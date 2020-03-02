@@ -1,0 +1,16 @@
+{
+  "name": "monorepo",
+  "version": "0.0.1",
+  "description": "Web app, browser extensions, mobile apps for brace.to",
+  "main": "index.js",
+  "repository": "https://github.com/bracedotto/monorepo",
+  "author": "brace.to",
+  "license": "MIT",
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": ["**/react-native", "**/react-native/**"]
+  },
+  "private": true
+}

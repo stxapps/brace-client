@@ -1,0 +1,6 @@
+{
+  "name": "common",
+  "version": "0.0.1",
+  "description": "Common package for code sharing between web and native",
+  "license": "MIT"
+}
