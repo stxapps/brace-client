@@ -1,0 +1,375 @@
+* Inspiring Adversary
+** getpocket.com
+** saved.io
+** pinterest
+* poc
+** subdomain names for tags
+- set up a catch-all (wildcard) subdomain
+  https://www.namecheap.com/support/knowledgebase/article.aspx/597/2237/how-can-i-set-up-a-catchall-wildcard-subdomain/
+- Use CNAME Record
+  CNAME Record - @ - parkingpage.namecheap.com. - 30 min
+  CNAME Record - * - parkingpage.namecheap.com. - 30 min
+- If value is IP, change CNAME Record to A Record
+- Can retrieve the whole url with js?
+** static files + custom domain + wildcard SSL + CDN
+*** google storage
+- Works like CDN but not good as CDN
+- No support https on custom domain
+*** firebase
+- No support wildcard SSL, only support https on subdomains, no more than 20 subdomains! and need to setup one by one!
+*** google storage + google load balancer + google CDN
+- Require load balancer to work with google CDN
+- $18++ per month
+*** google storage + cloudflare
+- $5++ per month
+*** render.com
+- Too newly startup
+*** netlify
+- Limited usage. If exceed, $45++ per month
+*** google app engine
+- Need wildcard SSL from 3rd party i.e. from cloudflare $5 per month
+- No CDN. Platform tries to distribute across its datacenters
+- Should use standard enviroment for cost saving and scalability
+*** aws cloudfront + s3
+**** s3
+- Create a new bucket with public access
+- Upload files and folders in folder 'build' and make them all public
+- At bucket properties, enable static website hosting
+  + Index document: index.html
+  + Error document: index.html
+- access at http://brace-web.s3-website-us-east-1.amazonaws.com/
+**** certificate manager
+- Verify ownership of the domain name
+  + Need to use AWS N.Virginia
+  + At namecheap, host records -> CNAME Record
+  + Name to Host but without domain name i.e _dea0a23bf1e683425e901e82d7c7e816.brace.to. -> _dea0a23bf1e683425e901e82d7c7e816
+  + Value to Value as is
+  + ref: https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-validate-dns.html, https://stackoverflow.com/questions/51198472/cname-entry-not-working-on-namecheap-using-amazon-certificate-manager
+**** cloudfront
+- Origin domain name -> type yourself, from dropdown list is incorrect
+- Viewer protocal policy -> Redirect HTTP -> HTTPS
+- might not necessary
+  + Default root object -> index.html
+  + Error pages -> index.html
+- At namecheap, CNAME Record on * and @ to cloudfront domain name i.e. df3eruy30b9uq.cloudfront.net
+  + it will ended with dot because https://stackexchange.github.io/dnscontrol/why-the-dot
+- *Invalidating files*
+  + Try to use name versioning instead as more than 1000 requests needs to pay (https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation.html)
+**** ref
+- https://medium.com/@wolovim/deploying-create-react-app-to-s3-or-cloudfront-48dae4ce0af
+- https://medium.com/dailyjs/a-guide-to-deploying-your-react-app-with-aws-s3-including-https-a-custom-domain-a-cdn-and-58245251f081
+- https://benjamincongdon.me/blog/2017/06/13/How-to-Deploy-a-Secure-Static-Site-to-AWS-with-S3-and-CloudFront/#fnref:5
+** web design
+*** consideration
+- color & contrast
+- white space
+- visual hierarchy
+- scale
+- simplicity
+- consistency
+- responsiveness
+*** guideline
+**** layout
+**** font
+**** color, shade, shaddow
+**** sizing, spacing, margin, padding, line-height
+*** system
+**** 8pt system
+- Set grid with 8px width and height
+- soft grid
+  + If size is divided by 8, margin or padding might not
+  + Use 4pt system? too small?
+- ref
+  + https://builttoadapt.io/intro-to-the-8-point-grid-system-d2573cde8632
+  + https://builttoadapt.io/8-point-grid-borders-and-layouts-e91eb97f5091
+  + https://blog.prototypr.io/a-framework-for-creating-a-predictable-and-harmonious-spacing-system-8eee8aaf773c
+**** material.io
+**** ant.design
+**** orbit.kiwi
+*** SVG tools
+**** Inkscape
+- For logo design, icon design, illustation design
+- Free
+*** UI/UX tools
+**** Sketch
+- $99 one time
+- Only on Mac
+**** Adobe XD
+- Free with limited features
+- On Mac and Windows only
+**** Figma
+- For web UI and UX
+- Free with limited features
+- Web app
+- Can use instead of Inkscape for simple logos, icons, illustrations
+  + Better as no need to import/reimport after edit/update the logo/icon
+- Make logos/icons components so that when change, apply to all linked
+*** Color tools
+**** colors.co
+**** colormind.io
+*** Free icons
+- github.com/refactoringui/heroicons
+- www.zondicons.com
+- www.heropatterns.com
+- iconscout.com
+- icons8.com
+*** Free images
+- unsplash.com
+*** Inspiration
+- land-book.com
+-
+*** starter kit
+**** Predifined Tailwind CSS + Free templates
+**** pdkit.co
+**** antforfigma.com ($79)
+**** setproduct.com ($86)
+**** refactoring UI ($149)
+**** tailwindui.com ($249)
+** css system
+*** bulma
+- Good for use as is
+*** tailwind
+- Customizable
+- ref
+  + tailwindcss.com/
+  + tailwindcomponents.com
+  + tailwindtoolbox.com/
+  + tailwindui.com
+  + www.youtube.com/watch?v=J_7_mnFSLDg
+  + github.com/aniftyco/awesome-tailwindcss
+*** misc.
+- debug.css
+- cssstats.com
+** single web app for every page
+*** pages
+- landing/home page
+- list/delete/add/edit page
+- add via url page
+*** libraries
+**** yarn
+- yarn init
+**** babel
+- yarn add @babel/core @babel/cli @babel/preset-env @babel/preset-react --dev
+- create .babelrc at the project root
+**** webpack
+- yarn add webpack webpack-cli webpack-dev-server style-loader css-loader babel-loader --dev
+- create webpack.config.js at the project root
+**** react
+**** sass/scss + bulma
+**** ref
+- https://blog.usejournal.com/creating-a-react-app-from-scratch-f3c693b84658
+*** starter-kits
+**** create-react-app
+** gaia & sync
+*** founding
+- some sync requires implementation on both client and server i.e. synceddb (github.com/paldepind/synceddb), pouchdb (pouchdb.com), turtleDB (turtle-db.github.io)
+- manual sync is cumbersum
+  + https://github.com/smebberson/array-sync - every time compare needs to load all items
+  + keep timestamp at client and keep log files of changes at gaia, max log files might be 10, compare tiemstamps and apply changes, update changes to gaia (a log file) <- irony?
+  + *easier with only add and delete?* use file names(MD5 of content + created dt + updated dt) for sync
+  + load just file names to compare? order is important!
+  + for bidirectional sync, how to know it's delete or add?
+  + Too complicate, need CRDTs!
+- if there are *thousands items*, first time sync would take long time
+- IndexedDB and LocalStorage are temporary, not persistant
+- Most promising would be PouchDB
+  + Gaia is wrapped by DownLevel and PouchDB connects to by leveldb -> PouchDB will treat it as local database but actually underneath blockstack API is called
+  + Create idb as local database, update to this one and sync to the above one
+  + No as required CouchDB! (pouchdb.com/faq.html) for Multiversion concurrency control(MCC) and IndexedDB has a limit!
+- Conflict-free Replicated Data Types (CRDTs)
+  + might be too slow to download all change log and build final results
+  + the list will keep growing with changes
+  + ref: github.com/orbitdb/crdts, github.com/conclave-team/conclave
+*** ref
+- medium.com/@cody_84149/gaia-storage-with-leveldb-37112007e335
+- hackernoon.com/building-conclave-a-decentralized-real-time-collaborative-text-editor-a6ab438fe79f
+- hackernoon.com/turtledb-a-javascript-framework-for-building-offline-first-collaborative-web-apps-7183cd787163
+** gaia & service worker & indexedDB & Cache API
+*** cache in indexedDB for faster startup
+- Check if there are items in indexedDB, if yes, show these first
+- In the background (might not need service worker), connect to Gaia and load latest items
+- if there is change, update UI with latest items
+- Save ONLY latest items in indexedDB for fast startup only!
+- Cache API might not suitable as the same request would return different response, except static files
+- *no need* to do this manually because there is *stale-while-revalidate*
+  + www.toptal.com/react-hooks/stale-while-revalidate
+*** SWR for faster startup
+- github.com/zeit/swr
+- features
+  + stale-while-revalidate
+  + Focus Revalidation
+  + Refetch on Interval
+  + Scroll Position Recovery and Pagination
+- check
+  + can work with gaia? yes
+  + pagination?
+  + add/edit/delete apply to cache? force update? force refetch?
+- alternative
+  + react-query
+*** background job for add/edit/delete and save results in indexedDB for error handling
+- Save data in indexedDB first
+- Connect to Gaia to update
+- if succeed, clear indexedDB, if not retry
+- Need to be a queue
+- check
+  + If add and then edit/delete while still connecting to Gaia?
+  + If first error, how to handle next in the queue?
+- should use library i.e. redux-offline
+*** redux-offline for add/edit/delete
+- github.com/redux-offline/redux-offline
+- can be used for faster startup too, no need SWR
+- 
+*** require appropriate UI
+- loading
+- message
+*** caveat
+**** inconsistency in indexedDB / cache management
+- when first visit
+- when revisit
+- when refresh
+- when add/edit/delete items
+- when load more
+- when scroll down/scroll up
+*** tools
+**** workbox
+**** idb
+- www.npmjs.com/package/idb
+**** dexie.org
+- Wrapper for IndexedDB
+*** ref
+- developers.google.com/web
+- serviceworke.rs
+** for each gaia server, one file per one link. performance issue?
+- each file, json data: url, title, image, web_favicon, just_web_name, beautifed_flag, uuid/guid, created_dt, updated_dt
+- settings file
+** How to extract web page content?
+- Use Google cloud storage to serve html/js/css files
+- If require, client (ReactJS) connects to server (Google App Engine) i.e. extract information from an url, security issue?
+  + jsonp
+  + use backend code
+  + window.postMessage
+  + Cross-Origin Resource Sharing (CORS)
+  + ref: https://javascript.info/fetch-crossorigin, http://www.eriwen.com/javascript/how-to-cors/, https://www.moxio.com/blog/12/how-to-make-a-cross-domain-request-in-javascript-using-cors, https://jvaneyck.wordpress.com/2014/01/07/cross-domain-requests-in-javascript/, https://www.moesif.com/blog/technical/cors/Authoritative-Guide-to-CORS-Cross-Origin-Resource-Sharing-for-REST-APIs/
+- Might need to be Python server, not NodeJS server as features needed are about information extraction i.e. beautifulsoup or libraries in NodeJS should be available
+- Believe that with Google App Engine standard enviroment, external libraries like beautifulsoup can be installed.
+** website analytics
+*** tools
+- usefathom.com/, $14 per month -> too expensive?
+- Google analytics is free but privacy?
+- github.com/PostHog/posthog - self host
+** monorepo
+- webapp, firefox extension, chrome extension, android with react native, ios with react native
+** CI/CD
+*** Github actions
+- 
+** test 
+This and CI/CD are very important!
+*** tools
+- github.com/enzymejs/enzyme
+- browserstack.com
+- lambdatest.com
+- pact.io
+- browsersync.io
+** tools
+- jdenticon.com - generate a random image placeholder for a missing image
+- greensock.com - animation, not totally free
+- relay.dev - the production-ready GraphQL client for React
+- immortalDB - redundant store data in indexedDB, localStorage, and cookies
+- reqres.in - test your front-end against a real API
+* requirement
+** Add link
+** List views, view more
+** Click to visit, Copy link, share link, delete link
+** search/filter with regex pattern
+** Getting started screen guide
+** Extensions on firefox, chrome
+** Mobile apps - react native
+** Beautify - extract web page title, images
+** Trash - 30 days before delete
+** tagging/labelling/archieved
+* design user experience (UI/UX)
+** theme
+- minimalism
+  + youtu.be/fzwOBOjSto8?t=224
+  + redstapler.co/web-design-trends-2019/
+  + youtube.com/watch?v=z0GChBEw4BU
+  + kaycinho.com/website-trends-2019-web-design/
+** inspiration
+- miro.com/stickies-capture
+- bizy.com
+- pros.com
+- upperquad.com
+- github.com/cssninjaStudio/fresh
+- webartisan.be
+- github.com (dark theme)
+- www.mozilla.org (white navbar)
+** icon
+- 
+** color pallete
+- All black on logo and landing page, colorfy with moving shapes like upperquad.com
+- On landing page requires black-white illustrator
+- On main page, primary color is blue like pros.com and dark shade is like Blockstack color, others generate from colormind.io
+- 
+** font
+- type: ?
+- size: 16px
+- line height: ?
+- color: ?
+- weight: ?
+- ref: https://ant.design/docs/spec/font
+** layout
+- margin: 8pt system
+- padding: 8pt system
+- spacing: 8pt system
+** landing page
+*** nav
+- BRACE
+*** 1st section
+- Save links to visit later
+- Blockstack login/signup button
+- *illustrator*
+*** 2nd section
+- Easy ways to save
+- 1. click add bottom
+- 2. type brace.to/ at url bar
+*** 3rd section
+- All in one place
+- *Show main page with beautiful contents*
+*** 4th section
+- Privacy, your own identity and full control of you data
+*** 5th section
+- Start saving now!
+- Blockstack login/signup button
+*** footer
+- twitter, github
+- about, terms of service, privacy
+- faq
+  + How different from pocket?
+  + What are the benefits of using Brace?
+  + 
+** main page w/o items
+*** tutorial
+-
+* mvp
+** No extensions yet
+- Put app name on url
+- Go to webapp and add manually
+** blockstack apis
+- register
+- sign in
+- sign out
+- retrieve all bookmarks
+- create a bookmark
+- delete a bookmark
+** monorepo
+** react
+- state, route, view
+* fully-fledged
+** webapp, firefox/chrome extensions, android, ios
+* resources
+- https://github.com/pujolchr/aStackToRead
+- https://github.com/ShafiqShams/reacttodosapp
+- https://github.com/bingex/react-crud
+- https://github.com/khanshamim/react-application
+- https://github.com/donovantc/react-shared
+- https://github.com/ksholla20/react-native-react-monorepo-starter
