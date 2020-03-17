@@ -61,7 +61,8 @@
 - https://benjamincongdon.me/blog/2017/06/13/How-to-Deploy-a-Secure-Static-Site-to-AWS-with-S3-and-CloudFront/#fnref:5
 ** web design
 *** consideration
-- color & contrast
+- color
+- contrast
 - white space
 - visual hierarchy
 - scale
@@ -69,12 +70,8 @@
 - consistency
 - responsiveness
 *** guideline
-**** layout
-**** font
-**** color, shade, shaddow
-**** sizing, spacing, margin, padding, line-height
-*** system
-**** 8pt system
+**** layout, sizing, spacing, margin, padding, line-height
+***** 8pt system
 - Set grid with 8px width and height
 - soft grid
   + If size is divided by 8, margin or padding might not
@@ -83,8 +80,21 @@
   + https://builttoadapt.io/intro-to-the-8-point-grid-system-d2573cde8632
   + https://builttoadapt.io/8-point-grid-borders-and-layouts-e91eb97f5091
   + https://blog.prototypr.io/a-framework-for-creating-a-predictable-and-harmonious-spacing-system-8eee8aaf773c
+**** font
+**** color, shade, shaddow
+***** refactoring ui
+***** lyft color
+- design.lyft.com/re-approaching-color-9e604ba22c88
+*** design system
+**** protocol.mozilla.org
 **** material.io
+**** primer.style
+**** brand.uber.com
+**** evergreen.segment.com
+**** design.workday.com
+**** thumbprint.design
 **** ant.design
+**** www.designsystems.com
 **** orbit.kiwi
 *** SVG tools
 **** Inkscape
@@ -107,17 +117,30 @@
 *** Color tools
 **** colors.co
 **** colormind.io
+*** Contrast tools
+**** usecontrast.com
+**** webaim.org/resources/contrastchecker
+*** Font tools
+**** fontsinuse.com
+**** klim.co.nz
+**** hanken.co
+**** www.fontsquirrel.com
+**** typewolf.com
 *** Free icons
-- github.com/refactoringui/heroicons
+- github.com/refactoringui/heroicons, www.heroicons.com/
 - www.zondicons.com
 - www.heropatterns.com
 - iconscout.com
 - icons8.com
+- fontawesome.com
+- useiconic.com
+*** Free illustrations
+- undraw.co
 *** Free images
 - unsplash.com
 *** Inspiration
 - land-book.com
--
+- pages.xyz
 *** starter kit
 **** Predifined Tailwind CSS + Free templates
 **** pdkit.co
@@ -157,7 +180,7 @@
 **** react
 **** sass/scss + bulma
 **** ref
-- https://blog.usejournal.com/creating-a-react-app-from-scratch-f3c693b84658
+- blog.usejournal.com/creating-a-react-app-from-scratch-f3c693b84658
 *** starter-kits
 **** create-react-app
 ** gaia & sync
@@ -215,6 +238,8 @@
   + If add and then edit/delete while still connecting to Gaia?
   + If first error, how to handle next in the queue?
 - should use library i.e. redux-offline
+*** redux-offline for faster startup
+- 
 *** redux-offline for add/edit/delete
 - github.com/redux-offline/redux-offline
 - can be used for faster startup too, no need SWR
@@ -240,8 +265,19 @@
 - developers.google.com/web
 - serviceworke.rs
 ** for each gaia server, one file per one link. performance issue?
+*** questions
 - each file, json data: url, title, image, web_favicon, just_web_name, beautifed_flag, uuid/guid, created_dt, updated_dt
+- forum.blockstack.org/t/proposal-create-a-document-collection-for-cross-app-data-sharing/9286/2
+- github.com/blockstack/blockstack-collections
 - settings file
+- all notes in a folder named notes, settings.json is in root or another folder
+- should have version.json file?
+- how to set filename? worst case: same account creat a file at the same time on web and mobile?
+- read file one by one, performance issue? one round trip, get everything?
+*** gaia api
+- put file
+- list file names with pagination
+- read file
 ** How to extract web page content?
 - Use Google cloud storage to serve html/js/css files
 - If require, client (ReactJS) connects to server (Google App Engine) i.e. extract information from an url, security issue?
@@ -276,6 +312,8 @@ This and CI/CD are very important!
 - relay.dev - the production-ready GraphQL client for React
 - immortalDB - redundant store data in indexedDB, localStorage, and cookies
 - reqres.in - test your front-end against a real API
+- puppeteer - provides a high-level API to control headless Chrome
+- cypress.io - a complete end-to-end testing experience
 * requirement
 ** Add link
 ** List views, view more
@@ -303,15 +341,46 @@ This and CI/CD are very important!
 - webartisan.be
 - github.com (dark theme)
 - www.mozilla.org (white navbar)
+- bvd.se
+- brander.ua
+- adoric.com
+- www.schwarz-matt.com
+- minimalissimo.com
+- apple.com
+- wsj.com
+- medium.com
+- brand.uber.com
+** logo
+*** color
+- black/white/silver/grey: balance, neutral, calm i.e. Apple, Nike, Puma, Honda, Wiki, CartoonNetwork, Benz, wsj, gucci, channel, prada, nytimes.com, sony, uber, medium.com
+*** fonts for brandname
+- Moiser techno Font - www.fontspace.com/moiser-techno-font-f16409
+- Chainsaw Geometric Font - www.fontspace.com/chainsaw-geometric-font-f9174
+- gtek-minimal - www.qbotype.com/pagina-del-producto/gtek-minimal-1
+- amirox - www.qbotype.com/pagina-del-producto/amirox-v16-1
+- HFF Modern Strand Font - www.fontspace.com/hff-modern-strand-font-f9019
+- misirlou - www.fontsc.com/font/misirlou
 ** icon
 - 
+** illustration
+- undraw.co/search -> collecting
+- undraw.co/search -> bookmarks
 ** color pallete
 - All black on logo and landing page, colorfy with moving shapes like upperquad.com
 - On landing page requires black-white illustrator
 - On main page, primary color is blue like pros.com and dark shade is like Blockstack color, others generate from colormind.io
-- 
+- tailwind css
+- lyft colors
+- brand.uber.com/guide#color-specialty-colors
 ** font
-- type: ?
+- type
+  + Rubik
+  + Work Sans
+  + tinkov.info/gilroy.html ($180)
+  + Eina03
+  + MaisonNeue
+  + Uber Move Text
+  + choose from www.typewolf.com/google-fonts
 - size: 16px
 - line height: ?
 - color: ?
