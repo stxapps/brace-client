@@ -158,6 +158,10 @@
 **** hanken.co
 **** www.fontsquirrel.com
 **** typewolf.com
+*** Chrome extensions
+- responsive-viewer: chrome.google.com/webstore/detail/responsive-viewer/inmopeiepgfljkpkidclfgbgbmfcennb
+- PixelParallel: chrome.google.com/webstore/detail/pixelparallel-by-htmlburg/iffnoibnepbcloaaagchjonfplimpkob
+- VisBug: chrome.google.com/webstore/detail/visbug/cdockenadnadldjbbgcallicgledbeoc
 *** Free icons
 - github.com/refactoringui/heroicons, www.heroicons.com/
 - www.zondicons.com
@@ -172,9 +176,12 @@
 - undraw.co
 *** Free images
 - unsplash.com
+- www.istockphoto.com
 *** Inspiration
 - land-book.com
 - pages.xyz
+- www.awwwards.com
+- thefwa.com
 *** starter kit
 **** Predifined Tailwind CSS + Free templates
 **** pdkit.co
@@ -426,9 +433,19 @@ This and CI/CD are very important!
 - weight: ?
 - ref: https://ant.design/docs/spec/font
 ** layout
-- margin: 8pt system
-- padding: 8pt system
-- spacing: 8pt system
+*** attributes
+- display-type/position-type
+- margin/padding
+- width/height
+- color
+- font-size
+- font-color
+- font-weight
+- line-height
+- letter-spacing
+- border-size
+- border-color
+- corner-radius
 ** landing page
 *** nav
 - BRACE
@@ -458,6 +475,14 @@ This and CI/CD are very important!
 ** main page w/o items
 *** tutorial
 -
+** attribution
+- tailwindcss
+- uirefactoring
+- figma
+- iconmonstr.com
+- undraw.co
+- pocket.com
+- saved.io
 * mvp
 ** No extensions yet
 - Put app name on url
