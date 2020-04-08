@@ -1,0 +1,19 @@
+{
+  "name": "prototypes-web",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "postcss src/tailwind.css -o css/tailwind.css",
+    "watch": "postcss src/tailwind.css -o css/tailwind.css --watch",
+    "serve": "live-server --ignore=node_modules,.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "autoprefixer": "^9.7.4",
+    "postcss-cli": "^7.1.0",
+    "tailwindcss": "^1.2.0"
+  }
+}

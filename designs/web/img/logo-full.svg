@@ -1,0 +1,14 @@
+<svg width="201" height="44" viewBox="0 0 201 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M93.7841 44L96.2983 35.5781H110.702L113.216 44H126L111.597 0H95.4034L81 44H93.7841Z" fill="#1A202C"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M162 35.1132C152.766 50.4086 125 45.9628 125 21.7536C125 -1.44942 151.154 -5.81183 161.153 7.33301L144.944 21.8264L162 35.1132Z" fill="#1A202C"/>
+<path d="M42 8.00581e-06V44H78.2447L64.2039 30.6087C85.1018 30.6087 85.4283 -2.39859e-05 64.2039 8.00581e-06H42Z" fill="#1A202C"/>
+<rect width="6" height="44" rx="3" fill="#1A202C"/>
+<path d="M28.4424 9.54e-06H3V44H29C42.5576 39 39 23 32.5 20C38.5 14 36.9039 3.04611 28.4424 9.54e-06Z" fill="#1A202C"/>
+<circle cx="11" cy="17" r="4" fill="white"/>
+<circle cx="23" cy="17" r="4" fill="white"/>
+<circle cx="23" cy="29" r="4" fill="white"/>
+<circle cx="11" cy="29" r="4" fill="white"/>
+<path d="M167 0H197C199.209 0 201 1.79086 201 4V15H167V0Z" fill="#1A202C"/>
+<path d="M167 29H201V40C201 42.2091 199.209 44 197 44H167V29Z" fill="#1A202C"/>
+<rect x="167" y="18" width="29" height="8" fill="#1A202C"/>
+</svg>
