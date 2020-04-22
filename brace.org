@@ -336,6 +336,8 @@
 - usefathom.com/, $14 per month -> too expensive?
 - Google analytics is free but privacy?
 - github.com/PostHog/posthog - self host
+- matomo.org
+- plausible.io
 ** monorepo
 - webapp, firefox extension, chrome extension, android with react native, ios with react native
 ** CI/CD
@@ -349,6 +351,7 @@ This and CI/CD are very important!
 - lambdatest.com
 - pact.io
 - browsersync.io
+- developers.google.com/web/tools/lighthouse
 ** tools
 - jdenticon.com - generate a random image placeholder for a missing image
 - greensock.com - animation, not totally free
@@ -472,6 +475,11 @@ This and CI/CD are very important!
   + How different from pocket?
   + What are the benefits of using Brace?
   + 
+** main page
+*** Auto Responsive Grid Layout
+- github.com/xudafeng/autoresponsive-react
+- github.com/tsuyoshiwada/react-stack-grid
+- github.com/dantrain/react-stonecutter
 ** main page w/o items
 *** tutorial
 -
@@ -483,6 +491,93 @@ This and CI/CD are very important!
 - undraw.co
 - pocket.com
 - saved.io
+* Implementation
+** project
+*** create-react-app
+- medium.com/@xijo/create-react-app-with-tailwind-via-postcss-plus-purgecss-5c36b4c33ba7
+*** dependencies
+- tailwindcss
+- postcss-cli
+- (No need autoprefixer here as css file will go through cra and will be autoprefix there)
+- purgecss
+- react
+- react-dom
+- react-scripts
+  + webpack
+  + babel
+  + postcss
+  + autoprefixer
+  + workbox
+- redux
+- react-redux
+- axios
+- redux-thunk
+- (No use redux-form for more control over action and reducer)
+- redux-offline
+- (No use router for more customization)
+- (No use context as use redux)
+- ? hook ?
+- blockstack-js
+- blockstack-connect
+- url-parse
+** React
+*** entry point
+- index.js
+*** components
+- App.js
+- Loading.js
+- Landing.js
+- TopBar.js
+  + redux-form on search and add
+- BottomBar.js
+- CardList.js
+- CardItem.js
+- Settings.js
+- Adding.js
+- DialogBox.js (Modal.js)
+- Popup.js
+  + If use redux, there will be only one popup, but how to click outside to close?
+- Link.js
+*** router
+- switch (medium.com/@daveford/react-router-alternative-switch-acd7961f08db)
+- if switch is not ok, use router5 (life.wongnai.com/router5-39d97bd9e48d)
+** Redux & Redux-Offline
+*** state
+- link
+  + version
+  + id (UUID)
+  + url (+ domain_name)
+  + list_name: default, archive
+  + added_dt
+  + did_beautify
+  + title
+  + favicon
+  + screenshot
+  + beautified_dt
+  + did_remove
+  + removed_dt
+- links: {key is link id, value is an object of its values}, sort?
+  + adding
+  + added
+  + removing
+  + removed
+  + deleting
+*** actions
+- SIGN_IN
+- SIGN_OUT
+*** reducers
+- userReducer
+** Workbox
+** Blockstack (js, Gaia, connect)
+*** sign in
+*** sign out
+*** fetch with pagination. sort?
+- featch all file with listFiles
+- save all files in root path both links and settings so that when calling listFiles, all files come at once
+*** save. id?
+** API server
+*** Google app engine
+*** Puppeteer
 * mvp
 ** No extensions yet
 - Put app name on url
