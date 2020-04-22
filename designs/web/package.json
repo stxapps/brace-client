@@ -6,7 +6,7 @@
   "scripts": {
     "build": "postcss src/tailwind.css -o css/tailwind.css",
     "watch": "postcss src/tailwind.css -o css/tailwind.css --watch",
-    "serve": "live-server --ignore=node_modules,.git"
+    "serve": "live-server --ignore=node_modules,.git --no-browser"
   },
   "keywords": [],
   "author": "",
