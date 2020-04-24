@@ -3,12 +3,14 @@ import { REHYDRATE } from 'redux-persist/constants'
 
 const initialState = {
   isUserSignedIn: null,
+  username: null,
+  image: null,
 };
 
 export default (state=initialState, action) => {
 
   if (action.type === REHYDRATE) {
-    return { ...action.payload.user, isUserSignedIn: null };
+    return { ...initialState };
   }
 
   if (action.type === INIT) {
@@ -16,7 +18,7 @@ export default (state=initialState, action) => {
   }
 
   if (action.type === UPDATE_USER) {
-    return { ...state, isUserSignedIn: action.payload.isUserSignedIn };
+    return { ...state, ...action.payload };
   }
 
   return state;

@@ -1,15 +1,16 @@
 import { UserSession, AppConfig } from 'blockstack';
+import { showBlockstackConnect } from '@blockstack/connect';
 
 import { INIT, UPDATE_WINDOW, UPDATE_HISTORY_POSITION,
          UPDATE_USER,
          UPDATE_POPUP } from '../types/actions';
-import { BACK_DECIDER, BACK_POPUP } from '../types/const';
+import { BACK_DECIDER, BACK_POPUP, APP_NAME, APP_ICON_URL } from '../types/const';
 
-const appConfig = new AppConfig()
-const userSession = new UserSession({ appConfig: appConfig })
+const appConfig = new AppConfig(['store_write'], APP_NAME);
+const userSession = new UserSession({ appConfig: appConfig });
 
-export const init = () => async (dispatch, getState) => {
-  dispatch({
+export const init = (store) => {
+  store.dispatch({
     type: INIT,
     payload: {
       isUserSignedIn: userSession.isUserSignedIn(),
@@ -17,29 +18,23 @@ export const init = () => async (dispatch, getState) => {
     }
   });
 
-  window.addEventListener('popstate', function(e) {
-    dispatch(popHistoryState());
+  popHistoryState(store);
+  window.addEventListener('popstate', function() {
+    popHistoryState(store);
   });
 };
 
-export const updateHistoryPosition = historyPosition => {
-  return {
-    type: UPDATE_HISTORY_POSITION,
-    payload: historyPosition,
-  };
-}
-
-export const popHistoryState = (e) => async (dispatch, getState) => {
+export const popHistoryState = (store) => {
 
   let historyPosition = window.history.state;
   if (historyPosition === BACK_DECIDER &&
-      getState().window.historyPosition === BACK_POPUP) {
+      store.getState().window.historyPosition === BACK_POPUP) {
 
     // if back button pressed and there is a popup shown
-    if (getState().display.isPopupShown) {
+    if (store.getState().display.isPopupShown) {
       // disable back button by forcing to go forward in history states
       // No need to update state here as window.history.go triggers popstate event
-      dispatch({
+      store.dispatch({
         type: 'UPDATE_POPUP',
         payload: false
       })
@@ -50,7 +45,7 @@ export const popHistoryState = (e) => async (dispatch, getState) => {
 
     // No popup shown, go back one more
     // need to update state first before going off so that when back know that back from somewhere else
-    dispatch({
+    store.dispatch({
       type: UPDATE_WINDOW,
       payload: {
         href: window.location.href,
@@ -69,7 +64,7 @@ export const popHistoryState = (e) => async (dispatch, getState) => {
     return;
   }
 
-  dispatch({
+  store.dispatch({
     type: UPDATE_WINDOW,
     payload: {
       href: window.location.href,
@@ -78,27 +73,84 @@ export const popHistoryState = (e) => async (dispatch, getState) => {
   });
 };
 
-export const signIn = () => {
+export const updateHistoryPosition = historyPosition => {
   return {
-    type: UPDATE_USER,
-    payload: {
-      isUserSignedIn: true,
-    },
+    type: UPDATE_HISTORY_POSITION,
+    payload: historyPosition,
   };
-}
+};
 
-export const signOut = () => {
-  return {
+export const signUp = () => async (dispatch, getState) => {
+
+  const authOptions = {
+    redirectTo: '/',
+    appDetails: {
+      name: APP_NAME,
+      icon: APP_ICON_URL,
+    },
+    finished: ({ userSession }) => {
+
+      const userData = userSession.loadUserData();
+
+      dispatch({
+        type: UPDATE_USER,
+        payload: {
+          isUserSignedIn: true,
+          username: userData.username,
+          image: (userData && userData.profile && userData.profile.image) || null,
+        },
+      });
+    },
+    sendToSignIn: false,
+    userSession: userSession,
+  };
+
+  showBlockstackConnect(authOptions);
+};
+
+export const signIn = () => async (dispatch, getState) => {
+
+  const authOptions = {
+    redirectTo: '/',
+    appDetails: {
+      name: APP_NAME,
+      icon: APP_ICON_URL,
+    },
+    finished: ({ userSession }) => {
+
+      const userData = userSession.loadUserData();
+
+      dispatch({
+        type: UPDATE_USER,
+        payload: {
+          isUserSignedIn: true,
+          username: userData.username,
+          image: (userData && userData.profile && userData.profile.image) || null,
+        },
+      });
+    },
+    sendToSignIn: true,
+    userSession: userSession,
+  };
+
+  showBlockstackConnect(authOptions);
+};
+
+export const signOut = () => async (dispatch, getState) => {
+
+  userSession.signUserOut();
+  dispatch({
     type: UPDATE_USER,
     payload: {
       isUserSignedIn: false,
+      username: null,
     },
-  };
-}
+  });
+};
 
 export const updatePopup = isShown => {
   return {
     type: UPDATE_POPUP,
     payload: isShown,
-  }
-}
+  };
+};

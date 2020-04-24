@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { signIn } from '../actions';
+import { signIn, signUp } from '../actions';
 
 class Landing extends React.Component {
 
@@ -9,11 +9,11 @@ class Landing extends React.Component {
     return (
       <React.Fragment>
         <div>
-          <button onClick={() => this.props.signIn()}>Sign in</button>
+          <button onClick={ () => this.props.signIn() }>Sign in</button>
         </div>
         <div>Landing page</div>
         <div>
-          <button>Get started</button>
+          <button onClick={ () => this.props.signUp() }>Get started</button>
         </div>
         <div>
           <a href="https://blockstack.org">Learn blockstack more</a>
@@ -28,4 +28,4 @@ class Landing extends React.Component {
 
 const mapStateToProps = null;
 
-export default connect(mapStateToProps, { signIn })(Landing);
+export default connect(mapStateToProps, { signIn, signUp })(Landing);

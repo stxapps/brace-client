@@ -9,14 +9,11 @@ const initialState = {
 export default (state=initialState, action) => {
 
   if (action.type === REHYDRATE) {
-    return {...initialState};
+    return { ...initialState };
   }
 
   if (action.type === INIT) {
-    return {
-      ...state,
-      href: action.payload.href,
-    };
+    return { ...state, href: action.payload.href };
   }
 
   if (action.type === UPDATE_WINDOW) {

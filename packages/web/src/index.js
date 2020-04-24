@@ -15,7 +15,7 @@ import { init } from './actions'
 import * as serviceWorker from './serviceWorker';
 
 offlineConfig.persistCallback = () => {
-  store.dispatch(init());
+  init(store);
 };
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
