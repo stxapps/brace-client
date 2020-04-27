@@ -1,15 +1,14 @@
-import { UPDATE_POPUP } from '../types/actions';
+import { UPDATE_POPUP } from '../types/actionTypes';
 import { REHYDRATE } from 'redux-persist/constants'
 
 const initialState = {
+  'listName': 'My List',
+  'listSize': 30,
+  'searchString': '',
   'isPopupShown': false,
-  'showingList': 'My List',
-  'My List': [],
-  'Trash': [],
-  'Archive': [],
 };
 
-export default (state=initialState, action) => {
+export default (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
     return { ...action.payload.display, isPopupShown: false };

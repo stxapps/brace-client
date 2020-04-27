@@ -1,10 +1,10 @@
-//import { } from '../types/actions';
+//import { } from '../types/actionTypes';
 
 const initialState = {
 
 };
 
-export default (state=initialState, action) => {
+export default (state = initialState, action) => {
 
   return state;
 };

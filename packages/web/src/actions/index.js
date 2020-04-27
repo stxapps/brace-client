@@ -1,13 +1,18 @@
-import { UserSession, AppConfig } from 'blockstack';
 import { showBlockstackConnect } from '@blockstack/connect';
 
-import { INIT, UPDATE_WINDOW, UPDATE_HISTORY_POSITION,
-         UPDATE_USER,
-         UPDATE_POPUP } from '../types/actions';
-import { BACK_DECIDER, BACK_POPUP, APP_NAME, APP_ICON_URL } from '../types/const';
-
-const appConfig = new AppConfig(['store_write'], APP_NAME);
-const userSession = new UserSession({ appConfig: appConfig });
+import userSession from '../userSession';
+import {
+  INIT, UPDATE_WINDOW, UPDATE_HISTORY_POSITION,
+  UPDATE_USER,
+  UPDATE_POPUP,
+  FETCH_LINKS, FETCH_LINKS_COMMIT, FETCH_LINKS_ROLLBACK,
+} from '../types/actionTypes';
+import {
+  BACK_DECIDER, BACK_POPUP,
+  APP_NAME, APP_ICON_URL,
+  PUT_FILE, DELETE_FILE, GET_FILE, LIST_FILES,
+} from '../types/const';
+import { createPath } from '../utils';
 
 export const init = (store) => {
   store.dispatch({
@@ -19,7 +24,7 @@ export const init = (store) => {
   });
 
   popHistoryState(store);
-  window.addEventListener('popstate', function() {
+  window.addEventListener('popstate', function () {
     popHistoryState(store);
   });
 };
@@ -28,7 +33,7 @@ export const popHistoryState = (store) => {
 
   let historyPosition = window.history.state;
   if (historyPosition === BACK_DECIDER &&
-      store.getState().window.historyPosition === BACK_POPUP) {
+    store.getState().window.historyPosition === BACK_POPUP) {
 
     // if back button pressed and there is a popup shown
     if (store.getState().display.isPopupShown) {
@@ -152,5 +157,19 @@ export const updatePopup = isShown => {
   return {
     type: UPDATE_POPUP,
     payload: isShown,
+  };
+};
+
+export const fetchLinks = (listName) => {
+  return {
+    type: FETCH_LINKS,
+    payload: { listName },
+    meta: {
+      offline: {
+        effect: { method: LIST_FILES, path: createPath(listName) },
+        commit: { type: FETCH_LINKS_COMMIT, meta: { listName } },
+        rollback: { type: FETCH_LINKS_ROLLBACK, meta: { listName } }
+      }
+    },
   };
 };

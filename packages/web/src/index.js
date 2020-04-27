@@ -11,9 +11,11 @@ import './stylesheets/tailwind.css';
 import App from './components/App';
 import reducers from './reducers';
 import { init } from './actions'
+import { effect } from './apis/blockstack'
 
 import * as serviceWorker from './serviceWorker';
 
+offlineConfig.effect = effect;
 offlineConfig.persistCallback = () => {
   init(store);
 };

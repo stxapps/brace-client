@@ -34,7 +34,7 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   return {
     isUserSignedIn: state.user.isUserSignedIn,
     href: state.window.href,

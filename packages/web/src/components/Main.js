@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import { updateHistoryPosition, signOut, updatePopup } from '../actions';
 import { BACK_DECIDER, BACK_POPUP } from '../types/const';
+import { getVisibleLinks } from '../selectors';
 
 class Main extends React.Component {
 
@@ -19,25 +20,23 @@ class Main extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <div><h1>Main page</h1></div>
+        <div className="p-3"><h1 className="font-bold">Main page</h1></div>
         <button onClick={() => this.props.signOut()}>Sign out</button>
+        <div className="p-3"></div>
         <div><p>This is a main page.</p></div>
-        <div><p>Link1</p></div>
-        <div><p>Link2</p></div>
+        <div><p>Card Link1</p></div>
+        <div><p>Card Link2</p></div>
         <button onClick={() => this.props.updatePopup(!this.props.isPopupShown)}>Toggle popup</button>
         <div><p>Now popup shown is {String(this.props.isPopupShown)}</p></div>
       </React.Fragment>
     );
   }
-
-  componentWillUnmount() {
-    console.log("Main component will unmount")
-  }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state, props) => {
   return {
     isPopupShown: state.display.isPopupShown,
+    links: getVisibleLinks(state, props),
   }
 };
 

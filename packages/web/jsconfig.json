@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "target": "es6",
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true,
+    "jsx": "react"
+  }
+}
