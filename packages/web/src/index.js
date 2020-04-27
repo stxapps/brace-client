@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, compose } from 'redux';
-import reduxThunk from 'redux-thunk';
+import { createStore, compose } from 'redux';
+import { install as installReduxLoop } from 'redux-loop';
 import { offline } from '@redux-offline/redux-offline';
 import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
 
@@ -11,7 +11,7 @@ import './stylesheets/tailwind.css';
 import App from './components/App';
 import reducers from './reducers';
 import { init } from './actions'
-import { effect } from './apis/blockstack'
+import { effect } from './apis/customOffline'
 
 import * as serviceWorker from './serviceWorker';
 
@@ -23,7 +23,10 @@ offlineConfig.persistCallback = () => {
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
   reducers,
-  composeEnhancers(applyMiddleware(reduxThunk), offline(offlineConfig))
+  composeEnhancers(
+    installReduxLoop({ ENABLE_THUNK_MIGRATION: true }),
+    offline(offlineConfig),
+  )
 );
 
 ReactDOM.render(

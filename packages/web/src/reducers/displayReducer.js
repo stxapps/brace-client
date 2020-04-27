@@ -11,7 +11,7 @@ const initialState = {
 export default (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
-    return { ...action.payload.display, isPopupShown: false };
+    return { ...state, ...action.payload.display, isPopupShown: false };
   }
 
   if (action.type === UPDATE_POPUP) {

@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+import { combineReducers } from 'redux-loop';
 
 import windowReducer from './windowReducer';
 import linksReducer from './linksReducer';
