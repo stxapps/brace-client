@@ -1,11 +1,14 @@
-import { UPDATE_POPUP } from '../types/actionTypes';
 import { REHYDRATE } from 'redux-persist/constants'
 
+import { UPDATE_POPUP } from '../types/actionTypes';
+import {
+  MY_LIST,
+} from '../types/const';
+
 const initialState = {
-  'listName': 'My List',
-  'listSize': 30,
-  'searchString': '',
-  'isPopupShown': false,
+  listName: MY_LIST,
+  searchString: '',
+  isPopupShown: false,
 };
 
 export default (state = initialState, action) => {

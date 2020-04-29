@@ -5,14 +5,20 @@ import {
   INIT, UPDATE_WINDOW, UPDATE_HISTORY_POSITION,
   UPDATE_USER,
   UPDATE_POPUP,
-  FETCH_LINKS, FETCH_LINKS_COMMIT, FETCH_LINKS_ROLLBACK,
+  FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
+  FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
+  ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
+  UPDATE_LINKS, UPDATE_LINKS_COMMIT, UPDATE_LINKS_ROLLBACK,
+  DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
+  MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
+  MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
 } from '../types/actionTypes';
 import {
-  BACK_DECIDER, BACK_POPUP,
   APP_NAME, APP_ICON_URL,
-  PUT_FILE, DELETE_FILE, GET_FILE, LIST_FILES,
+  BACK_DECIDER, BACK_POPUP,
+  MY_LIST, TRASH, ARCHIVE,
 } from '../types/const';
-import { createPath } from '../utils';
+import { randomString } from '../utils';
 
 export const init = (store) => {
   store.dispatch({
@@ -160,16 +166,88 @@ export const updatePopup = isShown => {
   };
 };
 
-export const fetchLinks = (listName) => {
-  return {
-    type: FETCH_LINKS,
-    payload: { listName },
+export const fetch = () => async (dispatch, getState) => {
+
+  const listName = getState().display.listName;
+  dispatch({
+    type: FETCH,
     meta: {
       offline: {
-        effect: { method: LIST_FILES, path: createPath(listName) },
-        commit: { type: FETCH_LINKS_COMMIT, meta: { listName } },
-        rollback: { type: FETCH_LINKS_ROLLBACK, meta: { listName } }
+        effect: { method: FETCH, params: listName },
+        commit: { type: FETCH_COMMIT },
+        rollback: { type: FETCH_ROLLBACK },
       }
     },
-  };
+  });
 };
+
+export const fetchMore = () => async (dispatch, getState) => {
+
+  const listName = getState().display.listName;
+  const ids = Object.keys(getState().links[listName]);
+
+  dispatch({
+    type: FETCH_MORE,
+    meta: {
+      offline: {
+        effect: { method: FETCH_MORE, params: { listName, ids } },
+        commit: { type: FETCH_MORE_COMMIT },
+        rollback: { type: FETCH_MORE_ROLLBACK },
+      }
+    },
+  });
+};
+
+export const addLink = (url) => async (dispatch, getState) => {
+
+  let listName = getState().display.listName;
+  if (listName === TRASH || listName === ARCHIVE) {
+    listName = MY_LIST;
+  }
+
+  const added_dt = Date.now();
+  const id = `${added_dt}-${randomString(4)}`;
+  const link = { id, url, added_dt, did_beautify: false, };
+  const links = [link];
+  const payload = { listName, links };
+
+  dispatch({
+    type: ADD_LINKS,
+    payload,
+    meta: {
+      offline: {
+        effect: { method: ADD_LINKS, params: payload },
+        commit: { type: ADD_LINKS_COMMIT },
+        rollback: { type: ADD_LINKS_ROLLBACK, meta: payload },
+      }
+    },
+  });
+};
+
+export const moveLinks = (ids) => async (dispatch, getState) => {
+
+  let listName = getState().display.listName;
+
+  // _.ignore()
+
+};
+
+export const deleteLinks = (ids) => async (dispatch, getState) => {
+
+  let listName = getState().display.listName;
+
+};
+
+export const changeListName = (listName, fetched) => async (dispatch, getState) => {
+
+  dispatch({
+    type: 'XXX',
+    payload: {
+      listName,
+    },
+  })
+};
+
+export const searchLinks = () => {
+  return null;
+}

@@ -11,11 +11,14 @@ import './stylesheets/tailwind.css';
 import App from './components/App';
 import reducers from './reducers';
 import { init } from './actions'
-import { effect } from './apis/customOffline'
+import { queue, discard, effect } from './apis/customOffline'
 
 import * as serviceWorker from './serviceWorker';
 
+offlineConfig.queue = queue;
+offlineConfig.discard = discard;
 offlineConfig.effect = effect;
+offlineConfig.persistOptions = { whitelist: [] };
 offlineConfig.persistCallback = () => {
   init(store);
 };

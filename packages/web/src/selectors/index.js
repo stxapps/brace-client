@@ -1,58 +1,33 @@
 import { createSelector } from 'reselect';
 
-const getAddingLinks = (state) => {
+import {
+  ID, STATUS,
+  ADDING, ADDED,
+} from '../types/const';
+import { _ } from '../utils';
 
-  if (!state.links[state.display.listName]) {
-    return null;
-  }
+export const getListNames = createSelector(
+  state => Object.keys(state.links),
+  listNames => listNames
+);
 
-  if (state.display.searchString === '') {
-    return state.links[state.display.listName].adding.map(x => {
-      return { ...x, status: 'adding' };
-    });
-  }
+export const getLinks = createSelector(
+  state => state.links,
+  state => state.display.listName,
+  state => state.display.searchString,
+  (links, listName, searchString) => {
+    if (!links || !links[listName]) return null;
 
-  // TODO: filter with search string
-  throw new Error('Not implemented yet');
-};
-
-const getAddedLinks = (state) => {
-
-  if (!state.links[state.display.listName]) {
-    return null;
-  }
-
-  if (state.display.searchString === '') {
-
-    let adding_ids = [];
-    for (const key in state.links) {
-      if (key === state.display.listName) {
+    const selectedLinks = _.select(links[listName], STATUS, [ADDING, ADDED]);
+    const adding_ids = [];
+    for (const key in links) {
+      if (key === listName || !links[key]) {
         continue;
       }
-
-      adding_ids.push(...state.links[key].adding.map(x => x.id));
+      adding_ids.push(..._.extract(_.select(links[key], STATUS, ADDING), ID));
     }
-
-    return state.links[state.display.listName].added
-      .filter(x => !adding_ids.includes(x.id))
-      .map(x => {
-        return { ...x, status: 'added' };
-      });
-  }
-
-  // TODO: filter with search string
-  throw new Error('Not implemented yet');
-};
-
-export const getVisibleLinks = createSelector(
-  [getAddingLinks, getAddedLinks],
-  (adding, added) => {
-
-    if (!adding || !added) {
-      return null;
-    }
-
-    return [...adding, ...added].sort((a, b) => {
+    const filteredLinks = _.exclude(selectedLinks, ID, adding_ids);
+    const sortedLinks = Object.values(filteredLinks).sort((a, b) => {
       if (a.added_dt > b.added_dt) {
         return -1;
       }
@@ -61,5 +36,12 @@ export const getVisibleLinks = createSelector(
       }
       return 0;
     });
+
+    if (searchString === '') {
+      return sortedLinks;
+    }
+
+    // TODO: filter with search string
+    throw new Error('Not implemented yet');
   }
 );
