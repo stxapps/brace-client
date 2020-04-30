@@ -56,7 +56,7 @@ const listFPaths = async () => {
   // List fpaths(keys)
   // Even though aws, az, gc sorts a-z but on Gaia local machine, it's arbitrary
   //   so need to fetch all and sort locally.
-  let linkFPaths = new DefaultDict([]);
+  let linkFPaths = new DefaultDict(function () { return []; });
   let settingsFPath;
 
   await userSession.listFiles((fpath) => {

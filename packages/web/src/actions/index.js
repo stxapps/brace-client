@@ -4,7 +4,7 @@ import userSession from '../userSession';
 import {
   INIT, UPDATE_WINDOW, UPDATE_HISTORY_POSITION,
   UPDATE_USER,
-  UPDATE_POPUP,
+  UPDATE_LIST_NAME, UPDATE_POPUP,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
@@ -16,9 +16,10 @@ import {
 import {
   APP_NAME, APP_ICON_URL,
   BACK_DECIDER, BACK_POPUP,
+  ALL, IS_POPUP_SHOWN,
   MY_LIST, TRASH, ARCHIVE,
 } from '../types/const';
-import { randomString } from '../utils';
+import { randomString, _ } from '../utils';
 
 export const init = (store) => {
   store.dispatch({
@@ -35,6 +36,21 @@ export const init = (store) => {
   });
 };
 
+const isPopupShown = (state) => {
+  if (state.display.isAddPopupShown ||
+    state.display.isProfilePopupShown || state.display.isListNamePopupShown) {
+    return true;
+  }
+
+  for (const listName in state.links) {
+    if (_.extract(state.links[listName], IS_POPUP_SHOWN).some(el => el === true)) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
 export const popHistoryState = (store) => {
 
   let historyPosition = window.history.state;
@@ -42,13 +58,10 @@ export const popHistoryState = (store) => {
     store.getState().window.historyPosition === BACK_POPUP) {
 
     // if back button pressed and there is a popup shown
-    if (store.getState().display.isPopupShown) {
+    if (isPopupShown(store.getState())) {
       // disable back button by forcing to go forward in history states
       // No need to update state here as window.history.go triggers popstate event
-      store.dispatch({
-        type: 'UPDATE_POPUP',
-        payload: false
-      })
+      store.dispatch(updatePopup(ALL, false))
 
       window.history.go(1);
       return
@@ -159,10 +172,10 @@ export const signOut = () => async (dispatch, getState) => {
   });
 };
 
-export const updatePopup = isShown => {
+export const updatePopup = (id, isShown) => {
   return {
     type: UPDATE_POPUP,
-    payload: isShown,
+    payload: { id, isShown },
   };
 };
 
@@ -241,11 +254,13 @@ export const deleteLinks = (ids) => async (dispatch, getState) => {
 export const changeListName = (listName, fetched) => async (dispatch, getState) => {
 
   dispatch({
-    type: 'XXX',
-    payload: {
-      listName,
-    },
+    type: UPDATE_LIST_NAME,
+    payload: listName,
   })
+
+  if (!fetched.includes(listName)) {
+    dispatch(fetch());
+  }
 };
 
 export const searchLinks = () => {

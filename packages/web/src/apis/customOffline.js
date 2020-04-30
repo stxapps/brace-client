@@ -37,6 +37,7 @@ export const queue = {
 
 export const discard = (error, action, _retries) => {
 
+  console.log(`redux-offline's discard called with error: ${error}!`);
   if (error && error.message && error.message.includes('Should be unreachable')) {
     return false;
   }

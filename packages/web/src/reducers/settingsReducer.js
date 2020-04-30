@@ -3,6 +3,8 @@ import { FETCH_COMMIT } from '../types/actionTypes';
 const initialState = {
   doBeautify: true,
   doDeleteOldLinksInTrash: true,
+  doDescendingOrder: true,
+  doRemoveAfterClick: false,
 };
 
 export default (state = initialState, action) => {

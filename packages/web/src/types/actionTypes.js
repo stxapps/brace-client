@@ -3,6 +3,7 @@ export const INIT = 'INIT';
 export const UPDATE_WINDOW = 'UPDATE_WINDOW';
 export const UPDATE_HISTORY_POSITION = 'UPDATE_HISTORY_POSITION';
 export const UPDATE_USER = 'UPDATE_USER';
+export const UPDATE_LIST_NAME = 'UPDATE_LIST_NAME';
 export const UPDATE_POPUP = 'UPDATE_POPUP';
 
 export const FETCH = 'FETCH';
