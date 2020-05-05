@@ -172,10 +172,10 @@ export const signOut = () => async (dispatch, getState) => {
   });
 };
 
-export const updatePopup = (id, isShown) => {
+export const updatePopup = (id, isShown, anchorPosition = null) => {
   return {
     type: UPDATE_POPUP,
-    payload: { id, isShown },
+    payload: { id, isShown, anchorPosition },
   };
 };
 
@@ -237,9 +237,9 @@ export const addLink = (url) => async (dispatch, getState) => {
   });
 };
 
-export const moveLinks = (ids) => async (dispatch, getState) => {
+export const moveLinks = (ids, toListName) => async (dispatch, getState) => {
 
-  let listName = getState().display.listName;
+  const fromListName = getState().display.listName;
 
   // _.ignore()
 

@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 
 import {
   ID, STATUS,
-  ADDING, ADDED,
+  ADDING, ADDED, DIED_ADDING, DIED_REMOVING, IS_POPUP_SHOWN,
 } from '../types/const';
 import { _ } from '../utils';
 
@@ -18,7 +18,7 @@ export const getLinks = createSelector(
   (links, listName, searchString) => {
     if (!links || !links[listName]) return null;
 
-    const selectedLinks = _.select(links[listName], STATUS, [ADDING, ADDED]);
+    const selectedLinks = _.select(links[listName], STATUS, [ADDING, ADDED, DIED_ADDING, DIED_REMOVING]);
     const adding_ids = [];
     for (const key in links) {
       if (key === listName || !links[key]) {
@@ -27,6 +27,14 @@ export const getLinks = createSelector(
       adding_ids.push(..._.extract(_.select(links[key], STATUS, ADDING), ID));
     }
     const filteredLinks = _.exclude(selectedLinks, ID, adding_ids);
+
+    const popupLinks = _.select(filteredLinks, IS_POPUP_SHOWN, true);
+    let popupLink = null;
+    for (const key in popupLinks) {
+      popupLink = popupLinks[key];
+      break;
+    }
+
     const sortedLinks = Object.values(filteredLinks).sort((a, b) => {
       if (a.added_dt > b.added_dt) {
         return -1;
@@ -38,7 +46,7 @@ export const getLinks = createSelector(
     });
 
     if (searchString === '') {
-      return sortedLinks;
+      return { links: sortedLinks, popupLink: popupLink };
     }
 
     // TODO: filter with search string

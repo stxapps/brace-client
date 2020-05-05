@@ -51,7 +51,6 @@ const extractLinkFPath = (fpath) => {
   return { listName, fname };
 };
 
-
 const listFPaths = async () => {
   // List fpaths(keys)
   // Even though aws, az, gc sorts a-z but on Gaia local machine, it's arbitrary

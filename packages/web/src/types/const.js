@@ -1,3 +1,5 @@
+export const DOMAIN_NAME = 'brace.to';
+
 export const APP_NAME = 'Brace';
 export const APP_ICON_URL = process.env.NODE_ENV === 'production' ? 'https://brace.to/logo192.png' : 'http://localhost:3000/logo192.png';
 
@@ -10,6 +12,7 @@ export const PROFILE_POPUP = 'PROFILE_POPUP';
 export const LIST_NAME_POPUP = 'LIST_NAME_POPUP';
 
 export const IS_POPUP_SHOWN = 'isPopupShown';
+export const POPUP_ANCHOR_POSITION = 'popupAnchorPosition';
 
 export const SETTINGS_FNAME = 'settings.json';
 
@@ -32,3 +35,17 @@ export const ADDED = 'ADDED';
 export const REMOVING = 'REMOVING';
 export const DIED_ADDING = 'DIED_ADDING';
 export const DIED_REMOVING = 'DIED_REMOVING';
+
+export const OPEN = 'Open';
+export const COPY_LINK = 'Copy link';
+//export const ARCHIVE = 'Archive';
+export const REMOVE = 'Remove';
+export const RESTORE = 'Restore';
+export const DELETE = 'Permanently delete';
+export const MOVE_TO = 'Move to';
+
+export const CARD_ITEM_POPUP_MENU = {
+  [MY_LIST]: [OPEN, COPY_LINK, ARCHIVE, REMOVE, MOVE_TO],
+  [TRASH]: [OPEN, COPY_LINK, RESTORE, DELETE],
+  [ARCHIVE]: [OPEN, COPY_LINK, REMOVE, MOVE_TO],
+};

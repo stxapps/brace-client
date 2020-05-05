@@ -49,17 +49,30 @@ const select = (obj, key, value) => {
   return newObj;
 };
 
+const _update = (obj, updKey, updValue) => {
+  const newObj = { ...obj };
+  if (Array.isArray(updKey)) {
+    for (let i = 0; i < updKey.length; i++) {
+      newObj[updKey[i]] = updValue[i];
+    }
+  } else {
+    newObj[updKey] = updValue;
+  }
+  return newObj;
+};
+
 const update = (obj, conKey, conValue, updKey, updValue) => {
   const newObj = {};
   for (const id in obj) {
     if (conKey === null) {
-      newObj[id] = { ...obj[id], [updKey]: updValue };
+      newObj[id] = _update(obj[id], updKey, updValue);
       continue;
     }
 
     if (Array.isArray(conValue)) {
       if (conValue.includes(obj[id][conKey])) {
-        newObj[id] = { ...obj[id], [updKey]: updValue };
+        newObj[id] = _update(obj[id], updKey, updValue);
+        continue
       }
 
       newObj[id] = { ...obj[id] };
@@ -67,7 +80,7 @@ const update = (obj, conKey, conValue, updKey, updValue) => {
     }
 
     if (obj[id][conKey] === conValue) {
-      newObj[id] = { ...obj[id], [updKey]: updValue };
+      newObj[id] = _update(obj[id], updKey, updValue);
       continue;
     }
 
@@ -130,3 +143,39 @@ const ignore = (obj, key) => {
 };
 
 export const _ = { mapKeys, select, update, extract, exclude, ignore };
+
+const fallbackCopyTextToClipboard = (text) => {
+  var textArea = document.createElement("textarea");
+  textArea.value = text;
+
+  // Avoid scrolling to bottom
+  textArea.style.top = "0";
+  textArea.style.left = "0";
+  textArea.style.position = "fixed";
+
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+
+  try {
+    var successful = document.execCommand('copy');
+    var msg = successful ? 'successful' : 'unsuccessful';
+    console.log('Fallback: Copying text command was ' + msg);
+  } catch (err) {
+    console.error('Fallback: Oops, unable to copy', err);
+  }
+
+  document.body.removeChild(textArea);
+};
+
+export const copyTextToClipboard = (text) => {
+  if (!navigator.clipboard) {
+    fallbackCopyTextToClipboard(text);
+    return;
+  }
+  navigator.clipboard.writeText(text).then(function () {
+    console.log('Async: Copying to clipboard was successful!');
+  }, function (err) {
+    console.error('Async: Could not copy text: ', err);
+  });
+};

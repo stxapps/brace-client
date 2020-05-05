@@ -1,6 +1,10 @@
 import { FETCH_COMMIT } from '../types/actionTypes';
+import {
+  MY_LIST,
+} from '../types/const';
 
 const initialState = {
+  defaultListName: MY_LIST,
   doBeautify: true,
   doDeleteOldLinksInTrash: true,
   doDescendingOrder: true,

@@ -7,7 +7,8 @@ import {
   DELETE_LINKS,
 } from '../types/actionTypes';
 import {
-  ALL, ADD_POPUP, PROFILE_POPUP, LIST_NAME_POPUP, IS_POPUP_SHOWN,
+  ALL, ADD_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
+  IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE,
   ID, STATUS,
   ADDING, ADDED, REMOVING, DIED_ADDING, DIED_REMOVING,
@@ -20,15 +21,16 @@ const initialState = {
   [ARCHIVE]: null,
 };
 
-const toObjAndAddAttrs = (links, status, isShown) => {
+const toObjAndAddAttrs = (links, status, isPopupShown, popupAnchorPosition) => {
   let obj = _.mapKeys(links, ID);
 
-  if (status !== undefined && status !== null) {
-    obj = _.update(obj, null, null, STATUS, status);
-  }
-  if (isShown !== undefined && isShown !== null) {
-    obj = _.update(obj, null, null, IS_POPUP_SHOWN, isShown);
-  }
+  obj = _.update(
+    obj,
+    null,
+    null,
+    [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION],
+    [status, isPopupShown, popupAnchorPosition]
+  );
 
   return obj;
 };
@@ -39,7 +41,7 @@ export default (state = initialState, action) => {
     const { listName, links, listNames } = action.payload;
 
     const newState = { ...state };
-    newState[listName] = toObjAndAddAttrs(links, ADDED, false);
+    newState[listName] = toObjAndAddAttrs(links, ADDED, false, null);
 
     for (const name of listNames) {
       if (!(name in newState)) {
@@ -56,7 +58,7 @@ export default (state = initialState, action) => {
     const newState = { ...state };
     newState[listName] = {
       ...state[listName],
-      ...toObjAndAddAttrs(links, ADDED, false)
+      ...toObjAndAddAttrs(links, ADDED, false, null)
     };
 
     return newState;
@@ -68,7 +70,7 @@ export default (state = initialState, action) => {
     const newState = { ...state };
     newState[listName] = {
       ...state[listName],
-      ...toObjAndAddAttrs(links, ADDING, false)
+      ...toObjAndAddAttrs(links, ADDING, false, null)
     };
 
     return newState;
@@ -78,10 +80,9 @@ export default (state = initialState, action) => {
     const { listName, links } = action.payload;
 
     const newState = { ...state };
-    newState[listName] = {
-      ...state[listName],
-      ...toObjAndAddAttrs(links, ADDED, null),
-    };
+    newState[listName] = _.update(
+      state[listName], ID, _.extract(links, ID), STATUS, ADDED
+    );
 
     return newState;
   }
@@ -90,10 +91,9 @@ export default (state = initialState, action) => {
     const { listName, links } = action.meta;
 
     const newState = { ...state };
-    newState[listName] = {
-      ...state[listName],
-      ...toObjAndAddAttrs(links, DIED_ADDING, null)
-    };
+    newState[listName] = _.update(
+      state[listName], ID, _.extract(links, ID), STATUS, DIED_ADDING
+    );
 
     return newState;
   }
@@ -136,7 +136,13 @@ export default (state = initialState, action) => {
       if (action.payload.id === ALL) {
         newState[listName] = _.update(state[listName], null, null, IS_POPUP_SHOWN, action.payload.isShown);
       } else {
-        newState[listName] = _.update(state[listName], ID, action.payload.id, IS_POPUP_SHOWN, action.payload.isShown);
+        newState[listName] = _.update(
+          state[listName],
+          ID,
+          action.payload.id,
+          [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION],
+          [action.payload.isShown, action.payload.anchorPosition]
+        );
       }
     }
 
