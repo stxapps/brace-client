@@ -352,6 +352,8 @@ This and CI/CD are very important!
 - pact.io
 - browsersync.io
 - developers.google.com/web/tools/lighthouse
+- cypress.io - a complete end-to-end testing experience
+- jest
 ** tools
 - jdenticon.com - generate a random image placeholder for a missing image
 - greensock.com - animation, not totally free
@@ -359,7 +361,13 @@ This and CI/CD are very important!
 - immortalDB - redundant store data in indexedDB, localStorage, and cookies
 - reqres.in - test your front-end against a real API
 - puppeteer - provides a high-level API to control headless Chrome
-- cypress.io - a complete end-to-end testing experience
+** resources
+- github.com/pujolchr/aStackToRead
+- github.com/ShafiqShams/reacttodosapp
+- github.com/bingex/react-crud
+- github.com/khanshamim/react-application
+- github.com/donovantc/react-shared
+- github.com/ksholla20/react-native-react-monorepo-starter
 * requirement
 ** Add link
 ** List views, view more
@@ -484,13 +492,19 @@ This and CI/CD are very important!
 *** tutorial
 -
 ** attribution
-- tailwindcss
+- tailwindcss, postcss, purgecss
 - uirefactoring
 - figma
 - iconmonstr.com
 - undraw.co
 - pocket.com
 - saved.io
+- udemy
+- react, create-react-app
+- redux, redux-thunk, redux-offline, react-redux
+- github.com/ConnorAtherton/loaders.css
+- loading.io/css/
+- react-stack-grid
 * Implementation
 ** project
 *** create-react-app
@@ -547,21 +561,28 @@ This and CI/CD are very important!
   + version
   + id (UUID)
   + url (+ domain_name)
-  + list_name: default, archive
+  + No need -> list_name: default, archive
   + added_dt
   + did_beautify
   + title
   + favicon
   + screenshot
   + beautified_dt
-  + did_remove
-  + removed_dt
+  + No need -> did_remove
+  + No need -> removed_dt
 - links: {key is link id, value is an object of its values}, sort?
-  + adding
-  + added
-  + removing
-  + removed
-  + deleting
+  + MyList
+    ~ adding
+    ~ added
+    ~ removing
+  + Trash
+    ~ adding
+    ~ added
+    ~ removing
+  + Archieve
+    ~ adding
+    ~ added
+    ~ removing
 *** actions
 - SIGN_IN
 - SIGN_OUT
@@ -575,9 +596,41 @@ This and CI/CD are very important!
 - featch all file with listFiles
 - save all files in root path both links and settings so that when calling listFiles, all files come at once
 *** save. id?
+** Auto Responsive Grid Layout
+- 
+** Search
+- lucaongaro.eu/blog/2019/01/30/minisearch-client-side-fulltext-search-engine.html
 ** API server
 *** Google app engine
 *** Puppeteer
+** stack user
+- blossom brand lounge toast divorce wool catalog sleep floor odor there advance
+** steps
+- yarn add tailwindcss postcss-cli
+- yarn add @fullhuman/postcss-purgecss
+- no need for dev dependencies as this's not a node app
+- no need autoprefixer as this will be done in creat-react-app
+- follow steps in tailwindcss.com/course/optimizing-for-production
+- follow steps in medium.com/@xijo/create-react-app-with-tailwind-via-postcss-plus-purgecss-5c36b4c33ba7 to config Tailwindcss
+- yarn add redux redux-thunk react-redux
+- yarn add @redux-offline/redux-offline
+- yarn add blockstack @blockstack/connect
+- Make sure history works:
+  + Address bar i.e. change path, change hash!
+  + redirect back i.e. from blockstack or other websites
+  + back, forward button
+  + button, tag <a> in the app
+- yarn add url-parse
+- Hack for back button
+  + Need 2 history states for when press back, the previous state still be our app and can handle in onpopstate
+  + Need to provide each history state a number for knowing back press or forward press or tag <a> click
+  + ref: stackoverflow.com/questions/8980255/how-do-i-retrieve-if-the-popstate-event-comes-from-back-or-forward-actions-with/49329267#49329267, medium.com/@subwaymatch/disabling-back-button-in-react-with-react-router-v5-34bb316c99d7
+- yarn add reselect
+- yarn remove redux-thunk
+- yarn add redux-loop
+- yarn add react-stack-grid
+- yarn remove @redux-offline/redux-offline
+- yarn add https://github.com/bracedotto/redux-offline#cc3a6fd8ff2c3d4fe05ec435d67fd40f0936b7e2
 * mvp
 ** No extensions yet
 - Put app name on url
@@ -594,10 +647,4 @@ This and CI/CD are very important!
 - state, route, view
 * fully-fledged
 ** webapp, firefox/chrome extensions, android, ios
-* resources
-- https://github.com/pujolchr/aStackToRead
-- https://github.com/ShafiqShams/reacttodosapp
-- https://github.com/bingex/react-crud
-- https://github.com/khanshamim/react-application
-- https://github.com/donovantc/react-shared
-- https://github.com/ksholla20/react-native-react-monorepo-starter
+
