@@ -1,8 +1,11 @@
 import { REHYDRATE } from 'redux-persist/constants'
 
-import { UPDATE_LIST_NAME, UPDATE_POPUP } from '../types/actionTypes';
 import {
-  ALL, ADD_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
+  UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
+  FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
+} from '../types/actionTypes';
+import {
+  ALL, ADD_POPUP, PROFILE_POPUP, LIST_NAME_POPUP, CONFIRM_DELETE_POPUP,
   MY_LIST,
 } from '../types/const';
 
@@ -12,16 +15,29 @@ const initialState = {
   isAddPopupShown: false,
   isProfilePopupShown: false,
   isListNamePopupShown: false,
+  isConfirmDeletePopupShown: false,
+  isFetchingMore: false,
 };
 
 export default (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
-    return { ...state, ...action.payload.display, isPopupShown: 0 };
+    return {
+      ...state,
+      ...action.payload.display,
+      isAddPopupShown: false,
+      isProfilePopupShown: false,
+      isListNamePopupShown: false,
+      isConfirmDeletePopupShown: false,
+    };
   }
 
   if (action.type === UPDATE_LIST_NAME) {
     return { ...state, listName: action.payload };
+  }
+
+  if (action.type === UPDATE_SEARCH_STRING) {
+    return { ...state, searchString: action.payload };
   }
 
   if (action.type === UPDATE_POPUP) {
@@ -31,6 +47,7 @@ export default (state = initialState, action) => {
         isAddPopupShown: action.payload.isShown,
         isProfilePopupShown: action.payload.isShown,
         isListNamePopupShown: action.payload.isShown,
+        isConfirmDeletePopupShown: action.payload.isShown,
       }
     }
 
@@ -45,6 +62,18 @@ export default (state = initialState, action) => {
     if (action.payload.id === LIST_NAME_POPUP) {
       return { ...state, isListNamePopupShown: action.payload.isShown }
     }
+
+    if (action.payload.id === CONFIRM_DELETE_POPUP) {
+      return { ...state, isConfirmDeletePopupShown: action.payload.isShown }
+    }
+  }
+
+  if (action.type === FETCH_MORE) {
+    return { ...state, isFetchingMore: true };
+  }
+
+  if (action.type === FETCH_MORE_COMMIT || action.type === FETCH_MORE_ROLLBACK) {
+    return { ...state, isFetchingMore: false };
   }
 
   return state;

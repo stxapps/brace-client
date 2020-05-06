@@ -1,48 +1,73 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import Url from 'url-parse';
 
-import { addLink, searchLinks, signOut, updatePopup } from '../actions';
-import { ADD_POPUP } from '../types/const';
+import { signOut, updatePopup, addLink, updateSearchString } from '../actions';
+import {
+  ADD_POPUP,
+  HTTP, HTTPS,
+} from '../types/const';
 
 class TopBar extends React.Component {
 
   state = {
     url: '',
     msg: '',
+    isAskingConfirm: false,
   }
 
   validateUrl(url) {
+
     if (!url) {
-      return [false, 'Please fill in a link you want to save in the textbox.'];
+      return [false, 'Please fill in a link you want to save in the textbox.', false];
     }
 
-    return [true, ''];
+    if (!url.startsWith(HTTP) && !url.startsWith(HTTPS)) {
+      url = HTTP + url;
+    }
+
+    const urlObj = new Url(url, {});
+    if (!urlObj.hostname.match(/^([-a-zA-Z0-9@:%_\+~#=]{2,256}\.)+[a-z]{2,6}$/)) {
+      return [false, 'Look like invalid link. Are you sure?', true];
+    }
+
+    return [true, '', null];
   }
 
   onAddBtnClick = () => {
     this.setState({
       url: '',
       msg: '',
+      isAskingConfirm: false,
     });
     this.props.updatePopup(ADD_POPUP, true);
-  };
+  }
+
+  onAddInputChange = (e) => {
+    this.setState({ url: e.target.value, msg: '', isAskingConfirm: false });
+  }
 
   onAddOkBtnClick = () => {
-    const [isValid, msg] = this.validateUrl(this.state.url);
-    if (!isValid) {
-      this.setState({ msg: msg });
-      return;
+    if (!this.state.isAskingConfirm) {
+      const [isValid, msg, isAskingConfirm] = this.validateUrl(this.state.url);
+      if (!isValid) {
+        this.setState({ msg, isAskingConfirm });
+        return;
+      }
     }
 
     this.props.addLink(this.state.url);
     this.props.updatePopup(ADD_POPUP, false);
-  };
+  }
 
   onAddCancelBtnClick = () => {
     this.props.updatePopup(ADD_POPUP, false);
-  };
+  }
 
   renderAddPopup() {
+
+    const { isAskingConfirm } = this.state;
+
     return (
       <React.Fragment>
         <button onClick={this.onAddCancelBtnClick} tabIndex="-1" className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-10"></button>
@@ -51,8 +76,8 @@ class TopBar extends React.Component {
             type="text"
             placeholder="http://"
             value={this.state.url}
-            onChange={e => this.setState({ url: e.target.value })} />
-          <button onClick={this.onAddOkBtnClick}>Save</button>
+            onChange={this.onAddInputChange} />
+          <button onClick={this.onAddOkBtnClick}>{isAskingConfirm ? 'Sure' : 'Save'}</button>
           <button onClick={this.onAddCancelBtnClick}>Cancel</button>
           <p className="text-red-500">{this.state.msg}</p>
         </div>
@@ -62,7 +87,7 @@ class TopBar extends React.Component {
 
   render() {
 
-    const { isAddPopupShown } = this.props;
+    const { searchString, isAddPopupShown, updateSearchString } = this.props;
 
     return (
       <React.Fragment>
@@ -75,6 +100,13 @@ class TopBar extends React.Component {
           </button>
           {isAddPopupShown && this.renderAddPopup()}
         </div>
+        <div>
+          <input
+            type="text"
+            placeholder="Search"
+            value={searchString}
+            onChange={e => updateSearchString(e.target.value)} />
+        </div>
       </React.Fragment >
     );
   }
@@ -82,8 +114,9 @@ class TopBar extends React.Component {
 
 const mapStateToProps = (state, props) => {
   return {
+    searchString: state.display.searchString,
     isAddPopupShown: state.display.isAddPopupShown,
   };
 };
 
-export default connect(mapStateToProps, { addLink, searchLinks, signOut, updatePopup })(TopBar);
+export default connect(mapStateToProps, { signOut, updatePopup, addLink, updateSearchString })(TopBar);

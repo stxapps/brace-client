@@ -13,7 +13,8 @@ class CardItem extends React.Component {
   };
 
   render() {
-    const { url } = this.props.link;
+    let { url, title } = this.props.link;
+    if (!title) title = url;
 
     return (
       <div className="mx-auto max-w-sm bg-white border-1 border-gray-200 rounded-lg shadow">
@@ -38,7 +39,7 @@ class CardItem extends React.Component {
           </div>
         </div>
         <h4 className="mt-1 p-3 lg:p-6 text-base text-gray-800 font-semibold leading-relaxed break-all">
-          <a className="" href={url}>http://www.facebook.com/asfien39ieo9ejklfdsnval/kjjvnek43kivn.,ksjdfo?q=4eijfv</a>
+          <a className="" href={url}>{title}</a>
         </h4>
       </div>
     );

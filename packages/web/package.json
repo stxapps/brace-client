@@ -5,7 +5,7 @@
   "dependencies": {
     "@blockstack/connect": "^2.3.1",
     "@fullhuman/postcss-purgecss": "^2.1.2",
-    "@redux-offline/redux-offline": "^2.5.2",
+    "@redux-offline/redux-offline": "https://github.com/bracedotto/redux-offline#cc3a6fd8ff2c3d4fe05ec435d67fd40f0936b7e2",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",

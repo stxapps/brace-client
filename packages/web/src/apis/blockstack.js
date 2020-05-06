@@ -33,8 +33,12 @@ export const effect = async (effectObj, _action) => {
     return fetchMore(params);
   }
 
-  if (method === ADD_LINKS) {
-    return addLinks(params);
+  if (method === ADD_LINKS || method === UPDATE_LINKS) {
+    return putLinks(params);
+  }
+
+  if (method === DELETE_LINKS) {
+    return deleteLinks(params);
   }
 
   throw new Error(`${method} is invalid for blockstack effect.`);
@@ -48,7 +52,12 @@ const createLinkFPath = (listName, id = null) => {
 const extractLinkFPath = (fpath) => {
   let [_, listName, fname] = fpath.split('/');
   listName = decodeURIComponent(listName);
-  return { listName, fname };
+
+  const dotIndex = fname.lastIndexOf('.');
+  const ext = fname.substring(dotIndex + 1);
+  fname = fname.substring(0, dotIndex);
+
+  return { listName, fname, ext };
 };
 
 const listFPaths = async () => {
@@ -126,7 +135,10 @@ const fetchMore = async (params) => {
 
   const { linkFPaths } = await listFPaths();
 
-  const filteredLinkFPaths = linkFPaths[listName].filter(link => !ids.includes(link.id));
+  const filteredLinkFPaths = linkFPaths[listName].filter(fpath => {
+    return !ids.includes(extractLinkFPath(fpath).fname);
+  });
+
   const selectedLinkFPaths = filteredLinkFPaths.sort().reverse().slice(0, N_LINKS);
   const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0);
   const links = responses.map(response => JSON.parse(response.content));
@@ -161,7 +173,7 @@ const batchPutFileWithRetry = async (fpaths, contents, callCount) => {
   return responses;
 };
 
-const addLinks = async (params) => {
+const putLinks = async (params) => {
 
   const { listName, links } = params;
   const linkFPaths = links.map(link => createLinkFPath(listName, link.id));
@@ -169,4 +181,39 @@ const addLinks = async (params) => {
   const publicUrls = responses.map(response => response.publicUrl);
 
   return { listName, links, publicUrls };
+};
+
+const batchDeleteFileWithRetry = async (fpaths, callCount) => {
+  if (callCount >= MAX_TRY) {
+    throw new Error('Number of retries exceeds MAX_TRY');
+  }
+
+  const responses = await Promise.all(
+    fpaths.map((fpath) =>
+      userSession.deleteFile(fpath)
+        .then(() => ({ fpath, success: true }))
+        .catch(error => ({ error, fpath, success: false }))
+    )
+  );
+
+  const failedResponses = responses.filter(({ success }) => !success);
+  const failedFPaths = failedResponses.map(({ fpath }) => fpath);
+
+  if (failedResponses.length) {
+    return [
+      ...responses.filter(({ success }) => success),
+      ...(await batchGetFileWithRetry(failedFPaths, callCount + 1))
+    ];
+  }
+
+  return responses;
+};
+
+const deleteLinks = async (params) => {
+
+  const { listName, ids } = params;
+  const linkFPaths = ids.map(id => createLinkFPath(listName, id));
+  await batchDeleteFileWithRetry(linkFPaths, 0);
+
+  return { listName, ids };
 };

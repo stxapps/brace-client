@@ -3,9 +3,10 @@ import { connect } from 'react-redux';
 
 import {
   updatePopup,
-  moveLinks,
+  moveLinks, deleteLinks,
 } from '../actions';
 import {
+  CONFIRM_DELETE_POPUP,
   MY_LIST,
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
   CARD_ITEM_POPUP_MENU,
@@ -54,7 +55,7 @@ class CardItemMenuPopup extends React.Component {
       }
     }
 
-    menu = menu.filter(text => text != MOVE_TO);
+    menu = menu.filter(text => text !== MOVE_TO);
 
     return { menu, moveTo };
   }
@@ -70,21 +71,21 @@ class CardItemMenuPopup extends React.Component {
 
     const { id, url } = this.props.link;
 
-
     if (text === OPEN) {
       window.open(url);
     } else if (text === COPY_LINK) {
       copyTextToClipboard(url);
     } else if (text === ARCHIVE) {
-      this.props.moveLinks([id], ARCHIVE);
+      this.props.moveLinks(ARCHIVE, [id]);
     } else if (text === REMOVE) {
-
+      this.props.moveLinks(TRASH, [id]);
     } else if (text === RESTORE) {
-
+      this.props.moveLinks(MY_LIST, [id]);
     } else if (text === DELETE) {
-
+      this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
+      return;
     } else if (text.startsWith(MOVE_TO)) {
-
+      this.props.moveLinks(text.substring(MOVE_TO.length + 1), [id]);
     } else {
       throw new Error(`Invalid text: ${text}`);
     }
@@ -94,6 +95,15 @@ class CardItemMenuPopup extends React.Component {
 
   onCancelBtnClick = () => {
     this.props.updatePopup(this.props.link.id, false);
+  };
+
+  onConfirmDeleteOkBtnClick = () => {
+    this.props.deleteLinks([this.props.link.id]);
+    this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+  };
+
+  onConfirmDeleteCancelBtnClick = () => {
+    this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
   };
 
   renderMenu() {
@@ -116,6 +126,19 @@ class CardItemMenuPopup extends React.Component {
         {this.menu.map(text => <li key={text} data-key={text}>{text}</li>)}
         {moveTo && moveTo}
       </React.Fragment>
+    );
+  }
+
+  renderConfirmDeletePopup() {
+    return (
+      <div>
+        <button onClick={this.onConfirmDeleteCancelBtnClick} tabIndex="-1" className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-30"></button>
+        <div className="fixed z-40">
+          <p>Confirm delete?</p>
+          <button onClick={this.onConfirmDeleteOkBtnClick}>Yes</button>
+          <button onClick={this.onConfirmDeleteCancelBtnClick}>No</button>
+        </div>
+      </div>
     );
   }
 
@@ -153,13 +176,20 @@ class CardItemMenuPopup extends React.Component {
         <ul onClick={this.onMenuPopupClick} style={popupPosition} className="fixed mt-2 py-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-20 cursor-pointer">
           {this.renderMenu()}
         </ul>
+        {this.props.isConfirmDeletePopupShown && this.renderConfirmDeletePopup()}
       </div >
     );
   }
 }
 
-const mapDispatchToProps = {
-  updatePopup, moveLinks,
+const mapStateToProps = (state, props) => {
+  return {
+    isConfirmDeletePopupShown: state.display.isConfirmDeletePopupShown,
+  }
 };
 
-export default connect(null, mapDispatchToProps)(CardItemMenuPopup);
+const mapDispatchToProps = {
+  updatePopup, moveLinks, deleteLinks,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CardItemMenuPopup);

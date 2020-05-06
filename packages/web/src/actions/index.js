@@ -1,10 +1,11 @@
 import { showBlockstackConnect } from '@blockstack/connect';
+import { RESET_STATE } from "@redux-offline/redux-offline/lib/constants";
 
 import userSession from '../userSession';
 import {
   INIT, UPDATE_WINDOW, UPDATE_HISTORY_POSITION,
   UPDATE_USER,
-  UPDATE_LIST_NAME, UPDATE_POPUP,
+  UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
@@ -16,8 +17,9 @@ import {
 import {
   APP_NAME, APP_ICON_URL,
   BACK_DECIDER, BACK_POPUP,
-  ALL, IS_POPUP_SHOWN,
+  ALL, CONFIRM_DELETE_POPUP, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE,
+  ID,
 } from '../types/const';
 import { randomString, _ } from '../utils';
 
@@ -37,8 +39,12 @@ export const init = (store) => {
 };
 
 const isPopupShown = (state) => {
-  if (state.display.isAddPopupShown ||
-    state.display.isProfilePopupShown || state.display.isListNamePopupShown) {
+  if (
+    state.display.isAddPopupShown ||
+    state.display.isProfilePopupShown ||
+    state.display.isListNamePopupShown ||
+    state.display.isConfirmDeletePopupShown
+  ) {
     return true;
   }
 
@@ -51,6 +57,16 @@ const isPopupShown = (state) => {
   return false;
 };
 
+const updatePopupAsBackPressed = (dispatch, getState) => {
+
+  let id = ALL;
+  if (getState().display.isConfirmDeletePopupShown) {
+    id = CONFIRM_DELETE_POPUP;
+  }
+
+  dispatch(updatePopup(id, false));
+};
+
 export const popHistoryState = (store) => {
 
   let historyPosition = window.history.state;
@@ -61,7 +77,7 @@ export const popHistoryState = (store) => {
     if (isPopupShown(store.getState())) {
       // disable back button by forcing to go forward in history states
       // No need to update state here as window.history.go triggers popstate event
-      store.dispatch(updatePopup(ALL, false))
+      updatePopupAsBackPressed(store.dispatch, store.getState);
 
       window.history.go(1);
       return
@@ -163,6 +179,11 @@ export const signIn = () => async (dispatch, getState) => {
 export const signOut = () => async (dispatch, getState) => {
 
   userSession.signUserOut();
+
+  // redux-offline: Empty outbox
+  dispatch({ type: RESET_STATE });
+
+  // TODO: clear all user data!
   dispatch({
     type: UPDATE_USER,
     payload: {
@@ -237,18 +258,63 @@ export const addLink = (url) => async (dispatch, getState) => {
   });
 };
 
-export const moveLinks = (ids, toListName) => async (dispatch, getState) => {
+export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
 
   const fromListName = getState().display.listName;
 
-  // _.ignore()
+  let links = _.ignore(
+    _.select(getState().links[fromListName], ID, ids),
+    [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]
+  );
+  links = Object.values(links);
+  const payload = { listName: toListName, links: links };
 
+  dispatch({
+    type: MOVE_LINKS_ADD_STEP,
+    payload,
+    meta: {
+      offline: {
+        effect: { method: ADD_LINKS, params: payload },
+        commit: { type: MOVE_LINKS_ADD_STEP_COMMIT, meta: { fromListName } },
+        rollback: { type: MOVE_LINKS_ADD_STEP_ROLLBACK, meta: payload },
+      }
+    },
+  });
+};
+
+export const moveLinksDeleteStep = (listName, ids) => async (dispatch, getState) => {
+
+  const payload = { listName, ids };
+
+  dispatch({
+    type: MOVE_LINKS_DELETE_STEP,
+    payload,
+    meta: {
+      offline: {
+        effect: { method: DELETE_LINKS, params: payload },
+        commit: { type: MOVE_LINKS_DELETE_STEP_COMMIT },
+        rollback: { type: MOVE_LINKS_DELETE_STEP_ROLLBACK, meta: payload },
+      }
+    },
+  });
 };
 
 export const deleteLinks = (ids) => async (dispatch, getState) => {
 
-  let listName = getState().display.listName;
+  const listName = getState().display.listName;
+  const payload = { listName, ids };
 
+  dispatch({
+    type: DELETE_LINKS,
+    payload,
+    meta: {
+      offline: {
+        effect: { method: DELETE_LINKS, params: payload },
+        commit: { type: DELETE_LINKS_COMMIT },
+        rollback: { type: DELETE_LINKS_ROLLBACK, meta: payload },
+      }
+    },
+  });
 };
 
 export const changeListName = (listName, fetched) => async (dispatch, getState) => {
@@ -263,6 +329,9 @@ export const changeListName = (listName, fetched) => async (dispatch, getState) 
   }
 };
 
-export const searchLinks = () => {
-  return null;
-}
+export const updateSearchString = (searchString) => {
+  return {
+    type: UPDATE_SEARCH_STRING,
+    payload: searchString,
+  };
+};

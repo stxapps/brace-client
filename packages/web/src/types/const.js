@@ -10,6 +10,7 @@ export const ALL = 'ALL';
 export const ADD_POPUP = 'ADD_POPUP';
 export const PROFILE_POPUP = 'PROFILE_POPUP';
 export const LIST_NAME_POPUP = 'LIST_NAME_POPUP';
+export const CONFIRM_DELETE_POPUP = 'CONFIRM_DELETE_POPUP';
 
 export const IS_POPUP_SHOWN = 'isPopupShown';
 export const POPUP_ANCHOR_POSITION = 'popupAnchorPosition';
@@ -32,9 +33,13 @@ export const STATUS = 'status';
 
 export const ADDING = 'ADDING';
 export const ADDED = 'ADDED';
+export const MOVING = 'MOVING';
 export const REMOVING = 'REMOVING';
+export const DELETING = 'DELETING';
 export const DIED_ADDING = 'DIED_ADDING';
+export const DIED_MOVING = 'DIED_MOVING';
 export const DIED_REMOVING = 'DIED_REMOVING';
+export const DIED_DELETING = 'DIED_DELETING';
 
 export const OPEN = 'Open';
 export const COPY_LINK = 'Copy link';
@@ -49,3 +54,7 @@ export const CARD_ITEM_POPUP_MENU = {
   [TRASH]: [OPEN, COPY_LINK, RESTORE, DELETE],
   [ARCHIVE]: [OPEN, COPY_LINK, REMOVE, MOVE_TO],
 };
+
+export const HTTP = 'http://';
+export const HTTPS = 'https://';
+export const WWW_DOT = 'www.';

@@ -2,9 +2,10 @@ import { createSelector } from 'reselect';
 
 import {
   ID, STATUS,
-  ADDING, ADDED, DIED_ADDING, DIED_REMOVING, IS_POPUP_SHOWN,
+  ADDING, ADDED, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING,
+  IS_POPUP_SHOWN,
 } from '../types/const';
-import { _ } from '../utils';
+import { _, isStringIn } from '../utils';
 
 export const getListNames = createSelector(
   state => Object.keys(state.links),
@@ -16,15 +17,15 @@ export const getLinks = createSelector(
   state => state.display.listName,
   state => state.display.searchString,
   (links, listName, searchString) => {
-    if (!links || !links[listName]) return null;
+    if (!links || !links[listName]) return { links: null, popupLink: null };
 
-    const selectedLinks = _.select(links[listName], STATUS, [ADDING, ADDED, DIED_ADDING, DIED_REMOVING]);
+    const selectedLinks = _.select(links[listName], STATUS, [ADDING, ADDED, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING]);
     const adding_ids = [];
     for (const key in links) {
       if (key === listName || !links[key]) {
         continue;
       }
-      adding_ids.push(..._.extract(_.select(links[key], STATUS, ADDING), ID));
+      adding_ids.push(..._.extract(_.select(links[key], STATUS, [ADDING, MOVING]), ID));
     }
     const filteredLinks = _.exclude(selectedLinks, ID, adding_ids);
 
@@ -49,7 +50,16 @@ export const getLinks = createSelector(
       return { links: sortedLinks, popupLink: popupLink };
     }
 
-    // TODO: filter with search string
-    throw new Error('Not implemented yet');
+    if (popupLink) {
+      if (!isStringIn(popupLink, searchString)) {
+        popupLink = null;
+      }
+    }
+
+    const searchLinks = sortedLinks.filter(link => {
+      return isStringIn(link, searchString);
+    });
+
+    return { links: searchLinks, popupLink: popupLink };
   }
 );

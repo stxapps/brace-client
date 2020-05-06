@@ -18,10 +18,13 @@ import * as serviceWorker from './serviceWorker';
 offlineConfig.queue = queue;
 offlineConfig.discard = discard;
 offlineConfig.effect = effect;
-// BUG: if remove
-//offlineConfig.persistOptions = { whitelist: [] };
+// BUG:
+offlineConfig.persistOptions = { whitelist: [] };
 offlineConfig.persistCallback = () => {
   init(store);
+};
+offlineConfig.dispatch = (...args) => {
+  store.dispatch(...args);
 };
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

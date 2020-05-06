@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { addLink, searchLinks, signOut } from '../actions';
+import { signOut, addLink, updateSearchString } from '../actions';
 
 class BottomBar extends React.Component {
 
@@ -14,4 +14,4 @@ class BottomBar extends React.Component {
   }
 }
 
-export default connect(null, { addLink, searchLinks, signOut })(BottomBar);
+export default connect(null, { signOut, addLink, updateSearchString })(BottomBar);

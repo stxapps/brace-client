@@ -39,14 +39,16 @@ class Main extends React.Component {
     }
 
     window.addEventListener('resize', this.updateColumnWidth);
+    window.addEventListener('scroll', this.updateScrollY);
 
     // BUG:
-    //this.props.fetch();
+    this.props.fetch();
     this.fetched.push(this.props.listName);
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateColumnWidth);
+    window.removeEventListener('scroll', this.updateScrollY);
   }
 
   getColumnWidth = () => {
@@ -62,6 +64,33 @@ class Main extends React.Component {
 
   updateColumnWidth = () => {
     this.setState({ columnWidth: this.getColumnWidth() });
+  }
+
+  updateScrollY = () => {
+
+    // if has more, not fetching more, and at the bottom
+    const { hasMoreLinks, isFetchingMore } = this.props;
+    if (!hasMoreLinks || isFetchingMore) {
+      return;
+    }
+
+    // https://gist.github.com/enqtran/25c6b222a73dc497cc3a64c090fb6700
+    const body = document.body;
+    const html = document.documentElement;
+    const docHeight = Math.max(
+      body.scrollHeight,
+      body.offsetHeight,
+      html.clientHeight,
+      html.scrollHeight,
+      html.offsetHeight
+    );
+
+    const windowHeight = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
+    const windowBottom = windowHeight + window.pageYOffset;
+
+    if (windowBottom > (docHeight * 0.96)) {
+      this.props.fetchMore();
+    }
   }
 
   onListNameBtnClick = () => {
@@ -81,6 +110,10 @@ class Main extends React.Component {
     this.props.updatePopup(LIST_NAME_POPUP, false);
   };
 
+  onFetchMoreBtnClick = () => {
+    this.props.fetchMore();
+  };
+
   renderListNamePopup() {
 
     return (
@@ -93,13 +126,56 @@ class Main extends React.Component {
     );
   }
 
+  renderEmpty() {
+
+    const { searchString } = this.props;
+
+    if (searchString !== '') {
+      return (
+        <div>
+          <h3>Search not found!</h3>
+          <p>No links contains search words.</p>
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        <h3>Empty</h3>
+        <p>Save a link now!</p>
+      </div>
+    );
+  }
+
+  renderLinks() {
+
+    const { listName, listNames, links, popupLink } = this.props;
+    const { hasMoreLinks, isFetchingMore } = this.props;
+
+    const showFetchMoreBtn = hasMoreLinks && !isFetchingMore;
+    const showFetchingMore = hasMoreLinks && isFetchingMore;
+
+    return (
+      <React.Fragment>
+        <StackGrid columnWidth={this.state.columnWidth}>
+          {links.map(link => <CardItem key={link.id} link={link} />)}
+        </StackGrid>
+        {popupLink && <CardItemMenuPopup listName={listName} listNames={listNames} link={popupLink} />}
+        {showFetchMoreBtn && <button onClick={this.onFetchMoreBtnClick}>More</button>}
+        {showFetchingMore && <div className="lds-ellipsis"><div></div><div></div><div></div><div></div></div>}
+      </React.Fragment>
+    );
+  }
+
   render() {
 
-    const { listName, listNames, links, isListNamePopupShown, popupLink } = this.props;
+    const { listName, links, isListNamePopupShown } = this.props;
 
     if (links === null) {
       return <Loading />;
     }
+
+    const isEmpty = links.length === 0;
 
     return (
       <React.Fragment>
@@ -111,11 +187,8 @@ class Main extends React.Component {
         {isListNamePopupShown && this.renderListNamePopup()}
 
         <div><p>This is a main page.</p></div>
-
-        <StackGrid columnWidth={this.state.columnWidth}>
-          {links.map(link => <CardItem key={link.id} link={link} />)}
-        </StackGrid>
-        {popupLink && <CardItemMenuPopup listName={listName} listNames={listNames} link={popupLink} />}
+        {isEmpty && this.renderEmpty()}
+        {!isEmpty && this.renderLinks()}
         <BottomBar />
       </React.Fragment>
     );
@@ -124,14 +197,18 @@ class Main extends React.Component {
 
 const mapStateToProps = (state, props) => {
 
+  const listName = state.display.listName;
   const { links, popupLink } = getLinks(state);
 
   return {
-    listName: state.display.listName,
+    listName: listName,
     listNames: getListNames(state),
     links: links,
     isListNamePopupShown: state.display.isListNamePopupShown,
     popupLink: popupLink,
+    hasMoreLinks: state.hasMoreLinks[listName],
+    isFetchingMore: state.display.isFetchingMore,
+    searchString: state.display.searchString,
   };
 };
 

@@ -1,3 +1,5 @@
+import { HTTP, HTTPS, WWW_DOT } from '../types/const';
+
 export const randomString = (length) => {
 
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -142,7 +144,36 @@ const ignore = (obj, key) => {
   return newObj;
 };
 
-export const _ = { mapKeys, select, update, extract, exclude, ignore };
+const copyAttr = (obj, copiedObj, key) => {
+
+  if (!obj || !copiedObj) {
+    return obj;
+  }
+
+  const objKeys = Object.keys(obj);
+  const copiedObjKeys = Object.keys(copiedObj);
+
+  const newObj = {};
+
+  for (const objKey of objKeys) {
+    if (copiedObjKeys.includes(objKey)) {
+      newObj[objKey] = { ...obj[objKey] };
+      if (Array.isArray(key)) {
+        for (const k of key) {
+          newObj[objKey][k] = copiedObj[objKey][k];
+        }
+      } else {
+        newObj[objKey][key] = copiedObj[objKey][key];
+      }
+    } else {
+      newObj[objKey] = obj[objKey];
+    }
+  }
+
+  return newObj;
+};
+
+export const _ = { mapKeys, select, update, extract, exclude, ignore, copyAttr };
 
 const fallbackCopyTextToClipboard = (text) => {
   var textArea = document.createElement("textarea");
@@ -178,4 +209,61 @@ export const copyTextToClipboard = (text) => {
   }, function (err) {
     console.error('Async: Could not copy text: ', err);
   });
+};
+
+export const isEmptyObject = (obj) => {
+  for (const prop in obj) {
+    if (obj.hasOwnProperty(prop)) {
+      return false;
+    }
+  }
+
+  return JSON.stringify(obj) === JSON.stringify({});
+};
+
+export const isStringIn = (link, searchString) => {
+  let url = link.url;
+  if (!containUppercase(searchString)) {
+    url = url.toLowerCase();
+  }
+  if (url.startsWith(HTTP)) {
+    url = url.substring(HTTP.length);
+  }
+  if (url.startsWith(HTTPS)) {
+    url = url.substring(HTTPS.length);
+  }
+  if (url.startsWith(WWW_DOT)) {
+    url = url.substring(WWW_DOT.length);
+  }
+
+  const searchWords = searchString.split(' ');
+
+  let inUrl = searchWords.every(word => url.includes(word));
+
+  let inTitle = null;
+  if (link.title) {
+    inTitle = searchWords.every(word => link.title.includes(word));
+  }
+
+  if (inTitle === null) {
+    if (inUrl) {
+      return true;
+    }
+  } else {
+    if (inUrl || inTitle) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+export const containUppercase = (letters) => {
+  for (let i = 0; i < letters.length; i++) {
+    if (letters[i] === letters[i].toUpperCase()
+      && letters[i] !== letters[i].toLowerCase()) {
+      return true;
+    }
+  }
+  return false;
 };
