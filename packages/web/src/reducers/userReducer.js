@@ -1,5 +1,6 @@
-import { INIT, UPDATE_USER } from '../types/actionTypes';
 import { REHYDRATE } from 'redux-persist/constants'
+
+import { INIT, UPDATE_USER, RESET_STATE } from '../types/actionTypes';
 
 const initialState = {
   isUserSignedIn: null,
@@ -19,6 +20,10 @@ export default (state = initialState, action) => {
 
   if (action.type === UPDATE_USER) {
     return { ...state, ...action.payload };
+  }
+
+  if (action.type === RESET_STATE) {
+    return { ...initialState };
   }
 
   return state;

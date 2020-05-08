@@ -1,25 +1,25 @@
 import { showBlockstackConnect } from '@blockstack/connect';
-import { RESET_STATE } from "@redux-offline/redux-offline/lib/constants";
+import { RESET_STATE as OFFLINE_RESET_STATE } from "@redux-offline/redux-offline/lib/constants";
 
 import userSession from '../userSession';
 import {
-  INIT, UPDATE_WINDOW, UPDATE_HISTORY_POSITION,
-  UPDATE_USER,
+  INIT, UPDATE_WINDOW, UPDATE_HISTORY_POSITION, UPDATE_USER,
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
-  UPDATE_LINKS, UPDATE_LINKS_COMMIT, UPDATE_LINKS_ROLLBACK,
+  //UPDATE_LINKS, UPDATE_LINKS_COMMIT, UPDATE_LINKS_ROLLBACK,
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
   MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
   MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
+  RESET_STATE,
 } from '../types/actionTypes';
 import {
   APP_NAME, APP_ICON_URL,
   BACK_DECIDER, BACK_POPUP,
-  ALL, CONFIRM_DELETE_POPUP, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
-  MY_LIST, TRASH, ARCHIVE,
-  ID,
+  ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, CONFIRM_DELETE_POPUP,
+  ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
+  MY_LIST, TRASH, ARCHIVE, LIST_NAME_POPUP,
 } from '../types/const';
 import { randomString, _ } from '../utils';
 
@@ -38,23 +38,27 @@ export const init = (store) => {
   });
 };
 
-const isPopupShown = (state) => {
-  if (
-    state.display.isAddPopupShown ||
-    state.display.isProfilePopupShown ||
-    state.display.isListNamePopupShown ||
-    state.display.isConfirmDeletePopupShown
-  ) {
-    return true;
-  }
+const getPopupShownId = (state) => {
+  if (state.display.isAddPopupShown) return ADD_POPUP;
+  if (state.display.isProfilePopupShown) return PROFILE_POPUP;
+  if (state.display.isListNamePopupShown) return LIST_NAME_POPUP;
+  if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
 
   for (const listName in state.links) {
-    if (_.extract(state.links[listName], IS_POPUP_SHOWN).some(el => el === true)) {
-      return true;
+    for (const id in state.links[listName]) {
+      if (state.links[listName][id][IS_POPUP_SHOWN]) return id;
     }
   }
 
-  return false;
+  // IMPORTANT that search is on the last as updatePopupAsBackPressed relies on this
+  //   to close other popups before search (search is the last to be closed).
+  if (state.display.isSearchPopupShown) return SEARCH_POPUP;
+
+  return null;
+};
+
+const isPopupShown = (state) => {
+  return getPopupShownId(state) !== null;
 };
 
 const updatePopupAsBackPressed = (dispatch, getState) => {
@@ -62,6 +66,9 @@ const updatePopupAsBackPressed = (dispatch, getState) => {
   let id = ALL;
   if (getState().display.isConfirmDeletePopupShown) {
     id = CONFIRM_DELETE_POPUP;
+  } else if (getState().display.isSearchPopupShown) {
+    const _id = getPopupShownId(getState());
+    if (_id !== SEARCH_POPUP) id = _id;
   }
 
   dispatch(updatePopup(id, false));
@@ -181,15 +188,11 @@ export const signOut = () => async (dispatch, getState) => {
   userSession.signUserOut();
 
   // redux-offline: Empty outbox
-  dispatch({ type: RESET_STATE });
+  dispatch({ type: OFFLINE_RESET_STATE });
 
-  // TODO: clear all user data!
+  // clear all user data!
   dispatch({
-    type: UPDATE_USER,
-    payload: {
-      isUserSignedIn: false,
-      username: null,
-    },
+    type: RESET_STATE,
   });
 };
 

@@ -8,6 +8,7 @@ export const BACK_POPUP = 'BACK_POPUP';
 
 export const ALL = 'ALL';
 export const ADD_POPUP = 'ADD_POPUP';
+export const SEARCH_POPUP = 'SEARCH_POPUP';
 export const PROFILE_POPUP = 'PROFILE_POPUP';
 export const LIST_NAME_POPUP = 'LIST_NAME_POPUP';
 export const CONFIRM_DELETE_POPUP = 'CONFIRM_DELETE_POPUP';
@@ -57,4 +58,8 @@ export const CARD_ITEM_POPUP_MENU = {
 
 export const HTTP = 'http://';
 export const HTTPS = 'https://';
-export const WWW_DOT = 'www.';
+export const WWW = 'www.';
+
+export const PC_100 = '100%';
+export const PC_50 = '50%';
+export const PC_33 = '33.33333%';

@@ -50,7 +50,7 @@ const createLinkFPath = (listName, id = null) => {
 };
 
 const extractLinkFPath = (fpath) => {
-  let [_, listName, fname] = fpath.split('/');
+  let [listName, fname] = fpath.split('/').slice(1);
   listName = decodeURIComponent(listName);
 
   const dotIndex = fname.lastIndexOf('.');

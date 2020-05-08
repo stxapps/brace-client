@@ -10,6 +10,7 @@ import {
 import {
   BACK_DECIDER, BACK_POPUP,
   LIST_NAME_POPUP,
+  PC_100, PC_50, PC_33,
 } from '../types/const';
 import { getListNames, getLinks } from '../selectors';
 
@@ -52,12 +53,12 @@ class Main extends React.Component {
   }
 
   getColumnWidth = () => {
-    let columnWidth = '100%';
+    let columnWidth = PC_100;
     if (window.innerWidth >= 640) {
-      columnWidth = '50%';
+      columnWidth = PC_50;
     }
     if (window.innerWidth >= 768) {
-      columnWidth = '33%';
+      columnWidth = PC_33;
     }
     return columnWidth;
   }
@@ -114,12 +115,27 @@ class Main extends React.Component {
     this.props.fetchMore();
   };
 
+  renderListName() {
+
+    const { listName, isListNamePopupShown } = this.props;
+
+    return (
+      <React.Fragment>
+        <div className="p-3 flex">
+          <h1 className="font-bold">Main page: {listName}</h1>
+          <button onClick={this.onListNameBtnClick} className={`ml-1 px-2 bg-green-400 ${isListNamePopupShown && 'z-41'}`}>&darr;</button>
+        </div>
+        {isListNamePopupShown && this.renderListNamePopup()}
+      </React.Fragment>
+    );
+  }
+
   renderListNamePopup() {
 
     return (
       <div className="relative">
-        <button onClick={this.onListNameCancelBtnClick} tabIndex="-1" className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-10"></button>
-        <div onClick={this.onListNamePopupClick} className="absolute right-0 mt-2 py-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-20 cursor-pointer">
+        <button onClick={this.onListNameCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-40"></button>
+        <div onClick={this.onListNamePopupClick} className="absolute right-0 mt-2 py-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-41 cursor-pointer">
           {this.props.listNames.map(listName => <div key={listName}>{listName}</div>)}
         </div>
       </div>
@@ -169,7 +185,7 @@ class Main extends React.Component {
 
   render() {
 
-    const { listName, links, isListNamePopupShown } = this.props;
+    const { links } = this.props;
 
     if (links === null) {
       return <Loading />;
@@ -179,17 +195,10 @@ class Main extends React.Component {
 
     return (
       <React.Fragment>
-        <TopBar />
-        <div className="p-3 flex">
-          <h1 className="font-bold">Main page: {listName}</h1>
-          <button onClick={this.onListNameBtnClick} className={`ml-1 px-2 bg-green-400 ${isListNamePopupShown && 'z-20'}`}>&darr;</button>
-        </div>
-        {isListNamePopupShown && this.renderListNamePopup()}
-
-        <div><p>This is a main page.</p></div>
-        {isEmpty && this.renderEmpty()}
-        {!isEmpty && this.renderLinks()}
-        <BottomBar />
+        <TopBar columnWidth={this.state.columnWidth} />
+        {this.renderListName()}
+        {isEmpty ? this.renderEmpty() : this.renderLinks()}
+        <BottomBar columnWidth={this.state.columnWidth} />
       </React.Fragment>
     );
   }

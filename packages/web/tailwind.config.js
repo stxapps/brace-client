@@ -45,7 +45,11 @@ module.exports = {
       },
       inset: {
         '1/2': '50%',
-      }
+      },
+      zIndex: {
+        '41': '41',
+        '51': '51',
+      },
     }
   },
   variants: {

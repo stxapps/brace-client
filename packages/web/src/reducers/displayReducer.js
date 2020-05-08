@@ -3,9 +3,10 @@ import { REHYDRATE } from 'redux-persist/constants'
 import {
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
+  RESET_STATE,
 } from '../types/actionTypes';
 import {
-  ALL, ADD_POPUP, PROFILE_POPUP, LIST_NAME_POPUP, CONFIRM_DELETE_POPUP,
+  ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP, CONFIRM_DELETE_POPUP,
   MY_LIST,
 } from '../types/const';
 
@@ -13,6 +14,7 @@ const initialState = {
   listName: MY_LIST,
   searchString: '',
   isAddPopupShown: false,
+  isSearchPopupShown: false,
   isProfilePopupShown: false,
   isListNamePopupShown: false,
   isConfirmDeletePopupShown: false,
@@ -26,6 +28,7 @@ export default (state = initialState, action) => {
       ...state,
       ...action.payload.display,
       isAddPopupShown: false,
+      isSearchPopupShown: false,
       isProfilePopupShown: false,
       isListNamePopupShown: false,
       isConfirmDeletePopupShown: false,
@@ -45,6 +48,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isAddPopupShown: action.payload.isShown,
+        isSearchPopupShown: action.payload.isShown,
         isProfilePopupShown: action.payload.isShown,
         isListNamePopupShown: action.payload.isShown,
         isConfirmDeletePopupShown: action.payload.isShown,
@@ -53,6 +57,10 @@ export default (state = initialState, action) => {
 
     if (action.payload.id === ADD_POPUP) {
       return { ...state, isAddPopupShown: action.payload.isShown }
+    }
+
+    if (action.payload.id === SEARCH_POPUP) {
+      return { ...state, isSearchPopupShown: action.payload.isShown }
     }
 
     if (action.payload.id === PROFILE_POPUP) {
@@ -74,6 +82,10 @@ export default (state = initialState, action) => {
 
   if (action.type === FETCH_MORE_COMMIT || action.type === FETCH_MORE_ROLLBACK) {
     return { ...state, isFetchingMore: false };
+  }
+
+  if (action.type === RESET_STATE) {
+    return { ...initialState };
   }
 
   return state;

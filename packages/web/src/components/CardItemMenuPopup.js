@@ -21,7 +21,7 @@ class CardItemMenuPopup extends React.Component {
   constructor(props) {
     super(props);
 
-    this.initialScrollY = window.scrollY;
+    this.initialScrollY = window.pageYOffset;
     this.state = { scrollY: this.initialScrollY };
 
     const { menu, moveTo } = this.populateMenu(props);
@@ -61,7 +61,7 @@ class CardItemMenuPopup extends React.Component {
   }
 
   updateScrollY = () => {
-    this.setState({ scrollY: window.scrollY });
+    this.setState({ scrollY: window.pageYOffset });
   }
 
   onMenuPopupClick = (e) => {
@@ -131,14 +131,14 @@ class CardItemMenuPopup extends React.Component {
 
   renderConfirmDeletePopup() {
     return (
-      <div>
-        <button onClick={this.onConfirmDeleteCancelBtnClick} tabIndex="-1" className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-30"></button>
-        <div className="fixed z-40">
+      <React.Fragment>
+        <button onClick={this.onConfirmDeleteCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-50"></button>
+        <div className="fixed top-1/2 left-1/2 w-full max-w-xs h-20 bg-white transform -translate-x-1/2 -translate-y-1/2 z-51">
           <p>Confirm delete?</p>
           <button onClick={this.onConfirmDeleteOkBtnClick}>Yes</button>
           <button onClick={this.onConfirmDeleteCancelBtnClick}>No</button>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 
@@ -167,13 +167,13 @@ class CardItemMenuPopup extends React.Component {
 
     return (
       <div className="relative">
-        <button onClick={this.onCancelBtnClick} tabIndex="-1" className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-10"></button>
-        <button style={menuBtnPosition} className="fixed pl-4 pr-2 pt-4 pb-2 bg-white z-20">
+        <button onClick={this.onCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-40"></button>
+        <button style={menuBtnPosition} className="fixed pl-4 pr-2 pt-4 pb-2 bg-white z-41">
           <svg className="w-6 text-gray-600" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <ul onClick={this.onMenuPopupClick} style={popupPosition} className="fixed mt-2 py-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-20 cursor-pointer">
+        <ul onClick={this.onMenuPopupClick} style={popupPosition} className="fixed mt-2 py-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-41 cursor-pointer">
           {this.renderMenu()}
         </ul>
         {this.props.isConfirmDeletePopupShown && this.renderConfirmDeletePopup()}

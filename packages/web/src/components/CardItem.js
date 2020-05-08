@@ -26,7 +26,7 @@ class CardItem extends React.Component {
             <div className="flex justify-start items-center pl-3 lg:pl-6 pt-3 lg:pt-6">
               <img className="flex-shrink-0 flex-grow-0" src="/favicon.ico" alt="Website favicon" />
               <p className="flex-shrink flex-grow ml-1 text-sm text-gray-600 truncate">
-                <a href="#">facebook.com</a>
+                <a href="/#">facebook.com</a>
               </p>
             </div>
           </div>

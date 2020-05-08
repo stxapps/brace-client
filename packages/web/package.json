@@ -24,12 +24,13 @@
     "url-parse": "^1.4.7"
   },
   "scripts": {
-    "start:css": "postcss tailwind.css -o src/stylesheets/tailwind.css --watch",
-    "build:css": "postcss tailwind.css -o src/stylesheets/tailwind.css --env production",
-    "start:js": "BROWSER=none react-scripts start",
-    "build:js": "react-scripts build",
-    "start": "npm-run-all -p start:css start:js",
-    "build": "npm-run-all build:css build:js",
+    "start-css": "postcss tailwind.css -o src/stylesheets/tailwind.css --watch",
+    "build-css": "postcss tailwind.css -o src/stylesheets/tailwind.css --env production",
+    "build-css-dev": "postcss tailwind.css -o src/stylesheets/tailwind.css",
+    "start-js": "BROWSER=none react-scripts start",
+    "build-js": "react-scripts build",
+    "start": "npm-run-all -p start-css start-js",
+    "build": "npm-run-all build-css build-js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

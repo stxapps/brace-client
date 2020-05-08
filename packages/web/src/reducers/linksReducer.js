@@ -6,9 +6,8 @@ import {
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
   MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
   MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
-  DELETE_LINKS,
-  DELETE_LINKS_COMMIT,
-  DELETE_LINKS_ROLLBACK,
+  DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
+  RESET_STATE,
 } from '../types/actionTypes';
 import {
   ALL, ADD_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
@@ -220,7 +219,9 @@ export default (state = initialState, action) => {
 
     for (const listName in state) {
       if (action.payload.id === ALL) {
-        newState[listName] = _.update(state[listName], null, null, IS_POPUP_SHOWN, action.payload.isShown);
+        newState[listName] = _.update(
+          state[listName], null, null, IS_POPUP_SHOWN, action.payload.isShown
+        );
       } else {
         newState[listName] = _.update(
           state[listName],
@@ -233,6 +234,10 @@ export default (state = initialState, action) => {
     }
 
     return newState;
+  }
+
+  if (action.type === RESET_STATE) {
+    return { ...initialState };
   }
 
   return state;

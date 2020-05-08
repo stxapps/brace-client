@@ -1,4 +1,6 @@
-import { HTTP, HTTPS, WWW_DOT } from '../types/const';
+import Url from 'url-parse';
+
+import { HTTP, HTTPS, WWW } from '../types/const';
 
 export const randomString = (length) => {
 
@@ -232,8 +234,8 @@ export const isStringIn = (link, searchString) => {
   if (url.startsWith(HTTPS)) {
     url = url.substring(HTTPS.length);
   }
-  if (url.startsWith(WWW_DOT)) {
-    url = url.substring(WWW_DOT.length);
+  if (url.startsWith(WWW)) {
+    url = url.substring(WWW.length);
   }
 
   const searchWords = searchString.split(' ');
@@ -266,4 +268,29 @@ export const containUppercase = (letters) => {
     }
   }
   return false;
+};
+
+export const validateUrl = (url) => {
+
+  if (!url) {
+    return [false, 'Please fill in a link you want to save in the textbox.', false];
+  }
+
+  if (!url.startsWith(HTTP) && !url.startsWith(HTTPS)) {
+    url = HTTP + url;
+  }
+
+  const urlObj = new Url(url, {});
+  if (!urlObj.hostname.match(/^([-a-zA-Z0-9@:%_+~#=]{2,256}\.)+[a-z]{2,6}$/)) {
+    return [false, 'Look like invalid link. Are you sure?', true];
+  }
+
+  return [true, '', null];
+};
+
+export const subtractPixel = (a, b) => {
+  a = parseInt(a.slice(0, -2));
+  b = parseInt(b.slice(0, -2));
+
+  return (a - b).toString() + 'px';
 };
