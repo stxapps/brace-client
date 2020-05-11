@@ -84,9 +84,6 @@ const listFPaths = async () => {
 };
 
 const batchGetFileWithRetry = async (fpaths, callCount) => {
-  if (callCount >= MAX_TRY) {
-    throw new Error('Number of retries exceeds MAX_TRY');
-  }
 
   const responses = await Promise.all(
     fpaths.map(fpath =>
@@ -100,6 +97,8 @@ const batchGetFileWithRetry = async (fpaths, callCount) => {
   const failedFPaths = failedResponses.map(({ fpath }) => fpath);
 
   if (failedResponses.length) {
+    if (callCount + 1 >= MAX_TRY) throw failedResponses[0].error;
+
     return [
       ...responses.filter(({ success }) => success),
       ...(await batchGetFileWithRetry(failedFPaths, callCount + 1))
@@ -148,9 +147,6 @@ const fetchMore = async (params) => {
 };
 
 const batchPutFileWithRetry = async (fpaths, contents, callCount) => {
-  if (callCount >= MAX_TRY) {
-    throw new Error('Number of retries exceeds MAX_TRY');
-  }
 
   const responses = await Promise.all(
     fpaths.map((fpath, i) =>
@@ -164,6 +160,8 @@ const batchPutFileWithRetry = async (fpaths, contents, callCount) => {
   const failedFPaths = failedResponses.map(({ fpath }) => fpath);
 
   if (failedResponses.length) {
+    if (callCount + 1 >= MAX_TRY) throw failedResponses[0].error;
+
     return [
       ...responses.filter(({ success }) => success),
       ...(await batchGetFileWithRetry(failedFPaths, callCount + 1))
@@ -184,9 +182,6 @@ const putLinks = async (params) => {
 };
 
 const batchDeleteFileWithRetry = async (fpaths, callCount) => {
-  if (callCount >= MAX_TRY) {
-    throw new Error('Number of retries exceeds MAX_TRY');
-  }
 
   const responses = await Promise.all(
     fpaths.map((fpath) =>
@@ -200,6 +195,8 @@ const batchDeleteFileWithRetry = async (fpaths, callCount) => {
   const failedFPaths = failedResponses.map(({ fpath }) => fpath);
 
   if (failedResponses.length) {
+    if (callCount + 1 >= MAX_TRY) throw failedResponses[0].error;
+
     return [
       ...responses.filter(({ success }) => success),
       ...(await batchGetFileWithRetry(failedFPaths, callCount + 1))

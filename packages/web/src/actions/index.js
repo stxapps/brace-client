@@ -12,7 +12,7 @@ import {
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
   MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
   MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
-  RESET_STATE,
+  CANCEL_DIED_LINKS, RESET_STATE,
 } from '../types/actionTypes';
 import {
   APP_NAME, APP_ICON_URL,
@@ -317,6 +317,28 @@ export const deleteLinks = (ids) => async (dispatch, getState) => {
         rollback: { type: DELETE_LINKS_ROLLBACK, meta: payload },
       }
     },
+  });
+};
+
+export const retryDiedLinks = (ids) => async (dispatch, getState) => {
+
+  //const listName = getState().display.listName;
+
+  // TODO
+  // DIED_ADDING
+  // DIED_MOVING
+  // DIED_REMOVING
+  // DIED_DELETING
+};
+
+export const cancelDiedLinks = (ids, listName = null) => async (dispatch, getState) => {
+
+  if (!listName) listName = getState().display.listName;
+  const payload = { listName, ids };
+
+  dispatch({
+    type: CANCEL_DIED_LINKS,
+    payload,
   });
 };
 

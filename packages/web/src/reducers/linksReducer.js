@@ -7,6 +7,7 @@ import {
   MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
   MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
+  CANCEL_DIED_LINKS,
   RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -207,6 +208,15 @@ export default (state = initialState, action) => {
     newState[listName] = _.update(
       state[listName], ID, ids, STATUS, DIED_DELETING
     );
+
+    return newState;
+  }
+
+  if (action.type === CANCEL_DIED_LINKS) {
+    const { listName, ids } = action.payload;
+
+    const newState = { ...state };
+    newState[listName] = _.exclude(state[listName], ID, ids);
 
     return newState;
   }

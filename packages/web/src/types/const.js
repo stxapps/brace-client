@@ -63,3 +63,7 @@ export const WWW = 'www.';
 export const PC_100 = '100%';
 export const PC_50 = '50%';
 export const PC_33 = '33.33333%';
+
+export const URL_QUERY_CLOSE_KEY = 'brace-dot-to-show-close';
+export const URL_QUERY_CLOSE_WINDOW = 'window';
+export const URL_QUERY_CLOSE_TAB = 'tab';

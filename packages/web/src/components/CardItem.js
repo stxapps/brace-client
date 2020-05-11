@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import {
   updatePopup,
 } from '../actions';
+import { ensureContainUrlProtocol } from '../utils';
 
 class CardItem extends React.Component {
 
@@ -15,6 +16,7 @@ class CardItem extends React.Component {
   render() {
     let { url, title } = this.props.link;
     if (!title) title = url;
+    url = ensureContainUrlProtocol(url);
 
     return (
       <div className="mx-auto max-w-sm bg-white border-1 border-gray-200 rounded-lg shadow">

@@ -9,11 +9,11 @@ class Landing extends React.Component {
     return (
       <React.Fragment>
         <div>
-          <button onClick={ () => this.props.signIn() }>Sign in</button>
+          <button onClick={() => this.props.signIn()}>Sign in</button>
         </div>
         <div>Landing page</div>
         <div>
-          <button onClick={ () => this.props.signUp() }>Get started</button>
+          <button onClick={() => this.props.signUp()}>Get started</button>
         </div>
         <div>
           <a href="https://blockstack.org">Learn blockstack more</a>
@@ -26,6 +26,4 @@ class Landing extends React.Component {
   }
 }
 
-const mapStateToProps = null;
-
-export default connect(mapStateToProps, { signIn, signUp })(Landing);
+export default connect(null, { signIn, signUp })(Landing);

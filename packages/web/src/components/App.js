@@ -18,12 +18,12 @@ class App extends React.Component {
 
     const hrefObj = new Url(this.props.href);
 
-    if (hrefObj.pathname === '/' && hrefObj.hash === '#about') {
-      return <About />;
+    if (hrefObj.pathname !== '/') {
+      return <Adding />;
     }
 
-    if (hrefObj.pathname.length >= 2 && hrefObj.hash === '') {
-      return <Adding />;
+    if (hrefObj.hash === '#about') {
+      return <About />;
     }
 
     if (this.props.isUserSignedIn) {

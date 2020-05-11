@@ -213,16 +213,6 @@ export const copyTextToClipboard = (text) => {
   });
 };
 
-export const isEmptyObject = (obj) => {
-  for (const prop in obj) {
-    if (obj.hasOwnProperty(prop)) {
-      return false;
-    }
-  }
-
-  return JSON.stringify(obj) === JSON.stringify({});
-};
-
 export const isStringIn = (link, searchString) => {
   let url = link.url;
   if (!containUppercase(searchString)) {
@@ -270,15 +260,23 @@ export const containUppercase = (letters) => {
   return false;
 };
 
+export const containUrlProtocol = (url) => {
+  const urlObj = new Url(url, {});
+  return urlObj.protocol && urlObj.protocol !== '';
+};
+
+export const ensureContainUrlProtocol = (url) => {
+  if (!containUrlProtocol(url)) return HTTP + url;
+  return url;
+};
+
 export const validateUrl = (url) => {
 
   if (!url) {
     return [false, 'Please fill in a link you want to save in the textbox.', false];
   }
 
-  if (!url.startsWith(HTTP) && !url.startsWith(HTTPS)) {
-    url = HTTP + url;
-  }
+  url = ensureContainUrlProtocol(url);
 
   const urlObj = new Url(url, {});
   if (!urlObj.hostname.match(/^([-a-zA-Z0-9@:%_+~#=]{2,256}\.)+[a-z]{2,6}$/)) {
@@ -288,9 +286,78 @@ export const validateUrl = (url) => {
   return [true, '', null];
 };
 
+export const separateUrlAndParam = (url, paramKey) => {
+
+  const doContain = containUrlProtocol(url);
+  url = ensureContainUrlProtocol(url);
+
+  const urlObj = new Url(url, {}, true);
+
+  const newQuery = {}, param = {};
+  for (const key in urlObj.query) {
+    if (Array.isArray(paramKey)) {
+      if (paramKey.includes(key)) {
+        param[key] = urlObj.query[key];
+      } else {
+        newQuery[key] = urlObj.query[key];
+      }
+    } else {
+      if (key === paramKey) {
+        param[key] = urlObj.query[key];
+      } else {
+        newQuery[key] = urlObj.query[key];
+      }
+    }
+  }
+
+  urlObj.set('query', newQuery);
+
+  let separatedUrl = urlObj.toString();
+  if (!doContain) {
+    separatedUrl = separatedUrl.substring(HTTP.length);
+  }
+
+  return [separatedUrl, param];
+};
+
 export const subtractPixel = (a, b) => {
   a = parseInt(a.slice(0, -2));
   b = parseInt(b.slice(0, -2));
 
   return (a - b).toString() + 'px';
+};
+
+export const isEqual = function (x, y) {
+  if (x === y) return true;
+  // if both x and y are null or undefined and exactly the same
+
+  if (!(x instanceof Object) || !(y instanceof Object)) return false;
+  // if they are not strictly equal, they both need to be Objects
+
+  if (x.constructor !== y.constructor) return false;
+  // they must have the exact same prototype chain, the closest we can do is
+  // test there constructor.
+
+  for (const p in x) {
+    if (!x.hasOwnProperty(p)) continue;
+    // other properties were tested using x.constructor === y.constructor
+
+    if (!y.hasOwnProperty(p)) return false;
+    // allows to compare x[ p ] and y[ p ] when set to undefined
+
+    if (x[p] === y[p]) continue;
+    // if they have the same strict value or identity then they are equal
+
+    if (typeof (x[p]) !== "object") return false;
+    // Numbers, Strings, Functions, Booleans must be strictly equal
+
+    if (!isEqual(x[p], y[p])) return false;
+    // Objects and Arrays must be tested recursively
+  }
+
+  for (const p in y) {
+    if (y.hasOwnProperty(p) && !x.hasOwnProperty(p)) return false;
+    // allows x[ p ] to be set to undefined
+  }
+  return true;
 };
