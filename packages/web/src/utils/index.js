@@ -35,10 +35,8 @@ const mapKeys = (arr, key) => {
 };
 
 const select = (obj, key, value) => {
-
   const newObj = {};
   for (const id in obj) {
-
     if (Array.isArray(value)) {
       if (value.includes(obj[id][key])) {
         newObj[id] = obj[id];
@@ -360,4 +358,37 @@ export const isEqual = function (x, y) {
     // allows x[ p ] to be set to undefined
   }
   return true;
+};
+
+export const rerandomRandomTerm = (id) => {
+  const arr = id.split('-');
+  if (arr.length !== 3 && arr.length !== 4) throw new Error(`Invalid id: ${id}`);
+
+  arr[2] = randomString(4);
+  return arr.join('-');
+};
+
+export const deleteRemovedDT = (id) => {
+  const arr = id.split('-');
+  if (arr.length !== 3 && arr.length !== 4) throw new Error(`Invalid id: ${id}`);
+
+  return arr.slice(0, 3).join('-');
+};
+
+export const getMainId = (id) => {
+  return id.split('-').slice(0, 2).join('-');
+};
+
+export const excludeWithMainIds = (links, ids) => {
+
+  ids = ids.map(id => getMainId(id));
+
+  const newLinks = {};
+  for (const id in links) {
+    if (ids.includes(getMainId(id))) {
+      continue;
+    }
+    newLinks[id] = links[id];
+  }
+  return newLinks;
 };

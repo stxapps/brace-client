@@ -8,6 +8,7 @@ import {
   MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
   CANCEL_DIED_LINKS,
+  DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -19,7 +20,7 @@ import {
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
 } from '../types/const';
 import { _ } from '../utils';
-import { moveLinksDeleteStep } from '../actions';
+import { moveLinksDeleteStep, deleteOldLinksInTrash } from '../actions';
 
 const initialState = {
   [MY_LIST]: null,
@@ -46,12 +47,15 @@ export default (state = initialState, action) => {
   if (action.type === FETCH_COMMIT) {
     const { listName, links, listNames } = action.payload;
 
-    const newState = { ...state };
-    newState[listName] = _.copyAttr(
+    const processingLinks = _.exclude(state[listName], STATUS, ADDED);
+    const fetchedLinks = _.copyAttr(
       toObjAndAddAttrs(links, ADDED, false, null),
       state[listName],
       [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]
     );
+
+    const newState = { ...state };
+    newState[listName] = { ...processingLinks, ...fetchedLinks };
 
     for (const name of listNames) {
       if (!(name in newState)) {
@@ -59,6 +63,15 @@ export default (state = initialState, action) => {
       }
     }
 
+    const { doCallNextActions } = action.meta;
+    if (doCallNextActions) {
+      return loop(
+        newState,
+        Cmd.run(
+          deleteOldLinksInTrash(),
+          { args: [Cmd.dispatch, Cmd.getState] })
+      );
+    }
     return newState;
   }
 
@@ -128,8 +141,7 @@ export default (state = initialState, action) => {
       state[listName], ID, _.extract(links, ID), STATUS, ADDED
     );
 
-    const { fromListName } = action.meta;
-    const ids = _.extract(links, ID);
+    const { fromListName, ids } = action.meta;
 
     return loop(
       newState,
@@ -213,6 +225,15 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === CANCEL_DIED_LINKS) {
+    const { listName, ids } = action.payload;
+
+    const newState = { ...state };
+    newState[listName] = _.exclude(state[listName], ID, ids);
+
+    return newState;
+  }
+
+  if (action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT) {
     const { listName, ids } = action.payload;
 
     const newState = { ...state };

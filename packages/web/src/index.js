@@ -18,8 +18,6 @@ import * as serviceWorker from './serviceWorker';
 offlineConfig.queue = queue;
 offlineConfig.discard = discard;
 offlineConfig.effect = effect;
-// BUG:
-offlineConfig.persistOptions = { whitelist: [] };
 offlineConfig.persistCallback = () => {
   init(store);
 };

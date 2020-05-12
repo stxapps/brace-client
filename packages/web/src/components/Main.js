@@ -11,6 +11,7 @@ import {
   BACK_DECIDER, BACK_POPUP,
   LIST_NAME_POPUP,
   PC_100, PC_50, PC_33,
+  TRASH,
 } from '../types/const';
 import { getListNames, getLinks } from '../selectors';
 
@@ -42,8 +43,7 @@ class Main extends React.Component {
     window.addEventListener('resize', this.updateColumnWidth);
     window.addEventListener('scroll', this.updateScrollY);
 
-    // BUG:
-    this.props.fetch();
+    this.props.fetch(true);
     this.fetched.push(this.props.listName);
   }
 
@@ -144,13 +144,22 @@ class Main extends React.Component {
 
   renderEmpty() {
 
-    const { searchString } = this.props;
+    const { listName, searchString } = this.props;
 
     if (searchString !== '') {
       return (
         <div>
           <h3>Search not found!</h3>
           <p>No links contains search words.</p>
+        </div>
+      );
+    }
+
+    if (listName === TRASH) {
+      return (
+        <div>
+          <h3>Empty trash</h3>
+          <p>There is no removed link!</p>
         </div>
       );
     }

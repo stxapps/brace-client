@@ -5,7 +5,7 @@ import {
   ADDING, ADDED, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING,
   IS_POPUP_SHOWN,
 } from '../types/const';
-import { _, isStringIn } from '../utils';
+import { _, isStringIn, excludeWithMainIds } from '../utils';
 
 export const getListNames = createSelector(
   state => Object.keys(state.links),
@@ -27,7 +27,7 @@ export const getLinks = createSelector(
       }
       adding_ids.push(..._.extract(_.select(links[key], STATUS, [ADDING, MOVING]), ID));
     }
-    const filteredLinks = _.exclude(selectedLinks, ID, adding_ids);
+    const filteredLinks = excludeWithMainIds(selectedLinks, adding_ids);
 
     const popupLinks = _.select(filteredLinks, IS_POPUP_SHOWN, true);
     let popupLink = null;

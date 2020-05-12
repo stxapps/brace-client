@@ -4,31 +4,60 @@ import {
   GET_FILE, PUT_FILE, DELETE_FILE,
 } from '../types/const';
 import {
-  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS,
+  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
 } from '../types/actionTypes';
 import { effect as blockstackEffect } from './blockstack';
+import { isEqual } from '../utils';
 
 const getMethod = action => action.meta.offline.effect.method;
+const getParams = action => action.meta.offline.effect.params;
 
 export const queue = {
   ...defaultQueue,
   enqueue(array, action) {
 
-    if (getMethod(action) === FETCH) {
-      const newArray = array.filter(item =>
-        getMethod(item) !== FETCH && getMethod(item) !== FETCH_MORE
-      );
-      return [...newArray, action];
+    // DO NOT touch action at index 0 as it's being processed
+    //   there will be async function called updating that action.
+
+    // Check if previous action is exactly the same, no need to add more
+    //   i.e. user enters address bar again and again.
+
+    // The same action FETCH might have different list name.
+    // One action FETCH might be followed by other actions and others might not.
+
+    // Also true for FETCH_MORE
+
+    if (getMethod(action) === FETCH && array.length) {
+
+      // If there is already FETCH with the same list name,
+      //   no need to add the new action.
+      const found = array.some(el => {
+        if (getMethod(el) === FETCH && getParams(el) === getParams(action)) return true;
+        return false;
+      });
+      if (found) return [...array];
+
+      // Filter out FETCH_MORE with the same list name which is not at index 0
+      let newArray = array.slice(1).filter(el => {
+        if (getMethod(el) === FETCH_MORE) {
+          if (getParams(el).listName === getParams(action)) return false;
+        }
+        return true
+      });
+      if (array[0]) newArray = [array[0], ...newArray];
+      return [...newArray, action]
     }
 
-    if (getMethod(action) === FETCH_MORE) {
-      const found = array.some(item => getMethod(item) === FETCH);
-      if (found) {
-        return [...array];
-      }
-
-      const newArray = array.filter(item => getMethod(item) !== FETCH_MORE);
-      return [...newArray, action];
+    if (getMethod(action) === FETCH_MORE && array.length) {
+      // If there is already FETCH_MORE with the same params,
+      //   no need to add the new action.
+      const found = array.some(el => {
+        if (getMethod(el) === FETCH_MORE) {
+          if (isEqual(getParams(el), getParams(action))) return true;
+        }
+        return false;
+      });
+      if (found) return [...array];
     }
 
     return [...array, action];
@@ -66,7 +95,7 @@ export const effect = async (effectObj, _action) => {
 
   if ([
     GET_FILE, PUT_FILE, DELETE_FILE,
-    FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS
+    FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
   ].includes(method)) {
     return await blockstackEffect(effectObj, _action);
   }

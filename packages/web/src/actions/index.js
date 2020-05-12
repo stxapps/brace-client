@@ -12,7 +12,10 @@ import {
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
   MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
   MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
-  CANCEL_DIED_LINKS, RESET_STATE,
+  CANCEL_DIED_LINKS,
+  DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
+  DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
+  RESET_STATE,
 } from '../types/actionTypes';
 import {
   APP_NAME, APP_ICON_URL,
@@ -21,7 +24,7 @@ import {
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE, LIST_NAME_POPUP,
 } from '../types/const';
-import { randomString, _ } from '../utils';
+import { randomString, _, rerandomRandomTerm, deleteRemovedDT } from '../utils';
 
 export const init = (store) => {
   store.dispatch({
@@ -203,7 +206,7 @@ export const updatePopup = (id, isShown, anchorPosition = null) => {
   };
 };
 
-export const fetch = () => async (dispatch, getState) => {
+export const fetch = (doCallNextActions = false) => async (dispatch, getState) => {
 
   const listName = getState().display.listName;
   dispatch({
@@ -211,7 +214,7 @@ export const fetch = () => async (dispatch, getState) => {
     meta: {
       offline: {
         effect: { method: FETCH, params: listName },
-        commit: { type: FETCH_COMMIT },
+        commit: { type: FETCH_COMMIT, meta: { doCallNextActions } },
         rollback: { type: FETCH_ROLLBACK },
       }
     },
@@ -242,9 +245,17 @@ export const addLink = (url) => async (dispatch, getState) => {
     listName = MY_LIST;
   }
 
-  const added_dt = Date.now();
-  const id = `${added_dt}-${randomString(4)}`;
-  const link = { id, url, added_dt, did_beautify: false, };
+  // First 2 terms are main of an id, should always be unique.
+  // The third term is changed when move around
+  //   to avoid etags confusing treating a new file as an existing file
+  //   in blockstack-js/storage.
+  // Getting content, etags is updated with key as path and value as content hash
+  //   this is for make sure no mid-air edit collisions.
+  //   But when delete, etags isn't updated so when add a new file with the same path,
+  //   old value in etags is used and create an error 412 Precondition Failed.
+  const addedDT = Date.now();
+  const id = `${addedDT}-${randomString(4)}-${randomString(4)}`;
+  const link = { id, url, addedDT, did_beautify: false, };
   const links = [link];
   const payload = { listName, links };
 
@@ -270,7 +281,22 @@ export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
     [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]
   );
   links = Object.values(links);
+
   const payload = { listName: toListName, links: links };
+  payload.links = payload.links.map(link => {
+    return { ...link, id: rerandomRandomTerm(link.id) };
+  });
+  if (fromListName === TRASH) {
+    payload.links = payload.links.map(link => {
+      return { ...link, id: deleteRemovedDT(link.id) };
+    });
+  }
+  if (toListName === TRASH) {
+    const removedDT = Date.now();
+    payload.links = payload.links.map(link => {
+      return { ...link, id: `${link.id}-${removedDT}` };
+    });
+  }
 
   dispatch({
     type: MOVE_LINKS_ADD_STEP,
@@ -278,7 +304,7 @@ export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
     meta: {
       offline: {
         effect: { method: ADD_LINKS, params: payload },
-        commit: { type: MOVE_LINKS_ADD_STEP_COMMIT, meta: { fromListName } },
+        commit: { type: MOVE_LINKS_ADD_STEP_COMMIT, meta: { fromListName, ids } },
         rollback: { type: MOVE_LINKS_ADD_STEP_ROLLBACK, meta: payload },
       }
     },
@@ -359,4 +385,17 @@ export const updateSearchString = (searchString) => {
     type: UPDATE_SEARCH_STRING,
     payload: searchString,
   };
+};
+
+export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
+  dispatch({
+    type: DELETE_OLD_LINKS_IN_TRASH,
+    meta: {
+      offline: {
+        effect: { method: DELETE_OLD_LINKS_IN_TRASH },
+        commit: { type: DELETE_OLD_LINKS_IN_TRASH_COMMIT },
+        rollback: { type: DELETE_OLD_LINKS_IN_TRASH_ROLLBACK },
+      }
+    },
+  });
 };

@@ -2,10 +2,11 @@ import userSession from '../userSession';
 import {
   GET_FILE, PUT_FILE, DELETE_FILE,
   SETTINGS_FNAME,
-  N_LINKS, MAX_TRY,
+  N_LINKS, MAX_TRY, N_DAYS,
+  TRASH,
 } from '../types/const';
 import {
-  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS,
+  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
 } from '../types/actionTypes';
 import { DefaultDict } from '../utils';
 
@@ -39,6 +40,10 @@ export const effect = async (effectObj, _action) => {
 
   if (method === DELETE_LINKS) {
     return deleteLinks(params);
+  }
+
+  if (method === DELETE_OLD_LINKS_IN_TRASH) {
+    return deleteOldLinksInTrash();
   }
 
   throw new Error(`${method} is invalid for blockstack effect.`);
@@ -213,4 +218,27 @@ const deleteLinks = async (params) => {
   await batchDeleteFileWithRetry(linkFPaths, 0);
 
   return { listName, ids };
+};
+
+const deleteOldLinksInTrash = async () => {
+
+  const { linkFPaths } = await listFPaths();
+  let oldFPaths = linkFPaths[TRASH].filter(fpath => {
+    const { fname } = extractLinkFPath(fpath);
+    const removedDT = fname.split('-')[3];
+    const interval = Date.now() - Number(removedDT);
+    const days = interval / 1000 / 60 / 60 / 24;
+
+    return days > N_DAYS;
+  });
+
+  oldFPaths = oldFPaths.slice(0, N_LINKS);
+  const ids = oldFPaths.map(fpath => {
+    const { fname } = extractLinkFPath(fpath);
+    return fname;
+  });
+
+  await batchDeleteFileWithRetry(oldFPaths, 0);
+
+  return { listName: TRASH, ids };
 };

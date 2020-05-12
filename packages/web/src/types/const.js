@@ -24,6 +24,7 @@ export const GET_FILE = 'GET_FILE';
 
 export const N_LINKS = 10;
 export const MAX_TRY = 3;
+export const N_DAYS = 45;
 
 export const MY_LIST = 'My List';
 export const TRASH = 'Trash';
