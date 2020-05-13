@@ -20,11 +20,12 @@ import {
 import {
   APP_NAME, APP_ICON_URL,
   BACK_DECIDER, BACK_POPUP,
-  ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, CONFIRM_DELETE_POPUP,
+  ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP, CONFIRM_DELETE_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
-  MY_LIST, TRASH, ARCHIVE, LIST_NAME_POPUP,
+  MY_LIST, TRASH, ARCHIVE,
+  DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
 } from '../types/const';
-import { randomString, _, rerandomRandomTerm, deleteRemovedDT } from '../utils';
+import { randomString, _, rerandomRandomTerm, deleteRemovedDT, getMainId } from '../utils';
 
 export const init = (store) => {
   store.dispatch({
@@ -255,7 +256,7 @@ export const addLink = (url) => async (dispatch, getState) => {
   //   old value in etags is used and create an error 412 Precondition Failed.
   const addedDT = Date.now();
   const id = `${addedDT}-${randomString(4)}-${randomString(4)}`;
-  const link = { id, url, addedDT, did_beautify: false, };
+  const link = { id, url, addedDT, didBeautify: false, };
   const links = [link];
   const payload = { listName, links };
 
@@ -272,9 +273,9 @@ export const addLink = (url) => async (dispatch, getState) => {
   });
 };
 
-export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
+export const moveLinks = (toListName, ids, fromListName = null) => async (dispatch, getState) => {
 
-  const fromListName = getState().display.listName;
+  if (!fromListName) fromListName = getState().display.listName;
 
   let links = _.ignore(
     _.select(getState().links[fromListName], ID, ids),
@@ -348,13 +349,57 @@ export const deleteLinks = (ids) => async (dispatch, getState) => {
 
 export const retryDiedLinks = (ids) => async (dispatch, getState) => {
 
-  //const listName = getState().display.listName;
+  const listName = getState().display.listName;
+  for (const id of ids) {
+    // DIED_ADDING -> try add this link again
+    // DIED_MOVING -> try move this link again
+    // DIED_REMOVING -> try delete this link again
+    // DIED_DELETING  -> try delete this link again
+    const link = getState().links[listName][id];
+    const { status } = link;
+    if (status === DIED_ADDING) {
+      const links = [link];
+      const payload = { listName, links };
 
-  // TODO
-  // DIED_ADDING
-  // DIED_MOVING
-  // DIED_REMOVING
-  // DIED_DELETING
+      dispatch({
+        type: ADD_LINKS,
+        payload,
+        meta: {
+          offline: {
+            effect: { method: ADD_LINKS, params: payload },
+            commit: { type: ADD_LINKS_COMMIT },
+            rollback: { type: ADD_LINKS_ROLLBACK, meta: payload },
+          }
+        },
+      });
+    } else if (status === DIED_MOVING) {
+
+      let fromListName = null, fromId = null;
+      for (const _listName in getState().links) {
+        for (const _id in getState().links[_listName]) {
+          if (getMainId(id) === getMainId(_id)) {
+            [fromListName, fromId] = [_listName, _id];
+            break;
+          }
+        }
+        if (fromId !== null) break;
+      }
+      if (fromId === null) throw new Error(`Could not find fromId for id: ${id}`);
+
+      const payload = { listName, ids };
+      dispatch({
+        type: CANCEL_DIED_LINKS,
+        payload,
+      });
+
+      dispatch(moveLinks(listName, [fromId], fromListName));
+
+    } else if (status === DIED_REMOVING || status === DIED_DELETING) {
+      dispatch(deleteLinks([id]));
+    } else {
+      throw new Error(`Invalid status: ${status} of id: ${id}`);
+    }
+  }
 };
 
 export const cancelDiedLinks = (ids, listName = null) => async (dispatch, getState) => {

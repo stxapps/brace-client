@@ -181,14 +181,14 @@ class Main extends React.Component {
     const showFetchingMore = hasMoreLinks && isFetchingMore;
 
     return (
-      <React.Fragment>
+      <div className="pb-20">
         <StackGrid columnWidth={this.state.columnWidth}>
           {links.map(link => <CardItem key={link.id} link={link} />)}
         </StackGrid>
         {popupLink && <CardItemMenuPopup listName={listName} listNames={listNames} link={popupLink} />}
         {showFetchMoreBtn && <button onClick={this.onFetchMoreBtnClick}>More</button>}
         {showFetchingMore && <div className="lds-ellipsis"><div></div><div></div><div></div><div></div></div>}
-      </React.Fragment>
+      </div>
     );
   }
 

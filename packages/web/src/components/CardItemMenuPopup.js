@@ -100,6 +100,7 @@ class CardItemMenuPopup extends React.Component {
   onConfirmDeleteOkBtnClick = () => {
     this.props.deleteLinks([this.props.link.id]);
     this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+    this.props.updatePopup(this.props.link.id, false);
   };
 
   onConfirmDeleteCancelBtnClick = () => {

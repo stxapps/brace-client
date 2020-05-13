@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 
 import {
   ID, STATUS,
-  ADDING, ADDED, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING,
+  ADDING, ADDED, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   IS_POPUP_SHOWN,
 } from '../types/const';
 import { _, isStringIn, excludeWithMainIds } from '../utils';
@@ -19,15 +19,15 @@ export const getLinks = createSelector(
   (links, listName, searchString) => {
     if (!links || !links[listName]) return { links: null, popupLink: null };
 
-    const selectedLinks = _.select(links[listName], STATUS, [ADDING, ADDED, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING]);
-    const adding_ids = [];
+    const selectedLinks = _.select(links[listName], STATUS, [ADDING, ADDED, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING]);
+    const moving_ids = [];
     for (const key in links) {
       if (key === listName || !links[key]) {
         continue;
       }
-      adding_ids.push(..._.extract(_.select(links[key], STATUS, [ADDING, MOVING]), ID));
+      moving_ids.push(..._.extract(_.select(links[key], STATUS, [MOVING, DIED_MOVING]), ID));
     }
-    const filteredLinks = excludeWithMainIds(selectedLinks, adding_ids);
+    const filteredLinks = excludeWithMainIds(selectedLinks, moving_ids);
 
     const popupLinks = _.select(filteredLinks, IS_POPUP_SHOWN, true);
     let popupLink = null;
@@ -37,10 +37,10 @@ export const getLinks = createSelector(
     }
 
     const sortedLinks = Object.values(filteredLinks).sort((a, b) => {
-      if (a.added_dt > b.added_dt) {
+      if (a.addedDT > b.addedDT) {
         return -1;
       }
-      if (a.added_dt < b.added_dt) {
+      if (a.addedDT < b.addedDT) {
         return 1;
       }
       return 0;

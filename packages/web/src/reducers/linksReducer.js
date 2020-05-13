@@ -230,6 +230,21 @@ export default (state = initialState, action) => {
     const newState = { ...state };
     newState[listName] = _.exclude(state[listName], ID, ids);
 
+    for (const id of ids) {
+      // DIED_ADDING -> remove this link
+      // DIED_MOVING -> remove this link
+      // DIED_REMOVING -> just set status to ADDED
+      // DIED_DELETING -> just set status to ADDED
+      const status = state[listName][id].status;
+      if ([DIED_ADDING, DIED_MOVING].includes(status)) {
+        continue;
+      } else if ([DIED_REMOVING, DIED_DELETING].includes(status)) {
+        newState[listName][id] = { ...state[listName][id], status: ADDED };
+      } else {
+        throw new Error(`Invalid status: ${status} of link id: ${id}`);
+      }
+    }
+
     return newState;
   }
 

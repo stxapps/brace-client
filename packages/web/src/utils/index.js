@@ -1,6 +1,9 @@
 import Url from 'url-parse';
 
-import { HTTP, HTTPS, WWW } from '../types/const';
+import {
+  HTTP, HTTPS, WWW,
+  DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
+} from '../types/const';
 
 export const randomString = (length) => {
 
@@ -391,4 +394,8 @@ export const excludeWithMainIds = (links, ids) => {
     newLinks[id] = links[id];
   }
   return newLinks;
+};
+
+export const isDiedStatus = (status) => {
+  return [DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING].includes(status);
 };
