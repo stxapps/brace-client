@@ -25,7 +25,9 @@ import {
   MY_LIST, TRASH, ARCHIVE,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
 } from '../types/const';
-import { randomString, _, rerandomRandomTerm, deleteRemovedDT, getMainId } from '../utils';
+import {
+  randomString, _, rerandomRandomTerm, deleteRemovedDT, getMainId, randomDecor, getUrlFirstChar,
+} from '../utils';
 
 export const init = (store) => {
   store.dispatch({
@@ -256,7 +258,8 @@ export const addLink = (url) => async (dispatch, getState) => {
   //   old value in etags is used and create an error 412 Precondition Failed.
   const addedDT = Date.now();
   const id = `${addedDT}-${randomString(4)}-${randomString(4)}`;
-  const link = { id, url, addedDT, didBeautify: false, };
+  const decor = randomDecor(getUrlFirstChar(url));
+  const link = { id, url, addedDT, decor, didBeautify: false, };
   const links = [link];
   const payload = { listName, links };
 

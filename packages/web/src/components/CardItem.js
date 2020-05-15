@@ -4,7 +4,10 @@ import { connect } from 'react-redux';
 import {
   updatePopup, retryDiedLinks, cancelDiedLinks,
 } from '../actions';
-import { ensureContainUrlProtocol, isDiedStatus } from '../utils';
+import { ensureContainUrlProtocol, isDiedStatus, extractUrl } from '../utils';
+import {
+  COLOR, PATTERN, IMAGE,
+} from '../types/const';
 
 class CardItem extends React.Component {
 
@@ -35,22 +38,83 @@ class CardItem extends React.Component {
     );
   }
 
+  renderImage() {
+
+    const { url, image, decor } = this.props.link;
+    if (image) {
+      return <img className="absolute h-full w-full object-cover object-center" src={image} alt={`illustration of ${url}`} />;
+    }
+
+    let fg = null;
+    if (decor.image.fg) {
+      const { text } = decor.image.fg;
+      fg = (
+        <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex justify-center items-center w-20 h-20 bg-white rounded-full`}>
+          <span className="text-5xl font-semibold text-gray-700">{text}</span>
+        </div>
+      );
+    }
+
+    // Only plain color background or plain color background with a letter
+    if (decor.image.bg.type === COLOR) {
+      return (
+        <React.Fragment>
+          <div className={`absolute h-full w-full bg-${decor.image.bg.value}`}></div>
+          {fg}
+        </React.Fragment>
+      );
+    }
+
+    // Only pattern background or pattern background with a big letter
+    if (decor.image.bg.type === PATTERN) {
+      return (
+        <React.Fragment>
+          <div className={`absolute w-full h-full pattern ${decor.image.bg.value}`}></div>
+          {fg}
+        </React.Fragment>
+      );
+    }
+
+    // Random image
+    if (decor.image.bg.type === IMAGE) {
+      return <img className="absolute h-full w-full object-cover object-center" src={decor.image.bg.value} alt={`illustration of ${url}`} />;
+    }
+
+    throw new Error(`Invalid decor: ${JSON.stringify(decor)}`);
+  }
+
+  renderFavicon() {
+
+    const { url, favicon, decor } = this.props.link;
+    if (favicon) {
+      return <img className="flex-shrink-0 flex-grow-0" src={favicon} alt={`Favicon of ${url}`} />;
+    }
+
+    if (decor.favicon.bg.type === COLOR) {
+      return <div className={`flex-shrink-0 flex-grow-0 w-4 h-4 bg-${decor.favicon.bg.value} rounded-full`}></div>;
+    }
+
+    if (decor.favicon.bg.type === PATTERN) {
+      return <div className={`flex-shrink-0 flex-grow-0 w-4 h-4 ${decor.favicon.bg.value} rounded-full`}></div>;
+    }
+  }
+
   render() {
     let { url, title, status } = this.props.link;
     if (!title) title = url;
-    url = ensureContainUrlProtocol(url);
+    const { host, origin } = extractUrl(url);
 
     return (
       <div className="relative mx-auto max-w-sm bg-white border-1 border-gray-200 rounded-lg shadow">
         <div className="relative pb-7/12">
-          <img className="absolute h-full w-full object-cover object-center" src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="imageAlt: Rear view of modern home with pool" />
+          {this.renderImage()}
         </div>
         <div className="flex justify-between">
           <div className="flex-shrink flex-grow">
             <div className="flex justify-start items-center pl-3 lg:pl-6 pt-3 lg:pt-6">
-              <img className="flex-shrink-0 flex-grow-0" src="/favicon.ico" alt="Website favicon" />
+              {this.renderFavicon()}
               <p className="flex-shrink flex-grow ml-1 text-sm text-gray-600 truncate">
-                <a href="/#">facebook.com</a>
+                <a href={origin}>{host}</a>
               </p>
             </div>
           </div>
@@ -63,7 +127,7 @@ class CardItem extends React.Component {
           </div>
         </div>
         <h4 className="mt-1 p-3 lg:p-6 text-base text-gray-800 font-semibold leading-relaxed break-all">
-          <a className="" href={url}>{title}</a>
+          <a className="" href={ensureContainUrlProtocol(url)}>{title}</a>
         </h4>
         {isDiedStatus(status) && this.renderRetry()}
       </div>

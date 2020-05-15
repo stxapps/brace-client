@@ -3,6 +3,8 @@ import Url from 'url-parse';
 import {
   HTTP, HTTPS, WWW,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
+  COLOR, PATTERN, IMAGE,
+  COLORS, COLOR_WEIGHTS, PATTERNS, IMAGES,
 } from '../types/const';
 
 export const randomString = (length) => {
@@ -271,6 +273,22 @@ export const ensureContainUrlProtocol = (url) => {
   return url;
 };
 
+export const extractUrl = (url) => {
+  url = ensureContainUrlProtocol(url);
+  const urlObj = new Url(url, {});
+  return {
+    host: urlObj.host,
+    origin: urlObj.origin,
+  };
+};
+
+export const getUrlFirstChar = (url) => {
+  url = ensureContainUrlProtocol(url);
+  const urlObj = new Url(url, {});
+
+  return urlObj.hostname.split('.').slice(-2)[0][0];
+};
+
 export const validateUrl = (url) => {
 
   if (!url) {
@@ -398,4 +416,81 @@ export const excludeWithMainIds = (links, ids) => {
 
 export const isDiedStatus = (status) => {
   return [DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING].includes(status);
+};
+
+export const randInt = (max) => {
+  return Math.floor(Math.random() * Math.floor(max));
+};
+
+export const sample = (arr) => {
+  return arr[Math.floor(Math.random() * arr.length)];
+};
+
+export const randomDecor = (text) => {
+
+  /*
+  decor = {
+    image: {
+      bg: {
+        type: image|color|pattern,
+        value: [value],
+      },
+      fg: {
+        text: 'A',
+      },
+    },
+    favicon: {
+      bg: {
+        type: color|pattern,
+        value: [value],
+      },
+    }
+  }
+  */
+
+  const decor = {
+    image: {
+      bg: {},
+      fg: null,
+    },
+    favicon: {
+      bg: {},
+    },
+  };
+  let n;
+
+  // image background
+  n = randInt(100);
+  if (n < 30) {
+    decor.image.bg.type = COLOR;
+    decor.image.bg.value = `${sample(COLORS)}-${sample(COLOR_WEIGHTS)}`;
+  } else if (n < 80) {
+    decor.image.bg.type = PATTERN;
+    decor.image.bg.value = sample(PATTERNS);
+  } else {
+    decor.image.bg.type = IMAGE;
+    decor.image.bg.value = sample(IMAGES);
+  }
+
+  // image foreground
+  n = randInt(100);
+  if ((decor.image.bg.type === COLOR && n < 75) ||
+    (decor.image.bg.type === PATTERN && n < 25)) {
+
+    decor.image.fg = {
+      text: text,
+    };
+  }
+
+  // favicon background
+  n = randInt(100);
+  if (n < 75) {
+    decor.favicon.bg.type = COLOR;
+    decor.favicon.bg.value = `${sample(COLORS)}-${sample(COLOR_WEIGHTS)}`;
+  } else {
+    decor.image.bg.type = PATTERN;
+    decor.image.bg.value = sample(PATTERNS);
+  }
+
+  return decor;
 };
