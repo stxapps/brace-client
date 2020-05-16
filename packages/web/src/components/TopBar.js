@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import GracefulImage from 'react-graceful-image';
+import jdenticon from "jdenticon";
 
 import { signOut, updatePopup, addLink, updateSearchString } from '../actions';
 import {
@@ -13,13 +15,22 @@ import fullLogo from '../images/logo-full.svg';
 
 class TopBar extends React.Component {
 
-  initialState = {
-    url: '',
-    msg: '',
-    isAskingConfirm: false,
-  };
+  constructor(props) {
+    super(props);
 
-  state = { ...this.initialState };
+    this.initialState = {
+      url: '',
+      msg: '',
+      isAskingConfirm: false,
+    };
+    this.state = { ...this.initialState };
+
+    this.userImage = props.userImage;
+    if (this.userImage === null) {
+      const svgString = jdenticon.toSvg(props.username, 32);
+      this.userImage = `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
+    }
+  }
 
   onAddBtnClick = () => {
     if (this.props.isAddPopupShown) return;
@@ -118,8 +129,8 @@ class TopBar extends React.Component {
             onChange={e => updateSearchString(e.target.value)} />
         </div>
         <div className="relative ml-6">
-          <button onClick={this.onProfileBtnClick} className={`relative block h-8 w-8 rounded-full overflow-hidden border-2 border-gray-200 ${isProfilePopupShown && 'z-41'}`}>
-            <img className="h-full w-full object-cover" src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80" alt="Profile" />
+          <button onClick={this.onProfileBtnClick} className={`relative block h-8 w-8 bg-white rounded-full overflow-hidden border-2 border-gray-200 ${isProfilePopupShown && 'z-41'}`}>
+            <GracefulImage className="h-full w-full object-cover" src={this.userImage} alt="Profile" />
           </button>
           {isProfilePopupShown && this.renderProfilePopup()}
         </div>
@@ -146,6 +157,8 @@ class TopBar extends React.Component {
 
 const mapStateToProps = (state, props) => {
   return {
+    username: state.user.username,
+    userImage: state.user.image,
     searchString: state.display.searchString,
     isAddPopupShown: state.display.isAddPopupShown,
     isProfilePopupShown: state.display.isProfilePopupShown,

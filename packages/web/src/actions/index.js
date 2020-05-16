@@ -15,6 +15,7 @@ import {
   CANCEL_DIED_LINKS,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
+  UPDATE_STATUS,
   RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -446,4 +447,11 @@ export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
       }
     },
   });
+};
+
+export const updateStatus = (status) => {
+  return {
+    type: UPDATE_STATUS,
+    payload: status,
+  };
 };

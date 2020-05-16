@@ -2,7 +2,11 @@ import { REHYDRATE } from 'redux-persist/constants'
 
 import {
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
+  FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
+  DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
+  DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
+  UPDATE_STATUS,
   RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -19,6 +23,7 @@ const initialState = {
   isListNamePopupShown: false,
   isConfirmDeletePopupShown: false,
   isFetchingMore: false,
+  status: null,
 };
 
 export default (state = initialState, action) => {
@@ -76,12 +81,40 @@ export default (state = initialState, action) => {
     }
   }
 
+  if (action.type === FETCH) {
+    return { ...state, status: FETCH };
+  }
+
+  if (action.type === FETCH_COMMIT) {
+    return { ...state, status: FETCH_COMMIT };
+  }
+
+  if (action.type === FETCH_ROLLBACK) {
+    return { ...state, status: FETCH_ROLLBACK };
+  }
+
   if (action.type === FETCH_MORE) {
     return { ...state, isFetchingMore: true };
   }
 
   if (action.type === FETCH_MORE_COMMIT || action.type === FETCH_MORE_ROLLBACK) {
     return { ...state, isFetchingMore: false };
+  }
+
+  if (action.type === DELETE_OLD_LINKS_IN_TRASH) {
+    return { ...state, status: DELETE_OLD_LINKS_IN_TRASH };
+  }
+
+  if (action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT) {
+    return { ...state, status: DELETE_OLD_LINKS_IN_TRASH_COMMIT };
+  }
+
+  if (action.type === DELETE_OLD_LINKS_IN_TRASH_ROLLBACK) {
+    return { ...state, status: DELETE_OLD_LINKS_IN_TRASH_ROLLBACK };
+  }
+
+  if (action.type === UPDATE_STATUS) {
+    return { ...state, status: action.payload };
   }
 
   if (action.type === RESET_STATE) {

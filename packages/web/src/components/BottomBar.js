@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import GracefulImage from 'react-graceful-image';
+import jdenticon from "jdenticon";
 
 import { signOut, updatePopup, addLink, updateSearchString } from '../actions';
 import {
@@ -15,14 +17,23 @@ const PROFILE_POPUP_HEIGHT = '80px';
 
 class BottomBar extends React.Component {
 
-  initialState = {
-    didAnimationEnd: true,
-    url: '',
-    msg: '',
-    isAskingConfirm: false,
-  };
+  constructor(props) {
+    super(props);
 
-  state = { ...this.initialState };
+    this.initialState = {
+      didAnimationEnd: true,
+      url: '',
+      msg: '',
+      isAskingConfirm: false,
+    };
+    this.state = { ...this.initialState };
+
+    this.userImage = props.userImage;
+    if (this.userImage === null) {
+      const svgString = jdenticon.toSvg(props.username, 32);
+      this.userImage = `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
+    }
+  }
 
   onAddBtnClick = () => {
     if (this.props.isAddPopupShown) return;
@@ -184,7 +195,9 @@ class BottomBar extends React.Component {
           <div className="flex justify-evenly content-between w-full h-full">
             <button onClick={this.onAddBtnClick} className="w-full h-full border-r-2 border-gray-900">Add</button>
             <button onClick={this.onSearchBtnClick} className="w-full h-full border-r-2 border-gray-900">Search</button>
-            <button onClick={this.onProfileBtnClick} className="w-full h-full">Profile</button>
+            <button onClick={this.onProfileBtnClick} className="w-full h-full">
+              <GracefulImage className="mx-auto rounded-full border-2 border-gray-200" src={this.userImage} alt="Profile" />
+            </button>
           </div>
         </div>
         {this.renderAddPopup()}
@@ -197,6 +210,8 @@ class BottomBar extends React.Component {
 
 const mapStateToProps = (state, props) => {
   return {
+    username: state.user.username,
+    userImage: state.user.image,
     searchString: state.display.searchString,
     isAddPopupShown: state.display.isAddPopupShown,
     isSearchPopupShown: state.display.isSearchPopupShown,

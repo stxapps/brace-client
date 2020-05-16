@@ -7,10 +7,10 @@ import {
 } from '../actions';
 import {
   CONFIRM_DELETE_POPUP,
-  MY_LIST,
+  MY_LIST, TRASH,
+  ADDING, MOVING,
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
   CARD_ITEM_POPUP_MENU,
-  TRASH,
 } from '../types/const';
 import { copyTextToClipboard } from '../utils';
 
@@ -43,6 +43,9 @@ class CardItemMenuPopup extends React.Component {
       menu = CARD_ITEM_POPUP_MENU[props.listName];
     } else {
       menu = CARD_ITEM_POPUP_MENU[MY_LIST];
+    }
+    if ([ADDING, MOVING].includes(props.link.status)) {
+      menu = menu.slice(0, 2);
     }
 
     const moveTo = [];

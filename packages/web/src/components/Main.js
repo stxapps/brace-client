@@ -20,6 +20,7 @@ import TopBar from './TopBar';
 import BottomBar from './BottomBar';
 import CardItem from './CardItem';
 import CardItemMenuPopup from './CardItemMenuPopup';
+import StatusPopup from './StatusPopup';
 
 class Main extends React.Component {
 
@@ -208,6 +209,7 @@ class Main extends React.Component {
         {this.renderListName()}
         {isEmpty ? this.renderEmpty() : this.renderLinks()}
         <BottomBar columnWidth={this.state.columnWidth} />
+        <StatusPopup />
       </React.Fragment>
     );
   }
