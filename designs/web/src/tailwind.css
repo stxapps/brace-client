@@ -1,3 +1,4 @@
+/* purgecss start ignore */
 @tailwind base;
 
 @font-face {
@@ -156,20 +157,20 @@
 @tailwind components;
 
 .howitwork-pb {
-  @apply pb-77/200;
+  @apply pb-1/4;
 }
 
-.blockstack-mt {
-  @apply mt-21/100;
+.howitwork-gray-pb {
+  @apply pb-77/200;
 }
 
 @media (min-width: 537px) {
   .howitwork-pb {
-    @apply pb-40;
+    @apply pb-32;
   }
 
-  .blockstack-mt {
-    @apply mt-24;
+  .howitwork-gray-pb {
+    @apply pb-40;
   }
 }
 
@@ -178,19 +179,20 @@
     @apply pb-24;
   }
 
-  .blockstack-mt {
-    @apply mt-12;
+  .howitwork-gray-pb {
+    @apply pb-24;
   }
 }
 
 @screen lg {
   .howitwork-pb {
-    @apply pb-36;
+    @apply pb-32;
   }
 
-  .blockstack-mt {
-    @apply mt-20;
+  .howitwork-gray-pb {
+    @apply pb-36;
   }
 }
+/* purgecss end ignore */
 
 @tailwind utilities;
