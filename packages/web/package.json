@@ -22,10 +22,12 @@
     "redux": "^4.0.5",
     "redux-loop": "^5.1.1",
     "reselect": "^4.0.0",
+    "source-map-explorer": "^2.4.2",
     "tailwindcss": "^1.3.4",
     "url-parse": "^1.4.7"
   },
   "scripts": {
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start-css": "postcss tailwind.css -o src/stylesheets/tailwind.css --watch",
     "build-css": "postcss tailwind.css -o src/stylesheets/tailwind.css --env production",
     "build-css-dev": "postcss tailwind.css -o src/stylesheets/tailwind.css",
