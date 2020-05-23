@@ -491,20 +491,6 @@ This and CI/CD are very important!
 ** main page w/o items
 *** tutorial
 -
-** attribution
-- tailwindcss, postcss, purgecss
-- uirefactoring
-- figma
-- iconmonstr.com
-- undraw.co
-- pocket.com
-- saved.io
-- udemy
-- react, create-react-app
-- redux, redux-thunk, redux-offline, react-redux
-- github.com/ConnorAtherton/loaders.css
-- loading.io/css/
-- react-stack-grid
 * Implementation
 ** project
 *** create-react-app
@@ -631,6 +617,64 @@ This and CI/CD are very important!
 - yarn add react-stack-grid
 - yarn remove @redux-offline/redux-offline
 - yarn add https://github.com/bracedotto/redux-offline#cc3a6fd8ff2c3d4fe05ec435d67fd40f0936b7e2
+- yarn add react-graceful-image
+- yarn add jdenticon
+** attribution
+- tailwindcss, postcss, purgecss
+- uirefactoring
+- figma
+- iconmonstr.com
+- undraw.co
+- getpocket.com
+- saved.io
+- udemy
+- react, create-react-app
+- redux, redux-thunk, redux-offline, react-redux
+- github.com/ConnorAtherton/loaders.css
+- loading.io/css/
+- react-stack-grid
+- react-graceful-image
+- jdenticon
+- leaverou.github.io/css3patterns
+- freefrontend.com/css-background-patterns
+- images
+  + silver-watch-newspaper-magazine-preview.jpg: https://www.pickpik.com/silver-watch-newspaper-magazine-flower-pink-69937
+  + black-and-white-electronic-device-cup-of-espresso-on-saucer-beside-spiral-note.jpg: https://www.pikrepo.com/frbdj/black-and-white-electronic-device-cup-of-espresso-on-saucer-beside-spiral-note
+  + silver-macbook-beside-white-smartphone.jpg: https://www.pikrepo.com/fivtc/silver-macbook-beside-white-smartphone
+  + green-typewriter-beside-green-hardbound-book-and-book.jpg: https://www.pikrepo.com/fenlp/green-typewriter-beside-green-hardbound-book-and-book
+  + cup-of-coffee-beside-gray-laptop-on-brown-wooden-desk.jpg: https://www.pikrepo.com/femfv/cup-of-coffee-beside-gray-laptop-on-brown-wooden-desk
+  + macbook-air-beside-white-ceramic-mug-on-brown-wooden-table.jpg: https://www.pikrepo.com/fevvb/macbook-air-beside-white-ceramic-mug-on-brown-wooden-table
+  + person-using-gray-laptop-computer.jpg: https://www.pikrepo.com/fefte/person-using-gray-laptop-computer
+  + black-and-gray-laptop-computer-macbook-beside-drinking-glass-on-wooden-table.jpg: https://www.pikrepo.com/fnejx/black-and-gray-laptop-computer-macbook-beside-drinking-glass-on-wooden-table
+  + black-ceramic-mug-near-three-smartphones-on-white-wooden-desk.jpg: https://www.pikrepo.com/fprob/black-ceramic-mug-near-three-smartphones-on-white-wooden-desk
+  + gold-iphone-6-on-white-book-near-gray-laptop-computer.jpg: https://www.pikrepo.com/fefsm/gold-iphone-6-on-white-book-near-gray-laptop-computer
+  + cup-of-coffee-beside-macbook-pro.jpg: https://www.pikrepo.com/fpgac/cup-of-coffee-beside-macbook-pro
+  + silver-iphone-6.jpg: https://www.pikrepo.com/felsy/silver-iphone-6
+  + silver-iphone-6-beside-white-ruled-paper.jpg: https://www.pikrepo.com/fntiz/silver-iphone-6-beside-white-ruled-paper
+  + eyeglasses-with-black-plastic-frame-on-top-of-open-book.jpg: https://www.pikrepo.com/flqlq/eyeglasses-with-black-plastic-frame-on-top-of-open-book
+  + macbook-pro-on-brown-table.jpg: https://www.pikrepo.com/fpgml/macbook-pro-on-brown-table
+  + white-ceramic-teacup-with-saucer.jpg: https://www.pikrepo.com/ferbh/white-ceramic-teacup-with-saucer
+  + white-pen-on-white-notebook-beside-the-orange-ceramic-coffee-cup-with-saucer-located-on-top-of-white-table.jpg: https://www.pikrepo.com/fqdhp/white-pen-on-white-notebook-beside-the-orange-ceramic-coffee-cup-with-saucer-located-on-top-of-white-table
+  + white-ipad-on-brown-wooden-table.jpg: https://www.pikrepo.com/fffbs/white-ipad-on-brown-wooden-table
+  + macbook-and-teal-ceramic-kettle-on-white-table.jpg: https://www.pikrepo.com/frwgk/macbook-and-teal-ceramic-kettle-on-white-table
+  + gray-zenit-e-slr-camera-on-brown-surface.jpg: https://www.pikrepo.com/femzx/gray-zenit-e-slr-camera-on-brown-surface
+  + eyeglasses-on-top-of-opened-book.jpg: https://www.pikrepo.com/flobr/eyeglasses-on-top-of-opened-book
+  + turned-off-black-laptop-computer-on-green-grass-field.jpg: https://www.pikrepo.com/ferad/turned-off-black-laptop-computer-on-green-grass-field
+  + pencil-with-gray-sharpener-on-notepad.jpg: https://www.pikrepo.com/feayq/pencil-with-gray-sharpener-on-notepad
+  + clear-light-bulb.jpg: https://www.pikrepo.com/frelq/clear-light-bulb
+  + brown-wooden-framed-chalkboard.jpg: https://www.pikrepo.com/fllvu/brown-wooden-framed-chalkboard
+  + clear-light-bulb-on-black-chalkboard.jpg: https://www.pikrepo.com/flsjo/clear-light-bulb-on-black-chalkboard
+  + clear-sodium-bulb-lot-with-white-background.jpg: https://www.pikrepo.com/fllvk/clear-sodium-bulb-lot-with-white-background
+  + happiness-illustration.jpg: https://www.pikrepo.com/fqlyh/happiness-illustration
+  + led-bulb-on-black-surface.jpg: https://www.pikrepo.com/fodsy/led-bulb-on-black-surface
+  + clear-halogen-bulb.jpg: https://www.pikrepo.com/frucq/clear-halogen-bulb
+  + macbook-pro-full-of-sticky-notes.jpg: https://www.pikrepo.com/fpgbt/macbook-pro-full-of-sticky-notes
+  + white-notebook-with-gray-ballpoint-pen.jpg: https://www.pikrepo.com/fpyvi/white-notebook-with-gray-ballpoint-pen
+  + blue-ballpoint-pen-on-white-ruled-notebook.jpg: https://www.pikrepo.com/fentc/blue-ballpoint-pen-on-white-ruled-notebook
+  + white-printing-paper-on-table.jpg: https://www.pikrepo.com/frmeg/white-printing-paper-on-table
+  + white-notepad-between-color-pens.jpg: https://www.pikrepo.com/frcst/white-notepad-between-color-pens
+  + black-ballpoint-pen-on-graphing-notebook.jpg: https://www.pikrepo.com/fobcp/black-ballpoint-pen-on-graphing-notebook
+  + silver-framed-eyeglasses-beside-white-click-pen-and-white-notebook.jpg: https://www.pikrepo.com/frrsu/silver-framed-eyeglasses-beside-white-click-pen-and-white-notebook
 * mvp
 ** No extensions yet
 - Put app name on url
