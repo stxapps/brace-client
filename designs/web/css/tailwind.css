@@ -897,6 +897,12 @@ video {
   }
 }
 
+.e-mail:before {
+  content: attr(data-website) "\0040" attr(data-user);
+  unicode-bidi: bidi-override;
+  direction: rtl;
+}
+
 /* purgecss end ignore */
 
 .space-y-0 > :not(template) ~ :not(template) {
