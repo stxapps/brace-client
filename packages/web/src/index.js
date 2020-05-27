@@ -7,6 +7,7 @@ import { offline } from '@redux-offline/redux-offline';
 import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
 
 import './stylesheets/tailwind.css';
+import './stylesheets/loading.css';
 import './stylesheets/patterns.css';
 
 import App from './components/App';

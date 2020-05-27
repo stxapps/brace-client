@@ -1,12 +1,24 @@
+const purgecss = require('@fullhuman/postcss-purgecss')({
+
+  content: [
+    './src/**/*.js',
+    './public/index.html',
+  ],
+
+  defaultExtractor: content => {
+
+    const broadMatches = content.match(/[^<>"'`\s]*[^<>"'`\s:]/g) || []
+    const innerMatches = content.match(/[^<>"'`\s.()]*[^<>"'`\s.():]/g) || []
+
+    return broadMatches.concat(innerMatches)
+  }
+})
+
 module.exports = {
   plugins: [
     require('tailwindcss'),
-    process.env.NODE_ENV === 'production' && require('@fullhuman/postcss-purgecss')({
-      content: [
-        './src/**/*.js',
-        './public/index.html',
-      ],
-      defaultExtractor: content => content.match(/[A-Za-z0-9-_:/]+/g) || []
-    })
-  ],
+    ...process.env.NODE_ENV === 'production'
+      ? [purgecss]
+      : []
+  ]
 }

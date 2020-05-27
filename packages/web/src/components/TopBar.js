@@ -6,7 +6,7 @@ import jdenticon from "jdenticon";
 import { signOut, updatePopup, addLink, updateSearchString } from '../actions';
 import {
   ADD_POPUP, PROFILE_POPUP,
-  PC_50, PC_33,
+  PC_50, PC_33, SIGN_IN, NAV,
 } from '../types/const';
 import { validateUrl } from '../utils';
 
@@ -107,7 +107,20 @@ class TopBar extends React.Component {
     );
   }
 
-  renderRightPane() {
+  renderRightPaneSignIn() {
+
+    return (
+      <button onClick={() => this.props.signIn()} className="my-px block h-14">
+        <span className="px-3 py-1 text-base text-gray-700 border border-gray-700 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900">Sign in</span>
+      </button>
+    );
+  }
+
+  renderRightPaneNav() {
+
+    const isRightPaneShown = [PC_50, PC_33].includes(this.props.columnWidth);
+    if (!isRightPaneShown) return null;
+
     const { isAddPopupShown, isProfilePopupShown } = this.props;
     const { searchString, updateSearchString } = this.props;
 
@@ -140,17 +153,24 @@ class TopBar extends React.Component {
 
   render() {
 
-    const isRightPaneShown = [PC_50, PC_33].includes(this.props.columnWidth);
+    const rightPaneType = this.props.rightPane;
+
+    let rightPane = null;
+    if (rightPaneType === SIGN_IN) {
+      rightPane = this.renderRightPaneSignIn();
+    } else if (rightPaneType === NAV) {
+      rightPane = this.renderRightPaneNav();
+    }
 
     return (
-      <div className="flex content justify-between content-between">
-        <div className="relative w-40">
+      <header className="mx-auto px-4 flex justify-between items-center max-w-6xl min-h-14 md:px-6 lg:px-8">
+        <div className="relative">
           <img className="h-8 md:hidden" src={shortLogo} alt="Brace logo" />
-          <img className="hidden h-8 md:block" src={fullLogo} alt="Brace logo" />
-          <span className="absolute text-xs" style={{ top: '-9px', right: '-26px' }}>beta</span>
+          <img className="hidden h-6 md:block" src={fullLogo} alt="Brace logo" />
+          <span style={{ top: '-0.5625rem', right: '-1.625rem' }} className="absolute text-xs">beta</span>
         </div>
-        {isRightPaneShown && this.renderRightPane()}
-      </div>
+        {rightPane}
+      </header>
     );
   }
 }

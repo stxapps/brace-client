@@ -1,3 +1,4 @@
+/* purgecss start ignore */
 @tailwind base;
 
 @font-face {
@@ -155,107 +156,21 @@
 
 @tailwind components;
 
-@keyframes square-spin {
-  25% {
-    transform: perspective(100px) rotateX(180deg) rotateY(0);
-  }
-  50% {
-    transform: perspective(100px) rotateX(180deg) rotateY(180deg);
-  }
-  75% {
-    transform: perspective(100px) rotateX(0) rotateY(180deg);
-  }
-  100% {
-    transform: perspective(100px) rotateX(0) rotateY(0);
-  }
-}
-
-.square-spin > img {
-  animation-fill-mode: both;
-  width: 48px;
-  height: 48px;
-  animation: square-spin 3s 0s cubic-bezier(0.09, 0.57, 0.49, 0.9) infinite;
-}
-
-.lds-ellipsis {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-}
-
-.lds-ellipsis div {
-  position: absolute;
-  top: 33px;
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  @apply bg-gray-600;
-  animation-timing-function: cubic-bezier(0, 1, 1, 0);
-}
-
-.lds-ellipsis div:nth-child(1) {
-  left: 8px;
-  animation: lds-ellipsis1 0.6s infinite;
-}
-
-.lds-ellipsis div:nth-child(2) {
-  left: 8px;
-  animation: lds-ellipsis2 0.6s infinite;
-}
-
-.lds-ellipsis div:nth-child(3) {
-  left: 32px;
-  animation: lds-ellipsis2 0.6s infinite;
-}
-
-.lds-ellipsis div:nth-child(4) {
-  left: 56px;
-  animation: lds-ellipsis3 0.6s infinite;
-}
-
-@keyframes lds-ellipsis1 {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes lds-ellipsis3 {
-  0% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(0);
-  }
-}
-
-@keyframes lds-ellipsis2 {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(24px, 0);
-  }
-}
-
 .howitwork-pb {
-  @apply pb-77/200;
+  @apply pb-1/4;
 }
 
-.blockstack-mt {
-  @apply mt-21/100;
+.howitwork-gray-pb {
+  @apply pb-77/200;
 }
 
 @media (min-width: 537px) {
   .howitwork-pb {
-    @apply pb-40;
+    @apply pb-32;
   }
 
-  .blockstack-mt {
-    @apply mt-24;
+  .howitwork-gray-pb {
+    @apply pb-40;
   }
 }
 
@@ -264,19 +179,26 @@
     @apply pb-24;
   }
 
-  .blockstack-mt {
-    @apply mt-12;
+  .howitwork-gray-pb {
+    @apply pb-24;
   }
 }
 
 @screen lg {
   .howitwork-pb {
-    @apply pb-36;
+    @apply pb-32;
   }
 
-  .blockstack-mt {
-    @apply mt-20;
+  .howitwork-gray-pb {
+    @apply pb-36;
   }
 }
+
+.e-mail:before {
+  content: attr(data-website) "\0040" attr(data-user);
+  unicode-bidi: bidi-override;
+  direction: rtl;
+}
+/* purgecss end ignore */
 
 @tailwind utilities;
