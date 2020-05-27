@@ -13,106 +13,143 @@
   <noscript>
     <strong>We're sorry but brace.to doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
   </noscript>
-  <div id="app" class="antialiased mx-auto md:max-w-6xl min-h-screen">
-    <div class="px-4 md:px-6 lg:px-8">
-      <header class="flex justify-start items-center h-16 md:justify-between">
+  <div id="app" class="min-h-screen antialiased ">
+    <header class="mx-auto px-4 flex justify-between items-center max-w-6xl min-h-14 md:px-6 lg:px-8">
+      <div class="relative">
+        <img class="h-8 md:hidden" src="/img/logo-short.svg" alt="Brace logo" />
+        <img class="hidden h-6 md:block" src="/img/logo-full.svg" alt="Brace logo" />
+        <span class="absolute text-xs" style="top: -9px; right: -26px">beta</span>
+      </div>
+      <div class="hidden md:flex md:justify-end md:items-center">
         <div class="relative">
-          <img class="h-8 md:hidden" src="/img/logo-short.svg" alt="Brace logo" />
-          <img class="hidden h-8 md:block" src="/img/logo-full.svg" alt="Brace logo" />
-          <span class="absolute text-xs" style="top: -9px; right: -26px">beta</span>
-        </div>
-        <div class="hidden md:flex md:items-center">
-          <div class="relative">
-            <button id="save-btn" class="relative px-2 py-2 bg-gray-900 rounded-lg shadow-sm hover:bg-gray-800 active:bg-black z-20">
-              <svg class="w-4 text-white lg:w-5" viewBox="0 0 18 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9.258 1v12M1 6.5h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
-            <button id="bg-save-btn" tabindex="-1" class="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-10"></button>
-            <div id="save-dialog" class="absolute right-0 mt-2 py-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-20">
-              <input class=""  placeholder="http://"/>
-              <button class="">Save</button>
-            </div>
-          </div>
-          <div class="relative ml-6 w-48 lg:w-56">
-            <div class="absolute inset-y-0 left-0 flex items-center pl-3">
-              <svg class="h-6 w-6 text-gray-600" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16.32 14.9l1.1 1.1c.4-.02.83.13 1.14.44l3 3a1.5 1.5 0 0 1-2.12 2.12l-3-3a1.5 1.5 0 0 1-.44-1.14l-1.1-1.1a8 8 0 1 1 1.41-1.41l.01-.01zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"/>
-              </svg>
-            </div>
-            <input class="block pl-10 pr-4 py-1 w-full bg-gray-200 text-gray-900 border border-transparent rounded-full focus:outline-none focus:bg-white focus:border-gray-300" placeholder="Search"/>
-          </div>
-          <div class="relative ml-6">
-            <button id="profile-btn" class="relative block h-8 w-8 rounded-full overflow-hidden border-2 border-gray-200 z-20">
-              <img class="h-full w-full object-cover" src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80" alt="Profile picture" />
-            </button>
-            <button id="bg-profile-btn" tabindex="-1" class="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-10"></button>
-            <div id="profile-menu" class="absolute right-0 mt-2 py-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-20">
-              <a class="block px-4 py-2 text-gray-800 hover:bg-gray-400" href="#">Settings</a>
-              <a class="block px-4 py-2 text-gray-800 hover:bg-gray-400" href="#">Support</a>
-              <a class="block px-4 py-2 text-gray-800 hover:bg-gray-400" href="#">Sign out</a>
-            </div>
-          </div>
-        </div>
-      </header>
-      <main class="py-4 md:py-6">
-        <div class="inline-block relative">
-          <button id="list-btn" class="flex items-center relative z-20">
-            <h2 class="text-lg text-gray-800 font-semibold">My List</h2>
-            <svg class="ml-1 w-5" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19 9l-7 7-7-7" stroke="#4A5568" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <button id="save-btn" class="relative w-8 h-7 bg-gray-900 rounded-lg shadow-sm hover:bg-gray-800 active:bg-black z-20">
+            <svg class="mx-auto w-4 text-white" viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 1V13M1 6.95139H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
-          <button id="bg-list-btn" tabindex="-1" class="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-10"></button>
-          <div id="list-menu" class="absolute right-0 bottom-0 mt-2 py-2 w-40 bg-white border border-gray-200 rounded-lg shadow-xl transform translate-x-11/12 translate-y-full z-20">
-            <a class="block px-4 py-2 text-gray-800 hover:bg-gray-400" href="#">Trash</a>            
+          <button id="bg-save-btn" tabindex="-1" class="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-10"></button>
+          <div id="save-dialog" class="mt-2 px-4 pt-6 pb-6 absolute right-0 w-96 bg-white border border-gray-200 rounded-lg shadow-xl z-20">
+            <input class="px-4 py-2 w-full bg-white text-gray-900 border border-gray-600 rounded-full focus:outline-none" type="text" placeholder="https://" value=""/>
+            <p class="hidden pt-3 text-red-500">Look like it's not a link. Save it anyway?</p>
+            <div class="pt-3">
+              <button class="px-5 py-2 bg-gray-900 text-base text-white font-medium rounded-full shadow-sm hover:bg-gray-800 active:bg-black">Save</button>
+              <button class="ml-2 underline">Cancel</button>
+            </div>
           </div>
         </div>
-        <div class="grid grid-cols-1 mx-auto max-w-md md:grid-cols-2 md:max-w-none lg:grid-cols-3 gap-5 pt-5">
-          <div class="bg-white border-1 border-gray-200 rounded-lg overflow-hidden shadow">
-            <div class="relative pb-7/12">
-              <img class="absolute h-full w-full object-cover object-center" src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="imageAlt: Rear view of modern home with pool">
-            </div>
-            <div class="flex justify-between">
-              <div class="flex-shrink flex-grow">
-                <div class="flex justify-start items-center pl-3 lg:pl-6 pt-3 lg:pt-6">
-                  <img class="flex-shrink-0 flex-grow-0" src="/favicon.ico" alt="Website favicon" />
-                  <p class="flex-shrink flex-grow ml-1 text-sm text-gray-600 truncate">
-                    <a href="#">facebook.com</a>
-                  </p>
-                </div>
-              </div>
-              <button id="option-btn" class="flex-shrink-0 flex-grow-0 pl-4 pr-2 pt-4 pb-2">
-                <svg class="w-6 text-gray-600" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </button>
-              
-            </div>
-            <h4 class="mt-1 p-3 lg:p-6 text-base text-gray-800 font-semibold leading-relaxed break-all">
-              <a class="" href="#">http://www.facebook.com/asfien39ieo9ejklfdsnval/kjjvnek43kivn.,ksjdfo?q=4eijfv</a>
-            </h4>
+        <div class="relative ml-6 w-48 lg:w-56">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+            <svg class="h-6 w-6 text-gray-600" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16.32 14.9l1.1 1.1c.4-.02.83.13 1.14.44l3 3a1.5 1.5 0 0 1-2.12 2.12l-3-3a1.5 1.5 0 0 1-.44-1.14l-1.1-1.1a8 8 0 1 1 1.41-1.41l.01-.01zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"/>
+            </svg>
+          </div>
+          <input class="py-1 pl-10 pr-4 block w-full bg-gray-200 text-gray-900 border border-transparent rounded-full focus:outline-none focus:bg-white focus:border-gray-300" placeholder="Search"/>
+        </div>
+        <div class="relative ml-6">
+          <button id="profile-btn" class="relative block h-8 w-8 rounded-full overflow-hidden border-2 border-gray-200 z-20">
+            <img class="h-full w-full object-cover" src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80" alt="Profile picture" />
+          </button>
+          <button id="bg-profile-btn" tabindex="-1" class="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-10"></button>
+          <div id="profile-menu" class="py-2 mt-2 absolute right-0 w-32 bg-white border border-gray-200 rounded-lg shadow-xl z-20">
+            <a class="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400" href="#support">Support</a>
+            <button class="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400">Sign out</button>
           </div>
         </div>
-      </main>
-    </div>
-    <div class="fixed inset-x-0 bottom-0 flex items-stretch justify-between h-16 md:hidden">
-      <div>
-        <button id="save-btn" class="relative px-2 py-2 bg-gray-900 rounded-lg shadow-sm hover:bg-gray-800 active:bg-black z-20">
-          <svg class="w-4 text-white lg:w-5" viewBox="0 0 18 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9.258 1v12M1 6.5h16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </div>
+    </header>
+    <main class="mx-auto px-4 pt-4 pb-20 max-w-6xl md:px-6 md:py-6 lg:px-8">
+      <div class="inline-block relative">
+        <button id="list-btn" class="flex items-center relative z-20">
+          <h2 class="text-lg text-gray-900 font-semibold">My List</h2>
+          <svg class="ml-1 w-5" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 9l-7 7-7-7" stroke="#4A5568" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
+        <button id="bg-list-btn" tabindex="-1" class="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-10"></button>
+        <div id="list-menu" class="py-2 mt-2 absolute right-0 bottom-0 w-28 bg-white border border-gray-200 rounded-lg shadow-xl transform translate-x-11/12 translate-y-full z-20">
+          <button class="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400">My List</button>
+          <button class="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400">Archive</button>
+          <button class="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400">Trash</button>
+        </div>
       </div>
-      <div>
-        <svg class="h-6 w-6 text-gray-600" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <div class="mx-auto pt-5 grid grid-cols-1 gap-5 max-w-md md:grid-cols-2 md:max-w-none lg:grid-cols-3">
+        <div class="bg-white border-1 border-gray-200 rounded-lg overflow-hidden shadow">
+          <div class="relative pb-7/12">
+            <img class="absolute h-full w-full object-cover object-center" src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="imageAlt: Rear view of modern home with pool">
+          </div>
+          <div class="flex justify-between">
+            <div class="flex-shrink flex-grow">
+              <div class="pt-3 pl-3 flex justify-start items-center lg:pl-6 lg:pt-6">
+                <img class="flex-shrink-0 flex-grow-0 w-6" src="/favicon.ico" alt="Website favicon" />
+                <p class="ml-1 flex-shrink flex-grow text-base text-gray-700 truncate">
+                  <a href="#">facebook.com</a>
+                </p>
+              </div>
+            </div>
+            <button id="option-btn" class="pt-4 pb-2 pl-4 pr-2 flex-shrink-0 flex-grow-0">
+              <svg class="w-6 text-gray-700" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <h4 class="mt-1 p-3 text-base text-gray-800 font-semibold leading-relaxed break-all lg:p-6">
+            <a href="#">http://www.facebook.com/asfien39ieo9ejklfdsnval/kjjvnek43kivn.,ksjdfo?q=4eijfv</a>
+          </h4>
+        </div>
+        <div class="bg-white border-1 border-gray-200 rounded-lg overflow-hidden shadow">
+          <div class="relative pb-7/12">
+            <img class="absolute h-full w-full object-cover object-center" src="/img/save-links-to-visit-later.svg" alt="imageAlt: Rear view of modern home with pool">
+          </div>
+          <div class="flex justify-between">
+            <div class="flex-shrink flex-grow">
+              <div class="pt-3 pl-3 flex justify-start items-center lg:pl-6 lg:pt-6">
+                <img class="flex-shrink-0 flex-grow-0 w-6" src="/img/blockstack-short.svg" alt="Website favicon" />
+                <p class="ml-1 flex-shrink flex-grow text-base text-gray-700 truncate">
+                  <a href="#">www.youtube.com</a>
+                </p>
+              </div>
+            </div>
+            <button id="option-btn" class="pt-4 pb-2 pl-4 pr-2 flex-shrink-0 flex-grow-0">
+              <svg class="w-6 text-gray-700" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <h4 class="mt-1 p-3 lg:p-6 text-base text-gray-800 font-semibold leading-relaxed break-all">
+            <a href="#">https://www.youtube.com/watch?v=En255ub9fgs&list=PLnlsD9YdBwhCf__q2kApv__pMVjxw0-7Q&index=30</a>
+          </h4>
+        </div>
+      </div>
+    </main>
+    <div class="fixed inset-x-0 bottom-0 flex h-14 bg-white shadow-inner md:hidden">
+      <button id="btm-save-btn" class="flex items-center w-1/3 h-full">
+        <div class="mx-auto flex items-center w-8 h-7 bg-gray-800 rounded-lg shadow-sm hover:bg-gray-700 active:bg-gray-900 z-20">
+          <svg class="mx-auto w-4 text-white" viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 1V13M1 6.95139H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </button>
+      <button class="flex items-center w-1/3 h-full">
+        <svg class="mx-auto h-8 w-8 text-gray-800" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
           <path d="M16.32 14.9l1.1 1.1c.4-.02.83.13 1.14.44l3 3a1.5 1.5 0 0 1-2.12 2.12l-3-3a1.5 1.5 0 0 1-.44-1.14l-1.1-1.1a8 8 0 1 1 1.41-1.41l.01-.01zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"/>
         </svg>
-      </div>
-      <div>
-        <button id="profile-btn" class="relative block h-8 w-8 rounded-full overflow-hidden border-2 border-gray-200 z-20">
+      </button>
+      <button id="btm-profile-btn" class="flex items-center w-1/3 h-full">
+        <div class="mx-auto flex items-center h-10 w-10 rounded-full overflow-hidden border-2 border-gray-200 z-20">
           <img class="h-full w-full object-cover" src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80" alt="Profile picture" />
-        </button>
+        </div>
+      </button>
+    </div>
+    <div style="top: 75px; right: 24px;" class="fixed w-56 h-12 text-right overflow-hidden">
+      <span class="inline-block">Fetching data from Gaia...</span>
+    </div>
+    <button id="bg-btm-save-btn" tabindex="-1" class="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-10"></button>
+    <div id="btm-save-dialog" class="px-4 pt-6 pb-6 fixed inset-x-0 bottom-0 bg-white border border-gray-200 rounded-t-lg shadow-xl z-20">
+      <input class="px-4 py-2 w-full bg-white text-gray-900 border border-gray-600 rounded-full focus:outline-none" type="text" placeholder="https://" value=""/>
+      <p class="pt-3 text-red-500">Look like it's not a link. Save it anyway?</p>
+      <div class="pt-3">
+        <button class="px-5 py-2 bg-gray-900 text-base text-white font-medium rounded-full shadow-sm hover:bg-gray-800 active:bg-black">Save</button>
+        <button class="ml-2 underline">Cancel</button>
       </div>
     </div>
   </div>
@@ -152,6 +189,20 @@
         $("#save-dialog").toggle(false);
         $("#bg-save-btn").toggle(false);
       });
+
+      // bottom save a new link
+      $("#btm-save-dialog").hide();
+      $("#bg-btm-save-btn").hide();
+      $("#btm-save-btn").click(function() {
+        $("#btm-save-dialog").toggle();
+        $("#bg-btm-save-btn").toggle();
+      });
+      $("#bg-btm-save-btn").click(function() {
+        $("#btm-save-dialog").toggle(false);
+        $("#bg-btm-save-btn").toggle(false);
+      });
+
+
 
       // link options
       // option-btn

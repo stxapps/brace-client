@@ -10,6 +10,7 @@ module.exports = {
         'purple-blockstack': '#211F6D'
       },
       spacing: {
+        '7': '1.75rem',
         '14': '3.5rem',
         '28': '7rem',
         '36': '9rem',
@@ -48,7 +49,13 @@ module.exports = {
       },
       inset: {
         '1/2': '50%',
-      }
+      },
+      minHeight: {
+        '14': '3.5rem',
+      },
+      fontSize: {
+        '2xl-extra': '1.625rem',
+      },
     }
   },
   variants: {

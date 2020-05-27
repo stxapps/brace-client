@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="/favicon.ico">
+  <title>Brace - Save links to visit later</title>
+  <link rel="stylesheet" href="/css/tailwind.css">
+  <script src="/js/jquery-3.4.1.js"></script>
+</head>
+<body>
+  <noscript>
+    <strong>We're sorry but brace.to doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+  </noscript>
+  <div id="app" class="min-h-screen antialiased">
+<header class="mx-auto px-4 flex justify-between items-center max-w-6xl min-h-14 md:px-6 lg:px-8">
+      <div class="relative">
+        <img class="h-8 md:hidden" src="/img/logo-short.svg" alt="Brace logo" />
+        <img class="hidden h-6 md:block" src="/img/logo-full.svg" alt="Brace logo" />
+        <span class="absolute text-xs" style="top: -9px; right: -26px">beta</span>
+      </div>
+      <div class="hidden md:flex md:justify-end md:items-center">
+        <div class="relative">
+          <button id="save-btn" class="relative w-8 h-7 bg-gray-900 rounded-lg shadow-sm hover:bg-gray-800 active:bg-black z-20">
+            <svg class="mx-auto w-4 text-white" viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 1V13M1 6.95139H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="relative ml-6 w-48 lg:w-56">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+            <svg class="h-6 w-6 text-gray-600" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16.32 14.9l1.1 1.1c.4-.02.83.13 1.14.44l3 3a1.5 1.5 0 0 1-2.12 2.12l-3-3a1.5 1.5 0 0 1-.44-1.14l-1.1-1.1a8 8 0 1 1 1.41-1.41l.01-.01zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"/>
+            </svg>
+          </div>
+          <input class="block pl-10 pr-4 py-1 w-full bg-gray-200 text-gray-900 border border-transparent rounded-full focus:outline-none focus:bg-white focus:border-gray-300" placeholder="Search"/>
+        </div>
+        <div class="relative ml-6">
+          <button id="profile-btn" class="relative block h-8 w-8 rounded-full overflow-hidden border-2 border-gray-200 z-20">
+            <img class="h-full w-full object-cover" src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80" alt="Profile picture" />
+          </button>
+        </div>
+      </div>
+    </header>
+    <section class="px-4 pt-16 pb-16 md:px-6 md:pt-24 lg:px-8">
+      <div style="border-radius: 1.5rem;" class="mx-auto px-4 pt-12 pb-12 w-full max-w-3xl bg-gray-200">
+        <img class="mx-auto h-16" src="/img/undraw-link.svg" alt="unDraw link icon" />
+        <p class="mt-4 text-lg text-gray-900 text-center">Get started saving links</p>
+        <button class="mx-auto mt-4 px-4 py-2 flex items-center bg-gray-900 rounded-lg shadow-sm hover:bg-gray-800 active:bg-black">
+          <svg class="inline w-4 text-white" viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 1V13M1 6.95139H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="ml-2 mr-1 text-lg text-white font-semibold">Save link</span>
+        </button>
+        <p class="mt-12 text-lg text-gray-900 text-center">Or type 'brace.to/' in front of any link in Address bar</p>
+        <img class="mt-4 mx-auto w-full max-w-lg" src="/img/save-link-at-url-bar.svg" alt="Save link at address bar" />
+      </div>
+    </section>
+  </div>
+</body>
+</html>
