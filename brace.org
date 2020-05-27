@@ -2,6 +2,7 @@
 ** getpocket.com
 ** saved.io
 ** pinterest
+** raindrop.io
 * Same Name
 ** brace.io
 - www.studioanthonylane.com/Brace-io
