@@ -56,6 +56,10 @@ module.exports = {
       fontSize: {
         '2xl-extra': '1.625rem',
       },
+      zIndex: {
+        '41': '41',
+        '51': '51',
+      },
     }
   },
   variants: {
