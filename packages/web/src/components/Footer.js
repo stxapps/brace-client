@@ -4,12 +4,12 @@ class Footer extends React.Component {
 
   render() {
     return (
-      <footer className="mx-auto px-4 pt-32 pb-6 max-w-6xl md:px-6 lg:px-8">
+      <footer className="mx-auto px-4 pt-28 pb-6 max-w-6xl md:px-6 lg:px-8">
         <div className="text-left md:text-center">
-          <a className="block text-base text-gray-700 md:inline md:mr-4" href="#about">About</a>
-          <a className="mt-4 block text-base text-gray-700 md:inline md:mt-0 md:mr-4" href="#terms">Terms of use</a>
-          <a className="mt-4 block text-base text-gray-700 md:inline md:mt-0 md:mr-4" href="#privacy">Privacy</a>
-          <a className="mt-4 block text-base text-gray-700 md:inline md:mt-0" href="#support">Support</a>
+          <a className="block text-base text-gray-700 md:inline md:mr-4" href="/#about">About</a>
+          <a className="mt-4 block text-base text-gray-700 md:inline md:mt-0 md:mr-4" href="/#terms">Terms of use</a>
+          <a className="mt-4 block text-base text-gray-700 md:inline md:mt-0 md:mr-4" href="/#privacy">Privacy</a>
+          <a className="mt-4 block text-base text-gray-700 md:inline md:mt-0" href="/#support">Support</a>
         </div>
         <div className="pt-6 flex justify-start items-center md:justify-center">
           <a href="https://twitter.com/bracedotto">

@@ -12,6 +12,7 @@ import {
   LIST_NAME_POPUP,
   PC_100, PC_50, PC_33,
   TRASH,
+  SHOW_COMMANDS,
 } from '../types/const';
 import { getListNames, getLinks } from '../selectors';
 
@@ -205,7 +206,7 @@ class Main extends React.Component {
 
     return (
       <React.Fragment>
-        <TopBar columnWidth={this.state.columnWidth} />
+        <TopBar rightPane={SHOW_COMMANDS} columnWidth={this.state.columnWidth} />
         {this.renderListName()}
         {isEmpty ? this.renderEmpty() : this.renderLinks()}
         <BottomBar columnWidth={this.state.columnWidth} />

@@ -7,6 +7,9 @@ import Landing from './Landing'
 import Main from './Main'
 import Adding from './Adding'
 import About from './About'
+import Terms from './Terms'
+import Privacy from './Privacy'
+import Support from './Support'
 
 class App extends React.Component {
 
@@ -24,6 +27,15 @@ class App extends React.Component {
 
     if (hrefObj.hash === '#about') {
       return <About />;
+    }
+    if (hrefObj.hash === '#terms') {
+      return <Terms />;
+    }
+    if (hrefObj.hash === '#privacy') {
+      return <Privacy />;
+    }
+    if (hrefObj.hash === '#support') {
+      return <Support />;
     }
 
     if (this.props.isUserSignedIn) {

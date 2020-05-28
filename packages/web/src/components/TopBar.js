@@ -3,10 +3,11 @@ import { connect } from 'react-redux';
 import GracefulImage from 'react-graceful-image';
 import jdenticon from "jdenticon";
 
-import { signOut, updatePopup, addLink, updateSearchString } from '../actions';
+import { signIn, signOut, updatePopup, addLink, updateSearchString } from '../actions';
 import {
   ADD_POPUP, PROFILE_POPUP,
-  PC_50, PC_33, SIGN_IN, NAV,
+  PC_50, PC_33,
+  SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS,
 } from '../types/const';
 import { validateUrl } from '../utils';
 
@@ -107,16 +108,7 @@ class TopBar extends React.Component {
     );
   }
 
-  renderRightPaneSignIn() {
-
-    return (
-      <button onClick={() => this.props.signIn()} className="my-px block h-14">
-        <span className="px-3 py-1 text-base text-gray-700 border border-gray-700 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900">Sign in</span>
-      </button>
-    );
-  }
-
-  renderRightPaneNav() {
+  renderCommands() {
 
     const isRightPaneShown = [PC_50, PC_33].includes(this.props.columnWidth);
     if (!isRightPaneShown) return null;
@@ -151,16 +143,24 @@ class TopBar extends React.Component {
     );
   }
 
+  renderSignInBtn() {
+
+    return (
+      <button onClick={() => this.props.signIn()} className="my-px block h-14">
+        <span className="px-3 py-1 text-base text-gray-700 border border-gray-700 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900">Sign in</span>
+      </button>
+    );
+  }
+
   render() {
 
-    const rightPaneType = this.props.rightPane;
+    const rightPaneProp = this.props.rightPane;
 
-    let rightPane = null;
-    if (rightPaneType === SIGN_IN) {
-      rightPane = this.renderRightPaneSignIn();
-    } else if (rightPaneType === NAV) {
-      rightPane = this.renderRightPaneNav();
-    }
+    let rightPane;
+    if (rightPaneProp === SHOW_BLANK) rightPane = null;
+    else if (rightPaneProp === SHOW_SIGN_IN) rightPane = this.renderSignInBtn();
+    else if (rightPaneProp === SHOW_COMMANDS) rightPane = this.renderCommands();
+    else throw new Error(`Invalid rightPane: ${rightPaneProp}`);
 
     return (
       <header className="mx-auto px-4 flex justify-between items-center max-w-6xl min-h-14 md:px-6 lg:px-8">
@@ -186,7 +186,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
-  signOut, updatePopup, addLink, updateSearchString,
+  signIn, signOut, updatePopup, addLink, updateSearchString,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TopBar);

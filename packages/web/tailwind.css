@@ -194,6 +194,10 @@
   }
 }
 
+.hyphens-auto {
+  hyphens: auto;
+}
+
 .e-mail:before {
   content: attr(data-website) "\0040" attr(data-user);
   unicode-bidi: bidi-override;

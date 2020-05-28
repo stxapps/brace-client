@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { signUp } from '../actions';
-import { SIGN_IN } from '../types/const';
+import { SHOW_SIGN_IN } from '../types/const';
 
 import TopBar from './TopBar';
 import Footer from './Footer';
@@ -20,7 +20,7 @@ class Landing extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <TopBar rightPane={SIGN_IN} />
+        <TopBar rightPane={SHOW_SIGN_IN} />
         <section className="mx-auto px-4 pt-16 pb-4 flex items-center max-w-6xl md:px-6 lg:px-8 lg:pt-12">
           <div className="w-full md:w-45/100 lg:w-55/100">
             <img className="mx-auto w-full max-w-sm object-contain md:hidden" src={saveLinksToVisitLater} alt="Save links to visit later" />
@@ -64,7 +64,7 @@ class Landing extends React.Component {
             <div className="mt-16 w-full md:w-1/2 lg:pr-1/6">
               <svg className="mx-auto h-14 text-pink-500" viewBox="0 0 54 56" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path d="M53.7143 48.416C53.7097 51.9703 51.04 53.7143 48.5943 53.7143C46.5303 53.7143 44.5714 52.4708 44.5714 50.0206C44.5714 47.4971 47.3165 45.1794 50.32 45.1794C50.688 45.1794 51.0583 45.2137 51.4285 45.2868V35.4308L37.7143 38.24V50.6971C37.7097 54.2537 35.0171 56 32.5531 56C30.4823 56 28.5714 54.7611 28.5714 52.32C28.5714 49.792 31.3165 47.4628 34.3268 47.4628C34.6925 47.4628 35.0628 47.4971 35.4331 47.5703V32.6674L53.7143 28.5714V48.416Z" />
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M25.1429 29.3333C27.4539 29.3333 29.3333 27.4539 29.3333 25.1429C29.3333 22.8318 27.4539 20.9524 25.1429 20.9524C22.8318 20.9524 20.9524 22.8318 20.9524 25.1429C20.9524 27.4539 22.8318 29.3333 25.1429 29.3333ZM50.1278 27.9761C50.2321 27.0461 50.2857 26.1007 50.2857 25.1429C50.2857 11.2577 39.028 0 25.1429 0C11.2577 0 0 11.2577 0 25.1429C0 39.028 11.2577 50.2857 25.1429 50.2857C25.9625 50.2857 26.7729 50.2465 27.5725 50.1698C28.1743 48.0629 30.58 46.32 33.184 46.32C33.5497 46.32 33.92 46.3543 34.2903 46.4274V31.5246L50.1278 27.9761ZM14.8531 32.3526C15.6933 33.551 16.7368 34.5945 17.9352 35.4347L14.497 43.1682C11.4589 41.3684 8.91943 38.829 7.11962 35.7909L14.8531 32.3526ZM25.1429 16.7619C29.7712 16.7619 33.5238 20.5145 33.5238 25.1429C33.5238 29.7712 29.7712 33.5238 25.1429 33.5238C20.5145 33.5238 16.7619 29.7712 16.7619 25.1429C16.7619 20.5145 20.5145 16.7619 25.1429 16.7619ZM35.7888 7.11962C38.8289 8.91943 41.3684 11.4589 43.1682 14.499L35.4347 17.9352C34.5924 16.7368 33.549 15.6933 32.3505 14.8531L35.7888 7.11962Z" />
+                <path fillRule="evenodd" clipRule="evenodd" d="M25.1429 29.3333C27.4539 29.3333 29.3333 27.4539 29.3333 25.1429C29.3333 22.8318 27.4539 20.9524 25.1429 20.9524C22.8318 20.9524 20.9524 22.8318 20.9524 25.1429C20.9524 27.4539 22.8318 29.3333 25.1429 29.3333ZM50.1278 27.9761C50.2321 27.0461 50.2857 26.1007 50.2857 25.1429C50.2857 11.2577 39.028 0 25.1429 0C11.2577 0 0 11.2577 0 25.1429C0 39.028 11.2577 50.2857 25.1429 50.2857C25.9625 50.2857 26.7729 50.2465 27.5725 50.1698C28.1743 48.0629 30.58 46.32 33.184 46.32C33.5497 46.32 33.92 46.3543 34.2903 46.4274V31.5246L50.1278 27.9761ZM14.8531 32.3526C15.6933 33.551 16.7368 34.5945 17.9352 35.4347L14.497 43.1682C11.4589 41.3684 8.91943 38.829 7.11962 35.7909L14.8531 32.3526ZM25.1429 16.7619C29.7712 16.7619 33.5238 20.5145 33.5238 25.1429C33.5238 29.7712 29.7712 33.5238 25.1429 33.5238C20.5145 33.5238 16.7619 29.7712 16.7619 25.1429C16.7619 20.5145 20.5145 16.7619 25.1429 16.7619ZM35.7888 7.11962C38.8289 8.91943 41.3684 11.4589 43.1682 14.499L35.4347 17.9352C34.5924 16.7368 33.549 15.6933 32.3505 14.8531L35.7888 7.11962Z" />
               </svg>
               <p className="mt-2 mx-auto w-48 text-2xl text-gray-800 font-medium leading-tight text-center">music you found in your feed to listen later</p>
             </div>
@@ -109,8 +109,8 @@ class Landing extends React.Component {
               </div>
               <div className="pt-16">
                 <svg className="h-6 md:mx-auto lg:h-8" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M24 48c13.255 0 24-10.745 24-24S37.255 0 24 0 0 10.745 0 24s10.745 24 24 24zm11.121-27.879a3 3 0 00-4.242-4.242L21 25.757l-3.879-3.878a3 3 0 10-4.242 4.242l6 6a3 3 0 004.242 0l12-12z" fill="#68D391" />
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M35.121 20.121a3 3 0 00-4.242-4.242L21 25.757l-3.879-3.878a3 3 0 10-4.242 4.242l6 6a3 3 0 004.242 0l12-12z" fill="#22543D" />
+                  <path fillRule="evenodd" clipRule="evenodd" d="M24 48c13.255 0 24-10.745 24-24S37.255 0 24 0 0 10.745 0 24s10.745 24 24 24zm11.121-27.879a3 3 0 00-4.242-4.242L21 25.757l-3.879-3.878a3 3 0 10-4.242 4.242l6 6a3 3 0 004.242 0l12-12z" fill="#68D391" />
+                  <path fillRule="evenodd" clipRule="evenodd" d="M35.121 20.121a3 3 0 00-4.242-4.242L21 25.757l-3.879-3.878a3 3 0 10-4.242 4.242l6 6a3 3 0 004.242 0l12-12z" fill="#22543D" />
                 </svg>
                 <p className="mt-2 text-2xl-extra text-white font-semibold leading-none md:text-center lg:text-3xl">Visit <br className="md:hidden" />anywhere, anytime</p>
                 <div className="mt-3 relative howitwork-gray-pb">
@@ -133,13 +133,13 @@ class Landing extends React.Component {
               <div style={{ borderRadius: '0.75rem' }} className="p-4 bg-gray-100 md:mr-2 lg:mx-auto lg:max-w-md">
                 <svg className="h-14" viewBox="0 0 78 78" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="39" cy="39" r="39" fill="#211F6D" />
-                  <path d="M22.5483 30.2583L38.5 21.2422M22.5483 30.2583L38.5 39.2744M22.5483 30.2583V48.2906M38.5 21.2422L54.4516 30.2583M38.5 21.2422V39.2744M38.5 39.2744L54.4516 30.2583M38.5 39.2744L54.4516 48.2906M38.5 39.2744V57.3067M38.5 39.2744L22.5483 48.2906M54.4516 30.2583V48.2906M22.5483 48.2906L38.5 57.3067M38.5 57.3067L54.4516 48.2906" stroke="white" stroke-width="2.01924" />
-                  <path d="M48.9032 33.379L54.4516 36.4133L60 33.2923V27.1371M48.9032 33.379V27.1371M48.9032 33.379L54.4516 30.258M60 27.1371L54.4516 30.258M60 27.1371L54.4516 24.0161L48.9032 27.1371M48.9032 27.1371L54.4516 30.258" stroke="white" stroke-width="2.01924" />
-                  <path d="M32.9517 24.3629L38.5 27.3972L44.0484 24.3629V18.121M32.9517 24.3629V18.121M32.9517 24.3629L38.5 21.2419M44.0484 18.121L38.5 21.2419M44.0484 18.121L38.5 15L32.9517 18.121M32.9517 18.121L38.5 21.2419" stroke="white" stroke-width="2.01924" />
-                  <path d="M28.0968 27.1371V33.379L22.5484 36.4133L17 33.379V27.1371M28.0968 27.1371L22.5484 30.258L17 27.1371M28.0968 27.1371L22.5484 24.0161L17 27.1371" stroke="white" stroke-width="2.01924" />
-                  <path d="M28.0968 45.1691V51.411L22.5484 54.4453M28.0968 45.1691L22.5484 48.29M28.0968 45.1691L22.5484 42.0481L17 45.1691M22.5484 54.4453L17 51.411V45.1691M22.5484 54.4453V48.29M17 45.1691L22.5484 48.29" stroke="white" stroke-width="2.01924" />
-                  <path d="M44.0484 54.1852V60.4271L38.5 63.4614M44.0484 54.1852L38.5 57.3061M44.0484 54.1852L38.5 51.0642L32.9517 54.1852M38.5 63.4614L32.9517 60.4271V54.1852M38.5 63.4614V57.3061M32.9517 54.1852L38.5 57.3061" stroke="white" stroke-width="2.01924" />
-                  <path d="M60 45.1691V51.411L54.4516 54.4453M60 45.1691L54.4516 48.29M60 45.1691L54.4516 42.0481L48.9032 45.1691M54.4516 54.4453L48.9032 51.411V45.1691M54.4516 54.4453V48.29M48.9032 45.1691L54.4516 48.29" stroke="white" stroke-width="2.01924" />
+                  <path d="M22.5483 30.2583L38.5 21.2422M22.5483 30.2583L38.5 39.2744M22.5483 30.2583V48.2906M38.5 21.2422L54.4516 30.2583M38.5 21.2422V39.2744M38.5 39.2744L54.4516 30.2583M38.5 39.2744L54.4516 48.2906M38.5 39.2744V57.3067M38.5 39.2744L22.5483 48.2906M54.4516 30.2583V48.2906M22.5483 48.2906L38.5 57.3067M38.5 57.3067L54.4516 48.2906" stroke="white" strokeWidth="2.01924" />
+                  <path d="M48.9032 33.379L54.4516 36.4133L60 33.2923V27.1371M48.9032 33.379V27.1371M48.9032 33.379L54.4516 30.258M60 27.1371L54.4516 30.258M60 27.1371L54.4516 24.0161L48.9032 27.1371M48.9032 27.1371L54.4516 30.258" stroke="white" strokeWidth="2.01924" />
+                  <path d="M32.9517 24.3629L38.5 27.3972L44.0484 24.3629V18.121M32.9517 24.3629V18.121M32.9517 24.3629L38.5 21.2419M44.0484 18.121L38.5 21.2419M44.0484 18.121L38.5 15L32.9517 18.121M32.9517 18.121L38.5 21.2419" stroke="white" strokeWidth="2.01924" />
+                  <path d="M28.0968 27.1371V33.379L22.5484 36.4133L17 33.379V27.1371M28.0968 27.1371L22.5484 30.258L17 27.1371M28.0968 27.1371L22.5484 24.0161L17 27.1371" stroke="white" strokeWidth="2.01924" />
+                  <path d="M28.0968 45.1691V51.411L22.5484 54.4453M28.0968 45.1691L22.5484 48.29M28.0968 45.1691L22.5484 42.0481L17 45.1691M22.5484 54.4453L17 51.411V45.1691M22.5484 54.4453V48.29M17 45.1691L22.5484 48.29" stroke="white" strokeWidth="2.01924" />
+                  <path d="M44.0484 54.1852V60.4271L38.5 63.4614M44.0484 54.1852L38.5 57.3061M44.0484 54.1852L38.5 51.0642L32.9517 54.1852M38.5 63.4614L32.9517 60.4271V54.1852M38.5 63.4614V57.3061M32.9517 54.1852L38.5 57.3061" stroke="white" strokeWidth="2.01924" />
+                  <path d="M60 45.1691V51.411L54.4516 54.4453M60 45.1691L54.4516 48.29M60 45.1691L54.4516 42.0481L48.9032 45.1691M54.4516 54.4453L48.9032 51.411V45.1691M54.4516 54.4453V48.29M48.9032 45.1691L54.4516 48.29" stroke="white" strokeWidth="2.01924" />
                 </svg>
                 <h3 className="mt-4 text-2xl text-gray-800 font-semibold leading-none">User-owned Identity</h3>
                 <p className="mt-3 text-lg text-gray-700 font-normal leading-normal">Your identity <span className="font-semibold">cannot</span> be locked, banned, or deleted by Brace.to. Your identity lives in blockchain and only you who have the private key can access it and control it.</p>
@@ -162,11 +162,11 @@ class Landing extends React.Component {
             <img className="absolute right-0 h-5 transform translate-x-0 translate-y-2 sm:translate-x-10" src={logoFullWhite} alt="Brace logo" />
           </div>
         </section>
-        <section className="py-24 flex justify-center bg-gray-100 md:py-32">
+        <section className="mb-4 py-24 flex justify-center bg-gray-100 md:py-32">
           <div className="relative">
             <img style={{ transform: 'translateX(-4.5rem)' }} className="mx-auto static h-16 md:absolute md:top-0 md:left-0 md:transform" src={undrawLink} alt="unDraw link icon" />
             <h2 className="mt-4 text-4xl text-gray-900 font-bold leading-none text-center md:text-5xl">Start saving links</h2>
-            <button className="mt-4 mx-auto px-6 block h-12 bg-gray-900 text-xl text-white font-semibold rounded-full shadow-lg hover:bg-gray-800 active:bg-black">Get started now</button>
+            <button onClick={() => this.props.signUp()} className="mt-4 mx-auto px-6 block h-12 bg-gray-900 text-xl text-white font-semibold rounded-full shadow-lg hover:bg-gray-800 active:bg-black">Get started now</button>
           </div>
         </section>
         <Footer />

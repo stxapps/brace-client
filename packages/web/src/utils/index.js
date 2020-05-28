@@ -299,7 +299,7 @@ export const validateUrl = (url) => {
 
   const urlObj = new Url(url, {});
   if (!urlObj.hostname.match(/^([-a-zA-Z0-9@:%_+~#=]{2,256}\.)+[a-z]{2,6}$/)) {
-    return [false, 'Look like invalid link. Are you sure?', true];
+    return [false, 'Looks like invalid link. Are you sure?', true];
   }
 
   return [true, '', null];
@@ -494,3 +494,13 @@ export const randomDecor = (text) => {
 
   return decor;
 };
+
+export const truncateString = (s, n) => {
+  if (!(typeof s === 'string' || s instanceof String)) return s;
+
+  if (s.length <= n) {
+    return s;
+  }
+
+  return s.slice(0, n) + '...';
+}
