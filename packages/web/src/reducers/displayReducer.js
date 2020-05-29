@@ -32,11 +32,13 @@ export default (state = initialState, action) => {
     return {
       ...state,
       ...action.payload.display,
+      searchString: '',
       isAddPopupShown: false,
       isSearchPopupShown: false,
       isProfilePopupShown: false,
       isListNamePopupShown: false,
       isConfirmDeletePopupShown: false,
+      status: null,
     };
   }
 

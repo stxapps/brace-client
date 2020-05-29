@@ -6,7 +6,6 @@ import jdenticon from "jdenticon";
 import { signIn, signOut, updatePopup, addLink, updateSearchString } from '../actions';
 import {
   ADD_POPUP, PROFILE_POPUP,
-  PC_50, PC_33,
   SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS,
 } from '../types/const';
 import { validateUrl } from '../utils';
@@ -42,6 +41,10 @@ class TopBar extends React.Component {
 
   onAddInputChange = (e) => {
     this.setState({ url: e.target.value, msg: '', isAskingConfirm: false });
+  }
+
+  onAddInputKeyPress = (e) => {
+    if (e.key === "Enter") this.onAddOkBtnClick();
   }
 
   onAddOkBtnClick = () => {
@@ -83,17 +86,15 @@ class TopBar extends React.Component {
     return (
       <React.Fragment>
         <button onClick={this.onAddCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-40"></button>
-        <div className="absolute right-0 mt-2 py-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-41">
-          <input
-            type="text"
-            placeholder="https://"
-            value={url}
-            onChange={this.onAddInputChange} />
-          <button onClick={this.onAddOkBtnClick}>{isAskingConfirm ? 'Sure' : 'Save'}</button>
-          <button onClick={this.onAddCancelBtnClick}>Cancel</button>
-          <p className="text-red-500">{msg}</p>
+        <div className="mt-2 px-4 pt-6 pb-6 absolute right-0 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-41 md:w-96">
+          <input onChange={this.onAddInputChange} onKeyPress={this.onAddInputKeyPress} className="px-4 py-2 w-full bg-white text-gray-900 border border-gray-600 rounded-full focus:outline-none" type="text" placeholder="https://" value={url} autoFocus />
+          <p className="pt-3 text-red-600">{msg}</p>
+          <div className="pt-3">
+            <button onClick={this.onAddOkBtnClick} className="px-5 py-2 bg-gray-900 text-base text-white font-medium rounded-full shadow-sm hover:bg-gray-800 active:bg-black">{isAskingConfirm ? 'Sure' : 'Save'}</button>
+            <button onClick={this.onAddCancelBtnClick} className="ml-2 underline">Cancel</button>
+          </div>
         </div>
-      </React.Fragment >
+      </React.Fragment>
     );
   }
 
@@ -101,8 +102,9 @@ class TopBar extends React.Component {
     return (
       <React.Fragment>
         <button onClick={this.onProfileCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-40"></button>
-        <div id="profile-menu" className="absolute right-0 mt-2 py-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-41">
-          <button onClick={this.onSignOutBtnClick} className="block px-4 py-2 text-gray-800 hover:bg-gray-400">Sign out</button>
+        <div className="mt-2 py-2 absolute right-0 w-32 bg-white border border-gray-200 rounded-lg shadow-xl z-41">
+          <a className="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400" href="/#support">Support</a>
+          <button onClick={this.onSignOutBtnClick} className="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400">Sign out</button>
         </div>
       </React.Fragment>
     );
@@ -110,36 +112,34 @@ class TopBar extends React.Component {
 
   renderCommands() {
 
-    const isRightPaneShown = [PC_50, PC_33].includes(this.props.columnWidth);
-    if (!isRightPaneShown) return null;
-
     const { isAddPopupShown, isProfilePopupShown } = this.props;
     const { searchString, updateSearchString } = this.props;
 
     return (
-      <React.Fragment>
-        <div className="relative p-3">
-          <button onClick={this.onAddBtnClick} className={`relative px-2 py-2 bg-gray-900 rounded-lg shadow-sm hover:bg-gray-800 active:bg-black ${isAddPopupShown && 'z-41'}`}>
-            <svg className="w-4 text-white lg:w-5" viewBox="0 0 18 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9.258 1v12M1 6.5h16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <div className="flex justify-end items-center">
+        <div className="relative flex items-center">
+          <button onClick={this.onAddBtnClick} className={`relative w-8 h-7 bg-gray-900 rounded-lg shadow-sm hover:bg-gray-800 active:bg-black ${isAddPopupShown && 'z-41'}`}>
+            <svg className="mx-auto w-4 text-white" viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
           {isAddPopupShown && this.renderAddPopup()}
         </div>
-        <div>
-          <input
-            type="text"
-            placeholder="Search"
-            value={searchString}
-            onChange={e => updateSearchString(e.target.value)} />
+        <div className="relative ml-4 w-48 lg:w-56">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+            <svg className="h-6 w-6 text-gray-600" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16.32 14.9l1.1 1.1c.4-.02.83.13 1.14.44l3 3a1.5 1.5 0 0 1-2.12 2.12l-3-3a1.5 1.5 0 0 1-.44-1.14l-1.1-1.1a8 8 0 1 1 1.41-1.41l.01-.01zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
+            </svg>
+          </div>
+          <input onChange={e => updateSearchString(e.target.value)} className="py-1 pl-10 pr-4 block w-full bg-gray-200 text-gray-900 border border-transparent rounded-full focus:outline-none focus:bg-white focus:border-gray-300" type="text" placeholder="Search" value={searchString} />
         </div>
-        <div className="relative ml-6">
-          <button onClick={this.onProfileBtnClick} className={`relative block h-8 w-8 bg-white rounded-full overflow-hidden border-2 border-gray-200 ${isProfilePopupShown && 'z-41'}`}>
-            <GracefulImage className="h-full w-full object-cover" src={this.userImage} alt="Profile" />
+        <div className="relative ml-4">
+          <button onClick={this.onProfileBtnClick} className={`relative block h-8 w-8 rounded-lg overflow-hidden border-2 border-gray-200 ${isProfilePopupShown && 'z-41'}`}>
+            <GracefulImage className="h-full w-full bg-white object-cover" src={this.userImage} alt="Profile" />
           </button>
           {isProfilePopupShown && this.renderProfilePopup()}
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 

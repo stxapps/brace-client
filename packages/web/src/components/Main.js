@@ -12,7 +12,7 @@ import {
   LIST_NAME_POPUP,
   PC_100, PC_50, PC_33,
   TRASH,
-  SHOW_COMMANDS,
+  SHOW_BLANK, SHOW_COMMANDS,
 } from '../types/const';
 import { getListNames, getLinks } from '../selectors';
 
@@ -38,8 +38,8 @@ class Main extends React.Component {
     if (window.history.state === null) {
       this.props.updateHistoryPosition(BACK_POPUP);
 
-      window.history.replaceState(BACK_DECIDER, null, window.location.href);
-      window.history.pushState(BACK_POPUP, null, window.location.href);
+      window.history.replaceState(BACK_DECIDER, '', window.location.href);
+      window.history.pushState(BACK_POPUP, '', window.location.href);
     }
 
     window.addEventListener('resize', this.updateColumnWidth);
@@ -56,12 +56,9 @@ class Main extends React.Component {
 
   getColumnWidth = () => {
     let columnWidth = PC_100;
-    if (window.innerWidth >= 640) {
-      columnWidth = PC_50;
-    }
-    if (window.innerWidth >= 768) {
-      columnWidth = PC_33;
-    }
+    if (window.innerWidth >= 640) columnWidth = PC_50;
+    if (window.innerWidth >= 1024) columnWidth = PC_33;
+
     return columnWidth;
   }
 
@@ -202,14 +199,15 @@ class Main extends React.Component {
       return <Loading />;
     }
 
+    const topBarRightPane = [PC_50, PC_33].includes(this.state.columnWidth) ? SHOW_COMMANDS : SHOW_BLANK;
     const isEmpty = links.length === 0;
 
     return (
       <React.Fragment>
-        <TopBar rightPane={SHOW_COMMANDS} columnWidth={this.state.columnWidth} />
+        <TopBar rightPane={topBarRightPane} />
         {this.renderListName()}
         {isEmpty ? this.renderEmpty() : this.renderLinks()}
-        <BottomBar columnWidth={this.state.columnWidth} />
+        {this.state.columnWidth === PC_100 && <BottomBar />}
         <StatusPopup />
       </React.Fragment>
     );

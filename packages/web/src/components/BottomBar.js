@@ -6,14 +6,10 @@ import jdenticon from "jdenticon";
 import { signOut, updatePopup, addLink, updateSearchString } from '../actions';
 import {
   ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
-  PC_100
 } from '../types/const';
-import { subtractPixel, validateUrl } from '../utils';
+import { validateUrl } from '../utils';
 
-const HEIGHT = '80px';
-const ADD_POPUP_HEIGHT = '80px';
-const SEARCH_POPUP_HEIGHT = '40px';
-const PROFILE_POPUP_HEIGHT = '80px';
+const BAR_HEIGHT = '3.5rem';
 
 class BottomBar extends React.Component {
 
@@ -21,12 +17,15 @@ class BottomBar extends React.Component {
     super(props);
 
     this.initialState = {
-      didAnimationEnd: true,
       url: '',
       msg: '',
       isAskingConfirm: false,
     };
     this.state = { ...this.initialState };
+
+    this.addInput = React.createRef();
+    this.searchInput = React.createRef();
+    this.searchClearBtn = React.createRef();
 
     this.userImage = props.userImage;
     if (this.userImage === null) {
@@ -36,18 +35,19 @@ class BottomBar extends React.Component {
   }
 
   onAddBtnClick = () => {
+    this.addInput.current.focus();
+
     if (this.props.isAddPopupShown) return;
-
     this.props.updatePopup(ADD_POPUP, true);
-    this.setState({ ...this.initialState, didAnimationEnd: false });
-  }
-
-  onAddPopupAnimationEnd = () => {
-    this.setState({ didAnimationEnd: true });
+    this.setState({ ...this.initialState });
   }
 
   onAddInputChange = (e) => {
     this.setState({ url: e.target.value, msg: '', isAskingConfirm: false });
+  }
+
+  onAddInputKeyPress = (e) => {
+    if (e.key === "Enter") this.onAddOkBtnClick();
   }
 
   onAddOkBtnClick = () => {
@@ -61,26 +61,37 @@ class BottomBar extends React.Component {
 
     this.props.addLink(this.state.url);
     this.props.updatePopup(ADD_POPUP, false);
-
-    this.setState({ didAnimationEnd: false });
   }
 
   onAddCancelBtnClick = () => {
     this.props.updatePopup(ADD_POPUP, false);
-    this.setState({ didAnimationEnd: false });
   }
 
   onSearchBtnClick = () => {
+    this.searchInput.current.focus();
+
     if (this.props.isSearchPopupShown) return;
     this.props.updatePopup(SEARCH_POPUP, true);
   }
 
-  onSearchCancelBtnClick = () => {
-    if (this.props.searchString !== '') {
-      this.props.updateSearchString('');
-      return;
-    }
+  onSearchInputChange = (e) => {
+    const value = e.target.value;
 
+    this.props.updateSearchString(value);
+
+    if (value.length === 0) this.searchClearBtn.current.classList.add("hidden");
+    else this.searchClearBtn.current.classList.remove("hidden");
+  }
+
+  onSearchClearBtnClick = () => {
+    this.props.updateSearchString('');
+    this.searchClearBtn.current.classList.add("hidden")
+    this.searchInput.current.focus();
+  }
+
+  onSearchCancelBtnClick = () => {
+    this.props.updateSearchString('');
+    this.searchClearBtn.current.classList.add("hidden")
     this.props.updatePopup(SEARCH_POPUP, false);
   }
 
@@ -88,71 +99,53 @@ class BottomBar extends React.Component {
     if (this.props.isProfilePopupShown) return;
 
     this.props.updatePopup(PROFILE_POPUP, true);
-    this.setState({ didAnimationEnd: false });
-  }
-
-  onProfilePopupAnimationEnd = () => {
-    this.setState({ didAnimationEnd: true });
   }
 
   onProfileCancelBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
-    this.setState({ didAnimationEnd: false });
   }
 
   onSignOutBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
     this.props.signOut()
-
-    this.setState({ didAnimationEnd: false });
   }
 
   renderAddPopup() {
 
     const { isAddPopupShown } = this.props;
-    const { didAnimationEnd, url, msg, isAskingConfirm } = this.state;
-
-    const cancelBtn = isAddPopupShown && didAnimationEnd ? <button onClick={this.onAddCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-40"></button> : null;
-
-    const style = {}
-    style.height = ADD_POPUP_HEIGHT;
-    style.bottom = isAddPopupShown ? HEIGHT : '0px';
-    style.zIndex = isAddPopupShown && didAnimationEnd ? 41 : 20;
-    style.transitionProperty = 'bottom';
+    const { url, msg, isAskingConfirm } = this.state;
 
     return (
       <React.Fragment>
-        {cancelBtn}
-        <div onTransitionEnd={this.onAddPopupAnimationEnd} style={style} className="fixed inset-x-0 p-2 bg-white border border-gray-200 rounded-lg shadow-xl duration-300 ease-in-out">
-          <input
-            type="text"
-            placeholder="https://"
-            value={url}
-            onChange={this.onAddInputChange} />
-          <button onClick={this.onAddOkBtnClick}>{isAskingConfirm ? 'Sure' : 'Save'}</button>
-          <button onClick={this.onAddCancelBtnClick}>Cancel</button>
-          <p className="text-red-500">{msg}</p>
+        <button onClick={this.onAddCancelBtnClick} tabIndex={-1} className={`${!isAddPopupShown && 'hidden'} fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-40`}></button>
+        <div className={`px-4 pt-6 pb-6 fixed inset-x-0 bottom-0 bg-white border border-gray-200 rounded-t-lg shadow-xl transform ${!isAddPopupShown && 'translate-y-full'} transition duration-300 ease-in-out z-41`}>
+          <input ref={this.addInput} onChange={this.onAddInputChange} onKeyPress={this.onAddInputKeyPress} className="px-4 py-2 w-full bg-white text-gray-900 border border-gray-600 rounded-full focus:outline-none" type="text" placeholder="https://" value={url} />
+          <p className="pt-3 text-red-500">{msg}</p>
+          <div className="pt-3">
+            <button onClick={this.onAddOkBtnClick} className="px-5 py-2 bg-gray-900 text-base text-white font-medium rounded-full shadow-sm hover:bg-gray-800 active:bg-black">{isAskingConfirm ? 'Sure' : 'Save'}</button>
+            <button onClick={this.onAddCancelBtnClick} className="ml-2 underline">Cancel</button>
+          </div>
         </div>
-      </React.Fragment >
+      </React.Fragment>
     );
   }
 
   renderSearchPopup() {
-    const { isSearchPopupShown, searchString, updateSearchString } = this.props;
+    const { isSearchPopupShown, searchString } = this.props;
 
-    const style = {}
-    style.height = SEARCH_POPUP_HEIGHT;
-    style.bottom = isSearchPopupShown ? HEIGHT : subtractPixel(HEIGHT, SEARCH_POPUP_HEIGHT);
-    style.transitionProperty = 'bottom';
+    const style = { bottom: BAR_HEIGHT }
 
     return (
-      <div style={style} className="fixed inset-x-0 bg-white border-t-2 border-gray-900 duration-150 ease-in-out z-10">
-        <input
-          type="text"
-          placeholder="Search"
-          value={searchString}
-          onChange={e => updateSearchString(e.target.value)} />
-        <button onClick={this.onSearchCancelBtnClick}>Cancel</button>
+      <div style={style} className={`px-2 py-2 fixed inset-x-0 flex justify-between items-center bg-white border border-gray-200 transform ${!isSearchPopupShown && 'translate-y-full'} transition duration-200 ease-in-out z-10`}>
+        <div className="relative w-full">
+          <input ref={this.searchInput} onChange={this.onSearchInputChange} className="pl-4 pr-8 py-1 flex-grow-1 flex-shrink w-full bg-white text-gray-900 border border-gray-600 rounded-full focus:outline-none" type="text" placeholder="Search" value={searchString} />
+          <button ref={this.searchClearBtn} onClick={this.onSearchClearBtnClick} className="hidden absolute inset-y-0 right-0 flex items-center pr-2">
+            <svg className="h-5 text-gray-600 cursor-pointer" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM8.70711 7.29289C8.31658 6.90237 7.68342 6.90237 7.29289 7.29289C6.90237 7.68342 6.90237 8.31658 7.29289 8.70711L8.58579 10L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L10 11.4142L11.2929 12.7071C11.6834 13.0976 12.3166 13.0976 12.7071 12.7071C13.0976 12.3166 13.0976 11.6834 12.7071 11.2929L11.4142 10L12.7071 8.70711C13.0976 8.31658 13.0976 7.68342 12.7071 7.29289C12.3166 6.90237 11.6834 6.90237 11.2929 7.29289L10 8.58579L8.70711 7.29289Z" />
+            </svg>
+          </button>
+        </div>
+        <button onClick={this.onSearchCancelBtnClick} className="ml-2 flex-grow-0 flex-shrink-0 h-10 underline">Cancel</button>
       </div>
     );
   }
@@ -160,21 +153,13 @@ class BottomBar extends React.Component {
   renderProfilePopup() {
 
     const { isProfilePopupShown } = this.props;
-    const { didAnimationEnd } = this.state;
-
-    const cancelBtn = isProfilePopupShown && didAnimationEnd ? <button onClick={this.onProfileCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-40"></button> : null;
-
-    const style = {}
-    style.height = PROFILE_POPUP_HEIGHT;
-    style.bottom = isProfilePopupShown ? HEIGHT : '0px';
-    style.zIndex = isProfilePopupShown && didAnimationEnd ? 41 : 20;
-    style.transitionProperty = 'bottom';
 
     return (
       <React.Fragment>
-        {cancelBtn}
-        <div onTransitionEnd={this.onProfilePopupAnimationEnd} style={style} className="fixed inset-x-0 p-2 bg-white border border-gray-200 rounded-lg shadow-xl duration-300 ease-in-out">
-          <button onClick={this.onSignOutBtnClick}>Sign out</button>
+        <button onClick={this.onProfileCancelBtnClick} tabIndex={-1} className={`${!isProfilePopupShown && 'hidden'} fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-40`}></button>
+        <div className={`py-4 fixed inset-x-0 bottom-0 bg-white border border-gray-200 rounded-t-lg shadow-xl transform ${!isProfilePopupShown && 'translate-y-full'} transition duration-300 ease-in-out z-41`}>
+          <a className="py-4 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400" href="/#support">Support</a>
+          <button onClick={this.onSignOutBtnClick} className="py-4 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400">Sign out</button>
         </div>
       </React.Fragment >
     );
@@ -182,23 +167,28 @@ class BottomBar extends React.Component {
 
   render() {
 
-    const isShown = this.props.columnWidth === PC_100;
-    if (!isShown) {
-      return null;
-    }
-
-    const style = { height: HEIGHT };
+    const style = { height: BAR_HEIGHT };
 
     return (
       <React.Fragment>
-        <div style={style} className="fixed inset-x-0 bottom-0 bg-white border-t-2 border-gray-900 z-30">
-          <div className="flex justify-evenly content-between w-full h-full">
-            <button onClick={this.onAddBtnClick} className="w-full h-full border-r-2 border-gray-900">Add</button>
-            <button onClick={this.onSearchBtnClick} className="w-full h-full border-r-2 border-gray-900">Search</button>
-            <button onClick={this.onProfileBtnClick} className="w-full h-full">
-              <GracefulImage className="mx-auto rounded-full border-2 border-gray-200" src={this.userImage} alt="Profile" />
-            </button>
-          </div>
+        <div style={style} className="fixed inset-x-0 bottom-0 flex bg-white shadow-inner z-30">
+          <button onClick={this.onAddBtnClick} className="flex items-center w-1/3 h-full">
+            <div className="mx-auto flex items-center w-8 h-7 bg-gray-800 rounded-lg shadow-sm hover:bg-gray-700 active:bg-gray-900">
+              <svg className="mx-auto w-4 text-white" viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+          </button>
+          <button onClick={this.onSearchBtnClick} className="flex items-center w-1/3 h-full">
+            <svg className="mx-auto h-8 w-8 text-gray-800" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16.32 14.9l1.1 1.1c.4-.02.83.13 1.14.44l3 3a1.5 1.5 0 0 1-2.12 2.12l-3-3a1.5 1.5 0 0 1-.44-1.14l-1.1-1.1a8 8 0 1 1 1.41-1.41l.01-.01zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
+            </svg>
+          </button>
+          <button onClick={this.onProfileBtnClick} className="flex items-center w-1/3 h-full">
+            <div className="mx-auto flex items-center h-10 w-10 rounded-lg overflow-hidden border-2 border-gray-200">
+              <GracefulImage className="h-full w-full bg-white object-cover" src={this.userImage} alt="Profile" />
+            </div>
+          </button>
         </div>
         {this.renderAddPopup()}
         {this.renderSearchPopup()}

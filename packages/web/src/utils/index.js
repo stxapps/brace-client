@@ -299,7 +299,7 @@ export const validateUrl = (url) => {
 
   const urlObj = new Url(url, {});
   if (!urlObj.hostname.match(/^([-a-zA-Z0-9@:%_+~#=]{2,256}\.)+[a-z]{2,6}$/)) {
-    return [false, 'Looks like invalid link. Are you sure?', true];
+    return [false, 'Looks like an invalid link. Are you sure?', true];
   }
 
   return [true, '', null];
@@ -336,7 +336,7 @@ export const separateUrlAndParam = (url, paramKey) => {
     separatedUrl = separatedUrl.substring(HTTP.length);
   }
 
-  return [separatedUrl, param];
+  return { separatedUrl, param };
 };
 
 export const subtractPixel = (a, b) => {

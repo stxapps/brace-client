@@ -21,6 +21,8 @@ const BRACE_URL = 'https://brace.to/';
 const LOCALHOST = 'http://localhost:3000/';
 const LOCAL_IP = 'http://192.168.43.220:3000/';
 
+const MAX_LINK_LENGTH = 157;
+
 class Adding extends React.Component {
 
   state = {
@@ -59,7 +61,8 @@ class Adding extends React.Component {
       return;
     }
 
-    [addingUrl, param] = separateUrlAndParam(addingUrl, URL_QUERY_CLOSE_KEY);
+    const res = separateUrlAndParam(addingUrl, URL_QUERY_CLOSE_KEY);
+    [addingUrl, param] = [res.separatedUrl, res.param];
 
     let { hasAskedConfirm } = this.state;
     if ((!isValid && !hasAskedConfirm) || !isUserSignedIn) {
@@ -112,7 +115,7 @@ class Adding extends React.Component {
   _processAddingUrl(addingUrl) {
     return {
       addingPUrl: ensureContainUrlProtocol(addingUrl),
-      addingTUrl: truncateString(addingUrl, 157),
+      addingTUrl: truncateString(addingUrl, MAX_LINK_LENGTH),
     };
   }
 
@@ -235,7 +238,6 @@ class Adding extends React.Component {
   renderAskingConfirm() {
 
     const { addingPUrl, addingTUrl } = this._processAddingUrl(this.state.addingUrl);
-    const { msg } = this.state;
 
     const content = (
       <React.Fragment>

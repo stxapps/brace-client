@@ -27,10 +27,21 @@ import {
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
 } from '../types/const';
 import {
-  randomString, _, rerandomRandomTerm, deleteRemovedDT, getMainId, randomDecor, getUrlFirstChar,
+  _,
+  randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
+  getUrlFirstChar, separateUrlAndParam,
+  randomDecor,
 } from '../utils';
 
-export const init = (store) => {
+export const init = async (store) => {
+
+  if (userSession.isSignInPending()) {
+    await userSession.handlePendingSignIn();
+
+    const { separatedUrl } = separateUrlAndParam(window.location.href, 'authResponse');
+    window.history.replaceState(window.history.state, '', separatedUrl);
+  }
+
   store.dispatch({
     type: INIT,
     payload: {
@@ -74,8 +85,18 @@ const updatePopupAsBackPressed = (dispatch, getState) => {
   if (getState().display.isConfirmDeletePopupShown) {
     id = CONFIRM_DELETE_POPUP;
   } else if (getState().display.isSearchPopupShown) {
-    const _id = getPopupShownId(getState());
-    if (_id !== SEARCH_POPUP) id = _id;
+    // Close other popups before search,
+    //   this depends on getPopupShownId to return other ids before search id
+    id = getPopupShownId(getState());
+    if (id === SEARCH_POPUP) {
+      // Clear search string
+      //   and need to defocus too to prevent keyboard appears on mobile
+      dispatch(updateSearchString(''));
+
+      if (window.document.activeElement instanceof HTMLInputElement) {
+        window.document.activeElement.blur();
+      }
+    }
   }
 
   dispatch(updatePopup(id, false));
