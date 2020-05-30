@@ -880,6 +880,22 @@ video {
   }
 }
 
+.focus\:outline-none-outer:focus {
+  outline: 0;
+}
+
+.focus\:outline-none-outer:focus > .focus\:shadow-outline-inner {
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+.min-w-32 {
+  min-width: 8rem;
+}
+
+.hyphens-auto {
+  hyphens: auto;
+}
+
 .e-mail:before {
   content: attr(data-website) "\0040" attr(data-user);
   unicode-bidi: bidi-override;

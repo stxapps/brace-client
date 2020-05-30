@@ -25,7 +25,7 @@ class Landing extends React.Component {
           <div className="w-full md:w-45/100 lg:w-55/100">
             <img className="mx-auto w-full max-w-sm object-contain md:hidden" src={saveLinksToVisitLater} alt="Save links to visit later" />
             <h1 className="mt-16 text-4xl text-gray-900 font-bold leading-none md:mt-0 md:text-5xl">Save links <br className="inline sm:hidden md:inline lg:hidden" />to visit later</h1>
-            <button onClick={() => this.props.signUp()} className="mt-4 px-6 h-12 bg-gray-900 text-xl text-white font-semibold rounded-full shadow-lg hover:bg-gray-800 active:bg-black">Get Started</button>
+            <button onClick={() => this.props.signUp()} className="mt-4 px-6 h-12 bg-gray-900 text-xl text-white font-semibold rounded-full shadow-lg hover:bg-gray-800 active:bg-black focus:outline-none focus:shadow-outline">Get Started</button>
           </div>
           <div className="hidden md:block md:w-55/100 lg:w-45/100">
             <img className="w-full object-contain" src={saveLinksToVisitLater} alt="Save links to visit later" />
@@ -124,7 +124,7 @@ class Landing extends React.Component {
           <div className="block md:flex md:flex-row md:justify-center md:items-center">
             <img className="h-16 md:mt-1 md:h-28 xl:mt-2" src={blockstackShort} alt="Blockstack Logo" />
             <div className="mt-4 md:mt-0 md:ml-3">
-              <h2 className="text-3xl text-gray-900 font-semibold text-left leading-tight md:text-4xl md:text-center">Your privacy at heart <br className="hidden md:inline" />powered by <a className="text-purple-blockstack" href="https://blockstack.org/">Blockstack</a></h2>
+              <h2 className="text-3xl text-gray-900 font-semibold text-left leading-tight md:text-4xl md:text-center">Your privacy at heart <br className="hidden md:inline" />powered by <a className="text-purple-blockstack focus:outline-none focus:shadow-outline" href="https://blockstack.org/">Blockstack</a></h2>
               <p className="mt-4 text-xl text-gray-700 leading-tight text-left md:mt-2 md:text-center">Your identity is yours. Your data is yours.</p>
             </div>
           </div>
@@ -166,7 +166,7 @@ class Landing extends React.Component {
           <div className="relative">
             <img style={{ transform: 'translateX(-4.5rem)' }} className="mx-auto static h-16 md:absolute md:top-0 md:left-0 md:transform" src={undrawLink} alt="unDraw link icon" />
             <h2 className="mt-4 text-4xl text-gray-900 font-bold leading-none text-center md:text-5xl">Start saving links</h2>
-            <button onClick={() => this.props.signUp()} className="mt-4 mx-auto px-6 block h-12 bg-gray-900 text-xl text-white font-semibold rounded-full shadow-lg hover:bg-gray-800 active:bg-black">Get started now</button>
+            <button onClick={() => this.props.signUp()} className="mt-4 mx-auto px-6 block h-12 bg-gray-900 text-xl text-white font-semibold rounded-full shadow-lg hover:bg-gray-800 active:bg-black focus:outline-none focus:shadow-outline">Get started now</button>
           </div>
         </section>
         <Footer />

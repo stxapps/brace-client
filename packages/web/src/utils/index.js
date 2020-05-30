@@ -4,8 +4,10 @@ import {
   HTTP, HTTPS, WWW,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   COLOR, PATTERN, IMAGE,
-  COLORS, COLOR_WEIGHTS, PATTERNS, IMAGES,
+  COLORS, COLOR_WEIGHTS, PATTERNS,
+  VALID_URL, NO_URL, ASK_CONFIRM_URL,
 } from '../types/const';
+import { IMAGES } from '../types/imagePaths';
 
 export const randomString = (length) => {
 
@@ -292,17 +294,17 @@ export const getUrlFirstChar = (url) => {
 export const validateUrl = (url) => {
 
   if (!url) {
-    return [false, 'Please fill in a link you want to save in the textbox.', false];
+    return NO_URL;
   }
 
   url = ensureContainUrlProtocol(url);
 
   const urlObj = new Url(url, {});
   if (!urlObj.hostname.match(/^([-a-zA-Z0-9@:%_+~#=]{2,256}\.)+[a-z]{2,6}$/)) {
-    return [false, 'Looks like an invalid link. Are you sure?', true];
+    return ASK_CONFIRM_URL;
   }
 
-  return [true, '', null];
+  return VALID_URL;
 };
 
 export const separateUrlAndParam = (url, paramKey) => {
@@ -339,11 +341,32 @@ export const separateUrlAndParam = (url, paramKey) => {
   return { separatedUrl, param };
 };
 
+export const getHrefPathQueryHash = (href) => {
+
+  const BRACE_URL = 'https://brace.to/';
+  const LOCALHOST = 'http://localhost:3000/';
+  const LOCAL_IP = 'http://192.168.43.220:3000/';
+
+  href = ensureContainUrlProtocol(href);
+  if (href.startsWith(BRACE_URL)) return href.substring(BRACE_URL.length);
+  if (href.startsWith(LOCALHOST)) return href.substring(LOCALHOST.length);
+  if (href.startsWith(LOCAL_IP)) return href.substring(LOCAL_IP.length);
+
+  throw new Error(`Invalid href: ${href}`);
+};
+
 export const subtractPixel = (a, b) => {
   a = parseInt(a.slice(0, -2));
   b = parseInt(b.slice(0, -2));
 
   return (a - b).toString() + 'px';
+};
+
+export const addRem = (a, b) => {
+  a = parseFloat(a.slice(0, -3));
+  b = parseFloat(b.slice(0, -3));
+
+  return (a + b).toString() + 'rem';
 };
 
 export const isEqual = function (x, y) {

@@ -13,8 +13,10 @@ import {
   PC_100, PC_50, PC_33,
   TRASH,
   SHOW_BLANK, SHOW_COMMANDS,
+  BAR_HEIGHT,
 } from '../types/const';
 import { getListNames, getLinks } from '../selectors';
+import { addRem } from '../utils';
 
 import Loading from './Loading';
 import TopBar from './TopBar';
@@ -99,7 +101,9 @@ class Main extends React.Component {
 
   onListNamePopupClick = (e) => {
 
-    const newListName = e.target.innerText;
+    const newListName = e.target.getAttribute('data-key');
+    if (!newListName) return;
+
     this.props.changeListName(newListName, this.fetched);
     this.fetched.push(newListName);
 
@@ -119,25 +123,27 @@ class Main extends React.Component {
     const { listName, isListNamePopupShown } = this.props;
 
     return (
-      <React.Fragment>
-        <div className="p-3 flex">
-          <h1 className="font-bold">Main page: {listName}</h1>
-          <button onClick={this.onListNameBtnClick} className={`ml-1 px-2 bg-green-400 ${isListNamePopupShown && 'z-41'}`}>&darr;</button>
-        </div>
+      <div className="inline-block relative">
+        <button onClick={this.onListNameBtnClick} className={`relative flex items-center ${isListNamePopupShown ? 'z-41' : ''} focus:outline-none focus:shadow-outline`}>
+          <h2 className="text-lg text-gray-900 font-semibold">{listName}</h2>
+          <svg className="ml-1 w-5" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
         {isListNamePopupShown && this.renderListNamePopup()}
-      </React.Fragment>
+      </div>
     );
   }
 
   renderListNamePopup() {
 
     return (
-      <div className="relative">
-        <button onClick={this.onListNameCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-40"></button>
-        <div onClick={this.onListNamePopupClick} className="absolute right-0 mt-2 py-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-41 cursor-pointer">
-          {this.props.listNames.map(listName => <div key={listName}>{listName}</div>)}
+      <React.Fragment>
+        <button onClick={this.onListNameCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default z-40 focus:outline-none"></button>
+        <div onClick={this.onListNamePopupClick} className="mt-2 py-2 absolute right-0 bottom-0 w-28 bg-white cursor-pointer border border-gray-200 rounded-lg shadow-xl transform translate-x-11/12 translate-y-full z-41">
+          {this.props.listNames.map(listName => <button className="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={listName} data-key={listName}>{listName}</button>)}
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 
@@ -171,23 +177,52 @@ class Main extends React.Component {
     );
   }
 
+  renderFetchMoreBtn() {
+    return (
+      <button onClick={this.onFetchMoreBtnClick} className="my-4 py-2 block w-full focus:outline-none-outer">
+        <span className="px-3 py-1 inline-block text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">More</span>
+      </button>
+    );
+  }
+
+  renderFetchingMore() {
+    return (
+      <div className="flex justify-center items-center">
+        <div className="lds-ellipsis">
+          <div className="bg-gray-600"></div>
+          <div className="bg-gray-600"></div>
+          <div className="bg-gray-600"></div>
+          <div className="bg-gray-600"></div>
+        </div>
+      </div>
+    );
+  }
+
   renderLinks() {
 
     const { listName, listNames, links, popupLink } = this.props;
     const { hasMoreLinks, isFetchingMore } = this.props;
 
+    const { columnWidth } = this.state;
+
     const showFetchMoreBtn = hasMoreLinks && !isFetchingMore;
     const showFetchingMore = hasMoreLinks && isFetchingMore;
 
+    let gutterWidth, gutterHeight;
+    if (columnWidth === PC_100) [gutterWidth, gutterHeight] = [16, 16];
+    else if (columnWidth === PC_50) [gutterWidth, gutterHeight] = [24, 24];
+    else if (columnWidth === PC_33) [gutterWidth, gutterHeight] = [32, 32];
+    else throw new Error(`Invalid columnWidth: ${columnWidth}`);
+
     return (
-      <div className="pb-20">
-        <StackGrid columnWidth={this.state.columnWidth}>
+      <React.Fragment>
+        <StackGrid className={links.length === 0 ? 'hidden' : ''} columnWidth={columnWidth} gutterWidth={gutterWidth} gutterHeight={gutterHeight}>
           {links.map(link => <CardItem key={link.id} link={link} />)}
         </StackGrid>
         {popupLink && <CardItemMenuPopup listName={listName} listNames={listNames} link={popupLink} />}
-        {showFetchMoreBtn && <button onClick={this.onFetchMoreBtnClick}>More</button>}
-        {showFetchingMore && <div className="lds-ellipsis"><div></div><div></div><div></div><div></div></div>}
-      </div>
+        {showFetchMoreBtn && this.renderFetchMoreBtn()}
+        {showFetchingMore && this.renderFetchingMore()}
+      </React.Fragment>
     );
   }
 
@@ -200,13 +235,18 @@ class Main extends React.Component {
     }
 
     const topBarRightPane = [PC_50, PC_33].includes(this.state.columnWidth) ? SHOW_COMMANDS : SHOW_BLANK;
-    const isEmpty = links.length === 0;
+    const style = { paddingBottom: addRem(BAR_HEIGHT, '1.5rem') };
 
     return (
       <React.Fragment>
         <TopBar rightPane={topBarRightPane} />
-        {this.renderListName()}
-        {isEmpty ? this.renderEmpty() : this.renderLinks()}
+        <main style={style} className="mx-auto px-4 pt-4 max-w-6xl md:px-6 md:pt-6 lg:px-8">
+          {this.renderListName()}
+          <div className="pt-6 md:pt-10">
+            {links.length === 0 && this.renderEmpty()}
+            {this.renderLinks()}
+          </div>
+        </main>
         {this.state.columnWidth === PC_100 && <BottomBar />}
         <StatusPopup />
       </React.Fragment>

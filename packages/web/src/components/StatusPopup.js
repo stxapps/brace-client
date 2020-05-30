@@ -9,7 +9,7 @@ import {
 import { updateStatus } from '../actions';
 
 const MSGS = {
-  [FETCH]: 'Fetching data from Gaia...',
+  [FETCH]: 'Fetching data from server...',
   [FETCH_COMMIT]: 'Finished fetching data.',
   [FETCH_ROLLBACK]: 'Error fetching data!',
   [DELETE_OLD_LINKS_IN_TRASH]: 'Deleting old links in trash...',
@@ -17,10 +17,20 @@ const MSGS = {
   [DELETE_OLD_LINKS_IN_TRASH_ROLLBACK]: 'Error deleting old links!',
 };
 
+const MSGS_SHRT = {
+  [FETCH]: 'Fetching data...',
+  [FETCH_COMMIT]: 'Finished fetching.',
+  [FETCH_ROLLBACK]: 'Error fetching!',
+  [DELETE_OLD_LINKS_IN_TRASH]: 'Deleting old links...',
+  [DELETE_OLD_LINKS_IN_TRASH_COMMIT]: 'Finished deleting.',
+  [DELETE_OLD_LINKS_IN_TRASH_ROLLBACK]: 'Error deleting!',
+};
+
 class StatusPopup extends React.Component {
 
   state = { isReady: false };
   msg = '';
+  msgShrt = '';
   timeout = null;
 
   componentDidMount() {
@@ -42,6 +52,7 @@ class StatusPopup extends React.Component {
       let { status } = this.props;
       if (status) {
         this.msg = MSGS[status];
+        this.msgShrt = MSGS_SHRT[status];
         translate = '';
 
         if ([FETCH_COMMIT, DELETE_OLD_LINKS_IN_TRASH_COMMIT].includes(status)) {
@@ -50,9 +61,15 @@ class StatusPopup extends React.Component {
       }
     }
 
+    const style = {
+      top: '4.6rem',
+      right: '1rem',
+    };
+
     return (
-      <div style={{ top: '64px' }} className="absolute right-0 w-56 h-12 text-right overflow-hidden">
-        <span className={`inline-block transform ${translate} transition duration-300 ease-in-out`}>{this.msg}</span>
+      <div style={style} className="absolute w-36 text-right overflow-hidden sm:w-56">
+        <span className={`hidden truncate transform ${translate} transition duration-300 ease-in-out sm:inline-block`}>{this.msg}</span>
+        <span className={`inline-block truncate transform ${translate} transition duration-300 ease-in-out sm:hidden`}>{this.msgShrt}</span>
       </div >
     );
   }

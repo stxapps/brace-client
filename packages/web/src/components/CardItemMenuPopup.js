@@ -14,8 +14,6 @@ import {
 } from '../types/const';
 import { copyTextToClipboard } from '../utils';
 
-const MOVE_TO_LABEL = 'MOVE_TO_LABEL';
-
 class CardItemMenuPopup extends React.Component {
 
   constructor(props) {
@@ -24,6 +22,8 @@ class CardItemMenuPopup extends React.Component {
     this.initialScrollY = window.pageYOffset;
     this.state = { scrollY: this.initialScrollY };
 
+    this.menuBtn = React.createRef();
+
     const { menu, moveTo } = this.populateMenu(props);
     this.menu = menu;
     this.moveTo = moveTo;
@@ -31,6 +31,8 @@ class CardItemMenuPopup extends React.Component {
 
   componentDidMount() {
     window.addEventListener('scroll', this.updateScrollY);
+
+    this.menuBtn.current.focus();
   }
 
   componentWillUnmount() {
@@ -70,7 +72,7 @@ class CardItemMenuPopup extends React.Component {
   onMenuPopupClick = (e) => {
 
     const text = e.target.getAttribute('data-key');
-    if (text === MOVE_TO_LABEL) return;
+    if (!text) return;
 
     const { id, url } = this.props.link;
 
@@ -116,10 +118,10 @@ class CardItemMenuPopup extends React.Component {
     if (this.moveTo && this.moveTo.length) {
       moveTo = (
         <React.Fragment>
-          <li key={MOVE_TO_LABEL} data-key={MOVE_TO_LABEL}>{MOVE_TO}</li>
+          <div className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left hover:bg-gray-400">{MOVE_TO}</div>
           {this.moveTo.map(text => {
             const key = MOVE_TO + ' ' + text;
-            return <li key={key} data-key={key}>{text}</li>;
+            return <button className="py-2 pl-6 pr-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={key} data-key={key}>{text}</button>;
           })}
         </React.Fragment>
       );
@@ -127,7 +129,7 @@ class CardItemMenuPopup extends React.Component {
 
     return (
       <React.Fragment>
-        {this.menu.map(text => <li key={text} data-key={text}>{text}</li>)}
+        {this.menu.map(text => <button className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={text} data-key={text}>{text}</button>)}
         {moveTo && moveTo}
       </React.Fragment>
     );
@@ -136,11 +138,17 @@ class CardItemMenuPopup extends React.Component {
   renderConfirmDeletePopup() {
     return (
       <React.Fragment>
-        <button onClick={this.onConfirmDeleteCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-50"></button>
-        <div className="fixed top-1/2 left-1/2 w-full max-w-xs h-20 bg-white transform -translate-x-1/2 -translate-y-1/2 z-51">
-          <p>Confirm delete?</p>
-          <button onClick={this.onConfirmDeleteOkBtnClick}>Yes</button>
-          <button onClick={this.onConfirmDeleteCancelBtnClick}>No</button>
+        <button onClick={this.onConfirmDeleteCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default z-50 focus:outline-none"></button>
+        <div className="p-4 fixed top-1/2 left-1/2 w-48 bg-white rounded-lg transform -translate-x-1/2 -translate-y-1/2 z-51">
+          <p className="py-2 text-lg text-gray-900 text-center">Confirm delete?</p>
+          <div className="py-2 text-center">
+            <button onClick={this.onConfirmDeleteOkBtnClick} className="mr-2 py-2 focus:outline-none-outer">
+              <span className="px-3 py-1 text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900  focus:shadow-outline-inner">Yes</span>
+            </button>
+            <button onClick={this.onConfirmDeleteCancelBtnClick} className="ml-2 py-2 focus:outline-none-outer">
+              <span className="px-3 py-1 text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900  focus:shadow-outline-inner">No</span>
+            </button>
+          </div>
         </div>
       </React.Fragment>
     );
@@ -152,34 +160,36 @@ class CardItemMenuPopup extends React.Component {
 
     const offsetScrollY = this.initialScrollY - this.state.scrollY;
     const windowWidth = window.innerWidth;
-    const menuBtnWidth = 48;
-    const menuBtnHeight = 40;
-    const popupWidth = 192;
-    const popupRightMargin = 10;
+
+    const menuBtnHeight = 48;
+    const widthThreshold = 160;
 
     const menuBtnPosition = {
       top: `${anchorPosition.top + offsetScrollY}px`, left: `${anchorPosition.left}px`
     };
 
-    let left = anchorPosition.left;
-    if (left + popupWidth + popupRightMargin >= windowWidth) {
-      left = left - popupWidth + menuBtnWidth;
-    }
     const popupPosition = {
-      top: `${anchorPosition.top + offsetScrollY + menuBtnHeight}px`, left: `${left}px`
+      top: `${anchorPosition.top + offsetScrollY + menuBtnHeight}px`,
     };
+
+    if (anchorPosition.left + widthThreshold < windowWidth) {
+      popupPosition.left = `${anchorPosition.left}px`;
+    } else {
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      popupPosition.right = `${windowWidth - scrollbarWidth - anchorPosition.right}px`;
+    }
 
     return (
       <div className="relative">
-        <button onClick={this.onCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default focus:outline-none z-40"></button>
-        <button style={menuBtnPosition} className="fixed pl-4 pr-2 pt-4 pb-2 bg-white z-41">
-          <svg className="w-6 text-gray-600" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <button onClick={this.onCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default z-40 focus:outline-none"></button>
+        <button ref={this.menuBtn} style={menuBtnPosition} className="pt-2 pb-0 pl-4 pr-2 fixed focus:outline-none-outer z-41">
+          <svg className="py-2 w-6 w-6 bg-white text-gray-700 rounded-full focus:shadow-outline-inner" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <ul onClick={this.onMenuPopupClick} style={popupPosition} className="fixed mt-2 py-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-41 cursor-pointer">
+        <div onClick={this.onMenuPopupClick} style={popupPosition} className="mt-2 ml-4 mr-2 py-2 fixed min-w-32 bg-white cursor-pointer border border-gray-200 rounded-lg shadow-xl z-41">
           {this.renderMenu()}
-        </ul>
+        </div>
         {this.props.isConfirmDeletePopupShown && this.renderConfirmDeletePopup()}
       </div >
     );

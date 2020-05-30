@@ -194,6 +194,18 @@
   }
 }
 
+.focus\:outline-none-outer:focus {
+  @apply outline-none;
+}
+
+.focus\:outline-none-outer:focus > .focus\:shadow-outline-inner {
+  @apply shadow-outline;
+}
+
+.min-w-32 {
+  min-width: 8rem;
+}
+
 .hyphens-auto {
   hyphens: auto;
 }

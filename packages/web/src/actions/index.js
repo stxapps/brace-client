@@ -30,6 +30,7 @@ import {
   _,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam,
+  getHrefPathQueryHash,
   randomDecor,
 } from '../utils';
 
@@ -84,18 +85,26 @@ const updatePopupAsBackPressed = (dispatch, getState) => {
   let id = ALL;
   if (getState().display.isConfirmDeletePopupShown) {
     id = CONFIRM_DELETE_POPUP;
+  } else if (getState().display.isAddPopupShown) {
+    id = ADD_POPUP;
   } else if (getState().display.isSearchPopupShown) {
     // Close other popups before search,
     //   this depends on getPopupShownId to return other ids before search id
     id = getPopupShownId(getState());
-    if (id === SEARCH_POPUP) {
-      // Clear search string
-      //   and need to defocus too to prevent keyboard appears on mobile
-      dispatch(updateSearchString(''));
+  }
 
-      if (window.document.activeElement instanceof HTMLInputElement) {
-        window.document.activeElement.blur();
-      }
+  if (id === ADD_POPUP) {
+    if (window.document.activeElement instanceof HTMLInputElement) {
+      window.document.activeElement.blur();
+    }
+  }
+  if (id === SEARCH_POPUP) {
+    // Clear search string
+    //   and need to defocus too to prevent keyboard appears on mobile
+    dispatch(updateSearchString(''));
+
+    if (window.document.activeElement instanceof HTMLInputElement) {
+      window.document.activeElement.blur();
     }
   }
 
@@ -158,7 +167,7 @@ export const updateHistoryPosition = historyPosition => {
 export const signUp = () => async (dispatch, getState) => {
 
   const authOptions = {
-    redirectTo: '/',
+    redirectTo: '/' + getHrefPathQueryHash(window.location.href),
     appDetails: {
       name: APP_NAME,
       icon: APP_ICON_URL,
@@ -186,7 +195,7 @@ export const signUp = () => async (dispatch, getState) => {
 export const signIn = () => async (dispatch, getState) => {
 
   const authOptions = {
-    redirectTo: '/',
+    redirectTo: '/' + getHrefPathQueryHash(window.location.href),
     appDetails: {
       name: APP_NAME,
       icon: APP_ICON_URL,
