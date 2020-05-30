@@ -592,6 +592,7 @@ This and CI/CD are very important!
 *** Puppeteer
 ** stack user
 - blossom brand lounge toast divorce wool catalog sleep floor odor there advance
+- law story ensure butter aspect wasp state cherry number spy knock gym
 ** steps
 - yarn add tailwindcss postcss-cli
 - yarn add @fullhuman/postcss-purgecss
@@ -617,9 +618,11 @@ This and CI/CD are very important!
 - yarn add redux-loop
 - yarn add react-stack-grid
 - yarn remove @redux-offline/redux-offline
-- yarn add https://github.com/bracedotto/redux-offline#cc3a6fd8ff2c3d4fe05ec435d67fd40f0936b7e2
+- yarn add https://github.com/bracedotto/redux-offline#88a89e7ebe76415e83bd1943360e817274d8063d
 - yarn add react-graceful-image
 - yarn add jdenticon
+- yarn add source-map-explorer
+- yarn add npm-run-all
 ** attribution
 - tailwindcss, postcss, purgecss
 - uirefactoring
