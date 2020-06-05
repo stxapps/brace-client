@@ -15,11 +15,11 @@ import {
   CANCEL_DIED_LINKS,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
-  UPDATE_STATUS,
+  UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
   RESET_STATE,
 } from '../types/actionTypes';
 import {
-  APP_NAME, APP_ICON_URL,
+  APP_NAME, APP_ICON_NAME,
   BACK_DECIDER, BACK_POPUP,
   ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP, CONFIRM_DELETE_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
@@ -29,8 +29,8 @@ import {
 import {
   _,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
-  getUrlFirstChar, separateUrlAndParam,
-  getHrefPathQueryHash,
+  getUrlFirstChar, separateUrlAndParam, extractUrl,
+  getUrlPathQueryHash,
   randomDecor,
 } from '../utils';
 
@@ -167,10 +167,10 @@ export const updateHistoryPosition = historyPosition => {
 export const signUp = () => async (dispatch, getState) => {
 
   const authOptions = {
-    redirectTo: '/' + getHrefPathQueryHash(window.location.href),
+    redirectTo: '/' + getUrlPathQueryHash(window.location.href),
     appDetails: {
       name: APP_NAME,
-      icon: APP_ICON_URL,
+      icon: extractUrl(window.location.href).origin + '/' + APP_ICON_NAME,
     },
     finished: ({ userSession }) => {
 
@@ -195,10 +195,10 @@ export const signUp = () => async (dispatch, getState) => {
 export const signIn = () => async (dispatch, getState) => {
 
   const authOptions = {
-    redirectTo: '/' + getHrefPathQueryHash(window.location.href),
+    redirectTo: '/' + getUrlPathQueryHash(window.location.href),
     appDetails: {
       name: APP_NAME,
-      icon: APP_ICON_URL,
+      icon: extractUrl(window.location.href).origin + '/' + APP_ICON_NAME,
     },
     finished: ({ userSession }) => {
 
@@ -483,5 +483,12 @@ export const updateStatus = (status) => {
   return {
     type: UPDATE_STATUS,
     payload: status,
+  };
+};
+
+export const updateCardItemMenuPopupPosition = (position) => {
+  return {
+    type: UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
+    payload: position,
   };
 };

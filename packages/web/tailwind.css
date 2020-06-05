@@ -154,6 +154,22 @@
        url("../fonts/Inter/Inter-BlackItalic.woff") format("woff");
 }
 
+/* clears the 'X' from Internet Explorer */
+input.hide-clear[type=search]::-ms-clear,
+input.hide-clear[type=search]::-ms-reveal {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* clears the 'X' from Webkit */
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance:none;
+}
+
 @tailwind components;
 
 .howitwork-pb {
@@ -215,6 +231,17 @@
   unicode-bidi: bidi-override;
   direction: rtl;
 }
+
+.new-line-in-address-bar {
+  @apply hidden;
+}
+
+@media (min-width: 396px) {
+  .new-line-in-address-bar {
+    @apply inline;
+  }
+}
+
 /* purgecss end ignore */
 
 @tailwind utilities;

@@ -1,3 +1,4 @@
+import { REHYDRATE } from 'redux-persist/constants'
 import { loop, Cmd } from 'redux-loop';
 
 import {
@@ -43,6 +44,21 @@ const toObjAndAddAttrs = (links, status, isPopupShown, popupAnchorPosition) => {
 };
 
 export default (state = initialState, action) => {
+
+  if (action.type === REHYDRATE) {
+    const newState = { ...state };
+    for (const listName in action.payload.links) {
+      newState[listName] = _.update(
+        action.payload.links[listName],
+        null,
+        null,
+        [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION],
+        [false, null]
+      );
+    }
+
+    return newState;
+  }
 
   if (action.type === FETCH_COMMIT) {
     const { listName, links, listNames } = action.payload;

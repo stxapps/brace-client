@@ -67,9 +67,9 @@ class StatusPopup extends React.Component {
     };
 
     return (
-      <div style={style} className="absolute w-36 text-right overflow-hidden sm:w-56">
-        <span className={`hidden truncate transform ${translate} transition duration-300 ease-in-out sm:inline-block`}>{this.msg}</span>
-        <span className={`inline-block truncate transform ${translate} transition duration-300 ease-in-out sm:hidden`}>{this.msgShrt}</span>
+      <div style={style} className="absolute w-40 text-right overflow-hidden sm:w-64">
+        <span className={`pl-3 hidden bg-white rounded-l-full transform ${translate} transition duration-300 ease-in-out sm:inline-block`}>{this.msg}</span>
+        <span className={`pl-3 inline-block bg-white rounded-l-full transform ${translate} transition duration-300 ease-in-out sm:hidden`}>{this.msgShrt}</span>
       </div >
     );
   }

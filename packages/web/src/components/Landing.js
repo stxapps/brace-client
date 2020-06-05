@@ -17,6 +17,10 @@ import logoFullWhite from '../images/logo-full-white.svg';
 
 class Landing extends React.Component {
 
+  componentDidMount() {
+    window.scrollTo(0, 0);
+  }
+
   render() {
     return (
       <React.Fragment>

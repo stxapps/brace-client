@@ -6,7 +6,7 @@ import {
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
-  UPDATE_STATUS,
+  UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
   RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -24,6 +24,7 @@ const initialState = {
   isConfirmDeletePopupShown: false,
   isFetchingMore: false,
   status: null,
+  cardItemMenuPopupPosition: null,
 };
 
 export default (state = initialState, action) => {
@@ -39,6 +40,7 @@ export default (state = initialState, action) => {
       isListNamePopupShown: false,
       isConfirmDeletePopupShown: false,
       status: null,
+      cardItemMenuPopupPosition: null,
     };
   }
 
@@ -117,6 +119,10 @@ export default (state = initialState, action) => {
 
   if (action.type === UPDATE_STATUS) {
     return { ...state, status: action.payload };
+  }
+
+  if (action.type === UPDATE_CARD_ITEM_MENU_POPUP_POSITION) {
+    return { ...state, cardItemMenuPopupPosition: action.payload };
   }
 
   if (action.type === RESET_STATE) {

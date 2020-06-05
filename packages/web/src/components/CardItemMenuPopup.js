@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import {
   updatePopup,
   moveLinks, deleteLinks,
+  updateCardItemMenuPopupPosition,
 } from '../actions';
 import {
   CONFIRM_DELETE_POPUP,
@@ -22,6 +23,7 @@ class CardItemMenuPopup extends React.Component {
     this.initialScrollY = window.pageYOffset;
     this.state = { scrollY: this.initialScrollY };
 
+    this.menuPopup = React.createRef();
     this.menuBtn = React.createRef();
 
     const { menu, moveTo } = this.populateMenu(props);
@@ -32,11 +34,16 @@ class CardItemMenuPopup extends React.Component {
   componentDidMount() {
     window.addEventListener('scroll', this.updateScrollY);
 
+    this.props.updateCardItemMenuPopupPosition(
+      this.menuPopup.current.getBoundingClientRect()
+    );
     this.menuBtn.current.focus();
   }
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.updateScrollY);
+
+    this.props.updateCardItemMenuPopupPosition(null);
   }
 
   populateMenu(props) {
@@ -118,7 +125,7 @@ class CardItemMenuPopup extends React.Component {
     if (this.moveTo && this.moveTo.length) {
       moveTo = (
         <React.Fragment>
-          <div className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left hover:bg-gray-400">{MOVE_TO}</div>
+          <div className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left">{MOVE_TO}</div>
           {this.moveTo.map(text => {
             const key = MOVE_TO + ' ' + text;
             return <button className="py-2 pl-6 pr-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={key} data-key={key}>{text}</button>;
@@ -138,15 +145,15 @@ class CardItemMenuPopup extends React.Component {
   renderConfirmDeletePopup() {
     return (
       <React.Fragment>
-        <button onClick={this.onConfirmDeleteCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default z-50 focus:outline-none"></button>
+        <button onClick={this.onConfirmDeleteCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-50 focus:outline-none"></button>
         <div className="p-4 fixed top-1/2 left-1/2 w-48 bg-white rounded-lg transform -translate-x-1/2 -translate-y-1/2 z-51">
           <p className="py-2 text-lg text-gray-900 text-center">Confirm delete?</p>
           <div className="py-2 text-center">
             <button onClick={this.onConfirmDeleteOkBtnClick} className="mr-2 py-2 focus:outline-none-outer">
-              <span className="px-3 py-1 text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900  focus:shadow-outline-inner">Yes</span>
+              <span className="px-3 py-1 text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Yes</span>
             </button>
             <button onClick={this.onConfirmDeleteCancelBtnClick} className="ml-2 py-2 focus:outline-none-outer">
-              <span className="px-3 py-1 text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900  focus:shadow-outline-inner">No</span>
+              <span className="px-3 py-1 text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">No</span>
             </button>
           </div>
         </div>
@@ -181,13 +188,13 @@ class CardItemMenuPopup extends React.Component {
 
     return (
       <div className="relative">
-        <button onClick={this.onCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default z-40 focus:outline-none"></button>
+        <button onClick={this.onCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none"></button>
         <button ref={this.menuBtn} style={menuBtnPosition} className="pt-2 pb-0 pl-4 pr-2 fixed focus:outline-none-outer z-41">
           <svg className="py-2 w-6 w-6 bg-white text-gray-700 rounded-full focus:shadow-outline-inner" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <div onClick={this.onMenuPopupClick} style={popupPosition} className="mt-2 ml-4 mr-2 py-2 fixed min-w-32 bg-white cursor-pointer border border-gray-200 rounded-lg shadow-xl z-41">
+        <div ref={this.menuPopup} onClick={this.onMenuPopupClick} style={popupPosition} className="mt-2 ml-4 mr-2 py-2 fixed min-w-32 bg-white border border-gray-200 rounded-lg shadow-xl z-41">
           {this.renderMenu()}
         </div>
         {this.props.isConfirmDeletePopupShown && this.renderConfirmDeletePopup()}
@@ -203,7 +210,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
-  updatePopup, moveLinks, deleteLinks,
+  updatePopup, moveLinks, deleteLinks, updateCardItemMenuPopupPosition,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardItemMenuPopup);

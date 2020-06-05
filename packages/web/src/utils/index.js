@@ -341,18 +341,16 @@ export const separateUrlAndParam = (url, paramKey) => {
   return { separatedUrl, param };
 };
 
-export const getHrefPathQueryHash = (href) => {
+export const getUrlPathQueryHash = (url) => {
 
-  const BRACE_URL = 'https://brace.to/';
-  const LOCALHOST = 'http://localhost:3000/';
-  const LOCAL_IP = 'http://192.168.43.220:3000/';
+  const urlObj = new Url(url, {});
 
-  href = ensureContainUrlProtocol(href);
-  if (href.startsWith(BRACE_URL)) return href.substring(BRACE_URL.length);
-  if (href.startsWith(LOCALHOST)) return href.substring(LOCALHOST.length);
-  if (href.startsWith(LOCAL_IP)) return href.substring(LOCAL_IP.length);
+  let i;
+  if (!urlObj.protocol || urlObj.protocol === '') i = 1;
+  else if (!urlObj.slashes) i = 2;
+  else i = 3;
 
-  throw new Error(`Invalid href: ${href}`);
+  return url.split('/').slice(i).join('/');
 };
 
 export const subtractPixel = (a, b) => {
@@ -526,4 +524,20 @@ export const truncateString = (s, n) => {
   }
 
   return s.slice(0, n) + '...';
-}
+};
+
+export const getWindowHeight = () => {
+  return "innerHeight" in window ? window.innerHeight : window.document.documentElement.offsetHeight;
+};
+
+export const getWindowScrollHeight = () => {
+  const body = window.document.body;
+  const html = window.document.documentElement;
+  return Math.max(
+    body.scrollHeight,
+    body.offsetHeight,
+    html.clientHeight,
+    html.scrollHeight,
+    html.offsetHeight
+  );
+};
