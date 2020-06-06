@@ -168,7 +168,7 @@ class Landing extends React.Component {
         </section>
         <section className="mb-4 py-24 flex justify-center bg-gray-100 md:py-32">
           <div className="relative">
-            <img style={{ transform: 'translateX(-4.5rem)' }} className="mx-auto static h-16 md:absolute md:top-0 md:left-0 md:transform" src={undrawLink} alt="unDraw link icon" />
+            <img className="mx-auto static h-16 start-saving-links-img md:absolute md:top-0 md:left-0" src={undrawLink} alt="unDraw link icon" />
             <h2 className="mt-4 text-4xl text-gray-900 font-bold leading-none text-center md:text-5xl">Start saving links</h2>
             <button onClick={() => this.props.signUp()} className="mt-4 mx-auto px-6 block h-12 bg-gray-900 text-xl text-white font-semibold rounded-full shadow-lg hover:bg-gray-800 active:bg-black focus:outline-none focus:shadow-outline">Get started now</button>
           </div>

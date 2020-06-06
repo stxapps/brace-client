@@ -9,7 +9,7 @@ import {
   SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS,
   NO_URL, ASK_CONFIRM_URL, URL_MSGS,
 } from '../types/const';
-import { validateUrl } from '../utils';
+import { validateUrl, isEqual } from '../utils';
 
 import shortLogo from '../images/logo-short.svg';
 import fullLogo from '../images/logo-full.svg';
@@ -39,7 +39,9 @@ class TopBar extends React.Component {
 
   componentDidUpdate() {
     if (!this.prevIsAddPopupShown && this.props.isAddPopupShown) {
-      this.setState({ ...this.initialState });
+      if (!isEqual(this.state, this.initialState)) {
+        this.setState({ ...this.initialState });
+      }
     }
     this.prevIsAddPopupShown = this.props.isAddPopupShown;
   }

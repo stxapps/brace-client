@@ -509,8 +509,8 @@ export const randomDecor = (text) => {
     decor.favicon.bg.type = COLOR;
     decor.favicon.bg.value = `${sample(COLORS)}-${sample(COLOR_WEIGHTS)}`;
   } else {
-    decor.image.bg.type = PATTERN;
-    decor.image.bg.value = sample(PATTERNS);
+    decor.favicon.bg.type = PATTERN;
+    decor.favicon.bg.value = sample(PATTERNS);
   }
 
   return decor;

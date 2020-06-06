@@ -898,6 +898,16 @@ input[type="search"]::-webkit-search-results-decoration {
   }
 }
 
+.start-saving-links-img {
+  transform: none;
+}
+
+@media (min-width: 768px) {
+  .start-saving-links-img {
+    transform: translateX(-4.5rem);
+  }
+}
+
 .focus\:outline-none-outer:focus {
   outline: 0;
 }

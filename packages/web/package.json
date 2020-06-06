@@ -9,7 +9,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
-    "blockstack": "^21.0.0",
+    "blockstack": "^21.1.0",
     "jdenticon": "^2.2.0",
     "npm-run-all": "^4.1.5",
     "postcss-cli": "^7.1.1",
@@ -27,15 +27,17 @@
     "url-parse": "^1.4.7"
   },
   "scripts": {
-    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start-css": "postcss tailwind.css -o src/stylesheets/tailwind.css --watch",
-    "build-css": "postcss tailwind.css -o src/stylesheets/tailwind.css --env production",
-    "build-css-dev": "postcss tailwind.css -o src/stylesheets/tailwind.css",
     "start-js": "BROWSER=none react-scripts start",
-    "build-js": "react-scripts build",
     "start": "npm-run-all -p start-css start-js",
+    "build-css-dev": "postcss tailwind.css -o src/stylesheets/tailwind.css",
+    "build-css": "postcss tailwind.css -o src/stylesheets/tailwind.css --env production",
+    "build-js": "react-scripts build",
     "build": "npm-run-all build-css build-js",
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "test": "react-scripts test",
+    "deploy-test": "aws s3 sync build/ s3://test-brace-web --delete --acl public-read",
+    "deploy-prod": "aws s3 sync build/ s3://brace-web --delete --acl public-read && aws cloudfront create-invalidation --distribution-id ECEBYZH814VT0 --paths /index.html",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

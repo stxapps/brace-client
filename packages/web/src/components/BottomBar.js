@@ -9,7 +9,7 @@ import {
   NO_URL, ASK_CONFIRM_URL, URL_MSGS,
   BAR_HEIGHT,
 } from '../types/const';
-import { validateUrl } from '../utils';
+import { validateUrl, isEqual } from '../utils';
 
 const BOTTOM_BAR_DURATION = 'duration-300';
 
@@ -42,7 +42,9 @@ class BottomBar extends React.Component {
   componentDidUpdate() {
     if (!this.prevIsAddPopupShown && this.props.isAddPopupShown) {
       this.addInput.current.focus();
-      this.setState({ ...this.initialState });
+      if (!isEqual(this.state, this.initialState)) {
+        this.setState({ ...this.initialState });
+      }
     }
     this.prevIsAddPopupShown = this.props.isAddPopupShown;
   }

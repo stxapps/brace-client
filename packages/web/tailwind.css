@@ -210,6 +210,16 @@ input[type="search"]::-webkit-search-results-decoration {
   }
 }
 
+.start-saving-links-img {
+  @apply transform-none;
+}
+
+@screen md {
+  .start-saving-links-img {
+    transform: translateX(-4.5rem);
+  }
+}
+
 .focus\:outline-none-outer:focus {
   @apply outline-none;
 }

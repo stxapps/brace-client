@@ -66,4 +66,5 @@ module.exports = {
     backgroundColor: ['responsive', 'hover', 'focus', 'active']
   },
   plugins: [],
+  purge: false,
 }

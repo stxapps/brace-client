@@ -3,6 +3,8 @@
 ** saved.io
 ** pinterest
 ** raindrop.io
+** www.pagemarker.io
+** getmemex.com
 * Same Name
 ** brace.io
 - www.studioanthonylane.com/Brace-io
@@ -593,6 +595,8 @@ This and CI/CD are very important!
 ** stack user
 - blossom brand lounge toast divorce wool catalog sleep floor odor there advance
 - law story ensure butter aspect wasp state cherry number spy knock gym
+- melody use spot old hub tool become motion defense plastic spike clean
+- 
 ** steps
 - yarn add tailwindcss postcss-cli
 - yarn add @fullhuman/postcss-purgecss
@@ -694,5 +698,13 @@ This and CI/CD are very important!
 ** react
 - state, route, view
 * fully-fledged
+** features
+- download all
+- delete all
+- delete account
+- create a new list
+- set default list
+- bulk edit
+- empty trash
 ** webapp, firefox/chrome extensions, android, ios
 
