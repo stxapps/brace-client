@@ -218,7 +218,7 @@ class Main extends React.Component {
         <div style={{ borderRadius: '1.5rem' }} className="mx-auto px-4 pt-16 pb-8 w-full max-w-md bg-gray-100">
           <img className="mx-auto h-16" src={undrawLink} alt="unDraw link icon" />
           <h3 className="mt-6 text-lg text-gray-900 text-center">Get started saving links</h3>
-          <button onClick={this.onAddBtnClick} className="mx-auto mt-4 px-3 py-1 flex items-center bg-gray-900 rounded-lg shadow-lg hover:bg-gray-800 active:bg-black focus:outline-none focus:shadow-outline">
+          <button onClick={this.onAddBtnClick} className="mx-auto mt-4 px-3 py-1 flex items-baseline bg-gray-900 rounded-lg shadow-lg hover:bg-gray-800 active:bg-black focus:outline-none focus:shadow-outline">
             <svg className="w-4 text-white" viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

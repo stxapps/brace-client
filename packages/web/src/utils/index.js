@@ -4,7 +4,7 @@ import {
   HTTP, HTTPS, WWW,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   COLOR, PATTERN, IMAGE,
-  COLORS, COLOR_WEIGHTS, PATTERNS,
+  BG_COLOR_STYLES, PATTERNS,
   VALID_URL, NO_URL, ASK_CONFIRM_URL,
 } from '../types/const';
 import { IMAGES } from '../types/imagePaths';
@@ -484,7 +484,7 @@ export const randomDecor = (text) => {
   n = randInt(100);
   if (n < 30) {
     decor.image.bg.type = COLOR;
-    decor.image.bg.value = `${sample(COLORS)}-${sample(COLOR_WEIGHTS)}`;
+    decor.image.bg.value = `${sample(BG_COLOR_STYLES)}`;
   } else if (n < 80) {
     decor.image.bg.type = PATTERN;
     decor.image.bg.value = sample(PATTERNS);
@@ -507,7 +507,7 @@ export const randomDecor = (text) => {
   n = randInt(100);
   if (n < 75) {
     decor.favicon.bg.type = COLOR;
-    decor.favicon.bg.value = `${sample(COLORS)}-${sample(COLOR_WEIGHTS)}`;
+    decor.favicon.bg.value = `${sample(BG_COLOR_STYLES)}`;
   } else {
     decor.favicon.bg.type = PATTERN;
     decor.favicon.bg.value = sample(PATTERNS);

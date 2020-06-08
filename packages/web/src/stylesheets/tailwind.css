@@ -921,7 +921,8 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .hyphens-auto {
-  hyphens: auto;
+  -webkit-hyphens: auto;
+          hyphens: auto;
 }
 
 .e-mail:before {
@@ -2959,7 +2960,9 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .appearance-none {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 .bg-fixed {
@@ -16872,19 +16875,23 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .select-none {
-  user-select: none;
+  -webkit-user-select: none;
+          user-select: none;
 }
 
 .select-text {
-  user-select: text;
+  -webkit-user-select: text;
+          user-select: text;
 }
 
 .select-all {
-  user-select: all;
+  -webkit-user-select: all;
+          user-select: all;
 }
 
 .select-auto {
-  user-select: auto;
+  -webkit-user-select: auto;
+          user-select: auto;
 }
 
 .align-baseline {
@@ -23886,7 +23893,9 @@ input[type="search"]::-webkit-search-results-decoration {
   }
 
   .sm\:appearance-none {
-    appearance: none;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
   }
 
   .sm\:bg-fixed {
@@ -37799,19 +37808,23 @@ input[type="search"]::-webkit-search-results-decoration {
   }
 
   .sm\:select-none {
-    user-select: none;
+    -webkit-user-select: none;
+            user-select: none;
   }
 
   .sm\:select-text {
-    user-select: text;
+    -webkit-user-select: text;
+            user-select: text;
   }
 
   .sm\:select-all {
-    user-select: all;
+    -webkit-user-select: all;
+            user-select: all;
   }
 
   .sm\:select-auto {
-    user-select: auto;
+    -webkit-user-select: auto;
+            user-select: auto;
   }
 
   .sm\:align-baseline {
@@ -44814,7 +44827,9 @@ input[type="search"]::-webkit-search-results-decoration {
   }
 
   .md\:appearance-none {
-    appearance: none;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
   }
 
   .md\:bg-fixed {
@@ -58727,19 +58742,23 @@ input[type="search"]::-webkit-search-results-decoration {
   }
 
   .md\:select-none {
-    user-select: none;
+    -webkit-user-select: none;
+            user-select: none;
   }
 
   .md\:select-text {
-    user-select: text;
+    -webkit-user-select: text;
+            user-select: text;
   }
 
   .md\:select-all {
-    user-select: all;
+    -webkit-user-select: all;
+            user-select: all;
   }
 
   .md\:select-auto {
-    user-select: auto;
+    -webkit-user-select: auto;
+            user-select: auto;
   }
 
   .md\:align-baseline {
@@ -65742,7 +65761,9 @@ input[type="search"]::-webkit-search-results-decoration {
   }
 
   .lg\:appearance-none {
-    appearance: none;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
   }
 
   .lg\:bg-fixed {
@@ -79655,19 +79676,23 @@ input[type="search"]::-webkit-search-results-decoration {
   }
 
   .lg\:select-none {
-    user-select: none;
+    -webkit-user-select: none;
+            user-select: none;
   }
 
   .lg\:select-text {
-    user-select: text;
+    -webkit-user-select: text;
+            user-select: text;
   }
 
   .lg\:select-all {
-    user-select: all;
+    -webkit-user-select: all;
+            user-select: all;
   }
 
   .lg\:select-auto {
-    user-select: auto;
+    -webkit-user-select: auto;
+            user-select: auto;
   }
 
   .lg\:align-baseline {
@@ -86670,7 +86695,9 @@ input[type="search"]::-webkit-search-results-decoration {
   }
 
   .xl\:appearance-none {
-    appearance: none;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
   }
 
   .xl\:bg-fixed {
@@ -100583,19 +100610,23 @@ input[type="search"]::-webkit-search-results-decoration {
   }
 
   .xl\:select-none {
-    user-select: none;
+    -webkit-user-select: none;
+            user-select: none;
   }
 
   .xl\:select-text {
-    user-select: text;
+    -webkit-user-select: text;
+            user-select: text;
   }
 
   .xl\:select-all {
-    user-select: all;
+    -webkit-user-select: all;
+            user-select: all;
   }
 
   .xl\:select-auto {
-    user-select: auto;
+    -webkit-user-select: auto;
+            user-select: auto;
   }
 
   .xl\:align-baseline {

@@ -43,7 +43,6 @@ class CardItem extends React.Component {
 
   renderRetry() {
     let { url } = this.props.link;
-    url = ensureContainUrlProtocol(url);
 
     return (
       <React.Fragment>
@@ -54,7 +53,7 @@ class CardItem extends React.Component {
             <button onClick={this.onRetryRetryBtnClick} className="px-4 py-1 bg-white text-base text-gray-900 font-semibold rounded-full border border-white hover:bg-gray-900 hover:text-white active:bg-black focus:outline-none focus:shadow-outline">Retry</button>
             <button onClick={this.onRetryCancelBtnClick} className="ml-4 px-3 py-1 text-base text-white font-semibold rounded-full border border-white hover:bg-gray-100 hover:text-gray-900 active:bg-white focus:outline-none focus:shadow-outline">Cancel</button>
           </div>
-          <a className="block mt-10 w-full text-base text-white font-medium text-center hover:underline focus:outline-none focus:shadow-outline" href={url}>Go to the link</a>
+          <a className="block mt-10 w-full text-base text-white font-medium text-center hover:underline focus:outline-none focus:shadow-outline" href={ensureContainUrlProtocol(url)}>Go to the link</a>
         </div>
       </React.Fragment>
     );
@@ -81,7 +80,7 @@ class CardItem extends React.Component {
     if (decor.image.bg.type === COLOR) {
       return (
         <React.Fragment>
-          <div className={`absolute h-full w-full bg-${decor.image.bg.value}`}></div>
+          <div className={`absolute h-full w-full ${decor.image.bg.value}`}></div>
           {fg}
         </React.Fragment>
       );
@@ -114,12 +113,17 @@ class CardItem extends React.Component {
     }
 
     if (decor.favicon.bg.type === COLOR) {
-      return <div className={`flex-shrink-0 flex-grow-0 w-4 h-4 bg-${decor.favicon.bg.value} rounded-full`}></div>;
+      return <div className={`flex-shrink-0 flex-grow-0 w-4 h-4 ${decor.favicon.bg.value} rounded-full`}></div>;
     }
 
     if (decor.favicon.bg.type === PATTERN) {
       // Require both 'pattern' and [pattern_name] class names
-      return <div className={`flex-shrink-0 flex-grow-0 w-4 h-4 pattern ${decor.favicon.bg.value} rounded-full`}></div>;
+      return (
+        <div className="flex-shrink-0 flex-grow-0">
+          <div className="relative">
+            <div className={`w-4 h-4 rounded-full pattern ${decor.favicon.bg.value}`}></div>
+          </div>
+        </div>);
     }
   }
 
@@ -129,13 +133,13 @@ class CardItem extends React.Component {
     const { host, origin } = extractUrl(url);
 
     return (
-      <div className="mx-auto relative max-w-sm bg-white border-1 border-gray-200 rounded-lg overflow-hidden shadow">
+      <div className="mx-auto relative max-w-sm bg-white border-1 border-gray-200 rounded-lg overflow-hidden shadow md:max-w-none">
         <div className="relative pb-7/12">
           {this.renderImage()}
         </div>
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center">
           <div className="flex-shrink flex-grow">
-            <div className="pt-3 pl-3 flex justify-start items-center lg:pl-6 lg:pt-6">
+            <div className="pl-4 flex justify-start items-center lg:pl-5">
               {this.renderFavicon()}
               <p className="pl-2 flex-shrink flex-grow text-base text-gray-700 truncate">
                 <a className="focus:outline-none focus:shadow-outline" href={origin}>{host}</a>
@@ -150,7 +154,7 @@ class CardItem extends React.Component {
             </button>
           </div>
         </div>
-        <h4 className="mt-1 p-3 text-base text-gray-800 font-semibold leading-relaxed break-all lg:p-6">
+        <h4 className="px-4 pt-0 pb-3 text-base text-gray-800 font-semibold leading-relaxed break-all lg:px-5 lg:pt-3 lg:pb-5">
           <a className="focus:outline-none focus:shadow-outline" href={ensureContainUrlProtocol(url)}>{title}</a>
         </h4>
         {isDiedStatus(status) && this.renderRetry()}

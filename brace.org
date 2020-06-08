@@ -501,7 +501,7 @@ This and CI/CD are very important!
 *** dependencies
 - tailwindcss
 - postcss-cli
-- (No need autoprefixer here as css file will go through cra and will be autoprefix there)
+- autoprefixer
 - purgecss
 - react
 - react-dom
@@ -596,12 +596,11 @@ This and CI/CD are very important!
 - blossom brand lounge toast divorce wool catalog sleep floor odor there advance
 - law story ensure butter aspect wasp state cherry number spy knock gym
 - melody use spot old hub tool become motion defense plastic spike clean
-- 
+- mosquito oxygen bronze sure couple trust husband join illness reject promote swallow
 ** steps
-- yarn add tailwindcss postcss-cli
+- yarn add tailwindcss postcss-cli 
 - yarn add @fullhuman/postcss-purgecss
 - no need for dev dependencies as this's not a node app
-- no need autoprefixer as this will be done in creat-react-app
 - follow steps in tailwindcss.com/course/optimizing-for-production
 - follow steps in medium.com/@xijo/create-react-app-with-tailwind-via-postcss-plus-purgecss-5c36b4c33ba7 to config Tailwindcss
 - yarn add redux redux-thunk react-redux
@@ -707,4 +706,20 @@ This and CI/CD are very important!
 - bulk edit
 - empty trash
 ** webapp, firefox/chrome extensions, android, ios
-
+* servers
+** tailwindcss's live-server
+- http://localhost:8080
+- http://192.168.43.220:8080
+** create-react-app's webpack dev server
+- https://localhost:3000
+- https://192.168.43.220:3000
+** test server
+- https://d2r7uroqj51uls.cloudfront.net
+** prod
+- https://brace.to
+* devices
+- Android phone: Firefox, Chrome
+- iphone (emulator): Firefox, Chrome, Safari
+- iPad: Firefox, Chrome, Safari
+- Macbook: Firefox, Chrome, Safari
+- Ubuntu laptop: Firefox, Chrome

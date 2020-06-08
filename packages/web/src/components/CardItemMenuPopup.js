@@ -13,7 +13,7 @@ import {
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
   CARD_ITEM_POPUP_MENU,
 } from '../types/const';
-import { copyTextToClipboard } from '../utils';
+import { copyTextToClipboard, ensureContainUrlProtocol } from '../utils';
 
 class CardItemMenuPopup extends React.Component {
 
@@ -84,7 +84,7 @@ class CardItemMenuPopup extends React.Component {
     const { id, url } = this.props.link;
 
     if (text === OPEN) {
-      window.open(url);
+      window.open(ensureContainUrlProtocol(url));
     } else if (text === COPY_LINK) {
       copyTextToClipboard(url);
     } else if (text === ARCHIVE) {
@@ -189,7 +189,7 @@ class CardItemMenuPopup extends React.Component {
     return (
       <div className="relative">
         <button onClick={this.onCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none"></button>
-        <button ref={this.menuBtn} style={menuBtnPosition} className="pt-2 pb-0 pl-4 pr-2 fixed focus:outline-none-outer z-41">
+        <button ref={this.menuBtn} style={menuBtnPosition} className="pt-2 pb-1 pl-4 pr-2 fixed focus:outline-none-outer z-41">
           <svg className="py-2 w-6 w-6 bg-white text-gray-700 rounded-full focus:shadow-outline-inner" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
