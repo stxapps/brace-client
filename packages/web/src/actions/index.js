@@ -137,7 +137,17 @@ export const popHistoryState = (store) => {
       },
     });
 
+    // https://stackoverflow.com/questions/3588315/how-to-check-if-the-user-can-go-back-in-browser-history-or-not
+    const href = window.location.href;
     window.history.go(-1);
+    setTimeout(function () {
+      // if location was not changed, then there is no history back
+      if (href === window.location.href) {
+        window.history.replaceState(null, '', '#back');
+        window.history.pushState(null, '', href);
+        window.history.go(-1);
+      }
+    }, 500);
     return;
   }
 

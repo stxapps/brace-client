@@ -1,15 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Url from 'url-parse'
+import Url from 'url-parse';
 
-import Loading from './Loading'
-import Landing from './Landing'
-import Main from './Main'
-import Adding from './Adding'
-import About from './About'
-import Terms from './Terms'
-import Privacy from './Privacy'
-import Support from './Support'
+import Loading from './Loading';
+import Landing from './Landing';
+import Main from './Main';
+import Adding from './Adding';
+import About from './About';
+import Terms from './Terms';
+import Privacy from './Privacy';
+import Support from './Support';
+import Back from './Back';
 
 class App extends React.Component {
 
@@ -36,6 +37,9 @@ class App extends React.Component {
     }
     if (hrefObj.hash === '#support') {
       return <Support />;
+    }
+    if (hrefObj.hash === '#back') {
+      return <Back />;
     }
 
     if (this.props.isUserSignedIn) {
