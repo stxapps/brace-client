@@ -111,9 +111,9 @@ class Adding extends React.Component {
 
   _render(content) {
     return (
-      <div className="px-4 bg-gray-200 min-h-screen md:px-6 lg:px-8">
+      <div className="bg-gray-200 min-h-screen">
         <TopBar rightPane={SHOW_BLANK} />
-        <section className="pt-12 pb-16 md:pt-20">
+        <section className="px-4 pt-12 pb-16 md:px-6 md:pt-20 lg:px-8">
           <div style={{ borderRadius: '1.5rem' }} className="mx-auto px-4 pt-16 pb-8 w-full max-w-md bg-white">
             {content}
           </div>
@@ -136,7 +136,7 @@ class Adding extends React.Component {
     if (param && param[URL_QUERY_CLOSE_KEY]) {
       if (param[URL_QUERY_CLOSE_KEY] === URL_QUERY_CLOSE_WINDOW) {
         leftLink = null;
-        centerText = <p>You can close this window now.</p>;
+        centerText = <button onClick={() => window.close()} className="py-2 block w-full text-center focus:outline-none focus:shadow-outline">close this window</button>;
         rightLink = null;
       }
     }
