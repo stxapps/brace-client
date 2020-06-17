@@ -316,15 +316,15 @@ class Main extends React.Component {
     return (
       <React.Fragment>
         <TopBar rightPane={topBarRightPane} />
-        <main ref={this.main} style={style} className="mx-auto px-4 pt-4 max-w-6xl transition-all duration-150 ease-in-out md:px-6 md:pt-6 lg:px-8">
+        <main ref={this.main} style={style} className="mx-auto px-4 pt-4 relative max-w-6xl transition-all duration-150 ease-in-out md:px-6 md:pt-6 lg:px-8">
           {this.renderListName()}
           <div className="pt-6 md:pt-10">
             {links.length === 0 && this.renderEmpty()}
             {this.renderLinks()}
           </div>
+          <StatusPopup />
         </main>
         {this.state.columnWidth === PC_100 && <BottomBar isShown={popupLink === null} />}
-        <StatusPopup />
       </React.Fragment>
     );
   }
