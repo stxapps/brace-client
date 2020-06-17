@@ -70,9 +70,10 @@ class CardItem extends React.Component {
     if (decor.image.fg) {
       const { text } = decor.image.fg;
       fg = (
-        <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex justify-center items-center w-20 h-20 bg-white rounded-full`}>
-          <span className="text-5xl font-semibold text-gray-700">{text}</span>
-        </div>
+        <React.Fragment>
+          <div className="absolute top-1/2 left-1/2 w-20 h-20 bg-white rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute top-1/2 left-1/2 text-5xl text-gray-700 font-semibold leading-none uppercase transform -translate-x-1/2 -translate-y-1/2">{text}</div>
+        </React.Fragment>
       );
     }
 
