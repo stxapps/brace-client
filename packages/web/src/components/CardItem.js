@@ -5,7 +5,10 @@ import GracefulImage from 'react-graceful-image';
 import {
   updatePopup, retryDiedLinks, cancelDiedLinks,
 } from '../actions';
-import { ensureContainUrlProtocol, isDiedStatus, extractUrl } from '../utils';
+import {
+  ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
+  isDiedStatus, extractUrl,
+} from '../utils';
 import {
   ADDING, MOVING,
   COLOR, PATTERN, IMAGE,
@@ -108,24 +111,29 @@ class CardItem extends React.Component {
 
   renderFavicon() {
 
-    const { url, favicon, decor } = this.props.link;
-    if (favicon) {
-      return <GracefulImage className="flex-shrink-0 flex-grow-0 w-4 h-4" src={favicon} alt={`Favicon of ${url}`} />;
-    }
+    const { url, decor } = this.props.link;
+    const { origin } = extractUrl(url);
 
-    if (decor.favicon.bg.type === COLOR) {
-      return <div className={`flex-shrink-0 flex-grow-0 w-4 h-4 ${decor.favicon.bg.value} rounded-full`}></div>;
-    }
+    const favicon = ensureContainUrlSecureProtocol(origin) + '/favicon.ico';
+    const placeholder = (ref) => {
+      if (decor.favicon.bg.type === COLOR) {
+        return <div ref={ref} className={`flex-shrink-0 flex-grow-0 w-4 h-4 ${decor.favicon.bg.value} rounded-full`}></div>;
+      }
 
-    if (decor.favicon.bg.type === PATTERN) {
-      // Require both 'pattern' and [pattern_name] class names
-      return (
-        <div className="flex-shrink-0 flex-grow-0">
-          <div className="relative">
-            <div className={`w-4 h-4 rounded-full pattern ${decor.favicon.bg.value}`}></div>
+      if (decor.favicon.bg.type === PATTERN) {
+        // Require both 'pattern' and [pattern_name] class names
+        // Require under relative class
+        return (
+          <div ref={ref} className="flex-shrink-0 flex-grow-0">
+            <div className="relative">
+              <div className={`w-4 h-4 rounded-full pattern ${decor.favicon.bg.value}`}></div>
+            </div>
           </div>
-        </div>);
-    }
+        );
+      }
+    };
+
+    return <GracefulImage className="flex-shrink-0 flex-grow-0 w-4 h-4" src={favicon} alt={`Favicon of ${url}`} customPlaceholder={placeholder} />;
   }
 
   render() {

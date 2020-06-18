@@ -139,7 +139,7 @@ class BottomBar extends React.Component {
     return (
       <React.Fragment>
         <button onClick={this.onAddCancelBtnClick} tabIndex={-1} className={`${!isAddPopupShown ? 'hidden' : ''} fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none`}></button>
-        <div className={`px-4 pt-6 pb-6 fixed inset-x-0 bottom-0 bg-white border border-gray-200 rounded-t-lg shadow-xl transform ${!isAddPopupShown ? 'translate-y-full' : ''} transition duration-300 ease-in-out z-41`}>
+        <div className={`px-4 pt-6 pb-6 fixed inset-x-0 bottom-0 bg-white border border-gray-200 rounded-t-lg shadow-xl transform ${!isAddPopupShown ? 'translate-y-full' : ''} transition-transform duration-300 ease-in-out z-41`}>
           <input ref={this.addInput} onChange={this.onAddInputChange} onKeyPress={this.onAddInputKeyPress} className="px-4 py-2 w-full bg-white text-gray-900 border border-gray-600 rounded-full appearance-none focus:outline-none focus:shadow-outline" type="url" placeholder="https://" value={url} />
           <p className="pt-3 text-red-500">{msg}</p>
           <div className="pt-3">
@@ -160,7 +160,7 @@ class BottomBar extends React.Component {
     this.prevIsSearchPopupShown = isSearchPopupShown;
 
     return (
-      <div style={style} className={`px-2 py-2 fixed inset-x-0 flex justify-between items-center bg-white border border-gray-200 transform ${!isSearchPopupShown ? 'translate-y-full' : ''} transition-all ${duration} ease-in-out z-10`}>
+      <div style={style} className={`px-2 py-2 fixed inset-x-0 flex justify-between items-center bg-white border border-gray-200 transform ${!isSearchPopupShown ? 'translate-y-full' : ''} transition-transform ${duration} ease-in-out z-10`}>
         <div className="relative w-full">
           <input ref={this.searchInput} onChange={this.onSearchInputChange} className="pl-4 pr-8 py-1 flex-grow-1 flex-shrink w-full bg-white text-gray-900 border border-gray-600 rounded-full appearance-none focus:outline-none focus:shadow-outline" type="search" placeholder="Search" value={searchString} />
           <button ref={this.searchClearBtn} onClick={this.onSearchClearBtnClick} className="hidden absolute inset-y-0 right-0 flex items-center pr-2 focus:outline-none-outer">
@@ -181,7 +181,7 @@ class BottomBar extends React.Component {
     return (
       <React.Fragment>
         <button onClick={this.onProfileCancelBtnClick} tabIndex={-1} className={`${!isProfilePopupShown ? 'hidden' : ''} fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none`}></button>
-        <div className={`py-4 fixed inset-x-0 bottom-0 bg-white border border-gray-200 rounded-t-lg shadow-xl transform ${!isProfilePopupShown ? 'translate-y-full' : ''} transition duration-300 ease-in-out z-41`}>
+        <div className={`py-4 fixed inset-x-0 bottom-0 bg-white border border-gray-200 rounded-t-lg shadow-xl transform ${!isProfilePopupShown ? 'translate-y-full' : ''} transition-transform duration-300 ease-in-out z-41`}>
           <a className="py-4 pl-4 block w-full text-gray-800 text-left focus:outline-none focus:shadow-outline" href="/#support">Support</a>
           <button onClick={this.onSignOutBtnClick} className="py-4 pl-4 block w-full text-gray-800 text-left focus:outline-none focus:shadow-outline">Sign out</button>
         </div>
@@ -196,7 +196,7 @@ class BottomBar extends React.Component {
 
     return (
       <React.Fragment>
-        <div style={style} className={`fixed inset-x-0 bottom-0 flex bg-white shadow-inner transform ${!isShown ? 'translate-y-full' : ''} transition ${BOTTOM_BAR_DURATION} ease-in-out z-30`}>
+        <div style={style} className={`fixed inset-x-0 bottom-0 flex bg-white shadow-inner transform ${!isShown ? 'translate-y-full' : ''} transition-transform ${BOTTOM_BAR_DURATION} ease-in-out z-30`}>
           <button onClick={this.onAddBtnClick} className="flex items-center w-1/3 h-full focus:outline-none-outer">
             <div className="mx-auto flex items-center w-8 h-7 bg-gray-800 rounded-lg shadow-sm active:bg-gray-900 focus:shadow-outline-inner">
               <svg className="mx-auto w-4 text-white" viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">

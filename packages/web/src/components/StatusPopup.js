@@ -68,8 +68,8 @@ class StatusPopup extends React.Component {
 
     return (
       <div style={style} className="mr-4 absolute w-48 text-right overflow-hidden sm:w-64 md:mr-6 lg:mr-8">
-        <span className={`pl-3 hidden bg-white rounded-l-full transform ${translate} transition duration-300 ease-in-out sm:inline-block`}>{this.msg}</span>
-        <span className={`pl-3 inline-block bg-white rounded-l-full transform ${translate} transition duration-300 ease-in-out sm:hidden`}>{this.msgShrt}</span>
+        <span className={`pl-3 hidden bg-white rounded-l-full transform ${translate} transition-transform duration-300 ease-in-out sm:inline-block`}>{this.msg}</span>
+        <span className={`pl-3 inline-block bg-white rounded-l-full transform ${translate} transition-transform duration-300 ease-in-out sm:hidden`}>{this.msgShrt}</span>
       </div >
     );
   }

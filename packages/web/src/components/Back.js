@@ -5,7 +5,7 @@ class Back extends React.Component {
   render() {
     return (
       <div className="pt-32">
-        <div className="text-base text-gray-900 text-center">This page intentionally left blank.</div>
+        <div className="text-base text-gray-900 text-center">[This Page intentionally Left Blank]</div>
         <a className="pt-12 pb-2 block text-base text-gray-900 text-center" href="/">
           Go to <span className="underline">your links</span>
         </a>

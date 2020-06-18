@@ -275,6 +275,12 @@ export const ensureContainUrlProtocol = (url) => {
   return url;
 };
 
+export const ensureContainUrlSecureProtocol = (url) => {
+  const urlObj = new Url(url, {});
+  urlObj.set('protocol', 'https');
+  return urlObj.toString();
+};
+
 export const extractUrl = (url) => {
   url = ensureContainUrlProtocol(url);
   const urlObj = new Url(url, {});
