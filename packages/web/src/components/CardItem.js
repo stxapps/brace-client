@@ -64,7 +64,11 @@ class CardItem extends React.Component {
 
   renderImage() {
 
-    const { url, image, decor } = this.props.link;
+    const { url, decor, extractedResult } = this.props.link;
+
+    let image;
+    if (extractedResult && extractedResult.image) image = extractedResult.image;
+
     if (image) {
       return <GracefulImage className="absolute h-full w-full object-cover object-center" src={image} alt={`illustration of ${url}`} />;
     }
@@ -133,12 +137,16 @@ class CardItem extends React.Component {
       }
     };
 
-    return <GracefulImage className="flex-shrink-0 flex-grow-0 w-4 h-4" src={favicon} alt={`Favicon of ${url}`} customPlaceholder={placeholder} />;
+    return <GracefulImage className="flex-shrink-0 flex-grow-0 w-4 h-4" src={favicon} alt={`Favicon of ${url}`} customPlaceholder={placeholder} retry={{ count: 2, delay: 3, accumulate: 'multiply' }} />;
   }
 
   render() {
-    let { url, title, status } = this.props.link;
+    const { url, status, extractedResult } = this.props.link;
+
+    let title;
+    if (extractedResult && extractedResult.title) title = extractedResult.title;
     if (!title) title = url;
+
     const { host, origin } = extractUrl(url);
 
     return (

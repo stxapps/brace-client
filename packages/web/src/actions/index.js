@@ -1,5 +1,6 @@
 import { showBlockstackConnect } from '@blockstack/connect';
 import { RESET_STATE as OFFLINE_RESET_STATE } from "@redux-offline/redux-offline/lib/constants";
+import axios from 'axios';
 
 import userSession from '../userSession';
 import {
@@ -8,7 +9,7 @@ import {
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
-  //UPDATE_LINKS, UPDATE_LINKS_COMMIT, UPDATE_LINKS_ROLLBACK,
+  UPDATE_LINKS, UPDATE_LINKS_COMMIT, UPDATE_LINKS_ROLLBACK,
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
   MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
   MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
@@ -25,6 +26,7 @@ import {
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
+  BRACE_EXTRACT_URL, EXTRACT_EXCEEDING_N_URLS,
 } from '../types/const';
 import {
   _,
@@ -282,7 +284,7 @@ export const fetchMore = () => async (dispatch, getState) => {
   });
 };
 
-export const addLink = (url) => async (dispatch, getState) => {
+export const addLink = (url, doCallNextActions = false) => async (dispatch, getState) => {
 
   let listName = getState().display.listName;
   if (listName === TRASH || listName === ARCHIVE) {
@@ -300,7 +302,7 @@ export const addLink = (url) => async (dispatch, getState) => {
   const addedDT = Date.now();
   const id = `${addedDT}-${randomString(4)}-${randomString(4)}`;
   const decor = randomDecor(getUrlFirstChar(url));
-  const link = { id, url, addedDT, decor, didBeautify: false, };
+  const link = { id, url, addedDT, decor, };
   const links = [link];
   const payload = { listName, links };
 
@@ -310,7 +312,7 @@ export const addLink = (url) => async (dispatch, getState) => {
     meta: {
       offline: {
         effect: { method: ADD_LINKS, params: payload },
-        commit: { type: ADD_LINKS_COMMIT },
+        commit: { type: ADD_LINKS_COMMIT, meta: { doCallNextActions } },
         rollback: { type: ADD_LINKS_ROLLBACK, meta: payload },
       }
     },
@@ -501,4 +503,76 @@ export const updateCardItemMenuPopupPosition = (position) => {
     type: UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
     payload: position,
   };
+};
+
+export const extractContent = (listName, ids) => async (dispatch, getState) => {
+
+  // IMPORTANT: didBeautify is removed as it's not needed
+  //   Legacy old link contains didBeautify
+
+  let links;
+  if (listName === null && ids === null) {
+
+    const customListNames = Object.keys(getState().links).filter(key => {
+      return ![MY_LIST, ARCHIVE, TRASH].includes(key);
+    });
+
+    let listNames = [MY_LIST, ARCHIVE];
+    listNames.push(...customListNames);
+
+    for (listName of listNames) {
+      const obj = getState().links[listName];
+      if (!obj) continue;
+
+      let _links = _.ignore(obj, [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]);
+      _links = Object.values(_links)
+        .filter(link => !link.extractedResult)
+        .sort((a, b) => b.addedDT - a.addedDT);
+
+      // Allow just one link at a time for now
+      if (_links[0]) {
+        links = [_links[0]];
+        break;
+      }
+    }
+    // No not extracted link found, return
+    if (!links) return;
+  } else if (listName !== null && ids !== null) {
+    let _links = _.ignore(
+      _.select(getState().links[listName], ID, ids),
+      [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]
+    );
+    _links = Object.values(_links);
+
+    // Allow just one link at a time for now
+    if (!_links[0]) throw new Error(`Links not found: ${listName}, ${ids}`);
+    links = [_links[0]];
+  } else {
+    throw new Error(`Invalid parameters: ${listName}, ${ids}`);
+  }
+
+  const res = await axios.post(BRACE_EXTRACT_URL, { urls: links.map(link => link.url) });
+  const extractedResults = res.data.extractedResults;
+
+  const extractedLinks = [];
+  for (let i = 0; i < extractedResults.length; i++) {
+    const extractedResult = extractedResults[i];
+    if (extractedResult.status === EXTRACT_EXCEEDING_N_URLS) return;
+    links[i].extractedResult = extractedResult;
+    extractedLinks.push(links[i]);
+  }
+  if (extractedLinks.length === 0) return;
+
+  const payload = { listName: listName, links: extractedLinks };
+  dispatch({
+    type: UPDATE_LINKS,
+    payload,
+    meta: {
+      offline: {
+        effect: { method: UPDATE_LINKS, params: payload },
+        commit: { type: UPDATE_LINKS_COMMIT },
+        rollback: { type: UPDATE_LINKS_ROLLBACK, meta: payload },
+      }
+    },
+  });
 };

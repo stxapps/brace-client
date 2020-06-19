@@ -91,3 +91,11 @@ export const URL_MSGS = {
   [NO_URL]: 'Please fill in a link you want to save in the textbox.',
   [ASK_CONFIRM_URL]: 'Looks like an invalid link. Are you sure?',
 };
+
+export const BRACE_URL = 'https://brace-001.uc.r.appspot.com';
+export const BRACE_EXTRACT_URL = BRACE_URL + '/extract';
+
+export const EXTRACT_OK = 'EXTRACT_OK';
+export const EXTRACT_ERROR = 'EXTRACT_ERROR';
+export const EXTRACT_INVALID_URL = 'EXTRACT_INVALID_URL';
+export const EXTRACT_EXCEEDING_N_URLS = 'EXTRACT_EXCEEDING_N_URLS';

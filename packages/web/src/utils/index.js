@@ -34,6 +34,8 @@ export class DefaultDict {
 }
 
 const mapKeys = (arr, key) => {
+  if (!Array.isArray(arr)) throw new Error(`Must be arr: ${arr}`);
+
   const obj = {};
   for (const el of arr) {
     obj[el[key]] = el;
@@ -42,6 +44,8 @@ const mapKeys = (arr, key) => {
 };
 
 const select = (obj, key, value) => {
+  if (Array.isArray(obj)) throw new Error(`Must be obj, not arr: ${obj}`);
+
   const newObj = {};
   for (const id in obj) {
     if (Array.isArray(value)) {
@@ -71,6 +75,8 @@ const _update = (obj, updKey, updValue) => {
 };
 
 const update = (obj, conKey, conValue, updKey, updValue) => {
+  if (Array.isArray(obj)) throw new Error(`Must be obj, not arr: ${obj}`);
+
   const newObj = {};
   for (const id in obj) {
     if (conKey === null) {
@@ -99,14 +105,24 @@ const update = (obj, conKey, conValue, updKey, updValue) => {
 };
 
 const extract = (obj, key) => {
+
   const arr = [];
-  for (const id in obj) {
-    arr.push(obj[id][key]);
+  if (Array.isArray(obj)) {
+    for (const el of obj) {
+      arr.push(el[key]);
+    }
+  } else {
+    for (const id in obj) {
+      arr.push(obj[id][key]);
+    }
   }
+
   return arr;
 };
 
 const exclude = (obj, key, value) => {
+  if (Array.isArray(obj)) throw new Error(`Must be obj, not arr: ${obj}`);
+
   const newObj = {};
   for (const id in obj) {
     if (Array.isArray(value)) {
@@ -127,6 +143,8 @@ const exclude = (obj, key, value) => {
 };
 
 const ignore = (obj, key) => {
+  if (Array.isArray(obj)) throw new Error(`Must be obj, not arr: ${obj}`);
+
   const newObj = {};
   for (const id in obj) {
     const newObjEl = {};
@@ -152,6 +170,7 @@ const ignore = (obj, key) => {
 };
 
 const copyAttr = (obj, copiedObj, key) => {
+  if (Array.isArray(obj)) throw new Error(`Must be obj, not arr: ${obj}`);
 
   if (!obj || !copiedObj) {
     return obj;

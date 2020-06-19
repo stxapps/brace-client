@@ -5,6 +5,7 @@ import {
   UPDATE_POPUP,
   FETCH_COMMIT, FETCH_MORE_COMMIT,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
+  UPDATE_LINKS, UPDATE_LINKS_COMMIT, UPDATE_LINKS_ROLLBACK,
   MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
   MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
@@ -21,7 +22,7 @@ import {
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
 } from '../types/const';
 import { _ } from '../utils';
-import { moveLinksDeleteStep, deleteOldLinksInTrash } from '../actions';
+import { moveLinksDeleteStep, deleteOldLinksInTrash, extractContent } from '../actions';
 
 const initialState = {
   [MY_LIST]: null,
@@ -123,6 +124,15 @@ export default (state = initialState, action) => {
       state[listName], ID, _.extract(links, ID), STATUS, ADDED
     );
 
+    const { doCallNextActions } = action.meta;
+    if (doCallNextActions) {
+      return loop(
+        newState,
+        Cmd.run(
+          extractContent(listName, _.extract(links, ID)),
+          { args: [Cmd.dispatch, Cmd.getState] })
+      );
+    }
     return newState;
   }
 
@@ -135,6 +145,28 @@ export default (state = initialState, action) => {
     );
 
     return newState;
+  }
+
+  if (action.type === UPDATE_LINKS) {
+    // Do nothing here so no need to rollback
+  }
+
+  if (action.type === UPDATE_LINKS_COMMIT) {
+    const { listName, links } = action.payload;
+
+    const newState = { ...state };
+    for (const link of links) {
+      newState[listName][link.id] = { ...newState[listName][link.id] };
+      for (const key of ['extractedResult']) {
+        newState[listName][link.id][key] = link[key];
+      }
+    }
+
+    return newState;
+  }
+
+  if (action.type === UPDATE_LINKS_ROLLBACK) {
+    // No need to rollback as UPDATE_LINKS does nothing
   }
 
   if (action.type === MOVE_LINKS_ADD_STEP) {
@@ -270,7 +302,12 @@ export default (state = initialState, action) => {
     const newState = { ...state };
     newState[listName] = _.exclude(state[listName], ID, ids);
 
-    return newState;
+    return loop(
+      newState,
+      Cmd.run(
+        extractContent(null, null),
+        { args: [Cmd.dispatch, Cmd.getState] })
+    );
   }
 
   if (action.type === UPDATE_POPUP &&

@@ -80,7 +80,7 @@ class BottomBar extends React.Component {
       }
     }
 
-    this.props.addLink(this.state.url);
+    this.props.addLink(this.state.url, true);
     this.props.updatePopup(ADD_POPUP, false);
   }
 

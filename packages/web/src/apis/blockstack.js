@@ -50,13 +50,18 @@ export const effect = async (effectObj, _action) => {
 };
 
 const createLinkFPath = (listName, id = null) => {
-  listName = encodeURIComponent(listName);
+  // Cannot encode because fpaths in etags are not encoded
+  // When fetch, unencoded fpaths are saved in etags
+  // When update, if encode, fpath will be different to the fpath in etags,
+  //   it'll be treated as a new file and fails in putFile
+  //   as on server, error is thrown: etag is different.
+  //listName = encodeURIComponent(listName);
   return id === null ? `links/${listName}` : `links/${listName}/${id}.json`;
 };
 
 const extractLinkFPath = (fpath) => {
   let [listName, fname] = fpath.split('/').slice(1);
-  listName = decodeURIComponent(listName);
+  //listName = decodeURIComponent(listName);
 
   const dotIndex = fname.lastIndexOf('.');
   const ext = fname.substring(dotIndex + 1);
@@ -157,19 +162,20 @@ const batchPutFileWithRetry = async (fpaths, contents, callCount) => {
     fpaths.map((fpath, i) =>
       userSession.putFile(fpath, JSON.stringify(contents[i]))
         .then(publicUrl => ({ publicUrl, fpath, success: true }))
-        .catch(error => ({ error, fpath, success: false }))
+        .catch(error => ({ error, fpath, content: contents[i], success: false }))
     )
   );
 
   const failedResponses = responses.filter(({ success }) => !success);
   const failedFPaths = failedResponses.map(({ fpath }) => fpath);
+  const failedContents = failedResponses.map(({ content }) => content);
 
   if (failedResponses.length) {
     if (callCount + 1 >= MAX_TRY) throw failedResponses[0].error;
 
     return [
       ...responses.filter(({ success }) => success),
-      ...(await batchGetFileWithRetry(failedFPaths, callCount + 1))
+      ...(await batchPutFileWithRetry(failedFPaths, failedContents, callCount + 1))
     ];
   }
 
@@ -204,7 +210,7 @@ const batchDeleteFileWithRetry = async (fpaths, callCount) => {
 
     return [
       ...responses.filter(({ success }) => success),
-      ...(await batchGetFileWithRetry(failedFPaths, callCount + 1))
+      ...(await batchDeleteFileWithRetry(failedFPaths, callCount + 1))
     ];
   }
 

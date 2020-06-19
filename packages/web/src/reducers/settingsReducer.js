@@ -6,7 +6,7 @@ import {
 const initialState = {
   defaultListName: MY_LIST,
   doEncrypt: true,
-  doBeautify: true,
+  doExtractContent: true,
   doDeleteOldLinksInTrash: true,
   doDescendingOrder: true,
   doRemoveAfterClick: false,
