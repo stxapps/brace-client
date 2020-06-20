@@ -70,7 +70,7 @@ class CardItem extends React.Component {
     if (extractedResult && extractedResult.image) image = extractedResult.image;
 
     if (image) {
-      return <GracefulImage className="absolute h-full w-full object-cover object-center" src={image} alt={`illustration of ${url}`} />;
+      return <GracefulImage className="absolute h-full w-full object-cover object-center shadow-xs" src={image} alt={`illustration of ${url}`} />;
     }
 
     let fg = null;
@@ -143,9 +143,15 @@ class CardItem extends React.Component {
   render() {
     const { url, status, extractedResult } = this.props.link;
 
-    let title;
-    if (extractedResult && extractedResult.title) title = extractedResult.title;
-    if (!title) title = url;
+    let title, classNames = '';
+    if (extractedResult && extractedResult.title) {
+      title = extractedResult.title;
+      classNames = 'text-justify hyphens-auto';
+    }
+    if (!title) {
+      title = url;
+      classNames = 'break-all';
+    }
 
     const { host, origin } = extractUrl(url);
 
@@ -155,12 +161,16 @@ class CardItem extends React.Component {
           {this.renderImage()}
         </div>
         <div className="flex justify-between items-center">
-          <div className="flex-shrink flex-grow">
+          <div className="flex-shrink flex-grow min-w-0">
             <div className="pl-4 flex justify-start items-center lg:pl-5">
               {this.renderFavicon()}
-              <p className="pl-2 flex-shrink flex-grow text-base text-gray-700 truncate">
-                <a className="focus:outline-none focus:shadow-outline" href={origin}>{host}</a>
-              </p>
+              <div className="flex-shrink flex-grow min-w-0">
+                <p className="pl-2 text-base text-gray-700 truncate">
+                  <a className="focus:outline-none focus:shadow-outline" href={origin}>
+                    {host}
+                  </a>
+                </p>
+              </div>
             </div>
           </div>
           <div className="flex-shrink-0 flex-grow-0">
@@ -171,9 +181,11 @@ class CardItem extends React.Component {
             </button>
           </div>
         </div>
-        <h4 className="px-4 pt-0 pb-3 text-base text-gray-800 font-semibold leading-relaxed break-all lg:px-5 lg:pt-3 lg:pb-5">
-          <a className="focus:outline-none focus:shadow-outline" href={ensureContainUrlProtocol(url)}>{title}</a>
-        </h4>
+        <a className="focus:outline-none-outer" href={ensureContainUrlProtocol(url)}>
+          <h4 className={`mt-0 mb-3 ml-4 mr-3 text-base text-gray-800 font-semibold leading-relaxed ${classNames} focus:shadow-outline-inner lg:mb-4 lg:ml-5 lg:mr-4`}>
+            {title}
+          </h4>
+        </a>
         {isDiedStatus(status) && this.renderRetry()}
         {[ADDING, MOVING].includes(status) && this.renderBusy()}
       </div>
