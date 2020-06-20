@@ -129,14 +129,14 @@ class Adding extends React.Component {
 
     const { addingPUrl } = this._processAddingUrl(addingUrl);
 
-    let rightLink = <a className="block text-2xl text-gray-900 font-semibold text-right leading-none hover:underline focus:outline-none focus:shadow-outline" href="/">{isUserSignedIn ? 'Go to My List >' : 'Go to Brace.to >'}</a>
+    let rightLink = <a className="block text-xl text-gray-900 font-medium text-right leading-none hover:underline focus:outline-none focus:shadow-outline" href="/">{isUserSignedIn ? 'Go to My List >' : 'Go to Brace.to >'}</a>
     let centerText = null;
-    let leftLink = urlValidatedResult === VALID_URL ? <a className="mt-6 block text-base text-gray-900 text-left leading-none hover:underline focus:outline-none focus:shadow-outline md:mt-0" href={addingPUrl}>Back to the link</a> : <div></div>;
+    let leftLink = urlValidatedResult === VALID_URL ? <a className="mt-6 block text-base text-gray-800 text-left leading-none hover:underline focus:outline-none focus:shadow-outline md:mt-0" href={addingPUrl}>Back to the link</a> : <div></div>;
 
     if (param && param[URL_QUERY_CLOSE_KEY]) {
       if (param[URL_QUERY_CLOSE_KEY] === URL_QUERY_CLOSE_WINDOW) {
         leftLink = null;
-        centerText = <button onClick={() => window.close()} className="py-2 block w-full text-center focus:outline-none focus:shadow-outline">close this window</button>;
+        centerText = <button onClick={() => window.close()} className="py-2 block w-full text-base text-gray-900 text-center focus:outline-none focus:shadow-outline">close this window</button>;
         rightLink = null;
       }
     }
@@ -164,10 +164,10 @@ class Adding extends React.Component {
             <div className="bg-gray-600"></div>
           </div>
         </div>
-        <p className="mx-auto mt-5 w-full max-w-xs text-xl text-gray-900 text-center">
-          <a className="break-all focus:outline-none focus:shadow-outline" href={addingPUrl}>{addingTUrl}</a>
+        <p className="mx-auto mt-5 w-full max-w-xs text-center">
+          <a className="text-base text-gray-800 break-all focus:outline-none focus:shadow-outline" href={addingPUrl}>{addingTUrl}</a>
           <br />
-          <span className="font-semibold break-normal">is being saved.</span>
+          <span className="text-2xl text-gray-900 font-semibold break-normal">is being saved</span>.
         </p>
       </React.Fragment>
     );
@@ -185,10 +185,10 @@ class Adding extends React.Component {
           <path fillRule="evenodd" clipRule="evenodd" d="M48 96C74.5098 96 96 74.5098 96 48C96 21.4903 74.5098 0 48 0C21.4903 0 0 21.4903 0 48C0 74.5098 21.4903 96 48 96ZM70.2426 40.2427C72.5856 37.8995 72.5856 34.1005 70.2426 31.7573C67.8996 29.4142 64.1004 29.4142 61.7574 31.7573L42 51.5148L34.2427 43.7573C31.8995 41.4142 28.1005 41.4142 25.7573 43.7573C23.4142 46.1005 23.4142 49.8996 25.7573 52.2426L37.7573 64.2426C40.1005 66.5856 43.8995 66.5856 46.2427 64.2426L70.2426 40.2427Z" fill="#68D391" />
           <path fillRule="evenodd" clipRule="evenodd" d="M70.2426 40.2427C72.5856 37.8995 72.5856 34.1005 70.2426 31.7573C67.8996 29.4142 64.1004 29.4142 61.7574 31.7573L42 51.5148L34.2427 43.7573C31.8995 41.4142 28.1005 41.4142 25.7573 43.7573C23.4142 46.1005 23.4142 49.8996 25.7573 52.2426L37.7573 64.2426C40.1005 66.5856 43.8995 66.5856 46.2427 64.2426L70.2426 40.2427Z" fill="#22543D" />
         </svg>
-        <p className="mx-auto mt-5 w-full max-w-xs text-xl text-gray-900 text-center">
-          <a className="break-all focus:outline-none focus:shadow-outline" href={addingPUrl}>{addingTUrl}</a>
+        <p className="mx-auto mt-5 w-full max-w-xs text-center">
+          <a className="text-base text-gray-800 break-all focus:outline-none focus:shadow-outline" href={addingPUrl}>{addingTUrl}</a>
           <br />
-          <span className="font-semibold break-normal">has been saved.</span>
+          <span className="text-2xl text-gray-900 font-semibold break-normal">has been saved</span>.
         </p>
         {this.renderNav()}
       </React.Fragment>
@@ -204,7 +204,7 @@ class Adding extends React.Component {
         <svg className="mx-auto h-24 text-red-600" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
           <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
         </svg>
-        <p className="mx-auto mt-5 w-full max-w-xs text-xl text-gray-900 text-center">Oops..., something went wrong!</p>
+        <p className="mx-auto mt-5 w-full max-w-xs text-2xl text-gray-900 font-semibold text-center">Oops..., something went wrong!</p>
         <p className="mx-auto mt-5 w-full max-w-xs text-base text-gray-900 text-center">
           Please wait a moment and try again. If the problem persists, please&nbsp;
           <a className="hover:underline focus:outline-none focus:shadow-outline" href="/#support">
@@ -234,10 +234,12 @@ class Adding extends React.Component {
         <svg className="mx-auto h-24 text-yellow-600" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
           <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM10 7C9.63113 7 9.3076 7.19922 9.13318 7.50073C8.85664 7.97879 8.24491 8.14215 7.76685 7.86561C7.28879 7.58906 7.12543 6.97733 7.40197 6.49927C7.91918 5.60518 8.88833 5 10 5C11.6569 5 13 6.34315 13 8C13 9.30622 12.1652 10.4175 11 10.8293V11C11 11.5523 10.5523 12 10 12C9.44773 12 9.00001 11.5523 9.00001 11V10C9.00001 9.44772 9.44773 9 10 9C10.5523 9 11 8.55228 11 8C11 7.44772 10.5523 7 10 7ZM10 15C10.5523 15 11 14.5523 11 14C11 13.4477 10.5523 13 10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15Z" />
         </svg>
-        <p className="mx-auto mt-5 w-full max-w-xs text-lg text-gray-900 text-center">
-          <a className="break-all focus:outline-none focus:shadow-outline" href={addingPUrl}>{addingTUrl}</a>
+        <p className="mx-auto mt-5 w-full max-w-xs text-center">
+          <a className="text-base text-gray-800 break-all focus:outline-none focus:shadow-outline" href={addingPUrl}>{addingTUrl}</a>
           <br />
-          <span className="font-semibold break-normal">looks like an invalid link. Are you sure?</span>
+          <span className="text-2xl text-gray-900 font-semibold break-normal">looks like an invalid link</span>.
+          <br />
+          <span className="text-xl text-gray-900 font-medium">Are you sure?</span>
         </p>
         <button onClick={this.onAskingConfirmOkBtnClick} className="mx-auto mt-5 mb-px block h-14 focus:outline-none-outer">
           <span className="px-4 py-2 text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Yes, I'm sure</span>
@@ -259,7 +261,7 @@ class Adding extends React.Component {
         <svg className="mx-auto h-24 text-red-600" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
           <path fillRule="evenodd" clipRule="evenodd" d="M8.25706 3.09882C9.02167 1.73952 10.9788 1.73952 11.7434 3.09882L17.3237 13.0194C18.0736 14.3526 17.1102 15.9999 15.5805 15.9999H4.4199C2.89025 15.9999 1.92682 14.3526 2.67675 13.0194L8.25706 3.09882ZM11.0001 13C11.0001 13.5523 10.5524 14 10.0001 14C9.44784 14 9.00012 13.5523 9.00012 13C9.00012 12.4477 9.44784 12 10.0001 12C10.5524 12 11.0001 12.4477 11.0001 13ZM10.0001 5C9.44784 5 9.00012 5.44772 9.00012 6V9C9.00012 9.55228 9.44784 10 10.0001 10C10.5524 10 11.0001 9.55228 11.0001 9V6C11.0001 5.44772 10.5524 5 10.0001 5Z" />
         </svg>
-        <p className="mx-auto mt-5 w-full max-w-xs text-lg text-gray-900 text-center">{msg}</p>
+        <p className="mx-auto mt-5 w-full max-w-xs text-2xl text-gray-900 font-semibold text-center">{msg}</p>
         {this.renderNav()}
       </React.Fragment>
     );
@@ -274,15 +276,14 @@ class Adding extends React.Component {
         <svg className="mx-auto h-24 text-yellow-600" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
           <path fillRule="evenodd" clipRule="evenodd" d="M8.25706 3.09882C9.02167 1.73952 10.9788 1.73952 11.7434 3.09882L17.3237 13.0194C18.0736 14.3526 17.1102 15.9999 15.5805 15.9999H4.4199C2.89025 15.9999 1.92682 14.3526 2.67675 13.0194L8.25706 3.09882ZM11.0001 13C11.0001 13.5523 10.5524 14 10.0001 14C9.44784 14 9.00012 13.5523 9.00012 13C9.00012 12.4477 9.44784 12 10.0001 12C10.5524 12 11.0001 12.4477 11.0001 13ZM10.0001 5C9.44784 5 9.00012 5.44772 9.00012 6V9C9.00012 9.55228 9.44784 10 10.0001 10C10.5524 10 11.0001 9.55228 11.0001 9V6C11.0001 5.44772 10.5524 5 10.0001 5Z" />
         </svg>
-        <p className="mx-auto mt-5 w-full max-w-xs text-base text-gray-900 text-center">Please sign in first</p>
-        <button onClick={() => this.props.signIn()} className="mx-auto mb-px block h-14 focus:outline-none-outer">
+        <p className="mx-auto mt-5 w-full max-w-xs text-2xl text-gray-900 font-semibold text-center">Please sign in first</p>
+        <button onClick={() => this.props.signIn()} className="mx-auto mt-2 block h-14 focus:outline-none-outer">
           <span className="px-4 py-2 text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Sign in</span>
         </button>
         <div className="mt-10 flex justify-center items-center">
           <p className="text-base text-gray-900">No account yet?</p>
-          <button onClick={() => this.props.signUp()} className="ml-2 hover:underline focus:outline-none focus:shadow-outline">Sign up</button>
+          <button onClick={() => this.props.signUp()} className="ml-2 underline focus:outline-none focus:shadow-outline">Sign up</button>
         </div>
-
         {this.renderNav()}
       </React.Fragment>
     );
@@ -300,10 +301,10 @@ class Adding extends React.Component {
           <path fillRule="evenodd" clipRule="evenodd" d="M48 96C74.5098 96 96 74.5098 96 48C96 21.4903 74.5098 0 48 0C21.4903 0 0 21.4903 0 48C0 74.5098 21.4903 96 48 96ZM70.2426 40.2427C72.5856 37.8995 72.5856 34.1005 70.2426 31.7573C67.8996 29.4142 64.1004 29.4142 61.7574 31.7573L42 51.5148L34.2427 43.7573C31.8995 41.4142 28.1005 41.4142 25.7573 43.7573C23.4142 46.1005 23.4142 49.8996 25.7573 52.2426L37.7573 64.2426C40.1005 66.5856 43.8995 66.5856 46.2427 64.2426L70.2426 40.2427Z" fill="#68D391" />
           <path fillRule="evenodd" clipRule="evenodd" d="M70.2426 40.2427C72.5856 37.8995 72.5856 34.1005 70.2426 31.7573C67.8996 29.4142 64.1004 29.4142 61.7574 31.7573L42 51.5148L34.2427 43.7573C31.8995 41.4142 28.1005 41.4142 25.7573 43.7573C23.4142 46.1005 23.4142 49.8996 25.7573 52.2426L37.7573 64.2426C40.1005 66.5856 43.8995 66.5856 46.2427 64.2426L70.2426 40.2427Z" fill="#22543D" />
         </svg>
-        <p className="mx-auto mt-5 w-full max-w-xs text-xl text-gray-900 text-center">
-          <a className="break-all focus:outline-none focus:shadow-outline" href={addingPUrl}>{addingTUrl}</a>
+        <p className="mx-auto mt-5 w-full max-w-xs text-center">
+          <a className="text-base text-gray-800 break-all focus:outline-none focus:shadow-outline" href={addingPUrl}>{addingTUrl}</a>
           <br />
-          <span className="font-semibold break-normal">already exists.</span>
+          <span className="text-2xl text-gray-900 font-semibold break-normal">already exists</span>.
         </p>
         {this.renderNav()}
       </React.Fragment>
