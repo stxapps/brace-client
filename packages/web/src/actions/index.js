@@ -9,13 +9,14 @@ import {
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
-  UPDATE_LINKS, UPDATE_LINKS_COMMIT, UPDATE_LINKS_ROLLBACK,
+  UPDATE_LINKS,
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
   MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
   MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
   CANCEL_DIED_LINKS,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
+  EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
   UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
   RESET_STATE,
 } from '../types/actionTypes';
@@ -505,7 +506,7 @@ export const updateCardItemMenuPopupPosition = (position) => {
   };
 };
 
-export const extractContent = (listName, ids) => async (dispatch, getState) => {
+export const extractContents = (listName, ids) => async (dispatch, getState) => {
 
   // IMPORTANT: didBeautify is removed as it's not needed
   //   Legacy old link contains didBeautify
@@ -565,13 +566,13 @@ export const extractContent = (listName, ids) => async (dispatch, getState) => {
 
   const payload = { listName: listName, links: extractedLinks };
   dispatch({
-    type: UPDATE_LINKS,
+    type: EXTRACT_CONTENTS,
     payload,
     meta: {
       offline: {
         effect: { method: UPDATE_LINKS, params: payload },
-        commit: { type: UPDATE_LINKS_COMMIT },
-        rollback: { type: UPDATE_LINKS_ROLLBACK, meta: payload },
+        commit: { type: EXTRACT_CONTENTS_COMMIT },
+        rollback: { type: EXTRACT_CONTENTS_ROLLBACK, meta: payload },
       }
     },
   });

@@ -5,12 +5,11 @@ import {
   UPDATE_POPUP,
   FETCH_COMMIT, FETCH_MORE_COMMIT,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
-  UPDATE_LINKS, UPDATE_LINKS_COMMIT, UPDATE_LINKS_ROLLBACK,
   MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
   MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
   CANCEL_DIED_LINKS,
-  DELETE_OLD_LINKS_IN_TRASH_COMMIT,
+  DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT,
   RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -22,7 +21,7 @@ import {
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
 } from '../types/const';
 import { _ } from '../utils';
-import { moveLinksDeleteStep, deleteOldLinksInTrash, extractContent } from '../actions';
+import { moveLinksDeleteStep, deleteOldLinksInTrash, extractContents } from '../actions';
 
 const initialState = {
   [MY_LIST]: null,
@@ -129,7 +128,7 @@ export default (state = initialState, action) => {
       return loop(
         newState,
         Cmd.run(
-          extractContent(listName, _.extract(links, ID)),
+          extractContents(listName, _.extract(links, ID)),
           { args: [Cmd.dispatch, Cmd.getState] })
       );
     }
@@ -145,28 +144,6 @@ export default (state = initialState, action) => {
     );
 
     return newState;
-  }
-
-  if (action.type === UPDATE_LINKS) {
-    // Do nothing here so no need to rollback
-  }
-
-  if (action.type === UPDATE_LINKS_COMMIT) {
-    const { listName, links } = action.payload;
-
-    const newState = { ...state };
-    for (const link of links) {
-      newState[listName][link.id] = { ...newState[listName][link.id] };
-      for (const key of ['extractedResult']) {
-        newState[listName][link.id][key] = link[key];
-      }
-    }
-
-    return newState;
-  }
-
-  if (action.type === UPDATE_LINKS_ROLLBACK) {
-    // No need to rollback as UPDATE_LINKS does nothing
   }
 
   if (action.type === MOVE_LINKS_ADD_STEP) {
@@ -305,9 +282,23 @@ export default (state = initialState, action) => {
     return loop(
       newState,
       Cmd.run(
-        extractContent(null, null),
+        extractContents(null, null),
         { args: [Cmd.dispatch, Cmd.getState] })
     );
+  }
+
+  if (action.type === EXTRACT_CONTENTS_COMMIT) {
+    const { listName, links } = action.payload;
+
+    const newState = { ...state };
+    for (const link of links) {
+      newState[listName][link.id] = { ...newState[listName][link.id] };
+      for (const key of ['extractedResult']) {
+        newState[listName][link.id][key] = link[key];
+      }
+    }
+
+    return newState;
   }
 
   if (action.type === UPDATE_POPUP &&

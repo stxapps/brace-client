@@ -6,6 +6,7 @@ import {
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
+  EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK, EXTRACT_CONTENTS_COMMIT,
   UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
   RESET_STATE,
 } from '../types/actionTypes';
@@ -115,6 +116,18 @@ export default (state = initialState, action) => {
 
   if (action.type === DELETE_OLD_LINKS_IN_TRASH_ROLLBACK) {
     return { ...state, status: DELETE_OLD_LINKS_IN_TRASH_ROLLBACK };
+  }
+
+  if (action.type === EXTRACT_CONTENTS) {
+    return { ...state, status: EXTRACT_CONTENTS };
+  }
+
+  if (action.type === EXTRACT_CONTENTS_COMMIT) {
+    return { ...state, status: EXTRACT_CONTENTS_COMMIT };
+  }
+
+  if (action.type === EXTRACT_CONTENTS_ROLLBACK) {
+    return { ...state, status: EXTRACT_CONTENTS_ROLLBACK };
   }
 
   if (action.type === UPDATE_STATUS) {
