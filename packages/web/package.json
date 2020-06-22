@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "dependencies": {
-    "@blockstack/connect": "^2.7.2",
+    "@blockstack/connect": "^2.7.5",
     "@fullhuman/postcss-purgecss": "^2.2.0",
     "@redux-offline/redux-offline": "https://github.com/bracedotto/redux-offline#88a89e7ebe76415e83bd1943360e817274d8063d",
     "@testing-library/jest-dom": "^4.2.4",
@@ -40,8 +40,8 @@
     "test": "react-scripts test",
     "deploy-test": "aws s3 sync build/ s3://test-brace-web --delete --acl public-read && aws cloudfront create-invalidation --distribution-id E1IMMCHCDM4Y81 --paths /index.html",
     "deploy-prod": "aws s3 sync build/ s3://brace-web --delete --acl public-read && aws cloudfront create-invalidation --distribution-id ECEBYZH814VT0 --paths /index.html",
-    "invalidate-test": "aws cloudfront create-invalidation --distribution-id E1IMMCHCDM4Y81 --paths /favicon.ico /manifest.json",
-    "invalidate-prod": "aws cloudfront create-invalidation --distribution-id ECEBYZH814VT0 --paths /favicon.ico /manifest.json",
+    "invalidate-test": "aws cloudfront create-invalidation --distribution-id E1IMMCHCDM4Y81 --paths /apple-touch-icon.png /logo192.png /logo512.png",
+    "invalidate-prod": "aws cloudfront create-invalidation --distribution-id ECEBYZH814VT0 --paths /apple-touch-icon.png /logo192.png /logo512.png",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
