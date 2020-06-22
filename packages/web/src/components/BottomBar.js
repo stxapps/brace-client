@@ -36,7 +36,6 @@ class BottomBar extends React.Component {
     }
 
     this.prevIsAddPopupShown = false;
-    this.prevIsSearchPopupShown = false;
   }
 
   componentDidUpdate() {
@@ -139,7 +138,7 @@ class BottomBar extends React.Component {
     return (
       <React.Fragment>
         <button onClick={this.onAddCancelBtnClick} tabIndex={-1} className={`${!isAddPopupShown ? 'hidden' : ''} fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none`}></button>
-        <div className={`px-4 pt-6 pb-6 fixed inset-x-0 bottom-0 bg-white border border-gray-200 rounded-t-lg shadow-xl transform ${!isAddPopupShown ? 'translate-y-full' : ''} transition-transform duration-300 ease-in-out z-41`}>
+        <div className={`px-4 pt-6 pb-6 fixed inset-x-0 bottom-0 bg-white border border-gray-200 rounded-t-lg shadow-xl transform ${!isAddPopupShown ? 'translate-y-full' : ''} z-41`}>
           <input ref={this.addInput} onChange={this.onAddInputChange} onKeyPress={this.onAddInputKeyPress} className="px-4 py-2 w-full bg-white text-gray-900 border border-gray-600 rounded-full appearance-none focus:outline-none focus:shadow-outline" type="url" placeholder="https://" value={url} />
           <p className="pt-3 text-red-500">{msg}</p>
           <div className="pt-3">
@@ -154,13 +153,16 @@ class BottomBar extends React.Component {
   renderSearchPopup() {
     const { isShown, isSearchPopupShown, searchString } = this.props;
 
-    const style = isShown ? { bottom: BAR_HEIGHT } : { bottom: 0 };
-    const duration = isSearchPopupShown || this.prevIsSearchPopupShown ? 'duration-200' : BOTTOM_BAR_DURATION;
-
-    this.prevIsSearchPopupShown = isSearchPopupShown;
+    // Only transition when moving with BottomBar
+    //   but when show/hide this search popup, no need animation
+    //   as keyboard is already animated.
+    const style = {};
+    if (isShown) style.bottom = BAR_HEIGHT;
+    else style.bottom = 0;
+    style.transitionProperty = 'bottom';
 
     return (
-      <div style={style} className={`px-2 py-2 fixed inset-x-0 flex justify-between items-center bg-white border border-gray-200 transform ${!isSearchPopupShown ? 'translate-y-full' : ''} transition-transform ${duration} ease-in-out z-10`}>
+      <div style={style} className={`px-2 py-2 fixed inset-x-0 flex justify-between items-center bg-white border border-gray-200 transform ${!isSearchPopupShown ? 'translate-y-full' : ''} ${BOTTOM_BAR_DURATION} ease-in-out z-10`}>
         <div className="relative w-full">
           <input ref={this.searchInput} onChange={this.onSearchInputChange} className="pl-4 pr-8 py-1 flex-grow-1 flex-shrink w-full bg-white text-gray-900 border border-gray-600 rounded-full appearance-none focus:outline-none focus:shadow-outline" type="search" placeholder="Search" value={searchString} />
           <button ref={this.searchClearBtn} onClick={this.onSearchClearBtnClick} className="hidden absolute inset-y-0 right-0 flex items-center pr-2 focus:outline-none-outer">
