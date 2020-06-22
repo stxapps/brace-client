@@ -600,6 +600,7 @@ This and CI/CD are very important!
 ** steps
 - yarn add tailwindcss postcss-cli 
 - yarn add @fullhuman/postcss-purgecss
+- yarn add autoprefixer
 - no need for dev dependencies as this's not a node app
 - follow steps in tailwindcss.com/course/optimizing-for-production
 - follow steps in medium.com/@xijo/create-react-app-with-tailwind-via-postcss-plus-purgecss-5c36b4c33ba7 to config Tailwindcss
@@ -626,6 +627,8 @@ This and CI/CD are very important!
 - yarn add jdenticon
 - yarn add source-map-explorer
 - yarn add npm-run-all
+- yarn add axios
+- yarn add react-clamp-lines
 ** attribution
 - tailwindcss, postcss, purgecss
 - uirefactoring
@@ -697,6 +700,12 @@ This and CI/CD are very important!
 ** react
 - state, route, view
 * fully-fledged
+** todo
+- BottomBar: jumpy when add popup transition with keyboard
+- On mobile, just use div, not GridLayout
+  + can use Tailwindcss space-y
+  + no animation!
+- Plus sign at the top of the page, what's about mobile?
 ** features
 - download all
 - delete all
@@ -705,6 +714,8 @@ This and CI/CD are very important!
 - set default list
 - bulk edit
 - empty trash
+- select pattern or extract content
+- sort, rearrange?
 ** webapp, firefox/chrome extensions, android, ios
 * servers
 ** tailwindcss's live-server
