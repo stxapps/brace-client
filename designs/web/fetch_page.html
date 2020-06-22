@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="/favicon.ico">
+  <title>Brace - Save links to visit later</title>
+  <link rel="stylesheet" href="/css/tailwind.css">
+  <script src="/js/jquery-3.4.1.js"></script>
+</head>
+<body>
+  <h1 class="mt-16 text-4xl text-gray-900 font-bold leading-none md:mt-0 md:text-5xl">Fetch script</h1>
+
+  <script>
+
+    async function postData(url = '', data = {}) {
+      const response = await fetch(url, {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-cache',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        referrerPolicy: 'strict-origin',
+        body: JSON.stringify(data)
+      });
+      return response.json();
+    }
+
+    //var url = 'http://localhost:8088/extract';
+    var url = 'https://20200619t134045-dot-brace-001.uc.r.appspot.com/extract';
+    var data = {
+      //urls: [null, undefined, "", "asdf", "asdf.cm", "fb.me", "https://youtube.com", "brace.to"]
+      //urls: [null, undefined, "", "asdf", "asdf.cm", "fb.me", "https://youtube.com", "brace.to", "https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText", "https://github.com/unshiftio/url-parse#readme", "https://www.youtube.com/watch?v=C5zXQU5yir4&list=PLnlsD9YdBwhCf__q2kApv__pMVjxw0-7Q&index=23", "https://danielgauthier.me/launch-an-app/?utm_source=hackernewsletter&utm_medium=email&utm_term=fav", "https://dropbox.design/article/mental-models-for-designers?utm_source=hackernewsletter&utm_medium=email&utm_term=design"]
+      //urls: ["brace.to", "https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText", "https://github.com/unshiftio/url-parse#readme", "https://www.youtube.com/watch?v=C5zXQU5yir4&list=PLnlsD9YdBwhCf__q2kApv__pMVjxw0-7Q&index=23", "https://danielgauthier.me/launch-an-app/?utm_source=hackernewsletter&utm_medium=email&utm_term=fav", "https://dropbox.design/article/mental-models-for-designers?utm_source=hackernewsletter&utm_medium=email&utm_term=design", "https://medium.com/@aaron.kaz.music/transitioning-from-prerender-to-server-side-rendering-for-react-apps-6365b6137710"]
+      //urls: ["https://dropbox.design/article/mental-models-for-designers", "brace.to", "https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText", "https://github.com/unshiftio/url-parse#readme", "https://www.youtube.com/watch?v=C5zXQU5yir4&list=PLnlsD9YdBwhCf__q2kApv__pMVjxw0-7Q&index=23", "https://danielgauthier.me/launch-an-app/?utm_source=hackernewsletter&utm_medium=email&utm_term=fav", "https://medium.com/@aaron.kaz.music/transitioning-from-prerender-to-server-side-rendering-for-react-apps-6365b6137710"]
+      //urls: ["https://medium.com/@pushkarmandot/https-medium-com-pushkarmandot-what-is-lightgbm-how-to-implement-it-how-to-fine-tune-the-parameters-60347819b7fc"]
+      //urls: ["https://medium.com/@aaron.kaz.music/transitioning-from-prerender-to-server-side-rendering-for-react-apps-6365b6137710"]
+      //urls: ["https://mgronline.com/", "https://twitter.com"]
+      //urls: ["https://getpocket.com"]
+      //urls: ["https://www.youtube.com/watch?v=_6kL6EaLxOU"]
+      //urls: ["https://www.amazon.com"]
+      urls: ["https://www.wsj.com"]
+    };
+    postData(url, data)
+      .then(response => {
+        console.log(response);
+      }
+    );
+  </script>
+</body>
+</html>
