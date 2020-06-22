@@ -79,12 +79,20 @@ export default (state = initialState, action) => {
       }
     }
 
-    const { doCallNextActions } = action.meta;
-    if (doCallNextActions) {
+    const { doDeleteOldLinks, doExtractContents } = action.meta;
+    if (doDeleteOldLinks) {
       return loop(
         newState,
         Cmd.run(
-          deleteOldLinksInTrash(),
+          deleteOldLinksInTrash(doExtractContents),
+          { args: [Cmd.dispatch, Cmd.getState] })
+      );
+    }
+    if (doExtractContents) {
+      return loop(
+        newState,
+        Cmd.run(
+          extractContents(null, null),
           { args: [Cmd.dispatch, Cmd.getState] })
       );
     }
@@ -100,7 +108,12 @@ export default (state = initialState, action) => {
       ...toObjAndAddAttrs(links, ADDED, false, null)
     };
 
-    return newState;
+    return loop(
+      newState,
+      Cmd.run(
+        extractContents(null, null),
+        { args: [Cmd.dispatch, Cmd.getState] })
+    );
   }
 
   if (action.type === ADD_LINKS) {
@@ -123,8 +136,8 @@ export default (state = initialState, action) => {
       state[listName], ID, _.extract(links, ID), STATUS, ADDED
     );
 
-    const { doCallNextActions } = action.meta;
-    if (doCallNextActions) {
+    const { doExtractContents } = action.meta;
+    if (doExtractContents) {
       return loop(
         newState,
         Cmd.run(
@@ -279,12 +292,16 @@ export default (state = initialState, action) => {
     const newState = { ...state };
     newState[listName] = _.exclude(state[listName], ID, ids);
 
-    return loop(
-      newState,
-      Cmd.run(
-        extractContents(null, null),
-        { args: [Cmd.dispatch, Cmd.getState] })
-    );
+    const { doExtractContents } = action.meta;
+    if (doExtractContents) {
+      return loop(
+        newState,
+        Cmd.run(
+          extractContents(null, null),
+          { args: [Cmd.dispatch, Cmd.getState] })
+      );
+    }
+    return newState;
   }
 
   if (action.type === EXTRACT_CONTENTS_COMMIT) {

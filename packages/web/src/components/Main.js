@@ -56,7 +56,7 @@ class Main extends React.Component {
     window.addEventListener('resize', this.updateColumnWidth);
     window.addEventListener('scroll', this.updateScrollY);
 
-    this.props.fetch(true);
+    this.props.fetch(true, true);
     this.fetched.push(this.props.listName);
   }
 

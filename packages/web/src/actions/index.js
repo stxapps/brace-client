@@ -253,7 +253,7 @@ export const updatePopup = (id, isShown, anchorPosition = null) => {
   };
 };
 
-export const fetch = (doCallNextActions = false) => async (dispatch, getState) => {
+export const fetch = (doDeleteOldLinks, doExtractContents) => async (dispatch, getState) => {
 
   const listName = getState().display.listName;
   dispatch({
@@ -261,7 +261,7 @@ export const fetch = (doCallNextActions = false) => async (dispatch, getState) =
     meta: {
       offline: {
         effect: { method: FETCH, params: listName },
-        commit: { type: FETCH_COMMIT, meta: { doCallNextActions } },
+        commit: { type: FETCH_COMMIT, meta: { doDeleteOldLinks, doExtractContents } },
         rollback: { type: FETCH_ROLLBACK },
       }
     },
@@ -285,7 +285,7 @@ export const fetchMore = () => async (dispatch, getState) => {
   });
 };
 
-export const addLink = (url, doCallNextActions = false) => async (dispatch, getState) => {
+export const addLink = (url, doExtractContents = false) => async (dispatch, getState) => {
 
   let listName = getState().display.listName;
   if (listName === TRASH || listName === ARCHIVE) {
@@ -313,7 +313,7 @@ export const addLink = (url, doCallNextActions = false) => async (dispatch, getS
     meta: {
       offline: {
         effect: { method: ADD_LINKS, params: payload },
-        commit: { type: ADD_LINKS_COMMIT, meta: { doCallNextActions } },
+        commit: { type: ADD_LINKS_COMMIT, meta: { doExtractContents } },
         rollback: { type: ADD_LINKS_ROLLBACK, meta: payload },
       }
     },
@@ -468,7 +468,7 @@ export const changeListName = (listName, fetched) => async (dispatch, getState) 
   })
 
   if (!fetched.includes(listName)) {
-    dispatch(fetch());
+    dispatch(fetch(false, true));
   }
 };
 
@@ -479,13 +479,13 @@ export const updateSearchString = (searchString) => {
   };
 };
 
-export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
+export const deleteOldLinksInTrash = (doExtractContents = false) => async (dispatch, getState) => {
   dispatch({
     type: DELETE_OLD_LINKS_IN_TRASH,
     meta: {
       offline: {
         effect: { method: DELETE_OLD_LINKS_IN_TRASH },
-        commit: { type: DELETE_OLD_LINKS_IN_TRASH_COMMIT },
+        commit: { type: DELETE_OLD_LINKS_IN_TRASH_COMMIT, meta: { doExtractContents } },
         rollback: { type: DELETE_OLD_LINKS_IN_TRASH_ROLLBACK },
       }
     },
@@ -513,29 +513,25 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
 
   let links;
   if (listName === null && ids === null) {
+    // Need to fetch first before update the link so that etags are available.
+    // Do extract contents only on the current list name
+    //   and make sure it's already fetched.
+    listName = getState().display.listName;
+    if (listName === TRASH) return;
 
-    const customListNames = Object.keys(getState().links).filter(key => {
-      return ![MY_LIST, ARCHIVE, TRASH].includes(key);
-    });
+    const obj = getState().links[listName];
+    if (!obj) return;
 
-    let listNames = [MY_LIST, ARCHIVE];
-    listNames.push(...customListNames);
+    let _links = _.ignore(obj, [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]);
+    _links = Object.values(_links)
+      .filter(link => !link.extractedResult)
+      .sort((a, b) => b.addedDT - a.addedDT);
 
-    for (listName of listNames) {
-      const obj = getState().links[listName];
-      if (!obj) continue;
-
-      let _links = _.ignore(obj, [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]);
-      _links = Object.values(_links)
-        .filter(link => !link.extractedResult)
-        .sort((a, b) => b.addedDT - a.addedDT);
-
-      // Allow just one link at a time for now
-      if (_links[0]) {
-        links = [_links[0]];
-        break;
-      }
+    // Allow just one link at a time for now
+    if (_links[0]) {
+      links = [_links[0]];
     }
+
     // No not extracted link found, return
     if (!links) return;
   } else if (listName !== null && ids !== null) {
