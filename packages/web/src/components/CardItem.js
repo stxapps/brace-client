@@ -70,7 +70,8 @@ class CardItem extends React.Component {
     if (extractedResult && extractedResult.image) image = extractedResult.image;
 
     if (image) {
-      return <GracefulImage className="absolute h-full w-full object-cover object-center shadow-xs" src={image} alt={`illustration of ${url}`} />;
+      // This GracefulImage needs to be different from the one below so that it's not just rerender but recreate a new component with a new src and new retry. React knows by using different keys.
+      return <GracefulImage key="image-graceful-image-extracted-result" className="absolute h-full w-full object-cover object-center shadow-xs" src={image} alt={`illustration of ${url}`} />;
     }
 
     let fg = null;
@@ -107,7 +108,7 @@ class CardItem extends React.Component {
 
     // Random image
     if (decor.image.bg.type === IMAGE) {
-      return <GracefulImage className="absolute h-full w-full object-cover object-center" src={decor.image.bg.value} alt={`illustration of ${url}`} />;
+      return <GracefulImage key="image-graceful-image-decor" className="absolute h-full w-full object-cover object-center" src={decor.image.bg.value} alt={`illustration of ${url}`} />;
     }
 
     throw new Error(`Invalid decor: ${JSON.stringify(decor)}`);
@@ -115,10 +116,6 @@ class CardItem extends React.Component {
 
   renderFavicon() {
 
-    const { url, decor } = this.props.link;
-    const { origin } = extractUrl(url);
-
-    const favicon = ensureContainUrlSecureProtocol(origin) + '/favicon.ico';
     const placeholder = (ref) => {
       if (decor.favicon.bg.type === COLOR) {
         return <div ref={ref} className={`flex-shrink-0 flex-grow-0 w-4 h-4 ${decor.favicon.bg.value} rounded-full`}></div>;
@@ -137,7 +134,20 @@ class CardItem extends React.Component {
       }
     };
 
-    return <GracefulImage className="flex-shrink-0 flex-grow-0 w-4 h-4" src={favicon} alt={`Favicon of ${url}`} customPlaceholder={placeholder} retry={{ count: 2, delay: 3, accumulate: 'multiply' }} />;
+    const { url, decor, extractedResult } = this.props.link;
+
+    let favicon;
+    if (extractedResult && extractedResult.favicon) favicon = extractedResult.favicon;
+
+    if (favicon) {
+      // This GracefulImage needs to be different from the one below so that it's not just rerender but recreate a new component with a new src and new retry. React knows by using different keys.
+      return <GracefulImage key="favicon-graceful-image-extracted-result" className="flex-shrink-0 flex-grow-0 w-4 h-4" src={favicon} alt={`Favicon of ${url}`} customPlaceholder={placeholder} retry={{ count: 2, delay: 3, accumulate: 'multiply' }} />;
+    }
+
+    const { origin } = extractUrl(url);
+    favicon = ensureContainUrlSecureProtocol(origin) + '/favicon.ico';
+
+    return <GracefulImage key="favicon-graceful-image-ico" className="flex-shrink-0 flex-grow-0 w-4 h-4" src={favicon} alt={`Favicon of ${url}`} customPlaceholder={placeholder} retry={{ count: 2, delay: 3, accumulate: 'multiply' }} />;
   }
 
   render() {
