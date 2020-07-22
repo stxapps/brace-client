@@ -1,4 +1,7 @@
 import defaultQueue from '@redux-offline/redux-offline/lib/defaults/queue';
+import {
+  OFFLINE_STATUS_CHANGED, PERSIST_REHYDRATE
+} from '@redux-offline/redux-offline/lib/constants';
 
 import {
   GET_FILE, PUT_FILE, DELETE_FILE,
@@ -61,6 +64,10 @@ export const queue = {
     }
 
     return [...array, action];
+  },
+  peek(array, item, context) {
+    if ([OFFLINE_STATUS_CHANGED, PERSIST_REHYDRATE].includes(item)) return undefined;
+    return array[0];
   }
 }
 

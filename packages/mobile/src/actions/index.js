@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import userSession from '../userSession';
 import {
-  INIT, UPDATE_WINDOW, UPDATE_HISTORY_POSITION, UPDATE_WINDOW_WIDTH, UPDATE_USER,
+  INIT, UPDATE_WINDOW, UPDATE_HISTORY_POSITION, UPDATE_WINDOW_SIZE, UPDATE_USER,
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
@@ -34,7 +34,7 @@ import { separateUrlAndParam } from '../utils';
 export const init = async (store) => {
 
   const hasSession = await userSession.hasSession();
-  if (!hasSession['hasSession']) {
+  if (!hasSession) {
     const config = {
       appDomain: DOMAIN_NAME,
       scopes: ['store_write'],
@@ -42,16 +42,6 @@ export const init = async (store) => {
     };
     await userSession.createSession(config);
   }
-
-  const isUserSignedIn = await userSession.isUserSignedIn();
-  store.dispatch({
-    type: INIT,
-    payload: {
-      isUserSignedIn: isUserSignedIn['signedIn'],
-      href: DOMAIN_NAME + '/',
-      windowWidth: Dimensions.get('window').width,
-    }
-  });
 
   // TODO: check if Linking.getInitialURL(url) is not null, handle it.
   //Linking.getInitialURL(url)
@@ -63,7 +53,7 @@ export const init = async (store) => {
       const { param: { authResponse } } = separateUrlAndParam(e.url, 'authResponse');
       try {
         const result = await userSession.handlePendingSignIn(authResponse);
-        console.log(`Result of handlePendingSignIn: ${JSON.stringify(result)}`);
+        console.log(`Result of handlePendingSignIn: ${result}`);
 
         const userData = await userSession.loadUserData();
         store.dispatch({
@@ -82,9 +72,23 @@ export const init = async (store) => {
 
   Dimensions.addEventListener("change", ({ window }) => {
     store.dispatch({
-      type: UPDATE_WINDOW_WIDTH,
-      payload: window.width
+      type: UPDATE_WINDOW_SIZE,
+      payload: {
+        windowWidth: window.width,
+        windowHeight: window.height,
+      }
     });
+  });
+
+  const isUserSignedIn = await userSession.isUserSignedIn();
+  store.dispatch({
+    type: INIT,
+    payload: {
+      isUserSignedIn: isUserSignedIn,
+      href: DOMAIN_NAME + '/',
+      windowWidth: Dimensions.get('window').width,
+      windowHeight: Dimensions.get('window').height,
+    }
   });
 };
 
@@ -102,7 +106,7 @@ export const signIn = () => async (dispatch, getState) => {
 export const signOut = () => async (dispatch, getState) => {
 
   const result = userSession.signUserOut();
-  console.log(JSON.stringify(result));
+  console.log(`Result of signUserOut: ${result}`);
 
   // redux-offline: Empty outbox
   dispatch({ type: OFFLINE_RESET_STATE });
@@ -111,4 +115,48 @@ export const signOut = () => async (dispatch, getState) => {
   dispatch({
     type: RESET_STATE,
   });
+};
+
+export const fetch = (doDeleteOldLinks, doExtractContents) => async (dispatch, getState) => {
+
+  const listName = getState().display.listName;
+  dispatch({
+    type: FETCH,
+    meta: {
+      offline: {
+        effect: { method: FETCH, params: listName },
+        commit: { type: FETCH_COMMIT, meta: { doDeleteOldLinks, doExtractContents } },
+        rollback: { type: FETCH_ROLLBACK },
+      }
+    },
+  });
+};
+
+export const fetchMore = () => async (dispatch, getState) => {
+
+  const listName = getState().display.listName;
+  const ids = Object.keys(getState().links[listName]);
+
+  dispatch({
+    type: FETCH_MORE,
+    meta: {
+      offline: {
+        effect: { method: FETCH_MORE, params: { listName, ids } },
+        commit: { type: FETCH_MORE_COMMIT },
+        rollback: { type: FETCH_MORE_ROLLBACK },
+      }
+    },
+  });
+};
+
+export const changeListName = (listName, fetched) => async (dispatch, getState) => {
+
+  dispatch({
+    type: UPDATE_LIST_NAME,
+    payload: listName,
+  })
+
+  if (!fetched.includes(listName)) {
+    dispatch(fetch(false, true));
+  }
 };

@@ -22,7 +22,8 @@ const buildComponent = (Component, defaultStyle = null, styleFn = null) => ({ st
 
 const styles = StyleSheet.create({
   text: {
-    fontFamily: 'Inter'
+    fontFamily: 'Inter',
+    fontSize: 16,
   }
 });
 

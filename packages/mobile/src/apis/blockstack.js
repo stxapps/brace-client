@@ -1,4 +1,4 @@
-//import userSession from '../userSession';
+import userSession from '../userSession';
 import {
   GET_FILE, PUT_FILE, DELETE_FILE,
   SETTINGS_FNAME,

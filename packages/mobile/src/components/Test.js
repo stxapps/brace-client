@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, FlatList, Dimensions, Button } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Dimensions, Button, ScrollView } from 'react-native';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 
 import { tailwind } from '../stylesheets/tailwind';
@@ -265,27 +265,28 @@ class Test extends React.Component {
     console.log(`onMoreBtnClick`);
   }
 
-  renderListNamePopup = () => {
-    return (
-      <View style={[tailwind('px-2 absolute bg-yellow-600 z-50'), { top: 10, left: 0 }]}>
-        <Button style={tailwind('text-lg text-gray-900')} title="My List" />
-        <Button style={tailwind('text-lg text-gray-900')} title="Archive" />
-        <Button style={tailwind('text-lg text-gray-900')} title="Trash" />
-        <Button style={tailwind('text-lg text-gray-900')} title="My List2" />
-        <Button style={tailwind('text-lg text-gray-900')} title="Archive2" />
-        <Button style={tailwind('text-lg text-gray-900')} title="Trash2" />
-      </View>
-    );
-  }
-
   renderHeader = () => {
     return (
       <Menu>
         <MenuTrigger text='My List' />
         <MenuOptions>
-          <MenuOption onSelect={() => alert(`Save`)} text='My List' />
-          <MenuOption onSelect={() => alert(`Save`)} text='Archive' />
-          <MenuOption onSelect={() => alert(`Save`)} text='Trash' />
+          <ScrollView style={{ maxHeight: 300 }}>
+            <MenuOption onSelect={() => alert(`Save`)} text='My List' />
+            <MenuOption onSelect={() => alert(`Save`)} text='Archive' />
+            <MenuOption onSelect={() => alert(`Save`)} text='Trash' />
+            <MenuOption onSelect={() => alert(`Save`)} text='My List2' />
+            <MenuOption onSelect={() => alert(`Save`)} text='Archive2' />
+            <MenuOption onSelect={() => alert(`Save`)} text='Trash2' />
+            <MenuOption onSelect={() => alert(`Save`)} text='My List3' />
+            <MenuOption onSelect={() => alert(`Save`)} text='Archive3' />
+            <MenuOption onSelect={() => alert(`Save`)} text='Trash3' />
+            <MenuOption onSelect={() => alert(`Save`)} text='My List4' />
+            <MenuOption onSelect={() => alert(`Save`)} text='Archive4' />
+            <MenuOption onSelect={() => alert(`Save`)} text='Trash4' />
+            <MenuOption onSelect={() => alert(`Save`)} text='My List5' />
+            <MenuOption onSelect={() => alert(`Save`)} text='Archive5' />
+            <MenuOption onSelect={() => alert(`Save`)} text='Trash5' />
+          </ScrollView>
         </MenuOptions>
       </Menu>
     );
@@ -298,7 +299,7 @@ class Test extends React.Component {
           <Text style={tailwind('text-lg text-gray-900 font-semibold')}>More</Text>
         </TouchableOpacity>
       </View>
-    )
+    );
   }
 
   renderItem = ({ item }) => {

@@ -4,16 +4,12 @@ import { connect } from 'react-redux';
 import Loading from './Loading';
 import Landing from './Landing';
 import Main from './Main';
-import Test from './Test';
 
 class App extends React.Component {
 
   render() {
 
-    return <Test />;
-    //return <ReactNativeMasonryListExample />;
-
-    /*if (this.props.href === null) {
+    if (this.props.href === null) {
       return <Loading />;
     }
 
@@ -21,7 +17,7 @@ class App extends React.Component {
       return <Main />;
     }
 
-    return <Landing />;*/
+    return <Landing />;
   }
 }
 

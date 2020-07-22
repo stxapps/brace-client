@@ -4,6 +4,9 @@ module.exports = {
       colors: {
         'purple-blockstack': '#211F6D'
       },
+      spacing: {
+        '9': '2.25rem',
+      },
     }
   },
   variants: {
