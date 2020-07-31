@@ -7,7 +7,7 @@ import { InterText as Text } from '.';
 import { signUp, signIn } from '../actions';
 import { tailwind } from '../stylesheets/tailwind';
 
-class Landing extends React.Component {
+class Landing extends React.PureComponent {
 
   render() {
     const { windowWidth } = this.props;

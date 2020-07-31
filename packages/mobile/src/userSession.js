@@ -19,13 +19,13 @@ const signIn = async () => {
   return await RNBlockstackSdk.signIn();
 };
 
-const handlePendingSignIn = async (authResponse) => {
-  const { loaded } = RNBlockstackSdk.handlePendingSignIn;
+const handlePendingSignIn = async (/** @type {string} */ authResponse) => {
+  const { loaded } = await RNBlockstackSdk.handlePendingSignIn(authResponse);
   return loaded;
 };
 
 const signUserOut = async () => {
-  const { signedOut } = RNBlockstackSdk.signUserOut;
+  const { signedOut } = await RNBlockstackSdk.signUserOut();
   return signedOut;
 };
 

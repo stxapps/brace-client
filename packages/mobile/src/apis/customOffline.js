@@ -1,7 +1,4 @@
 import defaultQueue from '@redux-offline/redux-offline/lib/defaults/queue';
-import {
-  OFFLINE_STATUS_CHANGED, PERSIST_REHYDRATE
-} from '@redux-offline/redux-offline/lib/constants';
 
 import {
   GET_FILE, PUT_FILE, DELETE_FILE,
@@ -9,6 +6,7 @@ import {
 import {
   FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
 } from '../types/actionTypes';
+import userSession from '../userSession';
 import { effect as blockstackEffect } from './blockstack';
 import { isEqual } from '../utils';
 
@@ -66,7 +64,7 @@ export const queue = {
     return [...array, action];
   },
   peek(array, item, context) {
-    if ([OFFLINE_STATUS_CHANGED, PERSIST_REHYDRATE].includes(item)) return undefined;
+    if (!userSession.hasSession()) return undefined;
     return array[0];
   }
 }

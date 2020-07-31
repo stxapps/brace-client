@@ -5,7 +5,7 @@ import Loading from './Loading';
 import Landing from './Landing';
 import Main from './Main';
 
-class App extends React.Component {
+class App extends React.PureComponent {
 
   render() {
 

@@ -1,6 +1,7 @@
 export const INIT = 'INIT';
 
 export const UPDATE_WINDOW = 'UPDATE_WINDOW';
+export const UPDATE_HREF = 'UPDATE_HREF';
 export const UPDATE_HISTORY_POSITION = 'UPDATE_HISTORY_POSITION';
 export const UPDATE_WINDOW_SIZE = 'UPDATE_WINDOW_SIZE';
 export const UPDATE_USER = 'UPDATE_USER';

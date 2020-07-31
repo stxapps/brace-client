@@ -1,7 +1,9 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { } from 'react-native';
 
-class Loading extends React.Component {
+import { InterText as Text } from '.';
+
+class Loading extends React.PureComponent {
 
   render() {
     return (

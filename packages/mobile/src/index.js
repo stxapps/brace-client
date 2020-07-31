@@ -34,7 +34,7 @@ const store = createStore(
 const Root = () => {
   return (
     <Provider store={store}>
-      <MenuProvider backHandler={true}>
+      <MenuProvider customStyles={{ backdrop: { backgroundColor: 'black', opacity: 0.25 } }} backHandler={true}>
         <SafeAreaView style={{ flex: 1 }}><App /></SafeAreaView>
       </MenuProvider>
     </Provider>
