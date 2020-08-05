@@ -5972,9 +5972,9 @@ react-native-animated-spinkit@^1.4.1:
   resolved "https://registry.yarnpkg.com/react-native-animated-spinkit/-/react-native-animated-spinkit-1.4.1.tgz#dfad4de395be4b92bbb5b2f636177aa9e3454a78"
   integrity sha512-Cb0r2jPQsOR278mrXCJz1sT3jIy06gNr1nPhwQCVHzw+f0XtypWgH1aa83fNtiSk6747jRQprf8/2J6PD7W4bg==
 
-"react-native-blockstack@https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?fb97026c06cc8101b384e14f0924ff0f7f72deed":
+"react-native-blockstack@https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?98117d6d0c3b3f9731702f16855e7e43fa709369":
   version "0.4.6"
-  resolved "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?fb97026c06cc8101b384e14f0924ff0f7f72deed#ebf3e5ae9a0ba8658b359b25df038824a5a6e128"
+  resolved "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?98117d6d0c3b3f9731702f16855e7e43fa709369#2a4abb98bbe90189a541921e9b660e1427acd293"
 
 react-native-modal@^11.5.6:
   version "11.5.6"

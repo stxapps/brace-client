@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { ScrollView, View, TouchableOpacity, Linking } from 'react-native';
 import { Menu, MenuOptions, MenuOption, MenuTrigger, withMenuContext } from 'react-native-popup-menu';
-import Svg, { Path } from "react-native-svg"
+import Svg, { Path } from 'react-native-svg'
 import Clipboard from '@react-native-community/clipboard'
 import Modal from 'react-native-modal';
 
@@ -157,7 +157,7 @@ class CardItem extends React.PureComponent {
     const { isConfirmDeletePopupShown } = this.props;
 
     return (
-      <Modal isVisible={isConfirmDeletePopupShown} onBackdropPress={this.onConfirmDeleteCancelBtnClick} onBackButtonPress={this.onConfirmDeleteCancelBtnClick} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.1} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1}>
+      <Modal isVisible={isConfirmDeletePopupShown} onBackdropPress={this.onConfirmDeleteCancelBtnClick} onBackButtonPress={this.onConfirmDeleteCancelBtnClick} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.1} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true}>
         <View style={tailwind('p-4 self-center w-48 bg-white rounded-lg')}>
           <Text style={tailwind('py-2 text-lg text-gray-900 text-center')}>Confirm delete?</Text>
           <View style={tailwind('py-2 flex-row items-center justify-center')}>
@@ -176,12 +176,12 @@ class CardItem extends React.PureComponent {
   renderBusy() {
 
     const triangleStyle = {
-      transform: [{ "translateX": 32 }, { "translateY": -32 }, { "rotate": "45deg" }],
+      transform: [{ 'translateX': 32 }, { 'translateY': -32 }, { 'rotate': '45deg' }],
     };
     const svgStyle = {
       top: 66,
       left: 34,
-      transform: [{ "translateX": -12 }, { "translateY": -24 }, { "rotate": "-45deg" }],
+      transform: [{ 'translateX': -12 }, { 'translateY': -24 }, { 'rotate': '-45deg' }],
     };
 
     return (
@@ -306,6 +306,10 @@ class CardItem extends React.PureComponent {
     const { style, windowWidth, windowHeight } = this.props;
     const { url, status, extractedResult } = this.props.link;
 
+    // Need to do this as React Native doesn't support maxWidth: "none"
+    //   even though it's in tailwind-rn.
+    const viewStyle = windowWidth < 640 ? 'max-w-sm' : '';
+
     let title, classNames = '';
     if (extractedResult && extractedResult.title) {
       title = extractedResult.title;
@@ -319,7 +323,7 @@ class CardItem extends React.PureComponent {
 
     return (
       <View style={style}>
-        <View style={tailwind('self-center max-w-sm bg-white border-t border-l border-b border-r border-gray-200 rounded-lg shadow overflow-hidden sm:max-w-none', windowWidth)}>
+        <View style={tailwind(`self-center bg-white border-t border-l border-b border-r border-gray-200 rounded-lg shadow overflow-hidden ${viewStyle}`)}>
           {this.renderImage()}
           <View style={tailwind('flex-row justify-between items-center w-full')}>
             <View style={tailwind('pl-4 flex-shrink flex-grow flex-row items-center lg:pl-5', windowWidth)}>

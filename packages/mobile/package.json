@@ -20,7 +20,7 @@
     "react": "16.13.1",
     "react-native": "0.63.0",
     "react-native-animated-spinkit": "^1.4.1",
-    "react-native-blockstack": "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?fb97026c06cc8101b384e14f0924ff0f7f72deed",
+    "react-native-blockstack": "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?98117d6d0c3b3f9731702f16855e7e43fa709369",
     "react-native-modal": "^11.5.6",
     "react-native-popup-menu": "^0.15.9",
     "react-native-svg": "^12.1.0",

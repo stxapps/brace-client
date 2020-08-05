@@ -1,9 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { NativeModules } from 'react-native';
 
 import Loading from './Loading';
 import Landing from './Landing';
 import Main from './Main';
+
+const { UIManager } = NativeModules;
+UIManager.setLayoutAnimationEnabledExperimental &&
+  UIManager.setLayoutAnimationEnabledExperimental(true);
 
 class App extends React.PureComponent {
 

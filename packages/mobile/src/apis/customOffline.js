@@ -64,7 +64,7 @@ export const queue = {
     return [...array, action];
   },
   peek(array, item, context) {
-    if (!userSession.hasSession()) return undefined;
+    if (!userSession.didSessionCreate()) return undefined;
     return array[0];
   }
 }

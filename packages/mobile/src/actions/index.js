@@ -445,7 +445,11 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
     throw new Error(`Invalid parameters: ${listName}, ${ids}`);
   }
 
-  const res = await axios.post(BRACE_EXTRACT_URL, { urls: links.map(link => link.url) });
+  const res = await axios.post(
+    BRACE_EXTRACT_URL,
+    { urls: links.map(link => link.url) },
+    { headers: { Referer: 'https://brace.to' } }
+  );
   const extractedResults = res.data.extractedResults;
 
   const extractedLinks = [];

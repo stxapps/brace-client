@@ -1,12 +1,21 @@
+// @ts-ignore
 import RNBlockstackSdk from 'react-native-blockstack';
+
+/* Need this sync function to check if session is available in ReduxOffline peek  */
+let _didSessionCreate = false;
+const didSessionCreate = () => {
+  return _didSessionCreate;
+};
 
 const hasSession = async () => {
   const { hasSession } = await RNBlockstackSdk.hasSession();
+  _didSessionCreate = hasSession;
   return hasSession;
 };
 
 const createSession = async (config) => {
   const { loaded } = await RNBlockstackSdk.createSession(config);
+  _didSessionCreate = true;
   return loaded;
 };
 
@@ -55,6 +64,7 @@ const deleteFile = async (path, options = { wasSigned: false }) => {
 };
 
 export default {
+  didSessionCreate,
   hasSession, createSession,
   isUserSignedIn, signIn, handlePendingSignIn, signUserOut,
   loadUserData,

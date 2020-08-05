@@ -394,12 +394,12 @@ export const addRem = (a, b) => {
 
 export const toPx = (rem, fontSize = 16) => {
   if (rem.endsWith('rem')) rem = rem.slice(0, -3);
-  return parseInt(rem) * fontSize;
+  return parseFloat(rem) * fontSize;
 };
 
 export const multiplyPercent = (value, percent) => {
   percent = percent.slice(0, -1);
-  return value * parseInt(percent) / 100;
+  return value * parseFloat(percent) / 100;
 };
 
 export const isEqual = function (x, y) {

@@ -35,7 +35,7 @@ const Root = () => {
   return (
     <Provider store={store}>
       <MenuProvider customStyles={{ backdrop: { backgroundColor: 'black', opacity: 0.25 } }} backHandler={true}>
-        <SafeAreaView style={{ flex: 1 }}><App /></SafeAreaView>
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}><App /></SafeAreaView>
       </MenuProvider>
     </Provider>
   );

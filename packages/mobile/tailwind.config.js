@@ -5,7 +5,14 @@ module.exports = {
         'purple-blockstack': '#211F6D'
       },
       spacing: {
+        '7': '1.75rem',
         '9': '2.25rem',
+      },
+      minWidth: {
+        '32': '8rem',
+      },
+      minHeight: {
+        '14': '3.5rem',
       },
     }
   },

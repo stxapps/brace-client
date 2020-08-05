@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { ScrollView, FlatList, View, TouchableOpacity } from 'react-native';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
-import Svg, { SvgXml, Path } from "react-native-svg"
+import Svg, { SvgXml, Path } from 'react-native-svg'
 import { Flow } from 'react-native-animated-spinkit'
 
 import {
@@ -24,8 +24,8 @@ import { InterText as Text } from '.';
 import MenuPopupRenderer from './MenuPopupRenderer';
 
 import Loading from './Loading';
-//import TopBar from './TopBar';
-//import BottomBar from './BottomBar';
+import TopBar from './TopBar';
+import BottomBar from './BottomBar';
 import CardItem from './CardItem';
 //import StatusPopup from './StatusPopup';
 
@@ -143,7 +143,17 @@ class Main extends React.PureComponent {
     const { listName, searchString, windowWidth } = this.props;
 
     if (searchString !== '') {
-
+      return (
+        <View style={tailwind('px-4 w-full md:px-6 lg:px-8', windowWidth)}>
+          <Text style={tailwind('text-base text-gray-900')}>Your search - <Text style={tailwind('text-lg text-gray-900 font-medium')}>{searchString}</Text> - did not match any links.</Text>
+          <Text style={tailwind('pt-4 md:pt-6', windowWidth)}>Suggestion:</Text>
+          <View style={tailwind('pt-2 pl-2')}>
+            <Text style={tailwind('text-base text-gray-900')}>{'\u2022'}  Make sure all words are spelled correctly.</Text>
+            <Text style={tailwind('text-base text-gray-900')}>{'\u2022'}  Try different keywords.</Text>
+            <Text style={tailwind('text-base text-gray-900')}>{'\u2022'}  Try more general keywords.</Text>
+          </View>
+        </View>
+      );
     }
 
     if (listName === MY_LIST) {
@@ -165,7 +175,7 @@ class Main extends React.PureComponent {
               </Svg>
               <Text style={tailwind('ml-1 text-xl text-white font-semibold')}>Save link</Text>
             </TouchableOpacity>
-            <Text style={tailwind('mt-16 max-w-md text-lg text-gray-900 text-center')}>Or type <Text style={tailwind('text-lg text-gray-900 font-semibold')}>"brace.to/"</Text> in front of any link in Address bar.</Text>
+            <Text style={tailwind('mt-16 max-w-md text-lg text-gray-900 text-center')}>Or type <Text style={tailwind('text-lg text-gray-900 font-semibold')}>"brace.to/"</Text> in front of any link {windowWidth > 390 ? '\n' : ''}in Address bar.</Text>
             <SvgXml style={tailwind('mt-4')} width={"100%"} xml={saveLinkAtUrlBar} />
           </View>
         </View>
@@ -325,12 +335,14 @@ class Main extends React.PureComponent {
 
   render() {
 
-    const { links, hasMoreLinks, windowWidth } = this.props;
+    const { links, popupLink, hasMoreLinks, windowWidth } = this.props;
     const columnWidth = this.getColumnWidth(windowWidth);
 
     if (links === null) {
       return <Loading />;
     }
+
+    const topBarRightPane = [PC_50, PC_33].includes(columnWidth) ? SHOW_COMMANDS : SHOW_BLANK;
 
     const mainData = [
       { id: MAIN_HEAD },
@@ -340,8 +352,8 @@ class Main extends React.PureComponent {
     if (columnWidth === PC_100) mainData.push({ id: MAIN_PADDING_BOTTOM });
 
     return (
-      <View>
-
+      <React.Fragment>
+        <TopBar rightPane={topBarRightPane} />
         <FlatList
           contentContainerStyle={tailwind('max-w-6xl self-center')}
           data={mainData}
@@ -349,8 +361,8 @@ class Main extends React.PureComponent {
           renderItem={this.renderMain}
           onEndReached={this.onEndReached}
           onEndReachedThreshold={0.9} />
-
-      </View>
+        {columnWidth === PC_100 && <BottomBar isShown={popupLink === null} />}
+      </React.Fragment>
     );
   }
 }
@@ -358,12 +370,14 @@ class Main extends React.PureComponent {
 const mapStateToProps = (state, props) => {
 
   const listName = state.display.listName;
-  const { links } = getLinks(state);
+  const { links, popupLink } = getLinks(state);
 
   return {
     listName: listName,
     listNames: getListNames(state),
     links: links,
+    isAddPopupShown: state.display.isAddPopupShown,
+    popupLink: popupLink,
     hasMoreLinks: state.hasMoreLinks[listName],
     isFetchingMore: state.display.isFetchingMore,
     searchString: state.display.searchString,
