@@ -64,5 +64,12 @@ const styleTextFn = (style) => {
   return style;
 };
 
-export const InterText = buildComponent(styles.text, styleTextFn)(Text);
-export const InterTextInput = buildComponent(styles.text, styleTextFn)(TextInput);
+/**
+ * @type {Text}
+ */
+export const InterText = /** @type {any} */ (buildComponent(styles.text, styleTextFn)(Text));
+
+/**
+ * @type {TextInput}
+ */
+export const InterTextInput = /** @type {any} */ (buildComponent(styles.text, styleTextFn)(TextInput));

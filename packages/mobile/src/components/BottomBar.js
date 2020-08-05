@@ -82,12 +82,7 @@ class BottomBar extends React.PureComponent {
   }
 
   onAddInputKeyPress = (e) => {
-    if (e.nativeEvent.key === 'Enter') {
-      this.onAddOkBtnClick();
-      if (window.document.activeElement instanceof HTMLInputElement) {
-        window.document.activeElement.blur();
-      }
-    }
+    if (e.nativeEvent.key === 'Enter') this.onAddOkBtnClick();
   }
 
   onAddOkBtnClick = () => {
@@ -208,7 +203,6 @@ class BottomBar extends React.PureComponent {
     return (
       <Animated.View style={[tailwind('px-2 py-2 absolute inset-x-0 flex-row justify-between items-center bg-white border border-gray-200 z-10'), style]}>
         <View style={tailwind('flex-grow flex-shrink')}>
-          {/* @ts-ignore */}
           <TextInput ref={this.searchInput} onChange={this.onSearchInputChange} style={tailwind('pl-4 pr-8 py-1 w-full bg-white text-gray-900 border border-gray-600 rounded-full')} placeholder="Search" value={searchString} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
           {/* A bug display: none doesn't work with absolute, need to change to relative. https://github.com/facebook/react-native/issues/18415 */}
           <TouchableOpacity onPress={this.onSearchClearBtnClick} style={tailwind(`pr-2 ${searchClearBtnClasses} inset-y-0 right-0 justify-center items-center`)}>
@@ -218,7 +212,6 @@ class BottomBar extends React.PureComponent {
           </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={this.onSearchCancelBtnClick} style={tailwind('ml-2 flex-grow-0 flex-shrink-0 justify-center items-center h-10 rounded-lg')}>
-          {/* @ts-ignore */}
           <Text style={tailwind('text-base text-gray-900 underline')}>Cancel</Text>
         </TouchableOpacity>
       </Animated.View>
@@ -272,7 +265,7 @@ class BottomBar extends React.PureComponent {
               </Svg>
             </TouchableOpacity>
             <TouchableOpacity onPress={this.onProfileBtnClick} style={tailwind('justify-center items-center w-1/3 h-full')}>
-              <View style={tailwind('h-10 w-10 rounded-lg overflow-hidden border-2 border-gray-200')}>
+              <View style={tailwind('h-10 w-10 bg-white rounded-lg overflow-hidden border-2 border-gray-200')}>
                 <SvgXml width={'100%'} height={'100%'} xml={this.userImage} />
               </View>
             </TouchableOpacity>

@@ -144,7 +144,7 @@ class Main extends React.PureComponent {
 
     if (searchString !== '') {
       return (
-        <View style={tailwind('px-4 w-full md:px-6 lg:px-8', windowWidth)}>
+        <View style={tailwind('px-4 pb-6 w-full md:px-6 lg:px-8', windowWidth)}>
           <Text style={tailwind('text-base text-gray-900')}>Your search - <Text style={tailwind('text-lg text-gray-900 font-medium')}>{searchString}</Text> - did not match any links.</Text>
           <Text style={tailwind('pt-4 md:pt-6', windowWidth)}>Suggestion:</Text>
           <View style={tailwind('pt-2 pl-2')}>
@@ -165,7 +165,7 @@ class Main extends React.PureComponent {
       };
 
       return (
-        <View style={tailwind('px-4 items-center w-full md:px-6 lg:px-8', windowWidth)}>
+        <View style={tailwind('px-4 pb-6 items-center w-full md:px-6 lg:px-8', windowWidth)}>
           <View style={[tailwind('pt-16 pb-8 items-center w-full max-w-md bg-gray-100'), borderRadius]}>
             <SvgXml width={64} height={64} xml={undrawLink} />
             <Text style={tailwind('mt-6 text-lg text-gray-900 text-center')}>Get started saving links</Text>
@@ -184,7 +184,7 @@ class Main extends React.PureComponent {
 
     if (listName === TRASH) {
       return (
-        <View style={tailwind('px-4 items-center w-full md:px-6 lg:px-8', windowWidth)}>
+        <View style={tailwind('px-4 pb-6 items-center w-full md:px-6 lg:px-8', windowWidth)}>
 
           <View style={tailwind('mt-6 justify-center items-center w-20 h-20 bg-gray-400 rounded-full')}>
             <Svg style={tailwind('w-10 h-10 text-gray-800')} viewBox="0 0 20 20" fill="currentColor">
@@ -198,7 +198,7 @@ class Main extends React.PureComponent {
     }
 
     return (
-      <View style={tailwind('px-4 items-center w-full md:px-6 lg:px-8', windowWidth)}>
+      <View style={tailwind('px-4 pb-6 items-center w-full md:px-6 lg:px-8', windowWidth)}>
         <SvgXml style={tailwind('mt-10')} width={160} height={146.66} xml={emptyBox} />
         <Text style={tailwind('mt-6 text-lg text-gray-900 text-center')}>No links in {listName}</Text>
         <Text style={tailwind('mt-4 max-w-md text-base text-gray-900 text-center')}>Click <Text style={tailwind('text-base text-gray-900 font-semibold')}>"{listName}"</Text> from the Link menu to move links here.</Text>

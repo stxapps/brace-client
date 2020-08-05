@@ -4,8 +4,11 @@ import { StyleSheet, View, TouchableOpacity } from 'react-native';
 
 import { InterText as Text } from '.';
 
-import { signUp, signIn } from '../actions';
+import { signUp } from '../actions';
+import { SHOW_SIGN_IN } from '../types/const';
 import { tailwind } from '../stylesheets/tailwind';
+
+import TopBar from './TopBar';
 
 class Landing extends React.PureComponent {
 
@@ -13,21 +16,19 @@ class Landing extends React.PureComponent {
     const { windowWidth } = this.props;
 
     return (
-      <View style={styles.container}>
-        <Text style={tailwind('text-gray-900 text-lg font-semibold sm:text-yellow-600', windowWidth)}>
-          Hello World!
-        </Text>
-        <TouchableOpacity onPress={() => this.props.signIn()}>
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>Sign In</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => this.props.signUp()}>
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>Get Started</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+      <React.Fragment>
+        <TopBar rightPane={SHOW_SIGN_IN} />
+        <View style={styles.container}>
+          <Text style={tailwind('text-gray-900 text-lg font-semibold sm:text-yellow-600', windowWidth)}>
+            Hello World!
+          </Text>
+          <TouchableOpacity onPress={() => this.props.signUp()}>
+            <View style={styles.button}>
+              <Text style={styles.buttonText}>Get Started</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </React.Fragment>
     );
   }
 }
@@ -56,4 +57,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { signUp, signIn })(Landing);
+export default connect(mapStateToProps, { signUp })(Landing);
