@@ -27,7 +27,7 @@ import Loading from './Loading';
 import TopBar from './TopBar';
 import BottomBar from './BottomBar';
 import CardItem from './CardItem';
-//import StatusPopup from './StatusPopup';
+import StatusPopup from './StatusPopup';
 
 import emptyBox from '../images/empty-box-sided.svg';
 import undrawLink from '../images/undraw-link.svg';
@@ -107,22 +107,25 @@ class Main extends React.PureComponent {
     }
 
     return (
-      <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: triggerOffsets, popupStyle: tailwind('py-2 min-w-32 border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onListNameBtnClick} onClose={this.onListNameCancelBtnClick}>
-        <MenuTrigger>
-          {/* Change the paddings here, need to change triggerOffsets too */}
-          <View style={tailwind('px-4 pt-4 pb-6 flex-row items-center w-full md:px-6 md:pt-10 lg:px-8', windowWidth)}>
-            <Text style={tailwind('text-lg text-gray-900 font-semibold')}>{listName}</Text>
-            <Svg style={tailwind('ml-1 w-5 h-5 text-black')} viewBox="0 0 24 24" stroke="currentColor" fill="none">
-              <Path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </Svg>
-          </View>
-        </MenuTrigger>
-        <MenuOptions>
-          <ScrollView style={{ maxHeight: windowHeight }}>
-            {this.renderListNamePopup()}
-          </ScrollView>
-        </MenuOptions>
-      </Menu>
+      <React.Fragment>
+        <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: triggerOffsets, popupStyle: tailwind('py-2 min-w-32 border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onListNameBtnClick} onClose={this.onListNameCancelBtnClick}>
+          <MenuTrigger>
+            {/* Change the paddings here, need to change triggerOffsets too */}
+            <View style={tailwind('px-4 pt-4 pb-6 flex-row items-center w-full md:px-6 md:pt-10 lg:px-8', windowWidth)}>
+              <Text style={tailwind('text-lg text-gray-900 font-semibold')}>{listName}</Text>
+              <Svg style={tailwind('ml-1 w-5 h-5 text-black')} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+                <Path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </Svg>
+            </View>
+          </MenuTrigger>
+          <MenuOptions>
+            <ScrollView style={{ maxHeight: windowHeight }}>
+              {this.renderListNamePopup()}
+            </ScrollView>
+          </MenuOptions>
+        </Menu>
+        <StatusPopup />
+      </React.Fragment>
     );
   }
 

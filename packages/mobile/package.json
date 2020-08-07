@@ -24,6 +24,7 @@
     "react-native-modal": "^11.5.6",
     "react-native-popup-menu": "^0.15.9",
     "react-native-svg": "^12.1.0",
+    "react-native-swiper": "^1.6.0",
     "react-redux": "^7.2.0",
     "redux": "^4.0.5",
     "redux-loop": "^6.0.1",

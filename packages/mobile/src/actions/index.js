@@ -38,9 +38,6 @@ import {
   randomDecor,
 } from '../utils';
 
-// BUG
-//import testLinks from '../../links.json';
-
 export const init = async (store) => {
 
   const hasSession = await userSession.hasSession();
@@ -155,21 +152,6 @@ export const fetch = (doDeleteOldLinks, doExtractContents) => async (dispatch, g
       }
     },
   });
-
-  // BUG
-  /*dispatch({
-    type: FETCH_COMMIT,
-    payload: {
-      listName,
-      links: [],
-      hasMore: false,
-      listNames: ['My List', 'Archive', 'Trash'],
-    },
-    meta: {
-      doDeleteOldLinks: false,
-      doExtractContents: false,
-    }
-  });*/
 };
 
 export const fetchMore = () => async (dispatch, getState) => {

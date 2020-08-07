@@ -1,15 +1,73 @@
 import React from 'react';
-import { } from 'react-native';
+import { View, Animated } from 'react-native';
+import { SvgXml } from 'react-native-svg'
 
-import { InterText as Text } from '.';
+import { tailwind } from '../stylesheets/tailwind';
+
+import logo from '../images/logo-short.svg';
 
 class Loading extends React.PureComponent {
 
+  constructor(props) {
+    super(props);
+
+    this.rotateX = new Animated.Value(0);
+    this.rotateY = new Animated.Value(0);
+  }
+
+  componentDidMount() {
+    const duration = 650;
+
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(this.rotateY, {
+          toValue: 100,
+          duration: duration,
+          useNativeDriver: true
+        }),
+        Animated.timing(this.rotateX, {
+          toValue: 100,
+          duration: duration,
+          useNativeDriver: true
+        }),
+        Animated.timing(this.rotateY, {
+          toValue: 0,
+          duration: duration,
+          useNativeDriver: true
+        }),
+        Animated.timing(this.rotateX, {
+          toValue: 0,
+          duration: duration,
+          useNativeDriver: true
+        }),
+      ])
+    ).start();
+  }
+
   render() {
+
+    const rotateX = this.rotateX.interpolate({
+      inputRange: [0, 100],
+      outputRange: ['0deg', '180deg'],
+      extrapolate: 'clamp',
+    });
+    const rotateY = this.rotateY.interpolate({
+      inputRange: [0, 100],
+      outputRange: ['0deg', '180deg'],
+      extrapolate: 'clamp',
+    });
+    const style = {
+      transform: [{ perspective: 800 }, { rotateX: rotateX }, { rotateY: rotateY }]
+    }
+
     return (
-      <Text>
-        Loading
-      </Text>
+      <View style={tailwind('items-center w-full h-full')}>
+        <View style={[{ top: '33.3333%', transform: [{ translateY: -24 }] }, tailwind('w-12 h-12')]}>
+          <Animated.View style={[tailwind('w-full h-full'), style]}>
+            <SvgXml width={'100%'} height={'100%'} xml={logo} />
+          </Animated.View>
+        </View>
+      </View>
     );
   }
 }
