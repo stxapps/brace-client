@@ -24,9 +24,30 @@
           <action android:name="android.intent.action.VIEW" />
           <category android:name="android.intent.category.DEFAULT" />
           <category android:name="android.intent.category.BROWSABLE" />
+          <data android:scheme="brace"
+                android:host="app" />
+        </intent-filter>
+        <intent-filter>
+          <action android:name="android.intent.action.VIEW" />
+          <category android:name="android.intent.category.DEFAULT" />
+          <category android:name="android.intent.category.BROWSABLE" />
           <data android:scheme="https"
-                android:host="brace.to"
-                android:pathPrefix="/blockstack-auth" />
+                android:host="brace.to" />
+        </intent-filter>
+      </activity>
+      <activity
+        android:name=".ShareActivity"
+        android:label="@string/share_name"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+        android:launchMode="singleTask"
+        android:windowSoftInputMode="adjustResize"
+        android:theme="@style/ShareTheme"
+        android:excludeFromRecents="true"
+        android:noHistory="true">
+        <intent-filter>
+          <action android:name="android.intent.action.SEND" />
+          <category android:name="android.intent.category.DEFAULT" />
+          <data android:mimeType="text/plain" />
         </intent-filter>
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />

@@ -8,6 +8,7 @@ import {
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK, EXTRACT_CONTENTS_COMMIT,
   UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
+  UPDATE_HANDLING_SIGN_IN,
   RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -26,6 +27,7 @@ const initialState = {
   isFetchingMore: false,
   status: null,
   cardItemMenuPopupPosition: null,
+  isHandlingSignIn: false,
 };
 
 export default (state = initialState, action) => {
@@ -136,6 +138,10 @@ export default (state = initialState, action) => {
 
   if (action.type === UPDATE_CARD_ITEM_MENU_POPUP_POSITION) {
     return { ...state, cardItemMenuPopupPosition: action.payload };
+  }
+
+  if (action.type === UPDATE_HANDLING_SIGN_IN) {
+    return { ...state, isHandlingSignIn: action.payload };
   }
 
   if (action.type === RESET_STATE) {

@@ -5989,6 +5989,10 @@ react-native-popup-menu@^0.15.9:
   resolved "https://registry.yarnpkg.com/react-native-popup-menu/-/react-native-popup-menu-0.15.9.tgz#75bccf71ff4627cb302d871a28be84a91eb2f8d9"
   integrity sha512-PO99dptMocEfUSS3SM7gY6UqophaBxizKjnZ7FcEwa+H4ONVxTk310/JCXJ9vdNunomgpxHluKRXnApfm9Md1w==
 
+"react-native-receive-sharing-intent@https://github.com/bracedotto/react-native-receive-sharing-intent#5d7ebfa44ea2bc34ecb5889963d207e18d131aec":
+  version "1.0.4"
+  resolved "https://github.com/bracedotto/react-native-receive-sharing-intent#5d7ebfa44ea2bc34ecb5889963d207e18d131aec"
+
 react-native-svg@^12.1.0:
   version "12.1.0"
   resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-12.1.0.tgz#acfe48c35cd5fca3d5fd767abae0560c36cfc03d"

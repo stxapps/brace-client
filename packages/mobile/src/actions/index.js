@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import userSession from '../userSession';
 import {
-  INIT, UPDATE_WINDOW, UPDATE_HREF, UPDATE_HISTORY_POSITION, UPDATE_WINDOW_SIZE,
+  INIT, UPDATE_WINDOW_SIZE,
   UPDATE_USER,
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
@@ -18,13 +18,11 @@ import {
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
-  UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
+  UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN,
   RESET_STATE,
 } from '../types/actionTypes';
 import {
   DOMAIN_NAME, BLOCKSTACK_AUTH,
-  BACK_DECIDER, BACK_POPUP,
-  ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP, CONFIRM_DELETE_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
@@ -33,8 +31,7 @@ import {
 import {
   _,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
-  getUrlFirstChar, separateUrlAndParam, extractUrl,
-  getUrlPathQueryHash,
+  getUrlFirstChar, separateUrlAndParam,
   randomDecor,
 } from '../utils';
 
@@ -50,39 +47,11 @@ export const init = async (store) => {
     await userSession.createSession(config);
   }
 
-  // TODO: check if Linking.getInitialURL(url) is not null, handle it.
-  //Linking.getInitialURL(url)
+  const initialUrl = await Linking.getInitialURL();
+  if (initialUrl) handlePendingSignIn(initialUrl)(store.dispatch, store.getState);
 
   Linking.addEventListener('url', async (e) => {
-    console.log(`Linking called:`, e);
-
-    if (e.url.startsWith(DOMAIN_NAME + BLOCKSTACK_AUTH)) {
-      // As handle pending sign in takes time, show loading first.
-      store.dispatch({
-        type: UPDATE_HREF,
-        payload: null
-      });
-
-      const { param: { authResponse } } = separateUrlAndParam(e.url, 'authResponse');
-      const result = await userSession.handlePendingSignIn(authResponse);
-      console.log(`Result of handlePendingSignIn: ${result}`);
-
-      const userData = await userSession.loadUserData();
-      store.dispatch({
-        type: UPDATE_USER,
-        payload: {
-          isUserSignedIn: true,
-          username: userData.username,
-          image: (userData && userData.profile && userData.profile.image) || null,
-        }
-      });
-
-      // Update it back
-      store.dispatch({
-        type: UPDATE_HREF,
-        payload: DOMAIN_NAME + '/'
-      });
-    }
+    handlePendingSignIn(e.url)(store.dispatch, store.getState);
   });
 
   Dimensions.addEventListener("change", ({ window }) => {
@@ -107,21 +76,47 @@ export const init = async (store) => {
   });
 };
 
+const handlePendingSignIn = (url) => async (dispatch, getState) => {
+
+  if (!url.startsWith(DOMAIN_NAME + BLOCKSTACK_AUTH)) return;
+  // TODO: url starts with brace://app/blockstack-auth?authResponse=xxxx
+
+  // As handle pending sign in takes time, show loading first.
+  dispatch({
+    type: UPDATE_HANDLING_SIGN_IN,
+    payload: true
+  });
+
+  const { param: { authResponse } } = separateUrlAndParam(url, 'authResponse');
+  await userSession.handlePendingSignIn(authResponse);
+  const userData = await userSession.loadUserData();
+  dispatch({
+    type: UPDATE_USER,
+    payload: {
+      isUserSignedIn: true,
+      username: userData.username,
+      image: (userData && userData.profile && userData.profile.image) || null,
+    }
+  });
+
+  // Stop show loading
+  dispatch({
+    type: UPDATE_HANDLING_SIGN_IN,
+    payload: false
+  });
+};
+
 export const signUp = () => async (dispatch, getState) => {
-  console.log(`signUp called.`);
   signIn()(dispatch, getState);
 };
 
 export const signIn = () => async (dispatch, getState) => {
-  console.log(`signIn called.`);
-  const result = await userSession.signIn();
-  console.log(JSON.stringify(result));
+  await userSession.signIn();
 };
 
 export const signOut = () => async (dispatch, getState) => {
 
-  const result = userSession.signUserOut();
-  console.log(`Result of signUserOut: ${result}`);
+  await userSession.signUserOut();
 
   // redux-offline: Empty outbox
   dispatch({ type: OFFLINE_RESET_STATE });

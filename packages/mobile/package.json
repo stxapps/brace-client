@@ -23,6 +23,7 @@
     "react-native-blockstack": "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?98117d6d0c3b3f9731702f16855e7e43fa709369",
     "react-native-modal": "^11.5.6",
     "react-native-popup-menu": "^0.15.9",
+    "react-native-receive-sharing-intent": "https://github.com/bracedotto/react-native-receive-sharing-intent#5d7ebfa44ea2bc34ecb5889963d207e18d131aec",
     "react-native-svg": "^12.1.0",
     "react-native-swiper": "^1.6.0",
     "react-redux": "^7.2.0",

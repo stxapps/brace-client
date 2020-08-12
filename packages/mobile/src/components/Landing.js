@@ -34,11 +34,11 @@ class Landing extends React.PureComponent {
     if (windowWidth > 470) logoTranslate.transform[0].translateX = 45;
 
     return (
-      <Swiper height={swiperHeight} showsPagination={true} showsButtons={false} activeDotStyle={tailwind('bg-gray-900')} >
+      <Swiper height={swiperHeight} showsPagination={true} showsButtons={false} activeDotStyle={tailwind('bg-gray-900')} paginationStyle={{ bottom: 10 }}>
         <View style={tailwind('px-12 justify-center items-center w-full h-full')}>
           <SvgXml width={'100%'} xml={saveLinksToVisitLater} />
           {/* From onLayout, text width is ~394 so when window width is wide enough, no line break. */}
-          <Text style={tailwind('mt-8 text-4xl text-gray-900 font-bold text-center md:text-5xl', windowWidth)}>Save links {windowWidth < 400 ? '\n' : ''}to visit later</Text>
+          <Text style={tailwind('mt-2 text-3xl text-gray-900 font-bold text-center sm:mt-5 sm:text-4xl md:text-5xl', windowWidth)}>Save links {windowWidth < 400 ? '\n' : ''}to visit later</Text>
         </View>
         <View style={tailwind('px-12 justify-center items-center w-full h-full')}>
           <SvgXml width={64} height={64} xml={undrawLink} />
@@ -49,13 +49,13 @@ class Landing extends React.PureComponent {
             <Path d="M29.325.175c5.138 2.74 13.856 11.394 17.342 16.056-3.001-2.1-9.436-3.867-14.213-2.751.518-3.426-.431-10.58-3.129-13.305zm17.342 25.492V56H0V0h19.621c11.333 0 7.782 18.667 7.782 18.667 7.02-1.739 19.264-.978 19.264 7zM9.333 37.333H21V28H9.333v9.333zm28 4.667h-28v2.333h28V42zm0-7H25.667v2.333h11.666V35zm0-7H25.667v2.333h11.666V28z" />
           </Svg>
           <Text style={tailwind('mt-2 w-48 text-xl text-gray-800 font-medium text-center')}>long useful articles to read later</Text>
-          <Svg style={tailwind('mt-8 text-blue-400')} width={40} height={40} viewBox="0 0 56 56" fill="currentColor">
+          <Svg style={tailwind('mt-6 text-blue-400')} width={40} height={40} viewBox="0 0 56 56" fill="currentColor">
             <Path d="M0 4C0 1.79088 1.79088 0 4 0H52C54.2092 0 56 1.79088 56 4V12C56 14.2091 54.2092 16 52 16H4C1.79088 16 0 14.2091 0 12V4Z" />
             <Path d="M0 28C0 25.7908 1.79088 24 4 24H28C30.2092 24 32 25.7908 32 28V52C32 54.2092 30.2092 56 28 56H4C1.79088 56 0 54.2092 0 52V28Z" />
             <Path d="M44 24C41.7908 24 40 25.7908 40 28V52C40 54.2092 41.7908 56 44 56H52C54.2092 56 56 54.2092 56 52V28C56 25.7908 54.2092 24 52 24H44Z" />
           </Svg>
           <Text style={tailwind('mt-2 w-48 text-xl text-gray-800 font-medium text-center')}>interesting websites to check out later</Text>
-          <Svg style={tailwind('mt-8 text-orange-500')} width={54} height={40} viewBox="0 0 75 56" fill="currentColor">
+          <Svg style={tailwind('mt-6 text-orange-500')} width={54} height={40} viewBox="0 0 75 56" fill="currentColor">
             <Path d="M31.111 51.333a4.666 4.666 0 11-9.333 0 4.666 4.666 0 019.333 0zM42 46.667a4.666 4.666 0 100 9.332 4.666 4.666 0 000-9.332zm4.157-15.556l6.15-21.778H0l9.14 21.778h37.017zM61.615 0L50.938 37.333h-39.19l2.61 6.223h41.188L66.354 6.222h6.001L74.667 0H61.616z" />
           </Svg>
           <Text style={tailwind('mt-2 w-48 text-xl text-gray-800 font-medium text-center')}>items on online shops to buy later</Text>
@@ -129,9 +129,8 @@ class Landing extends React.PureComponent {
     // if windowHeight < ~56 + ~576 + ~80, fix height on Swiper and use ScrollView
     // else if windowHeight < 900, expand Swiper so the content cover the screen
     // else center the content in the middle
-    const SWIPER_HEIGHT = 576;
-    if (windowHeight < 720) {
-      console.log(`Return ScrollView with windowHeight: ${windowHeight}`);
+    const SWIPER_HEIGHT = 502;
+    if (windowHeight < 640) {
       return (
         <ScrollView>
           <TopBar rightPane={SHOW_SIGN_IN} />
@@ -140,7 +139,6 @@ class Landing extends React.PureComponent {
         </ScrollView>
       );
     } else if (windowHeight < 900) {
-      console.log(`Return flex-grow with windowHeight: ${windowHeight}`);
       return (
         <React.Fragment>
           <TopBar rightPane={SHOW_SIGN_IN} />
@@ -151,7 +149,6 @@ class Landing extends React.PureComponent {
         </React.Fragment>
       );
     } else {
-      console.log(`Return center with windowHeight: ${windowHeight}`);
       return (
         <React.Fragment>
           <TopBar rightPane={SHOW_SIGN_IN} />
