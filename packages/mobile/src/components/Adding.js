@@ -8,7 +8,7 @@ import Svg, { Path } from 'react-native-svg'
 import {
   MY_LIST,
   ADDING, ADDED, DIED_ADDING,
-  VALID_URL, NO_URL, ASK_CONFIRM_URL, URL_MSGS,
+  NO_URL, ASK_CONFIRM_URL, URL_MSGS,
 } from '../types/const';
 import { addLink, cancelDiedLinks } from '../actions';
 import {
@@ -35,12 +35,11 @@ class Adding extends React.PureComponent {
       addingUrl: null,
       hasAskedConfirm: false,
     };
-
-    this.justReceivedUrl = null;
   }
 
   componentDidMount() {
-    ReceiveSharingIntent.getReceivedFiles(
+    this.justReceivedUrl = null;
+    this.removeListerner = ReceiveSharingIntent.getReceivedFiles(
       this.onReceivedFiles,
       this.onErrorReceivedFiles
     );
@@ -52,7 +51,7 @@ class Adding extends React.PureComponent {
     const link = this.getLinkFromAddingUrl(addingUrl);
 
     if (link && link.status === ADDED) {
-      setTimeout(() => BackHandler.exitApp(), 1000);
+      setTimeout(() => BackHandler.exitApp(), 2000);
       return;
     }
     if (link && link.status === ADDING) {
@@ -62,13 +61,14 @@ class Adding extends React.PureComponent {
       return;
     }
     if (link) {
-      setTimeout(() => BackHandler.exitApp(), 1000);
+      setTimeout(() => BackHandler.exitApp(), 2000);
       return;
     }
   }
 
   componentWillUnmount() {
     ReceiveSharingIntent.clearReceivedFiles();
+    this.removeListerner();
   }
 
   onReceivedFiles = (files) => {
@@ -77,11 +77,11 @@ class Adding extends React.PureComponent {
     if (this.justReceivedUrl !== null) return;
 
     // No link to save, just close this component
-    if (!(files && files[0] && files[0].weblink)) {
+    if (!(files && files[0] && (files[0].weblink || files[0].text))) {
       BackHandler.exitApp();
     }
 
-    const url = files[0].weblink;
+    const url = files[0].weblink || files[0].text;
 
     this.addLink(url);
     this.justReceivedUrl = url;
@@ -132,8 +132,9 @@ class Adding extends React.PureComponent {
   }
 
   onAskingConfirmOkBtnClick = () => {
-    this.setState({ hasAskedConfirm: true });
-    this.addLink(this.state.addingUrl);
+    this.setState({ hasAskedConfirm: true }, () => {
+      this.addLink(this.state.addingUrl);
+    });
   }
 
   onBackgroundBtnClick = () => {
