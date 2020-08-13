@@ -7,6 +7,7 @@
 ** getmemex.com
 ** www.linkpack.io
 ** larder.io
+** notado.app
 * Same Name
 ** brace.io
 - www.studioanthonylane.com/Brace-io
@@ -177,6 +178,8 @@
 - useiconic.com
 - streamlineicons.com
 - github.com/tabler/tabler-icons
+- github.com/twbs/icons
+- systemuicons.com
 *** Free illustrations
 - undraw.co
 *** Free images
@@ -373,6 +376,26 @@ This and CI/CD are very important!
 - github.com/khanshamim/react-application
 - github.com/donovantc/react-shared
 - github.com/ksholla20/react-native-react-monorepo-starter
+** react native
+*** blockstack-native
+**** requirements
+- sign up, sign in, sign out
+- listFiles, getFile, putFile, deleteFile
+*** tailwindcss for react-native
+**** requirements
+- width query: default, sm, md, lg,
+- custom classnames
+*** auto responsive grid layout
+**** requirements
+- 1 col, 2 cols, 3 cols
+- animation on add, remove
+- render on the fly like flatlist
+*** share extension
+**** requirements
+- share url to and save in a background
+*** change list names
+*** popup with back press
+*** animation
 * requirement
 ** Add link
 ** List views, view more
@@ -736,3 +759,26 @@ This and CI/CD are very important!
 - iPad: Firefox, Chrome, Safari
 - Macbook: Firefox, Chrome, Safari
 - Ubuntu laptop: Firefox, Chrome
+* react-native
+** steps
+- npx react-native init Brace
+- yarn add redux react-redux redux-loop
+- yarn add https://github.com/bracedotto/redux-offline#a5a5da91de14b9e22c73a15e3617a0d627d3c0ec
+- yarn add reselect url-parse axios jdenticon
+- yarn add @react-native-community/async-storage @react-native-community/netinfo
+- yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?98117d6d0c3b3f9731702f16855e7e43fa709369'
+- change minSdkVersion from 16 to 21 in ./android/build.gradle
+- Allow CORS access on https://brace.to/manifest.json
+- Set up Android deep linking: reactnative.dev/docs/linking and developer.android.com/training/app-links/deep-linking
+- yarn add https://github.com/bracedotto/tailwind-rn#f00e5de8b2b16fdbfbea2c7d14d5e52c9b52844b
+- npx react-native link to link assets i.e. fonts
+  + medium.com/@mehrankhandev/ultimate-guide-to-use-custom-fonts-in-react-native-77fcdf859cf4
+- yarn add react-native-popup-menu
+- yarn add react-native-modal
+- yarn add react-native-svg
+- yarn add @react-native-community/clipboard
+- yarn add react-native-animated-spinkit
+- yarn add babel-plugin-inline-import --dev
+- yarn add react-native-swiper
+- yarn add https://github.com/bracedotto/react-native-receive-sharing-intent#be4d3410fc96ba8e266a2a27535b3d531e56ef57
+- 
