@@ -1,10 +1,11 @@
 {
   "name": "Brace",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
     "build-css": "create-tailwind-rn tailwind.css src/stylesheets/tailwind.json",
     "android": "react-native run-android",
+    "android-release": "react-native run-android --variant=release",
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",

@@ -18,7 +18,7 @@ import { tailwind } from '../stylesheets/tailwind';
 
 import { InterText as Text, InterTextInput as TextInput } from '.';
 
-const BOTTOM_BAR_DURATION = 300;
+const BOTTOM_BAR_DURATION = 150;
 
 class BottomBar extends React.PureComponent {
 
