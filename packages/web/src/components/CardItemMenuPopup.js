@@ -15,7 +15,7 @@ import {
 } from '../types/const';
 import { copyTextToClipboard, ensureContainUrlProtocol } from '../utils';
 
-class CardItemMenuPopup extends React.Component {
+class CardItemMenuPopup extends React.PureComponent {
 
   constructor(props) {
     super(props);

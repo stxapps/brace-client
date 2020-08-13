@@ -15,7 +15,7 @@ import visitAnywhere from '../images/visit-anywhere.svg';
 import blockstackShort from '../images/blockstack-short.svg';
 import logoFullWhite from '../images/logo-full-white.svg';
 
-class Landing extends React.Component {
+class Landing extends React.PureComponent {
 
   componentDidMount() {
     window.scrollTo(0, 0);
@@ -146,7 +146,7 @@ class Landing extends React.Component {
                   <path d="M60 45.1691V51.411L54.4516 54.4453M60 45.1691L54.4516 48.29M60 45.1691L54.4516 42.0481L48.9032 45.1691M54.4516 54.4453L48.9032 51.411V45.1691M54.4516 54.4453V48.29M48.9032 45.1691L54.4516 48.29" stroke="white" strokeWidth="2.01924" />
                 </svg>
                 <h3 className="mt-4 text-2xl text-gray-800 font-semibold leading-none">User-owned Identity</h3>
-                <p className="mt-3 text-lg text-gray-700 font-normal leading-normal">Your identity <span className="font-semibold">cannot</span> be locked, banned, or deleted by Brace.to. Your identity lives in blockchain and only you who have the private key can access it and control it.</p>
+                <p className="mt-3 text-lg text-gray-700 font-normal text-justify leading-normal">Your identity <span className="font-semibold">cannot</span> be locked, banned, or deleted by Brace.to. Your identity lives in blockchain and only you who have the private key can access it and control it.</p>
               </div>
             </div>
             <div className="w-full md:w-1/2">
@@ -155,7 +155,7 @@ class Landing extends React.Component {
                   <path d="M36 19.6364C26.9771 19.6364 19.6364 26.9771 19.6364 36C19.6364 45.0229 26.9771 52.3636 36 52.3636C45.0229 52.3636 52.3636 45.0229 52.3636 36C52.3636 26.9771 45.0229 19.6364 36 19.6364ZM44.6924 26.1785C45.0884 26.532 45.468 26.9084 45.8182 27.3044L43.9135 29.2124L43.3702 28.6298L42.7844 28.0865L44.6924 26.1785ZM40.3527 23.6258C40.8567 23.8025 41.3509 24.0087 41.8222 24.2444L40.7684 26.7316L39.9175 26.3389L39.3055 26.1131L40.3527 23.6258ZM35.2047 22.9091H36.7953V25.6058L36 25.5764L35.2047 25.6058V22.9091ZM31.7258 23.5931L32.7567 26.0869L32.0793 26.3356L31.2873 26.6956L30.2596 24.2018C30.7309 23.9727 31.2251 23.7698 31.7258 23.5931ZM24.2444 30.1778L26.7316 31.2251L26.3422 32.076L26.1131 32.6913L23.6258 31.644C23.8025 31.1367 24.0087 30.6491 24.2444 30.1778ZM22.9091 35.1982H25.6058L25.5764 35.9935L25.6058 36.7887H22.9091V35.1982ZM24.2051 41.7338C23.976 41.2593 23.7698 40.7684 23.5931 40.2611L26.0902 39.2302L26.3389 39.9109L26.6956 40.6964L24.2051 41.7338ZM27.0818 46.0342L25.956 44.9116L28.0833 42.7778L28.6265 43.3604L29.2124 43.9036L27.0818 46.0342ZM28.6298 28.6298L28.0865 29.2124L26.1818 27.3044C26.532 26.9084 26.9116 26.532 27.3076 26.1785L29.2156 28.0865L28.6298 28.6298ZM31.6473 48.3742C31.1433 48.1975 30.6491 47.9913 30.1778 47.7556L31.2316 45.2684L32.0825 45.6611L32.6978 45.8902L31.6473 48.3742ZM36.7953 49.0909H35.2047V46.3909L36 46.4204L36.7953 46.3909V49.0909ZM40.2709 48.4036L39.2433 45.9065L39.9207 45.6578L40.7127 45.2978L41.7404 47.7916C41.2691 48.024 40.7749 48.2302 40.2709 48.4036ZM36 42.5455C32.3836 42.5455 29.4545 39.6164 29.4545 36C29.4545 34.668 29.8505 33.4342 30.5313 32.4L32.9007 34.7695L34.6091 33.0611L32.2167 30.6622C33.2836 29.9029 34.5862 29.4545 36 29.4545C39.6164 29.4545 42.5455 32.3869 42.5455 36C42.5455 39.6131 39.6164 42.5455 36 42.5455ZM44.6924 45.8084L42.7844 43.9004L43.3702 43.3571L43.9135 42.7745L45.8182 44.6825C45.468 45.0818 45.0884 45.4582 44.6924 45.8084ZM47.7556 41.8124L45.2684 40.7618L45.6578 39.9142L45.8869 39.2956L48.3742 40.3462C48.1975 40.8469 47.9913 41.3411 47.7556 41.8124ZM49.0909 36.7887H46.3942L46.4236 35.9935L46.3942 35.1982H49.0909V36.7887ZM48.4036 31.7225L45.9065 32.7535L45.6578 32.0727L45.3011 31.2807L47.7949 30.2531C48.024 30.7276 48.2269 31.2218 48.4036 31.7225ZM49.0909 72H65.4545V78.5455H49.0909V72ZM6.54545 72H22.9091V78.5455H6.54545V72ZM0 0V68.7273H72V0H0ZM36 55.6364C25.1476 55.6364 16.3636 46.8524 16.3636 36C16.3636 25.1444 25.1476 16.3636 36 16.3636C46.8524 16.3636 55.6364 25.1476 55.6364 36C55.6364 46.8524 46.8524 55.6364 36 55.6364Z" />
                 </svg>
                 <h3 className="mt-4 text-2xl text-gray-800 font-semibold leading-none">True data ownership</h3>
-                <p className="mt-3 text-lg text-gray-700 font-normal leading-normal">All links at Brace.to are <span className="font-semibold">encrypted</span> in your browser before sending to save in server. No one can look in your links. Only you can decrypt them and see the content inside.</p>
+                <p className="mt-3 text-lg text-gray-700 font-normal text-justify leading-normal">All links at Brace.to are <span className="font-semibold">encrypted</span> in your browser before sending to save in server. No one can look in your links. Only you can decrypt them and see the content inside.</p>
               </div>
             </div>
           </div>

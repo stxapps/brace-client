@@ -5,7 +5,7 @@ import { SHOW_BLANK } from '../types/const';
 import TopBar from './TopBar';
 import Footer from './Footer';
 
-class Terms extends React.Component {
+class Terms extends React.PureComponent {
 
   componentDidMount() {
     window.scrollTo(0, 0);

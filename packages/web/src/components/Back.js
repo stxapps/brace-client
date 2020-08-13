@@ -1,6 +1,6 @@
 import React from 'react';
 
-class Back extends React.Component {
+class Back extends React.PureComponent {
 
   render() {
     return (

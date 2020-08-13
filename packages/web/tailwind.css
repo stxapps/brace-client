@@ -228,10 +228,6 @@ input[type="search"]::-webkit-search-results-decoration {
   @apply shadow-outline;
 }
 
-.min-w-32 {
-  min-width: 8rem;
-}
-
 .hyphens-auto {
   hyphens: auto;
 }

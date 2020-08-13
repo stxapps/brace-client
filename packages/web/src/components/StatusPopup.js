@@ -33,12 +33,16 @@ const MSGS_SHRT = {
   [DELETE_OLD_LINKS_IN_TRASH_ROLLBACK]: 'Error deleting!',
 };
 
-class StatusPopup extends React.Component {
+class StatusPopup extends React.PureComponent {
 
-  state = { isReady: false };
-  msg = '';
-  msgShrt = '';
-  timeout = null;
+  constructor(props) {
+    super(props);
+
+    this.state = { isReady: false };
+    this.msg = '';
+    this.msgShrt = '';
+    this.timeout = null;
+  }
 
   componentDidMount() {
     this.setState({ isReady: true });
@@ -56,7 +60,7 @@ class StatusPopup extends React.Component {
 
     let translate = 'translate-x-full';
     if (this.state.isReady) {
-      let { status } = this.props;
+      const { status } = this.props;
       if (status) {
         this.msg = MSGS[status];
         this.msgShrt = MSGS_SHRT[status];

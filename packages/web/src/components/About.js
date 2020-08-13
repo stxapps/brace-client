@@ -10,7 +10,7 @@ import blockstackShort from '../images/blockstack-short.svg';
 import reactReduxGrid from '../images/react-redux-grid.png';
 import undrawShareLink from '../images/undraw-share-link.svg';
 
-class About extends React.Component {
+class About extends React.PureComponent {
 
   componentDidMount() {
     window.scrollTo(0, 0);

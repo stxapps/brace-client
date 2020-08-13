@@ -1,5 +1,5 @@
 import { showBlockstackConnect } from '@blockstack/connect';
-import { RESET_STATE as OFFLINE_RESET_STATE } from "@redux-offline/redux-offline/lib/constants";
+import { RESET_STATE as OFFLINE_RESET_STATE } from '@redux-offline/redux-offline/lib/constants';
 import axios from 'axios';
 
 import userSession from '../userSession';
@@ -17,7 +17,7 @@ import {
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
-  UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
+  UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION, UPDATE_HANDLING_SIGN_IN,
   RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -39,24 +39,53 @@ import {
 
 export const init = async (store) => {
 
-  if (userSession.isSignInPending()) {
-    await userSession.handlePendingSignIn();
-
-    const { separatedUrl } = separateUrlAndParam(window.location.href, 'authResponse');
-    window.history.replaceState(window.history.state, '', separatedUrl);
-  }
+  handlePendingSignIn()(store.dispatch, store.getState);
 
   store.dispatch({
     type: INIT,
     payload: {
       isUserSignedIn: userSession.isUserSignedIn(),
       href: window.location.href,
+      windowWidth: null,
+      windowHeight: null,
     }
   });
 
   popHistoryState(store);
   window.addEventListener('popstate', function () {
     popHistoryState(store);
+  });
+};
+
+const handlePendingSignIn = () => async (dispatch, getState) => {
+
+  if (!userSession.isSignInPending()) return;
+
+  // As handle pending sign in takes time, show loading first.
+  dispatch({
+    type: UPDATE_HANDLING_SIGN_IN,
+    payload: true
+  });
+
+  await userSession.handlePendingSignIn();
+
+  const userData = userSession.loadUserData();
+  dispatch({
+    type: UPDATE_USER,
+    payload: {
+      isUserSignedIn: true,
+      username: userData.username,
+      image: (userData && userData.profile && userData.profile.image) || null,
+    }
+  });
+
+  const { separatedUrl } = separateUrlAndParam(window.location.href, 'authResponse');
+  window.history.replaceState(window.history.state, '', separatedUrl);
+
+  // Stop show loading
+  dispatch({
+    type: UPDATE_HANDLING_SIGN_IN,
+    payload: false
   });
 };
 
@@ -188,7 +217,6 @@ export const signUp = () => async (dispatch, getState) => {
     finished: ({ userSession }) => {
 
       const userData = userSession.loadUserData();
-
       dispatch({
         type: UPDATE_USER,
         payload: {
@@ -216,7 +244,6 @@ export const signIn = () => async (dispatch, getState) => {
     finished: ({ userSession }) => {
 
       const userData = userSession.loadUserData();
-
       dispatch({
         type: UPDATE_USER,
         payload: {
@@ -548,13 +575,21 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
     throw new Error(`Invalid parameters: ${listName}, ${ids}`);
   }
 
-  const res = await axios.post(BRACE_EXTRACT_URL, { urls: links.map(link => link.url) });
+  const res = await axios.post(
+    BRACE_EXTRACT_URL,
+    { urls: links.map(link => link.url) }
+  );
   const extractedResults = res.data.extractedResults;
 
   const extractedLinks = [];
   for (let i = 0; i < extractedResults.length; i++) {
     const extractedResult = extractedResults[i];
-    if (extractedResult.status === EXTRACT_EXCEEDING_N_URLS) return;
+    if (extractedResult.status === EXTRACT_EXCEEDING_N_URLS) continue;
+
+    // Some links might be moved while extracting.
+    // If that the case, ignore them.
+    if (!Object.keys(getState().links[listName]).includes(links[i][ID])) continue;
+
     links[i].extractedResult = extractedResult;
     extractedLinks.push(links[i]);
   }

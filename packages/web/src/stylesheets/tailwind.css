@@ -916,10 +916,6 @@ input[type="search"]::-webkit-search-results-decoration {
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
 }
 
-.min-w-32 {
-  min-width: 8rem;
-}
-
 .hyphens-auto {
   -webkit-hyphens: auto;
           hyphens: auto;
@@ -11707,6 +11703,10 @@ input[type="search"]::-webkit-search-results-decoration {
 
 .min-w-0 {
   min-width: 0;
+}
+
+.min-w-32 {
+  min-width: 8rem;
 }
 
 .min-w-full {
@@ -32640,6 +32640,10 @@ input[type="search"]::-webkit-search-results-decoration {
 
   .sm\:min-w-0 {
     min-width: 0;
+  }
+
+  .sm\:min-w-32 {
+    min-width: 8rem;
   }
 
   .sm\:min-w-full {
@@ -53576,6 +53580,10 @@ input[type="search"]::-webkit-search-results-decoration {
     min-width: 0;
   }
 
+  .md\:min-w-32 {
+    min-width: 8rem;
+  }
+
   .md\:min-w-full {
     min-width: 100%;
   }
@@ -74510,6 +74518,10 @@ input[type="search"]::-webkit-search-results-decoration {
     min-width: 0;
   }
 
+  .lg\:min-w-32 {
+    min-width: 8rem;
+  }
+
   .lg\:min-w-full {
     min-width: 100%;
   }
@@ -95442,6 +95454,10 @@ input[type="search"]::-webkit-search-results-decoration {
 
   .xl\:min-w-0 {
     min-width: 0;
+  }
+
+  .xl\:min-w-32 {
+    min-width: 8rem;
   }
 
   .xl\:min-w-full {

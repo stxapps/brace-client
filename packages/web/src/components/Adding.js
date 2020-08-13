@@ -21,7 +21,7 @@ import TopBar from './TopBar';
 
 const MAX_LINK_LENGTH = 157;
 
-class Adding extends React.Component {
+class Adding extends React.PureComponent {
 
   state = {
     urlValidatedResult: null,
@@ -60,7 +60,7 @@ class Adding extends React.Component {
       return;
     }
 
-    let link = this.getLinkFromAddingUrl(addingUrl)
+    let link = this.getLinkFromAddingUrl(addingUrl);
     if (doCancelDiedLink) {
       if (link && link.status === DIED_ADDING) {
         this.props.cancelDiedLinks([link.id]);

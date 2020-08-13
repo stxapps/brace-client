@@ -12,11 +12,11 @@ import Privacy from './Privacy';
 import Support from './Support';
 import Back from './Back';
 
-class App extends React.Component {
+class App extends React.PureComponent {
 
   render() {
 
-    if (this.props.href === null) {
+    if (this.props.href === null || this.props.isHandlingSignIn) {
       return <Loading />;
     }
 
@@ -54,7 +54,8 @@ const mapStateToProps = (state) => {
   return {
     isUserSignedIn: state.user.isUserSignedIn,
     href: state.window.href,
-  }
+    isHandlingSignIn: state.display.isHandlingSignIn,
+  };
 };
 
 export default connect(mapStateToProps)(App);

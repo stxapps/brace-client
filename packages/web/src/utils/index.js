@@ -392,6 +392,16 @@ export const addRem = (a, b) => {
   return (a + b).toString() + 'rem';
 };
 
+export const toPx = (rem, fontSize = 16) => {
+  if (rem.endsWith('rem')) rem = rem.slice(0, -3);
+  return parseFloat(rem) * fontSize;
+};
+
+export const multiplyPercent = (value, percent) => {
+  percent = percent.slice(0, -1);
+  return value * parseFloat(percent) / 100;
+};
+
 export const isEqual = function (x, y) {
   if (x === y) return true;
   // if both x and y are null or undefined and exactly the same

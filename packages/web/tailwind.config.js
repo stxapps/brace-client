@@ -50,6 +50,9 @@ module.exports = {
       inset: {
         '1/2': '50%',
       },
+      minWidth: {
+        '32': '8rem',
+      },
       minHeight: {
         '14': '3.5rem',
       },
