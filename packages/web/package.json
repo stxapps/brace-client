@@ -1,6 +1,6 @@
 {
   "name": "brace-client-web",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
   "dependencies": {
     "@blockstack/connect": "^2.7.5",
@@ -39,7 +39,7 @@
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "test": "react-scripts test",
     "deploy-test": "aws s3 sync build/static s3://test-brace-web/static --size-only --delete --acl public-read --cache-control max-age=31536000 && aws s3 sync build s3://test-brace-web --exclude static/* --size-only --delete --acl public-read && aws s3 cp build/service-worker.js s3://test-brace-web/service-worker.js --acl public-read --cache-control no-cache && aws s3 cp build/index.html s3://test-brace-web/index.html --acl public-read --cache-control no-cache && aws cloudfront create-invalidation --distribution-id E1IMMCHCDM4Y81 --paths /index.html",
-    "deploy-prod": "aws s3 sync build/static s3://brace-web/static --size-only --delete --acl public-read --cache-control max-age=31536000 && aws s3 sync build s3://brace-web --exclude static/* --size-only --delete --acl public-read && aws s3 cp build/service-worker.js s3://brace-web/service-worker.js --acl public-read --cache-control no-cache && aws s3 cp build/index.html s3://brace-web/index.html --acl public-read --cache-control no-cache && aws cloudfront create-invalidation --distribution-id E1IMMCHCDM4Y81 --paths /index.html",
+    "deploy-prod": "aws s3 sync build/static s3://brace-web/static --size-only --delete --acl public-read --cache-control max-age=31536000 && aws s3 sync build s3://brace-web --exclude static/* --size-only --delete --acl public-read && aws s3 cp build/service-worker.js s3://brace-web/service-worker.js --acl public-read --cache-control no-cache && aws s3 cp build/index.html s3://brace-web/index.html --acl public-read --cache-control no-cache && aws cloudfront create-invalidation --distribution-id ECEBYZH814VT0 --paths /index.html",
     "invalidate-test": "aws cloudfront create-invalidation --distribution-id E1IMMCHCDM4Y81 --paths /apple-touch-icon.png /logo192.png /logo512.png",
     "invalidate-prod": "aws cloudfront create-invalidation --distribution-id ECEBYZH814VT0 --paths /apple-touch-icon.png /logo192.png /logo512.png",
     "eject": "react-scripts eject"
