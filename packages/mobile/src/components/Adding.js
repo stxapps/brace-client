@@ -9,6 +9,7 @@ import {
   MY_LIST,
   ADDING, ADDED, DIED_ADDING,
   NO_URL, ASK_CONFIRM_URL, URL_MSGS,
+  SHARE_BORDER_RADIUS,
 } from '../types/const';
 import { addLink, cancelDiedLinks } from '../actions';
 import {
@@ -17,13 +18,6 @@ import {
 import { tailwind } from '../stylesheets/tailwind';
 
 import { InterText as Text } from '.';
-
-const BORDER_RADIUS_STYLE = {
-  borderTopLeftRadius: 16,
-  borderTopRightRadius: 16,
-  borderBottomRightRadius: 16,
-  borderBottomLeftRadius: 16,
-};
 
 class Adding extends React.PureComponent {
 
@@ -172,7 +166,7 @@ class Adding extends React.PureComponent {
 
   renderAdding() {
     const content = (
-      <View style={[tailwind('mb-8 p-4 items-center w-40 bg-white'), BORDER_RADIUS_STYLE]}>
+      <View style={[tailwind('mb-8 p-4 items-center w-40 bg-white'), SHARE_BORDER_RADIUS]}>
         <View style={tailwind('justify-center items-center w-full h-14')}>
           <Flow size={48} color="rgba(113, 128, 150, 1)" />
         </View>
@@ -184,9 +178,8 @@ class Adding extends React.PureComponent {
   }
 
   renderAdded() {
-
     const content = (
-      <View style={[tailwind('mb-8 p-4 items-center w-40 bg-white'), BORDER_RADIUS_STYLE]}>
+      <View style={[tailwind('mb-8 p-4 items-center w-40 bg-white'), SHARE_BORDER_RADIUS]}>
         <Svg width={56} height={56} viewBox="0 0 96 96" fill="none">
           <Path fillRule="evenodd" clipRule="evenodd" d="M48 96C74.5098 96 96 74.5098 96 48C96 21.4903 74.5098 0 48 0C21.4903 0 0 21.4903 0 48C0 74.5098 21.4903 96 48 96ZM70.2426 40.2427C72.5856 37.8995 72.5856 34.1005 70.2426 31.7573C67.8996 29.4142 64.1004 29.4142 61.7574 31.7573L42 51.5148L34.2427 43.7573C31.8995 41.4142 28.1005 41.4142 25.7573 43.7573C23.4142 46.1005 23.4142 49.8996 25.7573 52.2426L37.7573 64.2426C40.1005 66.5856 43.8995 66.5856 46.2427 64.2426L70.2426 40.2427Z" fill="#68D391" />
           <Path fillRule="evenodd" clipRule="evenodd" d="M70.2426 40.2427C72.5856 37.8995 72.5856 34.1005 70.2426 31.7573C67.8996 29.4142 64.1004 29.4142 61.7574 31.7573L42 51.5148L34.2427 43.7573C31.8995 41.4142 28.1005 41.4142 25.7573 43.7573C23.4142 46.1005 23.4142 49.8996 25.7573 52.2426L37.7573 64.2426C40.1005 66.5856 43.8995 66.5856 46.2427 64.2426L70.2426 40.2427Z" fill="#22543D" />
@@ -200,14 +193,13 @@ class Adding extends React.PureComponent {
 
   renderDiedAdding() {
     let { windowWidth, windowHeight } = this.props;
-    if (!windowWidth) windowWidth = 360;
 
     const style = {
       height: Math.min(windowHeight - 72, 359),
     };
 
     const content = (
-      <View style={[tailwind('mb-8 bg-white'), style, BORDER_RADIUS_STYLE]}>
+      <View style={[tailwind('mb-8 bg-white'), style, SHARE_BORDER_RADIUS]}>
         <ScrollView contentContainerStyle={tailwind('p-4 items-center w-64 sm:w-72', windowWidth)}>
           <Svg style={tailwind('text-red-600')} width={96} height={96} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
@@ -231,14 +223,13 @@ class Adding extends React.PureComponent {
 
   renderAskingConfirm() {
     let { windowWidth, windowHeight } = this.props;
-    if (!windowWidth) windowWidth = 360;
 
     const style = {
       height: Math.min(windowHeight - 72, 309),
     };
 
     const content = (
-      <View style={[tailwind('mb-8 bg-white'), style, BORDER_RADIUS_STYLE]}>
+      <View style={[tailwind('mb-8 bg-white'), style, SHARE_BORDER_RADIUS]}>
         <ScrollView contentContainerStyle={tailwind('p-4 items-center w-64 sm:w-72', windowWidth)}>
 
           <Svg style={tailwind('text-yellow-600')} width={96} height={96} viewBox="0 0 20 20" fill="currentColor">
@@ -261,13 +252,12 @@ class Adding extends React.PureComponent {
   }
 
   renderInvalid() {
-    let { windowWidth, windowHeight } = this.props;
-    if (!windowWidth) windowWidth = 360;
+    let { windowWidth } = this.props;
 
     const msg = URL_MSGS[this.state.urlValidatedResult];
 
     const content = (
-      <View style={[tailwind('mb-8 p-4 items-center w-64 bg-white sm:w-72', windowWidth), BORDER_RADIUS_STYLE]}>
+      <View style={[tailwind('mb-8 p-4 items-center w-64 bg-white sm:w-72', windowWidth), SHARE_BORDER_RADIUS]}>
         <Svg style={tailwind('text-red-600')} width={96} height={96} viewBox="0 0 20 20" fill="currentColor">
           <Path fillRule="evenodd" clipRule="evenodd" d="M8.25706 3.09882C9.02167 1.73952 10.9788 1.73952 11.7434 3.09882L17.3237 13.0194C18.0736 14.3526 17.1102 15.9999 15.5805 15.9999H4.4199C2.89025 15.9999 1.92682 14.3526 2.67675 13.0194L8.25706 3.09882ZM11.0001 13C11.0001 13.5523 10.5524 14 10.0001 14C9.44784 14 9.00012 13.5523 9.00012 13C9.00012 12.4477 9.44784 12 10.0001 12C10.5524 12 11.0001 12.4477 11.0001 13ZM10.0001 5C9.44784 5 9.00012 5.44772 9.00012 6V9C9.00012 9.55228 9.44784 10 10.0001 10C10.5524 10 11.0001 9.55228 11.0001 9V6C11.0001 5.44772 10.5524 5 10.0001 5Z" />
         </Svg>
@@ -282,11 +272,10 @@ class Adding extends React.PureComponent {
   }
 
   renderNotSignedIn() {
-    let { windowWidth, windowHeight } = this.props;
-    if (!windowWidth) windowWidth = 360;
+    let { windowWidth } = this.props;
 
     const content = (
-      <View style={[tailwind('mb-8 p-4 items-center w-64 sm:w-72 bg-white', windowWidth), BORDER_RADIUS_STYLE]}>
+      <View style={[tailwind('mb-8 p-4 items-center w-64 sm:w-72 bg-white', windowWidth), SHARE_BORDER_RADIUS]}>
         <Svg style={tailwind('text-yellow-600')} width={96} height={96} viewBox="0 0 20 20" fill="currentColor">
           <Path fillRule="evenodd" clipRule="evenodd" d="M8.25706 3.09882C9.02167 1.73952 10.9788 1.73952 11.7434 3.09882L17.3237 13.0194C18.0736 14.3526 17.1102 15.9999 15.5805 15.9999H4.4199C2.89025 15.9999 1.92682 14.3526 2.67675 13.0194L8.25706 3.09882ZM11.0001 13C11.0001 13.5523 10.5524 14 10.0001 14C9.44784 14 9.00012 13.5523 9.00012 13C9.00012 12.4477 9.44784 12 10.0001 12C10.5524 12 11.0001 12.4477 11.0001 13ZM10.0001 5C9.44784 5 9.00012 5.44772 9.00012 6V9C9.00012 9.55228 9.44784 10 10.0001 10C10.5524 10 11.0001 9.55228 11.0001 9V6C11.0001 5.44772 10.5524 5 10.0001 5Z" />
         </Svg>
@@ -308,7 +297,7 @@ class Adding extends React.PureComponent {
   renderInOtherProcessing() {
 
     const content = (
-      <View style={[tailwind('mb-8 p-4 items-center w-40 bg-white'), BORDER_RADIUS_STYLE]}>
+      <View style={[tailwind('mb-8 p-4 items-center w-40 bg-white'), SHARE_BORDER_RADIUS]}>
         <Svg width={56} height={56} viewBox="0 0 96 96" fill="none">
           <Path fillRule="evenodd" clipRule="evenodd" d="M48 96C74.5098 96 96 74.5098 96 48C96 21.4903 74.5098 0 48 0C21.4903 0 0 21.4903 0 48C0 74.5098 21.4903 96 48 96ZM70.2426 40.2427C72.5856 37.8995 72.5856 34.1005 70.2426 31.7573C67.8996 29.4142 64.1004 29.4142 61.7574 31.7573L42 51.5148L34.2427 43.7573C31.8995 41.4142 28.1005 41.4142 25.7573 43.7573C23.4142 46.1005 23.4142 49.8996 25.7573 52.2426L37.7573 64.2426C40.1005 66.5856 43.8995 66.5856 46.2427 64.2426L70.2426 40.2427Z" fill="#68D391" />
           <Path fillRule="evenodd" clipRule="evenodd" d="M70.2426 40.2427C72.5856 37.8995 72.5856 34.1005 70.2426 31.7573C67.8996 29.4142 64.1004 29.4142 61.7574 31.7573L42 51.5148L34.2427 43.7573C31.8995 41.4142 28.1005 41.4142 25.7573 43.7573C23.4142 46.1005 23.4142 49.8996 25.7573 52.2426L37.7573 64.2426C40.1005 66.5856 43.8995 66.5856 46.2427 64.2426L70.2426 40.2427Z" fill="#22543D" />
@@ -322,12 +311,7 @@ class Adding extends React.PureComponent {
 
   render() {
 
-    const { isUserSignedIn, windowWidth } = this.props;
-    // windowWidth can be null if Redux state is not completely loaded.
-    //   waiting by faking saving and be careful if use windowWidth in there.
-    if (!windowWidth) {
-      return this.renderAdding();
-    }
+    const { isUserSignedIn } = this.props;
     if (!isUserSignedIn) {
       return this.renderNotSignedIn();
     }

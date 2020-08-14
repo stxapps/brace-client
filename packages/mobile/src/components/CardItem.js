@@ -211,7 +211,9 @@ class CardItem extends React.PureComponent {
               <Text style={tailwind('ml-4 px-3 py-1 text-base text-white font-semibold text-center border border-white rounded-full')}>Cancel</Text>
             </TouchableOpacity>
           </View>
-          <Text style={tailwind('mt-10 text-base text-white font-medium text-center')} onPress={() => Linking.openURL(ensureContainUrlProtocol(url))}>Go to the link</Text>
+          <TouchableOpacity onPress={() => Linking.openURL(ensureContainUrlProtocol(url))}>
+            <Text style={tailwind('mt-10 text-base text-white font-medium text-center')}>Go to the link</Text>
+          </TouchableOpacity>
         </View>
       </React.Fragment>
     );
@@ -329,7 +331,9 @@ class CardItem extends React.PureComponent {
             <View style={tailwind('pl-4 flex-shrink flex-grow flex-row items-center lg:pl-5', windowWidth)}>
               {this.renderFavicon()}
               <View style={tailwind('flex-shrink flex-grow')}>
-                <Text style={tailwind('pl-2 text-base text-gray-700')} onPress={() => Linking.openURL(origin)} numberOfLines={1} ellipsizeMode="tail">{host}</Text>
+                <TouchableOpacity onPress={() => Linking.openURL(origin)}>
+                  <Text style={tailwind('pl-2 text-base text-gray-700')} numberOfLines={1} ellipsizeMode="tail">{host}</Text>
+                </TouchableOpacity>
               </View>
             </View>
             {/* value of triggerOffsets needs to be aligned with paddings of the three dots */}
@@ -352,7 +356,9 @@ class CardItem extends React.PureComponent {
               </MenuOptions>
             </Menu>
           </View>
-          <Text style={tailwind(`mt-0 mb-3 ml-4 mr-3 text-base text-gray-800 font-semibold leading-6.5 ${classNames} lg:mb-4 lg:ml-5 lg:mr-4`, windowWidth)} onPress={() => Linking.openURL(ensureContainUrlProtocol(url))}>{title}</Text>
+          <TouchableOpacity onPress={() => Linking.openURL(ensureContainUrlProtocol(url))}>
+            <Text style={tailwind(`mt-0 mb-3 ml-4 mr-3 text-base text-gray-800 font-semibold leading-6.5 ${classNames} lg:mb-4 lg:ml-5 lg:mr-4`, windowWidth)}>{title}</Text>
+          </TouchableOpacity>
           {isDiedStatus(status) && this.renderRetry()}
           {[ADDING, MOVING].includes(status) && this.renderBusy()}
         </View>

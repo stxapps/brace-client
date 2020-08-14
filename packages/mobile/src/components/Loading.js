@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Animated } from 'react-native';
-import { SvgXml } from 'react-native-svg'
+import { SvgXml } from 'react-native-svg';
 
 import { tailwind } from '../stylesheets/tailwind';
 
@@ -63,8 +63,8 @@ class Loading extends React.PureComponent {
     return (
       <View style={tailwind('items-center w-full h-full')}>
         <View style={[{ top: '33.3333%', transform: [{ translateY: -24 }] }, tailwind('w-12 h-12')]}>
-          <Animated.View style={[tailwind('w-full h-full'), style]}>
-            <SvgXml width={'100%'} height={'100%'} xml={logo} />
+          <Animated.View style={[tailwind('justify-center items-center w-full h-full'), style]}>
+            <SvgXml width={39} height={44} xml={logo} />
           </Animated.View>
         </View>
       </View>

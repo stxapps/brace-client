@@ -179,7 +179,7 @@ class Main extends React.PureComponent {
               <Text style={tailwind('ml-1 text-xl text-white font-semibold')}>Save link</Text>
             </TouchableOpacity>
             <Text style={tailwind('mt-16 max-w-md text-lg text-gray-900 text-center')}>Or type <Text style={tailwind('text-lg text-gray-900 font-semibold')}>"brace.to/"</Text> in front of any link {windowWidth > 390 ? '\n' : ''}in Address bar.</Text>
-            <SvgXml style={tailwind('mt-4')} width={"100%"} xml={saveLinkAtUrlBar} />
+            <SvgXml style={tailwind('mt-4')} width={'100%'} xml={saveLinkAtUrlBar} />
           </View>
         </View>
       );
@@ -254,7 +254,7 @@ class Main extends React.PureComponent {
 
     const { windowWidth } = this.props;
     const columnWidth = this.getColumnWidth(windowWidth);
-    const width = Math.floor(multiplyPercent(windowWidth, columnWidth));
+    const width = Math.floor(multiplyPercent(Math.min(windowWidth, 1152), columnWidth));
 
     return (
       <FlatList

@@ -11,6 +11,10 @@ import {
 import { updateStatus } from '../actions';
 import { tailwind } from '../stylesheets/tailwind';
 
+import { InterText as Text } from '.';
+
+const AnimatedText = Animated.createAnimatedComponent(Text);
+
 const MSGS = {
   [FETCH]: 'Fetching data from server...',
   [FETCH_COMMIT]: 'Finished fetching data.',
@@ -134,7 +138,7 @@ class StatusPopup extends React.PureComponent {
     return (
       <View style={[tailwind('mr-4 absolute w-48 flex-row justify-start items-center overflow-hidden sm:w-64 md:mr-6 lg:mr-8', windowWidth), viewStyle]}>
         <View style={tailwind('w-full h-full')}></View>
-        <Animated.Text onLayout={this.onTextLayout} style={[tailwind('pl-3 bg-white text-base text-gray-900 rounded-l-full'), textStyle]}>{this.msg}</Animated.Text>
+        <AnimatedText onLayout={this.onTextLayout} style={[tailwind('pl-3 bg-white text-base text-gray-900 rounded-l-full'), textStyle]}>{this.msg}</AnimatedText>
       </View>
     );
   }

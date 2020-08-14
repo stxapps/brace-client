@@ -22,7 +22,7 @@ import {
   RESET_STATE,
 } from '../types/actionTypes';
 import {
-  DOMAIN_NAME, BLOCKSTACK_AUTH,
+  DOMAIN_NAME, APP_DOMAIN_NAME, BLOCKSTACK_AUTH,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
@@ -78,8 +78,7 @@ export const init = async (store) => {
 
 const handlePendingSignIn = (url) => async (dispatch, getState) => {
 
-  if (!url.startsWith(DOMAIN_NAME + BLOCKSTACK_AUTH)) return;
-  // TODO: url starts with brace://app/blockstack-auth?authResponse=xxxx
+  if (!url.startsWith(APP_DOMAIN_NAME + BLOCKSTACK_AUTH)) return;
 
   // As handle pending sign in takes time, show loading first.
   dispatch({

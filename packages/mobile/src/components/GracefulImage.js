@@ -15,8 +15,12 @@ class GracefulImage extends React.PureComponent {
     const { source, style, placeholderColor, customPlaceholder, ...nativeImageProps } = this.props;
     const { loaded } = this.state;
 
-    const imageStyle = [style];
-    if (!loaded) imageStyle.push({ display: 'none' });
+    const viewStyle = [style];
+    if (!loaded) viewStyle.push({ display: 'none' });
+
+    let imageStyle;
+    if (loaded) imageStyle = { width: '100%', height: '100%' };
+    else imageStyle = { width: 100, height: 100 };
 
     let placeHolder;
     if (!loaded) {
@@ -30,8 +34,8 @@ class GracefulImage extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <View style={imageStyle}>
-          <Image source={source} style={{ width: '100%', height: '100%' }} onLoad={this.onLoad} {...nativeImageProps} />
+        <View style={viewStyle}>
+          <Image source={source} style={imageStyle} onLoad={this.onLoad} {...nativeImageProps} />
         </View>
         {placeHolder}
       </React.Fragment>

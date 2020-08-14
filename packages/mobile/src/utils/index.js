@@ -398,7 +398,7 @@ export const toPx = (rem, fontSize = 16) => {
 };
 
 export const multiplyPercent = (value, percent) => {
-  percent = percent.slice(0, -1);
+  if (percent.endsWith('%')) percent = percent.slice(0, -1);
   return value * parseFloat(percent) / 100;
 };
 

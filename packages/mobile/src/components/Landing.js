@@ -34,7 +34,7 @@ class Landing extends React.PureComponent {
     if (windowWidth > 470) logoTranslate.transform[0].translateX = 45;
 
     return (
-      <Swiper height={swiperHeight} showsPagination={true} showsButtons={false} activeDotStyle={tailwind('bg-gray-900')} paginationStyle={{ bottom: 10 }}>
+      <Swiper height={swiperHeight} showsPagination={true} showsButtons={false} activeDotStyle={tailwind('bg-gray-900')} paginationStyle={{ bottom: 10 }} loop={false}>
         <View style={tailwind('px-12 justify-center items-center w-full h-full')}>
           <SvgXml width={'100%'} xml={saveLinksToVisitLater} />
           {/* From onLayout, text width is ~394 so when window width is wide enough, no line break. */}

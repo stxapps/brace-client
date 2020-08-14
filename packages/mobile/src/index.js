@@ -7,12 +7,12 @@ import { offline } from '@redux-offline/redux-offline';
 import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
 import { MenuProvider } from 'react-native-popup-menu';
 
-import App from './components/App';
-import Adding from './components/Adding';
-
 import reducers from './reducers';
 import { init } from './actions'
 import { queue, discard, effect } from './apis/customOffline'
+
+import App from './components/App';
+import Share from './components/Share';
 
 offlineConfig.queue = queue;
 offlineConfig.discard = discard;
@@ -43,10 +43,10 @@ const Root = () => {
   );
 };
 
-export const Share = () => {
+export const ShareRoot = () => {
   return (
     <Provider store={store}>
-      <Adding />
+      <Share />
     </Provider>
   );
 };

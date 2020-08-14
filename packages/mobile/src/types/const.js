@@ -1,4 +1,5 @@
 export const DOMAIN_NAME = 'https://brace.to';
+export const APP_DOMAIN_NAME = 'brace://app';
 export const BLOCKSTACK_AUTH = '/blockstack-auth';
 
 export const APP_NAME = 'Brace';
@@ -82,6 +83,12 @@ export const SHOW_SIGN_IN = 'SHOW_SIGN_IN';
 export const SHOW_COMMANDS = 'SHOW_COMMANDS';
 
 export const BAR_HEIGHT = '3.5rem';
+export const SHARE_BORDER_RADIUS = {
+  borderTopLeftRadius: 16,
+  borderTopRightRadius: 16,
+  borderBottomRightRadius: 16,
+  borderBottomLeftRadius: 16,
+};
 
 export const VALID_URL = 'VALID_URL';
 export const NO_URL = 'NO_URL';
