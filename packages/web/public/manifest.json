@@ -3,6 +3,11 @@
   "name": "Brace",
   "icons": [
     {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
       "src": "logo16.png",
       "sizes": "16x16",
       "type": "image/png"
@@ -16,11 +21,6 @@
       "src": "logo64.png",
       "sizes": "64x64",
       "type": "image/png"
-    },
-    {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
     },
     {
       "src": "logo512.png",
