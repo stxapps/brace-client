@@ -1,16 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { ScrollView, FlatList, View, TouchableOpacity } from 'react-native';
-import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
+import { Menu, MenuOptions, MenuOption, MenuTrigger, withMenuContext } from 'react-native-popup-menu';
 import Svg, { SvgXml, Path } from 'react-native-svg'
 import { Flow } from 'react-native-animated-spinkit'
+import Modal from 'react-native-modal';
 
 import {
   fetch, fetchMore, changeListName,
-  updatePopup,
+  updatePopup, deleteLinks,
 } from '../actions';
 import {
-  LIST_NAME_POPUP, ADD_POPUP,
+  LIST_NAME_POPUP, ADD_POPUP, CONFIRM_DELETE_POPUP,
   PC_100, PC_50, PC_33,
   MY_LIST, TRASH,
   SHOW_BLANK, SHOW_COMMANDS,
@@ -90,6 +91,37 @@ class Main extends React.PureComponent {
   onFetchMoreBtnClick = () => {
     this.props.fetchMore();
   };
+
+  onConfirmDeleteOkBtnClick = () => {
+    this.props.deleteLinks([this.props.popupLink.id]);
+    this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+    this.props.ctx.menuActions.closeMenu();
+  }
+
+  onConfirmDeleteCancelBtnClick = () => {
+    this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+  };
+
+  renderConfirmDeletePopup() {
+
+    const { isConfirmDeletePopupShown, windowWidth, windowHeight } = this.props;
+
+    return (
+      <Modal isVisible={isConfirmDeletePopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onConfirmDeleteCancelBtnClick} onBackButtonPress={this.onConfirmDeleteCancelBtnClick} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.1} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true}>
+        <View style={tailwind('p-4 self-center w-48 bg-white rounded-lg')}>
+          <Text style={tailwind('py-2 text-lg text-gray-900 text-center')}>Confirm delete?</Text>
+          <View style={tailwind('py-2 flex-row items-center justify-center')}>
+            <TouchableOpacity onPress={this.onConfirmDeleteOkBtnClick} style={tailwind('mr-2 py-2')}>
+              <Text style={tailwind('px-3 py-1 bg-white text-base text-gray-900 text-center border border-gray-900 rounded-full shadow-sm')}>Yes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.onConfirmDeleteCancelBtnClick} style={tailwind('ml-2 py-2')}>
+              <Text style={tailwind('px-3 py-1 bg-white text-base text-gray-900 text-center border border-gray-900 rounded-full shadow-sm')}>No</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    );
+  }
 
   renderListName = () => {
 
@@ -256,12 +288,19 @@ class Main extends React.PureComponent {
     const columnWidth = this.getColumnWidth(windowWidth);
     const width = Math.floor(multiplyPercent(Math.min(windowWidth, 1152), columnWidth));
 
+    let initialNumToRender;
+    if (columnWidth === PC_100) initialNumToRender = 5;
+    else if (columnWidth === PC_50) initialNumToRender = 4;
+    else if (columnWidth === PC_33) initialNumToRender = 3;
+    else throw new Error(`Invalid columnWidth: ${columnWidth}`);
+
     return (
       <FlatList
         style={{ width }}
         data={item.data}
         keyExtractor={item => item.id}
-        renderItem={this.renderItem} />
+        renderItem={this.renderItem}
+        initialNumToRender={initialNumToRender} />
     );
   }
 
@@ -365,6 +404,7 @@ class Main extends React.PureComponent {
           onEndReached={this.onEndReached}
           onEndReachedThreshold={0.9} />
         {columnWidth === PC_100 && <BottomBar isShown={popupLink === null} />}
+        {this.renderConfirmDeletePopup()}
       </React.Fragment>
     );
   }
@@ -380,6 +420,7 @@ const mapStateToProps = (state, props) => {
     listNames: getListNames(state),
     links: links,
     isAddPopupShown: state.display.isAddPopupShown,
+    isConfirmDeletePopupShown: state.display.isConfirmDeletePopupShown,
     popupLink: popupLink,
     hasMoreLinks: state.hasMoreLinks[listName],
     isFetchingMore: state.display.isFetchingMore,
@@ -390,7 +431,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
-  fetch, fetchMore, changeListName, updatePopup,
+  fetch, fetchMore, changeListName, updatePopup, deleteLinks,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Main);
+export default connect(mapStateToProps, mapDispatchToProps)(withMenuContext(Main));

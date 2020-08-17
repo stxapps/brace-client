@@ -162,11 +162,11 @@ class BottomBar extends React.PureComponent {
 
   renderAddPopup() {
 
-    const { isAddPopupShown } = this.props;
+    const { isAddPopupShown, windowWidth, windowHeight } = this.props;
     const { url, msg, isAskingConfirm } = this.state;
 
     return (
-      <Modal isVisible={isAddPopupShown} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={() => setTimeout(() => this.addInput.current.focus(), 1)} onModalWillHide={() => this.addInput.current.blur()} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true}>
+      <Modal isVisible={isAddPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={() => setTimeout(() => this.addInput.current.focus(), 1)} onModalWillHide={() => this.addInput.current.blur()} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true}>
         <View style={tailwind('px-4 pt-6 pb-6 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
           {/* onKeyPress event for Enter key only if there is multiline TextInput */}
           <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('px-4 py-2 w-full bg-white text-gray-900 border border-gray-600 rounded-full')} placeholder="https://" value={url} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
@@ -222,10 +222,10 @@ class BottomBar extends React.PureComponent {
 
   renderProfilePopup() {
 
-    const { isProfilePopupShown } = this.props;
+    const { isProfilePopupShown, windowWidth, windowHeight } = this.props;
 
     return (
-      <Modal isVisible={isProfilePopupShown} onBackdropPress={this.onProfileCancelBtnClick} onBackButtonPress={this.onProfileCancelBtnClick} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="slideInUp" animationInTiming={200} animationOut="slideOutDown" animationOutTiming={200} useNativeDriver={true}>
+      <Modal isVisible={isProfilePopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onProfileCancelBtnClick} onBackButtonPress={this.onProfileCancelBtnClick} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="slideInUp" animationInTiming={200} animationOut="slideOutDown" animationOutTiming={200} useNativeDriver={true}>
         <View style={tailwind('py-4 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
           <TouchableOpacity onPress={() => Linking.openURL(DOMAIN_NAME + '/#support')} style={tailwind('py-4 pl-4 w-full')}>
             <Text style={tailwind('text-gray-800')}>Support</Text>
@@ -245,15 +245,15 @@ class BottomBar extends React.PureComponent {
       transform: [{ translateY: this.bottomBarTranslateY }],
     };
     const shadowStyle = {
-      height: 1,
-      transform: [{ translateY: -1 }],
+      height: 10,
+      transform: [{ translateY: -15 }],
     };
 
     return (
       <React.Fragment>
         <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 bg-white z-30'), style]}>
           <View style={tailwind('relative flex-row w-full h-full overflow-hidden')}>
-            <View style={[tailwind('absolute inset-x-0 top-0 bg-white shadow-sm'), shadowStyle]}></View>
+            <View style={[tailwind('absolute inset-x-0 top-0 bg-white shadow-lg'), shadowStyle]}></View>
             <TouchableOpacity onPress={this.onAddBtnClick} style={tailwind('justify-center items-center w-1/3 h-full')}>
               <View style={tailwind('justify-center items-center w-8 h-7 bg-gray-800 rounded-lg shadow-sm')}>
                 <Svg style={tailwind('text-white')} width={16} height={14} viewBox="0 0 16 14" stroke="currentColor" fill="none">
@@ -293,6 +293,8 @@ const mapStateToProps = (state, props) => {
     isSearchPopupShown: state.display.isSearchPopupShown,
     isProfilePopupShown: state.display.isProfilePopupShown,
     popupLink: popupLink,
+    windowWidth: state.window.width,
+    windowHeight: state.window.height,
   };
 };
 

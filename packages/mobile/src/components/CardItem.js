@@ -1,22 +1,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { ScrollView, View, TouchableOpacity, Linking } from 'react-native';
-import { Menu, MenuOptions, MenuOption, MenuTrigger, withMenuContext } from 'react-native-popup-menu';
+import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Svg, { Path } from 'react-native-svg'
 import Clipboard from '@react-native-community/clipboard'
-import Modal from 'react-native-modal';
 
 import {
   updatePopup, retryDiedLinks, cancelDiedLinks,
-  moveLinks, deleteLinks,
+  moveLinks,
 } from '../actions';
 import {
   DOMAIN_NAME,
-  CONFIRM_DELETE_POPUP,
   MY_LIST, TRASH,
   ADDING, MOVING,
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
-  CARD_ITEM_POPUP_MENU,
+  CARD_ITEM_POPUP_MENU, CONFIRM_DELETE_POPUP,
   COLOR, PATTERN, IMAGE,
 } from '../types/const';
 import { getListNames } from '../selectors';
@@ -100,16 +98,6 @@ class CardItem extends React.PureComponent {
     return true;
   }
 
-  onConfirmDeleteOkBtnClick = () => {
-    this.props.deleteLinks([this.props.link.id]);
-    this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
-    this.props.ctx.menuActions.closeMenu();
-  }
-
-  onConfirmDeleteCancelBtnClick = () => {
-    this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
-  };
-
   onRetryRetryBtnClick = () => {
     this.props.retryDiedLinks([this.props.link.id]);
   }
@@ -149,27 +137,6 @@ class CardItem extends React.PureComponent {
         })}
         {moveTo && moveTo}
       </React.Fragment>
-    );
-  }
-
-  renderConfirmDeletePopup() {
-
-    const { isConfirmDeletePopupShown } = this.props;
-
-    return (
-      <Modal isVisible={isConfirmDeletePopupShown} onBackdropPress={this.onConfirmDeleteCancelBtnClick} onBackButtonPress={this.onConfirmDeleteCancelBtnClick} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.1} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true}>
-        <View style={tailwind('p-4 self-center w-48 bg-white rounded-lg')}>
-          <Text style={tailwind('py-2 text-lg text-gray-900 text-center')}>Confirm delete?</Text>
-          <View style={tailwind('py-2 flex-row items-center justify-center')}>
-            <TouchableOpacity onPress={this.onConfirmDeleteOkBtnClick} style={tailwind('mr-2 py-2')}>
-              <Text style={tailwind('px-3 py-1 bg-white text-base text-gray-900 text-center border border-gray-900 rounded-full shadow-sm')}>Yes</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this.onConfirmDeleteCancelBtnClick} style={tailwind('ml-2 py-2')}>
-              <Text style={tailwind('px-3 py-1 bg-white text-base text-gray-900 text-center border border-gray-900 rounded-full shadow-sm')}>No</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     );
   }
 
@@ -325,7 +292,7 @@ class CardItem extends React.PureComponent {
 
     return (
       <View style={style}>
-        <View style={tailwind(`self-center bg-white border-t border-l border-b border-r border-gray-200 rounded-lg shadow overflow-hidden ${viewStyle}`)}>
+        <View style={tailwind(`self-center bg-white rounded-lg shadow-sm overflow-hidden ${viewStyle}`)}>
           {this.renderImage()}
           <View style={tailwind('flex-row justify-between items-center w-full')}>
             <View style={tailwind('pl-4 flex-shrink flex-grow flex-row items-center lg:pl-5', windowWidth)}>
@@ -362,7 +329,6 @@ class CardItem extends React.PureComponent {
           {isDiedStatus(status) && this.renderRetry()}
           {[ADDING, MOVING].includes(status) && this.renderBusy()}
         </View>
-        {this.renderConfirmDeletePopup()}
       </View>
     );
   }
@@ -374,13 +340,12 @@ const mapStateToProps = (state, props) => {
     listNames: getListNames(state),
     windowWidth: state.window.width,
     windowHeight: state.window.height,
-    isConfirmDeletePopupShown: state.display.isConfirmDeletePopupShown,
   };
 };
 
 const mapDispatchToProps = {
   updatePopup, retryDiedLinks, cancelDiedLinks,
-  moveLinks, deleteLinks,
+  moveLinks,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withMenuContext(CardItem));
+export default connect(mapStateToProps, mapDispatchToProps)(CardItem);
