@@ -13,7 +13,7 @@ import {
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
   CARD_ITEM_POPUP_MENU,
 } from '../types/const';
-import { copyTextToClipboard, ensureContainUrlProtocol } from '../utils';
+import { copyTextToClipboard, ensureContainUrlProtocol, throttle } from '../utils';
 
 class CardItemMenuPopup extends React.PureComponent {
 
@@ -29,6 +29,8 @@ class CardItemMenuPopup extends React.PureComponent {
     const { menu, moveTo } = this.populateMenu(props);
     this.menu = menu;
     this.moveTo = moveTo;
+
+    this.updateScrollY = throttle(this.updateScrollY, 16);
   }
 
   componentDidMount() {

@@ -16,7 +16,7 @@ import {
   BAR_HEIGHT,
 } from '../types/const';
 import { getListNames, getLinks } from '../selectors';
-import { addRem, getWindowHeight, getWindowScrollHeight } from '../utils';
+import { addRem, getWindowHeight, getWindowScrollHeight, throttle } from '../utils';
 
 import Loading from './Loading';
 import TopBar from './TopBar';
@@ -42,6 +42,9 @@ class Main extends React.PureComponent {
     };
 
     this.main = React.createRef();
+
+    this.updateColumnWidth = throttle(this.updateColumnWidth, 16);
+    this.updateScrollY = throttle(this.updateScrollY, 16);
   }
 
   componentDidMount() {
