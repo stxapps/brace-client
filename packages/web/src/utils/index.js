@@ -306,6 +306,7 @@ export const extractUrl = (url) => {
   return {
     host: urlObj.host,
     origin: urlObj.origin,
+    pathname: urlObj.pathname,
   };
 };
 

@@ -59,7 +59,8 @@ export const init = async (store) => {
 
 const handlePendingSignIn = () => async (dispatch, getState) => {
 
-  if (!userSession.isSignInPending()) return;
+  const { pathname } = extractUrl(window.location.href);
+  if (!(pathname === '/' && userSession.isSignInPending())) return;
 
   // As handle pending sign in takes time, show loading first.
   dispatch({
@@ -67,17 +68,27 @@ const handlePendingSignIn = () => async (dispatch, getState) => {
     payload: true
   });
 
-  await userSession.handlePendingSignIn();
+  try {
+    await userSession.handlePendingSignIn();
+  } catch (e) {
+    console.log(`Catched an error thrown by handlePendingSignIn: ${e.message}`);
+    // All errors thrown by handlePendingSignIn have the same next steps
+    //   - Invalid token
+    //   - Already signed in with the same account
+    //   - Already signed in with different account
+  }
 
-  const userData = userSession.loadUserData();
-  dispatch({
-    type: UPDATE_USER,
-    payload: {
-      isUserSignedIn: true,
-      username: userData.username,
-      image: (userData && userData.profile && userData.profile.image) || null,
-    }
-  });
+  if (userSession.isUserSignedIn()) {
+    const userData = userSession.loadUserData();
+    dispatch({
+      type: UPDATE_USER,
+      payload: {
+        isUserSignedIn: true,
+        username: userData.username,
+        image: (userData && userData.profile && userData.profile.image) || null,
+      }
+    });
+  }
 
   const { separatedUrl } = separateUrlAndParam(window.location.href, 'authResponse');
   window.history.replaceState(window.history.state, '', separatedUrl);

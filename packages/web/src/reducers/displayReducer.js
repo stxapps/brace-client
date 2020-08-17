@@ -44,6 +44,7 @@ export default (state = initialState, action) => {
       isConfirmDeletePopupShown: false,
       status: null,
       cardItemMenuPopupPosition: null,
+      isHandlingSignIn: false,
     };
   }
 
