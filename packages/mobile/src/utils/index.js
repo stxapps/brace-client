@@ -576,3 +576,12 @@ export const getWindowScrollHeight = () => {
     html.offsetHeight
   );
 };
+
+export const indexesOf = (text, searchValue) => {
+  const indexes = [];
+
+  let i = -1;
+  while ((i = text.indexOf(searchValue, i + 1)) >= 0) indexes.push(i);
+
+  return indexes;
+};

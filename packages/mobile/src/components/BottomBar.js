@@ -156,7 +156,8 @@ class BottomBar extends React.PureComponent {
   }
 
   onSignOutBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, false);
+    // No need to update it, will get already unmount
+    // this.props.updatePopup(PROFILE_POPUP, false);
     this.props.signOut()
   }
 
