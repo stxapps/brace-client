@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { View, Animated } from 'react-native';
 
+import { SM_WIDTH } from '../types/const';
 import {
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
@@ -113,7 +114,7 @@ class StatusPopup extends React.PureComponent {
 
     const { status, windowWidth } = this.props;
     if (status) {
-      this.msg = windowWidth >= 640 ? MSGS[status] : MSGS_SHRT[status];
+      this.msg = windowWidth >= SM_WIDTH ? MSGS[status] : MSGS_SHRT[status];
 
       if ([
         FETCH_COMMIT,

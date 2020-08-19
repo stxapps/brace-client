@@ -1,7 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { ScrollView, FlatList, View, TouchableOpacity } from 'react-native';
-import { Menu, MenuOptions, MenuOption, MenuTrigger, withMenuContext } from 'react-native-popup-menu';
+import {
+  ScrollView, FlatList, View, TouchableOpacity, LayoutAnimation,
+} from 'react-native';
+import {
+  Menu, MenuOptions, MenuOption, MenuTrigger, withMenuContext,
+} from 'react-native-popup-menu';
 import Svg, { SvgXml, Path } from 'react-native-svg'
 import { Flow } from 'react-native-animated-spinkit'
 import Modal from 'react-native-modal';
@@ -16,10 +20,12 @@ import {
   MY_LIST, TRASH,
   SHOW_BLANK, SHOW_COMMANDS,
   BAR_HEIGHT,
+  SM_WIDTH, MD_WIDTH, LG_WIDTH,
 } from '../types/const';
 import { getListNames, getLinks } from '../selectors';
 import { toPx, multiplyPercent } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
+import { cardItemAnimConfig } from '../types/animConfigs';
 
 import { InterText as Text } from '.';
 import MenuPopupRenderer from './MenuPopupRenderer';
@@ -39,9 +45,21 @@ const MAIN_BODY = 'MAIN_BODY';
 const MAIN_FOOTER = 'MAIN_FOOTER';
 const MAIN_PADDING_BOTTOM = 'MAIN_PADDING_BOTTOM';
 
+const BORDER_RADIUS = {
+  borderTopLeftRadius: 24,
+  borderTopRightRadius: 24,
+  borderBottomRightRadius: 24,
+  borderBottomLeftRadius: 24,
+};
+
 class Main extends React.PureComponent {
 
-  fetched = [];
+  constructor(props) {
+    super(props);
+
+    this.fetched = [];
+    this.confirmDeleteLinkId = null;
+  }
 
   componentDidMount() {
     this.props.fetch(true, true);
@@ -50,8 +68,8 @@ class Main extends React.PureComponent {
 
   getColumnWidth = (windowWidth) => {
     let columnWidth = PC_100;
-    if (windowWidth >= 640) columnWidth = PC_50;
-    if (windowWidth >= 1024) columnWidth = PC_33;
+    if (windowWidth >= SM_WIDTH) columnWidth = PC_50;
+    if (windowWidth >= LG_WIDTH) columnWidth = PC_33;
 
     return columnWidth;
   }
@@ -93,21 +111,36 @@ class Main extends React.PureComponent {
   };
 
   onConfirmDeleteOkBtnClick = () => {
-    this.props.deleteLinks([this.props.popupLink.id]);
-    this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+    // Just save the value here
+    //   and after all popups close, call LayoutAnimation
+    //   to animate only CardItem layout changes in onConfirmDeletePopupClose.
+    this.confirmDeleteLinkId = this.props.popupLink.id;
+
     this.props.ctx.menuActions.closeMenu();
+    this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
   }
 
   onConfirmDeleteCancelBtnClick = () => {
     this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
   };
 
+  onConfirmDeletePopupClose = () => {
+    if (this.confirmDeleteLinkId) {
+      const { windowWidth } = this.props;
+      const animConfig = cardItemAnimConfig(windowWidth);
+
+      LayoutAnimation.configureNext(animConfig);
+      this.props.deleteLinks([this.confirmDeleteLinkId]);
+    }
+    this.confirmDeleteLinkId = null;
+  }
+
   renderConfirmDeletePopup() {
 
     const { isConfirmDeletePopupShown, windowWidth, windowHeight } = this.props;
 
     return (
-      <Modal isVisible={isConfirmDeletePopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onConfirmDeleteCancelBtnClick} onBackButtonPress={this.onConfirmDeleteCancelBtnClick} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.1} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true}>
+      <Modal isVisible={isConfirmDeletePopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onConfirmDeleteCancelBtnClick} onBackButtonPress={this.onConfirmDeleteCancelBtnClick} onModalHide={this.onConfirmDeletePopupClose} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.1} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true}>
         <View style={tailwind('p-4 self-center w-48 bg-white rounded-lg')}>
           <Text style={tailwind('py-2 text-lg text-gray-900 text-center')}>Confirm delete?</Text>
           <View style={tailwind('py-2 flex-row items-center justify-center')}>
@@ -129,11 +162,11 @@ class Main extends React.PureComponent {
 
     // value of triggerOffsets needs to be aligned with paddings of the MenuTrigger
     const triggerOffsets = { x: 16, y: 16, width: 0, height: 0 };
-    if (windowWidth >= 768) {
+    if (windowWidth >= MD_WIDTH) {
       triggerOffsets.x = 24;
       triggerOffsets.y = 40;
     }
-    if (windowWidth >= 1024) {
+    if (windowWidth >= LG_WIDTH) {
       triggerOffsets.x = 32;
       triggerOffsets.y = 40;
     }
@@ -192,16 +225,10 @@ class Main extends React.PureComponent {
     }
 
     if (listName === MY_LIST) {
-      const borderRadius = {
-        borderTopLeftRadius: 24,
-        borderTopRightRadius: 24,
-        borderBottomRightRadius: 24,
-        borderBottomLeftRadius: 24,
-      };
 
       return (
         <View style={tailwind('px-4 pb-6 items-center w-full md:px-6 lg:px-8', windowWidth)}>
-          <View style={[tailwind('pt-16 pb-8 items-center w-full max-w-md bg-gray-100'), borderRadius]}>
+          <View style={[tailwind('pt-16 pb-8 items-center w-full max-w-md bg-gray-100'), BORDER_RADIUS]}>
             <SvgXml width={64} height={64} xml={undrawLink} />
             <Text style={tailwind('mt-6 text-lg text-gray-900 text-center')}>Get started saving links</Text>
             <TouchableOpacity onPress={this.onAddBtnClick} style={tailwind('mt-4 px-3 py-1 flex-row justify-center items-center bg-gray-900 rounded-lg shadow-lg')}>

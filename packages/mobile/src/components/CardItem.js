@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { ScrollView, View, TouchableOpacity, Linking } from 'react-native';
+import {
+  ScrollView, View, TouchableOpacity, Linking, LayoutAnimation,
+} from 'react-native';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Svg, { Path } from 'react-native-svg'
 import Clipboard from '@react-native-community/clipboard'
@@ -16,6 +18,7 @@ import {
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
   CARD_ITEM_POPUP_MENU, CONFIRM_DELETE_POPUP,
   COLOR, PATTERN, IMAGE,
+  SM_WIDTH,
 } from '../types/const';
 import { getListNames } from '../selectors';
 import {
@@ -24,6 +27,7 @@ import {
 } from '../utils';
 import { PATTERN_MAP } from '../types/patternPaths';
 import { tailwind } from '../stylesheets/tailwind';
+import { cardItemAnimConfig } from '../types/animConfigs';
 
 import { InterText as Text } from '.';
 import GracefulImage from './GracefulImage';
@@ -35,6 +39,12 @@ const prependDomainName = (/** @type string */ value) => {
 };
 
 class CardItem extends React.PureComponent {
+
+  constructor(props) {
+    super(props);
+
+    this.menuPopupClickText = null;
+  }
 
   populateMenu() {
     const { link, listName, listNames } = this.props;
@@ -68,34 +78,49 @@ class CardItem extends React.PureComponent {
     this.props.updatePopup(this.props.link.id, true, null);
   }
 
-  onMenuCancelBtnClick = () => {
-    this.props.updatePopup(this.props.link.id, false);
-  };
-
   onMenuPopupClick = (text) => {
-
-    const { id, url } = this.props.link;
-
-    if (text === OPEN) {
-      Linking.openURL(ensureContainUrlProtocol(url));
-    } else if (text === COPY_LINK) {
-      Clipboard.setString(url);
-    } else if (text === ARCHIVE) {
-      this.props.moveLinks(ARCHIVE, [id]);
-    } else if (text === REMOVE) {
-      this.props.moveLinks(TRASH, [id]);
-    } else if (text === RESTORE) {
-      this.props.moveLinks(MY_LIST, [id]);
-    } else if (text === DELETE) {
+    if (text === DELETE) {
       this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
       return false;
-    } else if (text.startsWith(MOVE_TO)) {
-      this.props.moveLinks(text.substring(MOVE_TO.length + 1), [id]);
-    } else {
-      throw new Error(`Invalid text: ${text}`);
     }
 
+    // Just save the value here
+    //   and after all popups close, call LayoutAnimation
+    //   to animate only CardItem layout changes in onMenuPopupClose.
+    this.menuPopupClickText = text;
     return true;
+  }
+
+  onMenuPopupClose = () => {
+    const text = this.menuPopupClickText;
+    if (text) {
+      const { id, url } = this.props.link;
+      const { windowWidth } = this.props;
+      const animConfig = cardItemAnimConfig(windowWidth);
+
+      if (text === OPEN) {
+        Linking.openURL(ensureContainUrlProtocol(url));
+      } else if (text === COPY_LINK) {
+        Clipboard.setString(url);
+      } else if (text === ARCHIVE) {
+        LayoutAnimation.configureNext(animConfig);
+        this.props.moveLinks(ARCHIVE, [id]);
+      } else if (text === REMOVE) {
+        LayoutAnimation.configureNext(animConfig);
+        this.props.moveLinks(TRASH, [id]);
+      } else if (text === RESTORE) {
+        LayoutAnimation.configureNext(animConfig);
+        this.props.moveLinks(MY_LIST, [id]);
+      } else if (text.startsWith(MOVE_TO)) {
+        LayoutAnimation.configureNext(animConfig);
+        this.props.moveLinks(text.substring(MOVE_TO.length + 1), [id]);
+      } else {
+        throw new Error(`Invalid text: ${text}`);
+      }
+    }
+
+    this.props.updatePopup(this.props.link.id, false);
+    this.menuPopupClickText = null;
   }
 
   onRetryRetryBtnClick = () => {
@@ -277,7 +302,7 @@ class CardItem extends React.PureComponent {
 
     // Need to do this as React Native doesn't support maxWidth: "none"
     //   even though it's in tailwind-rn.
-    const viewStyle = windowWidth < 640 ? 'max-w-sm' : '';
+    const viewStyle = windowWidth < SM_WIDTH ? 'max-w-sm' : '';
 
     let title, classNames = '';
     if (extractedResult && extractedResult.title) {
@@ -304,7 +329,7 @@ class CardItem extends React.PureComponent {
               </View>
             </View>
             {/* value of triggerOffsets needs to be aligned with paddings of the three dots */}
-            <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 }, popupStyle: tailwind('py-2 min-w-32 border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onMenuBtnClick} onClose={this.onMenuCancelBtnClick}>
+            <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 }, popupStyle: tailwind('py-2 min-w-32 border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onMenuBtnClick} onClose={this.onMenuPopupClose}>
               <MenuTrigger>
                 {/* View with paddingBottom is required because there is this space on the web. */}
                 <View style={{ paddingBottom: 6 }}>

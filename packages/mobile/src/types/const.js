@@ -107,3 +107,8 @@ export const EXTRACT_OK = 'EXTRACT_OK';
 export const EXTRACT_ERROR = 'EXTRACT_ERROR';
 export const EXTRACT_INVALID_URL = 'EXTRACT_INVALID_URL';
 export const EXTRACT_EXCEEDING_N_URLS = 'EXTRACT_EXCEEDING_N_URLS';
+
+export const SM_WIDTH = 640;
+export const MD_WIDTH = 768;
+export const LG_WIDTH = 1024;
+export const XL_WIDTH = 1280;

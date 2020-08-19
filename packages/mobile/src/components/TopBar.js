@@ -1,7 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, TouchableOpacity, Linking } from 'react-native';
-import { Menu, MenuOptions, MenuOption, MenuTrigger, renderers, withMenuContext } from 'react-native-popup-menu';
+import {
+  View, TouchableOpacity, Linking, LayoutAnimation,
+} from 'react-native';
+import {
+  Menu, MenuOptions, MenuOption, MenuTrigger, renderers, withMenuContext,
+} from 'react-native-popup-menu';
 import Svg, { SvgXml, Path } from 'react-native-svg'
 import jdenticon from 'jdenticon';
 
@@ -14,6 +18,7 @@ import {
 } from '../types/const';
 import { validateUrl, isEqual } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
+import { cardItemAnimConfig } from '../types/animConfigs';
 
 import { InterText as Text, InterTextInput as TextInput } from '.';
 
@@ -37,6 +42,8 @@ class TopBar extends React.PureComponent {
       const svgString = jdenticon.toSvg(props.username, 32);
       this.userImage = svgString;
     }
+
+    this.addingUrl = null;
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -73,12 +80,24 @@ class TopBar extends React.PureComponent {
       }
     }
 
-    this.props.addLink(this.state.url, true);
+    // Just save the value here
+    //   and after all popups close, call LayoutAnimation
+    //   to animate only CardItem layout changes in onAddPopupClose.
+    this.addingUrl = this.state.url;
     this.props.ctx.menuActions.closeMenu();
   }
 
-  onAddCancelBtnClick = () => {
+  onAddPopupClose = () => {
+    if (this.addingUrl) {
+      const { windowWidth } = this.props;
+      const animConfig = cardItemAnimConfig(windowWidth);
+
+      LayoutAnimation.configureNext(animConfig);
+      this.props.addLink(this.addingUrl, true);
+    }
+
     this.props.updatePopup(ADD_POPUP, false);
+    this.addingUrl = null;
   }
 
   onSearchInputChange = (e) => {
@@ -146,7 +165,7 @@ class TopBar extends React.PureComponent {
 
     return (
       <View style={tailwind('flex-row justify-end items-center')}>
-        <Menu renderer={renderers.Popover} rendererProps={{ preferredPlacement: 'bottom', anchorStyle: tailwind('shadow-xl') }} onOpen={this.onAddBtnClick} onClose={this.onAddCancelBtnClick}>
+        <Menu renderer={renderers.Popover} rendererProps={{ preferredPlacement: 'bottom', anchorStyle: tailwind('shadow-xl') }} onOpen={this.onAddBtnClick} onClose={this.onAddPopupClose}>
           <MenuTrigger>
             <View style={tailwind('justify-center items-center w-8 h-8')}>
               <View style={tailwind('justify-center items-center w-8 h-7 bg-gray-900 rounded-lg shadow-sm')}>
