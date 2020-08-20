@@ -87,16 +87,28 @@ const handlePendingSignIn = (url) => async (dispatch, getState) => {
   });
 
   const { param: { authResponse } } = separateUrlAndParam(url, 'authResponse');
-  await userSession.handlePendingSignIn(authResponse);
-  const userData = await userSession.loadUserData();
-  dispatch({
-    type: UPDATE_USER,
-    payload: {
-      isUserSignedIn: true,
-      username: userData.username,
-      image: (userData && userData.profile && userData.profile.image) || null,
-    }
-  });
+  try {
+    await userSession.handlePendingSignIn(authResponse);
+  } catch (e) {
+    console.log(`Catched an error thrown by handlePendingSignIn: ${e.message}`);
+    // All errors thrown by handlePendingSignIn have the same next steps
+    //   - Invalid token
+    //   - Already signed in with the same account
+    //   - Already signed in with different account
+  }
+
+  const isUserSignedIn = await userSession.isUserSignedIn();
+  if (isUserSignedIn) {
+    const userData = await userSession.loadUserData();
+    dispatch({
+      type: UPDATE_USER,
+      payload: {
+        isUserSignedIn: true,
+        username: userData.username,
+        image: (userData && userData.profile && userData.profile.image) || null,
+      }
+    });
+  }
 
   // Stop show loading
   dispatch({
