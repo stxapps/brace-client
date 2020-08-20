@@ -45,6 +45,8 @@ class Adding extends React.PureComponent {
       urlValidatedResults: null,
       askedConfirmResults: null,
     };
+
+    this.timeoutId = null;
   }
 
   componentDidMount() {
@@ -59,7 +61,11 @@ class Adding extends React.PureComponent {
     const { type } = this.getAction();
 
     if (type === RENDER_ADDED || type === RENDER_IN_OTHER_PROCESSING) {
-      setTimeout(() => BackHandler.exitApp(), 2000);
+      // There is a bug, setTimeout is fired right away.
+      if (!this.timeoutId) clearTimeout(this.timeoutId);
+      this.timeoutId = setTimeout(() => {
+        BackHandler.exitApp()
+      }, 2000);
       return;
     }
   }

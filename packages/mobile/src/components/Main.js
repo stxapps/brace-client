@@ -316,7 +316,7 @@ class Main extends React.PureComponent {
     const width = Math.floor(multiplyPercent(Math.min(windowWidth, 1152), columnWidth));
 
     let initialNumToRender;
-    if (columnWidth === PC_100) initialNumToRender = 4;
+    if (columnWidth === PC_100) initialNumToRender = 3;
     else if (columnWidth === PC_50) initialNumToRender = 3;
     else if (columnWidth === PC_33) initialNumToRender = 2;
     else throw new Error(`Invalid columnWidth: ${columnWidth}`);
