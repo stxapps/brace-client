@@ -46,6 +46,7 @@ class Adding extends React.PureComponent {
       askedConfirmResults: null,
     };
 
+    this.removeListerner = null;
     this.timeoutId = null;
   }
 
@@ -62,7 +63,6 @@ class Adding extends React.PureComponent {
 
     if (type === RENDER_ADDED || type === RENDER_IN_OTHER_PROCESSING) {
       // There is a bug, setTimeout is fired right away.
-      if (!this.timeoutId) clearTimeout(this.timeoutId);
       this.timeoutId = setTimeout(() => {
         BackHandler.exitApp()
       }, 2000);
@@ -76,6 +76,11 @@ class Adding extends React.PureComponent {
     if (this.removeListerner) {
       this.removeListerner();
       this.removeListerner = null;
+    }
+
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
     }
   }
 
