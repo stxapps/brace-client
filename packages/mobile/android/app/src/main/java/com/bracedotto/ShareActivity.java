@@ -1,4 +1,4 @@
-package com.brace;
+package com.bracedotto;
 
 import android.content.Intent;
 import com.facebook.react.ReactActivity;

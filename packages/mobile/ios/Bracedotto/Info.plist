@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Brace</string>
+	<string>Bracedotto</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -73,7 +73,6 @@
 		<string>Inter-SemiBoldItalic.otf</string>
 		<string>Inter-Thin.otf</string>
 		<string>Inter-ThinItalic.otf</string>
-		<string>Inter.otf</string>
 	</array>
 </dict>
 </plist>

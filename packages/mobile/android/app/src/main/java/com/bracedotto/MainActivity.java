@@ -1,4 +1,4 @@
-package com.brace;
+package com.bracedotto;
 
 import com.facebook.react.ReactActivity;
 
