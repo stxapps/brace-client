@@ -322,12 +322,15 @@ class Main extends React.PureComponent {
     else throw new Error(`Invalid columnWidth: ${columnWidth}`);
 
     return (
+      // There is a bug if removeClippedSubviews is true
+      //   as on the doc page, it's said use at your own risk.
       <FlatList
         style={{ width }}
         data={item.data}
         keyExtractor={item => item.id}
         renderItem={this.renderItem}
-        initialNumToRender={initialNumToRender} />
+        initialNumToRender={initialNumToRender}
+        removeClippedSubviews={false} />
     );
   }
 
@@ -385,7 +388,8 @@ class Main extends React.PureComponent {
           data={colData}
           keyExtractor={item => item.id}
           renderItem={this.renderColumn}
-          ListEmptyComponent={this.renderEmpty} />
+          ListEmptyComponent={this.renderEmpty}
+          removeClippedSubviews={false} />
       );
     }
 
@@ -429,7 +433,8 @@ class Main extends React.PureComponent {
           keyExtractor={item => item.id}
           renderItem={this.renderMain}
           onEndReached={this.onEndReached}
-          onEndReachedThreshold={0.9} />
+          onEndReachedThreshold={0.9}
+          removeClippedSubviews={false} />
         {columnWidth === PC_100 && <BottomBar isShown={popupLink === null} />}
         {this.renderConfirmDeletePopup()}
       </React.Fragment>

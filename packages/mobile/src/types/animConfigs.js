@@ -6,8 +6,8 @@ export const cardItemAnimConfig = (windowWidth) => {
   if (windowWidth < SM_WIDTH) {
     return LayoutAnimation.create(
       200,
-      LayoutAnimation.Types.linear,
-      LayoutAnimation.Properties.opacity
+      LayoutAnimation.Types.easeInEaseOut,
+      LayoutAnimation.Properties.scaleY
     );
   }
   return LayoutAnimation.create(
