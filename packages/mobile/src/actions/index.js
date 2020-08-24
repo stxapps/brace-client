@@ -117,6 +117,31 @@ const handlePendingSignIn = (url) => async (dispatch, getState) => {
   });
 };
 
+const getPopupShownId = (state) => {
+
+  for (const listName in state.links) {
+    for (const id in state.links[listName]) {
+      if (state.links[listName][id][IS_POPUP_SHOWN]) return id;
+    }
+  }
+
+  return null;
+};
+
+export const updateMenuPopupAsBackPressed = (menuProvider, dispatch, getState) => {
+
+  if (menuProvider.isMenuOpen()) {
+    const id = getPopupShownId(getState());
+    if (id) {
+      menuProvider.closeMenu();
+      dispatch(updatePopup(id, false));
+      return true;
+    }
+  }
+
+  return false;
+};
+
 export const signUp = () => async (dispatch, getState) => {
   signIn()(dispatch, getState);
 };

@@ -42,8 +42,6 @@ class TopBar extends React.PureComponent {
       const svgString = jdenticon.toSvg(props.username, 32);
       this.userImage = svgString;
     }
-
-    this.addingUrl = null;
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -80,24 +78,13 @@ class TopBar extends React.PureComponent {
       }
     }
 
-    // Just save the value here
-    //   and after all popups close, call LayoutAnimation
-    //   to animate only CardItem layout changes in onAddPopupClose.
-    this.addingUrl = this.state.url;
+    const { windowWidth } = this.props;
+    const animConfig = cardItemAnimConfig(windowWidth);
+
+    LayoutAnimation.configureNext(animConfig);
+    this.props.addLink(this.state.url, true);
     this.props.ctx.menuActions.closeMenu();
-  }
-
-  onAddPopupClose = () => {
-    if (this.addingUrl) {
-      const { windowWidth } = this.props;
-      const animConfig = cardItemAnimConfig(windowWidth);
-
-      LayoutAnimation.configureNext(animConfig);
-      this.props.addLink(this.addingUrl, true);
-    }
-
     this.props.updatePopup(ADD_POPUP, false);
-    this.addingUrl = null;
   }
 
   onSearchInputChange = (e) => {
@@ -165,7 +152,7 @@ class TopBar extends React.PureComponent {
 
     return (
       <View style={tailwind('flex-row justify-end items-center')}>
-        <Menu renderer={renderers.Popover} rendererProps={{ preferredPlacement: 'bottom', anchorStyle: tailwind('shadow-xl') }} onOpen={this.onAddBtnClick} onClose={this.onAddPopupClose}>
+        <Menu renderer={renderers.Popover} rendererProps={{ preferredPlacement: 'bottom', anchorStyle: tailwind('shadow-xl') }} onOpen={this.onAddBtnClick}>
           <MenuTrigger>
             <View style={tailwind('justify-center items-center w-8 h-8')}>
               <View style={tailwind('justify-center items-center w-8 h-7 bg-gray-900 rounded-lg shadow-sm')}>

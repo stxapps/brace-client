@@ -58,7 +58,6 @@ class Main extends React.PureComponent {
     super(props);
 
     this.fetched = [];
-    this.confirmDeleteLinkId = null;
   }
 
   componentDidMount() {
@@ -111,37 +110,29 @@ class Main extends React.PureComponent {
   };
 
   onConfirmDeleteOkBtnClick = () => {
-    // Just save the value here
-    //   and after all popups close, call LayoutAnimation
-    //   to animate only CardItem layout changes in onConfirmDeletePopupClose.
-    this.confirmDeleteLinkId = this.props.popupLink.id;
+
+    const { windowWidth } = this.props;
+    const animConfig = cardItemAnimConfig(windowWidth);
+
+    LayoutAnimation.configureNext(animConfig);
+    this.props.deleteLinks([this.props.popupLink.id]);
 
     this.props.ctx.menuActions.closeMenu();
     this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+    this.props.updatePopup(this.props.popupLink.id, false);
   }
 
   onConfirmDeleteCancelBtnClick = () => {
     this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
   };
 
-  onConfirmDeletePopupClose = () => {
-    if (this.confirmDeleteLinkId) {
-      const { windowWidth } = this.props;
-      const animConfig = cardItemAnimConfig(windowWidth);
-
-      LayoutAnimation.configureNext(animConfig);
-      this.props.deleteLinks([this.confirmDeleteLinkId]);
-    }
-    this.confirmDeleteLinkId = null;
-  }
-
   renderConfirmDeletePopup() {
 
     const { isConfirmDeletePopupShown, windowWidth, windowHeight } = this.props;
 
     return (
-      <Modal isVisible={isConfirmDeletePopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onConfirmDeleteCancelBtnClick} onBackButtonPress={this.onConfirmDeleteCancelBtnClick} onModalHide={this.onConfirmDeletePopupClose} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.1} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true}>
-        <View style={tailwind('p-4 self-center w-48 bg-white rounded-lg')}>
+      <Modal isVisible={isConfirmDeletePopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onConfirmDeleteCancelBtnClick} onBackButtonPress={this.onConfirmDeleteCancelBtnClick} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.1} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true}>
+        <View style={tailwind('p-4 self-center w-48 bg-white border border-gray-200 rounded-lg shadow-lg')}>
           <Text style={tailwind('py-2 text-lg text-gray-900 text-center')}>Confirm delete?</Text>
           <View style={tailwind('py-2 flex-row items-center justify-center')}>
             <TouchableOpacity onPress={this.onConfirmDeleteOkBtnClick} style={tailwind('mr-2 py-2')}>

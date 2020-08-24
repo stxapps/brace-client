@@ -21,7 +21,7 @@ import { cardItemAnimConfig } from '../types/animConfigs';
 
 import { InterText as Text, InterTextInput as TextInput } from '.';
 
-const BOTTOM_BAR_DURATION = 150;
+const BOTTOM_BAR_DURATION = 225;
 
 class BottomBar extends React.PureComponent {
 
@@ -47,22 +47,24 @@ class BottomBar extends React.PureComponent {
     this.bottomBarTranslateY = new Animated.Value(0);
     this.searchPopupBottom = new Animated.Value(toPx(BAR_HEIGHT));
 
-    this.addingUrl = null;
     this.searchPopupBackHandler = null;
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.isShown != this.props.isShown) {
+
       const toValue = this.props.isShown ? 0 : toPx(BAR_HEIGHT);
+      const duration = this.props.isShown ? 0 : BOTTOM_BAR_DURATION;
+
       Animated.timing(this.bottomBarTranslateY, {
         toValue: toValue,
-        duration: BOTTOM_BAR_DURATION,
+        duration: duration,
         useNativeDriver: true,
       }).start();
 
       Animated.timing(this.searchPopupBottom, {
         toValue: toPx(BAR_HEIGHT) - toValue,
-        duration: BOTTOM_BAR_DURATION,
+        duration: duration,
         useNativeDriver: false,
       }).start();
     }
@@ -102,27 +104,16 @@ class BottomBar extends React.PureComponent {
       }
     }
 
-    // Just save the value here
-    //   and after all popups close, call LayoutAnimation
-    //   to animate only CardItem layout changes in onAddPopupClose.
-    this.addingUrl = this.state.url;
+    const { windowWidth } = this.props;
+    const animConfig = cardItemAnimConfig(windowWidth);
 
+    LayoutAnimation.configureNext(animConfig);
+    this.props.addLink(this.state.url, true);
     this.props.updatePopup(ADD_POPUP, false);
   }
 
   onAddCancelBtnClick = () => {
     this.props.updatePopup(ADD_POPUP, false);
-  }
-
-  onAddPopupClose = () => {
-    if (this.addingUrl) {
-      const { windowWidth } = this.props;
-      const animConfig = cardItemAnimConfig(windowWidth);
-
-      LayoutAnimation.configureNext(animConfig);
-      this.props.addLink(this.addingUrl, true);
-    }
-    this.addingUrl = null;
   }
 
   onSearchBtnClick = () => {
@@ -186,7 +177,7 @@ class BottomBar extends React.PureComponent {
     const { url, msg, isAskingConfirm } = this.state;
 
     return (
-      <Modal isVisible={isAddPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={() => setTimeout(() => this.addInput.current.focus(), 1)} onModalWillHide={() => this.addInput.current.blur()} onModalHide={this.onAddPopupClose} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true}>
+      <Modal isVisible={isAddPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={() => setTimeout(() => this.addInput.current.focus(), 1)} onModalWillHide={() => this.addInput.current.blur()} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true}>
         <View style={tailwind('px-4 pt-6 pb-6 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
           {/* onKeyPress event for Enter key only if there is multiline TextInput */}
           <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('px-4 py-2 w-full bg-white text-gray-900 border border-gray-600 rounded-full')} placeholder="https://" value={url} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />

@@ -8,7 +8,7 @@ import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
 import { MenuProvider } from 'react-native-popup-menu';
 
 import reducers from './reducers';
-import { init } from './actions'
+import { init, updateMenuPopupAsBackPressed } from './actions'
 import { queue, discard, effect } from './apis/customOffline'
 
 import App from './components/App';
@@ -26,6 +26,7 @@ offlineConfig.dispatch = (...args) => {
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
+  /** @ts-ignore */
   reducers,
   composeEnhancers(
     installReduxLoop({ ENABLE_THUNK_MIGRATION: true }),
@@ -36,7 +37,7 @@ const store = createStore(
 const Root = () => {
   return (
     <Provider store={store}>
-      <MenuProvider customStyles={{ backdrop: { backgroundColor: 'black', opacity: 0.25 } }} backHandler={true}>
+      <MenuProvider customStyles={{ backdrop: { backgroundColor: 'black', opacity: 0.25 } }} backHandler={(menuProvider) => updateMenuPopupAsBackPressed(menuProvider, store.dispatch, store.getState)}>
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}><App /></SafeAreaView>
       </MenuProvider>
     </Provider>

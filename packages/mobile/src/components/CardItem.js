@@ -42,8 +42,6 @@ class CardItem extends React.PureComponent {
 
   constructor(props) {
     super(props);
-
-    this.menuPopupClickText = null;
   }
 
   populateMenu() {
@@ -79,20 +77,7 @@ class CardItem extends React.PureComponent {
   }
 
   onMenuPopupClick = (text) => {
-    if (text === DELETE) {
-      this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
-      return false;
-    }
 
-    // Just save the value here
-    //   and after all popups close, call LayoutAnimation
-    //   to animate only CardItem layout changes in onMenuPopupClose.
-    this.menuPopupClickText = text;
-    return true;
-  }
-
-  onMenuPopupClose = () => {
-    const text = this.menuPopupClickText;
     if (text) {
       const { id, url } = this.props.link;
       const { windowWidth } = this.props;
@@ -114,13 +99,20 @@ class CardItem extends React.PureComponent {
       } else if (text.startsWith(MOVE_TO)) {
         LayoutAnimation.configureNext(animConfig);
         this.props.moveLinks(text.substring(MOVE_TO.length + 1), [id]);
+      } else if (text === DELETE) {
+        this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
+        return false;
       } else {
         throw new Error(`Invalid text: ${text}`);
       }
     }
 
     this.props.updatePopup(this.props.link.id, false);
-    this.menuPopupClickText = null;
+    return true;
+  }
+
+  onMenuBackdropPress = () => {
+    this.props.updatePopup(this.props.link.id, false);
   }
 
   onRetryRetryBtnClick = () => {
@@ -329,7 +321,7 @@ class CardItem extends React.PureComponent {
               </View>
             </View>
             {/* value of triggerOffsets needs to be aligned with paddings of the three dots */}
-            <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 }, popupStyle: tailwind('py-2 min-w-32 border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onMenuBtnClick} onClose={this.onMenuPopupClose}>
+            <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 }, popupStyle: tailwind('py-2 min-w-32 border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
               <MenuTrigger>
                 {/* View with paddingBottom is required because there is this space on the web. */}
                 <View style={{ paddingBottom: 6 }}>
