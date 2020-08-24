@@ -148,7 +148,7 @@ class CardItemMenuPopup extends React.PureComponent {
     return (
       <React.Fragment>
         <button onClick={this.onConfirmDeleteCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-50 focus:outline-none"></button>
-        <div className="p-4 fixed top-1/2 left-1/2 w-48 bg-white rounded-lg transform -translate-x-1/2 -translate-y-1/2 z-51">
+        <div className="p-4 fixed top-1/2 left-1/2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg transform -translate-x-1/2 -translate-y-1/2 z-51">
           <p className="py-2 text-lg text-gray-900 text-center">Confirm delete?</p>
           <div className="py-2 text-center">
             <button onClick={this.onConfirmDeleteOkBtnClick} className="mr-2 py-2 focus:outline-none-outer">
