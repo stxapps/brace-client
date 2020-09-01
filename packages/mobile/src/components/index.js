@@ -58,7 +58,7 @@ const styleTextFn = (style) => {
     else suffix = 'Regular';
 
     style.fontFamily = style.fontFamily + '-' + suffix;
-    style.fontWeight = 'normal';
+    delete style.fontWeight;
   }
 
   return style;

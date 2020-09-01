@@ -1,4 +1,4 @@
-import { Linking, Dimensions } from 'react-native';
+import { Linking, Dimensions, Platform } from 'react-native';
 import { RESET_STATE as OFFLINE_RESET_STATE } from '@redux-offline/redux-offline/lib/constants';
 import axios from 'axios';
 
@@ -90,7 +90,6 @@ const handlePendingSignIn = (url) => async (dispatch, getState) => {
   try {
     await userSession.handlePendingSignIn(authResponse);
   } catch (e) {
-    console.log(`Catched an error thrown by handlePendingSignIn: ${e.message}`);
     // All errors thrown by handlePendingSignIn have the same next steps
     //   - Invalid token
     //   - Already signed in with the same account
@@ -147,7 +146,48 @@ export const signUp = () => async (dispatch, getState) => {
 };
 
 export const signIn = () => async (dispatch, getState) => {
-  await userSession.signIn();
+  // On Android, signIn will always lead to handlePendingSignIn.
+  // On iOS, signIn will always return a promise.
+  if (Platform.OS === 'android') {
+    await userSession.signIn();
+  } else if (Platform.OS === 'ios') {
+
+    // As handle pending sign in takes time, show loading first.
+    dispatch({
+      type: UPDATE_HANDLING_SIGN_IN,
+      payload: true
+    });
+
+    try {
+      await userSession.signIn();
+    } catch (e) {
+      // All errors thrown by signIn have the same next steps
+      //   - Invalid token
+      //   - Already signed in with the same account
+      //   - Already signed in with different account
+    }
+
+    const isUserSignedIn = await userSession.isUserSignedIn();
+    if (isUserSignedIn) {
+      const userData = await userSession.loadUserData();
+      dispatch({
+        type: UPDATE_USER,
+        payload: {
+          isUserSignedIn: true,
+          username: userData.username,
+          image: (userData && userData.profile && userData.profile.image) || null,
+        }
+      });
+    }
+
+    // Stop show loading
+    dispatch({
+      type: UPDATE_HANDLING_SIGN_IN,
+      payload: false
+    });
+  } else {
+    throw new Error(`Invalid Platform.OS: ${Platform.OS}`);
+  }
 };
 
 export const signOut = () => async (dispatch, getState) => {

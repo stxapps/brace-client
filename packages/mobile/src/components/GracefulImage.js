@@ -16,7 +16,14 @@ class GracefulImage extends React.PureComponent {
     const { loaded } = this.state;
 
     const viewStyle = [style];
-    if (!loaded) viewStyle.push({ display: 'none' });
+    if (!loaded) viewStyle.push({
+      position: 'absolute',
+      top: -1,
+      left: -1,
+      width: 1,
+      height: 1,
+      overflow: 'hidden',
+    });
 
     let imageStyle;
     if (loaded) imageStyle = { width: '100%', height: '100%' };
