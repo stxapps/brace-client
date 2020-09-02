@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import userSession from '../userSession';
 import {
-  INIT, UPDATE_WINDOW_SIZE,
+  INIT, UPDATE_WINDOW, UPDATE_WINDOW_SIZE,
   UPDATE_USER,
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
@@ -22,7 +22,7 @@ import {
   RESET_STATE,
 } from '../types/actionTypes';
 import {
-  DOMAIN_NAME, APP_DOMAIN_NAME, BLOCKSTACK_AUTH,
+  DOMAIN_NAME, APP_DOMAIN_NAME, BLOCKSTACK_AUTH, SAVE_TO_BRACE,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
@@ -48,10 +48,18 @@ export const init = async (store) => {
   }
 
   const initialUrl = await Linking.getInitialURL();
-  if (initialUrl) handlePendingSignIn(initialUrl)(store.dispatch, store.getState);
+  if (initialUrl) {
+    await handlePendingSignIn(initialUrl)(store.dispatch, store.getState);
+  }
+
+  let saveToBraceUrl;
+  if (initialUrl && initialUrl.startsWith(APP_DOMAIN_NAME + SAVE_TO_BRACE)) {
+    saveToBraceUrl = initialUrl;
+  }
 
   Linking.addEventListener('url', async (e) => {
-    handlePendingSignIn(e.url)(store.dispatch, store.getState);
+    await handlePendingSignIn(e.url)(store.dispatch, store.getState);
+    await handleSaveToBrace(e.url)(store.dispatch, store.getState);
   });
 
   Dimensions.addEventListener("change", ({ window }) => {
@@ -65,11 +73,12 @@ export const init = async (store) => {
   });
 
   const isUserSignedIn = await userSession.isUserSignedIn();
+  const href = saveToBraceUrl || DOMAIN_NAME + '/';
   store.dispatch({
     type: INIT,
     payload: {
       isUserSignedIn: isUserSignedIn,
-      href: DOMAIN_NAME + '/',
+      href: href,
       windowWidth: Dimensions.get('window').width,
       windowHeight: Dimensions.get('window').height,
     }
@@ -114,6 +123,19 @@ const handlePendingSignIn = (url) => async (dispatch, getState) => {
     type: UPDATE_HANDLING_SIGN_IN,
     payload: false
   });
+};
+
+const handleSaveToBrace = (url) => async (dispatch, getState) => {
+
+  if (!url.startsWith(APP_DOMAIN_NAME + SAVE_TO_BRACE)) return;
+
+  dispatch({
+    type: UPDATE_WINDOW,
+    payload: {
+      href: url,
+      historyPosition: null,
+    },
+  })
 };
 
 const getPopupShownId = (state) => {

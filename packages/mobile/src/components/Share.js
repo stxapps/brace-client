@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { default as Loading } from './TranslucentLoading';
-import Adding from './Adding';
+import { default as Adding} from './TranslucentAdding';
 
 class Share extends React.PureComponent {
 

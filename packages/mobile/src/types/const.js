@@ -1,6 +1,7 @@
 export const DOMAIN_NAME = 'https://brace.to';
-export const APP_DOMAIN_NAME = 'brace://app';
+export const APP_DOMAIN_NAME = 'bracedotto://app';
 export const BLOCKSTACK_AUTH = '/blockstack-auth';
+export const SAVE_TO_BRACE = '/save-to-brace';
 
 export const APP_NAME = 'Brace';
 export const APP_ICON_NAME = 'logo192.png';

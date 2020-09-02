@@ -25,6 +25,9 @@
 		57D8A558131E1E7ED23C0A21 /* libPods-Bracedotto-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 79457F012932A4924B2544C1 /* libPods-Bracedotto-tvOSTests.a */; };
 		5B939D6D24F8ABB3008CB26B /* RNBlockstackSdk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B939D6A24F8ABB2008CB26B /* RNBlockstackSdk.swift */; };
 		5B939D6E24F8ABB3008CB26B /* RNBlockstackSdkModuleBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B939D6B24F8ABB2008CB26B /* RNBlockstackSdkModuleBridge.m */; };
+		5BF7034D24FDF91A00D5095E /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF7034C24FDF91A00D5095E /* ShareViewController.swift */; };
+		5BF7035024FDF91A00D5095E /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5BF7034E24FDF91A00D5095E /* MainInterface.storyboard */; };
+		5BF7035424FDF91A00D5095E /* Save to Brace.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 5BF7034A24FDF91A00D5095E /* Save to Brace.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6164584D4686405BB77BD2BA /* Inter-ExtraBoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = B15B24A20A0043D8BC280E62 /* Inter-ExtraBoldItalic.otf */; };
 		635F4E06FA94DCD4D9377E72 /* libPods-Bracedotto-BracedottoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 75970F0B4372C32CCBE014D1 /* libPods-Bracedotto-BracedottoTests.a */; };
 		663C080F212F45A78D4E3BC6 /* Inter-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = A768A4CFE5F64C75B31DD723 /* Inter-Bold.otf */; };
@@ -58,6 +61,13 @@
 			remoteGlobalIDString = 2D02E47A1E0B4A5D006451C7;
 			remoteInfo = "Bracedotto-tvOS";
 		};
+		5BF7035224FDF91A00D5095E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BF7034924FDF91A00D5095E;
+			remoteInfo = "Save to Brace";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -67,6 +77,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				5BF7035424FDF91A00D5095E /* Save to Brace.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -103,6 +114,10 @@
 		5B939D6A24F8ABB2008CB26B /* RNBlockstackSdk.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RNBlockstackSdk.swift; sourceTree = "<group>"; };
 		5B939D6B24F8ABB2008CB26B /* RNBlockstackSdkModuleBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNBlockstackSdkModuleBridge.m; sourceTree = "<group>"; };
 		5B939D6C24F8ABB2008CB26B /* RNBlockstackSdk-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RNBlockstackSdk-Bridging-Header.h"; sourceTree = "<group>"; };
+		5BF7034A24FDF91A00D5095E /* Save to Brace.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Save to Brace.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5BF7034C24FDF91A00D5095E /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		5BF7034F24FDF91A00D5095E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		5BF7035124FDF91A00D5095E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5EEA3F958973E74FDFC26008 /* Pods-Bracedotto-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bracedotto-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Bracedotto-tvOS/Pods-Bracedotto-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		641901FF0C2C4FCDB8345281 /* Pods-Bracedotto.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bracedotto.release.xcconfig"; path = "Target Support Files/Pods-Bracedotto/Pods-Bracedotto.release.xcconfig"; sourceTree = "<group>"; };
 		657CB59FAEC848A1DE3E25C2 /* Pods-Bracedotto.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bracedotto.debug.xcconfig"; path = "Target Support Files/Pods-Bracedotto/Pods-Bracedotto.debug.xcconfig"; sourceTree = "<group>"; };
@@ -161,6 +176,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				57D8A558131E1E7ED23C0A21 /* libPods-Bracedotto-tvOSTests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BF7034724FDF91A00D5095E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,6 +271,16 @@
 			path = "../node_modules/react-native-blockstack/ios/RNBlockstackSdk";
 			sourceTree = "<group>";
 		};
+		5BF7034B24FDF91A00D5095E /* Save to Brace */ = {
+			isa = PBXGroup;
+			children = (
+				5BF7034C24FDF91A00D5095E /* ShareViewController.swift */,
+				5BF7034E24FDF91A00D5095E /* MainInterface.storyboard */,
+				5BF7035124FDF91A00D5095E /* Info.plist */,
+			);
+			path = "Save to Brace";
+			sourceTree = "<group>";
+		};
 		60ACAAA39776E35BD8B7D35B /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -282,6 +314,7 @@
 				13B07FAE1A68108700A75B9A /* Bracedotto */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* BracedottoTests */,
+				5BF7034B24FDF91A00D5095E /* Save to Brace */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				01694E33B17748598DDAE203 /* Resources */,
@@ -299,6 +332,7 @@
 				00E356EE1AD99517003FC87E /* BracedottoTests.xctest */,
 				2D02E47B1E0B4A5D006451C7 /* Bracedotto-tvOS.app */,
 				2D02E4901E0B4A5D006451C7 /* Bracedotto-tvOSTests.xctest */,
+				5BF7034A24FDF91A00D5095E /* Save to Brace.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -342,6 +376,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5BF7035324FDF91A00D5095E /* PBXTargetDependency */,
 			);
 			name = Bracedotto;
 			productName = Bracedotto;
@@ -387,6 +422,23 @@
 			productReference = 2D02E4901E0B4A5D006451C7 /* Bracedotto-tvOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		5BF7034924FDF91A00D5095E /* Save to Brace */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5BF7035524FDF91B00D5095E /* Build configuration list for PBXNativeTarget "Save to Brace" */;
+			buildPhases = (
+				5BF7034624FDF91A00D5095E /* Sources */,
+				5BF7034724FDF91A00D5095E /* Frameworks */,
+				5BF7034824FDF91A00D5095E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Save to Brace";
+			productName = "Save to Brace";
+			productReference = 5BF7034A24FDF91A00D5095E /* Save to Brace.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -412,6 +464,10 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = 2D02E47A1E0B4A5D006451C7;
 					};
+					5BF7034924FDF91A00D5095E = {
+						CreatedOnToolsVersion = 11.5;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Bracedotto" */;
@@ -431,6 +487,7 @@
 				00E356ED1AD99517003FC87E /* BracedottoTests */,
 				2D02E47A1E0B4A5D006451C7 /* Bracedotto-tvOS */,
 				2D02E48F1E0B4A5D006451C7 /* Bracedotto-tvOSTests */,
+				5BF7034924FDF91A00D5095E /* Save to Brace */,
 			);
 		};
 /* End PBXProject section */
@@ -482,6 +539,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BF7034824FDF91A00D5095E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BF7035024FDF91A00D5095E /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -721,6 +786,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5BF7034624FDF91A00D5095E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BF7034D24FDF91A00D5095E /* ShareViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -734,7 +807,23 @@
 			target = 2D02E47A1E0B4A5D006451C7 /* Bracedotto-tvOS */;
 			targetProxy = 2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */;
 		};
+		5BF7035324FDF91A00D5095E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BF7034924FDF91A00D5095E /* Save to Brace */;
+			targetProxy = 5BF7035224FDF91A00D5095E /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		5BF7034E24FDF91A00D5095E /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5BF7034F24FDF91A00D5095E /* Base */,
+			);
+			name = MainInterface.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
@@ -786,6 +875,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 657CB59FAEC848A1DE3E25C2 /* Pods-Bracedotto.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -812,6 +902,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 641901FF0C2C4FCDB8345281 /* Pods-Bracedotto.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -939,6 +1030,59 @@
 				SDKROOT = appletvos;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bracedotto-tvOS.app/Bracedotto-tvOS";
 				TVOS_DEPLOYMENT_TARGET = 10.1;
+			};
+			name = Release;
+		};
+		5BF7035624FDF91B00D5095E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Save to Brace/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bracedotto.brace.Save-to-Brace";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5BF7035724FDF91B00D5095E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = "Save to Brace/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bracedotto.brace.Save-to-Brace";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -1090,6 +1234,15 @@
 			buildConfigurations = (
 				2D02E4991E0B4A5E006451C7 /* Debug */,
 				2D02E49A1E0B4A5E006451C7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5BF7035524FDF91B00D5095E /* Build configuration list for PBXNativeTarget "Save to Brace" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BF7035624FDF91B00D5095E /* Debug */,
+				5BF7035724FDF91B00D5095E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

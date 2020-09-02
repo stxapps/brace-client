@@ -766,7 +766,7 @@ This and CI/CD are very important!
 - yarn add https://github.com/bracedotto/redux-offline#a5a5da91de14b9e22c73a15e3617a0d627d3c0ec
 - yarn add reselect url-parse axios jdenticon
 - yarn add @react-native-community/async-storage @react-native-community/netinfo
-- yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?8eae5bc265bdc8fbbada529e74d774aa6449bff1'
+- yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?5662e3d96ac9d927443b623ddb271aa5e434c3ac'
 - change minSdkVersion from 16 to 21 in ./android/build.gradle
 - Allow CORS access on https://brace.to/manifest.json
 - Set up Android deep linking: reactnative.dev/docs/linking and developer.android.com/training/app-links/deep-linking
@@ -781,4 +781,20 @@ This and CI/CD are very important!
 - yarn add babel-plugin-inline-import --dev
 - yarn add react-native-swiper
 - yarn add https://github.com/bracedotto/react-native-receive-sharing-intent#be4d3410fc96ba8e266a2a27535b3d531e56ef57
+- ios
+  + Edit PodFile: ios target 11.0, pad 'Blockstack'
+  + Add RNBlockstackSdk to Bracedotto project with Xcode, select create groups
+  + In Xcode, Bracedotto General -> Target iOS 11.0
+  + Make swift file can import obj-c header
+    ~ In Build Settings -> Swift Compiler - General -> Objective-C Bridging Header: ../node_modules/react-native-blockstack/ios/RNBlockstackSdk/RNBlockstackSdk-Bridging-Header.h
+  + In AppDelegate.m, moduleName:@"Brace"
+- ios share extension
+  + Target Bracedotto -> Info -> URL Types -> URL Schemes: bracedotto
+  + Add RCTLinkingManager in AppDelegate.m
+  + File -> New -> Target -> Share Extension
+    ~ Save to Brace, Swift
+  + Target Save to Brace -> General -> target iOS: 11.0
+  + In Info.plist under Save To Brace
+    ~ NSExtension -> NSExtensionAttributes -> NSExtensionActivationRule -> NSExtensionActivationSupportsWebURLWithMaxCount -> Number 1
+  + Update ShareViewController.swift
 - 
