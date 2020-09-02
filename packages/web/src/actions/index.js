@@ -39,7 +39,7 @@ import {
 
 export const init = async (store) => {
 
-  handlePendingSignIn()(store.dispatch, store.getState);
+  await handlePendingSignIn()(store.dispatch, store.getState);
 
   store.dispatch({
     type: INIT,
