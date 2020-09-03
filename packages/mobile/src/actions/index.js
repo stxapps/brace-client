@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import userSession from '../userSession';
 import {
-  INIT, UPDATE_WINDOW, UPDATE_WINDOW_SIZE,
+  INIT, UPDATE_HREF, UPDATE_WINDOW_SIZE,
   UPDATE_USER,
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
@@ -130,10 +130,9 @@ const handleSaveToBrace = (url) => async (dispatch, getState) => {
   if (!url.startsWith(APP_DOMAIN_NAME + SAVE_TO_BRACE)) return;
 
   dispatch({
-    type: UPDATE_WINDOW,
+    type: UPDATE_HREF,
     payload: {
       href: url,
-      historyPosition: null,
     },
   })
 };
@@ -553,4 +552,11 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
       }
     },
   });
+};
+
+export const updateHref = (href) => {
+  return {
+    type: UPDATE_HREF,
+    payload: href,
+  };
 };

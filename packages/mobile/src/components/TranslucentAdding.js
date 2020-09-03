@@ -62,7 +62,11 @@ class TranslucentAdding extends React.PureComponent {
     const { type } = this.getAction();
 
     if (type === RENDER_ADDED || type === RENDER_IN_OTHER_PROCESSING) {
-      // There is a bug, setTimeout is fired right away.
+      // Need to clear timeout!
+      // Push app in background with BackHandler, js process is stopped
+      //   and it will continue running when back to foreground
+      //   meaning timeout just stops when app in background
+      //   and will continue running when app is back on foreground.
       this.timeoutId = setTimeout(() => {
         BackHandler.exitApp()
       }, 2000);
@@ -377,7 +381,7 @@ class TranslucentAdding extends React.PureComponent {
           </Svg>
           <Text style={tailwind('mt-2 w-full text-xl text-gray-900 font-normal text-center')}>Oops..., something went wrong!</Text>
           <Text style={tailwind('mt-2 w-full text-base text-gray-900 font-normal text-center')}>Please go to the app for more information</Text>
-          <TouchableOpacity onPress={() => Linking.openURL('brace://app')} style={tailwind('mt-2 justify-center items-center h-14')}>
+          <TouchableOpacity onPress={() => Linking.openURL('bracedotto://app')} style={tailwind('mt-2 justify-center items-center h-14')}>
             <View style={tailwind('px-4 py-2 justify-center items-center bg-white border border-gray-900 rounded-full shadow-sm')}>
               <Text style={tailwind('text-base text-gray-900')}>Brace</Text>
             </View>
@@ -404,9 +408,6 @@ class TranslucentAdding extends React.PureComponent {
       if (urlValidatedResult === NO_URL) continue;
       else if (urlValidatedResult === ASK_CONFIRM_URL) {
         if (askedConfirmResult === null) {
-          haveOthers = true;
-          break;
-        } else if (askedConfirmResult === CONFIRM_NOT_ADD) {
           if (!beenHere) {
             beenHere = true;
             continue;
@@ -414,6 +415,8 @@ class TranslucentAdding extends React.PureComponent {
 
           haveOthers = true;
           break;
+        } else if (askedConfirmResult === CONFIRM_NOT_ADD) {
+          continue;
         } else if (askedConfirmResult === CONFIRM_ADD) {
           haveOthers = true;
           break;
@@ -440,7 +443,7 @@ class TranslucentAdding extends React.PureComponent {
           <Svg style={tailwind('text-yellow-600')} width={96} height={96} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM10 7C9.63113 7 9.3076 7.19922 9.13318 7.50073C8.85664 7.97879 8.24491 8.14215 7.76685 7.86561C7.28879 7.58906 7.12543 6.97733 7.40197 6.49927C7.91918 5.60518 8.88833 5 10 5C11.6569 5 13 6.34315 13 8C13 9.30622 12.1652 10.4175 11 10.8293V11C11 11.5523 10.5523 12 10 12C9.44773 12 9.00001 11.5523 9.00001 11V10C9.00001 9.44772 9.44773 9 10 9C10.5523 9 11 8.55228 11 8C11 7.44772 10.5523 7 10 7ZM10 15C10.5523 15 11 14.5523 11 14C11 13.4477 10.5523 13 10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15Z" />
           </Svg>
-          <Text style={tailwind('mt-2 w-full text-lg text-gray-900 font-normal text-center')} numberOfLines={1} ellipsizeMode="tail">${addingUrl}</Text>
+          <Text style={tailwind('mt-2 w-full text-lg text-gray-900 font-normal text-center')} numberOfLines={1} ellipsizeMode="tail">{addingUrl}</Text>
           <Text style={tailwind('w-full text-xl text-gray-900 font-normal text-center')}>looks like an invalid link.</Text>
           <Text style={tailwind('mt-2 w-full text-xl text-gray-900 font-normal text-center')}>Are you sure{'\n'}to save to <Text style={tailwind('text-xl text-gray-900 font-semibold')}>Brace</Text>?</Text>
           <TouchableOpacity onPress={() => this.onAskingConfirmOkBtnClick(addingUrl)} style={tailwind('mt-2 justify-center items-center h-14')}>
@@ -485,7 +488,7 @@ class TranslucentAdding extends React.PureComponent {
           <Path fillRule="evenodd" clipRule="evenodd" d="M8.25706 3.09882C9.02167 1.73952 10.9788 1.73952 11.7434 3.09882L17.3237 13.0194C18.0736 14.3526 17.1102 15.9999 15.5805 15.9999H4.4199C2.89025 15.9999 1.92682 14.3526 2.67675 13.0194L8.25706 3.09882ZM11.0001 13C11.0001 13.5523 10.5524 14 10.0001 14C9.44784 14 9.00012 13.5523 9.00012 13C9.00012 12.4477 9.44784 12 10.0001 12C10.5524 12 11.0001 12.4477 11.0001 13ZM10.0001 5C9.44784 5 9.00012 5.44772 9.00012 6V9C9.00012 9.55228 9.44784 10 10.0001 10C10.5524 10 11.0001 9.55228 11.0001 9V6C11.0001 5.44772 10.5524 5 10.0001 5Z" />
         </Svg>
         <Text style={tailwind('mt-2 w-full text-xl text-gray-900 font-normal text-center')}>Please sign in first</Text>
-        <TouchableOpacity onPress={() => Linking.openURL('brace://app')} style={tailwind('mt-2 justify-center items-center h-14')}>
+        <TouchableOpacity onPress={() => Linking.openURL('bracedotto://app')} style={tailwind('mt-2 justify-center items-center h-14')}>
           <View style={tailwind('px-4 py-2 justify-center items-center bg-white border border-gray-900 rounded-full shadow-sm')}>
             <Text style={tailwind('text-base text-gray-900')}>Sign in</Text>
           </View>

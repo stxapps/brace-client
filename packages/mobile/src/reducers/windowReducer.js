@@ -1,6 +1,6 @@
 import {
   INIT,
-  UPDATE_WINDOW, UPDATE_HISTORY_POSITION, UPDATE_WINDOW_SIZE
+  UPDATE_WINDOW, UPDATE_HREF, UPDATE_HISTORY_POSITION, UPDATE_WINDOW_SIZE,
 } from '../types/actionTypes';
 import { REHYDRATE } from 'redux-persist/constants'
 
@@ -31,6 +31,13 @@ export default (state = initialState, action) => {
       ...state,
       href: action.payload.href,
       historyPosition: action.payload.historyPosition,
+    };
+  }
+
+  if (action.type === UPDATE_HREF) {
+    return {
+      ...state,
+      href: action.payload,
     };
   }
 
