@@ -276,7 +276,9 @@ class CardItem extends React.PureComponent {
     const { url, decor, extractedResult } = this.props.link;
 
     let favicon;
-    if (extractedResult && extractedResult.favicon) favicon = extractedResult.favicon;
+    if (extractedResult && extractedResult.favicon) {
+      favicon = ensureContainUrlSecureProtocol(extractedResult.favicon);
+    }
 
     if (favicon) {
       return <GracefulImage key="favicon-graceful-image-extracted-result" style={tailwind('flex-shrink-0 flex-grow-0 w-4 h-4')} source={{ uri: favicon }} customPlaceholder={placeholder} />;
