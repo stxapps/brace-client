@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@blockstack/connect": "^2.12.1",
+    "@blockstack/stacks-transactions": "^0.7.0",
     "@fullhuman/postcss-purgecss": "^2.2.0",
     "@redux-offline/redux-offline": "https://github.com/bracedotto/redux-offline#88a89e7ebe76415e83bd1943360e817274d8063d",
     "@testing-library/jest-dom": "^4.2.4",
