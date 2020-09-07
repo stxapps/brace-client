@@ -42,6 +42,10 @@ class CardItem extends React.PureComponent {
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      extractedFaviconError: false,
+    };
   }
 
   populateMenu() {
@@ -121,6 +125,10 @@ class CardItem extends React.PureComponent {
 
   onRetryCancelBtnClick = () => {
     this.props.cancelDiedLinks([this.props.link.id]);
+  }
+
+  onExtractedFaviconError = () => {
+    this.setState({ extractedFaviconError: true });
   }
 
   renderMenu() {
@@ -274,14 +282,15 @@ class CardItem extends React.PureComponent {
     };
 
     const { url, decor, extractedResult } = this.props.link;
+    const { extractedFaviconError } = this.state;
 
     let favicon;
     if (extractedResult && extractedResult.favicon) {
       favicon = ensureContainUrlSecureProtocol(extractedResult.favicon);
     }
 
-    if (favicon) {
-      return <GracefulImage key="favicon-graceful-image-extracted-result" style={tailwind('flex-shrink-0 flex-grow-0 w-4 h-4')} source={{ uri: favicon }} customPlaceholder={placeholder} />;
+    if (favicon && !extractedFaviconError) {
+      return <GracefulImage key="favicon-graceful-image-extracted-result" style={tailwind('flex-shrink-0 flex-grow-0 w-4 h-4')} source={{ uri: favicon }} customPlaceholder={placeholder} onError={this.onExtractedFaviconError} />;
     }
 
     const { origin } = extractUrl(url);

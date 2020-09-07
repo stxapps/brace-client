@@ -31,8 +31,6 @@ import saveLinkAtUrlBar from '../images/save-link-at-url-bar.svg';
 
 class Main extends React.PureComponent {
 
-  fetched = [];
-
   constructor(props) {
     super(props);
 
@@ -45,6 +43,8 @@ class Main extends React.PureComponent {
 
     this.updateColumnWidth = throttle(this.updateColumnWidth, 16);
     this.updateScrollY = throttle(this.updateScrollY, 16);
+
+    this.fetched = [];
   }
 
   componentDidMount() {

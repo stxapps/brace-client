@@ -12,7 +12,7 @@ class GracefulImage extends React.PureComponent {
   }
 
   render() {
-    const { source, style, placeholderColor, customPlaceholder, ...nativeImageProps } = this.props;
+    const { source, style, placeholderColor, customPlaceholder, onError, ...nativeImageProps } = this.props;
     const { loaded } = this.state;
 
     const viewStyle = [style];
@@ -42,7 +42,7 @@ class GracefulImage extends React.PureComponent {
     return (
       <React.Fragment>
         <View style={viewStyle}>
-          <Image source={source} style={imageStyle} onLoad={this.onLoad} {...nativeImageProps} />
+          <Image source={source} style={imageStyle} onLoad={this.onLoad} onError={() => onError()} {...nativeImageProps} />
         </View>
         {placeHolder}
       </React.Fragment>
@@ -54,6 +54,7 @@ GracefulImage.defaultProps = {
   style: {},
   placeholderColor: '#eee',
   customPlaceholder: null,
+  onError: () => { },
 }
 
 export default GracefulImage;

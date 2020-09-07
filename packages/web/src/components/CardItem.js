@@ -16,6 +16,14 @@ import {
 
 class CardItem extends React.PureComponent {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      extractedFaviconError: false,
+    };
+  }
+
   onMenuBtnClick = (e) => {
     const menuBtnPosition = e.currentTarget.getBoundingClientRect();
     this.props.updatePopup(this.props.link.id, true, menuBtnPosition);
@@ -27,6 +35,10 @@ class CardItem extends React.PureComponent {
 
   onRetryCancelBtnClick = () => {
     this.props.cancelDiedLinks([this.props.link.id]);
+  }
+
+  onExtractedFaviconError = () => {
+    this.setState({ extractedFaviconError: true });
   }
 
   renderBusy() {
@@ -135,15 +147,16 @@ class CardItem extends React.PureComponent {
     };
 
     const { url, decor, extractedResult } = this.props.link;
+    const { extractedFaviconError } = this.state;
 
     let favicon;
     if (extractedResult && extractedResult.favicon) {
       favicon = ensureContainUrlSecureProtocol(extractedResult.favicon);
     }
 
-    if (favicon) {
+    if (favicon && !extractedFaviconError) {
       // This GracefulImage needs to be different from the one below so that it's not just rerender but recreate a new component with a new src and new retry. React knows by using different keys.
-      return <GracefulImage key="favicon-graceful-image-extracted-result" className="flex-shrink-0 flex-grow-0 w-4 h-4" src={favicon} alt={`Favicon of ${url}`} customPlaceholder={placeholder} retry={{ count: 2, delay: 3, accumulate: 'multiply' }} />;
+      return <GracefulImage key="favicon-graceful-image-extracted-result" className="flex-shrink-0 flex-grow-0 w-4 h-4" src={favicon} alt={`Favicon of ${url}`} customPlaceholder={placeholder} retry={{ count: 2, delay: 3, accumulate: 'multiply' }} onError={this.onExtractedFaviconError} />;
     }
 
     const { origin } = extractUrl(url);
