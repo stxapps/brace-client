@@ -8,7 +8,6 @@ import {
 import {
   FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
 } from '../types/actionTypes';
-import { DefaultDict } from '../utils';
 
 export const effect = async (effectObj, _action) => {
 
@@ -74,12 +73,13 @@ const listFPaths = async () => {
   // List fpaths(keys)
   // Even though aws, az, gc sorts a-z but on Gaia local machine, it's arbitrary
   //   so need to fetch all and sort locally.
-  let linkFPaths = new DefaultDict(function () { return []; });
+  const linkFPaths = {};
   let settingsFPath;
 
   await userSession.listFiles((fpath) => {
     if (fpath.startsWith('links')) {
       const { listName } = extractLinkFPath(fpath);
+      if (!linkFPaths[listName]) linkFPaths[listName] = [];
       linkFPaths[listName].push(fpath);
     } else if (fpath === SETTINGS_FNAME) {
       settingsFPath = fpath;

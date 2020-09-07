@@ -21,18 +21,6 @@ export const randomString = (length) => {
   return result;
 };
 
-export class DefaultDict {
-  constructor(defaultInit) {
-    return new Proxy({}, {
-      get: (target, name) => name in target ?
-        target[name] :
-        (target[name] = typeof defaultInit === 'function' ?
-          new defaultInit().valueOf() :
-          defaultInit)
-    })
-  }
-}
-
 const mapKeys = (arr, key) => {
   if (!Array.isArray(arr)) throw new Error(`Must be arr: ${arr}`);
 
