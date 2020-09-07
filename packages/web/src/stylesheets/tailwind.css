@@ -2957,7 +2957,6 @@ input[type="search"]::-webkit-search-results-decoration {
 
 .appearance-none {
   -webkit-appearance: none;
-     -moz-appearance: none;
           appearance: none;
 }
 
@@ -23894,7 +23893,6 @@ input[type="search"]::-webkit-search-results-decoration {
 
   .sm\:appearance-none {
     -webkit-appearance: none;
-       -moz-appearance: none;
             appearance: none;
   }
 
@@ -44832,7 +44830,6 @@ input[type="search"]::-webkit-search-results-decoration {
 
   .md\:appearance-none {
     -webkit-appearance: none;
-       -moz-appearance: none;
             appearance: none;
   }
 
@@ -65770,7 +65767,6 @@ input[type="search"]::-webkit-search-results-decoration {
 
   .lg\:appearance-none {
     -webkit-appearance: none;
-       -moz-appearance: none;
             appearance: none;
   }
 
@@ -86708,7 +86704,6 @@ input[type="search"]::-webkit-search-results-decoration {
 
   .xl\:appearance-none {
     -webkit-appearance: none;
-       -moz-appearance: none;
             appearance: none;
   }
 
