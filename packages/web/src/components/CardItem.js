@@ -137,7 +137,9 @@ class CardItem extends React.PureComponent {
     const { url, decor, extractedResult } = this.props.link;
 
     let favicon;
-    if (extractedResult && extractedResult.favicon) favicon = extractedResult.favicon;
+    if (extractedResult && extractedResult.favicon) {
+      favicon = ensureContainUrlSecureProtocol(extractedResult.favicon);
+    }
 
     if (favicon) {
       // This GracefulImage needs to be different from the one below so that it's not just rerender but recreate a new component with a new src and new retry. React knows by using different keys.
