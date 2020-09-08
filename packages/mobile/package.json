@@ -23,6 +23,7 @@
     "react-native": "0.63.2",
     "react-native-animated-spinkit": "^1.4.1",
     "react-native-blockstack": "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?5662e3d96ac9d927443b623ddb271aa5e434c3ac",
+    "react-native-fast-image": "^8.3.2",
     "react-native-modal": "^11.5.6",
     "react-native-popup-menu": "^0.15.9",
     "react-native-receive-sharing-intent": "https://github.com/bracedotto/react-native-receive-sharing-intent#be4d3410fc96ba8e266a2a27535b3d531e56ef57",

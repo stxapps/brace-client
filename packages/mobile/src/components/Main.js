@@ -306,11 +306,17 @@ class Main extends React.PureComponent {
     const columnWidth = this.getColumnWidth(windowWidth);
     const width = Math.floor(multiplyPercent(Math.min(windowWidth, 1152), columnWidth));
 
-    let initialNumToRender;
-    if (columnWidth === PC_100) initialNumToRender = 3;
-    else if (columnWidth === PC_50) initialNumToRender = 3;
-    else if (columnWidth === PC_33) initialNumToRender = 2;
-    else throw new Error(`Invalid columnWidth: ${columnWidth}`);
+    let initialNumToRender, maxToRenderPerBatch;
+    if (columnWidth === PC_100) {
+      initialNumToRender = 3;
+      maxToRenderPerBatch = 3;
+    } else if (columnWidth === PC_50) {
+      initialNumToRender = 3;
+      maxToRenderPerBatch = 3;
+    } else if (columnWidth === PC_33) {
+      initialNumToRender = 2;
+      maxToRenderPerBatch = 2;
+    } else throw new Error(`Invalid columnWidth: ${columnWidth}`);
 
     return (
       // There is a bug if removeClippedSubviews is true
@@ -321,6 +327,7 @@ class Main extends React.PureComponent {
         keyExtractor={item => item.id}
         renderItem={this.renderItem}
         initialNumToRender={initialNumToRender}
+        maxToRenderPerBatch={maxToRenderPerBatch}
         removeClippedSubviews={false} />
     );
   }

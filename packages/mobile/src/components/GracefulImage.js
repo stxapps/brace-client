@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Image } from 'react-native';
+import { View } from 'react-native';
+import FastImage from 'react-native-fast-image'
 
 class GracefulImage extends React.PureComponent {
 
@@ -42,7 +43,7 @@ class GracefulImage extends React.PureComponent {
     return (
       <React.Fragment>
         <View style={viewStyle}>
-          <Image source={source} style={imageStyle} onLoad={this.onLoad} onError={() => onError()} {...nativeImageProps} />
+          <FastImage source={source} style={imageStyle} onLoad={this.onLoad} onError={() => onError()} {...nativeImageProps} />
         </View>
         {placeHolder}
       </React.Fragment>

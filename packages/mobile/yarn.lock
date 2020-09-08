@@ -5966,6 +5966,11 @@ react-native-animated-spinkit@^1.4.1:
   version "0.4.6"
   resolved "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?5662e3d96ac9d927443b623ddb271aa5e434c3ac#13d61ddfe5ff76595120f38a2593029cf8a13aa2"
 
+react-native-fast-image@^8.3.2:
+  version "8.3.2"
+  resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-8.3.2.tgz#e9db271b70b9634b7be054760914d80954f9898c"
+  integrity sha512-AJ0b4BEswRwa0bh4SibYUtXszEiaO88Lf4CZ1ib+t5ZfkAgsMk9Liv3L0LYnDblMJmSeGTr1+2ViIM8F2vamjg==
+
 react-native-modal@^11.5.6:
   version "11.5.6"
   resolved "https://registry.yarnpkg.com/react-native-modal/-/react-native-modal-11.5.6.tgz#bb25a78c35a5e24f45de060e5f64284397d38a87"
