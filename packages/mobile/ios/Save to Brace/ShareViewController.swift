@@ -3,7 +3,8 @@ import MobileCoreServices
 
 class ShareViewController: UIViewController {
 
-    let APP_DOMAIN_NAME = "bracedotto://app"
+    let APP_SCHEME_NAME = "bracedotto"
+    let APP_HOST_NAME = "app"
     let SAVE_TO_BRACE = "/save-to-brace"
 
     let urlContentType = kUTTypeURL as String
@@ -18,26 +19,24 @@ class ShareViewController: UIViewController {
             return
         }
 
-        for (i, _inputItem) in inputItems.enumerated() {
-            guard let inputItem = _inputItem as? NSExtensionItem else {
+        guard let inputItem = inputItems[0] as? NSExtensionItem else {
+            self.cancelRequest()
+            return
+        }
+
+        guard let attachments = inputItem.attachments, attachments.count > 0 else {
+            self.cancelRequest()
+            return
+        }
+
+        for (i, attachment) in attachments.enumerated() {
+            if !attachment.hasItemConformingToTypeIdentifier(urlContentType) {
                 self.cancelRequest()
                 return
             }
 
-            guard let attachments = inputItem.attachments, attachments.count > 0 else {
-                self.cancelRequest()
-                return
-            }
-
-            for (j, attachment) in attachments.enumerated() {
-                if !attachment.hasItemConformingToTypeIdentifier(urlContentType) {
-                    self.cancelRequest()
-                    return
-                }
-
-                handleUrl(attachment: attachment,
-                          isLast: i == inputItems.count - 1 && j == attachments.count - 1)
-            }
+            handleUrl(attachment: attachment,
+                      isLast: i == attachments.count - 1)
         }
     }
 
@@ -69,14 +68,21 @@ class ShareViewController: UIViewController {
             return
         }
 
-        let sharedUrls = self.sharedUrls.joined(separator: "")
-        guard let url = URL(string: "\(APP_DOMAIN_NAME)\(SAVE_TO_BRACE)?text=\(sharedUrls)") else {
+        let sharedUrls = self.sharedUrls.joined(separator: " ")
+
+        var urlComponents = URLComponents()
+        urlComponents.scheme = APP_SCHEME_NAME
+        urlComponents.host = APP_HOST_NAME
+        urlComponents.path = SAVE_TO_BRACE
+        urlComponents.queryItems = [
+          URLQueryItem(name: "text", value: sharedUrls)
+        ]
+
+        guard let url = urlComponents.url else {
             self.cancelRequest()
             return
         }
-        
-        self.extensionContext!.open(url, completionHandler: nil)
-        
+
         var responder = self as UIResponder?
         let selectorOpenURL = sel_registerName("openURL:")
 
@@ -97,11 +103,11 @@ class ShareViewController: UIViewController {
         let alert = UIAlertController(title: "Invalid link!",
                                       message: "Only URL links can be saved.",
                                       preferredStyle: .alert)
-        
+
         let action = UIAlertAction(title: "Close", style: .cancel) { _ in
             self.dismiss(animated: true, completion: nil)
         }
-        
+
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  View, TouchableOpacity, Linking, LayoutAnimation,
+  View, TouchableOpacity, Linking, LayoutAnimation, Platform,
 } from 'react-native';
 import {
   Menu, MenuOptions, MenuOption, MenuTrigger, renderers, withMenuContext,
@@ -146,13 +146,14 @@ class TopBar extends React.PureComponent {
   renderCommands() {
 
     const { searchString } = this.props;
-    const { windowWidth, windowHeight } = this.props;
+    const { windowWidth } = this.props;
 
+    const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl', default: '' });
     const searchClearBtnClasses = searchString.length === 0 ? 'hidden relative' : 'flex absolute';
 
     return (
       <View style={tailwind('flex-row justify-end items-center')}>
-        <Menu renderer={renderers.Popover} rendererProps={{ preferredPlacement: 'bottom', anchorStyle: tailwind('shadow-xl') }} onOpen={this.onAddBtnClick}>
+        <Menu renderer={renderers.Popover} rendererProps={{ preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) }} onOpen={this.onAddBtnClick}>
           <MenuTrigger>
             <View style={tailwind('justify-center items-center w-8 h-8')}>
               <View style={tailwind('justify-center items-center w-8 h-7 bg-gray-900 rounded-lg shadow-sm')}>
@@ -180,7 +181,7 @@ class TopBar extends React.PureComponent {
             </Svg>
           </View>
         </View>
-        <Menu renderer={renderers.Popover} rendererProps={{ preferredPlacement: 'bottom', anchorStyle: tailwind('shadow-xl') }} onOpen={this.onProfileBtnClick} onClose={this.onProfileCancelBtnClick}>
+        <Menu renderer={renderers.Popover} rendererProps={{ preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) }} onOpen={this.onProfileBtnClick} onClose={this.onProfileCancelBtnClick}>
           <MenuTrigger>
             <View style={tailwind('ml-4')}>
               <View style={tailwind('justify-center items-center h-8 w-8 bg-white rounded-lg overflow-hidden border-2 border-gray-200')}>
@@ -240,7 +241,6 @@ const mapStateToProps = (state, props) => {
     isAddPopupShown: state.display.isAddPopupShown,
     isProfilePopupShown: state.display.isProfilePopupShown,
     windowWidth: state.window.width,
-    windowHeight: state.window.height,
   };
 };
 

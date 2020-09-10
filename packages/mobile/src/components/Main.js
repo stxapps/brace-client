@@ -155,11 +155,11 @@ class Main extends React.PureComponent {
     const triggerOffsets = { x: 16, y: 16, width: 0, height: 0 };
     if (windowWidth >= MD_WIDTH) {
       triggerOffsets.x = 24;
-      triggerOffsets.y = 40;
+      triggerOffsets.y = 24;
     }
     if (windowWidth >= LG_WIDTH) {
-      triggerOffsets.x = 32;
-      triggerOffsets.y = 40;
+      triggerOffsets.x = 24;
+      triggerOffsets.y = 24;
     }
 
     return (
@@ -167,7 +167,7 @@ class Main extends React.PureComponent {
         <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: triggerOffsets, popupStyle: tailwind('py-2 min-w-32 border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onListNameBtnClick} onClose={this.onListNameCancelBtnClick}>
           <MenuTrigger>
             {/* Change the paddings here, need to change triggerOffsets too */}
-            <View style={tailwind('px-4 pt-4 pb-6 flex-row items-center w-full md:px-6 md:pt-10 lg:px-8', windowWidth)}>
+            <View style={tailwind('px-4 pt-4 pb-6 flex-row items-center w-full md:px-6 md:pt-6 md:pb-10 lg:px-8', windowWidth)}>
               <Text style={tailwind('text-lg text-gray-900 font-semibold')}>{listName}</Text>
               <Svg style={tailwind('ml-1 w-5 h-5 text-black')} viewBox="0 0 24 24" stroke="currentColor" fill="none">
                 <Path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

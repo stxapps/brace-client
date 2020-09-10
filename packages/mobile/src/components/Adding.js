@@ -19,6 +19,7 @@ import {
 } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 
+import Loading from './Loading';
 import TopBar from './TopBar';
 
 import { InterText as Text } from '.';
@@ -28,6 +29,7 @@ const MAX_ADDING_URLS = 3;
 const CONFIRM_ADD = 'CONFIRM_ADD';
 const CONFIRM_NOT_ADD = 'CONFIRM_NOT_ADD';
 
+const RENDER_LOADING = 'RENDER_LOADING';
 const RENDER_ADDING = 'RENDER_ADDING';
 const RENDER_ADDED = 'RENDER_ADDED';
 const RENDER_DIED_ADDING = 'RENDER_DIED_ADDING';
@@ -175,7 +177,7 @@ class Adding extends React.PureComponent {
     if (!isUserSignedIn) return { type: RENDER_NOT_SIGNED_IN };
 
     const { addingUrls, urlValidatedResults, askedConfirmResults } = this.state;
-    if (!addingUrls || !urlValidatedResults) return { type: RENDER_ADDING };
+    if (!addingUrls || !urlValidatedResults) return { type: RENDER_LOADING };
 
     if (urlValidatedResults.every(res => res === NO_URL)) return { type: RENDER_INVALID };
 
@@ -273,9 +275,7 @@ class Adding extends React.PureComponent {
       return;
     }
 
-    // TODO
-    // Show go to main
-    //BackHandler.exitApp();
+    this.onToMainBtnClick();
   }
 
   onToMainBtnClick = () => {
@@ -375,7 +375,6 @@ class Adding extends React.PureComponent {
 
   renderAskingConfirm(addingUrl) {
 
-    const { windowWidth, windowHeight } = this.props;
     const { addingUrls, urlValidatedResults, askedConfirmResults } = this.state;
 
     let haveOthers = false, beenHere = false;
@@ -409,7 +408,6 @@ class Adding extends React.PureComponent {
       }
     }
 
-    const uText = addingUrl;
     const cancelText = haveOthers ? 'Skip this link' : 'Cancel';
 
     const content = (
@@ -417,8 +415,7 @@ class Adding extends React.PureComponent {
         <Svg style={tailwind('text-yellow-600')} width={96} height={96} viewBox="0 0 20 20" fill="currentColor">
           <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM10 7C9.63113 7 9.3076 7.19922 9.13318 7.50073C8.85664 7.97879 8.24491 8.14215 7.76685 7.86561C7.28879 7.58906 7.12543 6.97733 7.40197 6.49927C7.91918 5.60518 8.88833 5 10 5C11.6569 5 13 6.34315 13 8C13 9.30622 12.1652 10.4175 11 10.8293V11C11 11.5523 10.5523 12 10 12C9.44773 12 9.00001 11.5523 9.00001 11V10C9.00001 9.44772 9.44773 9 10 9C10.5523 9 11 8.55228 11 8C11 7.44772 10.5523 7 10 7ZM10 15C10.5523 15 11 14.5523 11 14C11 13.4477 10.5523 13 10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15Z" />
         </Svg>
-
-        <Text style={tailwind('mt-5 w-full max-w-xs text-base text-gray-800 text-center')} numberOfLines={4} ellipsizeMode="tail">{uText}</Text>
+        <Text style={tailwind('mt-5 w-full max-w-xs text-base text-gray-800 text-center')} numberOfLines={4} ellipsizeMode="tail">{addingUrl}</Text>
         <Text style={tailwind('mt-2 w-full max-w-xs text-2xl text-gray-900 font-semibold text-center')}>looks like an invalid link.</Text>
         <Text style={tailwind('mt-2 w-full max-w-xs text-xl text-gray-900 font-medium text-center')}>Are you sure?</Text>
         <TouchableOpacity onPress={() => this.onAskingConfirmOkBtnClick(addingUrl)} style={tailwind('mt-2 justify-center items-center h-14')}>
@@ -437,7 +434,6 @@ class Adding extends React.PureComponent {
   }
 
   renderInvalid() {
-    const { windowWidth } = this.props;
 
     const content = (
       <React.Fragment>
@@ -467,7 +463,7 @@ class Adding extends React.PureComponent {
         </TouchableOpacity>
         <Text style={tailwind('mt-10 w-full max-w-xs text-base text-gray-900 text-center')}>
           No account yet?{'  '}
-          <Text onPress={() => this.props.signIn()} style={tailwind('text-base text-gray-900 underline')}>Sign up</Text>
+          <Text onPress={() => this.props.signUp()} style={tailwind('text-base text-gray-900 underline')}>Sign up</Text>
         </Text>
         {this.renderNav()}
       </React.Fragment>
@@ -499,7 +495,8 @@ class Adding extends React.PureComponent {
 
     const { type, payload } = this.getAction();
 
-    if (type === RENDER_ADDING) return this.renderAdding();
+    if (type === RENDER_LOADING) return <Loading />;
+    else if (type === RENDER_ADDING) return this.renderAdding();
     else if (type === RENDER_ADDED) return this.renderAdded();
     else if (type === RENDER_DIED_ADDING) return this.renderDiedAdding();
     else if (type === RENDER_ASKING_CONFIRM) return this.renderAskingConfirm(payload);
@@ -516,7 +513,6 @@ const mapStateToProps = (state) => {
     isUserSignedIn: state.user.isUserSignedIn,
     links: state.links[MY_LIST],
     windowWidth: state.window.width,
-    windowHeight: state.window.height,
   };
 };
 

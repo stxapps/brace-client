@@ -8,6 +8,7 @@
     "android-release": "react-native run-android --variant=release",
     "ios-install": "npx pod-install",
     "ios": "react-native run-ios",
+    "ios-release": "react-native run-ios --configuration Release",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint ."
