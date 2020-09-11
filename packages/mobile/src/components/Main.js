@@ -136,10 +136,14 @@ class Main extends React.PureComponent {
           <Text style={tailwind('py-2 text-lg text-gray-900 text-center')}>Confirm delete?</Text>
           <View style={tailwind('py-2 flex-row items-center justify-center')}>
             <TouchableOpacity onPress={this.onConfirmDeleteOkBtnClick} style={tailwind('mr-2 py-2')}>
-              <Text style={tailwind('px-3 py-1 bg-white text-base text-gray-900 text-center border border-gray-900 rounded-full shadow-sm')}>Yes</Text>
+              <View style={tailwind('px-3 py-1 bg-white border border-gray-900 rounded-full shadow-sm')}>
+                <Text style={tailwind('text-base text-gray-900 text-center')}>Yes</Text>
+              </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={this.onConfirmDeleteCancelBtnClick} style={tailwind('ml-2 py-2')}>
-              <Text style={tailwind('px-3 py-1 bg-white text-base text-gray-900 text-center border border-gray-900 rounded-full shadow-sm')}>No</Text>
+              <View style={tailwind('px-3 py-1 bg-white border border-gray-900 rounded-full shadow-sm')}>
+                <Text style={tailwind('text-base text-gray-900 text-center')}>No</Text>
+              </View>
             </TouchableOpacity>
           </View>
         </View>

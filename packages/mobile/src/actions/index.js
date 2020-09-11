@@ -131,10 +131,8 @@ const handleSaveToBrace = (url) => async (dispatch, getState) => {
 
   dispatch({
     type: UPDATE_HREF,
-    payload: {
-      href: url,
-    },
-  })
+    payload: url
+  });
 };
 
 const getPopupShownId = (state) => {

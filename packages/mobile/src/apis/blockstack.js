@@ -122,10 +122,11 @@ const fetch = async (listName) => {
 
   const { linkFPaths, settingsFPath } = await listFPaths();
 
-  const selectedLinkFPaths = linkFPaths[listName].sort().reverse().slice(0, N_LINKS);
+  const namedLinkFPaths = linkFPaths[listName] || [];
+  const selectedLinkFPaths = namedLinkFPaths.sort().reverse().slice(0, N_LINKS);
   const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0);
   const links = responses.map(response => JSON.parse(response.content));
-  const hasMore = linkFPaths[listName].length > N_LINKS;
+  const hasMore = namedLinkFPaths.length > N_LINKS;
 
   const listNames = Object.keys(linkFPaths);
 
@@ -144,7 +145,8 @@ const fetchMore = async (params) => {
 
   const { linkFPaths } = await listFPaths();
 
-  const filteredLinkFPaths = linkFPaths[listName].filter(fpath => {
+  const namedLinkFPaths = linkFPaths[listName] || [];
+  const filteredLinkFPaths = namedLinkFPaths.filter(fpath => {
     return !ids.includes(extractLinkFPath(fpath).fname);
   });
 
@@ -240,7 +242,9 @@ const deleteLinks = async (params) => {
 const deleteOldLinksInTrash = async () => {
 
   const { linkFPaths } = await listFPaths();
-  let oldFPaths = linkFPaths[TRASH].filter(fpath => {
+
+  const trashLinkFPaths = linkFPaths[TRASH] || [];
+  let oldFPaths = trashLinkFPaths.filter(fpath => {
     const { fname } = extractLinkFPath(fpath);
     const removedDT = fname.split('-')[3];
     const interval = Date.now() - Number(removedDT);
