@@ -145,10 +145,9 @@ class TopBar extends React.PureComponent {
 
   renderCommands() {
 
-    const { searchString } = this.props;
-    const { windowWidth } = this.props;
+    const { searchString, windowWidth } = this.props;
 
-    const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl', default: '' });
+    const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' })
     const searchClearBtnClasses = searchString.length === 0 ? 'hidden relative' : 'flex absolute';
 
     return (
@@ -163,7 +162,7 @@ class TopBar extends React.PureComponent {
               </View>
             </View>
           </MenuTrigger>
-          <MenuOptions customStyles={{ optionsContainer: tailwind('rounded-lg shadow-xl') }}>
+          <MenuOptions customStyles={{ optionsContainer: tailwind('bg-white rounded-lg shadow-xl') }}>
             {this.renderAddPopup()}
           </MenuOptions>
         </Menu>
@@ -189,7 +188,7 @@ class TopBar extends React.PureComponent {
               </View>
             </View>
           </MenuTrigger>
-          <MenuOptions customStyles={{ optionsContainer: tailwind('rounded-lg shadow-xl') }}>
+          <MenuOptions customStyles={{ optionsContainer: tailwind('bg-white rounded-lg shadow-xl') }}>
             {this.renderProfilePopup()}
           </MenuOptions>
         </Menu>

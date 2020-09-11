@@ -197,10 +197,14 @@ class CardItem extends React.PureComponent {
           <Text style={tailwind('text-2xl text-white font-medium text-center')}>Oops..., something went wrong!</Text>
           <View style={tailwind('pt-4 flex-row justify-center items-center')}>
             <TouchableOpacity onPress={this.onRetryRetryBtnClick}>
-              <Text style={tailwind('px-4 py-1 bg-white text-base text-gray-900 font-semibold text-center border border-white rounded-full')}>Retry</Text>
+              <View style={tailwind('px-4 py-1 bg-white border border-white rounded-full')}>
+                <Text style={tailwind('text-base text-gray-900 font-semibold text-center')}>Retry</Text>
+              </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={this.onRetryCancelBtnClick}>
-              <Text style={tailwind('ml-4 px-3 py-1 text-base text-white font-semibold text-center border border-white rounded-full')}>Cancel</Text>
+              <View style={tailwind('ml-4 px-3 py-1 border border-white rounded-full')}>
+                <Text style={tailwind('text-base text-white font-semibold text-center')}>Cancel</Text>
+              </View>
             </TouchableOpacity>
           </View>
           <TouchableOpacity onPress={() => Linking.openURL(ensureContainUrlProtocol(url))}>

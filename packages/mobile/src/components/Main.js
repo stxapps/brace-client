@@ -266,7 +266,9 @@ class Main extends React.PureComponent {
   renderFetchMoreBtn = () => {
     return (
       <TouchableOpacity onPress={this.onFetchMoreBtnClick} style={tailwind('my-4 py-2 flex-row justify-center w-full')}>
-        <Text style={tailwind('px-3 py-1 bg-white text-base text-gray-900 border border-gray-900 rounded-full shadow-sm')}>More</Text>
+        <View style={tailwind('px-3 py-1 bg-white border border-gray-900 rounded-full shadow-sm')}>
+          <Text style={tailwind('text-base text-gray-900')}>More</Text>
+        </View>
       </TouchableOpacity>
     );
   }
