@@ -25,7 +25,7 @@ import { InterText as Text, InterTextInput as TextInput } from '.';
 import shortLogo from '../images/logo-short.svg';
 import fullLogo from '../images/logo-full.svg';
 
-class TopBar extends React.PureComponent {
+class TopBar extends React.Component {
 
   constructor(props) {
     super(props);
@@ -50,6 +50,21 @@ class TopBar extends React.PureComponent {
         this.setState({ ...this.initialState });
       }
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+
+    if (
+      this.props.username !== nextProps.username ||
+      this.props.userImage !== nextProps.userImage ||
+      this.props.searchString !== nextProps.searchString ||
+      this.props.windowWidth !== nextProps.windowWidth ||
+      !isEqual(this.state, nextState)
+    ) {
+      return true;
+    }
+
+    return false;
   }
 
   onAddBtnClick = () => {
@@ -84,6 +99,10 @@ class TopBar extends React.PureComponent {
     LayoutAnimation.configureNext(animConfig);
     this.props.addLink(this.state.url, true);
     this.props.ctx.menuActions.closeMenu();
+    this.props.updatePopup(ADD_POPUP, false);
+  }
+
+  onAddCancelBtnClick = () => {
     this.props.updatePopup(ADD_POPUP, false);
   }
 
@@ -152,7 +171,7 @@ class TopBar extends React.PureComponent {
 
     return (
       <View style={tailwind('flex-row justify-end items-center')}>
-        <Menu renderer={renderers.Popover} rendererProps={{ preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) }} onOpen={this.onAddBtnClick}>
+        <Menu renderer={renderers.Popover} rendererProps={{ preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) }} onOpen={this.onAddBtnClick} onClose={this.onAddCancelBtnClick}>
           <MenuTrigger>
             <View style={tailwind('justify-center items-center w-8 h-8')}>
               <View style={tailwind('justify-center items-center w-8 h-7 bg-gray-900 rounded-lg shadow-sm')}>

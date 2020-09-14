@@ -38,7 +38,7 @@ const prependDomainName = (/** @type string */ value) => {
   return DOMAIN_NAME + value;
 };
 
-class CardItem extends React.PureComponent {
+class CardItem extends React.Component {
 
   constructor(props) {
     super(props);
@@ -46,6 +46,21 @@ class CardItem extends React.PureComponent {
     this.state = {
       extractedFaviconError: false,
     };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      this.props.link.extractedResult !== nextProps.link.extractedResult ||
+      this.props.link.status !== nextProps.link.status ||
+      this.props.style !== nextProps.style ||
+      this.props.windowWidth !== nextProps.windowWidth ||
+      this.props.windowHeight !== nextProps.windowHeight ||
+      this.state.extractedFaviconError !== nextState.extractedFaviconError
+    ) {
+      return true;
+    }
+
+    return false;
   }
 
   populateMenu() {
