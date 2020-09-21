@@ -27,7 +27,7 @@ import StatusPopup from './StatusPopup';
 
 import emptyBox from '../images/empty-box-sided.svg';
 import undrawLink from '../images/undraw-link.svg';
-import saveLinkAtUrlBar from '../images/save-link-at-url-bar.svg';
+import saveLinkInUrlBar from '../images/save-link-in-url-bar.svg';
 
 class Main extends React.PureComponent {
 
@@ -228,7 +228,7 @@ class Main extends React.PureComponent {
             <span className="ml-1 text-xl text-white font-semibold">Save link</span>
           </button>
           <p className="mx-auto mt-16 max-w-md text-lg text-gray-900 text-center">Or type <span className="font-semibold">"brace.to/"</span> in front of any link <br className="new-line-in-address-bar" />in Address bar.</p>
-          <img className="mx-auto mt-4 w-full" src={saveLinkAtUrlBar} alt="Save link at address bar" />
+          <img className="mx-auto mt-4 w-full" src={saveLinkInUrlBar} alt="Save link at address bar" />
         </div>
       );
     }

@@ -1993,12 +1993,10 @@ caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001111:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001117.tgz#69a9fae5d480eaa9589f7641a83842ad396d17c4"
   integrity sha512-4tY0Fatzdx59kYjQs+bNxUwZB03ZEBgVmJ1UkFPz/Q8OLiUUbjct2EdpnXj0fvFTPej2EkbPIG0w8BWsjAyk1Q==
 
-canvas-renderer@~2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/canvas-renderer/-/canvas-renderer-2.2.0.tgz#512151f5494aaac5270802fba22599785114716d"
-  integrity sha512-Itdq9pwXcs4IbbkRCXc7reeGBk6i6tlDtZTjE1yc+KvYkx1Mt3WLf6tidZ/Ixbm7Vmi+jpWKG0dRBor67x9yGw==
-  dependencies:
-    "@types/node" "*"
+canvas-renderer@~2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/canvas-renderer/-/canvas-renderer-2.1.1.tgz#d91fe9511ab48056ff9fa8a04514bede76535f55"
+  integrity sha512-/V0XetN7s1Mk3NO7x2wxPZYv0pLMQtGAhecuOuKR88beiYCUle1AbCcFZNLu+4NVzi9RVHS0rXtIgzPEaKidLw==
 
 capture-exit@^2.0.0:
   version "2.0.0"
@@ -3945,12 +3943,13 @@ istanbul-reports@^3.0.2:
     html-escaper "^2.0.0"
     istanbul-lib-report "^3.0.0"
 
-jdenticon@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/jdenticon/-/jdenticon-3.0.1.tgz#ef43e3e7af9535986969d59286501bc7bb6b7d18"
-  integrity sha512-6Bh9FSmh2NEZsa3gWlcQgWgdIuXudT/Q34N9A/05qUtPyJ34rYZuk2v7AVxR+1FPdgNmy4JpGj1u2wH63sCCrw==
+jdenticon@2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/jdenticon/-/jdenticon-2.2.0.tgz#6a9d9cb2134a7848ff21d59b3871148cbc6af87f"
+  integrity sha512-WGqwpjN9pab/Sah9pGnFH5tQc3HF3WbLV/tPVbykvk5nuAkxG/zhzQYWC2owvpnS+/A0HmlSx35rtY8kyN+x7Q==
   dependencies:
-    canvas-renderer "~2.2.0"
+    "@types/node" "*"
+    canvas-renderer "~2.1.1"
 
 jest-changed-files@^25.5.0:
   version "25.5.0"
