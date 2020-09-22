@@ -20,7 +20,7 @@ import { validateUrl, isEqual } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
 
-import { InterText as Text, InterTextInput as TextInput } from '.';
+import { InterText as Text, InterTextInput as TextInput, withSafeAreaContext } from '.';
 
 import shortLogo from '../images/logo-short.svg';
 import fullLogo from '../images/logo-full.svg';
@@ -239,7 +239,7 @@ class TopBar extends React.Component {
     return (
       <View style={tailwind('items-center w-full')}>
         <View style={tailwind('px-4 flex-row justify-between items-center w-full max-w-6xl min-h-14 md:px-6 lg:px-8', windowWidth)}>
-          <View style={tailwind('')}>
+          <View>
             <SvgXml style={tailwind('md:hidden', windowWidth)} width={28.36} height={32} xml={shortLogo} />
             <SvgXml style={tailwind('hidden md:flex', windowWidth)} width={109.63} height={24} xml={fullLogo} />
             <Text style={[tailwind('absolute text-xs'), { top: -9, right: -28.4 }]}>beta</Text>
@@ -266,4 +266,4 @@ const mapDispatchToProps = {
   signIn, signOut, updatePopup, addLink, updateSearchString,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withMenuContext(TopBar));
+export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(withMenuContext(TopBar)));

@@ -8,7 +8,7 @@ import { signUp } from '../actions';
 import { SHOW_SIGN_IN } from '../types/const';
 import { tailwind } from '../stylesheets/tailwind';
 
-import { InterText as Text } from '.';
+import { InterText as Text, withSafeAreaContext } from '.';
 
 import TopBar from './TopBar';
 
@@ -169,4 +169,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { signUp })(Landing);
+const mapDispatchToProps = { signUp };
+
+export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(Landing));

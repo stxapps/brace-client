@@ -29,7 +29,7 @@ import { PATTERN_MAP } from '../types/patternPaths';
 import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
 
-import { InterText as Text } from '.';
+import { InterText as Text, withSafeAreaContext } from '.';
 import GracefulImage from './GracefulImage';
 import MenuPopupRenderer from './MenuPopupRenderer';
 
@@ -239,7 +239,7 @@ class CardItem extends React.Component {
 
     if (image) {
       return (
-        <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full aspect-7/12')} source={{ uri: image }} />
+        <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full aspect-7/12 rounded-t-lg overflow-hidden')} source={{ uri: image }} />
       );
     }
 
@@ -259,7 +259,7 @@ class CardItem extends React.Component {
     if (decor.image.bg.type === COLOR) {
       return (
         <React.Fragment>
-          <View style={tailwind(`items-center justify-center w-full aspect-7/12 ${decor.image.bg.value}`)}>
+          <View style={tailwind(`items-center justify-center w-full aspect-7/12 rounded-t-lg overflow-hidden ${decor.image.bg.value}`)}>
             {fg}
           </View>
         </React.Fragment>
@@ -269,7 +269,7 @@ class CardItem extends React.Component {
     // Only pattern background or pattern background with a big letter
     if (decor.image.bg.type === PATTERN) {
       return (
-        <View style={tailwind('items-center justify-center w-full aspect-7/12')}>
+        <View style={tailwind('items-center justify-center w-full aspect-7/12 rounded-t-lg overflow-hidden')}>
           <GracefulImage key="image-graceful-image-pattern" style={tailwind('absolute inset-0')} source={PATTERN_MAP[decor.image.bg.value]} />
           {fg}
         </View>
@@ -279,7 +279,7 @@ class CardItem extends React.Component {
     // Random image
     if (decor.image.bg.type === IMAGE) {
       return (
-        <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full aspect-7/12')} source={{ uri: prependDomainName(decor.image.bg.value) }} />
+        <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full aspect-7/12 rounded-t-lg overflow-hidden')} source={{ uri: prependDomainName(decor.image.bg.value) }} />
       );
     }
 
@@ -339,7 +339,7 @@ class CardItem extends React.Component {
 
     return (
       <View style={style}>
-        <View style={tailwind(`self-center bg-white rounded-lg shadow-sm overflow-hidden ${viewStyle}`)}>
+        <View style={tailwind(`self-center bg-white rounded-lg shadow-sm ${viewStyle}`)}>
           {this.renderImage()}
           <View style={tailwind('flex-row justify-between items-center w-full')}>
             <View style={tailwind('pl-4 flex-shrink flex-grow flex-row items-center lg:pl-5', windowWidth)}>
@@ -391,8 +391,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
-  updatePopup, retryDiedLinks, cancelDiedLinks,
-  moveLinks,
+  updatePopup, retryDiedLinks, cancelDiedLinks, moveLinks,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CardItem);
+export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(CardItem));

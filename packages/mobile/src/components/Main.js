@@ -19,7 +19,7 @@ import {
   PC_100, PC_50, PC_33,
   MY_LIST, TRASH,
   SHOW_BLANK, SHOW_COMMANDS,
-  BAR_HEIGHT,
+  BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
   SM_WIDTH, MD_WIDTH, LG_WIDTH,
 } from '../types/const';
 import { getListNames, getLinks } from '../selectors';
@@ -27,7 +27,7 @@ import { toPx, multiplyPercent } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
 
-import { InterText as Text } from '.';
+import { InterText as Text, withSafeAreaContext } from '.';
 import MenuPopupRenderer from './MenuPopupRenderer';
 
 import Loading from './Loading';
@@ -340,7 +340,7 @@ class Main extends React.PureComponent {
 
   renderMain = ({ item }) => {
 
-    const { isFetchingMore } = this.props;
+    const { isSearchPopupShown, isFetchingMore } = this.props;
 
     if (item.id === MAIN_HEAD) return this.renderListName();
 
@@ -402,8 +402,12 @@ class Main extends React.PureComponent {
     }
 
     if (item.id === MAIN_PADDING_BOTTOM) {
+
+      let pb = toPx(BAR_HEIGHT);
+      if (isSearchPopupShown) pb += toPx(SEARCH_POPUP_HEIGHT);
+
       return (
-        <View style={{ paddingBottom: toPx(BAR_HEIGHT) }}></View>
+        <View style={{ paddingBottom: pb }}></View>
       );
     }
 
@@ -456,6 +460,7 @@ const mapStateToProps = (state, props) => {
     listNames: getListNames(state),
     links: links,
     isAddPopupShown: state.display.isAddPopupShown,
+    isSearchPopupShown: state.display.isSearchPopupShown,
     isConfirmDeletePopupShown: state.display.isConfirmDeletePopupShown,
     popupLink: popupLink,
     hasMoreLinks: state.hasMoreLinks[listName],
@@ -470,4 +475,4 @@ const mapDispatchToProps = {
   fetch, fetchMore, changeListName, updatePopup, deleteLinks,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withMenuContext(Main));
+export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(withMenuContext(Main)));

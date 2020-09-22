@@ -1,10 +1,12 @@
 import React from 'react';
-import { SafeAreaView } from 'react-native';
 import { Provider } from 'react-redux';
 import { createStore, compose } from 'redux';
 import { install as installReduxLoop } from 'redux-loop';
 import { offline } from '@redux-offline/redux-offline';
 import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
+import {
+  SafeAreaProvider, initialWindowMetrics, SafeAreaView,
+} from 'react-native-safe-area-context';
 import { MenuProvider } from 'react-native-popup-menu';
 
 import reducers from './reducers';
@@ -37,9 +39,13 @@ const store = createStore(
 const Root = () => {
   return (
     <Provider store={store}>
-      <MenuProvider customStyles={{ backdrop: { backgroundColor: 'black', opacity: 0.25 } }} backHandler={(menuProvider) => updateMenuPopupAsBackPressed(menuProvider, store.dispatch, store.getState)}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}><App /></SafeAreaView>
-      </MenuProvider>
+      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+        <MenuProvider customStyles={{ backdrop: { backgroundColor: 'black', opacity: 0.25 } }} backHandler={(menuProvider) => updateMenuPopupAsBackPressed(menuProvider, store.dispatch, store.getState)}>
+          <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+            <App />
+          </SafeAreaView>
+        </MenuProvider>
+      </SafeAreaProvider>
     </Provider>
   );
 };

@@ -2,8 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import {
   View, TouchableOpacity, Animated, Keyboard, BackHandler, Linking, LayoutAnimation,
+  KeyboardAvoidingView,
 } from 'react-native';
-import Svg, { SvgXml, Path } from 'react-native-svg'
+import Svg, { SvgXml, Path } from 'react-native-svg';
 import jdenticon from 'jdenticon';
 import Modal from 'react-native-modal';
 
@@ -12,14 +13,14 @@ import {
   DOMAIN_NAME,
   ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   NO_URL, ASK_CONFIRM_URL, URL_MSGS,
-  BAR_HEIGHT,
+  BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
 } from '../types/const';
 import { getLinks } from '../selectors';
 import { validateUrl, isEqual, toPx } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
 
-import { InterText as Text, InterTextInput as TextInput } from '.';
+import { InterText as Text, InterTextInput as TextInput, withSafeAreaContext } from '.';
 
 const BOTTOM_BAR_DURATION = 225;
 
@@ -33,7 +34,7 @@ class BottomBar extends React.PureComponent {
       msg: '',
       isAskingConfirm: false,
     };
-    this.state = { ...this.initialState };
+    this.state = { ...this.initialState, isKeyboardShown: false };
 
     this.addInput = React.createRef();
     this.searchInput = React.createRef();
@@ -50,20 +51,38 @@ class BottomBar extends React.PureComponent {
     this.searchPopupBackHandler = null;
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidMount() {
+    this.keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', () => {
+      this.setState({ isKeyboardShown: true });
+    });
+    this.keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', () => {
+      this.setState({ isKeyboardShown: false });
+    });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+
+    const duration = this.props.isShown ? 0 : BOTTOM_BAR_DURATION;
+
     if (prevProps.isShown != this.props.isShown) {
 
-      const toValue = this.props.isShown ? 0 : toPx(BAR_HEIGHT);
-      const duration = this.props.isShown ? 0 : BOTTOM_BAR_DURATION;
+      const totalHeight = toPx(BAR_HEIGHT) + this.props.insets.bottom;
+      const toValue = this.props.isShown ? 0 : totalHeight;
 
       Animated.timing(this.bottomBarTranslateY, {
         toValue: toValue,
         duration: duration,
         useNativeDriver: true,
       }).start();
+    }
+
+    if (prevProps.isShown != this.props.isShown || prevState.isKeyboardShown !== this.state.isKeyboardShown) {
+
+      const bottom = this.props.isShown ? toPx(BAR_HEIGHT) : 0 - this.props.insets.bottom;
+      const toValue = this.state.isKeyboardShown ? 0 : bottom;
 
       Animated.timing(this.searchPopupBottom, {
-        toValue: toPx(BAR_HEIGHT) - toValue,
+        toValue: toValue,
         duration: duration,
         useNativeDriver: false,
       }).start();
@@ -76,6 +95,11 @@ class BottomBar extends React.PureComponent {
         this.setState({ ...this.initialState });
       }
     }
+  }
+
+  componentWillUnmount() {
+    this.keyboardWillShowListener.remove();
+    this.keyboardWillHideListener.remove();
   }
 
   onAddBtnClick = () => {
@@ -177,7 +201,7 @@ class BottomBar extends React.PureComponent {
     const { url, msg, isAskingConfirm } = this.state;
 
     return (
-      <Modal isVisible={isAddPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={() => setTimeout(() => this.addInput.current.focus(), 1)} onModalWillHide={() => this.addInput.current.blur()} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true}>
+      <Modal isVisible={isAddPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={() => setTimeout(() => this.addInput.current.focus(), 1)} onModalWillHide={() => this.addInput.current.blur()} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true} avoidKeyboard={true}>
         <View style={tailwind('px-4 pt-6 pb-6 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
           {/* onKeyPress event for Enter key only if there is multiline TextInput */}
           <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('px-4 py-2 w-full bg-white text-gray-900 border border-gray-600 rounded-full')} placeholder="https://" value={url} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
@@ -197,10 +221,6 @@ class BottomBar extends React.PureComponent {
 
   renderSearchPopup() {
 
-    // BUG ALERT
-    // Hard coded height here will lead to a bug one day!
-    const SEARCH_POPUP_HEIGHT = 58;
-
     const { isSearchPopupShown, searchString } = this.props;
 
     // Only transition when moving with BottomBar
@@ -209,25 +229,27 @@ class BottomBar extends React.PureComponent {
     const style = {
       bottom: this.searchPopupBottom,
     };
-    if (!isSearchPopupShown) style.transform = [{ translateY: SEARCH_POPUP_HEIGHT }];
+    if (!isSearchPopupShown) style.transform = [{ translateY: toPx(SEARCH_POPUP_HEIGHT) }];
 
     const searchClearBtnClasses = searchString.length === 0 ? 'hidden relative' : 'flex absolute';
 
     return (
-      <Animated.View style={[tailwind('px-2 py-2 absolute inset-x-0 flex-row justify-between items-center bg-white border border-gray-200 z-10'), style]}>
-        <View style={tailwind('flex-grow flex-shrink')}>
-          <TextInput ref={this.searchInput} onChange={this.onSearchInputChange} style={tailwind('pl-4 pr-6 py-1 w-full bg-white text-gray-900 border border-gray-600 rounded-full')} placeholder="Search" value={searchString} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
-          {/* A bug display: none doesn't work with absolute, need to change to relative. https://github.com/facebook/react-native/issues/18415 */}
-          <TouchableOpacity onPress={this.onSearchClearBtnClick} style={tailwind(`pr-2 ${searchClearBtnClasses} inset-y-0 right-0 justify-center items-center`)}>
-            <Svg style={tailwind('text-gray-600 rounded-full')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
-              <Path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM8.70711 7.29289C8.31658 6.90237 7.68342 6.90237 7.29289 7.29289C6.90237 7.68342 6.90237 8.31658 7.29289 8.70711L8.58579 10L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L10 11.4142L11.2929 12.7071C11.6834 13.0976 12.3166 13.0976 12.7071 12.7071C13.0976 12.3166 13.0976 11.6834 12.7071 11.2929L11.4142 10L12.7071 8.70711C13.0976 8.31658 13.0976 7.68342 12.7071 7.29289C12.3166 6.90237 11.6834 6.90237 11.2929 7.29289L10 8.58579L8.70711 7.29289Z" />
-            </Svg>
+      <KeyboardAvoidingView behavior="position">
+        <Animated.View style={[tailwind('px-2 py-2 absolute inset-x-0 flex-row justify-between items-center bg-white border border-gray-200 z-10'), style]}>
+          <View style={tailwind('flex-grow flex-shrink')}>
+            <TextInput ref={this.searchInput} onChange={this.onSearchInputChange} style={tailwind('pl-4 pr-6 py-1 w-full bg-white text-gray-900 border border-gray-600 rounded-full')} placeholder="Search" value={searchString} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
+            {/* A bug display: none doesn't work with absolute, need to change to relative. https://github.com/facebook/react-native/issues/18415 */}
+            <TouchableOpacity onPress={this.onSearchClearBtnClick} style={tailwind(`pr-2 ${searchClearBtnClasses} inset-y-0 right-0 justify-center items-center`)}>
+              <Svg style={tailwind('text-gray-600 rounded-full')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+                <Path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM8.70711 7.29289C8.31658 6.90237 7.68342 6.90237 7.29289 7.29289C6.90237 7.68342 6.90237 8.31658 7.29289 8.70711L8.58579 10L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L10 11.4142L11.2929 12.7071C11.6834 13.0976 12.3166 13.0976 12.7071 12.7071C13.0976 12.3166 13.0976 11.6834 12.7071 11.2929L11.4142 10L12.7071 8.70711C13.0976 8.31658 13.0976 7.68342 12.7071 7.29289C12.3166 6.90237 11.6834 6.90237 11.2929 7.29289L10 8.58579L8.70711 7.29289Z" />
+              </Svg>
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity onPress={this.onSearchCancelBtnClick} style={tailwind('ml-2 flex-grow-0 flex-shrink-0 justify-center items-center h-10 rounded-lg')}>
+            <Text style={tailwind('text-base text-gray-900 underline')}>Cancel</Text>
           </TouchableOpacity>
-        </View>
-        <TouchableOpacity onPress={this.onSearchCancelBtnClick} style={tailwind('ml-2 flex-grow-0 flex-shrink-0 justify-center items-center h-10 rounded-lg')}>
-          <Text style={tailwind('text-base text-gray-900 underline')}>Cancel</Text>
-        </TouchableOpacity>
-      </Animated.View>
+        </Animated.View>
+      </KeyboardAvoidingView>
     );
   }
 
@@ -252,8 +274,11 @@ class BottomBar extends React.PureComponent {
   render() {
 
     const style = {
-      height: toPx(BAR_HEIGHT),
+      height: toPx(BAR_HEIGHT) + this.props.insets.bottom,
       transform: [{ translateY: this.bottomBarTranslateY }],
+    };
+    const innerStyle = {
+      height: toPx(BAR_HEIGHT),
     };
     const shadowStyle = {
       height: 10,
@@ -263,7 +288,7 @@ class BottomBar extends React.PureComponent {
     return (
       <React.Fragment>
         <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 bg-white z-30'), style]}>
-          <View style={tailwind('relative flex-row w-full h-full overflow-hidden')}>
+          <View style={[tailwind('relative flex-row w-full overflow-hidden'), innerStyle]}>
             <View style={[tailwind('absolute inset-x-0 top-0 bg-white shadow-lg'), shadowStyle]}></View>
             <TouchableOpacity onPress={this.onAddBtnClick} style={tailwind('justify-center items-center w-1/3 h-full')}>
               <View style={tailwind('justify-center items-center w-8 h-7 bg-gray-800 rounded-lg shadow-sm')}>
@@ -313,4 +338,4 @@ const mapDispatchToProps = {
   signOut, updatePopup, addLink, updateSearchString,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(BottomBar);
+export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(BottomBar));

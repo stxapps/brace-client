@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TextInput } from 'react-native';
+import { withSafeAreaInsets } from 'react-native-safe-area-context';
 
 const buildComponent = (defaultStyle = null, styleFn = null) => Component => {
 
@@ -26,7 +27,7 @@ const buildComponent = (defaultStyle = null, styleFn = null) => Component => {
   }
 
   return React.forwardRef((props, ref) => {
-    return <StyledComponent {...props} forwardedRef={ref} />
+    return <StyledComponent {...props} forwardedRef={ref} />;
   });
 };
 
@@ -73,3 +74,33 @@ export const InterText = /** @type {any} */ (buildComponent(styles.text, styleTe
  * @type {TextInput}
  */
 export const InterTextInput = /** @type {any} */ (buildComponent(styles.text, styleTextFn)(TextInput));
+
+const withSafeAreaSize = (Component) => {
+
+  class SafeAreaSizeCompoment extends React.PureComponent {
+    render() {
+      const { forwardedRef, windowWidth, windowHeight, insets, ...rest } = this.props;
+      if (!insets) throw new Error(`Illegal insets: ${insets}`);
+
+      const props = { insets, ...rest };
+      if (windowWidth) {
+        const safeAreaWidth = windowWidth - insets.left - insets.right;
+        props['windowWidth'] = safeAreaWidth;
+      }
+      if (windowHeight) {
+        const safeAreaHeight = windowHeight - insets.top - insets.bottom;
+        props['windowHeight'] = safeAreaHeight;
+      }
+
+      return <Component {...props} ref={forwardedRef} />;
+    }
+  }
+
+  return React.forwardRef((props, ref) => {
+    return <SafeAreaSizeCompoment {...props} forwardedRef={ref} />;
+  });
+};
+
+export const withSafeAreaContext = (Component) => {
+  return withSafeAreaInsets(withSafeAreaSize(Component));
+};

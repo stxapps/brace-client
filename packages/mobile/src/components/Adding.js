@@ -19,6 +19,8 @@ import {
 } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 
+import { withSafeAreaContext } from '.';
+
 import Loading from './Loading';
 import TopBar from './TopBar';
 
@@ -516,6 +518,8 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {
+const mapDispatchToProps = {
   signUp, signIn, updateHref, addLink, cancelDiedLinks,
-})(Adding);
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(Adding));

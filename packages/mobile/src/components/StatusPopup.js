@@ -12,7 +12,7 @@ import {
 import { updateStatus } from '../actions';
 import { tailwind } from '../stylesheets/tailwind';
 
-import { InterText as Text } from '.';
+import { InterText as Text, withSafeAreaContext } from '.';
 
 const AnimatedText = Animated.createAnimatedComponent(Text);
 
@@ -156,4 +156,4 @@ const mapDispatchToProps = {
   updateStatus,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(StatusPopup);
+export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(StatusPopup));

@@ -18,7 +18,7 @@ import {
 } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 
-import { InterText as Text } from '.';
+import { InterText as Text, withSafeAreaContext } from '.';
 
 const MAX_ADDING_URLS = 3;
 
@@ -541,4 +541,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { addLink, cancelDiedLinks })(TranslucentAdding);
+const mapDispatchToProps = { addLink, cancelDiedLinks };
+
+export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(TranslucentAdding));
