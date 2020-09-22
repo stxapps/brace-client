@@ -58,7 +58,7 @@ class Landing extends React.PureComponent {
           <div className="w-full md:w-55/100 lg:pt-10">
             <img className="mx-auto w-11/12 max-w-sm object-contain md:hidden" src={saveLinksToVisitLater} alt="Save links to visit later" />
             <h1 className="mt-16 first-h1-text text-gray-900 font-bold leading-none md:mt-0">Save links <br className="inline sm:hidden md:inline lg:hidden" />to visit later</h1>
-            <p className="mt-4 text-lg text-gray-700 font-normal text-justify leading-normal md:pr-4">Yet another bookmark manager with privacy at heart. Brace.to helps you save links to everything and visit them later easily anytime on your any devices. Powered by Blockstack technology, all your saved links are encrypted and only you can decrypt them and see the content inside.</p>
+            <p className="mt-4 text-lg text-gray-700 font-normal leading-normal md:pr-4">Yet another bookmark manager with privacy at heart. Brace.to helps you save links to everything and visit them later easily anytime on your any devices. Powered by Blockstack technology, all your saved links are encrypted and only you can decrypt them and see the content inside.</p>
             <button onClick={() => this.props.signUp()} className="mt-6 px-6 h-12 bg-gray-900 text-xl text-white font-semibold rounded-full shadow-lg hover:bg-gray-800 active:bg-black focus:outline-none focus:shadow-outline">Get Started</button>
             <div className="mt-3 flex items-end md:mt-4">
               <a className="focus:outline-none-outer" href="https://play.google.com/store/apps/details?id=com.bracedotto">
@@ -82,7 +82,7 @@ class Landing extends React.PureComponent {
         <section className="mx-auto px-4 pt-24 pb-4 max-w-6xl md:px-6 lg:px-8">
           <img className="mx-auto h-16" src={undrawLink} alt="unDraw link icon" />
           <h2 className="mt-4 text-3xl text-gray-900 font-semibold leading-none text-center md:text-4xl">Never miss a link <br className="inline md:hidden" />ever again</h2>
-          <p className="mt-4 text-lg text-gray-700 font-normal text-justify leading-normal sm:text-center">A lot of interesting, useful, and important stuff are <br className="hidden sm:inline md:hidden" />out there on the internet. <br className="hidden md:inline" />Brace.to helps you save them so that you will never miss anything.</p>
+          <p className="mt-4 text-lg text-gray-700 font-normal leading-normal sm:text-center">A lot of interesting, useful, and important stuff are <br className="hidden sm:inline md:hidden" />out there on the internet. <br className="hidden md:inline" />Brace.to helps you save them so that you will never miss anything.</p>
           <div className="mt-10">
             <ul className="md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
               <li>
@@ -96,7 +96,7 @@ class Landing extends React.PureComponent {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-2xl text-gray-900 font-medium leading-tight">Long useful articles</h3>
-                    <p className="mt-1.5 text-lg text-gray-700 text-justify">You found an interesting, long, useful article you can't read it right now? Not a problem. Just save to Brace.to to read it later.</p>
+                    <p className="mt-1.5 text-lg text-gray-700">You found an interesting, long, useful article you can't read it right now? Not a problem. Just save to Brace.to to read it later.</p>
                   </div>
                 </div>
               </li>
@@ -113,7 +113,7 @@ class Landing extends React.PureComponent {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-2xl text-gray-900 font-medium leading-tight">Interesting websites</h3>
-                    <p className="mt-1.5 text-lg text-gray-700 text-justify">You found an interesting websites you want to check it out later? Not a problem. Just save to Brace.to to visit them later.</p>
+                    <p className="mt-1.5 text-lg text-gray-700">You found an interesting websites you want to check it out later? Not a problem. Just save to Brace.to to visit them later.</p>
                   </div>
                 </div>
               </li>
@@ -128,7 +128,7 @@ class Landing extends React.PureComponent {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-2xl text-gray-900 font-medium leading-tight">Items on online shops</h3>
-                    <p className="mt-1.5 text-lg text-gray-700 text-justify">You found an item on online shop you don’t want them now but might want to buy them later? Not a problem. Just save to Brace.to.</p>
+                    <p className="mt-1.5 text-lg text-gray-700">You found an item on online shop you don’t want them now but might want to buy them later? Not a problem. Just save to Brace.to.</p>
                   </div>
                 </div>
               </li>
@@ -143,7 +143,7 @@ class Landing extends React.PureComponent {
                   </div>
                   <div className="ml-4">
                     <h3 className="text-2xl text-gray-900 font-medium leading-tight">Videos and music</h3>
-                    <p className="mt-1.5 text-lg text-gray-700 text-justify">Your friend’s just shared a video with you but you want to watch it tonight? Not a problem. Just save to Brace.to to watch it whenever you want.</p>
+                    <p className="mt-1.5 text-lg text-gray-700">Your friend’s just shared a video with you but you want to watch it tonight? Not a problem. Just save to Brace.to to watch it whenever you want.</p>
                   </div>
                 </div>
               </li>
@@ -158,7 +158,7 @@ class Landing extends React.PureComponent {
                   <path d="M0 11C0 4.92486 4.92486 0 11 0H44C50.0753 0 55 4.92486 55 11V88L27.5 74.25L0 88V11Z" />
                 </svg>
               </div>
-              <h2 className="pt-28 px-4 text-lg text-gray-300 font-normal text-justify md:px-6 lg:px-8">There are several ways to save a link for your convenience. <br className="hidden sm:inline" />Just one or two clicks away to save any links on your any devices.</h2>
+              <h2 className="pt-28 px-4 text-lg text-gray-300 font-normal md:px-6 lg:px-8">There are several ways to save a link for your convenience. <br className="hidden sm:inline" />Just one or two clicks away to save any links on your any devices.</h2>
               <div className="pt-16 px-4 md:px-6 md:flex lg:px-8">
                 <div className="md:flex-shrink-0">
                   <div className="flex items-center justify-center w-14 h-14 bg-gray-500 rounded-full">
@@ -174,7 +174,7 @@ class Landing extends React.PureComponent {
                 <div className="md:flex-grow md:flex md:items-start">
                   <div className="md:ml-4 md:w-1/2">
                     <h3 className="mt-3 text-2xl-extra text-white font-semibold leading-none md:mt-0 lg:text-3xl">Save at Brace.to</h3>
-                    <p className="mt-2 text-base text-gray-400 font-normal text-justify leading-normal md:pr-8 lg:text-lg">Click the black button with a plus sign <br className="hidden lg:inline" />at our website.</p>
+                    <p className="mt-2 text-base text-gray-400 font-normal leading-normal md:pr-8 lg:text-lg">Click the black button with a plus sign at our website.</p>
                   </div>
                   <img className="mt-4 mx-auto w-full max-w-md md:mt-0 md:mr-0 md:w-1/2" src={saveLinkAtTheSite} alt="Save link at brace.to" />
                 </div>
@@ -190,7 +190,7 @@ class Landing extends React.PureComponent {
                 <div className="md:flex-grow md:flex md:items-start">
                   <div className="md:ml-4 md:w-1/2">
                     <h3 className="mt-3 text-2xl-extra text-white font-semibold leading-none md:mt-0 lg:text-3xl">Save in Address Bar</h3>
-                    <p className="mt-2 text-base text-gray-400 font-normal text-justify leading-normal md:pr-8 lg:text-lg">Type ‘brace.to’ and ‘/’ in front of any link in web browser address bar.</p>
+                    <p className="mt-2 text-base text-gray-400 font-normal leading-normal md:pr-8 lg:text-lg">Type ‘brace.to’ and ‘/’ in front of any link in web browser address bar.</p>
                   </div>
                   <img className="mt-4 mx-auto w-full max-w-md md:mt-0 md:mr-0 md:w-1/2" src={saveLinkInUrlBar} alt="Save link in address bar" />
                 </div>
@@ -206,7 +206,7 @@ class Landing extends React.PureComponent {
                 <div className="md:flex-grow md:flex md:items-center lg:items-start">
                   <div className="md:ml-4 md:w-1/2">
                     <h3 className="mt-3 text-2xl-extra text-white font-semibold leading-none md:mt-0 lg:text-3xl">Save with our Extension</h3>
-                    <p className="mt-2 text-base text-gray-400 font-normal text-justify leading-normal md:pr-8 lg:text-lg">Install our Chrome or Firefox web browser extension and just click on our extension icon next to the address bar.</p>
+                    <p className="mt-2 text-base text-gray-400 font-normal leading-normal md:pr-8 lg:text-lg">Install our Chrome or Firefox web browser extension and just click on our extension icon next to the address bar.</p>
                     <a className="focus:outline-none-outer" href="https://chrome.google.com/webstore/detail/brace/hennjddhjodlmdnopaggbjjkpokpbdnn">
                       <img className="mt-4 h-16 focus:shadow-outline-inner" src={availableInChromeWebStore} alt="Available in Chrome Web Store" />
                     </a>
@@ -230,7 +230,7 @@ class Landing extends React.PureComponent {
                 <div className="md:flex-grow md:flex md:items-start">
                   <div className="px-4 md:ml-4 md:px-0 md:w-1/2">
                     <h3 className="mt-3 text-2xl-extra text-white font-semibold leading-none md:mt-0 lg:text-3xl">Save via our Mobile App</h3>
-                    <p className="mt-2 text-base text-gray-400 font-normal text-justify leading-normal md:pr-8 lg:text-lg">Install our Android or iOS app on your phone and just share a link with our app.</p>
+                    <p className="mt-2 text-base text-gray-400 font-normal leading-normal md:pr-8 lg:text-lg">Install our Android or iOS app on your phone and just share a link with our app.</p>
                     <a className="focus:outline-none-outer" href="https://play.google.com/store/apps/details?id=com.bracedotto">
                       <img className="mx-auto mt-4 available-on-size rounded-lg focus:shadow-outline-inner md:mx-0" src={availableOnPlayStore} alt="Available on Google Play" />
                     </a>
@@ -250,7 +250,7 @@ class Landing extends React.PureComponent {
                   <path fillRule="evenodd" clipRule="evenodd" d="M35.121 20.121a3 3 0 00-4.242-4.242L21 25.757l-3.879-3.878a3 3 0 10-4.242 4.242l6 6a3 3 0 004.242 0l12-12z" fill="#22543D" />
                 </svg>
                 <h3 className="mt-3 text-2xl-extra text-white font-semibold leading-none md:text-center lg:text-3xl">Visit anytime <br className="inline sm:hidden" />on your any devices</h3>
-                <p className="mt-2 text-base text-gray-400 font-normal text-justify leading-normal md:text-center">Every link you saved will be beautified with its representative image and title <br className="hidden md:inline" />so that you can easily find them and recognize them.</p>
+                <p className="mt-2 text-base text-gray-400 font-normal leading-normal md:text-center lg:text-lg">Every link you saved will be beautified with its representative image and title <br className="hidden md:inline" />so that you can easily find them and recognize them.</p>
                 <div className="mt-3 relative howitwork-gray-pb">
                   <img className="pt-2 absolute left-1/2 transform -translate-x-1/2 w-full max-w-lg md:max-w-lg lg:max-w-xl" src={visitAnywhere} srcSet={`${visitAnywhere} 1x, ${visitAnywhere2x} 2x, ${visitAnywhere3x} 3x, ${visitAnywhere4x} 4x`} alt="Visit anywhere, anytime" />
                 </div>
@@ -280,7 +280,7 @@ class Landing extends React.PureComponent {
                   <path d="M60 45.1691V51.411L54.4516 54.4453M60 45.1691L54.4516 48.29M60 45.1691L54.4516 42.0481L48.9032 45.1691M54.4516 54.4453L48.9032 51.411V45.1691M54.4516 54.4453V48.29M48.9032 45.1691L54.4516 48.29" stroke="white" strokeWidth="2.01924" />
                 </svg>
                 <h3 className="mt-4 text-2xl text-gray-800 font-semibold leading-none">User-owned Identity</h3>
-                <p className="mt-3 text-lg text-gray-700 font-normal text-justify leading-normal">Your identity <span className="font-semibold">cannot</span> be locked, banned, or deleted by Brace.to or anyone. Your identity lives in blockchain. Only you with your password can access it and control it.</p>
+                <p className="mt-3 text-lg text-gray-700 font-normal leading-normal">Your identity <span className="font-semibold">cannot</span> be locked, banned, or deleted by Brace.to or anyone. Your identity lives in blockchain. Only you with your password can access it and control it.</p>
               </div>
             </div>
             <div className="w-full md:w-1/2">
@@ -289,7 +289,7 @@ class Landing extends React.PureComponent {
                   <path d="M36 19.6364C26.9771 19.6364 19.6364 26.9771 19.6364 36C19.6364 45.0229 26.9771 52.3636 36 52.3636C45.0229 52.3636 52.3636 45.0229 52.3636 36C52.3636 26.9771 45.0229 19.6364 36 19.6364ZM44.6924 26.1785C45.0884 26.532 45.468 26.9084 45.8182 27.3044L43.9135 29.2124L43.3702 28.6298L42.7844 28.0865L44.6924 26.1785ZM40.3527 23.6258C40.8567 23.8025 41.3509 24.0087 41.8222 24.2444L40.7684 26.7316L39.9175 26.3389L39.3055 26.1131L40.3527 23.6258ZM35.2047 22.9091H36.7953V25.6058L36 25.5764L35.2047 25.6058V22.9091ZM31.7258 23.5931L32.7567 26.0869L32.0793 26.3356L31.2873 26.6956L30.2596 24.2018C30.7309 23.9727 31.2251 23.7698 31.7258 23.5931ZM24.2444 30.1778L26.7316 31.2251L26.3422 32.076L26.1131 32.6913L23.6258 31.644C23.8025 31.1367 24.0087 30.6491 24.2444 30.1778ZM22.9091 35.1982H25.6058L25.5764 35.9935L25.6058 36.7887H22.9091V35.1982ZM24.2051 41.7338C23.976 41.2593 23.7698 40.7684 23.5931 40.2611L26.0902 39.2302L26.3389 39.9109L26.6956 40.6964L24.2051 41.7338ZM27.0818 46.0342L25.956 44.9116L28.0833 42.7778L28.6265 43.3604L29.2124 43.9036L27.0818 46.0342ZM28.6298 28.6298L28.0865 29.2124L26.1818 27.3044C26.532 26.9084 26.9116 26.532 27.3076 26.1785L29.2156 28.0865L28.6298 28.6298ZM31.6473 48.3742C31.1433 48.1975 30.6491 47.9913 30.1778 47.7556L31.2316 45.2684L32.0825 45.6611L32.6978 45.8902L31.6473 48.3742ZM36.7953 49.0909H35.2047V46.3909L36 46.4204L36.7953 46.3909V49.0909ZM40.2709 48.4036L39.2433 45.9065L39.9207 45.6578L40.7127 45.2978L41.7404 47.7916C41.2691 48.024 40.7749 48.2302 40.2709 48.4036ZM36 42.5455C32.3836 42.5455 29.4545 39.6164 29.4545 36C29.4545 34.668 29.8505 33.4342 30.5313 32.4L32.9007 34.7695L34.6091 33.0611L32.2167 30.6622C33.2836 29.9029 34.5862 29.4545 36 29.4545C39.6164 29.4545 42.5455 32.3869 42.5455 36C42.5455 39.6131 39.6164 42.5455 36 42.5455ZM44.6924 45.8084L42.7844 43.9004L43.3702 43.3571L43.9135 42.7745L45.8182 44.6825C45.468 45.0818 45.0884 45.4582 44.6924 45.8084ZM47.7556 41.8124L45.2684 40.7618L45.6578 39.9142L45.8869 39.2956L48.3742 40.3462C48.1975 40.8469 47.9913 41.3411 47.7556 41.8124ZM49.0909 36.7887H46.3942L46.4236 35.9935L46.3942 35.1982H49.0909V36.7887ZM48.4036 31.7225L45.9065 32.7535L45.6578 32.0727L45.3011 31.2807L47.7949 30.2531C48.024 30.7276 48.2269 31.2218 48.4036 31.7225ZM49.0909 72H65.4545V78.5455H49.0909V72ZM6.54545 72H22.9091V78.5455H6.54545V72ZM0 0V68.7273H72V0H0ZM36 55.6364C25.1476 55.6364 16.3636 46.8524 16.3636 36C16.3636 25.1444 25.1476 16.3636 36 16.3636C46.8524 16.3636 55.6364 25.1476 55.6364 36C55.6364 46.8524 46.8524 55.6364 36 55.6364Z" />
                 </svg>
                 <h3 className="mt-4 text-2xl text-gray-800 font-semibold leading-none">True data ownership</h3>
-                <p className="mt-3 text-lg text-gray-700 font-normal text-justify leading-normal">All your saved links are <span className="font-semibold">encrypted</span> at your device before uploading to the server. Only you with your password can decrypt them and see the content of your encrypted links.</p>
+                <p className="mt-3 text-lg text-gray-700 font-normal leading-normal">All your saved links are <span className="font-semibold">encrypted</span> at your device before uploading to the server. Only you with your password can decrypt them and see the content of your encrypted links.</p>
               </div>
             </div>
           </div>
@@ -323,7 +323,7 @@ class Landing extends React.PureComponent {
               <svg className="absolute top-0 left-0 transform -translate-x-8 -translate-y-24 h-36 w-36 text-indigo-200 opacity-50" stroke="currentColor" fill="none" viewBox="0 0 144 144">
                 <path strokeWidth="2" d="M41.485 15C17.753 31.753 1 59.208 1 89.455c0 24.664 14.891 39.09 32.109 39.09 16.287 0 28.386-13.03 28.386-28.387 0-15.356-10.703-26.524-24.663-26.524-2.792 0-6.515.465-7.446.93 2.327-15.821 17.218-34.435 32.11-43.742L41.485 15zm80.04 0c-23.268 16.753-40.02 44.208-40.02 74.455 0 24.664 14.891 39.09 32.109 39.09 15.822 0 28.386-13.03 28.386-28.387 0-15.356-11.168-26.524-25.129-26.524-2.792 0-6.049.465-6.98.93 2.327-15.821 16.753-34.435 31.644-43.742L121.525 15z" />
               </svg>
-              <p className="text-2xl text-gray-900 font-normal text-justify md:text-left">Bring back control of your identity and your data one link at a time with Brace.to, powered by web 3.0 technology from Blockstack to make sure that
+              <p className="text-2xl text-gray-900 font-normal">Bring back control of your identity and your data one link at a time with Brace.to, powered by web 3.0 technology from Blockstack to make sure that
 your privacy cannot be compromised.</p>
             </div>
           </div>
