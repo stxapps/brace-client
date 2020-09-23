@@ -75,4 +75,7 @@
   "min-h-14": {
     "minHeight": 56
   },
+  "mt-1.5": {
+    "marginTop": 6
+  },
 }

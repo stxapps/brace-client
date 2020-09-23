@@ -24,4 +24,8 @@ module.exports = {
   },
   plugins: [],
   purge: false,
+  future: {
+    removeDeprecatedGapUtilities: true,
+    purgeLayersByDefault: true,
+  },
 }
