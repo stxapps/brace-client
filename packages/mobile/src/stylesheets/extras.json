@@ -19,7 +19,7 @@
     "shadowOpacity": 1,
     "shadowRadius": 1,
 
-    "elevation": 2
+    "elevation": 1.2
   },
   "shadow": {
     "shadowColor": "rgba(0, 0, 0, 0.1)",
@@ -30,7 +30,7 @@
     "shadowOpacity": 2,
     "shadowRadius": 2,
 
-    "elevation": 3
+    "elevation": 2.5
   },
   "shadow-lg": {
     "shadowColor": "rgba(0, 0, 0, 0.2)",
@@ -41,7 +41,7 @@
     "shadowOpacity": 3,
     "shadowRadius": 8,
 
-    "elevation": 5,
+    "elevation": 7
   },
   "shadow-xl": {
     "shadowColor": "rgba(0, 0, 0, 0.2)",
@@ -52,7 +52,7 @@
     "shadowOpacity": 3,
     "shadowRadius": 10,
 
-    "elevation": 6
+    "elevation": 12
   },
   "shadow-inner": {
     "shadowColor": "rgba(0, 0, 0, 0.06)",
