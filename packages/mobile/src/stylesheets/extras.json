@@ -1,4 +1,7 @@
 {
+  "elevation-xs": {
+    "elevation": 1
+  },
   "shadow-xs": {
     "shadowColor": "rgba(0, 0, 0, 0.05)",
     "shadowOffset": {
