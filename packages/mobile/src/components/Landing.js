@@ -22,12 +22,16 @@ import logoFullWhite from '../images/logo-full-white.svg';
 
 class Landing extends React.PureComponent {
 
-  renderSwiper(swiperHeight, windowWidth) {
+  renderSwiper(swiperHeight) {
+    const { windowWidth, windowHeight } = this.props;
 
     let saveLinksSvgWidth = 240;
     if (windowWidth >= SM_WIDTH) saveLinksSvgWidth = 288;
-    if (windowWidth >= MD_WIDTH) saveLinksSvgWidth = 432;
-    if (windowWidth >= LG_WIDTH) saveLinksSvgWidth = 384;
+    // iPhone 11 Pro Max landscape is wider than MD (414x896)
+    if (windowHeight >= 640) {
+      if (windowWidth >= MD_WIDTH) saveLinksSvgWidth = 432;
+      if (windowWidth >= LG_WIDTH) saveLinksSvgWidth = 384;
+    }
 
     const saveLinksSvgHeight = saveLinksSvgWidth * 270 / 232;
     const borderRadius = {
@@ -176,7 +180,7 @@ class Landing extends React.PureComponent {
   }
 
   render() {
-    const { windowWidth, windowHeight } = this.props;
+    const { windowHeight } = this.props;
 
     // Dangerous assumption that TopBar's height is 56-58 and the last view's height is 80.
     // if windowHeight < ~56 + ~576 + ~80, fix height on Swiper and use ScrollView
@@ -187,7 +191,7 @@ class Landing extends React.PureComponent {
       return (
         <ScrollView>
           <TopBar rightPane={SHOW_SIGN_IN} />
-          {this.renderSwiper(SWIPER_HEIGHT, windowWidth)}
+          {this.renderSwiper(SWIPER_HEIGHT)}
           {this.renderSignUp()}
         </ScrollView>
       );
@@ -196,7 +200,7 @@ class Landing extends React.PureComponent {
         <React.Fragment>
           <TopBar rightPane={SHOW_SIGN_IN} />
           <View style={tailwind('flex-grow')}>
-            {this.renderSwiper(undefined, windowWidth)}
+            {this.renderSwiper(undefined)}
           </View>
           {this.renderSignUp()}
         </React.Fragment>
@@ -206,7 +210,7 @@ class Landing extends React.PureComponent {
         <React.Fragment>
           <TopBar rightPane={SHOW_SIGN_IN} />
           <View style={tailwind('flex-1 justify-center')}>
-            {this.renderSwiper(SWIPER_HEIGHT, windowWidth)}
+            {this.renderSwiper(SWIPER_HEIGHT)}
             {this.renderSignUp()}
           </View>
         </React.Fragment>
