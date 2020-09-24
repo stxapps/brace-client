@@ -53,7 +53,11 @@ const Root = () => {
 export const ShareRoot = () => {
   return (
     <Provider store={store}>
-      <Share />
+      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
+          <Share />
+        </SafeAreaView>
+      </SafeAreaProvider>
     </Provider>
   );
 };
