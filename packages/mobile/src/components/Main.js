@@ -168,7 +168,7 @@ class Main extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: triggerOffsets, popupStyle: tailwind('py-2 min-w-32 border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onListNameBtnClick} onClose={this.onListNameCancelBtnClick}>
+        <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: triggerOffsets, popupStyle: tailwind('py-2 min-w-32 bg-white border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onListNameBtnClick} onClose={this.onListNameCancelBtnClick}>
           <MenuTrigger>
             {/* Change the paddings here, need to change triggerOffsets too */}
             <View style={tailwind('px-4 pt-4 pb-6 flex-row items-center w-full md:px-6 md:pt-6 md:pb-10 lg:px-8', windowWidth)}>

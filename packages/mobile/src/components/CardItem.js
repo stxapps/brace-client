@@ -239,7 +239,7 @@ class CardItem extends React.Component {
 
     if (image) {
       return (
-        <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={{ uri: image }} />
+        <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full aspect-7/12 bg-white rounded-t-lg shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={{ uri: image }} />
       );
     }
 
@@ -259,7 +259,7 @@ class CardItem extends React.Component {
     if (decor.image.bg.type === COLOR) {
       return (
         <React.Fragment>
-          <View style={tailwind(`items-center justify-center w-full aspect-7/12 rounded-t-lg shadow-xs ${decor.image.bg.value}`)}>
+          <View style={tailwind(`items-center justify-center w-full aspect-7/12 ${decor.image.bg.value} rounded-t-lg shadow-xs`)}>
             {fg}
           </View>
         </React.Fragment>
@@ -269,8 +269,8 @@ class CardItem extends React.Component {
     // Only pattern background or pattern background with a big letter
     if (decor.image.bg.type === PATTERN) {
       return (
-        <View style={tailwind('items-center justify-center w-full aspect-7/12 shadow-xs')}>
-          <GracefulImage key="image-graceful-image-pattern" style={tailwind('absolute inset-0')} contentStyle={tailwind('rounded-t-lg')} source={PATTERN_MAP[decor.image.bg.value]} />
+        <View style={tailwind('items-center justify-center w-full aspect-7/12 bg-white rounded-t-lg shadow-xs')}>
+          <GracefulImage key="image-graceful-image-pattern" style={tailwind('absolute inset-0 bg-white rounded-t-lg')} contentStyle={tailwind('rounded-t-lg')} source={PATTERN_MAP[decor.image.bg.value]} />
           {fg}
         </View>
       );
@@ -279,7 +279,7 @@ class CardItem extends React.Component {
     // Random image
     if (decor.image.bg.type === IMAGE) {
       return (
-        <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={{ uri: prependDomainName(decor.image.bg.value) }} />
+        <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full aspect-7/12 bg-white rounded-t-lg shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={{ uri: prependDomainName(decor.image.bg.value) }} />
       );
     }
 
@@ -351,7 +351,7 @@ class CardItem extends React.Component {
               </View>
             </View>
             {/* value of triggerOffsets needs to be aligned with paddings of the three dots */}
-            <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 }, popupStyle: tailwind('py-2 min-w-32 border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
+            <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 }, popupStyle: tailwind('py-2 min-w-32 bg-white border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
               <MenuTrigger>
                 {/* View with paddingBottom is required because there is this space on the web. */}
                 <View style={{ paddingBottom: 6 }}>
