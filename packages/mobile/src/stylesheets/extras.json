@@ -1,56 +1,56 @@
 {
   "shadow-xs": {
-    "shadowColor": "#000",
+    "shadowColor": "rgba(0, 0, 0, 0.05)",
     "shadowOffset": {
       "width": 0,
       "height": 1,
     },
-    "shadowOpacity": 0.18,
-    "shadowRadius": 1.00,
+    "shadowOpacity": 0.5,
+    "shadowRadius": 0,
 
     "elevation": 1
   },
   "shadow-sm": {
-    "shadowColor": "#000",
+    "shadowColor": "rgba(0, 0, 0, 0.05)",
     "shadowOffset": {
       "width": 0,
       "height": 1,
     },
-    "shadowOpacity": 0.20,
-    "shadowRadius": 1.41,
+    "shadowOpacity": 1,
+    "shadowRadius": 1,
 
     "elevation": 2
   },
   "shadow": {
-    "shadowColor": "#000",
+    "shadowColor": "rgba(0, 0, 0, 0.1)",
     "shadowOffset": {
       "width": 0,
       "height": 1,
     },
-    "shadowOpacity": 0.22,
-    "shadowRadius": 2.22,
+    "shadowOpacity": 2,
+    "shadowRadius": 2,
 
     "elevation": 3
   },
   "shadow-lg": {
-    "shadowColor": "#000",
+    "shadowColor": "rgba(0, 0, 0, 0.2)",
     "shadowOffset": {
       "width": 0,
       "height": 2,
     },
-    "shadowOpacity": 0.25,
-    "shadowRadius": 3.84,
+    "shadowOpacity": 3,
+    "shadowRadius": 8,
 
     "elevation": 5,
   },
   "shadow-xl": {
-    "shadowColor": "#000",
+    "shadowColor": "rgba(0, 0, 0, 0.2)",
     "shadowOffset": {
       "width": 0,
-      "height": 3,
+      "height": 4,
     },
-    "shadowOpacity": 0.27,
-    "shadowRadius": 4.65,
+    "shadowOpacity": 3,
+    "shadowRadius": 10,
 
     "elevation": 6
   },
@@ -77,5 +77,5 @@
   },
   "mt-1.5": {
     "marginTop": 6
-  },
+  }
 }

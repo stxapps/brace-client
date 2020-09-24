@@ -13,7 +13,7 @@ class GracefulImage extends React.PureComponent {
   }
 
   render() {
-    const { source, style, placeholderColor, customPlaceholder, onError, ...nativeImageProps } = this.props;
+    const { source, style, contentStyle, placeholderColor, customPlaceholder, onError, ...nativeImageProps } = this.props;
     const { loaded } = this.state;
 
     const viewStyle = [style];
@@ -26,9 +26,9 @@ class GracefulImage extends React.PureComponent {
       overflow: 'hidden',
     });
 
-    let imageStyle;
-    if (loaded) imageStyle = { width: '100%', height: '100%' };
-    else imageStyle = { width: 100, height: 100 };
+    const imageStyle = [contentStyle];
+    if (loaded) imageStyle.push({ width: '100%', height: '100%' });
+    else imageStyle.push({ width: 100, height: 100 });
 
     let placeHolder;
     if (!loaded) {
@@ -53,6 +53,7 @@ class GracefulImage extends React.PureComponent {
 
 GracefulImage.defaultProps = {
   style: {},
+  contentStyle: {},
   placeholderColor: '#eee',
   customPlaceholder: null,
   onError: () => { },

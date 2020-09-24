@@ -239,7 +239,7 @@ class CardItem extends React.Component {
 
     if (image) {
       return (
-        <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full aspect-7/12 rounded-t-lg overflow-hidden')} source={{ uri: image }} />
+        <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={{ uri: image }} />
       );
     }
 
@@ -259,7 +259,7 @@ class CardItem extends React.Component {
     if (decor.image.bg.type === COLOR) {
       return (
         <React.Fragment>
-          <View style={tailwind(`items-center justify-center w-full aspect-7/12 rounded-t-lg overflow-hidden ${decor.image.bg.value}`)}>
+          <View style={tailwind(`items-center justify-center w-full aspect-7/12 rounded-t-lg shadow-xs ${decor.image.bg.value}`)}>
             {fg}
           </View>
         </React.Fragment>
@@ -269,8 +269,8 @@ class CardItem extends React.Component {
     // Only pattern background or pattern background with a big letter
     if (decor.image.bg.type === PATTERN) {
       return (
-        <View style={tailwind('items-center justify-center w-full aspect-7/12 rounded-t-lg overflow-hidden')}>
-          <GracefulImage key="image-graceful-image-pattern" style={tailwind('absolute inset-0')} source={PATTERN_MAP[decor.image.bg.value]} />
+        <View style={tailwind('items-center justify-center w-full aspect-7/12 shadow-xs')}>
+          <GracefulImage key="image-graceful-image-pattern" style={tailwind('absolute inset-0')} contentStyle={tailwind('rounded-t-lg')} source={PATTERN_MAP[decor.image.bg.value]} />
           {fg}
         </View>
       );
@@ -279,7 +279,7 @@ class CardItem extends React.Component {
     // Random image
     if (decor.image.bg.type === IMAGE) {
       return (
-        <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full aspect-7/12 rounded-t-lg overflow-hidden')} source={{ uri: prependDomainName(decor.image.bg.value) }} />
+        <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={{ uri: prependDomainName(decor.image.bg.value) }} />
       );
     }
 
@@ -339,7 +339,7 @@ class CardItem extends React.Component {
 
     return (
       <View style={style}>
-        <View style={tailwind(`self-center bg-white rounded-lg shadow-sm ${viewStyle}`)}>
+        <View style={tailwind(`self-center bg-white rounded-lg shadow ${viewStyle}`)}>
           {this.renderImage()}
           <View style={tailwind('flex-row justify-between items-center w-full')}>
             <View style={tailwind('pl-4 flex-shrink flex-grow flex-row items-center lg:pl-5', windowWidth)}>
