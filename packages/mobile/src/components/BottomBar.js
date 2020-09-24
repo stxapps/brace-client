@@ -197,11 +197,11 @@ class BottomBar extends React.PureComponent {
 
   renderAddPopup() {
 
-    const { isAddPopupShown, windowWidth, windowHeight } = this.props;
+    const { isAddPopupShown, deviceWidth, deviceHeight } = this.props;
     const { url, msg, isAskingConfirm } = this.state;
 
     return (
-      <Modal isVisible={isAddPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={() => setTimeout(() => this.addInput.current.focus(), 1)} onModalWillHide={() => this.addInput.current.blur()} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true} avoidKeyboard={Platform.OS === 'ios' ? true : false}>
+      <Modal isVisible={isAddPopupShown} deviceWidth={deviceWidth} deviceHeight={deviceHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={() => setTimeout(() => this.addInput.current.focus(), 1)} onModalWillHide={() => this.addInput.current.blur()} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true} avoidKeyboard={Platform.OS === 'ios' ? true : false}>
         <View style={tailwind('px-4 pt-6 pb-6 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
           {/* onKeyPress event for Enter key only if there is multiline TextInput */}
           <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('px-4 py-2 w-full bg-white text-gray-900 border border-gray-600 rounded-full')} placeholder="https://" value={url} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
@@ -263,10 +263,10 @@ class BottomBar extends React.PureComponent {
 
   renderProfilePopup() {
 
-    const { isProfilePopupShown, windowWidth, windowHeight } = this.props;
+    const { isProfilePopupShown, deviceWidth, deviceHeight } = this.props;
 
     return (
-      <Modal isVisible={isProfilePopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onProfileCancelBtnClick} onBackButtonPress={this.onProfileCancelBtnClick} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="slideInUp" animationInTiming={200} animationOut="slideOutDown" animationOutTiming={200} useNativeDriver={true}>
+      <Modal isVisible={isProfilePopupShown} deviceWidth={deviceWidth} deviceHeight={deviceHeight} onBackdropPress={this.onProfileCancelBtnClick} onBackButtonPress={this.onProfileCancelBtnClick} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="slideInUp" animationInTiming={200} animationOut="slideOutDown" animationOutTiming={200} useNativeDriver={true}>
         <View style={tailwind('py-4 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
           <TouchableOpacity onPress={() => Linking.openURL(DOMAIN_NAME + '/#support')} style={tailwind('py-4 pl-4 w-full')}>
             <Text style={tailwind('text-gray-800')}>Support</Text>

@@ -84,10 +84,14 @@ const withSafeAreaSize = (Component) => {
 
       const props = { insets, ...rest };
       if (windowWidth) {
+        props['deviceWidth'] = windowWidth;
+
         const safeAreaWidth = windowWidth - insets.left - insets.right;
         props['windowWidth'] = safeAreaWidth;
       }
       if (windowHeight) {
+        props['deviceHeight'] = windowHeight;
+
         const safeAreaHeight = windowHeight - insets.top - insets.bottom;
         props['windowHeight'] = safeAreaHeight;
       }
