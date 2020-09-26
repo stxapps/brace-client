@@ -46,7 +46,7 @@ class BottomBar extends React.PureComponent {
     }
 
     this.bottomBarTranslateY = new Animated.Value(0);
-    this.searchPopupBottom = new Animated.Value(toPx(BAR_HEIGHT));
+    this.searchPopupTranslateY = new Animated.Value(toPx(SEARCH_POPUP_HEIGHT));
 
     this.searchPopupBackHandler = null;
   }
@@ -62,12 +62,13 @@ class BottomBar extends React.PureComponent {
 
   componentDidUpdate(prevProps, prevState) {
 
-    const duration = this.props.isShown ? 0 : BOTTOM_BAR_DURATION;
+    const { isShown, isSearchPopupShown, insets } = this.props;
+    const duration = isShown ? 0 : BOTTOM_BAR_DURATION;
 
-    if (prevProps.isShown != this.props.isShown) {
+    if (prevProps.isShown != isShown) {
 
-      const totalHeight = toPx(BAR_HEIGHT) + this.props.insets.bottom;
-      const toValue = this.props.isShown ? 0 : totalHeight;
+      const totalHeight = toPx(BAR_HEIGHT) + insets.bottom;
+      const toValue = isShown ? 0 : totalHeight;
 
       Animated.timing(this.bottomBarTranslateY, {
         toValue: toValue,
@@ -76,15 +77,31 @@ class BottomBar extends React.PureComponent {
       }).start();
     }
 
-    if (prevProps.isShown != this.props.isShown || prevState.isKeyboardShown !== this.state.isKeyboardShown) {
+    if (
+      prevProps.isShown !== isShown ||
+      prevProps.isSearchPopupShown !== isSearchPopupShown ||
+      prevState.isKeyboardShown !== this.state.isKeyboardShown
+    ) {
 
-      const bottom = this.props.isShown ? toPx(BAR_HEIGHT) : 0 - this.props.insets.bottom;
-      const toValue = this.state.isKeyboardShown ? 0 : bottom;
+      if (!isShown && isSearchPopupShown) throw new Error(`Illegal isShown: ${isShown} and isSearchPopupShown: ${isSearchPopupShown}`);
 
-      Animated.timing(this.searchPopupBottom, {
+      let toValue;
+      if (!isShown) {
+        toValue = toPx(BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT) + insets.bottom;
+      } else {
+        if (!isSearchPopupShown) toValue = toPx(SEARCH_POPUP_HEIGHT);
+        else {
+          // isKeyboardShown will be true only on iOS
+          //   as the keyboard events: willShow and willHide are only supported in iOS.
+          if (!this.state.isKeyboardShown) toValue = 0;
+          else toValue = toPx(BAR_HEIGHT);
+        }
+      }
+
+      Animated.timing(this.searchPopupTranslateY, {
         toValue: toValue,
         duration: duration,
-        useNativeDriver: false,
+        useNativeDriver: true,
       }).start();
     }
   }
@@ -221,15 +238,16 @@ class BottomBar extends React.PureComponent {
 
   renderSearchPopup() {
 
-    const { isSearchPopupShown, searchString } = this.props;
+    const { searchString } = this.props;
 
     // Only transition when moving with BottomBar
     //   but when show/hide this search popup, no need animation
     //   as keyboard is already animated.
     const style = {
-      bottom: this.searchPopupBottom,
+      transform: [{ translateY: this.searchPopupTranslateY }],
     };
-    if (!isSearchPopupShown) style.transform = [{ translateY: toPx(SEARCH_POPUP_HEIGHT) }];
+    style.bottom = toPx(BAR_HEIGHT);
+    if (Platform.OS !== 'ios') style.bottom += this.props.insets.bottom;
 
     const searchClearBtnClasses = searchString.length === 0 ? 'hidden relative' : 'flex absolute';
 
