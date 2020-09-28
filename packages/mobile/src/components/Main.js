@@ -1,40 +1,34 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  ScrollView, FlatList, View, TouchableOpacity, LayoutAnimation,
+  FlatList, View, TouchableOpacity,
 } from 'react-native';
-import {
-  Menu, MenuOptions, MenuOption, MenuTrigger, withMenuContext,
-} from 'react-native-popup-menu';
 import Svg, { SvgXml, Path } from 'react-native-svg'
 import { Flow } from 'react-native-animated-spinkit'
-import Modal from 'react-native-modal';
 
 import {
-  fetch, fetchMore, changeListName,
-  updatePopup, deleteLinks,
+  fetch, fetchMore,
 } from '../actions';
 import {
-  LIST_NAME_POPUP, ADD_POPUP, CONFIRM_DELETE_POPUP,
+  ADD_POPUP,
   PC_100, PC_50, PC_33,
   MY_LIST, TRASH,
   SHOW_BLANK, SHOW_COMMANDS,
   BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
-  SM_WIDTH, MD_WIDTH, LG_WIDTH,
+  SM_WIDTH, LG_WIDTH,
 } from '../types/const';
-import { getListNames, getLinks } from '../selectors';
+import { getLinks } from '../selectors';
 import { toPx, multiplyPercent } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
-import { cardItemAnimConfig } from '../types/animConfigs';
 
 import { InterText as Text, withSafeAreaContext } from '.';
-import MenuPopupRenderer from './MenuPopupRenderer';
 
 import Loading from './Loading';
 import TopBar from './TopBar';
 import BottomBar from './BottomBar';
+import ListName from './ListName';
 import CardItem from './CardItem';
-import StatusPopup from './StatusPopup';
+import ConfirmDeletePopup from './ConfirmDeletePopup';
 
 import emptyBox from '../images/empty-box-sided.svg';
 import undrawLink from '../images/undraw-link.svg';
@@ -83,123 +77,13 @@ class Main extends React.PureComponent {
     this.props.fetchMore();
   };
 
-  onListNameBtnClick = () => {
-    this.props.updatePopup(LIST_NAME_POPUP, true);
-  };
-
-  onListNamePopupClick = (newListName) => {
-
-    this.props.changeListName(newListName, this.fetched);
-    this.fetched.push(newListName);
-
-    return true;
-  };
-
-  onListNameCancelBtnClick = () => {
-    this.props.updatePopup(LIST_NAME_POPUP, false);
-  };
-
   onAddBtnClick = () => {
-    if (this.props.isAddPopupShown) return;
-
     this.props.updatePopup(ADD_POPUP, true);
   }
 
   onFetchMoreBtnClick = () => {
     this.props.fetchMore();
   };
-
-  onConfirmDeleteOkBtnClick = () => {
-
-    const { windowWidth } = this.props;
-    const animConfig = cardItemAnimConfig(windowWidth);
-
-    LayoutAnimation.configureNext(animConfig);
-    this.props.deleteLinks([this.props.popupLink.id]);
-
-    this.props.ctx.menuActions.closeMenu();
-    this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
-    this.props.updatePopup(this.props.popupLink.id, false);
-  }
-
-  onConfirmDeleteCancelBtnClick = () => {
-    this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
-  };
-
-  renderConfirmDeletePopup() {
-
-    const { isConfirmDeletePopupShown, deviceWidth, deviceHeight } = this.props;
-
-    return (
-      <Modal isVisible={isConfirmDeletePopupShown} deviceWidth={deviceWidth} deviceHeight={deviceHeight} onBackdropPress={this.onConfirmDeleteCancelBtnClick} onBackButtonPress={this.onConfirmDeleteCancelBtnClick} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.1} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true}>
-        <View style={tailwind('p-4 self-center w-48 bg-white border border-gray-200 rounded-lg shadow-xl')}>
-          <Text style={tailwind('py-2 text-lg text-gray-900 text-center')}>Confirm delete?</Text>
-          <View style={tailwind('py-2 flex-row items-center justify-center')}>
-            <TouchableOpacity onPress={this.onConfirmDeleteOkBtnClick} style={tailwind('mr-2 py-2')}>
-              <View style={tailwind('px-3 py-1 bg-white border border-gray-900 rounded-full shadow-sm')}>
-                <Text style={tailwind('text-base text-gray-900 text-center')}>Yes</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this.onConfirmDeleteCancelBtnClick} style={tailwind('ml-2 py-2')}>
-              <View style={tailwind('px-3 py-1 bg-white border border-gray-900 rounded-full shadow-sm')}>
-                <Text style={tailwind('text-base text-gray-900 text-center')}>No</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    );
-  }
-
-  renderListName = () => {
-
-    const { listName, windowWidth, windowHeight } = this.props;
-
-    // value of triggerOffsets needs to be aligned with paddings of the MenuTrigger
-    const triggerOffsets = { x: 16, y: 16, width: 0, height: 0 };
-    if (windowWidth >= MD_WIDTH) {
-      triggerOffsets.x = 24;
-      triggerOffsets.y = 24;
-    }
-    if (windowWidth >= LG_WIDTH) {
-      triggerOffsets.x = 24;
-      triggerOffsets.y = 24;
-    }
-
-    return (
-      <React.Fragment>
-        <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: triggerOffsets, popupStyle: tailwind('py-2 min-w-32 bg-white border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onListNameBtnClick} onClose={this.onListNameCancelBtnClick}>
-          <MenuTrigger>
-            {/* Change the paddings here, need to change triggerOffsets too */}
-            <View style={tailwind('px-4 pt-4 pb-6 flex-row items-center w-full md:px-6 md:pt-6 md:pb-10 lg:px-8', windowWidth)}>
-              <Text style={tailwind('text-lg text-gray-900 font-semibold')}>{listName}</Text>
-              <Svg style={tailwind('ml-1 w-5 h-5 text-black')} viewBox="0 0 24 24" stroke="currentColor" fill="none">
-                <Path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </Svg>
-            </View>
-          </MenuTrigger>
-          <MenuOptions>
-            <ScrollView style={{ maxHeight: windowHeight }}>
-              {this.renderListNamePopup()}
-            </ScrollView>
-          </MenuOptions>
-        </Menu>
-        <StatusPopup />
-      </React.Fragment>
-    );
-  }
-
-  renderListNamePopup = () => {
-    return (
-      this.props.listNames.map(listName => {
-        return (
-          <MenuOption key={listName} onSelect={() => this.onListNamePopupClick(listName)} customStyles={{ optionWrapper: { padding: 0 } }}>
-            <Text style={tailwind('py-2 pl-4 pr-4 text-gray-800')}>{listName}</Text>
-          </MenuOption>
-        );
-      })
-    );
-  }
 
   renderEmpty = () => {
 
@@ -340,9 +224,9 @@ class Main extends React.PureComponent {
 
   renderMain = ({ item }) => {
 
-    const { isSearchPopupShown, isFetchingMore } = this.props;
+    const { isFetchingMore } = this.props;
 
-    if (item.id === MAIN_HEAD) return this.renderListName();
+    if (item.id === MAIN_HEAD) return <ListName fetched={this.fetched} />;
 
     if (item.id === MAIN_BODY) {
 
@@ -403,8 +287,7 @@ class Main extends React.PureComponent {
 
     if (item.id === MAIN_PADDING_BOTTOM) {
 
-      let pb = toPx(BAR_HEIGHT);
-      if (isSearchPopupShown) pb += toPx(SEARCH_POPUP_HEIGHT);
+      const pb = toPx(BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT);
 
       return (
         <View style={{ paddingBottom: pb }}></View>
@@ -416,7 +299,7 @@ class Main extends React.PureComponent {
 
   render() {
 
-    const { links, popupLink, hasMoreLinks, windowWidth } = this.props;
+    const { links, hasMoreLinks, windowWidth } = this.props;
     const columnWidth = this.getColumnWidth(windowWidth);
 
     if (links === null) {
@@ -443,8 +326,8 @@ class Main extends React.PureComponent {
           onEndReached={this.onEndReached}
           onEndReachedThreshold={0.9}
           removeClippedSubviews={false} />
-        {columnWidth === PC_100 && <BottomBar isShown={popupLink === null} />}
-        {this.renderConfirmDeletePopup()}
+        {columnWidth === PC_100 && <BottomBar />}
+        <ConfirmDeletePopup />
       </React.Fragment>
     );
   }
@@ -453,26 +336,19 @@ class Main extends React.PureComponent {
 const mapStateToProps = (state, props) => {
 
   const listName = state.display.listName;
-  const { links, popupLink } = getLinks(state);
 
   return {
     listName: listName,
-    listNames: getListNames(state),
-    links: links,
-    isAddPopupShown: state.display.isAddPopupShown,
-    isSearchPopupShown: state.display.isSearchPopupShown,
-    isConfirmDeletePopupShown: state.display.isConfirmDeletePopupShown,
-    popupLink: popupLink,
+    links: getLinks(state),
     hasMoreLinks: state.hasMoreLinks[listName],
     isFetchingMore: state.display.isFetchingMore,
     searchString: state.display.searchString,
     windowWidth: state.window.width,
-    windowHeight: state.window.height,
   };
 };
 
 const mapDispatchToProps = {
-  fetch, fetchMore, changeListName, updatePopup, deleteLinks,
+  fetch, fetchMore,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(withMenuContext(Main)));
+export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(Main));

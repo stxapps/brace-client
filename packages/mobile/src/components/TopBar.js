@@ -55,6 +55,7 @@ class TopBar extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
 
     if (
+      this.props.rightPane !== nextProps.rightPane ||
       this.props.username !== nextProps.username ||
       this.props.userImage !== nextProps.userImage ||
       this.props.searchString !== nextProps.searchString ||

@@ -1,37 +1,31 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  ScrollView, View, TouchableOpacity, Linking, LayoutAnimation,
+  View, TouchableOpacity, Linking,
 } from 'react-native';
-import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Svg, { Path } from 'react-native-svg'
-import Clipboard from '@react-native-community/clipboard'
 
 import {
-  updatePopup, retryDiedLinks, cancelDiedLinks,
-  moveLinks,
+  retryDiedLinks, cancelDiedLinks,
 } from '../actions';
 import {
   DOMAIN_NAME,
-  MY_LIST, TRASH,
   ADDING, MOVING,
-  OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
-  CARD_ITEM_POPUP_MENU, CONFIRM_DELETE_POPUP,
   COLOR, PATTERN, IMAGE,
   SM_WIDTH,
 } from '../types/const';
-import { getListNames } from '../selectors';
 import {
   ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
   isDiedStatus, extractUrl,
+  isEqual,
 } from '../utils';
 import { PATTERN_MAP } from '../types/patternPaths';
 import { tailwind } from '../stylesheets/tailwind';
-import { cardItemAnimConfig } from '../types/animConfigs';
 
 import { InterText as Text, withSafeAreaContext } from '.';
 import GracefulImage from './GracefulImage';
-import MenuPopupRenderer from './MenuPopupRenderer';
+
+import CardItemMenuPopup from './CardItemMenuPopup';
 
 const prependDomainName = (/** @type string */ value) => {
   if (value.startsWith('data:')) return value;
@@ -50,88 +44,16 @@ class CardItem extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (
-      this.props.link.extractedResult !== nextProps.link.extractedResult ||
+      !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
       this.props.link.status !== nextProps.link.status ||
-      this.props.style !== nextProps.style ||
+      !isEqual(this.props.style, nextProps.style) ||
       this.props.windowWidth !== nextProps.windowWidth ||
-      this.props.windowHeight !== nextProps.windowHeight ||
       this.state.extractedFaviconError !== nextState.extractedFaviconError
     ) {
       return true;
     }
 
     return false;
-  }
-
-  populateMenu() {
-    const { link, listName, listNames } = this.props;
-
-    let menu = null;
-    if (listName in CARD_ITEM_POPUP_MENU) {
-      menu = CARD_ITEM_POPUP_MENU[listName];
-    } else {
-      menu = CARD_ITEM_POPUP_MENU[MY_LIST];
-    }
-    if ([ADDING, MOVING].includes(link.status)) {
-      menu = menu.slice(0, 2);
-    }
-
-    const moveTo = [];
-    if (menu.includes(MOVE_TO)) {
-      for (const name of listNames) {
-        if ([TRASH, ARCHIVE].includes(name)) continue;
-        if (listName === name) continue;
-
-        moveTo.push(name);
-      }
-    }
-
-    menu = menu.filter(text => text !== MOVE_TO);
-
-    return { menu, moveTo };
-  }
-
-  onMenuBtnClick = () => {
-    this.props.updatePopup(this.props.link.id, true, null);
-  }
-
-  onMenuPopupClick = (text) => {
-
-    if (text) {
-      const { id, url } = this.props.link;
-      const { windowWidth } = this.props;
-      const animConfig = cardItemAnimConfig(windowWidth);
-
-      if (text === OPEN) {
-        Linking.openURL(ensureContainUrlProtocol(url));
-      } else if (text === COPY_LINK) {
-        Clipboard.setString(url);
-      } else if (text === ARCHIVE) {
-        LayoutAnimation.configureNext(animConfig);
-        this.props.moveLinks(ARCHIVE, [id]);
-      } else if (text === REMOVE) {
-        LayoutAnimation.configureNext(animConfig);
-        this.props.moveLinks(TRASH, [id]);
-      } else if (text === RESTORE) {
-        LayoutAnimation.configureNext(animConfig);
-        this.props.moveLinks(MY_LIST, [id]);
-      } else if (text.startsWith(MOVE_TO)) {
-        LayoutAnimation.configureNext(animConfig);
-        this.props.moveLinks(text.substring(MOVE_TO.length + 1), [id]);
-      } else if (text === DELETE) {
-        this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
-        return false;
-      } else {
-        throw new Error(`Invalid text: ${text}`);
-      }
-    }
-
-    this.props.updatePopup(this.props.link.id, false);
-    return true;
-  }
-
-  onMenuBackdropPress = () => {
-    this.props.updatePopup(this.props.link.id, false);
   }
 
   onRetryRetryBtnClick = () => {
@@ -144,40 +66,6 @@ class CardItem extends React.Component {
 
   onExtractedFaviconError = () => {
     this.setState({ extractedFaviconError: true });
-  }
-
-  renderMenu() {
-    const { menu: _menu, moveTo: _moveTo } = this.populateMenu();
-
-    let moveTo = null;
-    if (_moveTo && _moveTo.length) {
-      moveTo = (
-        <React.Fragment>
-          <Text style={tailwind('py-2 pl-4 pr-4 text-gray-800')}>{MOVE_TO}</Text>
-          {_moveTo.map(text => {
-            const key = MOVE_TO + ' ' + text;
-            return (
-              <MenuOption key={key} onSelect={() => this.onMenuPopupClick(key)} customStyles={{ optionWrapper: { padding: 0 } }}>
-                <Text style={tailwind('py-2 pl-6 pr-4 text-gray-800')}>{text}</Text>
-              </MenuOption>
-            );
-          })}
-        </React.Fragment>
-      );
-    }
-
-    return (
-      <React.Fragment>
-        {_menu.map(text => {
-          return (
-            <MenuOption key={text} onSelect={() => this.onMenuPopupClick(text)} customStyles={{ optionWrapper: { padding: 0 } }}>
-              <Text style={tailwind('py-2 pl-4 pr-4 text-gray-800')}>{text}</Text>
-            </MenuOption>
-          );
-        })}
-        {moveTo && moveTo}
-      </React.Fragment>
-    );
   }
 
   renderBusy() {
@@ -319,7 +207,8 @@ class CardItem extends React.Component {
   }
 
   render() {
-    const { style, windowWidth, windowHeight } = this.props;
+
+    const { style, windowWidth } = this.props;
     const { url, status, extractedResult } = this.props.link;
 
     // Need to do this as React Native doesn't support maxWidth: "none"
@@ -350,25 +239,7 @@ class CardItem extends React.Component {
                 </TouchableOpacity>
               </View>
             </View>
-            {/* value of triggerOffsets needs to be aligned with paddings of the three dots */}
-            <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 }, popupStyle: tailwind('py-2 min-w-32 bg-white border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
-              <MenuTrigger>
-                {/* View with paddingBottom is required because there is this space on the web. */}
-                <View style={{ paddingBottom: 6 }}>
-                  {/* Change the paddings here, need to change triggerOffsets too */}
-                  <View style={tailwind('pt-2 pb-0 pl-4 pr-2 flex-shrink-0 flex-grow-0')}>
-                    <Svg style={tailwind('py-2 w-6 h-10 text-gray-700 rounded-full')} viewBox="0 0 24 24" stroke="currentColor" fill="none">
-                      <Path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </Svg>
-                  </View>
-                </View>
-              </MenuTrigger>
-              <MenuOptions>
-                <ScrollView style={{ maxHeight: windowHeight }}>
-                  {this.renderMenu()}
-                </ScrollView>
-              </MenuOptions>
-            </Menu>
+            <CardItemMenuPopup link={this.props.link} />
           </View>
           <TouchableOpacity onPress={() => Linking.openURL(ensureContainUrlProtocol(url))}>
             <Text style={tailwind(`mt-0 mb-3 ml-4 mr-3 text-base text-gray-800 font-semibold leading-6.5 ${classNames} lg:mb-4 lg:ml-5 lg:mr-4`, windowWidth)}>{title}</Text>
@@ -383,15 +254,12 @@ class CardItem extends React.Component {
 
 const mapStateToProps = (state, props) => {
   return {
-    listName: state.display.listName,
-    listNames: getListNames(state),
     windowWidth: state.window.width,
-    windowHeight: state.window.height,
   };
 };
 
 const mapDispatchToProps = {
-  updatePopup, retryDiedLinks, cancelDiedLinks, moveLinks,
+  retryDiedLinks, cancelDiedLinks,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(CardItem));

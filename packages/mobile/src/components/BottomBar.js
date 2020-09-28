@@ -15,7 +15,7 @@ import {
   NO_URL, ASK_CONFIRM_URL, URL_MSGS,
   BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
 } from '../types/const';
-import { getLinks } from '../selectors';
+import { getPopupLink } from '../selectors';
 import { validateUrl, isEqual, toPx } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
@@ -247,6 +247,7 @@ class BottomBar extends React.PureComponent {
       transform: [{ translateY: this.searchPopupTranslateY }],
     };
     style.bottom = toPx(BAR_HEIGHT);
+    // On iOS, there is a KeyboardAvoidingView which is already in SafeAreaView.
     if (Platform.OS !== 'ios') style.bottom += this.props.insets.bottom;
 
     const searchClearBtnClasses = searchString.length === 0 ? 'hidden relative' : 'flex absolute';
@@ -345,12 +346,13 @@ class BottomBar extends React.PureComponent {
 
 const mapStateToProps = (state, props) => {
 
-  const { popupLink } = getLinks(state);
+  const popupLink = getPopupLink(state);
 
   return {
     username: state.user.username,
     userImage: state.user.image,
     searchString: state.display.searchString,
+    isShown: popupLink === null,
     isAddPopupShown: state.display.isAddPopupShown,
     isSearchPopupShown: state.display.isSearchPopupShown,
     isProfilePopupShown: state.display.isProfilePopupShown,
