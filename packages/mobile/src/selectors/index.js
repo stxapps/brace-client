@@ -37,17 +37,22 @@ const createSelectorLinks = createSelectorCreator(
       return false;
     }
 
-    const results = [];
     for (const key in val['links']) {
+
+      if (!prevVal['links'][key] || !val['links'][key]) {
+        if (prevVal['links'][key] !== val['links'][key]) return false;
+        continue;
+      }
+
       // Deep equal without attributes: popup and popupAnchorPosition.
       const res = isEqual(
         _.ignore(prevVal['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]),
         _.ignore(val['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION])
       )
-      results.push(res);
+      if (!res) return false;
     }
 
-    return results.every(res => res === true);
+    return true;
   }
 );
 
@@ -106,17 +111,22 @@ const createSelectorPopupLink = createSelectorCreator(
       return false;
     }
 
-    const results = [];
     for (const key in val['links']) {
+
+      if (!prevVal['links'][key] || !val['links'][key]) {
+        if (prevVal['links'][key] !== val['links'][key]) return false;
+        continue;
+      }
+
       // Deep equal only attributes: popup and popupAnchorPosition.
       const res = isEqual(
         _.choose(prevVal['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]),
         _.choose(val['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION])
       )
-      results.push(res);
+      if (!res) return false;
     }
 
-    return results.every(res => res === true);
+    return true;
   }
 );
 
