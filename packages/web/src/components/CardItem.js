@@ -6,15 +6,16 @@ import {
   updatePopup, retryDiedLinks, cancelDiedLinks,
 } from '../actions';
 import {
-  ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
-  isDiedStatus, extractUrl,
-} from '../utils';
-import {
   ADDING, MOVING,
   COLOR, PATTERN, IMAGE,
 } from '../types/const';
+import {
+  ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
+  isDiedStatus, extractUrl,
+  isEqual,
+} from '../utils';
 
-class CardItem extends React.PureComponent {
+class CardItem extends React.Component {
 
   constructor(props) {
     super(props);
@@ -22,6 +23,18 @@ class CardItem extends React.PureComponent {
     this.state = {
       extractedFaviconError: false,
     };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
+      this.props.link.status !== nextProps.link.status ||
+      this.state.extractedFaviconError !== nextState.extractedFaviconError
+    ) {
+      return true;
+    }
+
+    return false;
   }
 
   onMenuBtnClick = (e) => {
@@ -166,6 +179,7 @@ class CardItem extends React.PureComponent {
   }
 
   render() {
+
     const { url, status, extractedResult } = this.props.link;
 
     let title, classNames = '';

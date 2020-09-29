@@ -21,6 +21,9 @@ export const randomString = (length) => {
   return result;
 };
 
+/**
+ * Convert an array of objects to an object of objects.
+ **/
 const mapKeys = (arr, key) => {
   if (!Array.isArray(arr)) throw new Error(`Must be arr: ${arr}`);
 
@@ -31,6 +34,10 @@ const mapKeys = (arr, key) => {
   return obj;
 };
 
+/**
+ * Select objects that meet the criteria: key and value
+ *   returning an object with selected objects.
+ **/
 const select = (obj, key, value) => {
   if (Array.isArray(obj)) throw new Error(`Must be obj, not arr: ${obj}`);
 
@@ -92,6 +99,9 @@ const update = (obj, conKey, conValue, updKey, updValue) => {
   return newObj;
 };
 
+/**
+ * Extract an array of values from objects in an object or an array.
+ **/
 const extract = (obj, key) => {
 
   const arr = [];
@@ -108,6 +118,9 @@ const extract = (obj, key) => {
   return arr;
 };
 
+/**
+ * Exclude objects in an object that meets the criteria.
+ **/
 const exclude = (obj, key, value) => {
   if (Array.isArray(obj)) throw new Error(`Must be obj, not arr: ${obj}`);
 
@@ -130,6 +143,9 @@ const exclude = (obj, key, value) => {
   return newObj;
 };
 
+/**
+ * Return an object of objects without/ingoring some attributes that meet the criteria.
+ **/
 const ignore = (obj, key) => {
   if (Array.isArray(obj)) throw new Error(`Must be obj, not arr: ${obj}`);
 
@@ -187,7 +203,30 @@ const copyAttr = (obj, copiedObj, key) => {
   return newObj;
 };
 
-export const _ = { mapKeys, select, update, extract, exclude, ignore, copyAttr };
+/**
+ * Return an object of objects containing/choosing only attributes specified in key.
+ */
+const choose = (obj, key) => {
+  if (Array.isArray(obj)) throw new Error(`Must be obj, not arr: ${obj}`);
+
+  const newObj = {};
+  for (const id in obj) {
+    const newObjEl = {};
+    for (const keyEl in obj[id]) {
+      if (Array.isArray(key)) {
+        if (key.includes(keyEl)) newObjEl[keyEl] = obj[id][keyEl];
+        continue;
+      }
+
+      if (key === keyEl) newObjEl[keyEl] = obj[id][keyEl];
+    }
+    newObj[id] = newObjEl;
+  }
+
+  return newObj;
+};
+
+export const _ = { mapKeys, select, update, extract, exclude, ignore, copyAttr, choose };
 
 const fallbackCopyTextToClipboard = (text) => {
   var textArea = document.createElement("textarea");
@@ -391,7 +430,15 @@ export const multiplyPercent = (value, percent) => {
   return value * parseFloat(percent) / 100;
 };
 
-export const isEqual = function (x, y) {
+export const isObject = val => {
+  return typeof val === 'object' && val !== null;
+};
+
+export const isString = val => {
+  return typeof val === 'string' || val instanceof String;
+};
+
+export const isEqual = (x, y) => {
   if (x === y) return true;
   // if both x and y are null or undefined and exactly the same
 
@@ -423,6 +470,27 @@ export const isEqual = function (x, y) {
     if (y.hasOwnProperty(p) && !x.hasOwnProperty(p)) return false;
     // allows x[ p ] to be set to undefined
   }
+  return true;
+};
+
+export const isArrayEqual = (arr1, arr2) => {
+  // if the other array is a falsy value, return
+  if (!arr1 || !arr2) return false;
+
+  // compare lengths - can save a lot of time
+  if (arr1.length !== arr2.length) return false;
+
+  for (let i = 0, l = arr1.length; i < l; i++) {
+    // Check if we have nested arrays
+    if (arr1[i] instanceof Array && arr2[i] instanceof Array) {
+      // recurse into the nested arrays
+      if (!isArrayEqual(arr1[i], arr2[i])) return false;
+    } else if (arr1[i] !== arr2[i]) {
+      // Warning - two different object instances will never be equal: {x:20} != {x:20}
+      return false;
+    }
+  }
+
   return true;
 };
 

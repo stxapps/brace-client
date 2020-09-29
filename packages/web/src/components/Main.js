@@ -9,18 +9,19 @@ import {
 } from '../actions';
 import {
   BACK_DECIDER, BACK_POPUP,
-  LIST_NAME_POPUP, ADD_POPUP,
+  ADD_POPUP,
   PC_100, PC_50, PC_33,
   MY_LIST, TRASH,
   SHOW_BLANK, SHOW_COMMANDS,
   BAR_HEIGHT,
 } from '../types/const';
-import { getListNames, getLinks } from '../selectors';
+import { getLinks } from '../selectors';
 import { addRem, getWindowHeight, getWindowScrollHeight, throttle } from '../utils';
 
 import Loading from './Loading';
 import TopBar from './TopBar';
 import BottomBar from './BottomBar';
+import ListName from './ListName';
 import CardItem from './CardItem';
 import CardItemMenuPopup from './CardItemMenuPopup';
 import StatusPopup from './StatusPopup';
@@ -140,63 +141,13 @@ class Main extends React.PureComponent {
     }
   };
 
-  onListNameBtnClick = () => {
-    this.props.updatePopup(LIST_NAME_POPUP, true);
-  };
-
-  onListNamePopupClick = (e) => {
-
-    const newListName = e.target.getAttribute('data-key');
-    if (!newListName) return;
-
-    this.props.changeListName(newListName, this.fetched);
-    this.fetched.push(newListName);
-
-    this.props.updatePopup(LIST_NAME_POPUP, false);
-  };
-
-  onListNameCancelBtnClick = () => {
-    this.props.updatePopup(LIST_NAME_POPUP, false);
-  };
-
   onAddBtnClick = () => {
-    if (this.props.isAddPopupShown) return;
-
     this.props.updatePopup(ADD_POPUP, true);
   }
 
   onFetchMoreBtnClick = () => {
     this.props.fetchMore();
   };
-
-  renderListName() {
-
-    const { listName, isListNamePopupShown } = this.props;
-
-    return (
-      <div className="inline-block relative">
-        <button onClick={this.onListNameBtnClick} className={`relative flex items-center ${isListNamePopupShown ? 'z-41' : ''} focus:outline-none focus:shadow-outline`}>
-          <h2 className="text-lg text-gray-900 font-semibold">{listName}</h2>
-          <svg className="ml-1 w-5 text-black" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-        {isListNamePopupShown && this.renderListNamePopup()}
-      </div>
-    );
-  }
-
-  renderListNamePopup() {
-
-    return (
-      <React.Fragment>
-        <button onClick={this.onListNameCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none"></button>
-        <div onClick={this.onListNamePopupClick} className="mt-2 py-2 absolute right-0 bottom-0 w-28 bg-white border border-gray-200 rounded-lg shadow-xl transform translate-x-11/12 translate-y-full z-41">
-          {this.props.listNames.map(listName => <button className="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={listName} data-key={listName}>{listName}</button>)}
-        </div>
-      </React.Fragment>
-    );
-  }
 
   renderEmpty() {
 
@@ -279,9 +230,7 @@ class Main extends React.PureComponent {
 
   renderLinks() {
 
-    const { listName, listNames, links, popupLink } = this.props;
-    const { hasMoreLinks, isFetchingMore } = this.props;
-
+    const { links, hasMoreLinks, isFetchingMore } = this.props;
     const { columnWidth } = this.state;
 
     const showFetchMoreBtn = hasMoreLinks && !isFetchingMore;
@@ -298,7 +247,7 @@ class Main extends React.PureComponent {
         <StackGrid className={links.length === 0 ? 'hidden' : ''} columnWidth={columnWidth} gutterWidth={gutterWidth} gutterHeight={gutterHeight}>
           {links.map(link => <CardItem key={link.id} link={link} />)}
         </StackGrid>
-        {popupLink && <CardItemMenuPopup listName={listName} listNames={listNames} link={popupLink} />}
+        <CardItemMenuPopup />
         {showFetchMoreBtn && this.renderFetchMoreBtn()}
         {showFetchingMore && this.renderFetchingMore()}
       </React.Fragment>
@@ -307,7 +256,7 @@ class Main extends React.PureComponent {
 
   render() {
 
-    const { links, popupLink } = this.props;
+    const { links } = this.props;
 
     if (links === null) {
       return <Loading />;
@@ -323,14 +272,14 @@ class Main extends React.PureComponent {
       <React.Fragment>
         <TopBar rightPane={topBarRightPane} />
         <main ref={this.main} style={style} className="mx-auto px-4 pt-4 relative max-w-6xl duration-150 ease-in-out md:px-6 md:pt-6 lg:px-8">
-          {this.renderListName()}
+          <ListName fetched={this.fetched} />
           <div className="pt-6 md:pt-10">
             {links.length === 0 && this.renderEmpty()}
             {this.renderLinks()}
           </div>
           <StatusPopup />
         </main>
-        {this.state.columnWidth === PC_100 && <BottomBar isShown={popupLink === null} />}
+        {this.state.columnWidth === PC_100 && <BottomBar />}
       </React.Fragment>
     );
   }
@@ -339,15 +288,10 @@ class Main extends React.PureComponent {
 const mapStateToProps = (state, props) => {
 
   const listName = state.display.listName;
-  const { links, popupLink } = getLinks(state);
 
   return {
     listName: listName,
-    listNames: getListNames(state),
-    links: links,
-    isListNamePopupShown: state.display.isListNamePopupShown,
-    isAddPopupShown: state.display.isAddPopupShown,
-    popupLink: popupLink,
+    links: getLinks(state),
     hasMoreLinks: state.hasMoreLinks[listName],
     isFetchingMore: state.display.isFetchingMore,
     searchString: state.display.searchString,

@@ -53,6 +53,7 @@ class StatusPopup extends React.PureComponent {
   }
 
   render() {
+
     if (this.timeout) {
       window.clearTimeout(this.timeout);
       this.timeout = null;

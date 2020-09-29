@@ -9,6 +9,7 @@ import {
   NO_URL, ASK_CONFIRM_URL, URL_MSGS,
   BAR_HEIGHT,
 } from '../types/const';
+import { getPopupLink } from '../selectors';
 import { validateUrl, isEqual } from '../utils';
 
 const BOTTOM_BAR_DURATION = 'duration-300';
@@ -221,10 +222,14 @@ class BottomBar extends React.PureComponent {
 }
 
 const mapStateToProps = (state, props) => {
+
+  const popupLink = getPopupLink(state);
+
   return {
     username: state.user.username,
     userImage: state.user.image,
     searchString: state.display.searchString,
+    isShown: popupLink === null,
     isAddPopupShown: state.display.isAddPopupShown,
     isSearchPopupShown: state.display.isSearchPopupShown,
     isProfilePopupShown: state.display.isProfilePopupShown,

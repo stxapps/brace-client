@@ -13,6 +13,7 @@ import {
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
   CARD_ITEM_POPUP_MENU,
 } from '../types/const';
+import { getListNames, getPopupLink } from '../selectors';
 import { copyTextToClipboard, ensureContainUrlProtocol, throttle } from '../utils';
 
 class CardItemMenuPopup extends React.PureComponent {
@@ -20,26 +21,57 @@ class CardItemMenuPopup extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.initialScrollY = window.pageYOffset;
+    this.initialScrollY = 0;
     this.state = { scrollY: this.initialScrollY };
 
     this.menuPopup = React.createRef();
     this.menuBtn = React.createRef();
 
-    const { menu, moveTo } = this.populateMenu(props);
-    this.menu = menu;
-    this.moveTo = moveTo;
+    this.menu = null;
+    this.moveTo = null;
 
     this.updateScrollY = throttle(this.updateScrollY, 16);
   }
 
   componentDidMount() {
-    window.addEventListener('scroll', this.updateScrollY);
+    if (this.props.popupLink) {
+      window.addEventListener('scroll', this.updateScrollY);
 
-    this.props.updateCardItemMenuPopupPosition(
-      this.menuPopup.current.getBoundingClientRect()
-    );
-    this.menuBtn.current.focus();
+      this.props.updateCardItemMenuPopupPosition(
+        this.menuPopup.current.getBoundingClientRect()
+      );
+
+      this.menuBtn.current.focus();
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!prevProps.popupLink && this.props.popupLink) {
+      window.addEventListener('scroll', this.updateScrollY);
+
+      this.props.updateCardItemMenuPopupPosition(
+        this.menuPopup.current.getBoundingClientRect()
+      );
+
+      this.menuBtn.current.focus();
+    }
+
+    if (prevProps.popupLink && !this.props.popupLink) {
+      window.removeEventListener('scroll', this.updateScrollY);
+      this.props.updateCardItemMenuPopupPosition(null);
+    }
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (!this.props.popupLink && nextProps.popupLink) {
+
+      this.initialScrollY = window.pageYOffset;
+      this.setState({ scrollY: this.initialScrollY });
+
+      const { menu, moveTo } = this.populateMenu(nextProps);
+      this.menu = menu;
+      this.moveTo = moveTo;
+    }
   }
 
   componentWillUnmount() {
@@ -55,7 +87,7 @@ class CardItemMenuPopup extends React.PureComponent {
     } else {
       menu = CARD_ITEM_POPUP_MENU[MY_LIST];
     }
-    if ([ADDING, MOVING].includes(props.link.status)) {
+    if ([ADDING, MOVING].includes(props.popupLink.status)) {
       menu = menu.slice(0, 2);
     }
 
@@ -83,7 +115,7 @@ class CardItemMenuPopup extends React.PureComponent {
     const text = e.target.getAttribute('data-key');
     if (!text) return;
 
-    const { id, url } = this.props.link;
+    const { id, url } = this.props.popupLink;
 
     if (text === OPEN) {
       window.open(ensureContainUrlProtocol(url));
@@ -104,17 +136,17 @@ class CardItemMenuPopup extends React.PureComponent {
       throw new Error(`Invalid text: ${text}`);
     }
 
-    this.props.updatePopup(this.props.link.id, false);
+    this.props.updatePopup(this.props.popupLink.id, false);
   };
 
   onCancelBtnClick = () => {
-    this.props.updatePopup(this.props.link.id, false);
+    this.props.updatePopup(this.props.popupLink.id, false);
   };
 
   onConfirmDeleteOkBtnClick = () => {
-    this.props.deleteLinks([this.props.link.id]);
+    this.props.deleteLinks([this.props.popupLink.id]);
     this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
-    this.props.updatePopup(this.props.link.id, false);
+    this.props.updatePopup(this.props.popupLink.id, false);
   };
 
   onConfirmDeleteCancelBtnClick = () => {
@@ -165,7 +197,10 @@ class CardItemMenuPopup extends React.PureComponent {
 
   render() {
 
-    const anchorPosition = this.props.link.popupAnchorPosition;
+    const { popupLink, isConfirmDeletePopupShown } = this.props;
+    if (!popupLink) return null;
+
+    const anchorPosition = popupLink.popupAnchorPosition;
 
     const offsetScrollY = this.initialScrollY - this.state.scrollY;
     const windowWidth = window.innerWidth;
@@ -199,7 +234,7 @@ class CardItemMenuPopup extends React.PureComponent {
         <div ref={this.menuPopup} onClick={this.onMenuPopupClick} style={popupPosition} className="mt-2 ml-4 mr-2 py-2 fixed min-w-32 bg-white border border-gray-200 rounded-lg shadow-xl z-41">
           {this.renderMenu()}
         </div>
-        {this.props.isConfirmDeletePopupShown && this.renderConfirmDeletePopup()}
+        {isConfirmDeletePopupShown && this.renderConfirmDeletePopup()}
       </div >
     );
   }
@@ -207,6 +242,9 @@ class CardItemMenuPopup extends React.PureComponent {
 
 const mapStateToProps = (state, props) => {
   return {
+    listName: state.display.listName,
+    listNames: getListNames(state),
+    popupLink: getPopupLink(state),
     isConfirmDeletePopupShown: state.display.isConfirmDeletePopupShown,
   }
 };

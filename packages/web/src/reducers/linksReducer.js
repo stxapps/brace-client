@@ -308,6 +308,7 @@ export default (state = initialState, action) => {
     const { listName, links } = action.payload;
 
     const newState = { ...state };
+    newState[listName] = { ...newState[listName] };
     for (const link of links) {
       newState[listName][link.id] = { ...newState[listName][link.id] };
       for (const key of ['extractedResult']) {
