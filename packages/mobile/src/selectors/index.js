@@ -7,7 +7,7 @@ import {
 } from '../types/const';
 import {
   _, isStringIn, excludeWithMainIds,
-  isObject, isString, isArrayEqual, isEqual,
+  isObject, isArrayEqual, isEqual,
 } from '../utils';
 
 const createSelectorListNames = createSelectorCreator(
@@ -29,37 +29,35 @@ const createSelectorLinks = createSelectorCreator(
   defaultMemoize,
   (prevVal, val) => {
 
-    if (isString(prevVal) || isString(val)) return prevVal === val;
-    if (prevVal === val) return true;
-    if (isObject(prevVal) && isObject(val)) {
+    if (prevVal['display'].listName !== val['display'].listName) return false;
+    if (prevVal['display'].searchString !== val['display'].searchString) return false;
 
-      // Assume these are prevLinks and links
-      if (!isArrayEqual(Object.keys(prevVal).sort(), Object.keys(val).sort())) {
-        return false;
-      }
-
-      const results = [];
-      for (const key in val) {
-        // Deep equal without attributes: popup and popupAnchorPosition.
-        const res = isEqual(
-          _.ignore(prevVal[key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]),
-          _.ignore(val[key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION])
-        )
-        results.push(res);
-      }
-
-      return results.every(res => res === true);
+    if (prevVal['links'] === val['links']) return true;
+    if (!isArrayEqual(Object.keys(prevVal['links']).sort(), Object.keys(val['links']).sort())) {
+      return false;
     }
 
-    return prevVal === val;
+    const results = [];
+    for (const key in val['links']) {
+      // Deep equal without attributes: popup and popupAnchorPosition.
+      const res = isEqual(
+        _.ignore(prevVal['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]),
+        _.ignore(val['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION])
+      )
+      results.push(res);
+    }
+
+    return results.every(res => res === true);
   }
 );
 
 export const getLinks = createSelectorLinks(
-  state => state.links,
-  state => state.display.listName,
-  state => state.display.searchString,
-  (links, listName, searchString) => {
+  state => state,
+  (state) => {
+
+    const links = state.links;
+    const listName = state.display.listName;
+    const searchString = state.display.searchString;
 
     if (!links || !links[listName]) return null;
 
@@ -100,37 +98,35 @@ const createSelectorPopupLink = createSelectorCreator(
   defaultMemoize,
   (prevVal, val) => {
 
-    if (isString(prevVal) || isString(val)) return prevVal === val;
-    if (prevVal === val) return true;
-    if (isObject(prevVal) && isObject(val)) {
+    if (prevVal['display'].listName !== val['display'].listName) return false;
+    if (prevVal['display'].searchString !== val['display'].searchString) return false;
 
-      // Assume these are prevLinks and links
-      if (!isArrayEqual(Object.keys(prevVal).sort(), Object.keys(val).sort())) {
-        return false;
-      }
-
-      const results = [];
-      for (const key in val) {
-        // Deep equal only attributes: popup and popupAnchorPosition.
-        const res = isEqual(
-          _.choose(prevVal[key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]),
-          _.choose(val[key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION])
-        )
-        results.push(res);
-      }
-
-      return results.every(res => res === true);
+    if (prevVal['links'] === val['links']) return true;
+    if (!isArrayEqual(Object.keys(prevVal['links']).sort(), Object.keys(val['links']).sort())) {
+      return false;
     }
 
-    return prevVal === val;
+    const results = [];
+    for (const key in val['links']) {
+      // Deep equal only attributes: popup and popupAnchorPosition.
+      const res = isEqual(
+        _.choose(prevVal['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]),
+        _.choose(val['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION])
+      )
+      results.push(res);
+    }
+
+    return results.every(res => res === true);
   }
 );
 
 export const getPopupLink = createSelectorPopupLink(
-  state => state.links,
-  state => state.display.listName,
-  state => state.display.searchString,
-  (links, listName, searchString) => {
+  state => state,
+  (state) => {
+
+    const links = state.links;
+    const listName = state.display.listName;
+    const searchString = state.display.searchString;
 
     if (!links || !links[listName]) return null;
 
