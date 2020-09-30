@@ -243,7 +243,6 @@ class TopBar extends React.Component {
           <View>
             <SvgXml style={tailwind('md:hidden', windowWidth)} width={28.36} height={32} xml={shortLogo} />
             <SvgXml style={tailwind('hidden md:flex', windowWidth)} width={109.63} height={24} xml={fullLogo} />
-            <Text style={[tailwind('absolute text-xs'), { top: -9, right: -28.4 }]}>beta</Text>
           </View>
           {rightPane}
         </View>
