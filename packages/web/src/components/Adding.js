@@ -216,7 +216,7 @@ class Adding extends React.PureComponent {
           </a>.
         </p>
         <button onClick={() => this.addLink(true)} className="mx-auto mt-5 mb-px block h-14 focus:outline-none-outer">
-          <span className="px-4 py-2 text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Try again</span>
+          <span className="px-4 py-2 bg-white text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Try again</span>
         </button>
         {this.renderNav()}
       </React.Fragment>
@@ -242,7 +242,7 @@ class Adding extends React.PureComponent {
           <span className="text-xl text-gray-900 font-medium">Are you sure?</span>
         </p>
         <button onClick={this.onAskingConfirmOkBtnClick} className="mx-auto mt-5 mb-px block h-14 focus:outline-none-outer">
-          <span className="px-4 py-2 text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Yes, I'm sure</span>
+          <span className="px-4 py-2 bg-white text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Yes, I'm sure</span>
         </button>
         <p className="mx-auto mt-5 w-full max-w-xs text-base text-gray-900 text-center">You can edit the link in address bar and press enter again</p>
         {this.renderNav()}
@@ -278,7 +278,7 @@ class Adding extends React.PureComponent {
         </svg>
         <p className="mx-auto mt-5 w-full max-w-xs text-2xl text-gray-900 font-semibold text-center">Please sign in first</p>
         <button onClick={() => this.props.signIn()} className="mx-auto mt-2 block h-14 focus:outline-none-outer">
-          <span className="px-4 py-2 text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Sign in</span>
+          <span className="px-4 py-2 bg-white text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Sign in</span>
         </button>
         <div className="mt-10 flex justify-center items-center">
           <p className="text-base text-gray-900">No account yet?</p>

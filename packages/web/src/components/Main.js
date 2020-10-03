@@ -25,6 +25,7 @@ import ListName from './ListName';
 import CardItem from './CardItem';
 import CardItemMenuPopup from './CardItemMenuPopup';
 import StatusPopup from './StatusPopup';
+import SettingsPopup from './SettingsPopup';
 
 import emptyBox from '../images/empty-box-sided.svg';
 import undrawLink from '../images/undraw-link.svg';
@@ -210,7 +211,7 @@ class Main extends React.PureComponent {
   renderFetchMoreBtn() {
     return (
       <button onClick={this.onFetchMoreBtnClick} className="my-4 py-2 block w-full focus:outline-none-outer">
-        <span className="px-3 py-1 inline-block text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">More</span>
+        <span className="px-3 py-1 inline-block bg-white text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">More</span>
       </button>
     );
   }
@@ -280,6 +281,7 @@ class Main extends React.PureComponent {
           <StatusPopup />
         </main>
         {this.state.columnWidth === PC_100 && <BottomBar />}
+        {this.props.isSettingsPopupShown && <SettingsPopup />}
       </React.Fragment>
     );
   }
@@ -296,6 +298,7 @@ const mapStateToProps = (state, props) => {
     isFetchingMore: state.display.isFetchingMore,
     searchString: state.display.searchString,
     cardItemMenuPopupPosition: state.display.cardItemMenuPopupPosition,
+    isSettingsPopupShown: state.display.isSettingsPopupShown,
   };
 };
 

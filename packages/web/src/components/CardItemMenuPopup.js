@@ -184,10 +184,10 @@ class CardItemMenuPopup extends React.PureComponent {
           <p className="py-2 text-lg text-gray-900 text-center">Confirm delete?</p>
           <div className="py-2 text-center">
             <button onClick={this.onConfirmDeleteOkBtnClick} className="mr-2 py-2 focus:outline-none-outer">
-              <span className="px-3 py-1 text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Yes</span>
+              <span className="px-3 py-1 bg-white text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Yes</span>
             </button>
             <button onClick={this.onConfirmDeleteCancelBtnClick} className="ml-2 py-2 focus:outline-none-outer">
-              <span className="px-3 py-1 text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">No</span>
+              <span className="px-3 py-1 bg-white text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">No</span>
             </button>
           </div>
         </div>

@@ -5,7 +5,7 @@ import jdenticon from 'jdenticon';
 
 import { signOut, updatePopup, addLink, updateSearchString } from '../actions';
 import {
-  ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
+  ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, SETTINGS_POPUP,
   NO_URL, ASK_CONFIRM_URL, URL_MSGS,
   BAR_HEIGHT,
 } from '../types/const';
@@ -119,6 +119,11 @@ class BottomBar extends React.PureComponent {
     this.props.updatePopup(PROFILE_POPUP, false);
   }
 
+  onSettingsBtnClick = () => {
+    this.props.updatePopup(PROFILE_POPUP, false);
+    this.props.updatePopup(SETTINGS_POPUP, true);
+  }
+
   onSignOutBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
     this.props.signOut()
@@ -180,6 +185,7 @@ class BottomBar extends React.PureComponent {
       <React.Fragment>
         <button onClick={this.onProfileCancelBtnClick} tabIndex={-1} className={`${!isProfilePopupShown ? 'hidden' : ''} fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none`}></button>
         <div className={`py-4 fixed inset-x-0 bottom-0 bg-white border border-gray-200 rounded-t-lg shadow-xl transform ${!isProfilePopupShown ? 'translate-y-full' : ''} transition-transform duration-300 ease-in-out z-41`}>
+          <button onClick={this.onSettingsBtnClick} className="py-4 pl-4 block w-full text-gray-800 text-left focus:outline-none focus:shadow-outline">Settings</button>
           <a className="py-4 pl-4 block w-full text-gray-800 text-left focus:outline-none focus:shadow-outline" href="/#support">Support</a>
           <button onClick={this.onSignOutBtnClick} className="py-4 pl-4 block w-full text-gray-800 text-left focus:outline-none focus:shadow-outline">Sign out</button>
         </div>

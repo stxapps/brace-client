@@ -315,6 +315,40 @@ input[type="search"]::-webkit-search-results-decoration {
   margin-bottom: -2px;
 }
 
+.h-screen-8\/10 {
+  height: 80vh;
+}
+
+.group:hover .group-hover\:text-gray-600 {
+  --text-opacity: 1;
+  color: #4b5563;
+  color: rgba(75, 85, 99, var(--text-opacity));
+}
+
+.group:focus .group-focus\:text-gray-600 {
+  --text-opacity: 1;
+  color: #4b5563;
+  color: rgba(75, 85, 99, var(--text-opacity));
+}
+
+.group:focus .group-focus\:text-gray-700 {
+  --text-opacity: 1;
+  color: #374151;
+  color: rgba(55, 65, 81, var(--text-opacity));
+}
+
+.group:hover .group-hover\:underline {
+  text-decoration: underline;
+}
+
+.max-w-48 {
+  max-width: 12rem;
+}
+
+.max-w-24 {
+  max-width: 6rem;
+}
+
 /* purgecss end ignore */
 
 @tailwind utilities;

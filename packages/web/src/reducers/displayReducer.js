@@ -12,7 +12,8 @@ import {
   RESET_STATE,
 } from '../types/actionTypes';
 import {
-  ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP, CONFIRM_DELETE_POPUP,
+  ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
+  CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
   MY_LIST,
 } from '../types/const';
 
@@ -24,10 +25,12 @@ const initialState = {
   isProfilePopupShown: false,
   isListNamePopupShown: false,
   isConfirmDeletePopupShown: false,
+  isSettingsPopupShown: false,
   isFetchingMore: false,
   status: null,
   cardItemMenuPopupPosition: null,
   isHandlingSignIn: false,
+
 };
 
 export default (state = initialState, action) => {
@@ -42,6 +45,7 @@ export default (state = initialState, action) => {
       isProfilePopupShown: false,
       isListNamePopupShown: false,
       isConfirmDeletePopupShown: false,
+      isSettingsPopupShown: false,
       status: null,
       cardItemMenuPopupPosition: null,
       isHandlingSignIn: false,
@@ -65,6 +69,7 @@ export default (state = initialState, action) => {
         isProfilePopupShown: action.payload.isShown,
         isListNamePopupShown: action.payload.isShown,
         isConfirmDeletePopupShown: action.payload.isShown,
+        isSettingsPopupShown: action.payload.isShown,
       }
     }
 
@@ -86,6 +91,10 @@ export default (state = initialState, action) => {
 
     if (action.payload.id === CONFIRM_DELETE_POPUP) {
       return { ...state, isConfirmDeletePopupShown: action.payload.isShown }
+    }
+
+    if (action.payload.id === SETTINGS_POPUP) {
+      return { ...state, isSettingsPopupShown: action.payload.isShown }
     }
   }
 

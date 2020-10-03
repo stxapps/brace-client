@@ -5,7 +5,7 @@ import jdenticon from 'jdenticon';
 
 import { signIn, signOut, updatePopup, addLink, updateSearchString } from '../actions';
 import {
-  ADD_POPUP, PROFILE_POPUP,
+  ADD_POPUP, PROFILE_POPUP, SETTINGS_POPUP,
   SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS,
   NO_URL, ASK_CONFIRM_URL, URL_MSGS,
 } from '../types/const';
@@ -92,6 +92,11 @@ class TopBar extends React.PureComponent {
     this.props.updatePopup(PROFILE_POPUP, false);
   }
 
+  onSettingsBtnClick = () => {
+    this.props.updatePopup(PROFILE_POPUP, false);
+    this.props.updatePopup(SETTINGS_POPUP, true);
+  }
+
   onSignOutBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
     this.props.signOut()
@@ -121,6 +126,7 @@ class TopBar extends React.PureComponent {
       <React.Fragment>
         <button onClick={this.onProfileCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none"></button>
         <div className="mt-2 py-2 absolute right-0 w-32 bg-white border border-gray-200 rounded-lg shadow-xl z-41">
+          <button onClick={this.onSettingsBtnClick} className="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline">Settings</button>
           <a className="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline" href="/#support">Support</a>
           <button onClick={this.onSignOutBtnClick} className="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline">Sign out</button>
         </div>
@@ -174,7 +180,7 @@ class TopBar extends React.PureComponent {
 
     return (
       <button onClick={() => this.props.signIn()} className="block h-14 focus:outline-none-outer">
-        <span className="px-3 py-1 text-base text-gray-700 border border-gray-700 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Sign in</span>
+        <span className="px-3 py-1 bg-white text-base text-gray-700 border border-gray-700 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Sign in</span>
       </button>
     );
   }
@@ -194,7 +200,6 @@ class TopBar extends React.PureComponent {
         <div className="relative">
           <img className="h-8 md:hidden" src={shortLogo} alt="Brace logo" />
           <img className="hidden h-6 md:block" src={fullLogo} alt="Brace logo" />
-          <span style={{ top: '-0.5625rem', right: '-1.775rem' }} className="absolute text-xs">beta</span>
         </div>
         {rightPane}
       </header>
