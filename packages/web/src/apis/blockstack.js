@@ -93,7 +93,7 @@ const listFPaths = async () => {
   return { linkFPaths, settingsFPath };
 };
 
-const batchGetFileWithRetry = async (fpaths, callCount) => {
+export const batchGetFileWithRetry = async (fpaths, callCount) => {
 
   const responses = await Promise.all(
     fpaths.map(fpath =>
@@ -133,7 +133,7 @@ const fetch = async (listName) => {
   // If there is settings, fetch settings
   let settings;
   if (settingsFPath) {
-    settings = JSON.parse(await userSession.getFile(settingsFPath));
+    settings = JSON.parse(/** @type {string} */(await userSession.getFile(settingsFPath)));
   }
 
   return { listName, links, hasMore, listNames, settings };
@@ -194,7 +194,7 @@ const putLinks = async (params) => {
   return { listName, links, publicUrls };
 };
 
-const batchDeleteFileWithRetry = async (fpaths, callCount) => {
+export const batchDeleteFileWithRetry = async (fpaths, callCount) => {
 
   const responses = await Promise.all(
     fpaths.map((fpath) =>

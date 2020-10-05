@@ -48,7 +48,7 @@ class About extends React.PureComponent {
                   </p>
             </div>
             <p className="pt-12 max-w-lg leading-relaxed text-justify hyphens-auto" >
-              Currently, Brace.to is free.In the future, we plan to have a subscription plan like $0.99 US Dollar per year.We believe if our service is useful, our users will support us.We wouldn't force it in any way. If users aren't ready, they will always be able to close the popup and continue using.
+              Currently, Brace.to is free. In the future, we plan to have a subscription plan like $0.99 US Dollar per year. We believe if our service is useful, our users will support us.We wouldn't force it in any way. If users aren't ready, they will always be able to close the popup and continue using.
             </p>
             <p className="pt-12 leading-relaxed">
               Brace Team

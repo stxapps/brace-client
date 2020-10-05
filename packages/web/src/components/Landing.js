@@ -262,7 +262,7 @@ class Landing extends React.PureComponent {
           <div className="block md:flex md:flex-row md:justify-center md:items-center">
             <img className="h-16 md:mt-1 md:h-28 xl:mt-2" src={blockstackShort} alt="Blockstack Logo" />
             <div className="mt-4 md:mt-0 md:ml-3">
-              <h2 className="text-3xl text-gray-900 font-semibold text-left leading-tight md:text-4xl md:text-center">Your privacy at heart <br className="hidden md:inline" />powered by <a className="text-purple-blockstack focus:outline-none focus:shadow-outline" href="https://blockstack.org/">Blockstack</a></h2>
+              <h2 className="text-3xl text-gray-900 font-semibold text-left leading-tight md:text-4xl md:text-center">Your privacy at heart <br className="hidden md:inline" />powered by <a className="text-purple-blockstack hover:text-gray-900 focus:outline-none focus:shadow-outline" href="https://blockstack.org/">Blockstack</a></h2>
               <p className="mt-4 text-xl text-gray-700 leading-tight text-left md:mt-2 md:text-center">Your identity is <span className="inline md:hidden">truly</span> yours. <br className="inline sm:hidden" />Your data is <span className="inline md:hidden">truly</span> yours.</p>
             </div>
           </div>

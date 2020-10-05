@@ -9,6 +9,7 @@ import {
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK, EXTRACT_CONTENTS_COMMIT,
   UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
   UPDATE_HANDLING_SIGN_IN,
+  UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -30,7 +31,8 @@ const initialState = {
   status: null,
   cardItemMenuPopupPosition: null,
   isHandlingSignIn: false,
-
+  exportAllDataProgress: null,
+  deleteAllDataProgress: null,
 };
 
 export default (state = initialState, action) => {
@@ -49,6 +51,8 @@ export default (state = initialState, action) => {
       status: null,
       cardItemMenuPopupPosition: null,
       isHandlingSignIn: false,
+      exportAllDataProgress: null,
+      deleteAllDataProgress: null,
     };
   }
 
@@ -152,6 +156,14 @@ export default (state = initialState, action) => {
 
   if (action.type === UPDATE_HANDLING_SIGN_IN) {
     return { ...state, isHandlingSignIn: action.payload };
+  }
+
+  if (action.type === UPDATE_EXPORT_ALL_DATA_PROGRESS) {
+    return { ...state, exportAllDataProgress: action.payload };
+  }
+
+  if (action.type === UPDATE_DELETE_ALL_DATA_PROGRESS) {
+    return { ...state, deleteAllDataProgress: action.payload };
   }
 
   if (action.type === RESET_STATE) {

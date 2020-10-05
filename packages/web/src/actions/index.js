@@ -1,8 +1,10 @@
 import { showBlockstackConnect } from '@blockstack/connect';
 import { RESET_STATE as OFFLINE_RESET_STATE } from '@redux-offline/redux-offline/lib/constants';
 import axios from 'axios';
+import { saveAs } from 'file-saver';
 
 import userSession from '../userSession';
+import { batchGetFileWithRetry, batchDeleteFileWithRetry } from '../apis/blockstack';
 import {
   INIT, UPDATE_WINDOW, UPDATE_HISTORY_POSITION, UPDATE_USER,
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
@@ -18,6 +20,7 @@ import {
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
   UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION, UPDATE_HANDLING_SIGN_IN,
+  UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -28,6 +31,7 @@ import {
   MY_LIST, TRASH, ARCHIVE,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   BRACE_EXTRACT_URL, EXTRACT_EXCEEDING_N_URLS,
+  N_LINKS,
 } from '../types/const';
 import {
   _,
@@ -41,10 +45,19 @@ export const init = async (store) => {
 
   await handlePendingSignIn()(store.dispatch, store.getState);
 
+  const isUserSignedIn = userSession.isUserSignedIn();
+  let username = null, userImage = null;
+  if (isUserSignedIn) {
+    const userData = userSession.loadUserData();
+    username = userData.username;
+    userImage = (userData && userData.profile && userData.profile.image) || null;
+  }
   store.dispatch({
     type: INIT,
     payload: {
-      isUserSignedIn: userSession.isUserSignedIn(),
+      isUserSignedIn,
+      username,
+      userImage,
       href: window.location.href,
       windowWidth: null,
       windowHeight: null,
@@ -618,4 +631,158 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
       }
     },
   });
+};
+
+const exportAllDataLoop = async (dispatch, fPaths, doneCount) => {
+
+  if (fPaths.length === 0) throw new Error(`Invalid fPaths: ${fPaths}`);
+
+  const selectedCount = Math.min(fPaths.length - doneCount, N_LINKS);
+  const selectedFPaths = fPaths.slice(doneCount, doneCount + selectedCount);
+  const responses = await batchGetFileWithRetry(selectedFPaths, 0);
+  const data = responses.map((response, i) => {
+    return { path: selectedFPaths[i], data: JSON.parse(response.content) };
+  });
+
+  doneCount = doneCount + selectedCount;
+  if (doneCount > fPaths.length) {
+    throw new Error(`Invalid doneCount: ${doneCount}, total: ${fPaths.length}`);
+  }
+
+  dispatch(updateExportAllDataProgress({
+    total: fPaths.length,
+    done: doneCount,
+  }));
+
+  if (doneCount < fPaths.length) {
+    const remainingData = await exportAllDataLoop(dispatch, fPaths, doneCount);
+    data.push(...remainingData);
+  }
+
+  return data;
+};
+
+export const exportAllData = () => async (dispatch, getState) => {
+
+  dispatch(updateExportAllDataProgress({
+    total: 'calculating...',
+    done: 0,
+  }));
+
+  const fPaths = [];
+  try {
+    await userSession.listFiles((fpath) => {
+      fPaths.push(fpath);
+      return true;
+    });
+  } catch (e) {
+    dispatch(updateExportAllDataProgress({
+      total: -1,
+      done: -1,
+      error: e.name + ': ' + e.message,
+    }));
+    return;
+  }
+
+  dispatch(updateExportAllDataProgress({
+    total: fPaths.length,
+    done: 0,
+  }));
+
+  if (fPaths.length === 0) return;
+
+  try {
+    const data = await exportAllDataLoop(dispatch, fPaths, 0);
+
+    var blob = new Blob([JSON.stringify(data)], { type: "text/plain;charset=utf-8" });
+    saveAs(blob, "brace-data.txt");
+  } catch (e) {
+    dispatch(updateExportAllDataProgress({
+      total: -1,
+      done: -1,
+      error: e.name + ': ' + e.message,
+    }));
+    return;
+  }
+};
+
+export const updateExportAllDataProgress = (progress) => {
+  return {
+    type: UPDATE_EXPORT_ALL_DATA_PROGRESS,
+    payload: progress
+  };
+};
+
+const deleteAllDataLoop = async (dispatch, fPaths, doneCount) => {
+
+  if (fPaths.length === 0) throw new Error(`Invalid fPaths: ${fPaths}`);
+
+  const selectedCount = Math.min(fPaths.length - doneCount, N_LINKS);
+  const selectedFPaths = fPaths.slice(doneCount, doneCount + selectedCount);
+  const responses = await batchDeleteFileWithRetry(selectedFPaths, 0);
+
+  doneCount = doneCount + selectedCount;
+  if (doneCount > fPaths.length) {
+    throw new Error(`Invalid doneCount: ${doneCount}, total: ${fPaths.length}`);
+  }
+
+  dispatch(updateDeleteAllDataProgress({
+    total: fPaths.length,
+    done: doneCount,
+  }));
+
+  if (doneCount < fPaths.length) {
+    const remainingResponses = await deleteAllDataLoop(dispatch, fPaths, doneCount);
+    responses.push(...remainingResponses);
+  }
+
+  return responses;
+};
+
+export const deleteAllData = () => async (dispatch, getState) => {
+
+  dispatch(updateDeleteAllDataProgress({
+    total: 'calculating...',
+    done: 0,
+  }));
+
+  const fPaths = [];
+  try {
+    await userSession.listFiles((fpath) => {
+      fPaths.push(fpath);
+      return true;
+    });
+  } catch (e) {
+    dispatch(updateDeleteAllDataProgress({
+      total: -1,
+      done: -1,
+      error: e.name + ': ' + e.message,
+    }));
+    return;
+  }
+
+  dispatch(updateDeleteAllDataProgress({
+    total: fPaths.length,
+    done: 0,
+  }));
+
+  if (fPaths.length === 0) return;
+
+  try {
+    await deleteAllDataLoop(dispatch, fPaths, 0);
+  } catch (e) {
+    dispatch(updateDeleteAllDataProgress({
+      total: -1,
+      done: -1,
+      error: e.name + ': ' + e.message,
+    }));
+    return;
+  }
+};
+
+export const updateDeleteAllDataProgress = (progress) => {
+  return {
+    type: UPDATE_DELETE_ALL_DATA_PROGRESS,
+    payload: progress
+  };
 };

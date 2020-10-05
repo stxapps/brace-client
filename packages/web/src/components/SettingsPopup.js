@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 
 import {
   updatePopup,
+  exportAllData, updateExportAllDataProgress,
+  deleteAllData, updateDeleteAllDataProgress,
 } from '../actions';
 import {
   SM_WIDTH, SETTINGS_POPUP,
@@ -25,6 +27,7 @@ class SettingsPopup extends React.PureComponent {
       didSidebarTransitionStart: true,
       didSidebarTransitionEnd: true,
       didCheckConfirm: false,
+      isRequireConfirmShown: false,
     };
 
     this.pendingViewId = null;
@@ -39,6 +42,18 @@ class SettingsPopup extends React.PureComponent {
     const { didSidebarTransitionStart } = this.state;
     if (!didSidebarTransitionStart) {
       this.setState({ didSidebarTransitionStart: true });
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.props.exportAllDataProgress) {
+      const { total, done } = this.props.exportAllDataProgress;
+      if (total === done) this.props.updateExportAllDataProgress(null);
+    }
+
+    if (this.props.deleteAllDataProgress) {
+      const { total, done } = this.props.deleteAllDataProgress;
+      if (total === done) this.props.updateDeleteAllDataProgress(null);
     }
   }
 
@@ -126,11 +141,11 @@ class SettingsPopup extends React.PureComponent {
     }
   }
 
-  onToExportDataViewBtnClick = () => {
+  onToExportAllDataViewBtnClick = () => {
     this.setState({ viewId: VIEW_DATA_EXPORT });
   }
 
-  onToDeleteDataViewBtnClick = () => {
+  onToDeleteAllDataViewBtnClick = () => {
     this.setState({ viewId: VIEW_DATA_DELETE });
   }
 
@@ -143,21 +158,29 @@ class SettingsPopup extends React.PureComponent {
     });
   }
 
-  onExportDataBtnClick = () => {
-
+  onExportAllDataBtnClick = () => {
+    this.props.exportAllData();
   }
 
   onConfirmInputChange = (e) => {
-    this.setState({ didCheckConfirm: e.target.checked });
+    this.setState({ didCheckConfirm: e.target.checked, isRequireConfirmShown: false });
   }
 
-  onDeleteDataBtnClick = () => {
+  onDeleteAllDataBtnClick = () => {
+    if (this.state.didCheckConfirm) {
+      if (this.state.isRequireConfirmShown) {
+        this.setState({ isRequireConfirmShown: false });
+      }
+      this.props.deleteAllData();
+      return;
+    }
 
+    this.setState({ isRequireConfirmShown: true });
   }
 
   _render(content) {
 
-    const { viewId, isSidebarShown } = this.state;
+    const { isSidebarShown } = this.state;
     const { didSidebarTransitionStart, didSidebarTransitionEnd } = this.state;
 
     let sidebarCanvasStyleClasses, sidebarOverlayStyleClasses, sidebarStyleClasses;
@@ -279,6 +302,21 @@ class SettingsPopup extends React.PureComponent {
 
   renderAccountView() {
 
+    let userImage;
+    if (this.props.userImage) {
+      userImage = (
+        <img className="mx-auto w-full max-w-24 md:ml-auto md:mr-0" src={this.props.userImage} alt="User" />
+      );
+    } else {
+      userImage = (
+        <svg className="mx-auto w-full max-w-24 md:ml-auto md:mr-0" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="48" cy="48" r="48" fill="#E2E8F0" />
+          <path d="M82.5302 81.3416C73.8015 90.3795 61.5571 96 47.9999 96C34.9627 96 23.1394 90.8024 14.4893 82.3663C18.2913 78.3397 22.7793 74.9996 27.7572 72.5098C34.3562 69.2093 41.6342 67.4938 49.0126 67.5C62.0922 67.5 73.9409 72.7881 82.5302 81.3416Z" fill="#A0AEC0" />
+          <path d="M57.9629 57.4535C60.3384 55.0781 61.6729 51.8562 61.6729 48.4968C61.6729 45.1374 60.3384 41.9156 57.9629 39.5401C55.5875 37.1647 52.3656 35.8302 49.0062 35.8302C45.6468 35.8302 42.425 37.1647 40.0495 39.5401C37.6741 41.9156 36.3396 45.1374 36.3396 48.4968C36.3396 51.8562 37.6741 55.0781 40.0495 57.4535C42.425 59.829 45.6468 61.1635 49.0062 61.1635C52.3656 61.1635 55.5875 59.829 57.9629 57.4535Z" fill="#A0AEC0" />
+        </svg>
+      );
+    }
+
     const content = (
       <div className="p-4 md:p-6 md:pt-4 md:pr-0">
         <div className="border-b border-gray-400 md:hidden">
@@ -287,34 +325,19 @@ class SettingsPopup extends React.PureComponent {
           </button>
           <h3 className="pb-2 text-2xl text-gray-800 font-medium leading-none">Account</h3>
         </div>
-        <p className="mt-4 text-base text-gray-700 md:mt-0">You sign in to Brace.to using your Blockstack Identity. This is similar to some websites that allow you to use your Google, Facebook, or Twitter account to sign in to their websites. Not similarly, your Blockstack Identity lives in blockchain and only you with your secret key can control it. If you want to change your Blockstack Identity’s information i.e. your profile picture, please visit <a className="underline hover:text-gray-800 focus:outline-none focus:shadow-outline" href="https://browser.blockstack.org/profiles">Blockstack Browser</a>.</p>
+        <p className="mt-4 text-base text-gray-700 md:mt-0">You sign in to Brace.to using your Blockstack Identity. This is similar to some websites that allow you to use your Google, Facebook, or Twitter account to sign in to their websites. Not similarly, your Blockstack Identity lives in blockchain and only you with your secret key can control it. If you want to change your Blockstack Identity’s information i.e. your profile picture, please visit <a className="underline hover:text-gray-900 focus:outline-none focus:shadow-outline" href="https://browser.blockstack.org/profiles">Blockstack Browser</a>.</p>
         <div className="mt-8 md:clearfix">
           <div className="md:float-right md:w-3/12">
-            <svg className="mx-auto w-full max-w-24 md:ml-auto md:mr-0" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="48" cy="48" r="48" fill="#E2E8F0" />
-              <mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="11" y="20" width="76" height="76">
-                <g clip-path="url(#clip0)">
-                  <path d="M87 86.4778V96H11V86.5127C15.4205 80.6051 21.1584 75.8104 27.7573 72.5098C34.3563 69.2093 41.6343 67.4938 49.0127 67.5C64.542 67.5 78.336 74.9543 87 86.4778V86.4778ZM61.673 48.4968C61.673 51.8562 60.3385 55.0781 57.963 57.4535C55.5876 59.829 52.3657 61.1635 49.0063 61.1635C45.6469 61.1635 42.4251 59.829 40.0496 57.4535C37.6742 55.0781 36.3397 51.8562 36.3397 48.4968C36.3397 45.1374 37.6742 41.9156 40.0496 39.5401C42.4251 37.1647 45.6469 35.8302 49.0063 35.8302C52.3657 35.8302 55.5876 37.1647 57.963 39.5401C60.3385 41.9156 61.673 45.1374 61.673 48.4968V48.4968Z" fill="#A0AEC0" />
-                </g>
-              </mask>
-              <g mask="url(#mask0)">
-                <circle cx="48" cy="48" r="48" fill="#A0AEC0" />
-              </g>
-              <defs>
-                <clipPath id="clip0">
-                  <rect width="76" height="76" fill="white" transform="translate(11 20)" />
-                </clipPath>
-              </defs>
-            </svg>
+            {userImage}
           </div>
           <table className="mt-2 table-auto lg:table-fixed">
             <tbody>
               <tr className="py-2">
-                <td className="align-baseline lg:w-4/12">
+                <td className="align-middle lg:w-4/12">
                   <p className="text-sm text-gray-700 text-right">ID:</p>
                 </td>
                 <td className="pl-2 align-baseline lg:w-8/12">
-                  <p className="text-base text-gray-700">{this.props.username || 'N/A'}</p>
+                  <p className="text-base text-gray-700 break-all">{this.props.username || 'N/A'}</p>
                 </td>
               </tr>
               <tr className="py-2">
@@ -323,7 +346,7 @@ class SettingsPopup extends React.PureComponent {
                 </td>
                 <td className="pl-2 align-baseline">
                   <p className="text-base text-gray-700">Unlike traditional systems, your password cannnot be reset. Your password is a 12-word secret key. It's only known to you. If you lose it, there is no way to retrieve it back. Keep it safe before you sign out. You can view it only when you sign in.</p>
-                  <p className="pt-2 text-base text-blue-600 underline hover:text-blue-700"><a className="focus:outline-none focus:shadow-outline" href="https://app.blockstack.org/#/settings/secret-key">View your 12-word secret key</a></p>
+                  <p className="pt-2 text-base text-blue-600 underline hover:text-blue-800"><a className="focus:outline-none focus:shadow-outline" href="https://app.blockstack.org/#/settings/secret-key">View your 12-word secret key</a></p>
                 </td>
               </tr>
             </tbody>
@@ -343,7 +366,7 @@ class SettingsPopup extends React.PureComponent {
         </div>
         <div className="mt-8 mb-4">
           <h4 className="text-xl text-red-700 font-medium leading-none">Delete Account</h4>
-          <p className="mt-2 text-base text-gray-700">Brace.to uses Blockstack Identity to sign you in. If you want to delete your Blockstack Identity, please send an email to support@blockstack.com. For more information, please visit <a className="underline hover:text-gray-800 focus:outline-none focus:shadow-outline" href="https://forum.blockstack.org/t/is-blockstack-gdrp-compliant/10931/4">here</a>.</p>
+          <p className="mt-2 text-base text-gray-700">Brace.to uses Blockstack Identity to sign you in. If you want to delete your Blockstack Identity, please send an email to support@blockstack.com. For more information, please visit <a className="underline hover:text-gray-900 focus:outline-none focus:shadow-outline" href="https://forum.blockstack.org/t/is-blockstack-gdrp-compliant/10931/4">here</a>.</p>
         </div>
       </div>
     );
@@ -363,16 +386,16 @@ class SettingsPopup extends React.PureComponent {
         </div>
         <div className="mt-6 md:mt-0">
           <h4 className="text-xl text-gray-800 font-medium leading-none">Data Server</h4>
-          <p className="mt-2 text-base text-gray-700">With your Blockstack identity, you can have your own data server called Gaia to store all your data from apps you use with your Blockstack identity. You just need to specify your server’s information in Blockstack blockchain. Brace.to stores all your data in the server specified in the blockchain. For more details, please visit <a className="underline hover:text-gray-800 focus:outline-none focus:shadow-outline" href="https://docs.blockstack.org/data-storage/overview">Blockstack Gaia</a> and <a className="underline hover:text-gray-800 focus:outline-none focus:shadow-outline" href="https://docs.blockstack.org/storage-hubs/overview">Blockstack Gaia hubs</a>.</p>
+          <p className="mt-2 text-base text-gray-700">With your Blockstack identity, you can have your own data server called Gaia to store all your data from apps you use with your Blockstack identity. You just need to specify your server’s information in Blockstack blockchain. Brace.to stores all your data in the server specified in the blockchain. For more details, please visit <a className="underline hover:text-gray-900 focus:outline-none focus:shadow-outline" href="https://docs.blockstack.org/data-storage/overview">Blockstack Gaia</a> and <a className="underline hover:text-gray-900 focus:outline-none focus:shadow-outline" href="https://docs.blockstack.org/storage-hubs/overview">Blockstack Gaia hubs</a>.</p>
         </div>
         <div className="mt-8">
-          <button onClick={this.onToExportDataViewBtnClick} className="focus:outline-none focus:shadow-outline">
+          <button onClick={this.onToExportAllDataViewBtnClick} className="focus:outline-none focus:shadow-outline">
             <h4 className="text-xl text-gray-800 font-medium leading-none underline hover:text-black">Export All Data</h4>
           </button>
           <p className="mt-2 text-base text-gray-700">Export all your data from server to your device in a text file.</p>
         </div>
         <div className="mt-8 mb-4">
-          <button onClick={this.onToDeleteDataViewBtnClick} className="focus:outline-none focus:shadow-outline">
+          <button onClick={this.onToDeleteAllDataViewBtnClick} className="focus:outline-none focus:shadow-outline">
             <h4 className="text-xl text-gray-800 font-medium leading-none underline hover:text-black">Delete All Data</h4>
           </button>
           <p className="mt-2 text-base text-gray-700">Delete all your data including but not limited to all your saved links in all lists, all your created lists, and all your settings.</p>
@@ -383,7 +406,77 @@ class SettingsPopup extends React.PureComponent {
     return this._render(content);
   }
 
-  renderExportDataView() {
+  renderExportAllDataView() {
+
+    const { exportAllDataProgress } = this.props;
+
+    let actionPanel;
+    if (!exportAllDataProgress) {
+      actionPanel = (
+        <button onClick={this.onExportAllDataBtnClick} className="mt-6 mb-4 block focus:outline-none-outer">
+          <span className="px-4 py-2 block bg-white text-base text-gray-700 border border-gray-700 rounded-full shadow hover:bg-gray-800 hover:text-white active:bg-gray-800 focus:shadow-outline-inner">Export All My Data</span>
+        </button>
+      );
+    } else if (exportAllDataProgress.total === -1) {
+      actionPanel = (
+        <div className="mt-6 mb-4">
+          <div className="flex items-center">
+            <svg className="w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
+            </svg>
+
+            <p className="ml-1 font-base text-red-700">Oops..., something went wrong!</p>
+          </div>
+          <p className="font-base text-red-700">{exportAllDataProgress.error}</p>
+          <p className="mt-6 font-base text-gray-800">
+            Please wait a moment and try again. If the problem persists, please&nbsp;
+            <a className="hover:underline focus:outline-none focus:shadow-outline" href="/#support">
+              contact us
+              <svg className="mb-2 inline-block w-4" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11 3C10.4477 3 10 3.44772 10 4C10 4.55228 10.4477 5 11 5H13.5858L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L15 6.41421V9C15 9.55228 15.4477 10 16 10C16.5523 10 17 9.55228 17 9V4C17 3.44772 16.5523 3 16 3H11Z" />
+                <path d="M5 5C3.89543 5 3 5.89543 3 7V15C3 16.1046 3.89543 17 5 17H13C14.1046 17 15 16.1046 15 15V12C15 11.4477 14.5523 11 14 11C13.4477 11 13 11.4477 13 12V15H5V7H8C8.55228 7 9 6.55228 9 6C9 5.44772 8.55228 5 8 5H5Z" />
+              </svg>
+            </a>.
+          </p>
+        </div>
+      );
+    } else if (exportAllDataProgress.total === 0) {
+      actionPanel = (
+        <div className="mt-6 mb-4">
+          <div className="flex items-center">
+            <svg className="w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 6C11 6.55228 10.5523 7 10 7C9.44772 7 9 6.55228 9 6C9 5.44772 9.44772 5 10 5C10.5523 5 11 5.44772 11 6ZM9 9C8.44772 9 8 9.44772 8 10C8 10.5523 8.44772 11 9 11V14C9 14.5523 9.44772 15 10 15H11C11.5523 15 12 14.5523 12 14C12 13.4477 11.5523 13 11 13V10C11 9.44772 10.5523 9 10 9H9Z" />
+            </svg>
+            <p className="ml-1 font-base text-gray-800">No data to export.</p>
+          </div>
+          <p className="font-base text-gray-800">{exportAllDataProgress.done} / {exportAllDataProgress.total}</p>
+        </div>
+      );
+    } else if (exportAllDataProgress.total === exportAllDataProgress.done) {
+      actionPanel = (
+        <div className="mt-6 mb-4">
+          <div className="flex items-center">
+            <svg className="w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.7071 8.70711C14.0976 8.31658 14.0976 7.68342 13.7071 7.29289C13.3166 6.90237 12.6834 6.90237 12.2929 7.29289L9 10.5858L7.70711 9.29289C7.31658 8.90237 6.68342 8.90237 6.29289 9.29289C5.90237 9.68342 5.90237 10.3166 6.29289 10.7071L8.29289 12.7071C8.68342 13.0976 9.31658 13.0976 9.70711 12.7071L13.7071 8.70711Z" />
+            </svg>
+            <p className="ml-1 font-base text-gray-800">Done</p>
+          </div>
+          <p className="font-base text-gray-800">{exportAllDataProgress.done} / {exportAllDataProgress.total}</p>
+        </div>
+      );
+    } else {
+      actionPanel = (
+        <div className="mt-6 mb-4">
+          <div className="flex items-center">
+            <div className="ball-clip-rotate">
+              <div></div>
+            </div>
+            <p className="ml-1 font-base text-gray-800">Exporting...</p>
+          </div>
+          <p className="font-base text-gray-800">{exportAllDataProgress.done} / {exportAllDataProgress.total}</p>
+        </div>
+      );
+    }
 
     const content = (
       <div className="p-4 md:p-6 md:pt-4 md:pr-0">
@@ -395,16 +488,87 @@ class SettingsPopup extends React.PureComponent {
         </div>
         <p className="mt-6 text-base text-gray-700">Export all your data from server to your device in a text file.</p>
         <p className="mt-6 text-base text-gray-700">It may take several minutes to export all your data.</p>
-        <button onClick={this.onExportDataBtnClick} className="mt-6 mb-4 block focus:outline-none-outer">
-          <span className="px-4 py-2 block bg-white text-base text-gray-700 border border-gray-700 rounded-full shadow-lg hover:bg-gray-800 hover:text-white active:bg-gray-800 focus:shadow-outline-inner">Export All My Data</span>
-        </button>
+        {actionPanel}
       </div>
     );
 
     return this._render(content);
   }
 
-  renderDeleteDataView() {
+  renderDeleteAllDataView() {
+
+    const { deleteAllDataProgress } = this.props;
+
+    let actionPanel;
+    if (!deleteAllDataProgress) {
+      actionPanel = (
+        <div className="mt-6 mb-4">
+          <button onClick={this.onDeleteAllDataBtnClick} className="block focus:outline-none-outer">
+            <span className="px-4 py-2 block bg-red-600 text-base text-white rounded-full shadow hover:bg-red-700 hover:text-white active:bg-red-800 focus:shadow-outline-inner">Delete All My Data</span>
+          </button>
+          {this.state.isRequireConfirmShown && <p className="mt-2 text-base text-red-700">Please confirm by checking the box above first.</p>}
+        </div>
+      );
+    } else if (deleteAllDataProgress.total === -1) {
+      actionPanel = (
+        <div className="mt-6 mb-4">
+          <div className="flex items-center">
+            <svg className="w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
+            </svg>
+
+            <p className="ml-1 font-base text-red-700">Oops..., something went wrong!</p>
+          </div>
+          <p className="font-base text-red-700">{deleteAllDataProgress.error}</p>
+          <p className="mt-6 font-base text-gray-800">
+            Please wait a moment and try again. If the problem persists, please&nbsp;
+            <a className="hover:underline focus:outline-none focus:shadow-outline" href="/#support">
+              contact us
+              <svg className="mb-2 inline-block w-4" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11 3C10.4477 3 10 3.44772 10 4C10 4.55228 10.4477 5 11 5H13.5858L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L15 6.41421V9C15 9.55228 15.4477 10 16 10C16.5523 10 17 9.55228 17 9V4C17 3.44772 16.5523 3 16 3H11Z" />
+                <path d="M5 5C3.89543 5 3 5.89543 3 7V15C3 16.1046 3.89543 17 5 17H13C14.1046 17 15 16.1046 15 15V12C15 11.4477 14.5523 11 14 11C13.4477 11 13 11.4477 13 12V15H5V7H8C8.55228 7 9 6.55228 9 6C9 5.44772 8.55228 5 8 5H5Z" />
+              </svg>
+            </a>.
+          </p>
+        </div>
+      );
+    } else if (deleteAllDataProgress.total === 0) {
+      actionPanel = (
+        <div className="mt-6 mb-4">
+          <div className="flex items-center">
+            <svg className="w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 6C11 6.55228 10.5523 7 10 7C9.44772 7 9 6.55228 9 6C9 5.44772 9.44772 5 10 5C10.5523 5 11 5.44772 11 6ZM9 9C8.44772 9 8 9.44772 8 10C8 10.5523 8.44772 11 9 11V14C9 14.5523 9.44772 15 10 15H11C11.5523 15 12 14.5523 12 14C12 13.4477 11.5523 13 11 13V10C11 9.44772 10.5523 9 10 9H9Z" />
+            </svg>
+            <p className="ml-1 font-base text-gray-800">No data to delete.</p>
+          </div>
+          <p className="font-base text-gray-800">{deleteAllDataProgress.done} / {deleteAllDataProgress.total}</p>
+        </div>
+      );
+    } else if (deleteAllDataProgress.total === deleteAllDataProgress.done) {
+      actionPanel = (
+        <div className="mt-6 mb-4">
+          <div className="flex items-center">
+            <svg className="w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.7071 8.70711C14.0976 8.31658 14.0976 7.68342 13.7071 7.29289C13.3166 6.90237 12.6834 6.90237 12.2929 7.29289L9 10.5858L7.70711 9.29289C7.31658 8.90237 6.68342 8.90237 6.29289 9.29289C5.90237 9.68342 5.90237 10.3166 6.29289 10.7071L8.29289 12.7071C8.68342 13.0976 9.31658 13.0976 9.70711 12.7071L13.7071 8.70711Z" />
+            </svg>
+            <p className="ml-1 font-base text-gray-800">Done</p>
+          </div>
+          <p className="font-base text-gray-800">{deleteAllDataProgress.done} / {deleteAllDataProgress.total}</p>
+        </div>
+      );
+    } else {
+      actionPanel = (
+        <div className="mt-6 mb-4">
+          <div className="flex items-center">
+            <div className="ball-clip-rotate">
+              <div></div>
+            </div>
+            <p className="ml-1 font-base text-gray-800">Deleting...</p>
+          </div>
+          <p className="font-base text-gray-800">{deleteAllDataProgress.done} / {deleteAllDataProgress.total}</p>
+        </div>
+      );
+    }
 
     const content = (
       <div className="p-4 md:p-6 md:pt-4 md:pr-0">
@@ -422,9 +586,7 @@ class SettingsPopup extends React.PureComponent {
           <input onChange={this.onConfirmInputChange} value={this.state.didCheckConfirm} className="form-checkbox text-indigo-600 transition duration-150 ease-in-out focus:outline-none focus:shadow-outline" id="confirm-input" type="checkbox" />
           <label htmlFor="confirm-input" className="ml-2 block text-base text-gray-700">Yes, I’m absolutely sure I want to delete all my data.</label>
         </div>
-        <button onClick={this.onDeleteDataBtnClick} className="mt-6 mb-4 block focus:outline-none-outer">
-          <span className="px-4 py-2 block bg-red-600 text-base text-white rounded-full shadow-lg hover:bg-red-700 hover:text-white active:bg-red-800 focus:shadow-outline-inner">Delete All My Data</span>
-        </button>
+        {actionPanel}
       </div>
     );
 
@@ -437,8 +599,8 @@ class SettingsPopup extends React.PureComponent {
 
     if (viewId === VIEW_ACCOUNT) return this.renderAccountView();
     else if (viewId === VIEW_DATA) return this.renderDataView();
-    else if (viewId === VIEW_DATA_EXPORT) return this.renderExportDataView();
-    else if (viewId === VIEW_DATA_DELETE) return this.renderDeleteDataView();
+    else if (viewId === VIEW_DATA_EXPORT) return this.renderExportAllDataView();
+    else if (viewId === VIEW_DATA_DELETE) return this.renderDeleteAllDataView();
     else throw new Error(`Invalid viewId: ${viewId}`);
   }
 }
@@ -446,12 +608,16 @@ class SettingsPopup extends React.PureComponent {
 const mapStateToProps = (state) => {
   return {
     username: state.user.username,
-    image: state.user.image,
+    userImage: state.user.image,
+    exportAllDataProgress: state.display.exportAllDataProgress,
+    deleteAllDataProgress: state.display.deleteAllDataProgress,
   };
 };
 
 const mapDispatchToProps = {
   updatePopup,
+  exportAllData, updateExportAllDataProgress,
+  deleteAllData, updateDeleteAllDataProgress,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsPopup);
