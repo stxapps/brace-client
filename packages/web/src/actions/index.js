@@ -21,12 +21,13 @@ import {
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
   UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION, UPDATE_HANDLING_SIGN_IN,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
-  RESET_STATE,
+  DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   APP_NAME, APP_ICON_NAME,
   BACK_DECIDER, BACK_POPUP,
-  ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP, CONFIRM_DELETE_POPUP,
+  ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
+  CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
@@ -36,9 +37,8 @@ import {
 import {
   _,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
-  getUrlFirstChar, separateUrlAndParam, extractUrl,
-  getUrlPathQueryHash,
-  randomDecor,
+  getUrlFirstChar, separateUrlAndParam, extractUrl, getUrlPathQueryHash,
+  getUserImageUrl, randomDecor,
 } from '../utils';
 
 export const init = async (store) => {
@@ -50,7 +50,7 @@ export const init = async (store) => {
   if (isUserSignedIn) {
     const userData = userSession.loadUserData();
     username = userData.username;
-    userImage = (userData && userData.profile && userData.profile.image) || null;
+    userImage = getUserImageUrl(userData);
   }
   store.dispatch({
     type: INIT,
@@ -98,7 +98,7 @@ const handlePendingSignIn = () => async (dispatch, getState) => {
       payload: {
         isUserSignedIn: true,
         username: userData.username,
-        image: (userData && userData.profile && userData.profile.image) || null,
+        image: getUserImageUrl(userData),
       }
     });
   }
@@ -118,6 +118,7 @@ const getPopupShownId = (state) => {
   if (state.display.isProfilePopupShown) return PROFILE_POPUP;
   if (state.display.isListNamePopupShown) return LIST_NAME_POPUP;
   if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
+  if (state.display.isSettingsPopupShown) return SETTINGS_POPUP;
 
   for (const listName in state.links) {
     for (const id in state.links[listName]) {
@@ -246,7 +247,7 @@ export const signUp = () => async (dispatch, getState) => {
         payload: {
           isUserSignedIn: true,
           username: userData.username,
-          image: (userData && userData.profile && userData.profile.image) || null,
+          image: getUserImageUrl(userData),
         },
       });
     },
@@ -273,7 +274,7 @@ export const signIn = () => async (dispatch, getState) => {
         payload: {
           isUserSignedIn: true,
           username: userData.username,
-          image: (userData && userData.profile && userData.profile.image) || null,
+          image: getUserImageUrl(userData),
         },
       });
     },
@@ -741,6 +742,9 @@ const deleteAllDataLoop = async (dispatch, fPaths, doneCount) => {
 
 export const deleteAllData = () => async (dispatch, getState) => {
 
+  // redux-offline: Empty outbox
+  dispatch({ type: OFFLINE_RESET_STATE });
+
   dispatch(updateDeleteAllDataProgress({
     total: 'calculating...',
     done: 0,
@@ -770,6 +774,10 @@ export const deleteAllData = () => async (dispatch, getState) => {
 
   try {
     await deleteAllDataLoop(dispatch, fPaths, 0);
+
+    dispatch({
+      type: DELETE_ALL_DATA,
+    });
   } catch (e) {
     dispatch(updateDeleteAllDataProgress({
       total: -1,

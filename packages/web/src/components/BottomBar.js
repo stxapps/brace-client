@@ -30,9 +30,11 @@ class BottomBar extends React.PureComponent {
     this.searchInput = React.createRef();
 
     this.userImage = props.userImage;
+    this.profileBtnStyleClasses = 'rounded-full';
     if (this.userImage === null) {
       const svgString = jdenticon.toSvg(props.username, 32);
       this.userImage = `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
+      this.profileBtnStyleClasses = 'rounded-lg';
     }
   }
 
@@ -214,7 +216,7 @@ class BottomBar extends React.PureComponent {
             </svg>
           </button>
           <button onClick={this.onProfileBtnClick} className="flex items-center w-1/3 h-full focus:outline-none-outer">
-            <div className="mx-auto flex items-center h-10 w-10 rounded-lg overflow-hidden border-2 border-gray-200 focus:shadow-outline-inner">
+            <div className={`mx-auto flex items-center h-10 w-10 overflow-hidden border-2 border-gray-200 focus:shadow-outline-inner ${this.profileBtnStyleClasses}`}>
               <GracefulImage className="h-full w-full bg-white object-cover" src={this.userImage} alt="Profile" />
             </div>
           </button>

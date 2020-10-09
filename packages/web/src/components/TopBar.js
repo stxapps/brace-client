@@ -27,9 +27,11 @@ class TopBar extends React.PureComponent {
     this.state = { ...this.initialState };
 
     this.userImage = props.userImage;
+    this.profileBtnStyleClasses = 'rounded-full';
     if (this.userImage === null) {
       const svgString = jdenticon.toSvg(props.username, 32);
       this.userImage = `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
+      this.profileBtnStyleClasses = 'rounded-lg';
     }
   }
 
@@ -167,7 +169,7 @@ class TopBar extends React.PureComponent {
           </button>
         </div>
         <div className="relative ml-4">
-          <button onClick={this.onProfileBtnClick} className={`relative block h-8 w-8 rounded-lg overflow-hidden border-2 border-gray-200 ${isProfilePopupShown ? 'z-41' : ''} focus:outline-none focus:shadow-outline`}>
+          <button onClick={this.onProfileBtnClick} className={`relative block h-8 w-8 overflow-hidden border-2 border-gray-200 ${isProfilePopupShown ? 'z-41' : ''} focus:outline-none focus:shadow-outline ${this.profileBtnStyleClasses}`}>
             <GracefulImage className="h-full w-full bg-white object-cover" src={this.userImage} alt="Profile" />
           </button>
           {isProfilePopupShown && this.renderProfilePopup()}

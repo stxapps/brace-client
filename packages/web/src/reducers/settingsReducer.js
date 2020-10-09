@@ -1,4 +1,4 @@
-import { FETCH_COMMIT, RESET_STATE } from '../types/actionTypes';
+import { FETCH_COMMIT, DELETE_ALL_DATA, RESET_STATE } from '../types/actionTypes';
 import {
   MY_LIST,
 } from '../types/const';
@@ -19,7 +19,7 @@ export default (state = initialState, action) => {
     return settings ? settings : state;
   }
 
-  if (action.type === RESET_STATE) {
+  if (action.type === DELETE_ALL_DATA || action.type === RESET_STATE) {
     return { ...initialState };
   }
 

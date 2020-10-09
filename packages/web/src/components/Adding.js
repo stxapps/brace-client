@@ -136,7 +136,7 @@ class Adding extends React.PureComponent {
     if (param && param[URL_QUERY_CLOSE_KEY]) {
       if (param[URL_QUERY_CLOSE_KEY] === URL_QUERY_CLOSE_WINDOW) {
         leftLink = null;
-        centerText = <button onClick={() => window.close()} className="py-2 block w-full text-base text-gray-900 text-center focus:outline-none focus:shadow-outline">close this window</button>;
+        centerText = <button onClick={() => window.close()} className="py-2 block w-full text-base text-gray-900 text-center hover:text-black focus:outline-none focus:shadow-outline">close this window</button>;
         rightLink = null;
       }
     }
@@ -207,7 +207,7 @@ class Adding extends React.PureComponent {
         <p className="mx-auto mt-5 w-full max-w-xs text-2xl text-gray-900 font-semibold text-center">Oops..., something went wrong!</p>
         <p className="mx-auto mt-5 w-full max-w-xs text-base text-gray-900 text-center">
           Please wait a moment and try again. If the problem persists, please&nbsp;
-          <a className="hover:underline focus:outline-none focus:shadow-outline" href="/#support">
+          <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="/#support">
             contact us
             <svg className="mb-2 inline-block w-4" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path d="M11 3C10.4477 3 10 3.44772 10 4C10 4.55228 10.4477 5 11 5H13.5858L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L15 6.41421V9C15 9.55228 15.4477 10 16 10C16.5523 10 17 9.55228 17 9V4C17 3.44772 16.5523 3 16 3H11Z" />
@@ -282,7 +282,7 @@ class Adding extends React.PureComponent {
         </button>
         <div className="mt-10 flex justify-center items-center">
           <p className="text-base text-gray-900">No account yet?</p>
-          <button onClick={() => this.props.signUp()} className="ml-2 underline focus:outline-none focus:shadow-outline">Sign up</button>
+          <button onClick={() => this.props.signUp()} className="ml-2 underline hover:text-black focus:outline-none focus:shadow-outline">Sign up</button>
         </div>
         {this.renderNav()}
       </React.Fragment>

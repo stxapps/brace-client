@@ -18,7 +18,7 @@ class Privacy extends React.PureComponent {
         <section className="pt-12 pb-4">
           <div style={{ borderRadius: '1.5rem' }} className="mx-auto px-4 pt-8 pb-8 w-full max-w-3xl bg-white text-gray-800">
             <h1 className="text-2xl text-gray-900 font-semibold">Privacy policy</h1>
-            <p className="pt-6 leading-relaxed">This Privacy Policy applies to <a className="focus:outline-none focus:shadow-outline" href="https://brace.to">https://brace.to</a> (hereinafter, "us", "we", or "https://brace.to"). We respect your privacy and are committed to protecting personally identifiable information you may provide us through the Website. We have adopted this privacy policy ("Privacy Policy") to explain what information may be collected on our Website, how we use this information, and under what circumstances we may disclose the information. This Privacy Policy applies only to information we collect through the Website and does not apply to our collection of information from other sources.</p>
+            <p className="pt-6 leading-relaxed">This Privacy Policy applies to <a className="hover:text-black focus:outline-none focus:shadow-outline" href="https://brace.to">https://brace.to</a> (hereinafter, "us", "we", or "https://brace.to"). We respect your privacy and are committed to protecting personally identifiable information you may provide us through the Website. We have adopted this privacy policy ("Privacy Policy") to explain what information may be collected on our Website, how we use this information, and under what circumstances we may disclose the information. This Privacy Policy applies only to information we collect through the Website and does not apply to our collection of information from other sources.</p>
             <p className="pt-6 leading-relaxed">This Privacy Policy, together with the Terms of use posted on our Website, set forth the general rules and policies governing your use of our Website. Depending on your activities when visiting our Website, you may be required to agree to additional terms of use.</p>
 
             <h2 className="pt-10 text-gray-900 font-semibold">Website Visitors</h2>
@@ -52,7 +52,7 @@ class Privacy extends React.PureComponent {
             <p className="pt-3 leading-relaxed">Although most changes are likely to be minor, Brace.to may change its Privacy Policy from time to time, and in Brace.to's sole discretion. Brace.to encourages visitors to frequently check this page for any changes to its Privacy Policy. Your continued use of this site after any change in this Privacy Policy will constitute your acceptance of such change.</p>
             <p className="pt-10 leading-relaxed">
               Your continued use of our website will be regarded as acceptance of our privacy policy. If you have any questions about this Privacy Policy, please contact us at&nbsp;
-              <a className="focus:outline-none focus:shadow-outline" href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;%73%75%70%70%6F%72%74%40%62%72%61%63%65%2E%74%6F">
+              <a className="hover:text-black focus:outline-none focus:shadow-outline" href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;%73%75%70%70%6F%72%74%40%62%72%61%63%65%2E%74%6F">
                 <span className="e-mail" data-user="troppus" data-website="ot.ecarb"></span>
               </a>
             </p>
@@ -60,16 +60,16 @@ class Privacy extends React.PureComponent {
               This policy is effective as of 25 May 2020.
                                                                                      </p>
             <div className="pt-12 text-right">
-              <button className="focus:outline-none focus:shadow-outline" onClick={() => window.scrollTo(0, 0)}>
+              <button className="group hover:text-black focus:outline-none focus:shadow-outline" onClick={() => window.scrollTo(0, 0)}>
                 <span>Back to top</span>
-                <svg className="mb-1 ml-1 inline-block w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <svg className="mb-1 ml-1 inline-block w-5 text-gray-600 group-hover:text-gray-800" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path fillRule="evenodd" clipRule="evenodd" d="M3.29289 9.70711C2.90237 9.31658 2.90237 8.68342 3.29289 8.29289L9.29289 2.29289C9.68342 1.90237 10.3166 1.90237 10.7071 2.29289L16.7071 8.29289C17.0976 8.68342 17.0976 9.31658 16.7071 9.70711C16.3166 10.0976 15.6834 10.0976 15.2929 9.70711L11 5.41421V17C11 17.5523 10.5523 18 10 18C9.44772 18 9 17.5523 9 17V5.41421L4.70711 9.70711C4.31658 10.0976 3.68342 10.0976 3.29289 9.70711Z" />
                 </svg>
               </button>
               <br />
-              <a className="mt-2 inline-block focus:outline-none focus:shadow-outline" href="/">
+              <a className="mt-2 inline-block group hover:text-black focus:outline-none focus:shadow-outline" href="/">
                 <span>Go home</span>
-                <svg className="mb-1 ml-1 inline-block w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <svg className="mb-1 ml-1 inline-block w-5 text-gray-600 group-hover:text-gray-800" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path d="M10.7071 2.29289C10.3166 1.90237 9.68342 1.90237 9.29289 2.29289L2.29289 9.29289C1.90237 9.68342 1.90237 10.3166 2.29289 10.7071C2.68342 11.0976 3.31658 11.0976 3.70711 10.7071L4 10.4142V17C4 17.5523 4.44772 18 5 18H7C7.55228 18 8 17.5523 8 17V15C8 14.4477 8.44772 14 9 14H11C11.5523 14 12 14.4477 12 15V17C12 17.5523 12.4477 18 13 18H15C15.5523 18 16 17.5523 16 17V10.4142L16.2929 10.7071C16.6834 11.0976 17.3166 11.0976 17.7071 10.7071C18.0976 10.3166 18.0976 9.68342 17.7071 9.29289L10.7071 2.29289Z" />
                 </svg>
               </a>
