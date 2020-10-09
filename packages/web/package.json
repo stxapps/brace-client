@@ -1,6 +1,6 @@
 {
   "name": "brace-client-web",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "dependencies": {
     "@blockstack/connect": "^2.12.7",
