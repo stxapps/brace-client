@@ -629,8 +629,8 @@ This and CI/CD are very important!
 - no need for dev dependencies as this's not a node app
 - follow steps in tailwindcss.com/course/optimizing-for-production
 - follow steps in medium.com/@xijo/create-react-app-with-tailwind-via-postcss-plus-purgecss-5c36b4c33ba7 to config Tailwindcss
-- yarn add redux redux-thunk react-redux
-- yarn add @redux-offline/redux-offline
+- yarn add redux redux-loop react-redux
+- yarn add https://github.com/bracedotto/redux-offline#88a89e7ebe76415e83bd1943360e817274d8063d
 - yarn add blockstack @blockstack/connect
 - Make sure history works:
   + Address bar i.e. change path, change hash!
@@ -643,17 +643,13 @@ This and CI/CD are very important!
   + Need to provide each history state a number for knowing back press or forward press or tag <a> click
   + ref: stackoverflow.com/questions/8980255/how-do-i-retrieve-if-the-popstate-event-comes-from-back-or-forward-actions-with/49329267#49329267, medium.com/@subwaymatch/disabling-back-button-in-react-with-react-router-v5-34bb316c99d7
 - yarn add reselect
-- yarn remove redux-thunk
-- yarn add redux-loop
 - yarn add react-stack-grid
-- yarn remove @redux-offline/redux-offline
-- yarn add https://github.com/bracedotto/redux-offline#88a89e7ebe76415e83bd1943360e817274d8063d
 - yarn add react-graceful-image
 - yarn add jdenticon
 - yarn add source-map-explorer
 - yarn add npm-run-all
 - yarn add axios
-- yarn add react-clamp-lines
+- yarn add file-saver
 ** attribution
 - tailwindcss, postcss, purgecss
 - uirefactoring
