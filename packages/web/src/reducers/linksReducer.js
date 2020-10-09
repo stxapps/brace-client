@@ -348,7 +348,7 @@ export default (state = initialState, action) => {
     const newState = {};
     for (const k in state) {
       if (state.hasOwnProperty(k)) {
-        newState[k] = [];
+        newState[k] = {};
       }
     }
     return newState;
