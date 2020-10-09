@@ -198,7 +198,7 @@ class TopBar extends React.PureComponent {
     else throw new Error(`Invalid rightPane: ${rightPaneProp}`);
 
     return (
-      <header className="mx-auto px-4 flex justify-between items-center max-w-6xl min-h-14 md:px-6 lg:px-8">
+      <header className="mx-auto px-4 fixed inset-x-0 top-0 flex justify-between items-center max-w-6xl min-h-14 bg-white z-30 md:px-6 lg:px-8">
         <div className="relative">
           <img className="h-8 md:hidden" src={shortLogo} alt="Brace logo" />
           <img className="hidden h-6 md:block" src={fullLogo} alt="Brace logo" />

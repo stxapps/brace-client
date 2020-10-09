@@ -84,7 +84,8 @@ export const SHOW_BLANK = 'SHOW_BLANK';
 export const SHOW_SIGN_IN = 'SHOW_SIGN_IN';
 export const SHOW_COMMANDS = 'SHOW_COMMANDS';
 
-export const BAR_HEIGHT = '3.5rem';
+export const TOP_BAR_HEIGHT = '3.5rem';
+export const BOTTOM_BAR_HEIGHT = '3.5rem';
 export const SEARCH_POPUP_HEIGHT = '3.625rem';
 export const SHARE_BORDER_RADIUS = {
   borderTopLeftRadius: 16,

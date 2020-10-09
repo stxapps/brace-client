@@ -7,7 +7,7 @@ import { signOut, updatePopup, addLink, updateSearchString } from '../actions';
 import {
   ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, SETTINGS_POPUP,
   NO_URL, ASK_CONFIRM_URL, URL_MSGS,
-  BAR_HEIGHT,
+  BOTTOM_BAR_HEIGHT,
 } from '../types/const';
 import { getPopupLink } from '../selectors';
 import { validateUrl, isEqual } from '../utils';
@@ -158,7 +158,7 @@ class BottomBar extends React.PureComponent {
     //   but when show/hide this search popup, no need animation
     //   as keyboard is already animated.
     const style = {};
-    if (isShown) style.bottom = BAR_HEIGHT;
+    if (isShown) style.bottom = BOTTOM_BAR_HEIGHT;
     else style.bottom = 0;
     style.transitionProperty = 'bottom';
 
@@ -198,7 +198,7 @@ class BottomBar extends React.PureComponent {
   render() {
 
     const { isShown } = this.props;
-    const style = { height: BAR_HEIGHT };
+    const style = { height: BOTTOM_BAR_HEIGHT };
 
     return (
       <React.Fragment>

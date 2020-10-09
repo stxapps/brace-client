@@ -13,7 +13,7 @@ import {
   PC_100, PC_50, PC_33,
   MY_LIST, TRASH,
   SHOW_BLANK, SHOW_COMMANDS,
-  BAR_HEIGHT,
+  TOP_BAR_HEIGHT, BOTTOM_BAR_HEIGHT,
 } from '../types/const';
 import { getLinks } from '../selectors';
 import { addRem, getWindowHeight, getWindowScrollHeight, throttle } from '../utils';
@@ -105,7 +105,7 @@ class Main extends React.PureComponent {
   }
 
   getDefaultPaddingBottom = () => {
-    if (this.getColumnWidth() === PC_100) return addRem(BAR_HEIGHT, '1.5rem');
+    if (this.getColumnWidth() === PC_100) return addRem(BOTTOM_BAR_HEIGHT, '1.5rem');
     return '1.5rem';
   };
 
@@ -265,6 +265,7 @@ class Main extends React.PureComponent {
 
     const topBarRightPane = [PC_50, PC_33].includes(this.state.columnWidth) ? SHOW_COMMANDS : SHOW_BLANK;
     const style = {
+      paddingTop: addRem(TOP_BAR_HEIGHT, '1rem'),
       paddingBottom: this.state.paddingBottom,
       transitionProperty: 'padding-bottom',
     };
@@ -272,7 +273,7 @@ class Main extends React.PureComponent {
     return (
       <React.Fragment>
         <TopBar rightPane={topBarRightPane} />
-        <main ref={this.main} style={style} className="mx-auto px-4 pt-4 relative max-w-6xl duration-150 ease-in-out md:px-6 md:pt-6 lg:px-8">
+        <main ref={this.main} style={style} className="mx-auto px-4 relative max-w-6xl duration-150 ease-in-out md:px-6 md:pt-6 lg:px-8">
           <ListName fetched={this.fetched} />
           <div className="pt-6 md:pt-10">
             {links.length === 0 && this.renderEmpty()}
