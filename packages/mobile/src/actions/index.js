@@ -32,7 +32,7 @@ import {
   _,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam,
-  randomDecor,
+  getUserImageUrl, randomDecor,
 } from '../utils';
 
 export const init = async (store) => {
@@ -73,12 +73,20 @@ export const init = async (store) => {
   });
 
   const isUserSignedIn = await userSession.isUserSignedIn();
+  let username = null, userImage = null;
+  if (isUserSignedIn) {
+    const userData = await userSession.loadUserData();
+    username = userData.username;
+    userImage = getUserImageUrl(userData);
+  }
   const href = saveToBraceUrl || DOMAIN_NAME + '/';
   store.dispatch({
     type: INIT,
     payload: {
-      isUserSignedIn: isUserSignedIn,
-      href: href,
+      isUserSignedIn,
+      username,
+      userImage,
+      href,
       windowWidth: Dimensions.get('window').width,
       windowHeight: Dimensions.get('window').height,
     }
@@ -113,7 +121,7 @@ const handlePendingSignIn = (url) => async (dispatch, getState) => {
       payload: {
         isUserSignedIn: true,
         username: userData.username,
-        image: (userData && userData.profile && userData.profile.image) || null,
+        image: getUserImageUrl(userData),
       }
     });
   }
@@ -194,7 +202,7 @@ export const signIn = () => async (dispatch, getState) => {
         payload: {
           isUserSignedIn: true,
           username: userData.username,
-          image: (userData && userData.profile && userData.profile.image) || null,
+          image: getUserImageUrl(userData),
         }
       });
     }

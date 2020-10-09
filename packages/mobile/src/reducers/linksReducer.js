@@ -10,7 +10,7 @@ import {
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
   CANCEL_DIED_LINKS,
   DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT,
-  RESET_STATE,
+  DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   ALL, ADD_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
@@ -341,6 +341,16 @@ export default (state = initialState, action) => {
       }
     }
 
+    return newState;
+  }
+
+  if (action.type === DELETE_ALL_DATA) {
+    const newState = {};
+    for (const k in state) {
+      if (state.hasOwnProperty(k)) {
+        newState[k] = {};
+      }
+    }
     return newState;
   }
 

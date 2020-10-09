@@ -15,7 +15,12 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === INIT) {
-    return { ...state, isUserSignedIn: action.payload.isUserSignedIn };
+    return {
+      ...state,
+      isUserSignedIn: action.payload.isUserSignedIn,
+      username: action.payload.username,
+      image: action.payload.userImage,
+    };
   }
 
   if (action.type === UPDATE_USER) {

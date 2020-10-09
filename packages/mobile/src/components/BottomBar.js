@@ -21,6 +21,7 @@ import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
 
 import { InterText as Text, InterTextInput as TextInput, withSafeAreaContext } from '.';
+import GracefulImage from './GracefulImage';
 
 const BOTTOM_BAR_DURATION = 225;
 
@@ -39,10 +40,17 @@ class BottomBar extends React.PureComponent {
     this.addInput = React.createRef();
     this.searchInput = React.createRef();
 
-    this.userImage = props.userImage;
-    if (this.userImage === null) {
+    if (props.userImage) {
+      this.userImage = (
+        <GracefulImage style={tailwind('w-full h-full')} source={{ uri: props.userImage }} />
+      );
+      this.profileBtnStyleClasses = 'rounded-full';
+    } else {
       const svgString = jdenticon.toSvg(props.username, 32);
-      this.userImage = svgString;
+      this.userImage = (
+        <SvgXml width={36} height={36} xml={svgString} />
+      );
+      this.profileBtnStyleClasses = 'rounded-lg';
     }
 
     this.bottomBarTranslateY = new Animated.Value(0);
@@ -330,8 +338,8 @@ class BottomBar extends React.PureComponent {
               </Svg>
             </TouchableOpacity>
             <TouchableOpacity onPress={this.onProfileBtnClick} style={tailwind('justify-center items-center w-1/3 h-full')}>
-              <View style={tailwind('justify-center items-center h-10 w-10 bg-white rounded-lg overflow-hidden border-2 border-gray-200')}>
-                <SvgXml width={36} height={36} xml={this.userImage} />
+              <View style={tailwind(`justify-center items-center h-10 w-10 bg-white overflow-hidden border-2 border-gray-200 ${this.profileBtnStyleClasses}`)}>
+                {this.userImage}
               </View>
             </TouchableOpacity>
           </View>

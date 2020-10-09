@@ -21,6 +21,7 @@ import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
 
 import { InterText as Text, InterTextInput as TextInput, withSafeAreaContext } from '.';
+import GracefulImage from './GracefulImage';
 
 import shortLogo from '../images/logo-short.svg';
 import fullLogo from '../images/logo-full.svg';
@@ -37,10 +38,17 @@ class TopBar extends React.Component {
     };
     this.state = { ...this.initialState };
 
-    this.userImage = props.userImage;
-    if (this.userImage === null) {
+    if (props.userImage) {
+      this.userImage = (
+        <GracefulImage style={tailwind('w-full h-full')} source={{ uri: props.userImage }} />
+      );
+      this.profileBtnStyleClasses = 'rounded-full';
+    } else {
       const svgString = jdenticon.toSvg(props.username, 32);
-      this.userImage = svgString;
+      this.userImage = (
+        <SvgXml width={28} height={28} xml={svgString} />
+      );
+      this.profileBtnStyleClasses = 'rounded-lg';
     }
   }
 
@@ -203,8 +211,8 @@ class TopBar extends React.Component {
         <Menu renderer={renderers.Popover} rendererProps={{ preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) }} onOpen={this.onProfileBtnClick} onClose={this.onProfileCancelBtnClick}>
           <MenuTrigger>
             <View style={tailwind('ml-4')}>
-              <View style={tailwind('justify-center items-center h-8 w-8 bg-white rounded-lg overflow-hidden border-2 border-gray-200')}>
-                <SvgXml width={28} height={28} xml={this.userImage} />
+              <View style={tailwind(`justify-center items-center h-8 w-8 bg-white overflow-hidden border-2 border-gray-200 ${this.profileBtnStyleClasses}`)}>
+                {this.userImage}
               </View>
             </View>
           </MenuTrigger>
