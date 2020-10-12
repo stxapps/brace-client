@@ -24,8 +24,8 @@ class ConfirmDeletePopup extends React.PureComponent {
 
   onConfirmDeleteOkBtnClick = () => {
 
-    const { windowWidth } = this.props;
-    const animConfig = cardItemAnimConfig(windowWidth);
+    const { safeAreaWidth } = this.props;
+    const animConfig = cardItemAnimConfig(safeAreaWidth);
 
     LayoutAnimation.configureNext(animConfig);
     this.props.deleteLinks([this.props.popupLink.id]);
@@ -41,10 +41,10 @@ class ConfirmDeletePopup extends React.PureComponent {
 
   render() {
 
-    const { isConfirmDeletePopupShown, deviceWidth, deviceHeight } = this.props;
+    const { isConfirmDeletePopupShown, windowWidth, windowHeight } = this.props;
 
     return (
-      <Modal isVisible={isConfirmDeletePopupShown} deviceWidth={deviceWidth} deviceHeight={deviceHeight} onBackdropPress={this.onConfirmDeleteCancelBtnClick} onBackButtonPress={this.onConfirmDeleteCancelBtnClick} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.1} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true}>
+      <Modal isVisible={isConfirmDeletePopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onConfirmDeleteCancelBtnClick} onBackButtonPress={this.onConfirmDeleteCancelBtnClick} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.1} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true}>
         <View style={tailwind('p-4 self-center w-48 bg-white border border-gray-200 rounded-lg shadow-xl')}>
           <Text style={tailwind('py-2 text-lg text-gray-900 text-center')}>Confirm delete?</Text>
           <View style={tailwind('py-2 flex-row items-center justify-center')}>

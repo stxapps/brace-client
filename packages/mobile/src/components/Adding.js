@@ -286,12 +286,12 @@ class Adding extends React.PureComponent {
 
   _render(content) {
 
-    const { windowWidth } = this.props;
+    const { safeAreaWidth } = this.props;
 
     return (
       <View style={tailwind('flex-1 bg-gray-200')}>
         <TopBar rightPane={SHOW_BLANK} />
-        <ScrollView style={{ flex: 1 }} contentContainerStyle={tailwind('px-4 pt-12 pb-16 items-center md:px-6 md:pt-20 lg:px-8', windowWidth)}>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={tailwind('px-4 pt-12 pb-16 items-center md:px-6 md:pt-20 lg:px-8', safeAreaWidth)}>
           <View style={[tailwind('px-4 pt-16 pb-8 items-center w-full max-w-md bg-white'), SHARE_BORDER_RADIUS]}>
             {content}
           </View>

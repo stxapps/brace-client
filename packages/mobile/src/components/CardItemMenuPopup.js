@@ -64,8 +64,8 @@ class CardItemMenuPopup extends React.PureComponent {
 
     if (text) {
       const { id, url } = this.props.link;
-      const { windowWidth } = this.props;
-      const animConfig = cardItemAnimConfig(windowWidth);
+      const { safeAreaWidth } = this.props;
+      const animConfig = cardItemAnimConfig(safeAreaWidth);
 
       if (text === OPEN) {
         Linking.openURL(ensureContainUrlProtocol(url));
@@ -135,7 +135,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
   render() {
 
-    const { windowHeight } = this.props;
+    const { safeAreaHeight } = this.props;
 
     return (
       /* value of triggerOffsets needs to be aligned with paddings of the three dots */
@@ -152,7 +152,7 @@ class CardItemMenuPopup extends React.PureComponent {
           </View>
         </MenuTrigger>
         <MenuOptions>
-          <ScrollView style={{ maxHeight: windowHeight }}>
+          <ScrollView style={{ maxHeight: safeAreaHeight }}>
             {this.renderMenu()}
           </ScrollView>
         </MenuOptions>

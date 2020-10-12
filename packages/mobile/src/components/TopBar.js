@@ -67,7 +67,7 @@ class TopBar extends React.Component {
       this.props.username !== nextProps.username ||
       this.props.userImage !== nextProps.userImage ||
       this.props.searchString !== nextProps.searchString ||
-      this.props.windowWidth !== nextProps.windowWidth ||
+      this.props.safeAreaWidth !== nextProps.safeAreaWidth ||
       !isEqual(this.state, nextState)
     ) {
       return true;
@@ -102,8 +102,8 @@ class TopBar extends React.Component {
       }
     }
 
-    const { windowWidth } = this.props;
-    const animConfig = cardItemAnimConfig(windowWidth);
+    const { safeAreaWidth } = this.props;
+    const animConfig = cardItemAnimConfig(safeAreaWidth);
 
     LayoutAnimation.configureNext(animConfig);
     this.props.addLink(this.state.url, true);
@@ -138,11 +138,11 @@ class TopBar extends React.Component {
   }
 
   renderAddPopup() {
-    const { windowWidth } = this.props;
+    const { safeAreaWidth } = this.props;
     const { url, msg, isAskingConfirm } = this.state;
 
     return (
-      <View style={tailwind('px-4 pt-6 pb-6 w-72 md:w-96', windowWidth)}>
+      <View style={tailwind('px-4 pt-6 pb-6 w-72 md:w-96', safeAreaWidth)}>
         {/* onKeyPress event for Enter key only if there is multiline TextInput */}
         <TextInput onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('px-4 py-2 w-full bg-white text-gray-900 border border-gray-600 rounded-full')} placeholder="https://" value={url} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} autoFocus />
         {msg === '' ? <View style={tailwind('w-full h-3')}></View> : <Text style={tailwind('pt-3 text-red-500')}>{msg}</Text>}
@@ -173,7 +173,7 @@ class TopBar extends React.Component {
 
   renderCommands() {
 
-    const { searchString, windowWidth } = this.props;
+    const { searchString, safeAreaWidth } = this.props;
 
     const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' })
     const searchClearBtnClasses = searchString.length === 0 ? 'hidden relative' : 'flex absolute';
@@ -194,7 +194,7 @@ class TopBar extends React.Component {
             {this.renderAddPopup()}
           </MenuOptions>
         </Menu>
-        <View style={tailwind('ml-4 w-48 lg:w-56', windowWidth)}>
+        <View style={tailwind('ml-4 w-48 lg:w-56', safeAreaWidth)}>
           <TextInput onChange={this.onSearchInputChange} style={tailwind('py-1 pl-10 pr-6 w-full bg-gray-200 text-gray-900 border border-transparent rounded-full')} placeholder="Search" value={searchString} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
           {/* A bug display: none doesn't work with absolute, need to change to relative. https://github.com/facebook/react-native/issues/18415 */}
           <TouchableOpacity onPress={this.onSearchClearBtnClick} style={tailwind(`pr-2 ${searchClearBtnClasses} inset-y-0 right-0 justify-center items-center`)}>
@@ -237,7 +237,7 @@ class TopBar extends React.Component {
   render() {
 
     const rightPaneProp = this.props.rightPane;
-    const { windowWidth } = this.props;
+    const { safeAreaWidth } = this.props;
 
     let rightPane;
     if (rightPaneProp === SHOW_BLANK) rightPane = null;
@@ -247,10 +247,10 @@ class TopBar extends React.Component {
 
     return (
       <View style={tailwind('items-center w-full')}>
-        <View style={tailwind('px-4 flex-row justify-between items-center w-full max-w-6xl min-h-14 md:px-6 lg:px-8', windowWidth)}>
+        <View style={tailwind('px-4 flex-row justify-between items-center w-full max-w-6xl min-h-14 md:px-6 lg:px-8', safeAreaWidth)}>
           <View>
-            <SvgXml style={tailwind('md:hidden', windowWidth)} width={28.36} height={32} xml={shortLogo} />
-            <SvgXml style={tailwind('hidden md:flex', windowWidth)} width={109.63} height={24} xml={fullLogo} />
+            <SvgXml style={tailwind('md:hidden', safeAreaWidth)} width={28.36} height={32} xml={shortLogo} />
+            <SvgXml style={tailwind('hidden md:flex', safeAreaWidth)} width={109.63} height={24} xml={fullLogo} />
           </View>
           {rightPane}
         </View>

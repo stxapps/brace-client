@@ -367,15 +367,15 @@ class TranslucentAdding extends React.PureComponent {
   }
 
   renderDiedAdding() {
-    const { windowWidth, windowHeight } = this.props;
+    const { safeAreaWidth, safeAreaHeight } = this.props;
 
     const style = {
-      height: Math.min(windowHeight - 72, 359),
+      height: Math.min(safeAreaHeight - 72, 359),
     };
 
     const content = (
       <View style={[tailwind('mb-8 bg-white'), style, SHARE_BORDER_RADIUS]}>
-        <ScrollView contentContainerStyle={tailwind('p-4 items-center w-64 sm:w-72', windowWidth)}>
+        <ScrollView contentContainerStyle={tailwind('p-4 items-center w-64 sm:w-72', safeAreaWidth)}>
           <Svg style={tailwind('text-red-600')} width={96} height={96} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
           </Svg>
@@ -397,7 +397,7 @@ class TranslucentAdding extends React.PureComponent {
   }
 
   renderAskingConfirm(addingUrl) {
-    const { windowWidth, windowHeight } = this.props;
+    const { safeAreaWidth, safeAreaHeight } = this.props;
     const { addingUrls, urlValidatedResults, askedConfirmResults } = this.state;
 
     let haveOthers = false, beenHere = false;
@@ -433,12 +433,12 @@ class TranslucentAdding extends React.PureComponent {
     const cancelText = haveOthers ? 'Skip this link' : 'Close';
 
     const style = {
-      height: Math.min(windowHeight - 72, 394),
+      height: Math.min(safeAreaHeight - 72, 394),
     };
 
     const content = (
       <View style={[tailwind('mb-8 bg-white'), style, SHARE_BORDER_RADIUS]}>
-        <ScrollView contentContainerStyle={tailwind('p-4 items-center w-64 sm:w-72', windowWidth)}>
+        <ScrollView contentContainerStyle={tailwind('p-4 items-center w-64 sm:w-72', safeAreaWidth)}>
 
           <Svg style={tailwind('text-yellow-600')} width={96} height={96} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM10 7C9.63113 7 9.3076 7.19922 9.13318 7.50073C8.85664 7.97879 8.24491 8.14215 7.76685 7.86561C7.28879 7.58906 7.12543 6.97733 7.40197 6.49927C7.91918 5.60518 8.88833 5 10 5C11.6569 5 13 6.34315 13 8C13 9.30622 12.1652 10.4175 11 10.8293V11C11 11.5523 10.5523 12 10 12C9.44773 12 9.00001 11.5523 9.00001 11V10C9.00001 9.44772 9.44773 9 10 9C10.5523 9 11 8.55228 11 8C11 7.44772 10.5523 7 10 7ZM10 15C10.5523 15 11 14.5523 11 14C11 13.4477 10.5523 13 10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15Z" />
@@ -462,10 +462,10 @@ class TranslucentAdding extends React.PureComponent {
   }
 
   renderInvalid() {
-    const { windowWidth } = this.props;
+    const { safeAreaWidth } = this.props;
 
     const content = (
-      <View style={[tailwind('mb-8 p-4 items-center w-64 bg-white sm:w-72', windowWidth), SHARE_BORDER_RADIUS]}>
+      <View style={[tailwind('mb-8 p-4 items-center w-64 bg-white sm:w-72', safeAreaWidth), SHARE_BORDER_RADIUS]}>
         <Svg style={tailwind('text-red-600')} width={96} height={96} viewBox="0 0 20 20" fill="currentColor">
           <Path fillRule="evenodd" clipRule="evenodd" d="M8.25706 3.09882C9.02167 1.73952 10.9788 1.73952 11.7434 3.09882L17.3237 13.0194C18.0736 14.3526 17.1102 15.9999 15.5805 15.9999H4.4199C2.89025 15.9999 1.92682 14.3526 2.67675 13.0194L8.25706 3.09882ZM11.0001 13C11.0001 13.5523 10.5524 14 10.0001 14C9.44784 14 9.00012 13.5523 9.00012 13C9.00012 12.4477 9.44784 12 10.0001 12C10.5524 12 11.0001 12.4477 11.0001 13ZM10.0001 5C9.44784 5 9.00012 5.44772 9.00012 6V9C9.00012 9.55228 9.44784 10 10.0001 10C10.5524 10 11.0001 9.55228 11.0001 9V6C11.0001 5.44772 10.5524 5 10.0001 5Z" />
         </Svg>
@@ -480,10 +480,10 @@ class TranslucentAdding extends React.PureComponent {
   }
 
   renderNotSignedIn() {
-    const { windowWidth } = this.props;
+    const { safeAreaWidth } = this.props;
 
     const content = (
-      <View style={[tailwind('mb-8 p-4 items-center w-64 sm:w-72 bg-white', windowWidth), SHARE_BORDER_RADIUS]}>
+      <View style={[tailwind('mb-8 p-4 items-center w-64 sm:w-72 bg-white', safeAreaWidth), SHARE_BORDER_RADIUS]}>
         <Svg style={tailwind('text-yellow-600')} width={96} height={96} viewBox="0 0 20 20" fill="currentColor">
           <Path fillRule="evenodd" clipRule="evenodd" d="M8.25706 3.09882C9.02167 1.73952 10.9788 1.73952 11.7434 3.09882L17.3237 13.0194C18.0736 14.3526 17.1102 15.9999 15.5805 15.9999H4.4199C2.89025 15.9999 1.92682 14.3526 2.67675 13.0194L8.25706 3.09882ZM11.0001 13C11.0001 13.5523 10.5524 14 10.0001 14C9.44784 14 9.00012 13.5523 9.00012 13C9.00012 12.4477 9.44784 12 10.0001 12C10.5524 12 11.0001 12.4477 11.0001 13ZM10.0001 5C9.44784 5 9.00012 5.44772 9.00012 6V9C9.00012 9.55228 9.44784 10 10.0001 10C10.5524 10 11.0001 9.55228 11.0001 9V6C11.0001 5.44772 10.5524 5 10.0001 5Z" />
         </Svg>

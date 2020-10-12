@@ -84,16 +84,12 @@ const withSafeAreaSize = (Component) => {
 
       const props = { insets, ...rest };
       if (windowWidth) {
-        props['deviceWidth'] = windowWidth;
-
         const safeAreaWidth = windowWidth - insets.left - insets.right;
-        props['windowWidth'] = safeAreaWidth;
+        props['safeAreaWidth'] = safeAreaWidth;
       }
       if (windowHeight) {
-        props['deviceHeight'] = windowHeight;
-
         const safeAreaHeight = windowHeight - insets.top - insets.bottom;
-        props['windowHeight'] = safeAreaHeight;
+        props['safeAreaHeight'] = safeAreaHeight;
       }
 
       return <Component {...props} ref={forwardedRef} />;

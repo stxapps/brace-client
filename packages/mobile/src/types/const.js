@@ -84,8 +84,16 @@ export const SHOW_BLANK = 'SHOW_BLANK';
 export const SHOW_SIGN_IN = 'SHOW_SIGN_IN';
 export const SHOW_COMMANDS = 'SHOW_COMMANDS';
 
-export const BAR_HEIGHT = '3.5rem';
+export const TOP_HEADER_HEIGHT = '3.5rem';
+export const TOP_LIST_NAME_HEIGHT = '1.75rem';
+export const TOP_HEADER_LIST_NAME_SPACE = '1rem';
+export const TOP_HEADER_LIST_NAME_SPACE_MD = '1.5rem';
+
+export const TOP_BAR_HEIGHT = '6.25rem'; /* HEADER + SPACE + LIST_NAME */
+export const TOP_BAR_HEIGHT_MD = '6.75rem'; /* HEADER + SPACE_MD + LIST_NAME */
+export const BOTTOM_BAR_HEIGHT = '3.5rem';
 export const SEARCH_POPUP_HEIGHT = '3.625rem';
+
 export const SHARE_BORDER_RADIUS = {
   borderTopLeftRadius: 16,
   borderTopRightRadius: 16,

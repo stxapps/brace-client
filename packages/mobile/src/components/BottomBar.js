@@ -13,7 +13,7 @@ import {
   DOMAIN_NAME,
   ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   NO_URL, ASK_CONFIRM_URL, URL_MSGS,
-  BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
+  BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
 } from '../types/const';
 import { getPopupLink } from '../selectors';
 import { validateUrl, isEqual, toPx } from '../utils';
@@ -75,7 +75,7 @@ class BottomBar extends React.PureComponent {
 
     if (prevProps.isShown != isShown) {
 
-      const totalHeight = toPx(BAR_HEIGHT) + insets.bottom;
+      const totalHeight = toPx(BOTTOM_BAR_HEIGHT) + insets.bottom;
       const toValue = isShown ? 0 : totalHeight;
 
       Animated.timing(this.bottomBarTranslateY, {
@@ -95,14 +95,14 @@ class BottomBar extends React.PureComponent {
 
       let toValue;
       if (!isShown) {
-        toValue = toPx(BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT) + insets.bottom;
+        toValue = toPx(BOTTOM_BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT) + insets.bottom;
       } else {
         if (!isSearchPopupShown) toValue = toPx(SEARCH_POPUP_HEIGHT);
         else {
           // isKeyboardShown will be true only on iOS
           //   as the keyboard events: willShow and willHide are only supported in iOS.
           if (!this.state.isKeyboardShown) toValue = 0;
-          else toValue = toPx(BAR_HEIGHT);
+          else toValue = toPx(BOTTOM_BAR_HEIGHT);
         }
       }
 
@@ -153,8 +153,8 @@ class BottomBar extends React.PureComponent {
       }
     }
 
-    const { windowWidth } = this.props;
-    const animConfig = cardItemAnimConfig(windowWidth);
+    const { safeAreaWidth } = this.props;
+    const animConfig = cardItemAnimConfig(safeAreaWidth);
 
     LayoutAnimation.configureNext(animConfig);
     this.props.addLink(this.state.url, true);
@@ -222,11 +222,11 @@ class BottomBar extends React.PureComponent {
 
   renderAddPopup() {
 
-    const { isAddPopupShown, deviceWidth, deviceHeight } = this.props;
+    const { isAddPopupShown, windowWidth, windowHeight } = this.props;
     const { url, msg, isAskingConfirm } = this.state;
 
     return (
-      <Modal isVisible={isAddPopupShown} deviceWidth={deviceWidth} deviceHeight={deviceHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={() => setTimeout(() => this.addInput.current.focus(), 1)} onModalWillHide={() => this.addInput.current.blur()} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true} avoidKeyboard={Platform.OS === 'ios' ? true : false}>
+      <Modal isVisible={isAddPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={() => setTimeout(() => this.addInput.current.focus(), 1)} onModalWillHide={() => this.addInput.current.blur()} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true} avoidKeyboard={Platform.OS === 'ios' ? true : false}>
         <View style={tailwind('px-4 pt-6 pb-6 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
           {/* onKeyPress event for Enter key only if there is multiline TextInput */}
           <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('px-4 py-2 w-full bg-white text-gray-900 border border-gray-600 rounded-full')} placeholder="https://" value={url} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
@@ -254,7 +254,7 @@ class BottomBar extends React.PureComponent {
     const style = {
       transform: [{ translateY: this.searchPopupTranslateY }],
     };
-    style.bottom = toPx(BAR_HEIGHT);
+    style.bottom = toPx(BOTTOM_BAR_HEIGHT);
     // On iOS, there is a KeyboardAvoidingView which is already in SafeAreaView.
     if (Platform.OS !== 'ios') style.bottom += this.props.insets.bottom;
 
@@ -290,10 +290,10 @@ class BottomBar extends React.PureComponent {
 
   renderProfilePopup() {
 
-    const { isProfilePopupShown, deviceWidth, deviceHeight } = this.props;
+    const { isProfilePopupShown, windowWidth, windowHeight } = this.props;
 
     return (
-      <Modal isVisible={isProfilePopupShown} deviceWidth={deviceWidth} deviceHeight={deviceHeight} onBackdropPress={this.onProfileCancelBtnClick} onBackButtonPress={this.onProfileCancelBtnClick} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="slideInUp" animationInTiming={200} animationOut="slideOutDown" animationOutTiming={200} useNativeDriver={true}>
+      <Modal isVisible={isProfilePopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onProfileCancelBtnClick} onBackButtonPress={this.onProfileCancelBtnClick} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="slideInUp" animationInTiming={200} animationOut="slideOutDown" animationOutTiming={200} useNativeDriver={true}>
         <View style={tailwind('py-4 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
           <TouchableOpacity onPress={() => Linking.openURL(DOMAIN_NAME + '/#support')} style={tailwind('py-4 pl-4 w-full')}>
             <Text style={tailwind('text-gray-800')}>Support</Text>
@@ -309,11 +309,11 @@ class BottomBar extends React.PureComponent {
   render() {
 
     const style = {
-      height: toPx(BAR_HEIGHT) + this.props.insets.bottom,
+      height: toPx(BOTTOM_BAR_HEIGHT) + this.props.insets.bottom,
       transform: [{ translateY: this.bottomBarTranslateY }],
     };
     const innerStyle = {
-      height: toPx(BAR_HEIGHT),
+      height: toPx(BOTTOM_BAR_HEIGHT),
     };
     const shadowStyle = {
       height: 10,

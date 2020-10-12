@@ -47,7 +47,7 @@ class CardItem extends React.Component {
       !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
       this.props.link.status !== nextProps.link.status ||
       !isEqual(this.props.style, nextProps.style) ||
-      this.props.windowWidth !== nextProps.windowWidth ||
+      this.props.safeAreaWidth !== nextProps.safeAreaWidth ||
       this.state.extractedFaviconError !== nextState.extractedFaviconError
     ) {
       return true;
@@ -208,12 +208,12 @@ class CardItem extends React.Component {
 
   render() {
 
-    const { style, windowWidth } = this.props;
+    const { style, safeAreaWidth } = this.props;
     const { url, status, extractedResult } = this.props.link;
 
     // Need to do this as React Native doesn't support maxWidth: "none"
     //   even though it's in tailwind-rn.
-    const viewStyle = windowWidth < SM_WIDTH ? 'max-w-sm' : '';
+    const viewStyle = safeAreaWidth < SM_WIDTH ? 'max-w-sm' : '';
 
     let title, classNames = '';
     if (extractedResult && extractedResult.title) {
@@ -231,7 +231,7 @@ class CardItem extends React.Component {
         <View style={tailwind(`self-center bg-white rounded-lg shadow ${viewStyle}`)}>
           {this.renderImage()}
           <View style={tailwind('flex-row justify-between items-center w-full')}>
-            <View style={tailwind('pl-4 flex-shrink flex-grow flex-row items-center lg:pl-5', windowWidth)}>
+            <View style={tailwind('pl-4 flex-shrink flex-grow flex-row items-center lg:pl-5', safeAreaWidth)}>
               {this.renderFavicon()}
               <View style={tailwind('flex-shrink flex-grow')}>
                 <TouchableOpacity onPress={() => Linking.openURL(origin)}>
@@ -242,7 +242,7 @@ class CardItem extends React.Component {
             <CardItemMenuPopup link={this.props.link} />
           </View>
           <TouchableOpacity onPress={() => Linking.openURL(ensureContainUrlProtocol(url))}>
-            <Text style={tailwind(`mt-0 mb-3 ml-4 mr-3 text-base text-gray-800 font-semibold leading-6.5 ${classNames} lg:mb-4 lg:ml-5 lg:mr-4`, windowWidth)}>{title}</Text>
+            <Text style={tailwind(`mt-0 mb-3 ml-4 mr-3 text-base text-gray-800 font-semibold leading-6.5 ${classNames} lg:mb-4 lg:ml-5 lg:mr-4`, safeAreaWidth)}>{title}</Text>
           </TouchableOpacity>
           {isDiedStatus(status) && this.renderRetry()}
           {[ADDING, MOVING].includes(status) && this.renderBusy()}

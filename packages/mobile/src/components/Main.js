@@ -14,7 +14,7 @@ import {
   PC_100, PC_50, PC_33,
   MY_LIST, TRASH,
   SHOW_BLANK, SHOW_COMMANDS,
-  BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
+  BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
   SM_WIDTH, LG_WIDTH,
 } from '../types/const';
 import { getLinks } from '../selectors';
@@ -59,10 +59,10 @@ class Main extends React.PureComponent {
     this.fetched.push(this.props.listName);
   }
 
-  getColumnWidth = (windowWidth) => {
+  getColumnWidth = (safeAreaWidth) => {
     let columnWidth = PC_100;
-    if (windowWidth >= SM_WIDTH) columnWidth = PC_50;
-    if (windowWidth >= LG_WIDTH) columnWidth = PC_33;
+    if (safeAreaWidth >= SM_WIDTH) columnWidth = PC_50;
+    if (safeAreaWidth >= LG_WIDTH) columnWidth = PC_33;
 
     return columnWidth;
   }
@@ -87,13 +87,13 @@ class Main extends React.PureComponent {
 
   renderEmpty = () => {
 
-    const { listName, searchString, windowWidth } = this.props;
+    const { listName, searchString, safeAreaWidth } = this.props;
 
     if (searchString !== '') {
       return (
-        <View style={tailwind('px-4 pb-6 w-full md:px-6 lg:px-8', windowWidth)}>
+        <View style={tailwind('px-4 pb-6 w-full md:px-6 lg:px-8', safeAreaWidth)}>
           <Text style={tailwind('text-base text-gray-900')}>Your search - <Text style={tailwind('text-lg text-gray-900 font-medium')}>{searchString}</Text> - did not match any links.</Text>
-          <Text style={tailwind('pt-4 md:pt-6', windowWidth)}>Suggestion:</Text>
+          <Text style={tailwind('pt-4 md:pt-6', safeAreaWidth)}>Suggestion:</Text>
           <View style={tailwind('pt-2 pl-2')}>
             <Text style={tailwind('text-base text-gray-900')}>{'\u2022'}  Make sure all words are spelled correctly.</Text>
             <Text style={tailwind('text-base text-gray-900')}>{'\u2022'}  Try different keywords.</Text>
@@ -106,7 +106,7 @@ class Main extends React.PureComponent {
     if (listName === MY_LIST) {
 
       return (
-        <View style={tailwind('px-4 pb-6 items-center w-full md:px-6 lg:px-8', windowWidth)}>
+        <View style={tailwind('px-4 pb-6 items-center w-full md:px-6 lg:px-8', safeAreaWidth)}>
           <View style={[tailwind('pt-16 pb-8 items-center w-full max-w-md bg-gray-100'), BORDER_RADIUS]}>
             <SvgXml width={64} height={64} xml={undrawLink} />
             <Text style={tailwind('mt-6 text-lg text-gray-900 text-center')}>Get started saving links</Text>
@@ -116,7 +116,7 @@ class Main extends React.PureComponent {
               </Svg>
               <Text style={tailwind('ml-1 text-xl text-white font-semibold')}>Save link</Text>
             </TouchableOpacity>
-            <Text style={tailwind('mt-16 max-w-md text-lg text-gray-900 text-center')}>Or type <Text style={tailwind('text-lg text-gray-900 font-semibold')}>"brace.to/"</Text> in front of any link {windowWidth > 390 ? '\n' : ''}in Address bar.</Text>
+            <Text style={tailwind('mt-16 max-w-md text-lg text-gray-900 text-center')}>Or type <Text style={tailwind('text-lg text-gray-900 font-semibold')}>"brace.to/"</Text> in front of any link {safeAreaWidth > 390 ? '\n' : ''}in Address bar.</Text>
             <SvgXml style={tailwind('mt-4')} width={'100%'} xml={saveLinkAtUrlBar} />
           </View>
         </View>
@@ -125,7 +125,7 @@ class Main extends React.PureComponent {
 
     if (listName === TRASH) {
       return (
-        <View style={tailwind('px-4 pb-6 items-center w-full md:px-6 lg:px-8', windowWidth)}>
+        <View style={tailwind('px-4 pb-6 items-center w-full md:px-6 lg:px-8', safeAreaWidth)}>
 
           <View style={tailwind('mt-6 justify-center items-center w-20 h-20 bg-gray-400 rounded-full')}>
             <Svg style={tailwind('w-10 h-10 text-gray-800')} viewBox="0 0 20 20" fill="currentColor">
@@ -139,7 +139,7 @@ class Main extends React.PureComponent {
     }
 
     return (
-      <View style={tailwind('px-4 pb-6 items-center w-full md:px-6 lg:px-8', windowWidth)}>
+      <View style={tailwind('px-4 pb-6 items-center w-full md:px-6 lg:px-8', safeAreaWidth)}>
         <SvgXml style={tailwind('mt-10')} width={160} height={146.66} xml={emptyBox} />
         <Text style={tailwind('mt-6 text-lg text-gray-900 text-center')}>No links in {listName}</Text>
         <Text style={tailwind('mt-4 max-w-md text-base text-gray-900 text-center')}>Click <Text style={tailwind('text-base text-gray-900 font-semibold')}>"{listName}"</Text> from the Link menu to move links here.</Text>
@@ -192,9 +192,9 @@ class Main extends React.PureComponent {
 
   renderColumn = ({ item }) => {
 
-    const { windowWidth } = this.props;
-    const columnWidth = this.getColumnWidth(windowWidth);
-    const width = Math.floor(multiplyPercent(Math.min(windowWidth, 1152), columnWidth));
+    const { safeAreaWidth } = this.props;
+    const columnWidth = this.getColumnWidth(safeAreaWidth);
+    const width = Math.floor(multiplyPercent(Math.min(safeAreaWidth, 1152), columnWidth));
 
     let initialNumToRender, maxToRenderPerBatch;
     if (columnWidth === PC_100) {
@@ -230,8 +230,8 @@ class Main extends React.PureComponent {
 
     if (item.id === MAIN_BODY) {
 
-      const { links, windowWidth } = this.props;
-      const columnWidth = this.getColumnWidth(windowWidth);
+      const { links, safeAreaWidth } = this.props;
+      const columnWidth = this.getColumnWidth(safeAreaWidth);
 
       const colData = [];
       if (links.length > 0) {
@@ -287,7 +287,7 @@ class Main extends React.PureComponent {
 
     if (item.id === MAIN_PADDING_BOTTOM) {
 
-      const pb = toPx(BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT);
+      const pb = toPx(BOTTOM_BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT);
 
       return (
         <View style={{ paddingBottom: pb }}></View>
@@ -299,8 +299,8 @@ class Main extends React.PureComponent {
 
   render() {
 
-    const { links, hasMoreLinks, windowWidth } = this.props;
-    const columnWidth = this.getColumnWidth(windowWidth);
+    const { links, hasMoreLinks, safeAreaWidth } = this.props;
+    const columnWidth = this.getColumnWidth(safeAreaWidth);
 
     if (links === null) {
       return <Loading />;

@@ -112,9 +112,9 @@ class StatusPopup extends React.PureComponent {
       this.timeout = null;
     }
 
-    const { status, windowWidth } = this.props;
+    const { status, safeAreaWidth } = this.props;
     if (status) {
-      this.msg = windowWidth >= SM_WIDTH ? MSGS[status] : MSGS_SHRT[status];
+      this.msg = safeAreaWidth >= SM_WIDTH ? MSGS[status] : MSGS_SHRT[status];
 
       if ([
         FETCH_COMMIT,
@@ -137,7 +137,7 @@ class StatusPopup extends React.PureComponent {
     };
 
     return (
-      <View style={[tailwind('mr-4 absolute w-48 flex-row justify-start items-center overflow-hidden sm:w-64 md:mr-6 lg:mr-8', windowWidth), viewStyle]}>
+      <View style={[tailwind('mr-4 absolute w-48 flex-row justify-start items-center overflow-hidden sm:w-64 md:mr-6 lg:mr-8', safeAreaWidth), viewStyle]}>
         <View style={tailwind('w-full h-full')}></View>
         <AnimatedText onLayout={this.onTextLayout} style={[tailwind('pl-3 bg-white text-base text-gray-900 rounded-l-full'), textStyle]}>{this.msg}</AnimatedText>
       </View>
