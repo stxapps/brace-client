@@ -8,11 +8,30 @@ import {
   ADD_POPUP, PROFILE_POPUP, SETTINGS_POPUP,
   SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS,
   NO_URL, ASK_CONFIRM_URL, URL_MSGS,
+  TOP_HEADER_HEIGHT, TOP_LIST_NAME_HEIGHT,
+  TOP_HEADER_LIST_NAME_SPACE, TOP_HEADER_LIST_NAME_SPACE_MD,
+  TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD,
+  MD_WIDTH,
 } from '../types/const';
-import { validateUrl, isEqual } from '../utils';
+import { validateUrl, isEqual, toPx, throttle } from '../utils';
+
+import ListName from './ListName';
+import StatusPopup from './StatusPopup';
 
 import shortLogo from '../images/logo-short.svg';
 import fullLogo from '../images/logo-full.svg';
+
+const DISTANCE_X = toPx('3rem');
+const DISTANCE_X_MD = toPx('9rem');
+
+const START_Y = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE);
+const START_Y_MD = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE_MD);
+
+const END_Y = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2);
+const END_Y_MD = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2) + 6;
+
+const DISTANCE_Y = Math.abs(END_Y - START_Y);
+const DISTANCE_Y_MD = Math.abs(END_Y_MD - START_Y_MD);
 
 class TopBar extends React.PureComponent {
 
@@ -24,7 +43,7 @@ class TopBar extends React.PureComponent {
       msg: '',
       isAskingConfirm: false,
     };
-    this.state = { ...this.initialState };
+    this.state = { ...this.initialState, offsetY: window.pageYOffset };
 
     this.userImage = props.userImage;
     this.profileBtnStyleClasses = 'rounded-full';
@@ -33,6 +52,12 @@ class TopBar extends React.PureComponent {
       this.userImage = `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
       this.profileBtnStyleClasses = 'rounded-lg';
     }
+
+    this.updateScrollY = throttle(this.updateScrollY, 16);
+  }
+
+  componentDidMount() {
+    window.addEventListener('scroll', this.updateScrollY);
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -41,6 +66,16 @@ class TopBar extends React.PureComponent {
         this.setState({ ...this.initialState });
       }
     }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.updateScrollY);
+  }
+
+  updateScrollY = () => {
+    const distanceY = window.innerWidth < MD_WIDTH ? DISTANCE_Y : DISTANCE_Y_MD;
+    if (window.pageYOffset >= distanceY && this.state.offsetY >= distanceY) return;
+    this.setState({ offsetY: Math.min(window.pageYOffset, distanceY) });
   }
 
   onAddBtnClick = () => {
@@ -101,7 +136,7 @@ class TopBar extends React.PureComponent {
 
   onSignOutBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
-    this.props.signOut()
+    this.props.signOut();
   }
 
   renderAddPopup() {
@@ -197,13 +232,39 @@ class TopBar extends React.PureComponent {
     else if (rightPaneProp === SHOW_COMMANDS) rightPane = this.renderCommands();
     else throw new Error(`Invalid rightPane: ${rightPaneProp}`);
 
+    const { offsetY } = this.state;
+
+    let height, top, left;
+    if (window.innerWidth < MD_WIDTH) {
+      height = toPx(TOP_BAR_HEIGHT) + (offsetY * (toPx(TOP_HEADER_HEIGHT) - toPx(TOP_BAR_HEIGHT)) / DISTANCE_Y);
+      top = START_Y + (offsetY * (END_Y - START_Y) / DISTANCE_Y);
+      left = offsetY * DISTANCE_X / DISTANCE_Y;
+    } else {
+      height = toPx(TOP_BAR_HEIGHT_MD) + (offsetY * (toPx(TOP_HEADER_HEIGHT) - toPx(TOP_BAR_HEIGHT_MD)) / DISTANCE_Y_MD);
+      top = START_Y_MD + (offsetY * (END_Y_MD - START_Y_MD) / DISTANCE_Y_MD);
+      left = offsetY * DISTANCE_X_MD / DISTANCE_Y_MD;
+    }
+
+    const headerStyle = { height };
+    const headerStyleClasses = height === toPx(TOP_HEADER_HEIGHT) ? 'border-b border-gray-300' : '';
+    const listNameStyle = { position: 'absolute', top, left };
+
     return (
-      <header className="mx-auto px-4 fixed inset-x-0 top-0 flex justify-between items-center max-w-6xl min-h-14 bg-white z-30 md:px-6 lg:px-8">
+      <header style={headerStyle} className={`mx-auto px-4 fixed inset-x-0 top-0 max-w-6xl bg-white z-30 md:px-6 lg:px-8 ${headerStyleClasses}`}>
         <div className="relative">
-          <img className="h-8 md:hidden" src={shortLogo} alt="Brace logo" />
-          <img className="hidden h-6 md:block" src={fullLogo} alt="Brace logo" />
+          <div className="flex justify-between items-center h-14">
+            <div className="relative">
+              <img className="h-8 md:hidden" src={shortLogo} alt="Brace logo" />
+              <img className="hidden h-6 md:block" src={fullLogo} alt="Brace logo" />
+            </div>
+            {rightPane}
+          </div>
+          {/** @ts-ignore */}
+          <div style={listNameStyle}>
+            <ListName fetched={this.props.fetched} />
+          </div>
+          <StatusPopup offsetY={offsetY} />
         </div>
-        {rightPane}
       </header>
     );
   }

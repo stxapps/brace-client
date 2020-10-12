@@ -13,7 +13,8 @@ import {
   PC_100, PC_50, PC_33,
   MY_LIST, TRASH,
   SHOW_BLANK, SHOW_COMMANDS,
-  TOP_BAR_HEIGHT, BOTTOM_BAR_HEIGHT,
+  TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
+  SM_WIDTH, MD_WIDTH, LG_WIDTH,
 } from '../types/const';
 import { getLinks } from '../selectors';
 import { addRem, getWindowHeight, getWindowScrollHeight, throttle } from '../utils';
@@ -21,10 +22,8 @@ import { addRem, getWindowHeight, getWindowScrollHeight, throttle } from '../uti
 import Loading from './Loading';
 import TopBar from './TopBar';
 import BottomBar from './BottomBar';
-import ListName from './ListName';
 import CardItem from './CardItem';
 import CardItemMenuPopup from './CardItemMenuPopup';
-import StatusPopup from './StatusPopup';
 import SettingsPopup from './SettingsPopup';
 
 import emptyBox from '../images/empty-box-sided.svg';
@@ -76,8 +75,8 @@ class Main extends React.PureComponent {
 
   getColumnWidth = () => {
     let columnWidth = PC_100;
-    if (window.innerWidth >= 640) columnWidth = PC_50;
-    if (window.innerWidth >= 1024) columnWidth = PC_33;
+    if (window.innerWidth >= SM_WIDTH) columnWidth = PC_50;
+    if (window.innerWidth >= LG_WIDTH) columnWidth = PC_33;
 
     return columnWidth;
   }
@@ -105,7 +104,9 @@ class Main extends React.PureComponent {
   }
 
   getDefaultPaddingBottom = () => {
-    if (this.getColumnWidth() === PC_100) return addRem(BOTTOM_BAR_HEIGHT, '1.5rem');
+    if (this.getColumnWidth() === PC_100) {
+      return addRem(SEARCH_POPUP_HEIGHT, addRem(BOTTOM_BAR_HEIGHT, '1.5rem'));
+    }
     return '1.5rem';
   };
 
@@ -265,21 +266,19 @@ class Main extends React.PureComponent {
 
     const topBarRightPane = [PC_50, PC_33].includes(this.state.columnWidth) ? SHOW_COMMANDS : SHOW_BLANK;
     const style = {
-      paddingTop: addRem(TOP_BAR_HEIGHT, '1rem'),
+      paddingTop: window.innerWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD,
       paddingBottom: this.state.paddingBottom,
       transitionProperty: 'padding-bottom',
     };
 
     return (
       <React.Fragment>
-        <TopBar rightPane={topBarRightPane} />
+        <TopBar rightPane={topBarRightPane} fetched={this.fetched} />
         <main ref={this.main} style={style} className="mx-auto px-4 relative max-w-6xl duration-150 ease-in-out md:px-6 md:pt-6 lg:px-8">
-          <ListName fetched={this.fetched} />
           <div className="pt-6 md:pt-10">
             {links.length === 0 && this.renderEmpty()}
             {this.renderLinks()}
           </div>
-          <StatusPopup />
         </main>
         {this.state.columnWidth === PC_100 && <BottomBar />}
         {this.props.isSettingsPopupShown && <SettingsPopup />}

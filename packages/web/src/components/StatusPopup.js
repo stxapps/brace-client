@@ -7,7 +7,9 @@ import {
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
 } from '../types/actionTypes';
+import { MD_WIDTH } from '../types/const';
 import { updateStatus } from '../actions';
+import { toPx } from '../utils';
 
 const MSGS = {
   [FETCH]: 'Fetching data from server...',
@@ -33,6 +35,8 @@ const MSGS_SHRT = {
   [DELETE_OLD_LINKS_IN_TRASH_ROLLBACK]: 'Error deleting!',
 };
 
+const DISTANCE_Y = 36;
+
 class StatusPopup extends React.PureComponent {
 
   constructor(props) {
@@ -53,6 +57,8 @@ class StatusPopup extends React.PureComponent {
   }
 
   render() {
+
+    const { offsetY } = this.props;
 
     if (this.timeout) {
       window.clearTimeout(this.timeout);
@@ -77,17 +83,20 @@ class StatusPopup extends React.PureComponent {
       }
     }
 
-    const style = {
-      top: `1.095rem`,
-      right: '0',
-    };
+    const initialTop = window.innerWidth < MD_WIDTH ? '4.6rem' : '5.095rem';
+    const top = Math.max(0, toPx(initialTop) - offsetY);
+    const right = 0;
+    const opacity = Math.max(0, 1.0 - (offsetY / DISTANCE_Y));
+    const visibility = offsetY >= DISTANCE_Y ? 'hidden' : 'visible';
+    const style = { top, right, opacity, visibility };
 
     const transition = window.pageYOffset <= 100 ? 'transition-transform duration-300 ease-in-out' : '';
 
     return (
-      <div style={style} className="mr-4 absolute w-48 text-right overflow-hidden sm:w-64 md:mr-6 lg:mr-8">
-        <span className={`pl-3 hidden bg-white rounded-l-full transform ${translate} ${transition} sm:inline-block`}>{this.msg}</span>
-        <span className={`pl-3 inline-block bg-white rounded-l-full transform ${translate} ${transition} sm:hidden`}>{this.msgShrt}</span>
+      /** @ts-ignore */
+      <div style={style} className="absolute w-48 text-right overflow-hidden sm:w-64">
+        <span className={`pl-3 hidden bg-white text-gray-700 rounded-l-full transform ${translate} ${transition} sm:inline-block`}>{this.msg}</span>
+        <span className={`pl-3 inline-block bg-white text-gray-700 rounded-l-full transform ${translate} ${transition} sm:hidden`}>{this.msgShrt}</span>
       </div >
     );
   }
