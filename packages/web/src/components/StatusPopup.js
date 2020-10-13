@@ -57,9 +57,6 @@ class StatusPopup extends React.PureComponent {
   }
 
   render() {
-
-    const { offsetY } = this.props;
-
     if (this.timeout) {
       window.clearTimeout(this.timeout);
       this.timeout = null;
@@ -82,6 +79,8 @@ class StatusPopup extends React.PureComponent {
         }
       }
     }
+
+    const { offsetY } = this.props;
 
     const initialTop = window.innerWidth < MD_WIDTH ? '4.6rem' : '5.095rem';
     const top = Math.max(0, toPx(initialTop) - offsetY);

@@ -57,7 +57,9 @@ class TopBar extends React.PureComponent {
   }
 
   componentDidMount() {
-    window.addEventListener('scroll', this.updateScrollY);
+    if (this.props.isListNameShown) {
+      window.addEventListener('scroll', this.updateScrollY);
+    }
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -222,6 +224,32 @@ class TopBar extends React.PureComponent {
     );
   }
 
+  renderListName() {
+
+    const { offsetY } = this.state;
+
+    let top, left;
+    if (window.innerWidth < MD_WIDTH) {
+      top = START_Y + (offsetY * (END_Y - START_Y) / DISTANCE_Y);
+      left = offsetY * DISTANCE_X / DISTANCE_Y;
+    } else {
+      top = START_Y_MD + (offsetY * (END_Y_MD - START_Y_MD) / DISTANCE_Y_MD);
+      left = offsetY * DISTANCE_X_MD / DISTANCE_Y_MD;
+    }
+
+    const listNameStyle = { position: 'absolute', top, left };
+
+    return (
+      <React.Fragment>
+        {/** @ts-ignore */}
+        < div style={listNameStyle} >
+          <ListName fetched={this.props.fetched} />
+        </div >
+        <StatusPopup offsetY={offsetY} />
+      </React.Fragment>
+    );
+  }
+
   render() {
 
     const rightPaneProp = this.props.rightPane;
@@ -232,25 +260,32 @@ class TopBar extends React.PureComponent {
     else if (rightPaneProp === SHOW_COMMANDS) rightPane = this.renderCommands();
     else throw new Error(`Invalid rightPane: ${rightPaneProp}`);
 
-    const { offsetY } = this.state;
+    const { isListNameShown } = this.props;
 
-    let height, top, left;
-    if (window.innerWidth < MD_WIDTH) {
-      height = toPx(TOP_BAR_HEIGHT) + (offsetY * (toPx(TOP_HEADER_HEIGHT) - toPx(TOP_BAR_HEIGHT)) / DISTANCE_Y);
-      top = START_Y + (offsetY * (END_Y - START_Y) / DISTANCE_Y);
-      left = offsetY * DISTANCE_X / DISTANCE_Y;
+    let headerStyle, headerStyleClasses;
+    if (isListNameShown) {
+
+      const { offsetY } = this.state;
+
+      let height;
+      if (window.innerWidth < MD_WIDTH) {
+        height = toPx(TOP_BAR_HEIGHT) + (offsetY * (toPx(TOP_HEADER_HEIGHT) - toPx(TOP_BAR_HEIGHT)) / DISTANCE_Y);
+      } else {
+        height = toPx(TOP_BAR_HEIGHT_MD) + (offsetY * (toPx(TOP_HEADER_HEIGHT) - toPx(TOP_BAR_HEIGHT_MD)) / DISTANCE_Y_MD);
+      }
+
+      headerStyle = { height };
+      headerStyleClasses = 'fixed inset-x-0 top-0 bg-white z-30';
+      if (height === toPx(TOP_HEADER_HEIGHT)) {
+        headerStyleClasses += ' border-b border-gray-300';
+      }
     } else {
-      height = toPx(TOP_BAR_HEIGHT_MD) + (offsetY * (toPx(TOP_HEADER_HEIGHT) - toPx(TOP_BAR_HEIGHT_MD)) / DISTANCE_Y_MD);
-      top = START_Y_MD + (offsetY * (END_Y_MD - START_Y_MD) / DISTANCE_Y_MD);
-      left = offsetY * DISTANCE_X_MD / DISTANCE_Y_MD;
+      headerStyle = { height: toPx(TOP_HEADER_HEIGHT) };
+      headerStyleClasses = '';
     }
 
-    const headerStyle = { height };
-    const headerStyleClasses = height === toPx(TOP_HEADER_HEIGHT) ? 'border-b border-gray-300' : '';
-    const listNameStyle = { position: 'absolute', top, left };
-
     return (
-      <header style={headerStyle} className={`mx-auto px-4 fixed inset-x-0 top-0 max-w-6xl bg-white z-30 md:px-6 lg:px-8 ${headerStyleClasses}`}>
+      <header style={headerStyle} className={`mx-auto px-4 max-w-6xl md:px-6 lg:px-8 ${headerStyleClasses}`}>
         <div className="relative">
           <div className="flex justify-between items-center h-14">
             <div className="relative">
@@ -259,16 +294,16 @@ class TopBar extends React.PureComponent {
             </div>
             {rightPane}
           </div>
-          {/** @ts-ignore */}
-          <div style={listNameStyle}>
-            <ListName fetched={this.props.fetched} />
-          </div>
-          <StatusPopup offsetY={offsetY} />
+          {isListNameShown ? this.renderListName() : null}
         </div>
       </header>
     );
   }
 }
+
+TopBar.defaultProps = {
+  isListNameShown: false,
+};
 
 const mapStateToProps = (state, props) => {
   return {

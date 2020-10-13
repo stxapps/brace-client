@@ -3,9 +3,7 @@ import { connect } from 'react-redux';
 import StackGrid from "react-stack-grid";
 
 import {
-  updateHistoryPosition,
-  fetch, fetchMore, changeListName,
-  updatePopup,
+  updateHistoryPosition, fetch, fetchMore, updatePopup,
 } from '../actions';
 import {
   BACK_DECIDER, BACK_POPUP,
@@ -273,13 +271,13 @@ class Main extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <TopBar rightPane={topBarRightPane} fetched={this.fetched} />
         <main ref={this.main} style={style} className="mx-auto px-4 relative max-w-6xl duration-150 ease-in-out md:px-6 md:pt-6 lg:px-8">
           <div className="pt-6 md:pt-10">
             {links.length === 0 && this.renderEmpty()}
             {this.renderLinks()}
           </div>
         </main>
+        <TopBar rightPane={topBarRightPane} isListNameShown={true} fetched={this.fetched} />
         {this.state.columnWidth === PC_100 && <BottomBar />}
         {this.props.isSettingsPopupShown && <SettingsPopup />}
       </React.Fragment>
@@ -303,7 +301,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
-  updateHistoryPosition, fetch, fetchMore, changeListName, updatePopup,
+  updateHistoryPosition, fetch, fetchMore, updatePopup,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);
