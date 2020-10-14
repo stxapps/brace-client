@@ -21,8 +21,6 @@ import { tailwind } from '../stylesheets/tailwind';
 import { InterText as Text, withSafeAreaContext } from '.';
 import MenuPopupRenderer from './MenuPopupRenderer';
 
-import StatusPopup from './StatusPopup';
-
 class ListName extends React.PureComponent {
 
   onListNameBtnClick = () => {
@@ -58,14 +56,14 @@ class ListName extends React.PureComponent {
     const { listName, safeAreaWidth, safeAreaHeight } = this.props;
 
     // value of triggerOffsets needs to be aligned with paddings of the MenuTrigger
-    const triggerOffsets = { x: 16, y: 16, width: 0, height: 0 };
+    const triggerOffsets = { x: 0, y: 0, width: 0, height: 0 };
     if (safeAreaWidth >= MD_WIDTH) {
-      triggerOffsets.x = 24;
-      triggerOffsets.y = 24;
+      triggerOffsets.x = 0;
+      triggerOffsets.y = 0;
     }
     if (safeAreaWidth >= LG_WIDTH) {
-      triggerOffsets.x = 24;
-      triggerOffsets.y = 24;
+      triggerOffsets.x = 0;
+      triggerOffsets.y = 0;
     }
 
     return (
@@ -73,7 +71,7 @@ class ListName extends React.PureComponent {
         <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: triggerOffsets, popupStyle: tailwind('py-2 min-w-32 bg-white border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onListNameBtnClick} onClose={this.onListNameCancelBtnClick}>
           <MenuTrigger>
             {/* Change the paddings here, need to change triggerOffsets too */}
-            <View style={tailwind('px-4 pt-4 pb-6 flex-row items-center w-full md:px-6 md:pt-6 md:pb-10 lg:px-8', safeAreaWidth)}>
+            <View style={tailwind('flex-row items-center')}>
               <Text style={tailwind('text-lg text-gray-900 font-semibold')}>{listName}</Text>
               <Svg style={tailwind('ml-1 w-5 h-5 text-black')} viewBox="0 0 24 24" stroke="currentColor" fill="none">
                 <Path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -86,7 +84,6 @@ class ListName extends React.PureComponent {
             </ScrollView>
           </MenuOptions>
         </Menu>
-        <StatusPopup />
       </React.Fragment>
     );
   }

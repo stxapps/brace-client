@@ -7,15 +7,15 @@ import Svg, { SvgXml, Path } from 'react-native-svg'
 import { Flow } from 'react-native-animated-spinkit'
 
 import {
-  fetch, fetchMore,
+  fetch, fetchMore, updateTopBarOffsetY,
 } from '../actions';
 import {
   ADD_POPUP,
   PC_100, PC_50, PC_33,
   MY_LIST, TRASH,
   SHOW_BLANK, SHOW_COMMANDS,
-  BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
-  SM_WIDTH, LG_WIDTH,
+  TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
+  SM_WIDTH, MD_WIDTH, LG_WIDTH,
 } from '../types/const';
 import { getLinks } from '../selectors';
 import { toPx, multiplyPercent } from '../utils';
@@ -24,9 +24,8 @@ import { tailwind } from '../stylesheets/tailwind';
 import { InterText as Text, withSafeAreaContext } from '.';
 
 import Loading from './Loading';
-import TopBar from './TopBar';
+import TopBar, { LIST_NAME_DISTANCE_Y, LIST_NAME_DISTANCE_Y_MD } from './TopBar';
 import BottomBar from './BottomBar';
-import ListName from './ListName';
 import CardItem from './CardItem';
 import ConfirmDeletePopup from './ConfirmDeletePopup';
 
@@ -46,7 +45,7 @@ const BORDER_RADIUS = {
   borderBottomLeftRadius: 24,
 };
 
-class Main extends React.PureComponent {
+class Main extends React.Component {
 
   constructor(props) {
     super(props);
@@ -59,12 +58,44 @@ class Main extends React.PureComponent {
     this.fetched.push(this.props.listName);
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+
+    if (
+      this.props.listName !== nextProps.listName ||
+      this.props.links !== nextProps.links ||
+      this.props.hasMoreLinks !== nextProps.hasMoreLinks ||
+      this.props.isFetchingMore !== nextProps.isFetchingMore ||
+      this.props.searchString !== nextProps.searchString ||
+      this.props.safeAreaWidth !== nextProps.safeAreaWidth
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
   getColumnWidth = (safeAreaWidth) => {
     let columnWidth = PC_100;
     if (safeAreaWidth >= SM_WIDTH) columnWidth = PC_50;
     if (safeAreaWidth >= LG_WIDTH) columnWidth = PC_33;
 
     return columnWidth;
+  }
+
+  updateScrollY = (e) => {
+
+    const { topBarOffsetY, safeAreaWidth } = this.props;
+
+    const offsetY = e.nativeEvent.contentOffset.y;
+    const distanceY = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_Y : LIST_NAME_DISTANCE_Y_MD;
+
+    if (!topBarOffsetY) {
+      this.props.updateTopBarOffsetY(Math.min(offsetY, distanceY));
+      return;
+    }
+
+    if (offsetY >= distanceY && topBarOffsetY >= distanceY) return;
+    this.props.updateTopBarOffsetY(Math.min(offsetY, distanceY));
   }
 
   onEndReached = () => {
@@ -75,7 +106,7 @@ class Main extends React.PureComponent {
     }
 
     this.props.fetchMore();
-  };
+  }
 
   onAddBtnClick = () => {
     this.props.updatePopup(ADD_POPUP, true);
@@ -83,7 +114,7 @@ class Main extends React.PureComponent {
 
   onFetchMoreBtnClick = () => {
     this.props.fetchMore();
-  };
+  }
 
   renderEmpty = () => {
 
@@ -224,9 +255,15 @@ class Main extends React.PureComponent {
 
   renderMain = ({ item }) => {
 
-    const { isFetchingMore } = this.props;
+    const { isFetchingMore, safeAreaWidth } = this.props;
 
-    if (item.id === MAIN_HEAD) return <ListName fetched={this.fetched} />;
+    if (item.id === MAIN_HEAD) {
+      let pt = safeAreaWidth < MD_WIDTH ? toPx(TOP_BAR_HEIGHT) : toPx(TOP_BAR_HEIGHT_MD);
+      pt += toPx('1.5rem');
+      return (
+        <View style={{ paddingTop: pt }}></View>
+      );
+    }
 
     if (item.id === MAIN_BODY) {
 
@@ -286,9 +323,7 @@ class Main extends React.PureComponent {
     }
 
     if (item.id === MAIN_PADDING_BOTTOM) {
-
       const pb = toPx(BOTTOM_BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT);
-
       return (
         <View style={{ paddingBottom: pb }}></View>
       );
@@ -317,7 +352,6 @@ class Main extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <TopBar rightPane={topBarRightPane} />
         <FlatList
           contentContainerStyle={tailwind('max-w-6xl self-center')}
           data={mainData}
@@ -325,7 +359,10 @@ class Main extends React.PureComponent {
           renderItem={this.renderMain}
           onEndReached={this.onEndReached}
           onEndReachedThreshold={0.9}
-          removeClippedSubviews={false} />
+          removeClippedSubviews={false}
+          onScroll={this.updateScrollY}
+          scrollEventThrottle={16} />
+        <TopBar rightPane={topBarRightPane} isListNameShown={true} fetched={this.fetched} />
         {columnWidth === PC_100 && <BottomBar />}
         <ConfirmDeletePopup />
       </React.Fragment>
@@ -344,11 +381,12 @@ const mapStateToProps = (state, props) => {
     isFetchingMore: state.display.isFetchingMore,
     searchString: state.display.searchString,
     windowWidth: state.window.width,
+    topBarOffsetY: state.display.topBarOffsetY,
   };
 };
 
 const mapDispatchToProps = {
-  fetch, fetchMore,
+  fetch, fetchMore, updateTopBarOffsetY,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(Main));

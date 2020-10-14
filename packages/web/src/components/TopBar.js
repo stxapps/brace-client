@@ -38,12 +38,17 @@ class TopBar extends React.PureComponent {
   constructor(props) {
     super(props);
 
+    const distanceY = window.innerWidth < MD_WIDTH ? DISTANCE_Y : DISTANCE_Y_MD;
+
     this.initialState = {
       url: '',
       msg: '',
       isAskingConfirm: false,
     };
-    this.state = { ...this.initialState, offsetY: window.pageYOffset };
+    this.state = {
+      ...this.initialState,
+      offsetY: Math.min(window.pageYOffset, distanceY),
+    };
 
     this.userImage = props.userImage;
     this.profileBtnStyleClasses = 'rounded-full';

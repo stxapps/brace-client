@@ -18,11 +18,13 @@ import {
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
-  UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN,
+  UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_TOP_BAR_OFFSET_Y,
   RESET_STATE,
 } from '../types/actionTypes';
 import {
   DOMAIN_NAME, APP_DOMAIN_NAME, BLOCKSTACK_AUTH, SAVE_TO_BRACE,
+  ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
+  CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
@@ -145,11 +147,21 @@ const handleSaveToBrace = (url) => async (dispatch, getState) => {
 
 const getPopupShownId = (state) => {
 
+  if (state.display.isAddPopupShown) return ADD_POPUP;
+  if (state.display.isProfilePopupShown) return PROFILE_POPUP;
+  if (state.display.isListNamePopupShown) return LIST_NAME_POPUP;
+  if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
+  if (state.display.isSettingsPopupShown) return SETTINGS_POPUP;
+
   for (const listName in state.links) {
     for (const id in state.links[listName]) {
       if (state.links[listName][id][IS_POPUP_SHOWN]) return id;
     }
   }
+
+  // IMPORTANT that search is on the last as updatePopupAsBackPressed relies on this
+  //   to close other popups before search (search is the last to be closed).
+  if (state.display.isSearchPopupShown) return SEARCH_POPUP;
 
   return null;
 };
@@ -564,5 +576,12 @@ export const updateHref = (href) => {
   return {
     type: UPDATE_HREF,
     payload: href,
+  };
+};
+
+export const updateTopBarOffsetY = (offsetY) => {
+  return {
+    type: UPDATE_TOP_BAR_OFFSET_Y,
+    payload: offsetY,
   };
 };

@@ -15,16 +15,35 @@ import {
   ADD_POPUP, PROFILE_POPUP,
   SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS,
   NO_URL, ASK_CONFIRM_URL, URL_MSGS,
+  TOP_HEADER_HEIGHT, TOP_LIST_NAME_HEIGHT,
+  TOP_HEADER_LIST_NAME_SPACE, TOP_HEADER_LIST_NAME_SPACE_MD,
+  TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD,
+  MD_WIDTH,
 } from '../types/const';
-import { validateUrl, isEqual } from '../utils';
+import { validateUrl, isEqual, toPx } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
 
 import { InterText as Text, InterTextInput as TextInput, withSafeAreaContext } from '.';
 import GracefulImage from './GracefulImage';
 
+import ListName from './ListName';
+import StatusPopup from './StatusPopup';
+
 import shortLogo from '../images/logo-short.svg';
 import fullLogo from '../images/logo-full.svg';
+
+const DISTANCE_X = toPx('3rem');
+const DISTANCE_X_MD = toPx('9rem');
+
+const START_Y = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE);
+const START_Y_MD = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE_MD);
+
+const END_Y = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2);
+const END_Y_MD = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2) + 6;
+
+const DISTANCE_Y = Math.abs(END_Y - START_Y);
+const DISTANCE_Y_MD = Math.abs(END_Y_MD - START_Y_MD);
 
 class TopBar extends React.Component {
 
@@ -68,6 +87,7 @@ class TopBar extends React.Component {
       this.props.userImage !== nextProps.userImage ||
       this.props.searchString !== nextProps.searchString ||
       this.props.safeAreaWidth !== nextProps.safeAreaWidth ||
+      this.props.offsetY !== nextProps.offsetY ||
       !isEqual(this.state, nextState)
     ) {
       return true;
@@ -234,10 +254,35 @@ class TopBar extends React.Component {
     );
   }
 
+  renderListName() {
+
+    const { offsetY, safeAreaWidth } = this.props;
+
+    let top, left;
+    if (safeAreaWidth < MD_WIDTH) {
+      top = START_Y + (offsetY * (END_Y - START_Y) / DISTANCE_Y);
+      left = offsetY * DISTANCE_X / DISTANCE_Y;
+    } else {
+      top = START_Y_MD + (offsetY * (END_Y_MD - START_Y_MD) / DISTANCE_Y_MD);
+      left = offsetY * DISTANCE_X_MD / DISTANCE_Y_MD;
+    }
+
+    const listNameStyle = { position: 'absolute', top, left };
+
+    return (
+      <React.Fragment>
+        {/** @ts-ignore */}
+        <View style={listNameStyle}>
+          <ListName fetched={this.props.fetched} />
+        </View>
+        <StatusPopup offsetY={offsetY} />
+      </React.Fragment>
+    );
+  };
+
   render() {
 
     const rightPaneProp = this.props.rightPane;
-    const { safeAreaWidth } = this.props;
 
     let rightPane;
     if (rightPaneProp === SHOW_BLANK) rightPane = null;
@@ -245,19 +290,55 @@ class TopBar extends React.Component {
     else if (rightPaneProp === SHOW_COMMANDS) rightPane = this.renderCommands();
     else throw new Error(`Invalid rightPane: ${rightPaneProp}`);
 
+    const { isListNameShown, safeAreaWidth, insets } = this.props;
+
+    let headerStyle, headerStyleClasses;
+    if (isListNameShown) {
+
+      const offsetY = this.props.offsetY === null ? 0 : this.props.offsetY;
+
+      let height;
+      if (safeAreaWidth < MD_WIDTH) {
+        height = toPx(TOP_BAR_HEIGHT) + (offsetY * (toPx(TOP_HEADER_HEIGHT) - toPx(TOP_BAR_HEIGHT)) / DISTANCE_Y);
+      } else {
+        height = toPx(TOP_BAR_HEIGHT_MD) + (offsetY * (toPx(TOP_HEADER_HEIGHT) - toPx(TOP_BAR_HEIGHT_MD)) / DISTANCE_Y_MD);
+      }
+
+      headerStyle = { height };
+      headerStyleClasses = 'absolute inset-x-0 top-0 bg-white z-30';
+      if (height === toPx(TOP_HEADER_HEIGHT) + insets.top) {
+        headerStyleClasses += ' border-b border-gray-300';
+      }
+    } else {
+      headerStyle = { height: toPx(TOP_HEADER_HEIGHT) };
+      headerStyleClasses = '';
+    }
+
+    headerStyle['height'] += insets.top;
+    headerStyle['paddingTop'] = insets.top;
+
     return (
-      <View style={tailwind('items-center w-full')}>
-        <View style={tailwind('px-4 flex-row justify-between items-center w-full max-w-6xl min-h-14 md:px-6 lg:px-8', safeAreaWidth)}>
+      <View style={[tailwind(`items-center w-full ${headerStyleClasses}`), headerStyle]}>
+        <View style={tailwind('px-4 w-full max-w-6xl md:px-6 lg:px-8', safeAreaWidth)}>
           <View>
-            <SvgXml style={tailwind('md:hidden', safeAreaWidth)} width={28.36} height={32} xml={shortLogo} />
-            <SvgXml style={tailwind('hidden md:flex', safeAreaWidth)} width={109.63} height={24} xml={fullLogo} />
+            <View style={tailwind('flex-row justify-between items-center h-14')}>
+              <View>
+                <SvgXml style={tailwind('md:hidden', safeAreaWidth)} width={28.36} height={32} xml={shortLogo} />
+                <SvgXml style={tailwind('hidden md:flex', safeAreaWidth)} width={109.63} height={24} xml={fullLogo} />
+              </View>
+              {rightPane}
+            </View>
+            {isListNameShown ? this.renderListName() : null}
           </View>
-          {rightPane}
         </View>
       </View>
     );
   }
 }
+
+TopBar.defaultProps = {
+  isListNameShown: false,
+};
 
 const mapStateToProps = (state, props) => {
   return {
@@ -267,6 +348,7 @@ const mapStateToProps = (state, props) => {
     isAddPopupShown: state.display.isAddPopupShown,
     isProfilePopupShown: state.display.isProfilePopupShown,
     windowWidth: state.window.width,
+    offsetY: state.display.topBarOffsetY,
   };
 };
 
@@ -275,3 +357,5 @@ const mapDispatchToProps = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(withMenuContext(TopBar)));
+
+export { DISTANCE_Y as LIST_NAME_DISTANCE_Y, DISTANCE_Y_MD as LIST_NAME_DISTANCE_Y_MD };

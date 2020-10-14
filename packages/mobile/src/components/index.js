@@ -82,7 +82,7 @@ const withSafeAreaSize = (Component) => {
       const { forwardedRef, windowWidth, windowHeight, insets, ...rest } = this.props;
       if (!insets) throw new Error(`Illegal insets: ${insets}`);
 
-      const props = { insets, ...rest };
+      const props = { windowWidth, windowHeight, insets, ...rest };
       if (windowWidth) {
         const safeAreaWidth = windowWidth - insets.left - insets.right;
         props['safeAreaWidth'] = safeAreaWidth;
