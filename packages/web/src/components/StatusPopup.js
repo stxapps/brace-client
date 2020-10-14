@@ -7,9 +7,7 @@ import {
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
 } from '../types/actionTypes';
-import { MD_WIDTH } from '../types/const';
 import { updateStatus } from '../actions';
-import { toPx } from '../utils';
 
 const MSGS = {
   [FETCH]: 'Fetching data from server...',
@@ -34,8 +32,6 @@ const MSGS_SHRT = {
   [DELETE_OLD_LINKS_IN_TRASH_COMMIT]: 'Finished deleting.',
   [DELETE_OLD_LINKS_IN_TRASH_ROLLBACK]: 'Error deleting!',
 };
-
-const DISTANCE_Y = 36;
 
 class StatusPopup extends React.PureComponent {
 
@@ -80,23 +76,13 @@ class StatusPopup extends React.PureComponent {
       }
     }
 
-    const { offsetY } = this.props;
-
-    const initialTop = window.innerWidth < MD_WIDTH ? '4.6rem' : '5.095rem';
-    const top = Math.max(0, toPx(initialTop) - offsetY);
-    const right = 0;
-    const opacity = Math.max(0, 1.0 - (offsetY / DISTANCE_Y));
-    const visibility = offsetY >= DISTANCE_Y ? 'hidden' : 'visible';
-    const style = { top, right, opacity, visibility };
-
     const transition = window.pageYOffset <= 100 ? 'transition-transform duration-300 ease-in-out' : '';
 
     return (
-      /** @ts-ignore */
-      <div style={style} className="absolute w-48 text-right overflow-hidden sm:w-64">
+      <div className="w-48 text-right overflow-hidden sm:w-64">
         <span className={`pl-3 hidden bg-white text-gray-700 rounded-l-full transform ${translate} ${transition} sm:inline-block`}>{this.msg}</span>
         <span className={`pl-3 inline-block bg-white text-gray-700 rounded-l-full transform ${translate} ${transition} sm:hidden`}>{this.msgShrt}</span>
-      </div >
+      </div>
     );
   }
 }

@@ -21,24 +21,26 @@ import StatusPopup from './StatusPopup';
 import shortLogo from '../images/logo-short.svg';
 import fullLogo from '../images/logo-full.svg';
 
-const DISTANCE_X = toPx('3rem');
-const DISTANCE_X_MD = toPx('9rem');
+const LIST_NAME_DISTANCE_X = toPx('3rem');
+const LIST_NAME_DISTANCE_X_MD = toPx('9rem');
 
-const START_Y = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE);
-const START_Y_MD = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE_MD);
+const LIST_NAME_START_Y = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE);
+const LIST_NAME_START_Y_MD = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE_MD);
 
-const END_Y = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2);
-const END_Y_MD = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2) + 6;
+const LIST_NAME_END_Y = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2);
+const LIST_NAME_END_Y_MD = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2) + 6;
 
-const DISTANCE_Y = Math.abs(END_Y - START_Y);
-const DISTANCE_Y_MD = Math.abs(END_Y_MD - START_Y_MD);
+const LIST_NAME_DISTANCE_Y = Math.abs(LIST_NAME_END_Y - LIST_NAME_START_Y);
+const LIST_NAME_DISTANCE_Y_MD = Math.abs(LIST_NAME_END_Y_MD - LIST_NAME_START_Y_MD);
+
+const STATUS_POPUP_DISTANCE_Y = 36;
 
 class TopBar extends React.PureComponent {
 
   constructor(props) {
     super(props);
 
-    const distanceY = window.innerWidth < MD_WIDTH ? DISTANCE_Y : DISTANCE_Y_MD;
+    const distanceY = window.innerWidth < MD_WIDTH ? LIST_NAME_DISTANCE_Y : LIST_NAME_DISTANCE_Y_MD;
 
     this.initialState = {
       url: '',
@@ -80,7 +82,7 @@ class TopBar extends React.PureComponent {
   }
 
   updateScrollY = () => {
-    const distanceY = window.innerWidth < MD_WIDTH ? DISTANCE_Y : DISTANCE_Y_MD;
+    const distanceY = window.innerWidth < MD_WIDTH ? LIST_NAME_DISTANCE_Y : LIST_NAME_DISTANCE_Y_MD;
     if (window.pageYOffset >= distanceY && this.state.offsetY >= distanceY) return;
     this.setState({ offsetY: Math.min(window.pageYOffset, distanceY) });
   }
@@ -235,23 +237,38 @@ class TopBar extends React.PureComponent {
 
     let top, left;
     if (window.innerWidth < MD_WIDTH) {
-      top = START_Y + (offsetY * (END_Y - START_Y) / DISTANCE_Y);
-      left = offsetY * DISTANCE_X / DISTANCE_Y;
+      top = LIST_NAME_START_Y + (offsetY * (LIST_NAME_END_Y - LIST_NAME_START_Y) / LIST_NAME_DISTANCE_Y);
+      left = offsetY * LIST_NAME_DISTANCE_X / LIST_NAME_DISTANCE_Y;
     } else {
-      top = START_Y_MD + (offsetY * (END_Y_MD - START_Y_MD) / DISTANCE_Y_MD);
-      left = offsetY * DISTANCE_X_MD / DISTANCE_Y_MD;
+      top = LIST_NAME_START_Y_MD + (offsetY * (LIST_NAME_END_Y_MD - LIST_NAME_START_Y_MD) / LIST_NAME_DISTANCE_Y_MD);
+      left = offsetY * LIST_NAME_DISTANCE_X_MD / LIST_NAME_DISTANCE_Y_MD;
     }
 
-    const listNameStyle = { position: 'absolute', top, left };
+    const listNameStyle = { top, left };
 
     return (
-      <React.Fragment>
-        {/** @ts-ignore */}
-        < div style={listNameStyle} >
-          <ListName fetched={this.props.fetched} />
-        </div >
-        <StatusPopup offsetY={offsetY} />
-      </React.Fragment>
+      <div style={listNameStyle} className="absolute">
+        <ListName fetched={this.props.fetched} />
+      </div >
+    );
+  }
+
+  renderStatusPopup() {
+
+    const { offsetY } = this.state;
+
+    const initialTop = window.innerWidth < MD_WIDTH ? '4.6rem' : '5.095rem';
+    const top = Math.max(0, toPx(initialTop) - offsetY);
+    const right = 0;
+    const opacity = Math.max(0, 1.0 - (offsetY / STATUS_POPUP_DISTANCE_Y));
+    const visibility = offsetY >= STATUS_POPUP_DISTANCE_Y ? 'hidden' : 'visible';
+
+    const statusPopupStyle = { top, right, opacity, visibility };
+    return (
+      /** @ts-ignore */
+      <div style={statusPopupStyle} className="absolute">
+        <StatusPopup />
+      </div>
     );
   }
 
@@ -274,9 +291,9 @@ class TopBar extends React.PureComponent {
 
       let height;
       if (window.innerWidth < MD_WIDTH) {
-        height = toPx(TOP_BAR_HEIGHT) + (offsetY * (toPx(TOP_HEADER_HEIGHT) - toPx(TOP_BAR_HEIGHT)) / DISTANCE_Y);
+        height = toPx(TOP_BAR_HEIGHT) + (offsetY * (toPx(TOP_HEADER_HEIGHT) - toPx(TOP_BAR_HEIGHT)) / LIST_NAME_DISTANCE_Y);
       } else {
-        height = toPx(TOP_BAR_HEIGHT_MD) + (offsetY * (toPx(TOP_HEADER_HEIGHT) - toPx(TOP_BAR_HEIGHT_MD)) / DISTANCE_Y_MD);
+        height = toPx(TOP_BAR_HEIGHT_MD) + (offsetY * (toPx(TOP_HEADER_HEIGHT) - toPx(TOP_BAR_HEIGHT_MD)) / LIST_NAME_DISTANCE_Y_MD);
       }
 
       headerStyle = { height };
@@ -299,7 +316,8 @@ class TopBar extends React.PureComponent {
             </div>
             {rightPane}
           </div>
-          {isListNameShown ? this.renderListName() : null}
+          {isListNameShown && this.renderListName()}
+          {isListNameShown && this.renderStatusPopup()}
         </div>
       </header>
     );
@@ -308,6 +326,7 @@ class TopBar extends React.PureComponent {
 
 TopBar.defaultProps = {
   isListNameShown: false,
+  fetched: null,
 };
 
 const mapStateToProps = (state, props) => {
