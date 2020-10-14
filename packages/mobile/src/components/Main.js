@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  FlatList, View, TouchableOpacity,
+  FlatList, View, TouchableOpacity, Animated,
 } from 'react-native';
 import Svg, { SvgXml, Path } from 'react-native-svg'
 import { Flow } from 'react-native-animated-spinkit'
 
 import {
-  fetch, fetchMore, updateTopBarOffsetY,
+  fetch, fetchMore,
 } from '../actions';
 import {
   ADD_POPUP,
@@ -24,7 +24,7 @@ import { tailwind } from '../stylesheets/tailwind';
 import { InterText as Text, withSafeAreaContext } from '.';
 
 import Loading from './Loading';
-import TopBar, { LIST_NAME_DISTANCE_Y, LIST_NAME_DISTANCE_Y_MD } from './TopBar';
+import TopBar from './TopBar';
 import BottomBar from './BottomBar';
 import CardItem from './CardItem';
 import ConfirmDeletePopup from './ConfirmDeletePopup';
@@ -51,6 +51,7 @@ class Main extends React.Component {
     super(props);
 
     this.fetched = [];
+    this.scrollY = new Animated.Value(0);
   }
 
   componentDidMount() {
@@ -80,22 +81,6 @@ class Main extends React.Component {
     if (safeAreaWidth >= LG_WIDTH) columnWidth = PC_33;
 
     return columnWidth;
-  }
-
-  updateScrollY = (e) => {
-
-    const { topBarOffsetY, safeAreaWidth } = this.props;
-
-    const offsetY = e.nativeEvent.contentOffset.y;
-    const distanceY = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_Y : LIST_NAME_DISTANCE_Y_MD;
-
-    if (!topBarOffsetY) {
-      this.props.updateTopBarOffsetY(Math.min(offsetY, distanceY));
-      return;
-    }
-
-    if (offsetY >= distanceY && topBarOffsetY >= distanceY) return;
-    this.props.updateTopBarOffsetY(Math.min(offsetY, distanceY));
   }
 
   onEndReached = () => {
@@ -360,9 +345,11 @@ class Main extends React.Component {
           onEndReached={this.onEndReached}
           onEndReachedThreshold={0.9}
           removeClippedSubviews={false}
-          onScroll={this.updateScrollY}
+          onScroll={Animated.event([{
+            nativeEvent: { contentOffset: { y: this.scrollY } }
+          }], { useNativeDriver: false })}
           scrollEventThrottle={16} />
-        <TopBar rightPane={topBarRightPane} isListNameShown={true} fetched={this.fetched} />
+        <TopBar rightPane={topBarRightPane} isListNameShown={true} fetched={this.fetched} scrollY={this.scrollY} />
         {columnWidth === PC_100 && <BottomBar />}
         <ConfirmDeletePopup />
       </React.Fragment>
@@ -381,12 +368,11 @@ const mapStateToProps = (state, props) => {
     isFetchingMore: state.display.isFetchingMore,
     searchString: state.display.searchString,
     windowWidth: state.window.width,
-    topBarOffsetY: state.display.topBarOffsetY,
   };
 };
 
 const mapDispatchToProps = {
-  fetch, fetchMore, updateTopBarOffsetY,
+  fetch, fetchMore,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(Main));

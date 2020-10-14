@@ -8,9 +8,8 @@ import {
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
 } from '../types/actionTypes';
-import { SM_WIDTH, MD_WIDTH } from '../types/const';
+import { SM_WIDTH } from '../types/const';
 import { updateStatus } from '../actions';
-import { toPx } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 
 import { InterText as Text, withSafeAreaContext } from '.';
@@ -40,8 +39,6 @@ const MSGS_SHRT = {
   [DELETE_OLD_LINKS_IN_TRASH_COMMIT]: 'Finished deleting.',
   [DELETE_OLD_LINKS_IN_TRASH_ROLLBACK]: 'Error deleting!',
 };
-
-const DISTANCE_Y = 36;
 
 class StatusPopup extends React.PureComponent {
 
@@ -131,22 +128,12 @@ class StatusPopup extends React.PureComponent {
       this.msg = this.msg + ' ';
     }
 
-    const offsetY = this.props.offsetY === null ? 0 : this.props.offsetY;
-
-    const initialTop = safeAreaWidth < MD_WIDTH ? '4.6rem' : '5.095rem';
-    const top = Math.max(0, toPx(initialTop) - offsetY);
-    const right = 0;
-    const opacity = Math.max(0, 1.0 - (offsetY / DISTANCE_Y));
-    const display = offsetY >= DISTANCE_Y ? 'none' : 'flex';
-    const viewStyle = { top, right, opacity, display };
-
     const textStyle = {
       transform: [{ translateX: this.translateX }],
     };
 
     return (
-      /** @ts-ignore */
-      <View style={[tailwind('absolute w-48 flex-row justify-start items-center overflow-hidden sm:w-64', safeAreaWidth), viewStyle]}>
+      <View style={tailwind('w-48 flex-row justify-start items-center overflow-hidden sm:w-64', safeAreaWidth)}>
         <View style={tailwind('w-full h-full')}></View>
         <AnimatedText onLayout={this.onTextLayout} style={[tailwind('pl-3 bg-white text-base text-gray-900 rounded-l-full'), textStyle]}>{this.msg}</AnimatedText>
       </View>

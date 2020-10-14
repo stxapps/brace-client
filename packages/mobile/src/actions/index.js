@@ -18,7 +18,7 @@ import {
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
-  UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_TOP_BAR_OFFSET_Y,
+  UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN,
   RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -576,12 +576,5 @@ export const updateHref = (href) => {
   return {
     type: UPDATE_HREF,
     payload: href,
-  };
-};
-
-export const updateTopBarOffsetY = (offsetY) => {
-  return {
-    type: UPDATE_TOP_BAR_OFFSET_Y,
-    payload: offsetY,
   };
 };

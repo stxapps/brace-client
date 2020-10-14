@@ -8,7 +8,7 @@ import {
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK, EXTRACT_CONTENTS_COMMIT,
   UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
-  UPDATE_HANDLING_SIGN_IN, UPDATE_TOP_BAR_OFFSET_Y,
+  UPDATE_HANDLING_SIGN_IN,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   RESET_STATE,
 } from '../types/actionTypes';
@@ -31,7 +31,6 @@ const initialState = {
   status: null,
   cardItemMenuPopupPosition: null,
   isHandlingSignIn: false,
-  topBarOffsetY: null,
   exportAllDataProgress: null,
   deleteAllDataProgress: null,
 };
@@ -52,7 +51,6 @@ export default (state = initialState, action) => {
       status: null,
       cardItemMenuPopupPosition: null,
       isHandlingSignIn: false,
-      topBarOffsetY: null,
       exportAllDataProgress: null,
       deleteAllDataProgress: null,
     };
@@ -158,10 +156,6 @@ export default (state = initialState, action) => {
 
   if (action.type === UPDATE_HANDLING_SIGN_IN) {
     return { ...state, isHandlingSignIn: action.payload };
-  }
-
-  if (action.type === UPDATE_TOP_BAR_OFFSET_Y) {
-    return { ...state, topBarOffsetY: action.payload };
   }
 
   if (action.type === UPDATE_EXPORT_ALL_DATA_PROGRESS) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  View, TouchableOpacity, Linking, LayoutAnimation, Platform,
+  View, TouchableOpacity, Linking, Animated, LayoutAnimation, Platform,
 } from 'react-native';
 import {
   Menu, MenuOptions, MenuOption, MenuTrigger, renderers, withMenuContext,
@@ -33,17 +33,19 @@ import StatusPopup from './StatusPopup';
 import shortLogo from '../images/logo-short.svg';
 import fullLogo from '../images/logo-full.svg';
 
-const DISTANCE_X = toPx('3rem');
-const DISTANCE_X_MD = toPx('9rem');
+const LIST_NAME_DISTANCE_X = toPx('3rem');
+const LIST_NAME_DISTANCE_X_MD = toPx('9rem');
 
-const START_Y = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE);
-const START_Y_MD = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE_MD);
+const LIST_NAME_START_Y = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE);
+const LIST_NAME_START_Y_MD = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE_MD);
 
-const END_Y = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2);
-const END_Y_MD = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2) + 6;
+const LIST_NAME_END_Y = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2);
+const LIST_NAME_END_Y_MD = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2) + 6;
 
-const DISTANCE_Y = Math.abs(END_Y - START_Y);
-const DISTANCE_Y_MD = Math.abs(END_Y_MD - START_Y_MD);
+const LIST_NAME_DISTANCE_Y = Math.abs(LIST_NAME_END_Y - LIST_NAME_START_Y);
+const LIST_NAME_DISTANCE_Y_MD = Math.abs(LIST_NAME_END_Y_MD - LIST_NAME_START_Y_MD);
+
+const STATUS_POPUP_DISTANCE_Y = 36;
 
 class TopBar extends React.Component {
 
@@ -83,11 +85,12 @@ class TopBar extends React.Component {
 
     if (
       this.props.rightPane !== nextProps.rightPane ||
+      this.props.isListNameShown !== nextProps.isListNameShown ||
+      this.props.scrollY !== nextProps.scrollY ||
       this.props.username !== nextProps.username ||
       this.props.userImage !== nextProps.userImage ||
       this.props.searchString !== nextProps.searchString ||
       this.props.safeAreaWidth !== nextProps.safeAreaWidth ||
-      this.props.offsetY !== nextProps.offsetY ||
       !isEqual(this.state, nextState)
     ) {
       return true;
@@ -256,29 +259,68 @@ class TopBar extends React.Component {
 
   renderListName() {
 
-    const { offsetY, safeAreaWidth } = this.props;
+    const { scrollY, safeAreaWidth } = this.props;
 
-    let top, left;
-    if (safeAreaWidth < MD_WIDTH) {
-      top = START_Y + (offsetY * (END_Y - START_Y) / DISTANCE_Y);
-      left = offsetY * DISTANCE_X / DISTANCE_Y;
-    } else {
-      top = START_Y_MD + (offsetY * (END_Y_MD - START_Y_MD) / DISTANCE_Y_MD);
-      left = offsetY * DISTANCE_X_MD / DISTANCE_Y_MD;
-    }
+    const distanceX = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_X : LIST_NAME_DISTANCE_X_MD;
 
-    const listNameStyle = { position: 'absolute', top, left };
+    const startY = safeAreaWidth < MD_WIDTH ? LIST_NAME_START_Y : LIST_NAME_START_Y_MD;
+    const endY = safeAreaWidth < MD_WIDTH ? LIST_NAME_END_Y : LIST_NAME_END_Y_MD;
+    const distanceY = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_Y : LIST_NAME_DISTANCE_Y_MD;
+
+    const changingTop = scrollY.interpolate({
+      inputRange: [0, distanceY],
+      outputRange: [startY, endY],
+      extrapolate: 'clamp'
+    });
+    const changingLeft = scrollY.interpolate({
+      inputRange: [0, distanceY],
+      outputRange: [0, distanceX],
+      extrapolate: 'clamp'
+    });
+
+    const listNameStyle = { top: changingTop, left: changingLeft };
 
     return (
-      <React.Fragment>
-        {/** @ts-ignore */}
-        <View style={listNameStyle}>
-          <ListName fetched={this.props.fetched} />
-        </View>
-        <StatusPopup offsetY={offsetY} />
-      </React.Fragment>
+      <Animated.View style={[tailwind('absolute'), listNameStyle]}>
+        <ListName fetched={this.props.fetched} />
+      </Animated.View>
     );
   };
+
+  renderStatusPopup() {
+
+    const { scrollY, safeAreaWidth } = this.props;
+
+    const top = toPx(safeAreaWidth < MD_WIDTH ? '4.6rem' : '5.095rem');
+
+    const changingTop = scrollY.interpolate({
+      inputRange: [0, STATUS_POPUP_DISTANCE_Y],
+      outputRange: [top, top - STATUS_POPUP_DISTANCE_Y],
+      extrapolate: 'clamp'
+    });
+    const changingOpacity = scrollY.interpolate({
+      inputRange: [0, STATUS_POPUP_DISTANCE_Y],
+      outputRange: [1.0, 0.0],
+      extrapolate: 'clamp'
+    });
+    const changingTranslateX = scrollY.interpolate({
+      inputRange: [0, STATUS_POPUP_DISTANCE_Y - 1, STATUS_POPUP_DISTANCE_Y],
+      outputRange: [0, 0, 9999],
+      extrapolate: 'clamp'
+    });
+
+    const statusPopupStyle = {
+      top: changingTop,
+      right: 0,
+      opacity: changingOpacity,
+      transform: [{ translateX: changingTranslateX }],
+    };
+    return (
+      <Animated.View style={[tailwind('absolute'), statusPopupStyle]}>
+        <StatusPopup />
+      </Animated.View>
+    );
+  }
 
   render() {
 
@@ -290,35 +332,37 @@ class TopBar extends React.Component {
     else if (rightPaneProp === SHOW_COMMANDS) rightPane = this.renderCommands();
     else throw new Error(`Invalid rightPane: ${rightPaneProp}`);
 
-    const { isListNameShown, safeAreaWidth, insets } = this.props;
+    const { isListNameShown, scrollY, safeAreaWidth, insets } = this.props;
 
     let headerStyle, headerStyleClasses;
     if (isListNameShown) {
 
-      const offsetY = this.props.offsetY === null ? 0 : this.props.offsetY;
+      const distanceY = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_Y : LIST_NAME_DISTANCE_Y_MD;
+      let topBarHeight = safeAreaWidth < MD_WIDTH ? toPx(TOP_BAR_HEIGHT) : toPx(TOP_BAR_HEIGHT_MD);
+      let topHeaderHeight = toPx(TOP_HEADER_HEIGHT);
 
-      let height;
-      if (safeAreaWidth < MD_WIDTH) {
-        height = toPx(TOP_BAR_HEIGHT) + (offsetY * (toPx(TOP_HEADER_HEIGHT) - toPx(TOP_BAR_HEIGHT)) / DISTANCE_Y);
-      } else {
-        height = toPx(TOP_BAR_HEIGHT_MD) + (offsetY * (toPx(TOP_HEADER_HEIGHT) - toPx(TOP_BAR_HEIGHT_MD)) / DISTANCE_Y_MD);
-      }
+      const changingHeight = scrollY.interpolate({
+        inputRange: [0, distanceY],
+        outputRange: [topBarHeight + insets.top, topHeaderHeight + insets.top],
+        extrapolate: 'clamp'
+      });
+      const changingBorder = scrollY.interpolate({
+        inputRange: [0, distanceY - 1, distanceY],
+        outputRange: [0, 0, 1],
+        extrapolate: 'clamp'
+      });
 
-      headerStyle = { height };
-      headerStyleClasses = 'absolute inset-x-0 top-0 bg-white z-30';
-      if (height === toPx(TOP_HEADER_HEIGHT) + insets.top) {
-        headerStyleClasses += ' border-b border-gray-300';
-      }
+      headerStyle = { height: changingHeight, borderBottomWidth: changingBorder };
+      headerStyleClasses = 'absolute inset-x-0 top-0 bg-white border-gray-300 z-30';
     } else {
-      headerStyle = { height: toPx(TOP_HEADER_HEIGHT) };
+      headerStyle = { height: toPx(TOP_HEADER_HEIGHT) + insets.top };
       headerStyleClasses = '';
     }
 
-    headerStyle['height'] += insets.top;
     headerStyle['paddingTop'] = insets.top;
 
     return (
-      <View style={[tailwind(`items-center w-full ${headerStyleClasses}`), headerStyle]}>
+      <Animated.View style={[tailwind(`items-center w-full ${headerStyleClasses}`), headerStyle]}>
         <View style={tailwind('px-4 w-full max-w-6xl md:px-6 lg:px-8', safeAreaWidth)}>
           <View>
             <View style={tailwind('flex-row justify-between items-center h-14')}>
@@ -328,16 +372,19 @@ class TopBar extends React.Component {
               </View>
               {rightPane}
             </View>
-            {isListNameShown ? this.renderListName() : null}
+            {isListNameShown && this.renderListName()}
+            {isListNameShown && this.renderStatusPopup()}
           </View>
         </View>
-      </View>
+      </Animated.View>
     );
   }
 }
 
 TopBar.defaultProps = {
   isListNameShown: false,
+  fetched: null,
+  scrollY: null,
 };
 
 const mapStateToProps = (state, props) => {
@@ -348,7 +395,6 @@ const mapStateToProps = (state, props) => {
     isAddPopupShown: state.display.isAddPopupShown,
     isProfilePopupShown: state.display.isProfilePopupShown,
     windowWidth: state.window.width,
-    offsetY: state.display.topBarOffsetY,
   };
 };
 
@@ -357,5 +403,3 @@ const mapDispatchToProps = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(withMenuContext(TopBar)));
-
-export { DISTANCE_Y as LIST_NAME_DISTANCE_Y, DISTANCE_Y_MD as LIST_NAME_DISTANCE_Y_MD };
