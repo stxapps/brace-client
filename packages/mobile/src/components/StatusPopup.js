@@ -135,7 +135,7 @@ class StatusPopup extends React.PureComponent {
     return (
       <View style={tailwind('w-48 flex-row justify-start items-center overflow-hidden sm:w-64', safeAreaWidth)}>
         <View style={tailwind('w-full h-full')}></View>
-        <AnimatedText onLayout={this.onTextLayout} style={[tailwind('pl-3 bg-white text-base text-gray-900 rounded-l-full'), textStyle]}>{this.msg}</AnimatedText>
+        <AnimatedText onLayout={this.onTextLayout} style={[tailwind('pl-3 bg-white text-base text-gray-900 leading-6 rounded-l-full'), textStyle]}>{this.msg}</AnimatedText>
       </View>
     );
   }

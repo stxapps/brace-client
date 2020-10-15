@@ -72,7 +72,7 @@ class ListName extends React.PureComponent {
           <MenuTrigger>
             {/* Change the paddings here, need to change triggerOffsets too */}
             <View style={tailwind('flex-row items-center')}>
-              <Text style={tailwind('text-lg text-gray-900 font-semibold')}>{listName}</Text>
+              <Text style={tailwind('text-lg text-gray-900 font-semibold leading-7')}>{listName}</Text>
               <Svg style={tailwind('ml-1 w-5 h-5 text-black')} viewBox="0 0 24 24" stroke="currentColor" fill="none">
                 <Path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </Svg>

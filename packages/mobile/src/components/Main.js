@@ -337,7 +337,7 @@ class Main extends React.Component {
 
     return (
       <React.Fragment>
-        <FlatList
+        <Animated.FlatList
           contentContainerStyle={tailwind('max-w-6xl self-center')}
           data={mainData}
           keyExtractor={item => item.id}
@@ -347,7 +347,7 @@ class Main extends React.Component {
           removeClippedSubviews={false}
           onScroll={Animated.event([{
             nativeEvent: { contentOffset: { y: this.scrollY } }
-          }], { useNativeDriver: false })}
+          }], { useNativeDriver: true })}
           scrollEventThrottle={16} />
         <TopBar rightPane={topBarRightPane} isListNameShown={true} fetched={this.fetched} scrollY={this.scrollY} />
         {columnWidth === PC_100 && <BottomBar />}

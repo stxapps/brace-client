@@ -80,5 +80,8 @@
   },
   "mt-1.5": {
     "marginTop": 6
+  },
+  "h-px": {
+    "height": 1
   }
 }

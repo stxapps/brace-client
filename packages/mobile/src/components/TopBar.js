@@ -18,7 +18,7 @@ import {
   TOP_HEADER_HEIGHT, TOP_LIST_NAME_HEIGHT,
   TOP_HEADER_LIST_NAME_SPACE, TOP_HEADER_LIST_NAME_SPACE_MD,
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD,
-  MD_WIDTH,
+  MD_WIDTH, LG_WIDTH,
 } from '../types/const';
 import { validateUrl, isEqual, toPx } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
@@ -32,6 +32,9 @@ import StatusPopup from './StatusPopup';
 
 import shortLogo from '../images/logo-short.svg';
 import fullLogo from '../images/logo-full.svg';
+
+/* header: 56, border: 1, status: 28, list name + commands: 109 */
+const LAID_TOP_BAR_HEIGHT = 56 + 1 + 28 + 109;
 
 const LIST_NAME_DISTANCE_X = toPx('3rem');
 const LIST_NAME_DISTANCE_X_MD = toPx('9rem');
@@ -194,7 +197,7 @@ class TopBar extends React.Component {
     );
   }
 
-  renderCommands() {
+  _renderCommands() {
 
     const { searchString, safeAreaWidth } = this.props;
 
@@ -261,27 +264,30 @@ class TopBar extends React.Component {
 
     const { scrollY, safeAreaWidth } = this.props;
 
-    const distanceX = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_X : LIST_NAME_DISTANCE_X_MD;
+    const topBarHeight = toPx(safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD);
+    const headerHeight = toPx(TOP_HEADER_HEIGHT);
+    const space = toPx(safeAreaWidth < MD_WIDTH ? TOP_HEADER_LIST_NAME_SPACE : TOP_HEADER_LIST_NAME_SPACE_MD);
 
-    const startY = safeAreaWidth < MD_WIDTH ? LIST_NAME_START_Y : LIST_NAME_START_Y_MD;
-    const endY = safeAreaWidth < MD_WIDTH ? LIST_NAME_END_Y : LIST_NAME_END_Y_MD;
+    const distanceX = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_X : LIST_NAME_DISTANCE_X_MD;
     const distanceY = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_Y : LIST_NAME_DISTANCE_Y_MD;
 
-    const changingTop = scrollY.interpolate({
-      inputRange: [0, distanceY],
-      outputRange: [startY, endY],
-      extrapolate: 'clamp'
-    });
-    const changingLeft = scrollY.interpolate({
+    const changingTranslateX = scrollY.interpolate({
       inputRange: [0, distanceY],
       outputRange: [0, distanceX],
       extrapolate: 'clamp'
     });
+    const changingTranslateY = scrollY.interpolate({
+      inputRange: [0, distanceY],
+      outputRange: [(109 - 28) / 2 * -1 - 28 + space + (LAID_TOP_BAR_HEIGHT - topBarHeight), (109 - 28) / 2 * -1 - 28 - 56 + (56 - 28) / 2 + (LAID_TOP_BAR_HEIGHT - headerHeight)],
+      extrapolate: 'clamp'
+    });
 
-    const listNameStyle = { top: changingTop, left: changingLeft };
+    const listNameStyle = {
+      transform: [{ translateX: changingTranslateX }, { translateY: changingTranslateY }]
+    };
 
     return (
-      <Animated.View style={[tailwind('absolute'), listNameStyle]}>
+      <Animated.View style={listNameStyle}>
         <ListName fetched={this.props.fetched} />
       </Animated.View>
     );
@@ -291,11 +297,13 @@ class TopBar extends React.Component {
 
     const { scrollY, safeAreaWidth } = this.props;
 
-    const top = toPx(safeAreaWidth < MD_WIDTH ? '4.6rem' : '5.095rem');
+    const topBarHeight = toPx(safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD);
+    const headerHeight = toPx(TOP_HEADER_HEIGHT);
+    const space = toPx(safeAreaWidth < MD_WIDTH ? TOP_HEADER_LIST_NAME_SPACE : TOP_HEADER_LIST_NAME_SPACE_MD);
 
-    const changingTop = scrollY.interpolate({
+    const changingTranslateY = scrollY.interpolate({
       inputRange: [0, STATUS_POPUP_DISTANCE_Y],
-      outputRange: [top, top - STATUS_POPUP_DISTANCE_Y],
+      outputRange: [(28 - 24) / 2 * -1 + space + (28 - 24) + (LAID_TOP_BAR_HEIGHT - topBarHeight), (28 - 24) / 2 * -1 + space + (28 - 24) + (LAID_TOP_BAR_HEIGHT - headerHeight) - STATUS_POPUP_DISTANCE_Y],
       extrapolate: 'clamp'
     });
     const changingOpacity = scrollY.interpolate({
@@ -303,23 +311,38 @@ class TopBar extends React.Component {
       outputRange: [1.0, 0.0],
       extrapolate: 'clamp'
     });
-    const changingTranslateX = scrollY.interpolate({
-      inputRange: [0, STATUS_POPUP_DISTANCE_Y - 1, STATUS_POPUP_DISTANCE_Y],
-      outputRange: [0, 0, 9999],
-      extrapolate: 'clamp'
-    });
 
     const statusPopupStyle = {
-      top: changingTop,
-      right: 0,
+      transform: [{ translateY: changingTranslateY }],
       opacity: changingOpacity,
-      transform: [{ translateX: changingTranslateX }],
     };
     return (
-      <Animated.View style={[tailwind('absolute'), statusPopupStyle]}>
+      <Animated.View style={statusPopupStyle}>
         <StatusPopup />
       </Animated.View>
     );
+  }
+
+  renderCommands() {
+
+    const { scrollY, safeAreaWidth } = this.props;
+
+    const topBarHeight = toPx(safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD);
+    const headerHeight = toPx(TOP_HEADER_HEIGHT);
+    const distanceY = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_Y : LIST_NAME_DISTANCE_Y_MD;
+
+    const changingTranslateY = scrollY.interpolate({
+      inputRange: [0, distanceY],
+      outputRange: [(109 - 38) / 2 * -1 - 28 - 56 + (56 - 38) / 2 + (LAID_TOP_BAR_HEIGHT - topBarHeight), (109 - 38) / 2 * -1 - 28 - 56 + (56 - 38) / 2 + (LAID_TOP_BAR_HEIGHT - headerHeight)],
+      extrapolate: 'clamp'
+    });
+
+    const commandsStyle = { transform: [{ translateY: changingTranslateY }] };
+    return (
+      <Animated.View style={commandsStyle}>
+        {this._renderCommands()}
+      </Animated.View>
+    )
   }
 
   render() {
@@ -329,52 +352,75 @@ class TopBar extends React.Component {
     let rightPane;
     if (rightPaneProp === SHOW_BLANK) rightPane = null;
     else if (rightPaneProp === SHOW_SIGN_IN) rightPane = this.renderSignInBtn();
-    else if (rightPaneProp === SHOW_COMMANDS) rightPane = this.renderCommands();
+    else if (rightPaneProp === SHOW_COMMANDS) rightPane = null;
     else throw new Error(`Invalid rightPane: ${rightPaneProp}`);
 
     const { isListNameShown, scrollY, safeAreaWidth, insets } = this.props;
 
-    let headerStyle, headerStyleClasses;
+    let topBarStyleClasses, topBarStyle, headerStyle, headerBorderStyle, listNamePane;
     if (isListNameShown) {
 
-      const distanceY = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_Y : LIST_NAME_DISTANCE_Y_MD;
-      let topBarHeight = safeAreaWidth < MD_WIDTH ? toPx(TOP_BAR_HEIGHT) : toPx(TOP_BAR_HEIGHT_MD);
-      let topHeaderHeight = toPx(TOP_HEADER_HEIGHT);
+      const topBarHeight = toPx(safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD);
+      const headerHeight = toPx(TOP_HEADER_HEIGHT);
 
-      const changingHeight = scrollY.interpolate({
+      const distanceY = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_Y : LIST_NAME_DISTANCE_Y_MD;
+
+      const changingTopBarTranslateY = scrollY.interpolate({
         inputRange: [0, distanceY],
-        outputRange: [topBarHeight + insets.top, topHeaderHeight + insets.top],
+        outputRange: [topBarHeight - LAID_TOP_BAR_HEIGHT, headerHeight - LAID_TOP_BAR_HEIGHT],
         extrapolate: 'clamp'
       });
-      const changingBorder = scrollY.interpolate({
+      const changingHeaderTranslateY = scrollY.interpolate({
+        inputRange: [0, distanceY],
+        outputRange: [LAID_TOP_BAR_HEIGHT - topBarHeight, LAID_TOP_BAR_HEIGHT - headerHeight],
+        extrapolate: 'clamp'
+      });
+      const changingHeaderBorderOpacity = scrollY.interpolate({
         inputRange: [0, distanceY - 1, distanceY],
         outputRange: [0, 0, 1],
         extrapolate: 'clamp'
       });
 
-      headerStyle = { height: changingHeight, borderBottomWidth: changingBorder };
-      headerStyleClasses = 'absolute inset-x-0 top-0 bg-white border-gray-300 z-30';
+      topBarStyleClasses = 'absolute inset-x-0 top-0 bg-white border-gray-300 z-30';
+      topBarStyle = { transform: [{ translateY: changingTopBarTranslateY }] };
+      headerStyle = { transform: [{ translateY: changingHeaderTranslateY }] };
+      headerBorderStyle = { opacity: changingHeaderBorderOpacity };
+
+      listNamePane = (
+        <React.Fragment>
+          <View style={tailwind('px-4 flex-row justify-end items-center h-7 md:px-6 lg:px-8', safeAreaWidth)}>
+            {this.renderStatusPopup()}
+          </View>
+          <View style={[tailwind('px-4 flex-row justify-between items-center md:px-6 lg:px-8', safeAreaWidth), { height: 108 }]}>
+            {this.renderListName()}
+            {rightPaneProp === SHOW_COMMANDS && this.renderCommands()}
+          </View>
+        </React.Fragment>
+      );
     } else {
-      headerStyle = { height: toPx(TOP_HEADER_HEIGHT) + insets.top };
-      headerStyleClasses = '';
+      topBarStyleClasses = '';
+      topBarStyle = {};
+      headerStyle = {};
+      headerBorderStyle = { opacity: 1.0 };
+      listNamePane = null;
     }
 
-    headerStyle['paddingTop'] = insets.top;
+    headerStyle['marginTop'] = insets.top;
 
     return (
-      <Animated.View style={[tailwind(`items-center w-full ${headerStyleClasses}`), headerStyle]}>
-        <View style={tailwind('px-4 w-full max-w-6xl md:px-6 lg:px-8', safeAreaWidth)}>
-          <View>
-            <View style={tailwind('flex-row justify-between items-center h-14')}>
+      <Animated.View style={[tailwind(`items-center w-full ${topBarStyleClasses}`), topBarStyle]}>
+        <View style={tailwind('w-full max-w-6xl')}>
+          <Animated.View style={headerStyle}>
+            <View style={tailwind('px-4 flex-row justify-between items-center h-14 md:px-6 lg:px-8', safeAreaWidth)}>
               <View>
                 <SvgXml style={tailwind('md:hidden', safeAreaWidth)} width={28.36} height={32} xml={shortLogo} />
                 <SvgXml style={tailwind('hidden md:flex', safeAreaWidth)} width={109.63} height={24} xml={fullLogo} />
               </View>
               {rightPane}
             </View>
-            {isListNameShown && this.renderListName()}
-            {isListNameShown && this.renderStatusPopup()}
-          </View>
+            <Animated.View style={[tailwind('w-full h-px bg-gray-300'), headerBorderStyle]}></Animated.View>
+          </Animated.View>
+          {listNamePane}
         </View>
       </Animated.View>
     );
