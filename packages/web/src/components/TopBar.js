@@ -257,7 +257,9 @@ class TopBar extends React.PureComponent {
       listNameStartY, listNameEndY, listNameDistanceY,
     } = getSizes(window.innerWidth);
 
-    const top = listNameStartY + (offsetY * (listNameEndY - listNameStartY) / listNameDistanceY);
+    // Start from MD width, align baseline with Brace logo instead of align center
+    let top = listNameStartY + (offsetY * (listNameEndY - listNameStartY) / listNameDistanceY);
+    if (window.innerWidth >= MD_WIDTH) top += 6;
     const left = offsetY * listNameDistanceX / listNameDistanceY;
 
     const listNameStyle = { top, left };
