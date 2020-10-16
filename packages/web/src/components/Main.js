@@ -62,8 +62,12 @@ class Main extends React.PureComponent {
     this.fetched.push(this.props.listName);
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     this.updatePaddingBottom();
+
+    if (this.props.listName !== prevProps.listName) {
+      window.scrollTo(0, 0);
+    }
   }
 
   componentWillUnmount() {

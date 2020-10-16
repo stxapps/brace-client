@@ -114,6 +114,7 @@ const handlePendingSignIn = () => async (dispatch, getState) => {
 };
 
 const getPopupShownId = (state) => {
+
   if (state.display.isAddPopupShown) return ADD_POPUP;
   if (state.display.isProfilePopupShown) return PROFILE_POPUP;
   if (state.display.isListNamePopupShown) return LIST_NAME_POPUP;

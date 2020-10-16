@@ -35,10 +35,7 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_HREF) {
-    return {
-      ...state,
-      href: action.payload,
-    };
+    return { ...state, href: action.payload };
   }
 
   if (action.type === UPDATE_HISTORY_POSITION) {
