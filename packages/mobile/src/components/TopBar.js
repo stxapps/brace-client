@@ -18,7 +18,7 @@ import {
   TOP_HEADER_HEIGHT, TOP_LIST_NAME_HEIGHT,
   TOP_HEADER_LIST_NAME_SPACE, TOP_HEADER_LIST_NAME_SPACE_MD,
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD,
-  MD_WIDTH, LG_WIDTH,
+  MD_WIDTH,
 } from '../types/const';
 import { validateUrl, isEqual, toPx } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
@@ -33,22 +33,55 @@ import StatusPopup from './StatusPopup';
 import shortLogo from '../images/logo-short.svg';
 import fullLogo from '../images/logo-full.svg';
 
-/* header: 56, border: 1, status: 28, list name + commands: 109 */
-const LAID_TOP_BAR_HEIGHT = 56 + 1 + 28 + 109;
+const getSizes = (safeAreaWidth, insets) => {
 
-const LIST_NAME_DISTANCE_X = toPx('3rem');
-const LIST_NAME_DISTANCE_X_MD = toPx('9rem');
+  const topBarHeight = toPx(safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD) + insets.top;
+  const headerHeight = toPx(TOP_HEADER_HEIGHT) + insets.top;
+  const listNameHeight = toPx(TOP_LIST_NAME_HEIGHT); // From ListName -> Text -> leading-7
+  const statusPopupHeight = 24; // From StatusPopup -> AnimatedText -> leading-6
+  const commandsHeight = 38; // From onLayout
 
-const LIST_NAME_START_Y = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE);
-const LIST_NAME_START_Y_MD = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE_MD);
+  const headerListNameSpace = toPx(safeAreaWidth < MD_WIDTH ? TOP_HEADER_LIST_NAME_SPACE : TOP_HEADER_LIST_NAME_SPACE_MD);
 
-const LIST_NAME_END_Y = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2);
-const LIST_NAME_END_Y_MD = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2) + 6;
+  const laidStatusPopupHeight = 28; // From render -> listNamePane -> View -> h-7
+  const laidListNameCommandsHeight = 109; // From describe below
 
-const LIST_NAME_DISTANCE_Y = Math.abs(LIST_NAME_END_Y - LIST_NAME_START_Y);
-const LIST_NAME_DISTANCE_Y_MD = Math.abs(LIST_NAME_END_Y_MD - LIST_NAME_START_Y_MD);
+  // header: 56, border: 1, status: 28, list name + commands: 109
+  // Touchable and TextInput work only within its parent's bound
+  //   so height needs to be enough for translateY.
+  //   56 (header) + 1 (borderBottom) + 24 (headerListNamespaceMd) + 28 (listName) = 109
+  //   commands need to be translated from bottom to that height!
+  const laidTopBarHeight = headerHeight + 1 + laidStatusPopupHeight + laidListNameCommandsHeight;
 
-const STATUS_POPUP_DISTANCE_Y = 36;
+  const LIST_NAME_DISTANCE_X = toPx('3rem');
+  const LIST_NAME_DISTANCE_X_MD = toPx('9rem');
+  const listNameDistanceX = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_X : LIST_NAME_DISTANCE_X_MD;
+
+  const LIST_NAME_START_Y = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE) + insets.top;
+  const LIST_NAME_START_Y_MD = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE_MD) + insets.top;
+
+  const LIST_NAME_END_Y = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2) + insets.top;
+  const LIST_NAME_END_Y_MD = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2) + insets.top;
+
+  const listNameDistanceY = safeAreaWidth < MD_WIDTH ? Math.abs(LIST_NAME_END_Y - LIST_NAME_START_Y) : Math.abs(LIST_NAME_END_Y_MD - LIST_NAME_START_Y_MD);
+
+  const statusPopupDistanceY = 36;
+
+  return {
+    topBarHeight,
+    headerHeight,
+    listNameHeight,
+    statusPopupHeight,
+    commandsHeight,
+    headerListNameSpace,
+    laidStatusPopupHeight,
+    laidListNameCommandsHeight,
+    laidTopBarHeight,
+    listNameDistanceX,
+    listNameDistanceY,
+    statusPopupDistanceY,
+  };
+};
 
 class TopBar extends React.Component {
 
@@ -262,23 +295,32 @@ class TopBar extends React.Component {
 
   renderListName() {
 
-    const { scrollY, safeAreaWidth } = this.props;
+    const { scrollY, safeAreaWidth, insets } = this.props;
+    const {
+      topBarHeight, headerHeight, listNameHeight, headerListNameSpace,
+      laidStatusPopupHeight, laidListNameCommandsHeight, laidTopBarHeight,
+      listNameDistanceX, listNameDistanceY,
+    } = getSizes(safeAreaWidth, insets);
 
-    const topBarHeight = toPx(safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD);
-    const headerHeight = toPx(TOP_HEADER_HEIGHT);
-    const space = toPx(safeAreaWidth < MD_WIDTH ? TOP_HEADER_LIST_NAME_SPACE : TOP_HEADER_LIST_NAME_SPACE_MD);
+    const space1 = (laidListNameCommandsHeight - listNameHeight) / 2;
+    const space2 = laidStatusPopupHeight;
+    const space3 = headerHeight;
 
-    const distanceX = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_X : LIST_NAME_DISTANCE_X_MD;
-    const distanceY = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_Y : LIST_NAME_DISTANCE_Y_MD;
+    // Start from MD width, align baseline with Brace logo instead of align center
+    let space4 = (headerHeight - listNameHeight) / 2;
+    if (safeAreaWidth >= MD_WIDTH) space4 += 6;
 
     const changingTranslateX = scrollY.interpolate({
-      inputRange: [0, distanceY],
-      outputRange: [0, distanceX],
+      inputRange: [0, listNameDistanceY],
+      outputRange: [0, listNameDistanceX],
       extrapolate: 'clamp'
     });
     const changingTranslateY = scrollY.interpolate({
-      inputRange: [0, distanceY],
-      outputRange: [(109 - 28) / 2 * -1 - 28 + space + (LAID_TOP_BAR_HEIGHT - topBarHeight), (109 - 28) / 2 * -1 - 28 - 56 + (56 - 28) / 2 + (LAID_TOP_BAR_HEIGHT - headerHeight)],
+      inputRange: [0, listNameDistanceY],
+      outputRange: [
+        space1 * -1 - space2 + headerListNameSpace + (laidTopBarHeight - topBarHeight),
+        space1 * -1 - space2 - space3 + space4 + (laidTopBarHeight - headerHeight)
+      ],
       extrapolate: 'clamp'
     });
 
@@ -295,19 +337,26 @@ class TopBar extends React.Component {
 
   renderStatusPopup() {
 
-    const { scrollY, safeAreaWidth } = this.props;
+    const { scrollY, safeAreaWidth, insets } = this.props;
+    const {
+      topBarHeight, headerHeight, listNameHeight, statusPopupHeight, headerListNameSpace,
+      laidStatusPopupHeight, laidTopBarHeight,
+      statusPopupDistanceY,
+    } = getSizes(safeAreaWidth, insets);
 
-    const topBarHeight = toPx(safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD);
-    const headerHeight = toPx(TOP_HEADER_HEIGHT);
-    const space = toPx(safeAreaWidth < MD_WIDTH ? TOP_HEADER_LIST_NAME_SPACE : TOP_HEADER_LIST_NAME_SPACE_MD);
+    const space1 = (laidStatusPopupHeight - statusPopupHeight) / 2;
+    const space2 = listNameHeight - statusPopupHeight;
 
     const changingTranslateY = scrollY.interpolate({
-      inputRange: [0, STATUS_POPUP_DISTANCE_Y],
-      outputRange: [(28 - 24) / 2 * -1 + space + (28 - 24) + (LAID_TOP_BAR_HEIGHT - topBarHeight), (28 - 24) / 2 * -1 + space + (28 - 24) + (LAID_TOP_BAR_HEIGHT - headerHeight) - STATUS_POPUP_DISTANCE_Y],
+      inputRange: [0, statusPopupDistanceY],
+      outputRange: [
+        space1 * -1 + headerListNameSpace + space2 + (laidTopBarHeight - topBarHeight),
+        space1 * -1 + headerListNameSpace + space2 + (laidTopBarHeight - headerHeight) - statusPopupDistanceY
+      ],
       extrapolate: 'clamp'
     });
     const changingOpacity = scrollY.interpolate({
-      inputRange: [0, STATUS_POPUP_DISTANCE_Y],
+      inputRange: [0, statusPopupDistanceY],
       outputRange: [1.0, 0.0],
       extrapolate: 'clamp'
     });
@@ -325,15 +374,24 @@ class TopBar extends React.Component {
 
   renderCommands() {
 
-    const { scrollY, safeAreaWidth } = this.props;
+    const { scrollY, safeAreaWidth, insets } = this.props;
+    const {
+      topBarHeight, headerHeight, commandsHeight,
+      laidStatusPopupHeight, laidListNameCommandsHeight, laidTopBarHeight,
+      listNameDistanceY,
+    } = getSizes(safeAreaWidth, insets);
 
-    const topBarHeight = toPx(safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD);
-    const headerHeight = toPx(TOP_HEADER_HEIGHT);
-    const distanceY = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_Y : LIST_NAME_DISTANCE_Y_MD;
+    const space1 = (laidListNameCommandsHeight - commandsHeight) / 2;
+    const space2 = laidStatusPopupHeight;
+    const space3 = headerHeight;
+    const space4 = (headerHeight - commandsHeight) / 2;
 
     const changingTranslateY = scrollY.interpolate({
-      inputRange: [0, distanceY],
-      outputRange: [(109 - 38) / 2 * -1 - 28 - 56 + (56 - 38) / 2 + (LAID_TOP_BAR_HEIGHT - topBarHeight), (109 - 38) / 2 * -1 - 28 - 56 + (56 - 38) / 2 + (LAID_TOP_BAR_HEIGHT - headerHeight)],
+      inputRange: [0, listNameDistanceY],
+      outputRange: [
+        space1 * -1 - space2 - space3 + space4 + (laidTopBarHeight - topBarHeight),
+        space1 * -1 - space2 - space3 + space4 + (laidTopBarHeight - headerHeight)
+      ],
       extrapolate: 'clamp'
     });
 
@@ -360,23 +418,30 @@ class TopBar extends React.Component {
     let topBarStyleClasses, topBarStyle, headerStyle, headerBorderStyle, listNamePane;
     if (isListNameShown) {
 
-      const topBarHeight = toPx(safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD);
-      const headerHeight = toPx(TOP_HEADER_HEIGHT);
-
-      const distanceY = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_Y : LIST_NAME_DISTANCE_Y_MD;
+      const {
+        topBarHeight, headerHeight,
+        laidTopBarHeight, laidListNameCommandsHeight,
+        listNameDistanceY,
+      } = getSizes(safeAreaWidth, insets);
 
       const changingTopBarTranslateY = scrollY.interpolate({
-        inputRange: [0, distanceY],
-        outputRange: [topBarHeight - LAID_TOP_BAR_HEIGHT, headerHeight - LAID_TOP_BAR_HEIGHT],
+        inputRange: [0, listNameDistanceY],
+        outputRange: [
+          topBarHeight - laidTopBarHeight,
+          headerHeight - laidTopBarHeight
+        ],
         extrapolate: 'clamp'
       });
       const changingHeaderTranslateY = scrollY.interpolate({
-        inputRange: [0, distanceY],
-        outputRange: [LAID_TOP_BAR_HEIGHT - topBarHeight, LAID_TOP_BAR_HEIGHT - headerHeight],
+        inputRange: [0, listNameDistanceY],
+        outputRange: [
+          laidTopBarHeight - topBarHeight,
+          laidTopBarHeight - headerHeight
+        ],
         extrapolate: 'clamp'
       });
       const changingHeaderBorderOpacity = scrollY.interpolate({
-        inputRange: [0, distanceY - 1, distanceY],
+        inputRange: [0, listNameDistanceY - 1, listNameDistanceY],
         outputRange: [0, 0, 1],
         extrapolate: 'clamp'
       });
@@ -391,7 +456,7 @@ class TopBar extends React.Component {
           <View style={tailwind('px-4 flex-row justify-end items-center h-7 md:px-6 lg:px-8', safeAreaWidth)}>
             {this.renderStatusPopup()}
           </View>
-          <View style={[tailwind('px-4 flex-row justify-between items-center md:px-6 lg:px-8', safeAreaWidth), { height: 108 }]}>
+          <View style={[tailwind('px-4 flex-row justify-between items-center md:px-6 lg:px-8', safeAreaWidth), { height: laidListNameCommandsHeight }]}>
             {this.renderListName()}
             {rightPaneProp === SHOW_COMMANDS && this.renderCommands()}
           </View>

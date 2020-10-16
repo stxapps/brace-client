@@ -95,6 +95,7 @@ export const TOP_HEADER_LIST_NAME_SPACE_MD = '1.5rem';
  */
 export const TOP_BAR_HEIGHT = '6.25rem';
 export const TOP_BAR_HEIGHT_MD = '6.75rem';
+
 export const BOTTOM_BAR_HEIGHT = '3.5rem';
 export const SEARCH_POPUP_HEIGHT = '3.625rem';
 

@@ -50,6 +50,8 @@ class Main extends React.Component {
   constructor(props) {
     super(props);
 
+    this.mainFlatList = React.createRef();
+
     this.fetched = [];
     this.scrollY = new Animated.Value(0);
   }
@@ -57,6 +59,15 @@ class Main extends React.Component {
   componentDidMount() {
     this.props.fetch(true, true);
     this.fetched.push(this.props.listName);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.listName !== prevProps.listName) {
+      this.mainFlatList.current.scrollToOffset({
+        offset: 0,
+        animated: true,
+      });
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -338,6 +349,7 @@ class Main extends React.Component {
     return (
       <React.Fragment>
         <Animated.FlatList
+          ref={this.mainFlatList}
           contentContainerStyle={tailwind('max-w-6xl self-center')}
           data={mainData}
           keyExtractor={item => item.id}
