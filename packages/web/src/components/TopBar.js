@@ -3,7 +3,9 @@ import { connect } from 'react-redux';
 import GracefulImage from 'react-graceful-image';
 import jdenticon from 'jdenticon';
 
-import { signIn, signOut, updatePopup, addLink, updateSearchString } from '../actions';
+import {
+  signIn, signOut, updatePopup, addLink, updateSearchString, updateBulkEdit,
+} from '../actions';
 import {
   ADD_POPUP, PROFILE_POPUP, SETTINGS_POPUP,
   SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS,
@@ -147,6 +149,10 @@ class TopBar extends React.PureComponent {
     this.props.updateSearchString('');
   }
 
+  onBulkEditBtnClick = () => {
+    this.props.updateBulkEdit(true);
+  }
+
   onProfileBtnClick = () => {
     if (this.props.isProfilePopupShown) return;
     this.props.updatePopup(PROFILE_POPUP, true);
@@ -228,6 +234,16 @@ class TopBar extends React.PureComponent {
             <svg className="h-5 text-gray-600 cursor-pointer rounded-full focus:shadow-outline-inner" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM8.70711 7.29289C8.31658 6.90237 7.68342 6.90237 7.29289 7.29289C6.90237 7.68342 6.90237 8.31658 7.29289 8.70711L8.58579 10L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L10 11.4142L11.2929 12.7071C11.6834 13.0976 12.3166 13.0976 12.7071 12.7071C13.0976 12.3166 13.0976 11.6834 12.7071 11.2929L11.4142 10L12.7071 8.70711C13.0976 8.31658 13.0976 7.68342 12.7071 7.29289C12.3166 6.90237 11.6834 6.90237 11.2929 7.29289L10 8.58579L8.70711 7.29289Z" />
             </svg>
+          </button>
+        </div>
+        <div className="relative ml-4">
+          <button onClick={this.onBulkEditBtnClick} className={`w-8 h-8 group focus:outline-none-outer active:bg-gray-200`}>
+            <div className="flex items-center w-8 h-8 rounded-lg border border-gray-500 shadow-sm group-hover:text-gray-700 focus:shadow-outline-inner">
+              <svg className="mx-auto w-4 text-gray-600 group-hover:text-gray-700" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.4142 2.58579C16.6332 1.80474 15.3668 1.80474 14.5858 2.58579L7 10.1716V13H9.82842L17.4142 5.41421C18.1953 4.63316 18.1953 3.36683 17.4142 2.58579Z" />
+                <path fillRule="evenodd" clipRule="evenodd" d="M2 6C2 4.89543 2.89543 4 4 4H8C8.55228 4 9 4.44772 9 5C9 5.55228 8.55228 6 8 6H4V16H14V12C14 11.4477 14.4477 11 15 11C15.5523 11 16 11.4477 16 12V16C16 17.1046 15.1046 18 14 18H4C2.89543 18 2 17.1046 2 16V6Z" />
+              </svg>
+            </div>
           </button>
         </div>
         <div className="relative ml-4">
@@ -360,7 +376,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
-  signIn, signOut, updatePopup, addLink, updateSearchString,
+  signIn, signOut, updatePopup, addLink, updateSearchString, updateBulkEdit,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TopBar);

@@ -20,6 +20,8 @@ import {
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
   UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION, UPDATE_HANDLING_SIGN_IN,
+  UPDATE_BULK_EDITING,
+  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, CLEAR_SELECTED_LINK_IDS,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -185,7 +187,16 @@ export const popHistoryState = (store) => {
       return
     }
 
-    // No popup shown, go back one more
+    // if back button pressed and is bulk editing
+    if (store.getState().display.isBulkEditing) {
+
+      store.dispatch(updateBulkEdit(false));
+
+      window.history.go(1);
+      return
+    }
+
+    // No popup shown and no bulk editing, go back one more
     // need to update state first before going off so that when back know that back from somewhere else
     store.dispatch({
       type: UPDATE_WINDOW,
@@ -634,6 +645,33 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
     },
   });
 };
+
+export const updateBulkEdit = (isBulkEditing) => {
+  return {
+    type: UPDATE_BULK_EDITING,
+    payload: isBulkEditing,
+  };
+};
+
+export const addSelectedLinkIds = (ids) => {
+  return {
+    type: ADD_SELECTED_LINK_IDS,
+    payload: ids,
+  };
+}
+
+export const deleteSelectedLinkIds = (ids) => {
+  return {
+    type: DELETE_SELECTED_LINK_IDS,
+    payload: ids,
+  };
+}
+
+export const clearSelectedLinkIds = () => {
+  return {
+    type: CLEAR_SELECTED_LINK_IDS
+  };
+}
 
 const exportAllDataLoop = async (dispatch, fPaths, doneCount) => {
 

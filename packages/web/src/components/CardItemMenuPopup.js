@@ -136,7 +136,7 @@ class CardItemMenuPopup extends React.PureComponent {
       throw new Error(`Invalid text: ${text}`);
     }
 
-    this.props.updatePopup(this.props.popupLink.id, false);
+    this.props.updatePopup(id, false);
   };
 
   onCancelBtnClick = () => {

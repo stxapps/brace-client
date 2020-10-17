@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import GracefulImage from 'react-graceful-image';
 
 import {
-  updatePopup, retryDiedLinks, cancelDiedLinks,
+  updatePopup, retryDiedLinks, cancelDiedLinks, updateBulkEdit, addSelectedLinkIds,
 } from '../actions';
 import {
   ADDING, MOVING,
@@ -15,6 +15,8 @@ import {
   isEqual,
 } from '../utils';
 
+import CardItemSelector from './CardItemSelector';
+
 class CardItem extends React.Component {
 
   constructor(props) {
@@ -23,6 +25,12 @@ class CardItem extends React.Component {
     this.state = {
       extractedFaviconError: false,
     };
+
+    this.pressTimer = null;
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.pressTimer);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -35,6 +43,17 @@ class CardItem extends React.Component {
     }
 
     return false;
+  }
+
+  onPress = () => {
+    this.pressTimer = setTimeout(() => {
+      this.props.updateBulkEdit(true);
+      this.props.addSelectedLinkIds([this.props.link.id]);
+    }, 700);
+  }
+
+  onPressRelease = () => {
+    clearTimeout(this.pressTimer);
   }
 
   onMenuBtnClick = (e) => {
@@ -196,7 +215,7 @@ class CardItem extends React.Component {
 
     return (
       <div className="mx-auto relative max-w-sm bg-white border-1 border-gray-200 rounded-lg overflow-hidden shadow sm:max-w-none">
-        <div className="relative pb-7/12">
+        <div onTouchStart={this.onPress} onTouchEnd={this.onPressRelease} onMouseDown={this.onPress} onMouseUp={this.onPressRelease} onMouseLeave={this.onPressRelease} className="relative pb-7/12">
           {this.renderImage()}
         </div>
         <div className="flex justify-between items-center">
@@ -227,9 +246,14 @@ class CardItem extends React.Component {
         </a>
         {isDiedStatus(status) && this.renderRetry()}
         {[ADDING, MOVING].includes(status) && this.renderBusy()}
+        <CardItemSelector linkId={this.props.link.id} />
       </div>
     );
   }
 }
 
-export default connect(null, { updatePopup, retryDiedLinks, cancelDiedLinks })(CardItem);
+const mapDispatchToProps = {
+  updatePopup, retryDiedLinks, cancelDiedLinks, updateBulkEdit, addSelectedLinkIds,
+};
+
+export default connect(null, mapDispatchToProps)(CardItem);
