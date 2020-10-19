@@ -16,6 +16,7 @@ import {
 import {
   ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
   CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
+  BULK_EDIT_MOVE_TO_POPUP,
   MY_LIST,
 } from '../types/const';
 
@@ -34,6 +35,7 @@ const initialState = {
   isHandlingSignIn: false,
   isBulkEditing: false,
   selectedLinkIds: [],
+  isBulkEditMoveToPopupShown: false,
   exportAllDataProgress: null,
   deleteAllDataProgress: null,
 };
@@ -56,6 +58,7 @@ export default (state = initialState, action) => {
       isHandlingSignIn: false,
       isBulkEditing: false,
       selectedLinkIds: [],
+      isBulkEditMoveToPopupShown: false,
       exportAllDataProgress: null,
       deleteAllDataProgress: null,
     };
@@ -79,6 +82,7 @@ export default (state = initialState, action) => {
         isListNamePopupShown: action.payload.isShown,
         isConfirmDeletePopupShown: action.payload.isShown,
         isSettingsPopupShown: action.payload.isShown,
+        isBulkEditMoveToPopupShown: action.payload.isShown,
       }
     }
 
@@ -104,6 +108,10 @@ export default (state = initialState, action) => {
 
     if (action.payload.id === SETTINGS_POPUP) {
       return { ...state, isSettingsPopupShown: action.payload.isShown }
+    }
+
+    if (action.payload.id === BULK_EDIT_MOVE_TO_POPUP) {
+      return { ...state, isBulkEditMoveToPopupShown: action.payload.isShown }
     }
   }
 

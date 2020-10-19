@@ -4,7 +4,8 @@ import GracefulImage from 'react-graceful-image';
 import jdenticon from 'jdenticon';
 
 import {
-  signIn, signOut, updatePopup, addLink, updateSearchString, updateBulkEdit,
+  signIn, signOut, updatePopup, addLink, updateSearchString,
+  updateBulkEdit,
 } from '../actions';
 import {
   ADD_POPUP, PROFILE_POPUP, SETTINGS_POPUP,
@@ -19,6 +20,7 @@ import { validateUrl, isEqual, toPx, throttle } from '../utils';
 
 import ListName from './ListName';
 import StatusPopup from './StatusPopup';
+import TopBarBulkEditCommands from './TopBarBulkEditCommands';
 
 import shortLogo from '../images/logo-short.svg';
 import fullLogo from '../images/logo-full.svg';
@@ -214,11 +216,12 @@ class TopBar extends React.PureComponent {
     return (
       <div className="flex justify-end items-center">
         <div className="relative">
-          <button onClick={this.onAddBtnClick} className={`w-8 h-8 ${isAddPopupShown ? 'z-41' : ''} focus:outline-none-outer`}>
-            <div className="flex items-center w-8 h-7 bg-gray-900 rounded-lg shadow-sm hover:bg-gray-800 active:bg-black focus:shadow-outline-inner">
-              <svg className="mx-auto w-4 text-white" viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <button onClick={this.onAddBtnClick} className={`group ${isAddPopupShown ? 'z-41' : ''} focus:outline-none-outer`}>
+            <div style={{ padding: '0.2rem 0.8rem 0.2rem 0.65rem' }} className="py-1 flex items-center border border-gray-700 rounded-full shadow-sm hover:border-gray-900 hover:shadow-outline group-hover:text-gray-900 active:bg-gray-200 focus:shadow-outline-inner">
+              <svg className="w-3 text-gray-700 group-hover:text-gray-900" viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
+              <span className="ml-1 text-base text-gray-700 group-hover:text-gray-900">Add</span>
             </div>
           </button>
           {isAddPopupShown && this.renderAddPopup()}
@@ -229,7 +232,7 @@ class TopBar extends React.PureComponent {
               <path d="M16.32 14.9l1.1 1.1c.4-.02.83.13 1.14.44l3 3a1.5 1.5 0 0 1-2.12 2.12l-3-3a1.5 1.5 0 0 1-.44-1.14l-1.1-1.1a8 8 0 1 1 1.41-1.41l.01-.01zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
             </svg>
           </div>
-          <input onChange={this.onSearchInputChange} className="py-1 pl-10 pr-6 block w-full bg-gray-200 text-gray-900 border border-transparent rounded-full appearance-none focus:outline-none focus:shadow-outline focus:bg-white focus:border-gray-300" type="search" placeholder="Search" value={searchString} />
+          <input onChange={this.onSearchInputChange} className="py-1 pl-10 pr-6 block w-full bg-gray-300 text-gray-900 border border-transparent rounded-full placeholder-gray-600 appearance-none hover:shadow-outline focus:outline-none focus:shadow-outline focus:bg-white focus:border-gray-300" type="search" placeholder="Search" value={searchString} />
           <button onClick={this.onSearchClearBtnClick} className={`pr-2 ${searchClearBtnClasses} absolute inset-y-0 right-0 flex items-center focus:outline-none-outer`}>
             <svg className="h-5 text-gray-600 cursor-pointer rounded-full focus:shadow-outline-inner" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM8.70711 7.29289C8.31658 6.90237 7.68342 6.90237 7.29289 7.29289C6.90237 7.68342 6.90237 8.31658 7.29289 8.70711L8.58579 10L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L10 11.4142L11.2929 12.7071C11.6834 13.0976 12.3166 13.0976 12.7071 12.7071C13.0976 12.3166 13.0976 11.6834 12.7071 11.2929L11.4142 10L12.7071 8.70711C13.0976 8.31658 13.0976 7.68342 12.7071 7.29289C12.3166 6.90237 11.6834 6.90237 11.2929 7.29289L10 8.58579L8.70711 7.29289Z" />
@@ -237,17 +240,18 @@ class TopBar extends React.PureComponent {
           </button>
         </div>
         <div className="relative ml-4">
-          <button onClick={this.onBulkEditBtnClick} className={`w-8 h-8 group focus:outline-none-outer active:bg-gray-200`}>
-            <div className="flex items-center w-8 h-8 rounded-lg border border-gray-500 shadow-sm group-hover:text-gray-700 focus:shadow-outline-inner">
-              <svg className="mx-auto w-4 text-gray-600 group-hover:text-gray-700" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <button onClick={this.onBulkEditBtnClick} className={`group focus:outline-none-outer`}>
+            <div className="px-3 py-1 flex items-center border border-gray-600 rounded-full shadow-sm hover:border-gray-900 hover:shadow-outline group-hover:text-gray-900 active:bg-gray-200 focus:shadow-outline-inner">
+              <svg className="mx-auto w-4 text-gray-600 group-hover:text-gray-800" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path d="M17.4142 2.58579C16.6332 1.80474 15.3668 1.80474 14.5858 2.58579L7 10.1716V13H9.82842L17.4142 5.41421C18.1953 4.63316 18.1953 3.36683 17.4142 2.58579Z" />
                 <path fillRule="evenodd" clipRule="evenodd" d="M2 6C2 4.89543 2.89543 4 4 4H8C8.55228 4 9 4.44772 9 5C9 5.55228 8.55228 6 8 6H4V16H14V12C14 11.4477 14.4477 11 15 11C15.5523 11 16 11.4477 16 12V16C16 17.1046 15.1046 18 14 18H4C2.89543 18 2 17.1046 2 16V6Z" />
               </svg>
+              <span className="ml-1 text-base text-gray-700 group-hover:text-gray-900">Select</span>
             </div>
           </button>
         </div>
         <div className="relative ml-4">
-          <button onClick={this.onProfileBtnClick} className={`relative block h-8 w-8 overflow-hidden border-2 border-gray-200 ${isProfilePopupShown ? 'z-41' : ''} focus:outline-none focus:shadow-outline ${this.profileBtnStyleClasses}`}>
+          <button onClick={this.onProfileBtnClick} className={`relative block h-8 w-8 overflow-hidden border-2 border-gray-200 ${isProfilePopupShown ? 'z-41' : ''} hover:shadow-outline focus:outline-none focus:shadow-outline ${this.profileBtnStyleClasses}`}>
             <GracefulImage className="h-full w-full bg-white object-cover" src={this.userImage} alt="Profile" />
           </button>
           {isProfilePopupShown && this.renderProfilePopup()}
@@ -311,12 +315,15 @@ class TopBar extends React.PureComponent {
   render() {
 
     const rightPaneProp = this.props.rightPane;
+    const isBulkEditing = this.props.isBulkEditing;
 
     let rightPane;
     if (rightPaneProp === SHOW_BLANK) rightPane = null;
     else if (rightPaneProp === SHOW_SIGN_IN) rightPane = this.renderSignInBtn();
-    else if (rightPaneProp === SHOW_COMMANDS) rightPane = this.renderCommands();
-    else throw new Error(`Invalid rightPane: ${rightPaneProp}`);
+    else if (rightPaneProp === SHOW_COMMANDS) {
+      if (isBulkEditing) rightPane = <TopBarBulkEditCommands />;
+      else rightPane = this.renderCommands();
+    } else throw new Error(`Invalid rightPane: ${rightPaneProp}`);
 
     const { isListNameShown } = this.props;
 
@@ -372,6 +379,7 @@ const mapStateToProps = (state, props) => {
     searchString: state.display.searchString,
     isAddPopupShown: state.display.isAddPopupShown,
     isProfilePopupShown: state.display.isProfilePopupShown,
+    isBulkEditing: state.display.isBulkEditing,
   };
 };
 

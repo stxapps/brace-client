@@ -1032,6 +1032,10 @@ input[type="search"]::-webkit-search-results-decoration {
   top: 100%;
 }
 
+.left-29\/100 {
+  left: 29%;
+}
+
 .right-full {
   right: 100%;
 }
@@ -1088,6 +1092,12 @@ input[type="search"]::-webkit-search-results-decoration {
   color: rgba(22, 30, 46, var(--text-opacity));
 }
 
+.group:hover .group-hover\:text-red-700 {
+  --text-opacity: 1;
+  color: #c81e1e;
+  color: rgba(200, 30, 30, var(--text-opacity));
+}
+
 .group:focus .group-focus\:text-gray-600 {
   --text-opacity: 1;
   color: #4b5563;
@@ -1098,6 +1108,18 @@ input[type="search"]::-webkit-search-results-decoration {
   --text-opacity: 1;
   color: #374151;
   color: rgba(55, 65, 81, var(--text-opacity));
+}
+
+.group:focus .group-focus\:text-gray-800 {
+  --text-opacity: 1;
+  color: #252f3f;
+  color: rgba(37, 47, 63, var(--text-opacity));
+}
+
+.group:focus .group-focus\:text-gray-900 {
+  --text-opacity: 1;
+  color: #161e2e;
+  color: rgba(22, 30, 46, var(--text-opacity));
 }
 
 .group:hover .group-hover\:underline {

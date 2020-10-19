@@ -48,7 +48,7 @@ class ListName extends React.PureComponent {
 
     return (
       <div className="inline-block relative">
-        <button onClick={this.onListNameBtnClick} className={`relative flex items-center ${isListNamePopupShown ? 'z-41' : ''} focus:outline-none focus:shadow-outline`}>
+        <button onClick={this.onListNameBtnClick} className={`relative flex items-center rounded ${isListNamePopupShown ? 'z-41' : ''} hover:shadow-outline focus:outline-none focus:shadow-outline`}>
           <h2 className="text-lg text-gray-900 font-semibold leading-7">{listName}</h2>
           <svg className="ml-1 w-5 text-black" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

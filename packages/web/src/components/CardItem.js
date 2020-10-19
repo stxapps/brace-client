@@ -233,7 +233,7 @@ class CardItem extends React.Component {
           </div>
           <div className="flex-shrink-0 flex-grow-0">
             <button onClick={this.onMenuBtnClick} className="pt-2 pb-0 pl-4 pr-2 focus:outline-none-outer">
-              <svg className="py-2 w-6 text-gray-700 rounded-full focus:shadow-outline-inner" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg className="py-2 w-6 text-gray-700 rounded-full hover:shadow-outline focus:shadow-outline-inner" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
@@ -246,7 +246,7 @@ class CardItem extends React.Component {
         </a>
         {isDiedStatus(status) && this.renderRetry()}
         {[ADDING, MOVING].includes(status) && this.renderBusy()}
-        <CardItemSelector linkId={this.props.link.id} />
+        {![ADDING, MOVING].includes(status) && <CardItemSelector linkId={this.props.link.id} />}
       </div>
     );
   }
