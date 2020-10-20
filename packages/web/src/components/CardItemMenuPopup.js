@@ -159,10 +159,10 @@ class CardItemMenuPopup extends React.PureComponent {
     if (this.moveTo && this.moveTo.length) {
       moveTo = (
         <React.Fragment>
-          <div className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left">{MOVE_TO}</div>
+          <div className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left">Move to...</div>
           {this.moveTo.map(text => {
             const key = MOVE_TO + ' ' + text;
-            return <button className="py-2 pl-6 pr-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={key} data-key={key}>{text}</button>;
+            return <button className="py-2 pl-8 pr-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={key} data-key={key}>{text}</button>;
           })}
         </React.Fragment>
       );

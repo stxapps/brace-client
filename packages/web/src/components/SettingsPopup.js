@@ -612,7 +612,7 @@ class SettingsPopup extends React.PureComponent {
         <p className="mt-6 text-base text-gray-700 leading-relaxed">It may take several minutes to delete all your data.</p>
         <p className="mt-6 text-base text-red-700 leading-relaxed">This action CANNOT be undone.</p>
         <div className="mt-6 flex items-center">
-          <input onChange={this.onConfirmInputChange} value={this.state.didCheckConfirm} className="form-checkbox text-blue-600 transition duration-150 ease-in-out focus:outline-none focus:shadow-outline" id="confirm-input" type="checkbox" />
+          <input onChange={this.onConfirmInputChange} checked={this.state.didCheckConfirm} className="form-checkbox text-blue-600 transition duration-150 ease-in-out focus:outline-none focus:shadow-outline" id="confirm-input" type="checkbox" />
           <label htmlFor="confirm-input" className="ml-2 block text-base text-gray-700">Yes, I’m absolutely sure I want to delete all my data.</label>
         </div>
         {actionPanel}

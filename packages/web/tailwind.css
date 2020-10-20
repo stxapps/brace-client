@@ -283,6 +283,43 @@ input[type="search"]::-webkit-search-results-decoration {
   direction: rtl;
 }
 
+.form-input {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  background-color: #ffffff;
+  border-color: #d2d6dc;
+  border-width: 1px;
+  border-radius: 0.375rem;
+  padding-top: 0.5rem;
+  padding-right: 0.75rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.form-input::-moz-placeholder {
+  color: #9fa6b2;
+  opacity: 1;
+}
+
+.form-input:-ms-input-placeholder {
+  color: #9fa6b2;
+  opacity: 1;
+}
+
+.form-input::placeholder {
+  color: #9fa6b2;
+  opacity: 1;
+}
+
+.form-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(164, 202, 254, 0.45);
+  border-color: #a4cafe;
+}
+
 .form-checkbox:checked {
   background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z'/%3e%3c/svg%3e");
   border-color: transparent;
@@ -383,6 +420,10 @@ input[type="search"]::-webkit-search-results-decoration {
   @apply shadow-outline;
 }
 
+.focus\:outline-none-outer:focus > .focus\:shadow-outline-inner-opaque {
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.75);
+}
+
 .group:hover .group-hover\:text-gray-600 {
   --text-opacity: 1;
   color: #4b5563;
@@ -411,6 +452,10 @@ input[type="search"]::-webkit-search-results-decoration {
   --text-opacity: 1;
   color: #c81e1e;
   color: rgba(200, 30, 30, var(--text-opacity));
+}
+
+.group:hover .group-hover\:shadow-outline-opaque {
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.75);
 }
 
 .group:focus .group-focus\:text-gray-600 {
