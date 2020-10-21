@@ -2,12 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import {
-  updatePopup,
-  updateBulkEdit, clearSelectedLinkIds,
-  moveLinks, deleteLinks,
+  updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks,
 } from '../actions';
 import {
-  BULK_EDIT_MOVE_TO_POPUP,
+  CONFIRM_DELETE_POPUP, BULK_EDIT_MOVE_TO_POPUP,
   MY_LIST, ARCHIVE, TRASH,
   MOVE_TO,
 } from '../types/const';
@@ -59,33 +57,42 @@ class TopBarBulkEditCommands extends React.Component {
   onBulkEditArchiveBtnClick = () => {
     if (this.checkNoLinkIdSelected()) return;
 
-    const { selectedLinkIds, moveLinks, clearSelectedLinkIds } = this.props;
+    const {
+      selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
+    } = this.props;
+
     moveLinks(ARCHIVE, selectedLinkIds);
     clearSelectedLinkIds();
+    updateBulkEdit(false);
   }
 
   onBulkEditRemoveBtnClick = () => {
     if (this.checkNoLinkIdSelected()) return;
 
-    const { selectedLinkIds, moveLinks, clearSelectedLinkIds } = this.props;
+    const {
+      selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
+    } = this.props;
+
     moveLinks(TRASH, selectedLinkIds);
     clearSelectedLinkIds();
+    updateBulkEdit(false);
   }
 
   onBulkEditRestoreBtnClick = () => {
     if (this.checkNoLinkIdSelected()) return;
 
-    const { selectedLinkIds, moveLinks, clearSelectedLinkIds } = this.props;
+    const {
+      selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
+    } = this.props;
+
     moveLinks(MY_LIST, selectedLinkIds);
     clearSelectedLinkIds();
+    updateBulkEdit(false);
   }
 
   onBulkEditDeleteBtnClick = () => {
     if (this.checkNoLinkIdSelected()) return;
-
-    const { selectedLinkIds, deleteLinks, clearSelectedLinkIds } = this.props;
-    deleteLinks(selectedLinkIds);
-    clearSelectedLinkIds();
+    this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
   }
 
   onBulkEditMoveToBtnClick = () => {
@@ -99,13 +106,17 @@ class TopBarBulkEditCommands extends React.Component {
 
   onBulkEditMoveToPopupClick = (e) => {
 
-    const { selectedLinkIds, moveLinks, clearSelectedLinkIds } = this.props;
+    const {
+      selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
+    } = this.props;
+
     const text = e.target.getAttribute('data-key');
     if (!text) return;
 
     if (text.startsWith(MOVE_TO)) {
       moveLinks(text.substring(MOVE_TO.length + 1), selectedLinkIds);
       clearSelectedLinkIds();
+      updateBulkEdit(false);
     } else {
       throw new Error(`Invalid text: ${text}`);
     }
@@ -254,7 +265,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
-  updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks, deleteLinks,
+  updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TopBarBulkEditCommands);

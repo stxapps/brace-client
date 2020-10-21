@@ -22,6 +22,7 @@ import TopBar from './TopBar';
 import BottomBar from './BottomBar';
 import CardItem from './CardItem';
 import CardItemMenuPopup from './CardItemMenuPopup';
+import ConfirmDeletePopup from './ConfirmDeletePopup';
 import SettingsPopup from './SettingsPopup';
 
 import emptyBox from '../images/empty-box-sided.svg';
@@ -283,6 +284,7 @@ class Main extends React.PureComponent {
         </main>
         <TopBar rightPane={topBarRightPane} isListNameShown={true} fetched={this.fetched} />
         {this.state.columnWidth === PC_100 && <BottomBar />}
+        <ConfirmDeletePopup />
         {this.props.isSettingsPopupShown && <SettingsPopup />}
       </React.Fragment>
     );

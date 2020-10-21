@@ -2,12 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import {
-  updatePopup,
-  updateBulkEdit, clearSelectedLinkIds,
-  moveLinks, deleteLinks,
+  updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks,
 } from '../actions';
 import {
-  BULK_EDIT_MOVE_TO_POPUP,
+  CONFIRM_DELETE_POPUP, BULK_EDIT_MOVE_TO_POPUP,
   MY_LIST, ARCHIVE, TRASH,
   MOVE_TO,
   BOTTOM_BAR_HEIGHT,
@@ -95,14 +93,7 @@ class BottomBarBulkEditCommands extends React.Component {
 
   onBulkEditDeleteBtnClick = () => {
     if (this.checkNoLinkIdSelected()) return;
-
-    const {
-      selectedLinkIds, deleteLinks, clearSelectedLinkIds, updateBulkEdit,
-    } = this.props;
-
-    deleteLinks(selectedLinkIds);
-    clearSelectedLinkIds();
-    updateBulkEdit(false);
+    this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
   }
 
   onBulkEditMoveToBtnClick = () => {
@@ -288,7 +279,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
-  updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks, deleteLinks,
+  updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BottomBarBulkEditCommands);

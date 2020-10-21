@@ -2,9 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import {
-  updatePopup,
-  moveLinks, deleteLinks,
-  updateCardItemMenuPopupPosition,
+  updatePopup, moveLinks, updateCardItemMenuPopupPosition,
 } from '../actions';
 import {
   CONFIRM_DELETE_POPUP,
@@ -143,16 +141,6 @@ class CardItemMenuPopup extends React.PureComponent {
     this.props.updatePopup(this.props.popupLink.id, false);
   };
 
-  onConfirmDeleteOkBtnClick = () => {
-    this.props.deleteLinks([this.props.popupLink.id]);
-    this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
-    this.props.updatePopup(this.props.popupLink.id, false);
-  };
-
-  onConfirmDeleteCancelBtnClick = () => {
-    this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
-  };
-
   renderMenu() {
 
     let moveTo = null;
@@ -176,28 +164,9 @@ class CardItemMenuPopup extends React.PureComponent {
     );
   }
 
-  renderConfirmDeletePopup() {
-    return (
-      <React.Fragment>
-        <button onClick={this.onConfirmDeleteCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-50 focus:outline-none"></button>
-        <div className="p-4 fixed top-1/2 left-1/2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl transform -translate-x-1/2 -translate-y-1/2 z-51">
-          <p className="py-2 text-lg text-gray-900 text-center">Confirm delete?</p>
-          <div className="py-2 text-center">
-            <button onClick={this.onConfirmDeleteOkBtnClick} className="mr-2 py-2 focus:outline-none-outer">
-              <span className="px-3 py-1 bg-white text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Yes</span>
-            </button>
-            <button onClick={this.onConfirmDeleteCancelBtnClick} className="ml-2 py-2 focus:outline-none-outer">
-              <span className="px-3 py-1 bg-white text-base text-gray-900 border border-gray-900 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">No</span>
-            </button>
-          </div>
-        </div>
-      </React.Fragment>
-    );
-  }
-
   render() {
 
-    const { popupLink, isConfirmDeletePopupShown } = this.props;
+    const { popupLink } = this.props;
     if (!popupLink) return null;
 
     const anchorPosition = popupLink.popupAnchorPosition;
@@ -234,7 +203,6 @@ class CardItemMenuPopup extends React.PureComponent {
         <div ref={this.menuPopup} onClick={this.onMenuPopupClick} style={popupPosition} className="mt-2 ml-4 mr-2 py-2 fixed min-w-32 bg-white border border-gray-200 rounded-lg shadow-xl z-41">
           {this.renderMenu()}
         </div>
-        {isConfirmDeletePopupShown && this.renderConfirmDeletePopup()}
       </div >
     );
   }
@@ -245,12 +213,11 @@ const mapStateToProps = (state, props) => {
     listName: state.display.listName,
     listNames: getListNames(state),
     popupLink: getPopupLink(state),
-    isConfirmDeletePopupShown: state.display.isConfirmDeletePopupShown,
   }
 };
 
 const mapDispatchToProps = {
-  updatePopup, moveLinks, deleteLinks, updateCardItemMenuPopupPosition,
+  updatePopup, moveLinks, updateCardItemMenuPopupPosition,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardItemMenuPopup);

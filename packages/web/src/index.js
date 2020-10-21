@@ -1,3 +1,5 @@
+//import './wdyr';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -49,11 +51,13 @@ if (getUrlPathQueryHash(window.location.href).startsWith(BLOCKSTACK_AUTH.slice(1
   );
 
   ReactDOM.render(
-    <React.StrictMode>
+    (
+      //<React.StrictMode>
       <Provider store={store}>
         <App />
       </Provider>
-    </React.StrictMode>,
+      //</React.StrictMode>,
+    ),
     document.getElementById('root')
   );
 }

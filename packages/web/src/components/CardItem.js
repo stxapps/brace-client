@@ -49,7 +49,7 @@ class CardItem extends React.Component {
     this.pressTimer = setTimeout(() => {
       this.props.updateBulkEdit(true);
       this.props.addSelectedLinkIds([this.props.link.id]);
-    }, 700);
+    }, 500);
   }
 
   onPressRelease = () => {
