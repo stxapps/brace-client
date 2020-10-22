@@ -188,7 +188,9 @@ class TopBar extends React.PureComponent {
         <div style={style} className="mt-2 px-4 pt-6 pb-6 absolute w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-41 md:w-96">
           <div className="flex">
             <span className="inline-flex items-center bg-white text-sm font-medium text-gray-700">Url:</span>
-            <input onChange={this.onAddInputChange} onKeyPress={this.onAddInputKeyPress} className="ml-3 px-4 py-2 form-input flex-1 block w-full bg-white text-base text-gray-900 rounded-full border border-gray-500 appearance-none focus:outline-none focus:shadow-outline" type="url" placeholder="https://" value={url} autoFocus />
+            <div className="ml-3 flex-1">
+              <input onChange={this.onAddInputChange} onKeyPress={this.onAddInputKeyPress} className="px-4 py-2 form-input w-full bg-white text-base text-gray-900 rounded-full border border-gray-500 appearance-none focus:outline-none focus:shadow-outline" type="url" placeholder="https://" value={url} autoFocus />
+            </div>
           </div>
           <p className="pt-3 text-red-600">{msg}</p>
           <div className="pt-3">
@@ -223,13 +225,11 @@ class TopBar extends React.PureComponent {
     return (
       <div className="flex justify-end items-center">
         <div className="relative">
-          <button onClick={this.onAddBtnClick} className={`group ${isAddPopupShown ? 'z-41' : ''} focus:outline-none-outer`}>
-            <div style={{ padding: '0.2rem 0.8rem 0.2rem 0.65rem' }} className="py-1 flex items-center border border-gray-700 rounded-full shadow-sm hover:border-gray-900 hover:shadow-outline group-hover:text-gray-900 active:bg-gray-200 focus:shadow-outline-inner">
-              <svg className="w-3 text-gray-700 group-hover:text-gray-900" viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <span className="ml-1 text-base text-gray-700 group-hover:text-gray-900">Add</span>
-            </div>
+          <button onClick={this.onAddBtnClick} style={{ padding: '0.2rem 0.8rem 0.2rem 0.65rem' }} className={`flex items-center border border-gray-700 rounded-full shadow-sm group hover:border-gray-900 hover:shadow-outline active:bg-gray-200 focus:outline-none focus:shadow-outline ${isAddPopupShown ? 'z-41' : ''}`}>
+            <svg className="w-3 text-gray-700 group-hover:text-gray-900" viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span className="ml-1 text-base text-gray-700 group-hover:text-gray-900">Add</span>
           </button>
           {isAddPopupShown && this.renderAddPopup()}
         </div>
@@ -247,14 +247,13 @@ class TopBar extends React.PureComponent {
           </button>
         </div>
         <div className="relative ml-4">
-          <button onClick={this.onBulkEditBtnClick} className={`group focus:outline-none-outer`}>
-            <div className="px-3 py-1 flex items-center border border-gray-600 rounded-full shadow-sm hover:border-gray-900 hover:shadow-outline group-hover:text-gray-900 active:bg-gray-200 focus:shadow-outline-inner">
-              <svg className="mx-auto w-4 text-gray-600 group-hover:text-gray-800" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M17.4142 2.58579C16.6332 1.80474 15.3668 1.80474 14.5858 2.58579L7 10.1716V13H9.82842L17.4142 5.41421C18.1953 4.63316 18.1953 3.36683 17.4142 2.58579Z" />
-                <path fillRule="evenodd" clipRule="evenodd" d="M2 6C2 4.89543 2.89543 4 4 4H8C8.55228 4 9 4.44772 9 5C9 5.55228 8.55228 6 8 6H4V16H14V12C14 11.4477 14.4477 11 15 11C15.5523 11 16 11.4477 16 12V16C16 17.1046 15.1046 18 14 18H4C2.89543 18 2 17.1046 2 16V6Z" />
-              </svg>
-              <span className="ml-1 text-base text-gray-700 group-hover:text-gray-900">Select</span>
-            </div>
+          <button onClick={this.onBulkEditBtnClick} className={`px-3 py-1 flex items-center border border-gray-600 rounded-full shadow-sm group hover:border-gray-900 hover:shadow-outline active:bg-gray-200 focus:outline-none focus:shadow-outline`}>
+
+            <svg className="mx-auto w-4 text-gray-600 group-hover:text-gray-800" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.4142 2.58579C16.6332 1.80474 15.3668 1.80474 14.5858 2.58579L7 10.1716V13H9.82842L17.4142 5.41421C18.1953 4.63316 18.1953 3.36683 17.4142 2.58579Z" />
+              <path fillRule="evenodd" clipRule="evenodd" d="M2 6C2 4.89543 2.89543 4 4 4H8C8.55228 4 9 4.44772 9 5C9 5.55228 8.55228 6 8 6H4V16H14V12C14 11.4477 14.4477 11 15 11C15.5523 11 16 11.4477 16 12V16C16 17.1046 15.1046 18 14 18H4C2.89543 18 2 17.1046 2 16V6Z" />
+            </svg>
+            <span className="ml-1 text-base text-gray-700 group-hover:text-gray-900">Select</span>
           </button>
         </div>
         <div className="relative ml-4">
@@ -271,7 +270,7 @@ class TopBar extends React.PureComponent {
 
     return (
       <button onClick={() => this.props.signIn()} className="block h-14 focus:outline-none-outer">
-        <span className="px-3 py-1 bg-white text-base text-gray-700 border border-gray-700 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Sign in</span>
+        <span style={{ padding: '0.3125rem 0.6875rem' }} className="bg-white text-base text-gray-700 border border-gray-700 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Sign in</span>
       </button>
     );
   }

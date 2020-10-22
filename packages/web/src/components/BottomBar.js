@@ -218,7 +218,7 @@ class BottomBar extends React.PureComponent {
       <React.Fragment>
         <div style={style} className={`fixed inset-x-0 bottom-0 flex justify-evenly bg-white border-t border-gray-300 transform ${!isShown ? 'translate-y-full' : ''} transition-transform ${BOTTOM_BAR_DURATION} ease-in-out z-30`}>
           <div className="p-1 w-full h-full">
-            <button onClick={this.onAddBtnClick} className="flex flex-col justify-center items-center w-full h-full hover:shadow-outline focus:outline-none focus:shadow-outline">
+            <button onClick={this.onAddBtnClick} className="flex flex-col justify-center items-center w-full h-full focus:outline-none focus:shadow-outline">
               <div className="flex justify-center items-center w-6 h-6">
                 <svg className="w-4 text-gray-600" viewBox="0 0 13 12" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path d="M6.5 1V10.4286M1 5.67609H12" strokeWidth="1.57143" strokeLinecap="round" strokeLinejoin="round" />
@@ -228,7 +228,7 @@ class BottomBar extends React.PureComponent {
             </button>
           </div>
           <div className="p-1 w-full h-full">
-            <button onClick={this.onSearchBtnClick} className="flex flex-col justify-center items-center w-full h-full hover:shadow-outline focus:outline-none focus:shadow-outline">
+            <button onClick={this.onSearchBtnClick} className="flex flex-col justify-center items-center w-full h-full focus:outline-none focus:shadow-outline">
               <div className="flex justify-center items-center w-6 h-6">
                 <svg style={{ width: '1.4rem' }} className="text-gray-600 rounded-lg focus:shadow-outline-inner" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path d="M16.32 14.9l1.1 1.1c.4-.02.83.13 1.14.44l3 3a1.5 1.5 0 0 1-2.12 2.12l-3-3a1.5 1.5 0 0 1-.44-1.14l-1.1-1.1a8 8 0 1 1 1.41-1.41l.01-.01zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
@@ -238,7 +238,7 @@ class BottomBar extends React.PureComponent {
             </button>
           </div>
           <div className="p-1 w-full h-full">
-            <button onClick={this.onBulkEditBtnClick} className="flex flex-col justify-center items-center w-full h-full hover:shadow-outline focus:outline-none focus:shadow-outline">
+            <button onClick={this.onBulkEditBtnClick} className="flex flex-col justify-center items-center w-full h-full focus:outline-none focus:shadow-outline">
               <div className="flex justify-center items-center w-6 h-6">
                 <svg style={{ width: '1.2rem' }} className="text-gray-600" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path d="M17.4142 2.58579C16.6332 1.80474 15.3668 1.80474 14.5858 2.58579L7 10.1716V13H9.82842L17.4142 5.41421C18.1953 4.63316 18.1953 3.36683 17.4142 2.58579Z" />
@@ -249,7 +249,7 @@ class BottomBar extends React.PureComponent {
             </button>
           </div>
           <button onClick={this.onProfileBtnClick} className="flex items-center w-full h-full focus:outline-none-outer">
-            <div className={`mx-auto flex items-center h-10 w-10 overflow-hidden border-2 border-gray-200 hover:shadow-outline focus:shadow-outline-inner ${this.profileBtnStyleClasses}`}>
+            <div className={`mx-auto flex items-center h-10 w-10 overflow-hidden border-2 border-gray-200 focus:shadow-outline-inner ${this.profileBtnStyleClasses}`}>
               <GracefulImage className="h-full w-full bg-white object-cover" src={this.userImage} alt="Profile" />
             </div>
           </button>

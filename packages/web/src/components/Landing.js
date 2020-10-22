@@ -59,7 +59,12 @@ class Landing extends React.PureComponent {
             <img className="mx-auto w-11/12 max-w-sm object-contain md:hidden" src={saveLinksToVisitLater} alt="Save links to visit later" />
             <h1 className="mt-16 first-h1-text text-gray-900 font-bold leading-none md:mt-0">Save links <br className="inline sm:hidden md:inline lg:hidden" />to visit later</h1>
             <p className="mt-4 text-lg text-gray-700 font-normal leading-normal md:pr-4">Yet another bookmark manager with privacy at heart. Brace.to helps you save links to everything and visit them later easily anytime on your any devices. Powered by Blockstack technology, all your saved links are encrypted and only you can decrypt them and see the content inside.</p>
-            <button onClick={() => this.props.signUp()} className="mt-6 px-6 h-12 bg-gray-900 text-xl text-white font-semibold rounded-full shadow-lg hover:bg-gray-800 active:bg-black focus:outline-none focus:shadow-outline">Get Started</button>
+            <button onClick={() => this.props.signUp()} style={{ padding: '0.625rem 1.25rem' }} className="mt-6 flex justify-center items-center bg-gray-900 rounded-full shadow-lg hover:bg-gray-800 active:bg-black focus:outline-none focus:shadow-outline">
+              <span className="text-xl text-white font-semibold">Get Started</span>
+              <svg className="ml-2 w-2 text-white" viewBox="0 0 6 10" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd" clipRule="evenodd" d="M0.29289 9.7071C-0.09763 9.3166 -0.09763 8.6834 0.29289 8.2929L3.5858 5L0.29289 1.70711C-0.09763 1.31658 -0.09763 0.68342 0.29289 0.29289C0.68342 -0.09763 1.31658 -0.09763 1.70711 0.29289L5.7071 4.29289C6.0976 4.68342 6.0976 5.3166 5.7071 5.7071L1.70711 9.7071C1.31658 10.0976 0.68342 10.0976 0.29289 9.7071Z" />
+              </svg>
+            </button>
             <div className="mt-3 flex items-end md:mt-4">
               <a className="focus:outline-none-outer" href="https://play.google.com/store/apps/details?id=com.bracedotto">
                 <img className="w-6 focus:shadow-outline-inner md:w-8" src={playStore} alt="Play store" />
@@ -83,7 +88,7 @@ class Landing extends React.PureComponent {
           <img className="mx-auto h-16" src={undrawLink} alt="unDraw link icon" />
           <h2 className="mt-4 text-3xl text-gray-900 font-semibold leading-none text-center md:text-4xl">Never miss a link <br className="inline md:hidden" />ever again</h2>
           <p className="mt-4 text-lg text-gray-700 font-normal leading-normal sm:text-center">A lot of interesting, useful, and important stuff is <br className="hidden sm:inline md:hidden" />out there on the internet. <br className="hidden md:inline" />Brace.to helps you save them so that you will never miss anything.</p>
-          <div className="mt-10">
+          <div className="mt-10 md:mt-12">
             <ul className="md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
               <li>
                 <div className="flex">
@@ -331,7 +336,12 @@ class Landing extends React.PureComponent {
           <div className="relative">
             <img className="mx-auto static h-16 start-saving-links-img md:absolute md:top-0 md:left-0" src={undrawLink} alt="unDraw link icon" />
             <h2 className="mt-4 text-4xl text-gray-900 font-bold leading-none text-center md:text-5xl">Start saving links</h2>
-            <button onClick={() => this.props.signUp()} className="mt-4 mx-auto px-6 block h-12 bg-gray-900 text-xl text-white font-semibold rounded-full shadow-lg hover:bg-gray-800 active:bg-black focus:outline-none focus:shadow-outline">Get started now</button>
+            <button onClick={() => this.props.signUp()} style={{ padding: '0.875rem 1.375rem' }} className="mt-4 mx-auto flex justify-center items-center bg-gray-900 rounded-full shadow-lg hover:bg-gray-800 active:bg-black focus:outline-none focus:shadow-outline">
+              <span className="text-xl text-white font-semibold">Get started now</span>
+              <svg className="ml-2 w-2 text-white" viewBox="0 0 6 10" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd" clipRule="evenodd" d="M0.29289 9.7071C-0.09763 9.3166 -0.09763 8.6834 0.29289 8.2929L3.5858 5L0.29289 1.70711C-0.09763 1.31658 -0.09763 0.68342 0.29289 0.29289C0.68342 -0.09763 1.31658 -0.09763 1.70711 0.29289L5.7071 4.29289C6.0976 4.68342 6.0976 5.3166 5.7071 5.7071L1.70711 9.7071C1.31658 10.0976 0.68342 10.0976 0.29289 9.7071Z" />
+              </svg>
+            </button>
           </div>
         </section>
         <Footer />

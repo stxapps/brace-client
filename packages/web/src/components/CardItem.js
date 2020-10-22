@@ -215,7 +215,7 @@ class CardItem extends React.Component {
 
     return (
       <div className="mx-auto relative max-w-sm bg-white border-1 border-gray-200 rounded-lg overflow-hidden shadow sm:max-w-none">
-        <div onTouchStart={this.onPress} onTouchEnd={this.onPressRelease} onMouseDown={this.onPress} onMouseUp={this.onPressRelease} onMouseLeave={this.onPressRelease} className="relative pb-7/12">
+        <div onTouchStart={this.onPress} onTouchMove={this.onPressRelease} onTouchEnd={this.onPressRelease} onTouchCancel={this.onPressRelease} onMouseDown={this.onPress} onMouseMove={this.onPressRelease} onMouseUp={this.onPressRelease} onMouseLeave={this.onPressRelease} className="relative pb-7/12">
           {this.renderImage()}
         </div>
         <div className="flex justify-between items-center">

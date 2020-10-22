@@ -597,6 +597,13 @@ input[type="search"]::-webkit-search-results-decoration {
   -webkit-appearance:none;
 }
 
+/*  */
+
+img {
+  pointer-events: none;
+  -webkit-touch-callout: none;
+}
+
 @font-face {
   font-family: 'Inter';
 

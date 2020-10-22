@@ -148,7 +148,7 @@ class BottomBarBulkEditCommands extends React.Component {
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm leading-5 font-medium text-red-800 text-left">Please select item(s) below first before continuing.</h3>
+              <h3 className="text-sm leading-5 font-medium text-red-800 text-left">Please select item(s) first before continuing.</h3>
             </div>
           </div>
         </div>
