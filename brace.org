@@ -650,6 +650,7 @@ This and CI/CD are very important!
 - yarn add npm-run-all
 - yarn add axios
 - yarn add file-saver
+- yarn add @welldone-software/why-did-you-render
 ** attribution
 - tailwindcss, postcss, purgecss
 - uirefactoring
@@ -777,6 +778,7 @@ This and CI/CD are very important!
 - yarn add babel-plugin-inline-import --dev
 - yarn add react-native-swiper
 - yarn add https://github.com/bracedotto/react-native-receive-sharing-intent#be4d3410fc96ba8e266a2a27535b3d531e56ef57
+- yarn add @welldone-software/why-did-you-render --dev
 - ios
   + Edit PodFile: ios target 11.0, pad 'Blockstack'
   + Add RNBlockstackSdk to Bracedotto project with Xcode, select create groups
