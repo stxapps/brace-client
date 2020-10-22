@@ -42,6 +42,7 @@
     "@babel/core": "^7.8.4",
     "@babel/runtime": "^7.8.4",
     "@react-native-community/eslint-config": "^1.1.0",
+    "@welldone-software/why-did-you-render": "^5.0.0-rc.1",
     "babel-jest": "^25.1.0",
     "babel-plugin-inline-import": "^3.0.0",
     "eslint": "^6.5.1",

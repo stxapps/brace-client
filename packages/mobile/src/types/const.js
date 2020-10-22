@@ -16,6 +16,7 @@ export const PROFILE_POPUP = 'PROFILE_POPUP';
 export const LIST_NAME_POPUP = 'LIST_NAME_POPUP';
 export const CONFIRM_DELETE_POPUP = 'CONFIRM_DELETE_POPUP';
 export const SETTINGS_POPUP = 'SETTINGS_POPUP';
+export const BULK_EDIT_MOVE_TO_POPUP = 'BULK_EDIT_MOVE_TO_POPUP';
 
 export const IS_POPUP_SHOWN = 'isPopupShown';
 export const POPUP_ANCHOR_POSITION = 'popupAnchorPosition';
@@ -128,3 +129,5 @@ export const SM_WIDTH = 640;
 export const MD_WIDTH = 768;
 export const LG_WIDTH = 1024;
 export const XL_WIDTH = 1280;
+
+export const MAX_SELECTED_LINK_IDS = 10;

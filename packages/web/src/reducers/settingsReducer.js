@@ -10,7 +10,7 @@ const initialState = {
   doDeleteOldLinksInTrash: true,
   doDescendingOrder: true,
   doRemoveAfterClick: false,
-  doExitBulkEditAfterAction: false,
+  doExitBulkEditAfterAction: true,
 };
 
 export default (state = initialState, action) => {

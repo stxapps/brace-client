@@ -4,8 +4,7 @@ import axios from 'axios';
 
 import userSession from '../userSession';
 import {
-  INIT, UPDATE_HREF, UPDATE_WINDOW_SIZE,
-  UPDATE_USER,
+  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW_SIZE,
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
@@ -18,7 +17,9 @@ import {
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
-  UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN,
+  UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION, UPDATE_HANDLING_SIGN_IN,
+  UPDATE_BULK_EDITING,
+  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, CLEAR_SELECTED_LINK_IDS,
   RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -495,6 +496,13 @@ export const updateStatus = (status) => {
   };
 };
 
+export const updateCardItemMenuPopupPosition = (position) => {
+  return {
+    type: UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
+    payload: position,
+  };
+};
+
 export const extractContents = (listName, ids) => async (dispatch, getState) => {
 
   // IMPORTANT: didBeautify is removed as it's not needed
@@ -576,5 +584,32 @@ export const updateHref = (href) => {
   return {
     type: UPDATE_HREF,
     payload: href,
+  };
+};
+
+export const updateBulkEdit = (isBulkEditing) => {
+  return {
+    type: UPDATE_BULK_EDITING,
+    payload: isBulkEditing,
+  };
+};
+
+export const addSelectedLinkIds = (ids) => {
+  return {
+    type: ADD_SELECTED_LINK_IDS,
+    payload: ids,
+  };
+};
+
+export const deleteSelectedLinkIds = (ids) => {
+  return {
+    type: DELETE_SELECTED_LINK_IDS,
+    payload: ids,
+  };
+};
+
+export const clearSelectedLinkIds = () => {
+  return {
+    type: CLEAR_SELECTED_LINK_IDS
   };
 };

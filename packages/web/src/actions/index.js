@@ -6,7 +6,7 @@ import { saveAs } from 'file-saver';
 import userSession from '../userSession';
 import { batchGetFileWithRetry, batchDeleteFileWithRetry } from '../apis/blockstack';
 import {
-  INIT, UPDATE_WINDOW, UPDATE_HISTORY_POSITION, UPDATE_USER,
+  INIT, UPDATE_WINDOW, UPDATE_HISTORY_POSITION, UPDATE_USER, UPDATE_HREF,
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
@@ -614,7 +614,7 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
 
   const res = await axios.post(
     BRACE_EXTRACT_URL,
-    { urls: links.map(link => link.url) }
+    { urls: links.map(link => link.url) },
   );
   const extractedResults = res.data.extractedResults;
 
@@ -646,6 +646,13 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
   });
 };
 
+export const updateHref = (href) => {
+  return {
+    type: UPDATE_HREF,
+    payload: href,
+  };
+};
+
 export const updateBulkEdit = (isBulkEditing) => {
   return {
     type: UPDATE_BULK_EDITING,
@@ -658,20 +665,20 @@ export const addSelectedLinkIds = (ids) => {
     type: ADD_SELECTED_LINK_IDS,
     payload: ids,
   };
-}
+};
 
 export const deleteSelectedLinkIds = (ids) => {
   return {
     type: DELETE_SELECTED_LINK_IDS,
     payload: ids,
   };
-}
+};
 
 export const clearSelectedLinkIds = () => {
   return {
     type: CLEAR_SELECTED_LINK_IDS
   };
-}
+};
 
 const exportAllDataLoop = async (dispatch, fPaths, doneCount) => {
 

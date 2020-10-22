@@ -8,13 +8,15 @@ import {
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK, EXTRACT_CONTENTS_COMMIT,
   UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
-  UPDATE_HANDLING_SIGN_IN,
+  UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
+  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, CLEAR_SELECTED_LINK_IDS,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   RESET_STATE,
 } from '../types/actionTypes';
 import {
   ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
   CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
+  BULK_EDIT_MOVE_TO_POPUP,
   MY_LIST,
 } from '../types/const';
 
@@ -31,6 +33,9 @@ const initialState = {
   status: null,
   cardItemMenuPopupPosition: null,
   isHandlingSignIn: false,
+  isBulkEditing: false,
+  selectedLinkIds: [],
+  isBulkEditMoveToPopupShown: false,
   exportAllDataProgress: null,
   deleteAllDataProgress: null,
 };
@@ -51,6 +56,9 @@ export default (state = initialState, action) => {
       status: null,
       cardItemMenuPopupPosition: null,
       isHandlingSignIn: false,
+      isBulkEditing: false,
+      selectedLinkIds: [],
+      isBulkEditMoveToPopupShown: false,
       exportAllDataProgress: null,
       deleteAllDataProgress: null,
     };
@@ -74,6 +82,7 @@ export default (state = initialState, action) => {
         isListNamePopupShown: action.payload.isShown,
         isConfirmDeletePopupShown: action.payload.isShown,
         isSettingsPopupShown: action.payload.isShown,
+        isBulkEditMoveToPopupShown: action.payload.isShown,
       }
     }
 
@@ -99,6 +108,10 @@ export default (state = initialState, action) => {
 
     if (action.payload.id === SETTINGS_POPUP) {
       return { ...state, isSettingsPopupShown: action.payload.isShown }
+    }
+
+    if (action.payload.id === BULK_EDIT_MOVE_TO_POPUP) {
+      return { ...state, isBulkEditMoveToPopupShown: action.payload.isShown }
     }
   }
 
@@ -156,6 +169,30 @@ export default (state = initialState, action) => {
 
   if (action.type === UPDATE_HANDLING_SIGN_IN) {
     return { ...state, isHandlingSignIn: action.payload };
+  }
+
+  if (action.type === UPDATE_BULK_EDITING) {
+    return { ...state, isBulkEditing: action.payload };
+  }
+
+  if (action.type === ADD_SELECTED_LINK_IDS) {
+    const selectedLinkIds = [...state.selectedLinkIds];
+    for (const linkId of action.payload) {
+      if (!selectedLinkIds.includes(linkId)) selectedLinkIds.push(linkId);
+    }
+    return { ...state, selectedLinkIds };
+  }
+
+  if (action.type === DELETE_SELECTED_LINK_IDS) {
+    const selectedLinkIds = [];
+    for (const linkId of state.selectedLinkIds) {
+      if (!action.payload.includes(linkId)) selectedLinkIds.push(linkId);
+    }
+    return { ...state, selectedLinkIds };
+  }
+
+  if (action.type === CLEAR_SELECTED_LINK_IDS) {
+    return { ...state, selectedLinkIds: [] };
   }
 
   if (action.type === UPDATE_EXPORT_ALL_DATA_PROGRESS) {
