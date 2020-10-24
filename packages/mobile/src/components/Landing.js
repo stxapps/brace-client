@@ -172,8 +172,11 @@ class Landing extends React.PureComponent {
   renderSignUp() {
     return (
       <TouchableOpacity onPress={() => this.props.signUp()} style={tailwind('py-5 items-center')}>
-        <View style={tailwind('px-6 justify-center items-center h-12 bg-gray-900 rounded-full shadow-lg')}>
+        <View style={tailwind('px-6 flex-row justify-center items-center h-12 bg-gray-900 rounded-full shadow-lg')}>
           <Text style={tailwind('text-xl text-white font-semibold')}>Get Started</Text>
+          <Svg style={tailwind('ml-2 text-white')} width={6} height={13} viewBox="0 0 6 10" fill="currentColor">
+            <Path fillRule="evenodd" clipRule="evenodd" d="M0.29289 9.7071C-0.09763 9.3166 -0.09763 8.6834 0.29289 8.2929L3.5858 5L0.29289 1.70711C-0.09763 1.31658 -0.09763 0.68342 0.29289 0.29289C0.68342 -0.09763 1.31658 -0.09763 1.70711 0.29289L5.7071 4.29289C6.0976 4.68342 6.0976 5.3166 5.7071 5.7071L1.70711 9.7071C1.31658 10.0976 0.68342 10.0976 0.29289 9.7071Z" />
+          </Svg>
         </View>
       </TouchableOpacity>
     );

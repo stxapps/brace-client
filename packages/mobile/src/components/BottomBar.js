@@ -8,7 +8,10 @@ import Svg, { SvgXml, Path } from 'react-native-svg';
 import jdenticon from 'jdenticon';
 import Modal from 'react-native-modal';
 
-import { signOut, updatePopup, addLink, updateSearchString } from '../actions';
+import {
+  signOut, updatePopup, addLink, updateSearchString,
+  updateBulkEdit,
+} from '../actions';
 import {
   DOMAIN_NAME,
   ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
@@ -22,6 +25,8 @@ import { cardItemAnimConfig } from '../types/animConfigs';
 
 import { InterText as Text, InterTextInput as TextInput, withSafeAreaContext } from '.';
 import GracefulImage from './GracefulImage';
+
+import BottomBarBulkEditCommands from './BottomBarBulkEditCommands';
 
 const BOTTOM_BAR_DURATION = 225;
 
@@ -205,6 +210,10 @@ class BottomBar extends React.PureComponent {
     }
   }
 
+  onBulkEditBtnClick = () => {
+    this.props.updateBulkEdit(true);
+  }
+
   onProfileBtnClick = () => {
     if (this.props.isProfilePopupShown) return;
     this.props.updatePopup(PROFILE_POPUP, true);
@@ -216,7 +225,7 @@ class BottomBar extends React.PureComponent {
 
   onSignOutBtnClick = () => {
     // No need to update it, will get already unmount
-    // this.props.updatePopup(PROFILE_POPUP, false);
+    //this.props.updatePopup(PROFILE_POPUP, false);
     this.props.signOut()
   }
 
@@ -228,15 +237,18 @@ class BottomBar extends React.PureComponent {
     return (
       <Modal isVisible={isAddPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={() => setTimeout(() => this.addInput.current.focus(), 1)} onModalWillHide={() => this.addInput.current.blur()} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true} avoidKeyboard={Platform.OS === 'ios' ? true : false}>
         <View style={tailwind('px-4 pt-6 pb-6 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
-          {/* onKeyPress event for Enter key only if there is multiline TextInput */}
-          <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('px-4 py-2 w-full bg-white text-gray-900 border border-gray-600 rounded-full')} placeholder="https://" value={url} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
+          <View style={tailwind('flex-row justify-start items-center')}>
+            <Text style={tailwind('flex-none text-sm font-medium text-gray-700')}>Url:</Text>
+            {/* onKeyPress event for Enter key only if there is multiline TextInput */}
+            <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('ml-3 px-4 py-2 flex-1 bg-white text-gray-900 border border-gray-500 rounded-full')} placeholder="https://" value={url} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
+          </View>
           {msg === '' ? <View style={tailwind('w-full h-3')}></View> : <Text style={tailwind('pt-3 text-red-500')}>{msg}</Text>}
           <View style={tailwind('pt-3 flex-row justify-start items-center')}>
-            <TouchableOpacity onPress={this.onAddOkBtnClick} style={tailwind('px-5 py-2 justify-center items-center bg-gray-900 rounded-full shadow-sm')}>
+            <TouchableOpacity onPress={this.onAddOkBtnClick} style={tailwind('px-5 py-2 justify-center items-center bg-gray-800 rounded-full shadow-sm')}>
               <Text style={tailwind('text-base text-white font-medium')}>{isAskingConfirm ? 'Sure' : 'Save'}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={this.onAddCancelBtnClick} style={tailwind('ml-2 rounded-sm')}>
-              <Text style={tailwind('text-base text-gray-900 underline')}>Cancel</Text>
+            <TouchableOpacity onPress={this.onAddCancelBtnClick} style={tailwind('ml-4 rounded-sm')}>
+              <Text style={tailwind('text-base text-gray-700')}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -263,7 +275,7 @@ class BottomBar extends React.PureComponent {
     const searchPopup = (
       <Animated.View style={[tailwind('px-2 py-2 absolute inset-x-0 flex-row justify-between items-center bg-white border border-gray-200 z-10'), style]}>
         <View style={tailwind('flex-grow flex-shrink')}>
-          <TextInput ref={this.searchInput} onChange={this.onSearchInputChange} style={tailwind('pl-4 pr-6 py-1 w-full bg-white text-gray-900 border border-gray-600 rounded-full')} placeholder="Search" value={searchString} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
+          <TextInput ref={this.searchInput} onChange={this.onSearchInputChange} style={tailwind('pl-4 pr-6 py-1 w-full bg-white text-gray-900 border border-gray-500 rounded-full')} placeholder="Search" value={searchString} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
           {/* A bug display: none doesn't work with absolute, need to change to relative. https://github.com/facebook/react-native/issues/18415 */}
           <TouchableOpacity onPress={this.onSearchClearBtnClick} style={tailwind(`pr-2 ${searchClearBtnClasses} inset-y-0 right-0 justify-center items-center`)}>
             <Svg style={tailwind('text-gray-600 rounded-full')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
@@ -272,7 +284,7 @@ class BottomBar extends React.PureComponent {
           </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={this.onSearchCancelBtnClick} style={tailwind('ml-2 flex-grow-0 flex-shrink-0 justify-center items-center h-10 rounded-lg')}>
-          <Text style={tailwind('text-base text-gray-900 underline')}>Cancel</Text>
+          <Text style={tailwind('text-base text-gray-700')}>Cancel</Text>
         </TouchableOpacity>
       </Animated.View>
     );
@@ -308,6 +320,8 @@ class BottomBar extends React.PureComponent {
 
   render() {
 
+    if (this.props.isBulkEditing) return <BottomBarBulkEditCommands />;
+
     const style = {
       height: toPx(BOTTOM_BAR_HEIGHT) + this.props.insets.bottom,
       transform: [{ translateY: this.bottomBarTranslateY }],
@@ -315,29 +329,43 @@ class BottomBar extends React.PureComponent {
     const innerStyle = {
       height: toPx(BOTTOM_BAR_HEIGHT),
     };
-    const shadowStyle = {
-      height: 10,
-      transform: [{ translateY: -15 }],
-    };
 
     return (
       <React.Fragment>
-        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 bg-white z-30'), style]}>
-          <View style={[tailwind('relative flex-row w-full overflow-hidden'), innerStyle]}>
-            <View style={[tailwind('absolute inset-x-0 top-0 bg-white shadow-lg'), shadowStyle]}></View>
-            <TouchableOpacity onPress={this.onAddBtnClick} style={tailwind('justify-center items-center w-1/3 h-full')}>
-              <View style={tailwind('justify-center items-center w-8 h-7 bg-gray-800 rounded-lg shadow-sm')}>
-                <Svg style={tailwind('text-white')} width={16} height={14} viewBox="0 0 16 14" stroke="currentColor" fill="none">
-                  <Path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </Svg>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this.onSearchBtnClick} style={tailwind('justify-center items-center w-1/3 h-full')}>
-              <Svg style={tailwind('text-gray-800 rounded-lg')} width={32} height={32} viewBox="0 0 24 24" fill="currentColor">
-                <Path d="M16.32 14.9l1.1 1.1c.4-.02.83.13 1.14.44l3 3a1.5 1.5 0 0 1-2.12 2.12l-3-3a1.5 1.5 0 0 1-.44-1.14l-1.1-1.1a8 8 0 1 1 1.41-1.41l.01-.01zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
-              </Svg>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this.onProfileBtnClick} style={tailwind('justify-center items-center w-1/3 h-full')}>
+        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 bg-white border-t border-gray-300 z-30'), style]}>
+          <View style={[tailwind('relative flex-row justify-evenly w-full overflow-hidden'), innerStyle]}>
+            <View style={tailwind('p-1 flex-1')}>
+              <TouchableOpacity onPress={this.onAddBtnClick} style={tailwind('justify-center items-center w-full h-full')}>
+                <View style={tailwind('justify-center items-center w-6 h-6')}>
+                  <Svg style={[tailwind('text-gray-600'), { marginBottom: 2 }]} width={18} height={17} viewBox="0 0 13 12" stroke="currentColor">
+                    <Path d="M6.5 1V10.4286M1 5.67609H12" strokeWidth="1.57143" strokeLinecap="round" strokeLinejoin="round" />
+                  </Svg>
+                </View>
+                <Text style={[tailwind('text-xs text-gray-700 leading-4'), { marginTop: 2 }]}>Add</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={tailwind('p-1 flex-1')}>
+              <TouchableOpacity onPress={this.onSearchBtnClick} style={tailwind('justify-center items-center w-full h-full')}>
+                <View style={tailwind('justify-center items-center w-6 h-6')}>
+                  <Svg style={tailwind('text-gray-600')} width={22} height={22} viewBox="0 0 24 24" fill="currentColor">
+                    <Path d="M16.32 14.9l1.1 1.1c.4-.02.83.13 1.14.44l3 3a1.5 1.5 0 0 1-2.12 2.12l-3-3a1.5 1.5 0 0 1-.44-1.14l-1.1-1.1a8 8 0 1 1 1.41-1.41l.01-.01zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
+                  </Svg>
+                </View>
+                <Text style={[tailwind('text-xs text-gray-700 leading-4'), { marginTop: 2 }]}>Search</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={tailwind('p-1 flex-1')}>
+              <TouchableOpacity onPress={this.onBulkEditBtnClick} style={tailwind('justify-center items-center w-full h-full')}>
+                <View style={tailwind('justify-center items-center w-6 h-6')}>
+                  <Svg style={tailwind('text-gray-600')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+                    <Path d="M17.4142 2.58579C16.6332 1.80474 15.3668 1.80474 14.5858 2.58579L7 10.1716V13H9.82842L17.4142 5.41421C18.1953 4.63316 18.1953 3.36683 17.4142 2.58579Z" />
+                    <Path fillRule="evenodd" clipRule="evenodd" d="M2 6C2 4.89543 2.89543 4 4 4H8C8.55228 4 9 4.44772 9 5C9 5.55228 8.55228 6 8 6H4V16H14V12C14 11.4477 14.4477 11 15 11C15.5523 11 16 11.4477 16 12V16C16 17.1046 15.1046 18 14 18H4C2.89543 18 2 17.1046 2 16V6Z" />
+                  </Svg>
+                </View>
+                <Text style={[tailwind('text-xs text-gray-700 leading-4'), { marginTop: 2 }]}>Select</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity onPress={this.onProfileBtnClick} style={tailwind('flex-1 justify-center items-center')}>
               <View style={tailwind(`justify-center items-center h-10 w-10 bg-white overflow-hidden border-2 border-gray-200 ${this.profileBtnStyleClasses}`)}>
                 {this.userImage}
               </View>
@@ -365,13 +393,14 @@ const mapStateToProps = (state, props) => {
     isSearchPopupShown: state.display.isSearchPopupShown,
     isProfilePopupShown: state.display.isProfilePopupShown,
     popupLink: popupLink,
+    isBulkEditing: state.display.isBulkEditing,
     windowWidth: state.window.width,
     windowHeight: state.window.height,
   };
 };
 
 const mapDispatchToProps = {
-  signOut, updatePopup, addLink, updateSearchString,
+  signOut, updatePopup, addLink, updateSearchString, updateBulkEdit,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(BottomBar));

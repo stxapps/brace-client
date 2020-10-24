@@ -9,7 +9,7 @@ import {
 import Modal from 'react-native-modal';
 
 import {
-  updatePopup, deleteLinks,
+  updatePopup, deleteLinks, clearSelectedLinkIds, updateBulkEdit,
 } from '../actions';
 import {
   CONFIRM_DELETE_POPUP,
@@ -20,19 +20,57 @@ import { tailwind } from '../stylesheets/tailwind';
 
 import { InterText as Text, withSafeAreaContext } from '.';
 
-class ConfirmDeletePopup extends React.PureComponent {
+class ConfirmDeletePopup extends React.Component {
+
+  shouldComponentUpdate(nextProps) {
+    if (
+      this.props.isConfirmDeletePopupShown !== nextProps.isConfirmDeletePopupShown ||
+      this.props.safeAreaWidth !== nextProps.safeAreaWidth ||
+      this.props.safeAreaHeight !== nextProps.safeAreaHeight
+    ) {
+      return true;
+    }
+
+    return false;
+  }
 
   onConfirmDeleteOkBtnClick = () => {
 
-    const { safeAreaWidth } = this.props;
-    const animConfig = cardItemAnimConfig(safeAreaWidth);
+    const { popupLink, selectedLinkIds, safeAreaWidth } = this.props;
 
-    LayoutAnimation.configureNext(animConfig);
-    this.props.deleteLinks([this.props.popupLink.id]);
+    if (
+      (popupLink && selectedLinkIds.length > 0) ||
+      (!popupLink && selectedLinkIds.length === 0)
+    ) {
+      throw new Error(`Invalid popupLink: ${popupLink} and selectedLinkIds: ${selectedLinkIds}`);
+    }
 
-    this.props.ctx.menuActions.closeMenu();
-    this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
-    this.props.updatePopup(this.props.popupLink.id, false);
+    if (popupLink) {
+      const { deleteLinks, updatePopup } = this.props;
+      const animConfig = cardItemAnimConfig(safeAreaWidth);
+
+      LayoutAnimation.configureNext(animConfig);
+      deleteLinks([popupLink.id]);
+      this.props.ctx.menuActions.closeMenu();
+      updatePopup(CONFIRM_DELETE_POPUP, false);
+      updatePopup(popupLink.id, false);
+      return;
+    }
+
+    if (selectedLinkIds.length > 0) {
+
+      const {
+        deleteLinks, updatePopup, clearSelectedLinkIds, updateBulkEdit,
+      } = this.props;
+
+      deleteLinks(selectedLinkIds);
+      updatePopup(CONFIRM_DELETE_POPUP, false);
+      clearSelectedLinkIds();
+      updateBulkEdit(false);
+      return;
+    }
+
+    throw new Error('Must not reach here!');
   }
 
   onConfirmDeleteCancelBtnClick = () => {
@@ -70,13 +108,14 @@ const mapStateToProps = (state, props) => {
   return {
     isConfirmDeletePopupShown: state.display.isConfirmDeletePopupShown,
     popupLink: getPopupLink(state),
+    selectedLinkIds: state.display.selectedLinkIds,
     windowWidth: state.window.width,
     windowHeight: state.window.height,
   }
 };
 
 const mapDispatchToProps = {
-  updatePopup, deleteLinks,
+  updatePopup, deleteLinks, clearSelectedLinkIds, updateBulkEdit,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(withMenuContext(ConfirmDeletePopup)));

@@ -106,12 +106,12 @@ class CardItemMenuPopup extends React.PureComponent {
     if (_moveTo && _moveTo.length) {
       moveTo = (
         <React.Fragment>
-          <Text style={tailwind('py-2 pl-4 pr-4 text-gray-800')}>{MOVE_TO}</Text>
+          <Text style={tailwind('py-2 pl-4 pr-4 text-gray-800')}>Move to...</Text>
           {_moveTo.map(text => {
             const key = MOVE_TO + ' ' + text;
             return (
               <MenuOption key={key} onSelect={() => this.onMenuPopupClick(key)} customStyles={{ optionWrapper: { padding: 0 } }}>
-                <Text style={tailwind('py-2 pl-6 pr-4 text-gray-800')}>{text}</Text>
+                <Text style={tailwind('py-2 pl-8 pr-4 text-gray-800')}>{text}</Text>
               </MenuOption>
             );
           })}

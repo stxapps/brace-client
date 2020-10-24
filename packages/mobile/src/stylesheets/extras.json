@@ -83,5 +83,8 @@
   },
   "h-px": {
     "height": 1
+  },
+  "opacity-90": {
+    "opacity": 0.9
   }
 }

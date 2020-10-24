@@ -6,7 +6,7 @@ import {
 import Svg, { Path } from 'react-native-svg'
 
 import {
-  retryDiedLinks, cancelDiedLinks,
+  retryDiedLinks, cancelDiedLinks, updateBulkEdit, addSelectedLinkIds,
 } from '../actions';
 import {
   DOMAIN_NAME,
@@ -26,6 +26,7 @@ import { InterText as Text, withSafeAreaContext } from '.';
 import GracefulImage from './GracefulImage';
 
 import CardItemMenuPopup from './CardItemMenuPopup';
+import CardItemSelector from './CardItemSelector';
 
 const prependDomainName = (/** @type string */ value) => {
   if (value.startsWith('data:')) return value;
@@ -54,6 +55,11 @@ class CardItem extends React.Component {
     }
 
     return false;
+  }
+
+  onLongPress = () => {
+    this.props.updateBulkEdit(true);
+    this.props.addSelectedLinkIds([this.props.link.id]);
   }
 
   onRetryRetryBtnClick = () => {
@@ -229,7 +235,9 @@ class CardItem extends React.Component {
     return (
       <View style={style}>
         <View style={tailwind(`self-center bg-white rounded-lg shadow ${viewStyle}`)}>
-          {this.renderImage()}
+          <TouchableOpacity onLongPress={this.onLongPress}>
+            {this.renderImage()}
+          </TouchableOpacity>
           <View style={tailwind('flex-row justify-between items-center w-full')}>
             <View style={tailwind('pl-4 flex-shrink flex-grow flex-row items-center lg:pl-5', safeAreaWidth)}>
               {this.renderFavicon()}
@@ -246,6 +254,7 @@ class CardItem extends React.Component {
           </TouchableOpacity>
           {isDiedStatus(status) && this.renderRetry()}
           {[ADDING, MOVING].includes(status) && this.renderBusy()}
+          {![ADDING, MOVING].includes(status) && <CardItemSelector linkId={this.props.link.id} />}
         </View>
       </View>
     );
@@ -259,7 +268,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
-  retryDiedLinks, cancelDiedLinks,
+  retryDiedLinks, cancelDiedLinks, updateBulkEdit, addSelectedLinkIds,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(CardItem));
