@@ -33,6 +33,14 @@ class CardItemMenuPopup extends React.PureComponent {
 
   componentDidMount() {
     if (this.props.popupLink) {
+
+      this.initialScrollY = window.pageYOffset;
+      this.setState({ scrollY: this.initialScrollY });
+
+      const { menu, moveTo } = this.populateMenu(this.props);
+      this.menu = menu;
+      this.moveTo = moveTo;
+
       window.addEventListener('scroll', this.updateScrollY);
 
       this.props.updateCardItemMenuPopupPosition(
@@ -74,7 +82,6 @@ class CardItemMenuPopup extends React.PureComponent {
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.updateScrollY);
-
     this.props.updateCardItemMenuPopupPosition(null);
   }
 

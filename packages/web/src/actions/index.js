@@ -29,7 +29,7 @@ import {
   APP_NAME, APP_ICON_NAME,
   BACK_DECIDER, BACK_POPUP,
   ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
-  CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
+  CONFIRM_DELETE_POPUP, SETTINGS_POPUP, BULK_EDIT_MOVE_TO_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
@@ -122,6 +122,7 @@ const getPopupShownId = (state) => {
   if (state.display.isListNamePopupShown) return LIST_NAME_POPUP;
   if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
   if (state.display.isSettingsPopupShown) return SETTINGS_POPUP;
+  if (state.display.isBulkEditMoveToPopupShown) return BULK_EDIT_MOVE_TO_POPUP;
 
   for (const listName in state.links) {
     for (const id in state.links[listName]) {

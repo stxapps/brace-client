@@ -17,7 +17,7 @@ input[type="search"]::-webkit-search-results-decoration {
   -webkit-appearance:none;
 }
 
-/*  */
+/* no image context menu when long press */
 img {
   pointer-events: none;
   -webkit-touch-callout: none;

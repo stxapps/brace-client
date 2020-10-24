@@ -56,7 +56,7 @@ class CardItemSelector extends React.Component {
 
     return (
       <div className="absolute top-0 inset-x-0 flex justify-center items-start">
-        <div className="m-4 p-4 rounded-md bg-red-100">
+        <div className="m-4 p-4 bg-red-100 rounded-md ">
           <div className="flex">
             <div className="flex-shrink-0">
               <svg className="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -64,7 +64,7 @@ class CardItemSelector extends React.Component {
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm leading-5 font-medium text-red-800 text-left">To prevent network overload, up to {MAX_SELECTED_LINK_IDS} items<br />can be selected.</h3>
+              <h3 className="text-sm leading-5 font-medium text-red-800 text-left">To prevent network overload, up to {MAX_SELECTED_LINK_IDS} items can be selected.</h3>
             </div>
           </div>
         </div>

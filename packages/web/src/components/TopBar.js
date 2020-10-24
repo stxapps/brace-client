@@ -192,7 +192,7 @@ class TopBar extends React.PureComponent {
               <input onChange={this.onAddInputChange} onKeyPress={this.onAddInputKeyPress} className="px-4 py-2 form-input w-full bg-white text-base text-gray-900 rounded-full border border-gray-500 appearance-none focus:outline-none focus:shadow-outline" type="url" placeholder="https://" value={url} autoFocus />
             </div>
           </div>
-          <p className="pt-3 text-red-600">{msg}</p>
+          <p className="pt-3 text-red-500">{msg}</p>
           <div className="pt-3">
             <button onClick={this.onAddOkBtnClick} className="px-5 py-2 bg-gray-800 text-base text-white font-medium rounded-full shadow-sm hover:shadow-outline active:bg-gray-600 focus:outline-none focus:shadow-outline">{isAskingConfirm ? 'Sure' : 'Save'}</button>
             <button onClick={this.onAddCancelBtnClick} className="ml-4 text-gray-700 rounded-sm hover:text-gray-900 hover:underline focus:outline-none focus:shadow-outline">Cancel</button>
@@ -225,7 +225,7 @@ class TopBar extends React.PureComponent {
     return (
       <div className="flex justify-end items-center">
         <div className="relative">
-          <button onClick={this.onAddBtnClick} style={{ padding: '0.2rem 0.8rem 0.2rem 0.65rem' }} className={`flex items-center border border-gray-700 rounded-full shadow-sm group hover:border-gray-900 hover:shadow-outline active:bg-gray-200 focus:outline-none focus:shadow-outline ${isAddPopupShown ? 'z-41' : ''}`}>
+          <button onClick={this.onAddBtnClick} style={{ height: '2rem', paddingLeft: '0.625rem', paddingRight: '0.75rem' }} className={`flex justify-center items-center bg-white border border-gray-700 rounded-full shadow-sm group hover:border-gray-900 hover:shadow-outline active:bg-gray-200 focus:outline-none focus:shadow-outline ${isAddPopupShown ? 'z-41' : ''}`}>
             <svg className="w-3 text-gray-700 group-hover:text-gray-900" viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -247,7 +247,7 @@ class TopBar extends React.PureComponent {
           </button>
         </div>
         <div className="relative ml-4">
-          <button onClick={this.onBulkEditBtnClick} className={`px-3 py-1 flex items-center border border-gray-600 rounded-full shadow-sm group hover:border-gray-900 hover:shadow-outline active:bg-gray-200 focus:outline-none focus:shadow-outline`}>
+          <button onClick={this.onBulkEditBtnClick} style={{ height: '2rem', paddingLeft: '0.625rem', paddingRight: '0.75rem' }} className={`px-3 flex justify-center items-center bg-white border border-gray-600 rounded-full shadow-sm group hover:border-gray-900 hover:shadow-outline active:bg-gray-200 focus:outline-none focus:shadow-outline`}>
 
             <svg className="mx-auto w-4 text-gray-600 group-hover:text-gray-800" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path d="M17.4142 2.58579C16.6332 1.80474 15.3668 1.80474 14.5858 2.58579L7 10.1716V13H9.82842L17.4142 5.41421C18.1953 4.63316 18.1953 3.36683 17.4142 2.58579Z" />
@@ -303,7 +303,7 @@ class TopBar extends React.PureComponent {
       statusPopupDistanceY,
     } = getSizes(window.innerWidth);
 
-    const initialTop = window.innerWidth < MD_WIDTH ? '4.6rem' : '5.095rem';
+    const initialTop = window.innerWidth < MD_WIDTH ? '4.625rem' : '5.125rem';
     const top = Math.max(0, toPx(initialTop) - offsetY);
     const right = 0;
     const opacity = Math.max(0, 1.0 - (offsetY / statusPopupDistanceY));
