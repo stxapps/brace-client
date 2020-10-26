@@ -618,10 +618,10 @@ This and CI/CD are very important!
 *** Google app engine
 *** Puppeteer
 ** stack user
-- blossom brand lounge toast divorce wool catalog sleep floor odor there advance
+- iiowmang.id.blockstack: blossom brand lounge toast divorce wool catalog sleep floor odor there advance
 - law story ensure butter aspect wasp state cherry number spy knock gym
-- melody use spot old hub tool become motion defense plastic spike clean
-- mosquito oxygen bronze sure couple trust husband join illness reject promote swallow
+- wiennsie.id.blockstack: melody use spot old hub tool become motion defense plastic spike clean
+- llienakd.id.blockstack: mosquito oxygen bronze sure couple trust husband join illness reject promote swallow
 ** steps
 - yarn add tailwindcss postcss-cli 
 - yarn add @fullhuman/postcss-purgecss
