@@ -63,10 +63,12 @@ class Main extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.listName !== prevProps.listName) {
-      this.mainFlatList.current.scrollToOffset({
-        offset: 0,
-        animated: true,
-      });
+      if (this.mainFlatList.current) {
+        this.mainFlatList.current.scrollToOffset({
+          offset: 0,
+          animated: true,
+        });
+      }
     }
   }
 
