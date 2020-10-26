@@ -37,10 +37,10 @@ import TopBarBulkEditCommands from './TopBarBulkEditCommands';
 import shortLogo from '../images/logo-short.svg';
 import fullLogo from '../images/logo-full.svg';
 
-const getSizes = (safeAreaWidth, insets) => {
+const getSizes = (safeAreaWidth) => {
 
-  const topBarHeight = toPx(safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD) + insets.top;
-  const headerHeight = toPx(TOP_HEADER_HEIGHT) + insets.top;
+  const topBarHeight = toPx(safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD);
+  const headerHeight = toPx(TOP_HEADER_HEIGHT);
   const listNameHeight = toPx(TOP_LIST_NAME_HEIGHT); // From ListName -> Text -> leading-7
   const statusPopupHeight = 24; // From StatusPopup -> AnimatedText -> leading-6
   const commandsHeight = 38; // From onLayout
@@ -61,11 +61,11 @@ const getSizes = (safeAreaWidth, insets) => {
   const LIST_NAME_DISTANCE_X_MD = toPx('9rem');
   const listNameDistanceX = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_X : LIST_NAME_DISTANCE_X_MD;
 
-  const LIST_NAME_START_Y = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE) + insets.top;
-  const LIST_NAME_START_Y_MD = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE_MD) + insets.top;
+  const LIST_NAME_START_Y = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE);
+  const LIST_NAME_START_Y_MD = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE_MD);
 
-  const LIST_NAME_END_Y = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2) + insets.top;
-  const LIST_NAME_END_Y_MD = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2) + insets.top;
+  const LIST_NAME_END_Y = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2);
+  const LIST_NAME_END_Y_MD = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2);
 
   const listNameDistanceY = safeAreaWidth < MD_WIDTH ? Math.abs(LIST_NAME_END_Y - LIST_NAME_START_Y) : Math.abs(LIST_NAME_END_Y_MD - LIST_NAME_START_Y_MD);
 
@@ -315,12 +315,12 @@ class TopBar extends React.Component {
 
   renderListName() {
 
-    const { scrollY, safeAreaWidth, insets } = this.props;
+    const { scrollY, safeAreaWidth } = this.props;
     const {
       topBarHeight, headerHeight, listNameHeight, headerListNameSpace,
       laidStatusPopupHeight, laidListNameCommandsHeight, laidTopBarHeight,
       listNameDistanceX, listNameDistanceY,
-    } = getSizes(safeAreaWidth, insets);
+    } = getSizes(safeAreaWidth);
 
     const space1 = (laidListNameCommandsHeight - listNameHeight) / 2;
     const space2 = laidStatusPopupHeight;
@@ -328,7 +328,7 @@ class TopBar extends React.Component {
 
     // Start from MD width, align baseline with Brace logo instead of align center
     let space4 = (headerHeight - listNameHeight) / 2;
-    if (safeAreaWidth >= MD_WIDTH) space4 += 6;
+    if (safeAreaWidth >= MD_WIDTH) space4 += 4;
 
     const changingTranslateX = scrollY.interpolate({
       inputRange: [0, listNameDistanceY],
@@ -357,12 +357,12 @@ class TopBar extends React.Component {
 
   renderStatusPopup() {
 
-    const { scrollY, safeAreaWidth, insets } = this.props;
+    const { scrollY, safeAreaWidth } = this.props;
     const {
       topBarHeight, headerHeight, listNameHeight, statusPopupHeight, headerListNameSpace,
       laidStatusPopupHeight, laidTopBarHeight,
       statusPopupDistanceY,
-    } = getSizes(safeAreaWidth, insets);
+    } = getSizes(safeAreaWidth);
 
     const space1 = (laidStatusPopupHeight - statusPopupHeight) / 2;
     const space2 = listNameHeight - statusPopupHeight;
@@ -394,12 +394,12 @@ class TopBar extends React.Component {
 
   renderCommands() {
 
-    const { scrollY, safeAreaWidth, insets, isBulkEditing } = this.props;
+    const { scrollY, safeAreaWidth, isBulkEditing } = this.props;
     const {
       topBarHeight, headerHeight, commandsHeight,
       laidStatusPopupHeight, laidListNameCommandsHeight, laidTopBarHeight,
       listNameDistanceY,
-    } = getSizes(safeAreaWidth, insets);
+    } = getSizes(safeAreaWidth);
 
     const space1 = (laidListNameCommandsHeight - commandsHeight) / 2;
     const space2 = laidStatusPopupHeight;
@@ -442,7 +442,7 @@ class TopBar extends React.Component {
         topBarHeight, headerHeight,
         laidTopBarHeight, laidListNameCommandsHeight,
         listNameDistanceY,
-      } = getSizes(safeAreaWidth, insets);
+      } = getSizes(safeAreaWidth);
 
       const changingTopBarTranslateY = scrollY.interpolate({
         inputRange: [0, listNameDistanceY],

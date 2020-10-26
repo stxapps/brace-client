@@ -255,7 +255,7 @@ class Main extends React.Component {
 
     if (item.id === MAIN_HEAD) {
       let pt = safeAreaWidth < MD_WIDTH ? toPx(TOP_BAR_HEIGHT) : toPx(TOP_BAR_HEIGHT_MD);
-      pt += toPx('1.5rem');
+      pt += safeAreaWidth < MD_WIDTH ? toPx('1.5rem') : toPx('2.5rem');
       return (
         <View style={{ paddingTop: pt }}></View>
       );
