@@ -353,7 +353,7 @@ export const validateUrl = (url) => {
   url = ensureContainUrlProtocol(url);
 
   const urlObj = new Url(url, {});
-  if (!urlObj.hostname.match(/^([-a-zA-Z0-9@:%_+~#=]{1,256}\.)+[a-z]{2,6}$/)) {
+  if (!urlObj.hostname.match(/^([-a-zA-Z0-9@:%_+~#=]{1,256}\.)+[a-z]{2,8}$/)) {
     return ASK_CONFIRM_URL;
   }
 

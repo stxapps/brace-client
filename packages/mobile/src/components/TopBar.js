@@ -482,15 +482,17 @@ class TopBar extends React.Component {
           </View>
         </React.Fragment>
       );
+
+      topBarStyle['marginLeft'] = insets.left;
+      topBarStyle['marginRight'] = insets.right;
+      headerStyle['marginTop'] = insets.top;
     } else {
       topBarStyleClasses = '';
       topBarStyle = {};
       headerStyle = {};
-      headerBorderStyle = { opacity: 1.0 };
+      headerBorderStyle = { opacity: 0 };
       listNamePane = null;
     }
-
-    headerStyle['marginTop'] = insets.top;
 
     return (
       <Animated.View style={[tailwind(`items-center w-full ${topBarStyleClasses}`), topBarStyle]}>
