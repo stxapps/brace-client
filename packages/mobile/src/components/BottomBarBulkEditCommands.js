@@ -19,7 +19,7 @@ import { getListNames } from '../selectors';
 import { toPx } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 
-import { InterText as Text } from '.';
+import { InterText as Text, withSafeAreaContext } from '.';
 
 class BottomBarBulkEditCommands extends React.Component {
 
@@ -322,4 +322,4 @@ const mapDispatchToProps = {
   updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(BottomBarBulkEditCommands);
+export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(BottomBarBulkEditCommands));
