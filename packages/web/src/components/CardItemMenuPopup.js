@@ -11,8 +11,8 @@ import {
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
   CARD_ITEM_POPUP_MENU,
 } from '../types/const';
-import { getListNames, getPopupLink } from '../selectors';
-import { copyTextToClipboard, ensureContainUrlProtocol, throttle } from '../utils';
+import { getListNameMap, getPopupLink } from '../selectors';
+import { copyTextToClipboard, ensureContainUrlProtocol, getLongestListNameDisplayName, throttle } from '../utils';
 
 class CardItemMenuPopup extends React.PureComponent {
 
@@ -27,6 +27,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
     this.menu = null;
     this.moveTo = null;
+    this.longestListName = null;
 
     this.updateScrollY = throttle(this.updateScrollY, 16);
   }
@@ -37,9 +38,10 @@ class CardItemMenuPopup extends React.PureComponent {
       this.initialScrollY = window.pageYOffset;
       this.setState({ scrollY: this.initialScrollY });
 
-      const { menu, moveTo } = this.populateMenu(this.props);
+      const { menu, moveTo, longestListName } = this.populateMenu(this.props);
       this.menu = menu;
       this.moveTo = moveTo;
+      this.longestListName = longestListName;
 
       window.addEventListener('scroll', this.updateScrollY);
 
@@ -74,9 +76,10 @@ class CardItemMenuPopup extends React.PureComponent {
       this.initialScrollY = window.pageYOffset;
       this.setState({ scrollY: this.initialScrollY });
 
-      const { menu, moveTo } = this.populateMenu(nextProps);
+      const { menu, moveTo, longestListName } = this.populateMenu(nextProps);
       this.menu = menu;
       this.moveTo = moveTo;
+      this.longestListName = longestListName;
     }
   }
 
@@ -98,17 +101,19 @@ class CardItemMenuPopup extends React.PureComponent {
 
     const moveTo = [];
     if (menu.includes(MOVE_TO)) {
-      for (const listName of props.listNames) {
-        if ([TRASH, ARCHIVE].includes(listName)) continue;
-        if (props.listName === listName) continue;
+      for (const listNameObj of props.listNameMap) {
+        if ([TRASH, ARCHIVE].includes(listNameObj.listName)) continue;
+        if (props.listName === listNameObj.listName) continue;
 
-        moveTo.push(listName);
+        moveTo.push(listNameObj);
       }
     }
 
+    const longestListName = getLongestListNameDisplayName(props.listNameMap);
+
     menu = menu.filter(text => text !== MOVE_TO);
 
-    return { menu, moveTo };
+    return { menu, moveTo, longestListName };
   }
 
   updateScrollY = () => {
@@ -154,10 +159,10 @@ class CardItemMenuPopup extends React.PureComponent {
     if (this.moveTo && this.moveTo.length) {
       moveTo = (
         <React.Fragment>
-          <div className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left">Move to...</div>
-          {this.moveTo.map(text => {
-            const key = MOVE_TO + ' ' + text;
-            return <button className="py-2 pl-8 pr-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={key} data-key={key}>{text}</button>;
+          <div className="py-2 pl-4 pr-2 block w-full text-gray-800 text-left">Move to...</div>
+          {this.moveTo.map(listNameObj => {
+            const key = MOVE_TO + ' ' + listNameObj.listName;
+            return <button className="py-2 pl-8 pr-2 block w-full text-gray-800 text-left truncate hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={key} data-key={key}>{listNameObj.displayName}</button>;
           })}
         </React.Fragment>
       );
@@ -165,7 +170,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
     return (
       <React.Fragment>
-        {this.menu.map(text => <button className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={text} data-key={text}>{text}</button>)}
+        {this.menu.map(text => <button className="py-2 pl-4 pr-2 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={text} data-key={text}>{text}</button>)}
         {moveTo && moveTo}
       </React.Fragment>
     );
@@ -199,6 +204,14 @@ class CardItemMenuPopup extends React.PureComponent {
       popupPosition.right = `${windowWidth - scrollbarWidth - anchorPosition.right}px`;
     }
 
+    popupPosition.width = '8rem';
+    popupPosition.maxHeight = '16rem';
+    if (this.longestListName.length > 7) {
+      // Approx 10px or 0.625rem per additional character
+      const width = Math.min(8 + 0.625 * (this.longestListName.length - 7), 16);
+      popupPosition.width = `${width}rem`;
+    }
+
     return (
       <div className="relative">
         <button onClick={this.onCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none"></button>
@@ -207,7 +220,7 @@ class CardItemMenuPopup extends React.PureComponent {
             <path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <div ref={this.menuPopup} onClick={this.onMenuPopupClick} style={popupPosition} className="mt-2 ml-4 mr-2 py-2 fixed min-w-32 bg-white border border-gray-200 rounded-lg shadow-xl z-41">
+        <div ref={this.menuPopup} onClick={this.onMenuPopupClick} style={popupPosition} className="mt-2 ml-4 mr-2 py-2 fixed bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41">
           {this.renderMenu()}
         </div>
       </div >
@@ -218,7 +231,7 @@ class CardItemMenuPopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
-    listNames: getListNames(state),
+    listNameMap: getListNameMap(state),
     popupLink: getPopupLink(state),
   }
 };

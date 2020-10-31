@@ -1085,6 +1085,10 @@ img {
   padding-top: 100%;
 }
 
+.max-w-40 {
+  max-width: 10rem;
+}
+
 .max-w-48 {
   max-width: 12rem;
 }

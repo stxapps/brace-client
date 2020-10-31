@@ -8,21 +8,42 @@ import {
 import {
   _, isStringIn, excludeWithMainIds,
   isObject, isArrayEqual, isEqual,
+  doContainListName,
 } from '../utils';
 
-const createSelectorListNames = createSelectorCreator(
+const createSelectorListNameMap = createSelectorCreator(
   defaultMemoize,
-  (prevLinks, links) => {
-    if (!isObject(prevLinks) || !isObject(links)) {
-      return prevLinks === links;
+  (prevVal, val) => {
+    if (!isObject(prevVal['links']) || !isObject(val['links'])) {
+      if (prevVal['links'] !== val['links']) return false;
     }
-    return isArrayEqual(Object.keys(prevLinks).sort(), Object.keys(links).sort());
+
+    if (!isArrayEqual(
+      Object.keys(prevVal['links']).sort(),
+      Object.keys(val['links']).sort()
+    )) return false;
+
+    return prevVal['settings']['listNameMap'] === val['settings']['listNameMap'];
   }
 );
 
-export const getListNames = createSelectorListNames(
-  state => state.links,
-  links => Object.keys(links)
+export const getListNameMap = createSelectorListNameMap(
+  state => state,
+  (state) => {
+
+    const listNames = Object.keys(state.links);
+    const listNameMap = [...state.settings.listNameMap];
+
+    let i = 1;
+    for (const listName of listNames) {
+      if (!doContainListName(listName, listNameMap)) {
+        listNameMap.push({ listName: listName, displayName: `<missing-name-${i}>` });
+        i += 1;
+      }
+    }
+
+    return listNameMap;
+  }
 );
 
 const createSelectorLinks = createSelectorCreator(

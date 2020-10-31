@@ -10,7 +10,7 @@ import {
   MOVE_TO,
   BOTTOM_BAR_HEIGHT,
 } from '../types/const';
-import { getListNames } from '../selectors';
+import { getListNameMap } from '../selectors';
 
 class BottomBarBulkEditCommands extends React.Component {
 
@@ -35,7 +35,7 @@ class BottomBarBulkEditCommands extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (
       this.props.listName !== nextProps.listName ||
-      this.props.listNames !== nextProps.listNames ||
+      this.props.listNameMap !== nextProps.listNameMap ||
       this.props.isBulkEditMoveToPopupShown !== nextProps.isBulkEditMoveToPopupShown ||
       this.state.isEmptyErrorShown !== nextState.isEmptyErrorShown
     ) {
@@ -161,21 +161,23 @@ class BottomBarBulkEditCommands extends React.Component {
     const { isBulkEditMoveToPopupShown } = this.props;
 
     const moveTo = [];
-    for (const listName of this.props.listNames) {
-      if ([TRASH, ARCHIVE].includes(listName)) continue;
-      if (this.props.listName === listName) continue;
+    for (const listNameObj of this.props.listNameMap) {
+      if ([TRASH, ARCHIVE].includes(listNameObj.listName)) continue;
+      if (this.props.listName === listNameObj.listName) continue;
 
-      moveTo.push(listName);
+      moveTo.push(listNameObj);
     }
+
+    const style = { maxHeight: '18rem' };
 
     return (
       <React.Fragment>
         <button onClick={this.onBulkEditMoveToCancelBtnClick} tabIndex={-1} className={`${!isBulkEditMoveToPopupShown ? 'hidden' : ''} fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none`}></button>
-        <div onClick={this.onBulkEditMoveToPopupClick} className={`py-4 fixed inset-x-0 bottom-0 bg-white border border-gray-200 rounded-t-lg shadow-xl transform ${!isBulkEditMoveToPopupShown ? 'translate-y-full' : ''} transition-transform duration-300 ease-in-out z-41`}>
-          <div className="py-4 pl-4 block w-full text-gray-800 text-left">Move to...</div>
-          {moveTo.map(text => {
-            const key = MOVE_TO + ' ' + text;
-            return <button className="py-4 pl-8 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={key} data-key={key}>{text}</button>;
+        <div onClick={this.onBulkEditMoveToPopupClick} style={style} className={`py-4 fixed inset-x-0 bottom-0 bg-white border border-gray-200 rounded-t-lg shadow-xl overflow-auto transform ${!isBulkEditMoveToPopupShown ? 'translate-y-full' : ''} transition-transform duration-300 ease-in-out z-41`}>
+          <div className="py-4 pl-4 pr-2 block w-full text-gray-800 text-left">Move to...</div>
+          {moveTo.map(listNameObj => {
+            const key = MOVE_TO + ' ' + listNameObj.listName;
+            return <button className="py-4 pl-8 pr-2 block w-full text-gray-800 text-left truncate hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={key} data-key={key}>{listNameObj.displayName}</button>;
           })}
         </div>
       </React.Fragment>
@@ -272,7 +274,7 @@ class BottomBarBulkEditCommands extends React.Component {
 const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
-    listNames: getListNames(state),
+    listNameMap: getListNameMap(state),
     isBulkEditMoveToPopupShown: state.display.isBulkEditMoveToPopupShown,
     selectedLinkIds: state.display.selectedLinkIds,
   };

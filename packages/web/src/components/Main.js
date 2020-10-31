@@ -45,6 +45,7 @@ class Main extends React.PureComponent {
     this.updateScrollY = throttle(this.updateScrollY, 16);
 
     this.fetched = [];
+    this.doFetchSettings = true;
   }
 
   componentDidMount() {
@@ -59,8 +60,9 @@ class Main extends React.PureComponent {
     window.addEventListener('resize', this.updateColumnWidth);
     window.addEventListener('scroll', this.updateScrollY);
 
-    this.props.fetch(true, true);
+    this.props.fetch(true, true, this.doFetchSettings);
     this.fetched.push(this.props.listName);
+    this.doFetchSettings = false;
   }
 
   componentDidUpdate(prevProps) {

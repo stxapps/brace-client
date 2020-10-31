@@ -10,6 +10,7 @@ import {
   UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
   UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, CLEAR_SELECTED_LINK_IDS,
+  UPDATE_DELETING_LIST_NAME,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   RESET_STATE,
 } from '../types/actionTypes';
@@ -36,6 +37,7 @@ const initialState = {
   isBulkEditing: false,
   selectedLinkIds: [],
   isBulkEditMoveToPopupShown: false,
+  deletingListName: null,
   exportAllDataProgress: null,
   deleteAllDataProgress: null,
 };
@@ -59,6 +61,7 @@ export default (state = initialState, action) => {
       isBulkEditing: false,
       selectedLinkIds: [],
       isBulkEditMoveToPopupShown: false,
+      deletingListName: null,
       exportAllDataProgress: null,
       deleteAllDataProgress: null,
     };
@@ -193,6 +196,10 @@ export default (state = initialState, action) => {
 
   if (action.type === CLEAR_SELECTED_LINK_IDS) {
     return { ...state, selectedLinkIds: [] };
+  }
+
+  if (action.type === UPDATE_DELETING_LIST_NAME) {
+    return { ...state, deletingListName: action.payload };
   }
 
   if (action.type === UPDATE_EXPORT_ALL_DATA_PROGRESS) {

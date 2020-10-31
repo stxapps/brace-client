@@ -9,7 +9,8 @@ import {
   MY_LIST, ARCHIVE, TRASH,
   MOVE_TO,
 } from '../types/const';
-import { getListNames } from '../selectors';
+import { getListNameMap } from '../selectors';
+import { getLongestListNameDisplayName } from '../utils';
 
 class TopBarBulkEditCommands extends React.Component {
 
@@ -34,7 +35,7 @@ class TopBarBulkEditCommands extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (
       this.props.listName !== nextProps.listName ||
-      this.props.listNames !== nextProps.listNames ||
+      this.props.listNameMap !== nextProps.listNameMap ||
       this.props.isBulkEditMoveToPopupShown !== nextProps.isBulkEditMoveToPopupShown ||
       this.state.isEmptyErrorShown !== nextState.isEmptyErrorShown
     ) {
@@ -154,21 +155,30 @@ class TopBarBulkEditCommands extends React.Component {
   renderBulkEditMoveToPopup() {
 
     const moveTo = [];
-    for (const listName of this.props.listNames) {
-      if ([TRASH, ARCHIVE].includes(listName)) continue;
-      if (this.props.listName === listName) continue;
+    for (const listNameObj of this.props.listNameMap) {
+      if ([TRASH, ARCHIVE].includes(listNameObj.listName)) continue;
+      if (this.props.listName === listNameObj.listName) continue;
 
-      moveTo.push(listName);
+      moveTo.push(listNameObj);
+    }
+
+    const longestDisplayNameLength = getLongestListNameDisplayName(moveTo).length;
+
+    const style = { width: '7rem', maxHeight: '16rem' };
+    if (longestDisplayNameLength > 7) {
+      // Approx 10px or 0.625rem per additional character
+      const width = Math.min(7 + 0.625 * (longestDisplayNameLength - 7), 8.25);
+      style.width = `${width}rem`;
     }
 
     return (
       <React.Fragment>
         <button onClick={this.onBulkEditMoveToCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none"></button>
-        <div onClick={this.onBulkEditMoveToPopupClick} className="mt-2 py-2 absolute left-29/100 w-32 bg-white border border-gray-200 rounded-lg shadow-xl z-41">
+        <div onClick={this.onBulkEditMoveToPopupClick} style={style} className="mt-2 py-2 absolute left-29/100 bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41">
 
-          {moveTo.map(text => {
-            const key = MOVE_TO + ' ' + text;
-            return <button className="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={key} data-key={key}>{text}</button>;
+          {moveTo.map(listNameObj => {
+            const key = MOVE_TO + ' ' + listNameObj.listName;
+            return <button className="py-2 pl-4 pr-2 block w-full text-gray-800 text-left truncate hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={key} data-key={key}>{listNameObj.displayName}</button>;
           })}
         </div>
       </React.Fragment>
@@ -259,7 +269,7 @@ class TopBarBulkEditCommands extends React.Component {
 const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
-    listNames: getListNames(state),
+    listNameMap: getListNameMap(state),
     isBulkEditMoveToPopupShown: state.display.isBulkEditMoveToPopupShown,
     selectedLinkIds: state.display.selectedLinkIds,
   };

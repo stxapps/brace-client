@@ -5,6 +5,7 @@ import {
 } from '../types/const';
 import {
   FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
+  UPDATE_SETTINGS,
 } from '../types/actionTypes';
 import { effect as blockstackEffect } from './blockstack';
 import { isEqual } from '../utils';
@@ -96,6 +97,7 @@ export const effect = async (effectObj, _action) => {
   if ([
     GET_FILE, PUT_FILE, DELETE_FILE,
     FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
+    UPDATE_SETTINGS,
   ].includes(method)) {
     return await blockstackEffect(effectObj, _action);
   }

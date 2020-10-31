@@ -6,7 +6,8 @@ import {
   TRASH,
 } from '../types/const';
 import {
-  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
+  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS,
+  DELETE_OLD_LINKS_IN_TRASH, UPDATE_SETTINGS,
 } from '../types/actionTypes';
 
 export const effect = async (effectObj, _action) => {
@@ -43,6 +44,10 @@ export const effect = async (effectObj, _action) => {
 
   if (method === DELETE_OLD_LINKS_IN_TRASH) {
     return deleteOldLinksInTrash();
+  }
+
+  if (method === UPDATE_SETTINGS) {
+    return updateSettings(params);
   }
 
   throw new Error(`${method} is invalid for blockstack effect.`);
@@ -118,7 +123,9 @@ export const batchGetFileWithRetry = async (fpaths, callCount) => {
   return responses;
 };
 
-const fetch = async (listName) => {
+const fetch = async (params) => {
+
+  const { listName, doFetchSettings } = params;
 
   const { linkFPaths, settingsFPath } = await listFPaths();
 
@@ -128,11 +135,13 @@ const fetch = async (listName) => {
   const links = responses.map(response => JSON.parse(response.content));
   const hasMore = namedLinkFPaths.length > N_LINKS;
 
+  // List names should be retrieve from settings
+  //   but also retrive from file paths in case the settings is gone.
   const listNames = Object.keys(linkFPaths);
 
   // If there is settings, fetch settings
   let settings;
-  if (settingsFPath) {
+  if (settingsFPath && doFetchSettings) {
     settings = JSON.parse(/** @type {string} */(await userSession.getFile(settingsFPath)));
   }
 
@@ -263,3 +272,27 @@ const deleteOldLinksInTrash = async () => {
 
   return { listName: TRASH, ids };
 };
+
+const updateSettings = async (settings) => {
+
+  const fPaths = [SETTINGS_FNAME];
+  const contents = [settings];
+
+  const responses = await batchPutFileWithRetry(fPaths, contents, 0);
+  const publicUrls = responses.map(response => response.publicUrl);
+
+  return { publicUrls };
+};
+
+export const canDeleteListNames = async (listNames) => {
+
+  const { linkFPaths } = await listFPaths();
+  const inUseListNames = Object.keys(linkFPaths);
+
+  const canDeletes = [];
+  for (const listName of listNames) {
+    canDeletes.push(!inUseListNames.includes(listName));
+  }
+
+  return canDeletes;
+}

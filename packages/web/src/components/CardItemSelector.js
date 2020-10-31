@@ -64,7 +64,7 @@ class CardItemSelector extends React.Component {
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm leading-5 font-medium text-red-800 text-left">To prevent network overload, up to {MAX_SELECTED_LINK_IDS} items can be selected.</h3>
+              <h3 className="text-sm text-red-800 font-medium text-left leading-5">To prevent network overload, up to {MAX_SELECTED_LINK_IDS} items can be selected.</h3>
             </div>
           </div>
         </div>
