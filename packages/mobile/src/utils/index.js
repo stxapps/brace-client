@@ -6,6 +6,7 @@ import {
   COLOR, PATTERN, IMAGE,
   BG_COLOR_STYLES, PATTERNS,
   VALID_URL, NO_URL, ASK_CONFIRM_URL,
+  VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME,
 } from '../types/const';
 import { IMAGES } from '../types/imagePaths';
 
@@ -144,7 +145,7 @@ const exclude = (obj, key, value) => {
 };
 
 /**
- * Return an object of objects without/ingoring some attributes that meet the criteria.
+ * Return an object of objects without/ignoring some attributes that meet the criteria.
  **/
 const ignore = (obj, key) => {
   if (Array.isArray(obj)) throw new Error(`Must be obj, not arr: ${obj}`);
@@ -675,4 +676,100 @@ export const getUserImageUrl = (userData) => {
   }
 
   return userImageUrl;
+};
+
+export const getListNameDisplayName = (listName, listNameMap) => {
+  for (const listNameObj of listNameMap) {
+    if (listNameObj.listName === listName) return listNameObj.displayName;
+  }
+
+  // Not throw an error because it can happen:
+  //   - Delete a link
+  //   - Delete a list name
+  //   - Commit delete the link -> cause rerender without the list name!
+  console.log(`getListNameDisplayName: invalid listName: ${listName} and listNameMap: ${listNameMap}`);
+  return listName;
+};
+
+export const getLongestListNameDisplayName = (listNameMap) => {
+  let displayName = '';
+  for (const listNameObj of listNameMap) {
+    if (listNameObj.displayName.length > displayName.length) {
+      displayName = listNameObj.displayName;
+    }
+  }
+  return displayName;
+};
+
+export const doContainListName = (listName, listNameObjs) => {
+
+  for (const listNameObj of listNameObjs) {
+    if (listNameObj.listName === listName) return true;
+  }
+
+  return false;
+}
+
+export const doContainListNameDisplayName = (displayName, listNameObjs) => {
+
+  for (const listNameObj of listNameObjs) {
+    if (listNameObj.displayName === displayName) return true;
+  }
+
+  return false;
+}
+
+export const validateListNameDisplayName = (displayName, listNameMap) => {
+
+  // Validate:
+  //   1. Empty 2. Contain space at the begining or the end 3. Contain invalid characters
+  //   4. Too long 5. Duplicate
+  //
+  // 2 and 3 are not the problem because this is display name!
+
+  if (!displayName || !isString(displayName) || displayName === '') return NO_LIST_NAME;
+  if (displayName.length > 256) return TOO_LONG_LIST_NAME;
+
+  if (doContainListNameDisplayName(displayName, listNameMap)) return DUPLICATE_LIST_NAME;
+
+  return VALID_LIST_NAME;
+};
+
+export const swapArrayElements = (a, x, y) => (a[x] && a[y] && [
+  ...a.slice(0, x),
+  a[y],
+  ...a.slice(x + 1, y),
+  a[x],
+  ...a.slice(y + 1)
+]) || a;
+
+export const getInsertIndex = (listNameObj, oldListNameMap, newListNameMap) => {
+
+  // listNameObj is in oldListNameMap and try to find where to insert into newListNameMap
+  //   while preserving the order.
+
+  const i = oldListNameMap.findIndex(obj => obj.listName === listNameObj.listName);
+  if (i < 0) {
+    console.log(`getInsertIndex: invalid listNameObj: ${listNameObj} and oldListNameMap: ${oldListNameMap}`);
+    return -1;
+  }
+
+  let prev = i - 1;
+  let next = i + 1;
+  while (prev >= 0 || next < oldListNameMap.length) {
+    if (prev >= 0) {
+      const listName = oldListNameMap[prev].listName;
+      const listNameIndex = newListNameMap.findIndex(obj => obj.listName === listName);
+      if (listNameIndex >= 0) return listNameIndex + 1;
+      prev -= 1;
+    }
+    if (next < oldListNameMap.length) {
+      const listName = oldListNameMap[next].listName;
+      const listNameIndex = newListNameMap.findIndex(obj => obj.listName === listName);
+      if (listNameIndex >= 0) return listNameIndex;
+      next += 1;
+    }
+  }
+
+  return -1;
 };

@@ -43,10 +43,12 @@ export const ADDED = 'ADDED';
 export const MOVING = 'MOVING';
 export const REMOVING = 'REMOVING';
 export const DELETING = 'DELETING';
+export const UPDATING = 'UPDATING';
 export const DIED_ADDING = 'DIED_ADDING';
 export const DIED_MOVING = 'DIED_MOVING';
 export const DIED_REMOVING = 'DIED_REMOVING';
 export const DIED_DELETING = 'DIED_DELETING';
+export const DIED_UPDATING = 'DIED_UPDATING';
 
 export const OPEN = 'Open';
 export const COPY_LINK = 'Copy link';
@@ -131,3 +133,20 @@ export const LG_WIDTH = 1024;
 export const XL_WIDTH = 1280;
 
 export const MAX_SELECTED_LINK_IDS = 10;
+
+export const VALID_LIST_NAME = 'VALID_LIST_NAME';
+export const NO_LIST_NAME = 'NO_LIST_NAME';
+export const TOO_LONG_LIST_NAME = 'TOO_LONG_LIST_NAME';
+export const DUPLICATE_LIST_NAME = 'DUPLICATE_LIST_NAME';
+export const IN_USE_LIST_NAME = 'IN_USE_LIST_NAME';
+
+export const LIST_NAME_MSGS = {
+  [VALID_LIST_NAME]: '',
+  [NO_LIST_NAME]: 'List is blank',
+  [TOO_LONG_LIST_NAME]: 'List is too long',
+  [DUPLICATE_LIST_NAME]: 'List already exists',
+  [IN_USE_LIST_NAME]: 'List is in use',
+};
+
+export const SWAP_LEFT = 'SWAP_LEFT';
+export const SWAP_RIGHT = 'SWAP_RIGHT';

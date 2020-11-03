@@ -20,7 +20,16 @@ import {
   UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION, UPDATE_HANDLING_SIGN_IN,
   UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, CLEAR_SELECTED_LINK_IDS,
-  RESET_STATE,
+  ADD_LIST_NAMES, ADD_LIST_NAMES_COMMIT, ADD_LIST_NAMES_ROLLBACK,
+  UPDATE_LIST_NAMES, UPDATE_LIST_NAMES_COMMIT, UPDATE_LIST_NAMES_ROLLBACK,
+  MOVE_LIST_NAME, MOVE_LIST_NAME_COMMIT, MOVE_LIST_NAME_ROLLBACK,
+  DELETE_LIST_NAMES, DELETE_LIST_NAMES_COMMIT, DELETE_LIST_NAMES_ROLLBACK,
+  UPDATE_DELETING_LIST_NAME,
+  RETRY_ADD_LIST_NAMES, RETRY_UPDATE_LIST_NAMES, RETRY_MOVE_LIST_NAME,
+  RETRY_DELETE_LIST_NAMES, CANCEL_DIED_LIST_NAMES,
+  UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
+  UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
+  DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   DOMAIN_NAME, APP_DOMAIN_NAME, BLOCKSTACK_AUTH, SAVE_TO_BRACE,
@@ -28,14 +37,15 @@ import {
   CONFIRM_DELETE_POPUP, SETTINGS_POPUP, BULK_EDIT_MOVE_TO_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE,
-  DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
+  DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   BRACE_EXTRACT_URL, EXTRACT_EXCEEDING_N_URLS,
+  N_LINKS, SWAP_LEFT, SWAP_RIGHT,
 } from '../types/const';
 import {
   _,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam,
-  getUserImageUrl, randomDecor,
+  getUserImageUrl, randomDecor, swapArrayElements,
 } from '../utils';
 
 export const init = async (store) => {
@@ -251,14 +261,14 @@ export const updatePopup = (id, isShown, anchorPosition = null) => {
   };
 };
 
-export const fetch = (doDeleteOldLinks, doExtractContents) => async (dispatch, getState) => {
+export const fetch = (doDeleteOldLinks, doExtractContents, doFetchSettings = false) => async (dispatch, getState) => {
 
   const listName = getState().display.listName;
   dispatch({
     type: FETCH,
     meta: {
       offline: {
-        effect: { method: FETCH, params: listName },
+        effect: { method: FETCH, params: { listName, doFetchSettings } },
         commit: { type: FETCH_COMMIT, meta: { doDeleteOldLinks, doExtractContents } },
         rollback: { type: FETCH_ROLLBACK },
       }
@@ -613,4 +623,249 @@ export const clearSelectedLinkIds = () => {
   return {
     type: CLEAR_SELECTED_LINK_IDS
   };
+};
+
+export const addListNames = (newNames) => async (dispatch, getState) => {
+
+  let i = 0;
+  const addedDT = Date.now();
+
+  const listNameObjs = [];
+  for (const newName of newNames) {
+    // If cpu is fast enough, addedDT will be the same for all new names!
+    //    so use a predefined one with added loop index.
+    const id = `${addedDT + i}-${randomString(4)}`;
+    const listNameObj = { listName: id, displayName: newName };
+    listNameObjs.push(listNameObj);
+
+    i += 1;
+  }
+
+  const settings = { ...getState()['settings'] };
+  settings.listNameMap = [
+    ...settings.listNameMap.map(listNameObj => {
+      return { listName: listNameObj.listName, displayName: listNameObj.displayName };
+    }),
+    ...listNameObjs
+  ];
+
+  const payload = { listNameObjs };
+  dispatch({
+    type: ADD_LIST_NAMES,
+    payload: payload,
+    meta: {
+      offline: {
+        effect: { method: UPDATE_SETTINGS, params: settings },
+        commit: { type: ADD_LIST_NAMES_COMMIT, meta: payload },
+        rollback: { type: ADD_LIST_NAMES_ROLLBACK, meta: payload }
+      }
+    }
+  });
+};
+
+export const updateListNames = (listNames, newNames) => async (dispatch, getState) => {
+
+  const settings = { ...getState()['settings'] };
+  settings.listNameMap = settings.listNameMap.map(listNameObj => {
+
+    const i = listNames.indexOf(listNameObj.listName);
+    if (i >= 0) {
+      return { listName: listNameObj.listName, displayName: newNames[i] };
+    }
+
+    return { listName: listNameObj.listName, displayName: listNameObj.displayName };
+  });
+
+  const payload = { listNames, newNames };
+  dispatch({
+    type: UPDATE_LIST_NAMES,
+    payload: payload,
+    meta: {
+      offline: {
+        effect: { method: UPDATE_SETTINGS, params: settings },
+        commit: { type: UPDATE_LIST_NAMES_COMMIT, meta: payload },
+        rollback: { type: UPDATE_LIST_NAMES_ROLLBACK, meta: payload }
+      }
+    }
+  });
+};
+
+export const moveListName = (listName, direction) => async (dispatch, getState) => {
+
+  const settings = { ...getState()['settings'] };
+  settings.listNameMap = settings.listNameMap.map(listNameObj => {
+    return { listName: listNameObj.listName, displayName: listNameObj.displayName };
+  });
+
+  const i = settings.listNameMap.findIndex(listNameObj => {
+    return listNameObj.listName === listName;
+  });
+  if (i < 0) throw new Error(`Invalid listName: ${listName} and listNameMap: ${settings.listNameMap}`);
+
+  if (direction === SWAP_LEFT) {
+    settings.listNameMap = swapArrayElements(settings.listNameMap, i - 1, i);
+  } else if (direction === SWAP_RIGHT) {
+    settings.listNameMap = swapArrayElements(settings.listNameMap, i, i + 1);
+  } else {
+    throw new Error(`Invalid direction: ${direction}`);
+  }
+
+  const payload = { listName, direction };
+  dispatch({
+    type: MOVE_LIST_NAME,
+    payload: payload,
+    meta: {
+      offline: {
+        effect: { method: UPDATE_SETTINGS, params: settings },
+        commit: { type: MOVE_LIST_NAME_COMMIT, meta: payload },
+        rollback: { type: MOVE_LIST_NAME_ROLLBACK, meta: payload }
+      }
+    }
+  });
+};
+
+export const deleteListNames = (listNames) => async (dispatch, getState) => {
+
+  const settings = { ...getState()['settings'] };
+  settings.listNameMap = settings.listNameMap.filter(listNameObj => {
+    return !listNames.includes(listNameObj.listName);
+  });
+  settings.listNameMap = settings.listNameMap.map(listNameObj => {
+    return { listName: listNameObj.listName, displayName: listNameObj.displayName };
+  });
+
+  const payload = { listNames };
+  dispatch({
+    type: DELETE_LIST_NAMES,
+    payload: payload,
+    meta: {
+      offline: {
+        effect: { method: UPDATE_SETTINGS, params: settings },
+        commit: { type: DELETE_LIST_NAMES_COMMIT, meta: payload },
+        rollback: { type: DELETE_LIST_NAMES_ROLLBACK, meta: payload }
+      }
+    }
+  });
+};
+
+export const updateDeletingListName = (listName) => {
+  return {
+    type: UPDATE_DELETING_LIST_NAME,
+    payload: listName,
+  }
+};
+
+export const retryDiedListNames = (listNames) => async (dispatch, getState) => {
+
+  const settings = { ...getState()['settings'] };
+
+  const listNameObjs = settings.listNameMap.filter(obj => {
+    return listNames.includes(obj.listName)
+  });
+
+  settings.listNameMap = [
+    ...settings.listNameMap.map(listNameObj => {
+      return { listName: listNameObj.listName, displayName: listNameObj.displayName };
+    })
+  ];
+
+  const diedAddingListNameObjs = listNameObjs.filter(obj => {
+    return obj.status === DIED_ADDING;
+  });
+  if (diedAddingListNameObjs.length > 0) {
+
+    const payload = { listNameObjs: diedAddingListNameObjs };
+    dispatch({
+      type: RETRY_ADD_LIST_NAMES,
+      payload: payload,
+      meta: {
+        offline: {
+          effect: { method: UPDATE_SETTINGS, params: settings },
+          commit: { type: ADD_LIST_NAMES_COMMIT, meta: payload },
+          rollback: { type: ADD_LIST_NAMES_ROLLBACK, meta: payload }
+        }
+      }
+    });
+  }
+
+  const diedUpdatingListNameObjs = listNameObjs.filter(obj => {
+    return obj.status === DIED_UPDATING;
+  });
+  if (diedUpdatingListNameObjs.length > 0) {
+
+    const diedUpdatingListNames = diedUpdatingListNameObjs.map(obj => obj.listName);
+    const payload = { listNames: diedUpdatingListNames };
+    dispatch({
+      type: RETRY_UPDATE_LIST_NAMES,
+      payload: payload,
+      meta: {
+        offline: {
+          effect: { method: UPDATE_SETTINGS, params: settings },
+          commit: { type: UPDATE_LIST_NAMES_COMMIT, meta: payload },
+          rollback: { type: UPDATE_LIST_NAMES_ROLLBACK, meta: payload }
+        }
+      }
+    });
+  }
+
+  const diedMovingListNameObjs = listNameObjs.filter(obj => {
+    return obj.status === DIED_MOVING;
+  });
+  for (const diedMovingListNameObj of diedMovingListNameObjs) {
+
+    const payload = { listName: diedMovingListNameObj.listName };
+    dispatch({
+      type: RETRY_MOVE_LIST_NAME,
+      payload: payload,
+      meta: {
+        offline: {
+          effect: { method: UPDATE_SETTINGS, params: settings },
+          commit: { type: MOVE_LIST_NAME_COMMIT, meta: payload },
+          rollback: { type: MOVE_LIST_NAME_ROLLBACK, meta: payload }
+        }
+      }
+    });
+  }
+
+  const diedDeletingListNameObjs = listNameObjs.filter(obj => {
+    return obj.status === DIED_DELETING;
+  });
+  if (diedDeletingListNameObjs.length > 0) {
+
+    const diedDeletingListNames = diedDeletingListNameObjs.map(obj => obj.listName);
+    const payload = { listNames: diedDeletingListNames };
+    dispatch({
+      type: RETRY_DELETE_LIST_NAMES,
+      payload: payload,
+      meta: {
+        offline: {
+          effect: { method: UPDATE_SETTINGS, params: settings },
+          commit: { type: DELETE_LIST_NAMES_COMMIT, meta: payload },
+          rollback: { type: DELETE_LIST_NAMES_ROLLBACK, meta: payload }
+        }
+      }
+    });
+  }
+};
+
+export const cancelDiedListNames = (listNames) => {
+  return {
+    type: CANCEL_DIED_LIST_NAMES,
+    payload: { listNames }
+  };
+};
+
+export const updateSettings = (updatedValues) => async (dispatch, getState) => {
+
+  const settings = { ...getState()['settings'], ...updatedValues };
+  dispatch({
+    type: UPDATE_SETTINGS,
+    meta: {
+      offline: {
+        effect: { method: UPDATE_SETTINGS, params: settings },
+        commit: { type: UPDATE_SETTINGS_COMMIT },
+        rollback: { type: UPDATE_SETTINGS_ROLLBACK }
+      }
+    }
+  });
 };

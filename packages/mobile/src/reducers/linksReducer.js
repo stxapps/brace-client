@@ -10,6 +10,7 @@ import {
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
   CANCEL_DIED_LINKS,
   DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT,
+  DELETE_LIST_NAMES_COMMIT,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -17,10 +18,10 @@ import {
   IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE,
   ID, STATUS,
-  ADDING, ADDED, MOVING, REMOVING, DELETING,
+  ADDED, ADDING, MOVING, REMOVING, DELETING,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
 } from '../types/const';
-import { _ } from '../utils';
+import { _, isEqual } from '../utils';
 import { moveLinksDeleteStep, deleteOldLinksInTrash, extractContents } from '../actions';
 
 const initialState = {
@@ -339,6 +340,28 @@ export default (state = initialState, action) => {
           [action.payload.isShown, action.payload.anchorPosition]
         );
       }
+    }
+
+    return newState;
+  }
+
+  if (action.type === DELETE_LIST_NAMES_COMMIT) {
+
+    const { listNames } = action.meta;
+
+    const newState = {};
+    for (const listName in state) {
+      if (listNames.includes(listName)) {
+        if (
+          state[listName] !== undefined &&
+          state[listName] !== null &&
+          !isEqual(state[listName], {})
+        ) {
+          throw new Error(`links: ${listName} should be undefined, null, or an empty object.`);
+        }
+        continue;
+      }
+      newState[listName] = state[listName];
     }
 
     return newState;
