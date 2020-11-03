@@ -188,12 +188,13 @@ class TopBarBulkEditCommands extends React.Component {
   render() {
 
     const { listName, isBulkEditMoveToPopupShown } = this.props;
+    const rListName = [MY_LIST, ARCHIVE, TRASH].includes(listName) ? listName : MY_LIST;
 
-    const isArchiveBtnShown = [MY_LIST].includes(listName);
-    const isRemoveBtnShown = [MY_LIST, ARCHIVE].includes(listName);
-    const isRestoreBtnShown = [TRASH].includes(listName);
-    const isDeleteBtnShown = [TRASH].includes(listName);
-    const isMoveToBtnShown = [ARCHIVE].includes(listName);
+    const isArchiveBtnShown = [MY_LIST].includes(rListName);
+    const isRemoveBtnShown = [MY_LIST, ARCHIVE].includes(rListName);
+    const isRestoreBtnShown = [TRASH].includes(rListName);
+    const isDeleteBtnShown = [TRASH].includes(rListName);
+    const isMoveToBtnShown = [ARCHIVE].includes(rListName);
 
     const btnStyle = {
       height: '2.125rem',

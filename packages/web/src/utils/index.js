@@ -683,7 +683,12 @@ export const getListNameDisplayName = (listName, listNameMap) => {
     if (listNameObj.listName === listName) return listNameObj.displayName;
   }
 
-  throw new Error(`Invalid listName: ${listName} and listNameMap: ${listNameMap}`);
+  // Not throw an error because it can happen:
+  //   - Delete a link
+  //   - Delete a list name
+  //   - Commit delete the link -> cause rerender without the list name!
+  console.log(`getListNameDisplayName: invalid listName: ${listName} and listNameMap: ${listNameMap}`);
+  return listName;
 };
 
 export const getLongestListNameDisplayName = (listNameMap) => {
@@ -737,3 +742,34 @@ export const swapArrayElements = (a, x, y) => (a[x] && a[y] && [
   a[x],
   ...a.slice(y + 1)
 ]) || a;
+
+export const getInsertIndex = (listNameObj, oldListNameMap, newListNameMap) => {
+
+  // listNameObj is in oldListNameMap and try to find where to insert into newListNameMap
+  //   while preserving the order.
+
+  const i = oldListNameMap.findIndex(obj => obj.listName === listNameObj.listName);
+  if (i < 0) {
+    console.log(`getInsertIndex: invalid listNameObj: ${listNameObj} and oldListNameMap: ${oldListNameMap}`);
+    return -1;
+  }
+
+  let prev = i - 1;
+  let next = i + 1;
+  while (prev >= 0 || next < oldListNameMap.length) {
+    if (prev >= 0) {
+      const listName = oldListNameMap[prev].listName;
+      const listNameIndex = newListNameMap.findIndex(obj => obj.listName === listName);
+      if (listNameIndex >= 0) return listNameIndex + 1;
+      prev -= 1;
+    }
+    if (next < oldListNameMap.length) {
+      const listName = oldListNameMap[next].listName;
+      const listNameIndex = newListNameMap.findIndex(obj => obj.listName === listName);
+      if (listNameIndex >= 0) return listNameIndex;
+      next += 1;
+    }
+  }
+
+  return -1;
+};

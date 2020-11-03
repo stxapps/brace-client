@@ -2,7 +2,8 @@ import { createSelectorCreator, defaultMemoize, createSelector } from 'reselect'
 
 import {
   ID, STATUS,
-  ADDING, ADDED, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
+  ADDED, ADDING, UPDATING, MOVING, DIED_ADDING, DIED_UPDATING, DIED_MOVING,
+  DIED_REMOVING, DIED_DELETING,
   IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
 } from '../types/const';
 import {
@@ -32,11 +33,14 @@ export const getListNameMap = createSelectorListNameMap(
   (state) => {
 
     const listNames = Object.keys(state.links);
-    const listNameMap = [...state.settings.listNameMap];
+    const listNameMap = [...state.settings.listNameMap.filter(listNameObj => {
+      return [ADDED, ADDING, UPDATING, MOVING, DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_DELETING].includes(listNameObj.status);
+    })];
 
     let i = 1;
     for (const listName of listNames) {
-      if (!doContainListName(listName, listNameMap)) {
+      // Not in listNameMap and also deleting list name in state.settings.listNameMap.
+      if (!doContainListName(listName, state.settings.listNameMap)) {
         listNameMap.push({ listName: listName, displayName: `<missing-name-${i}>` });
         i += 1;
       }
@@ -87,7 +91,7 @@ export const getLinks = createSelectorLinks(
 
     if (!links || !links[listName]) return null;
 
-    const selectedLinks = _.select(links[listName], STATUS, [ADDING, ADDED, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING]);
+    const selectedLinks = _.select(links[listName], STATUS, [ADDED, ADDING, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING]);
 
     const moving_ids = [];
     for (const key in links) {

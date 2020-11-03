@@ -10,7 +10,7 @@ import {
   UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
   UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, CLEAR_SELECTED_LINK_IDS,
-  UPDATE_DELETING_LIST_NAME,
+  DELETE_LIST_NAMES_COMMIT, UPDATE_DELETING_LIST_NAME,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   RESET_STATE,
 } from '../types/actionTypes';
@@ -196,6 +196,13 @@ export default (state = initialState, action) => {
 
   if (action.type === CLEAR_SELECTED_LINK_IDS) {
     return { ...state, selectedLinkIds: [] };
+  }
+
+  if (action.type === DELETE_LIST_NAMES_COMMIT) {
+    const { listNames } = action.meta;
+    if (listNames.includes(state.listName)) {
+      return { ...state, listName: MY_LIST };
+    }
   }
 
   if (action.type === UPDATE_DELETING_LIST_NAME) {

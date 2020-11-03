@@ -14,8 +14,10 @@ import {
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
   SM_WIDTH, MD_WIDTH, LG_WIDTH,
 } from '../types/const';
-import { getLinks } from '../selectors';
-import { addRem, getWindowHeight, getWindowScrollHeight, throttle } from '../utils';
+import { getListNameMap, getLinks } from '../selectors';
+import {
+  addRem, getWindowHeight, getWindowScrollHeight, throttle, getListNameDisplayName,
+} from '../utils';
 
 import Loading from './Loading';
 import TopBar from './TopBar';
@@ -158,7 +160,7 @@ class Main extends React.PureComponent {
 
   renderEmpty() {
 
-    const { listName, searchString } = this.props;
+    const { listName, listNameMap, searchString } = this.props;
 
     if (searchString !== '') {
       return (
@@ -205,11 +207,13 @@ class Main extends React.PureComponent {
       );
     }
 
+    const displayName = getListNameDisplayName(listName, listNameMap);
+
     return (
       <React.Fragment>
         <img className="mx-auto mt-10 w-40" src={emptyBox} alt="An empty box lying down" />
-        <h3 className="mt-6 text-lg text-gray-900 text-center">No links in {listName}</h3>
-        <p className="mx-auto mt-4 max-w-md text-base text-gray-900 text-center">Click <span className="font-semibold">"{listName}"</span> from the Link menu to move links here.</p>
+        <h3 className="mt-6 text-lg text-gray-900 text-center">No links in {displayName}</h3>
+        <p className="mx-auto mt-4 max-w-md text-base text-gray-900 text-center">Click <span className="font-semibold">"{displayName}"</span> from the Link menu to move links here.</p>
       </React.Fragment>
     );
   }
@@ -299,6 +303,7 @@ const mapStateToProps = (state, props) => {
 
   return {
     listName: listName,
+    listNameMap: getListNameMap(state),
     links: getLinks(state),
     hasMoreLinks: state.hasMoreLinks[listName],
     isFetchingMore: state.display.isFetchingMore,
