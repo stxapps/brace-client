@@ -69,12 +69,14 @@ class _ListNameEditor extends React.PureComponent {
     this.state = { ...this.initialState };
 
     this.input = React.createRef();
+
     this.didOkBtnJustPress = false;
+    this.didCancelBtnJustPress = false;
   }
 
   componentDidMount() {
     if (this.props.listNameObj) {
-      this.setState({ value: this.props.listNameObj.displayName })
+      this.setState({ value: this.props.listNameObj.displayName });
     }
   }
 
@@ -115,9 +117,10 @@ class _ListNameEditor extends React.PureComponent {
   }
 
   onInputBlur = () => {
-    console.log('onInputBlur called');
-    if (this.didOkBtnJustPress) {
+
+    if (this.didOkBtnJustPress || this.didCancelBtnJustPress) {
       this.didOkBtnJustPress = false;
+      this.didCancelBtnJustPress = false;
       return;
     }
 
@@ -135,7 +138,6 @@ class _ListNameEditor extends React.PureComponent {
   }
 
   onOkBtnPress = () => {
-    console.log('onOkBtnPress called');
     this.didOkBtnJustPress = true;
   }
 
@@ -145,7 +147,7 @@ class _ListNameEditor extends React.PureComponent {
   }
 
   onAddOkBtnClick = () => {
-    console.log('onAddOkBtnClick called');
+
     const { validateDisplayName, addListNames } = this.props;
     const { value } = this.state;
 
@@ -161,7 +163,7 @@ class _ListNameEditor extends React.PureComponent {
   }
 
   onEditOkBtnClick = () => {
-    console.log('onEditOkBtnClick called');
+
     const { listNameObj, validateDisplayName, updateListNames } = this.props;
     const { value } = this.state;
 
@@ -178,8 +180,11 @@ class _ListNameEditor extends React.PureComponent {
     this.setState({ ...this.initialState, value: value });
   }
 
+  onCancelBtnPress = () => {
+    this.didCancelBtnJustPress = true;
+  }
+
   onCancelBtnClick = () => {
-    console.log('onCancelBtnClick called');
     const value = this.props.listNameObj ? this.props.listNameObj.displayName : '';
     this.setState({ mode: MODE_VIEW, value: value, msg: '' });
     this.input.current.blur();
@@ -232,12 +237,6 @@ class _ListNameEditor extends React.PureComponent {
     const { listNameObj } = this.props;
     const { mode, value, msg, isCheckingCanDelete } = this.state;
 
-    // No delete on 3 main lists, hide the button
-    let deleteBtnStyleClasses = '';
-    if (listNameObj && [MY_LIST, TRASH, ARCHIVE].includes(listNameObj.listName)) {
-      deleteBtnStyleClasses = 'invisible';
-    }
-
     const isBusy = (listNameObj && [ADDING, UPDATING, MOVING].includes(listNameObj.status)) || isCheckingCanDelete;
     const doRetry = listNameObj && [DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_DELETING].includes(listNameObj.status);
 
@@ -259,13 +258,20 @@ class _ListNameEditor extends React.PureComponent {
         </div>
       );
     } else {
-      deleteBtn = (
-        <button onClick={this.onDeleteBtnClick} className={`flex-grow-0 flex-shrink-0 flex justify-start items-center w-8 h-10 group ${deleteBtnStyleClasses} focus:outline-none-outer`}>
-          <svg className="h-4 text-gray-600 rounded-sm group-hover:text-gray-900 focus:shadow-outline-inner" viewBox="0 0 14 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path fillRule="evenodd" clipRule="evenodd" d="M6 0C5.62123 0 5.27497 0.214 5.10557 0.55279L4.38197 2H1C0.44772 2 0 2.44772 0 3C0 3.55228 0.44772 4 1 4V14C1 15.1046 1.89543 16 3 16H11C12.1046 16 13 15.1046 13 14V4C13.5523 4 14 3.55228 14 3C14 2.44772 13.5523 2 13 2H9.618L8.8944 0.55279C8.725 0.214 8.3788 0 8 0H6ZM4 6C4 5.44772 4.44772 5 5 5C5.55228 5 6 5.44772 6 6V12C6 12.5523 5.55228 13 5 13C4.44772 13 4 12.5523 4 12V6ZM9 5C8.4477 5 8 5.44772 8 6V12C8 12.5523 8.4477 13 9 13C9.5523 13 10 12.5523 10 12V6C10 5.44772 9.5523 5 9 5Z" />
-          </svg>
-        </button>
-      );
+      // No delete on 3 main lists, hide the button
+      if (listNameObj && [MY_LIST, TRASH, ARCHIVE].includes(listNameObj.listName)) {
+        deleteBtn = (
+          <div className="flex-grow-0 flex-shrink-0 w-8 h-10"></div>
+        );
+      } else {
+        deleteBtn = (
+          <button onClick={this.onDeleteBtnClick} className={'flex-grow-0 flex-shrink-0 flex justify-start items-center w-8 h-10 group focus:outline-none-outer'}>
+            <svg className="h-4 text-gray-600 rounded-sm group-hover:text-gray-900 focus:shadow-outline-inner" viewBox="0 0 14 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" clipRule="evenodd" d="M6 0C5.62123 0 5.27497 0.214 5.10557 0.55279L4.38197 2H1C0.44772 2 0 2.44772 0 3C0 3.55228 0.44772 4 1 4V14C1 15.1046 1.89543 16 3 16H11C12.1046 16 13 15.1046 13 14V4C13.5523 4 14 3.55228 14 3C14 2.44772 13.5523 2 13 2H9.618L8.8944 0.55279C8.725 0.214 8.3788 0 8 0H6ZM4 6C4 5.44772 4.44772 5 5 5C5.55228 5 6 5.44772 6 6V12C6 12.5523 5.55228 13 5 13C4.44772 13 4 12.5523 4 12V6ZM9 5C8.4477 5 8 5.44772 8 6V12C8 12.5523 8.4477 13 9 13C9.5523 13 10 12.5523 10 12V6C10 5.44772 9.5523 5 9 5Z" />
+            </svg>
+          </button>
+        );
+      }
     }
 
     let errMsg;
@@ -283,14 +289,14 @@ class _ListNameEditor extends React.PureComponent {
           </svg>
         </button>}
         {(mode === MODE_VIEW && listNameObj !== null) && deleteBtn}
-        {mode === MODE_EDIT && <button onClick={this.onCancelBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-start items-center w-8 h-10 group focus:outline-none-outer">
+        {mode === MODE_EDIT && <button onTouchStart={this.onCancelBtnPress} onMouseDown={this.onCancelBtnPress} onClick={this.onCancelBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-start items-center w-8 h-10 group focus:outline-none-outer">
           <svg className="w-3 h-3 text-gray-600 rounded-sm group-hover:text-gray-900 focus:shadow-outline-inner" viewBox="0 0 12 12" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M0.29289 0.29289C0.68342 -0.09763 1.31658 -0.09763 1.70711 0.29289L6 4.58579L10.2929 0.29289C10.6834 -0.09763 11.3166 -0.09763 11.7071 0.29289C12.0976 0.68342 12.0976 1.31658 11.7071 1.70711L7.4142 6L11.7071 10.2929C12.0976 10.6834 12.0976 11.3166 11.7071 11.7071C11.3166 12.0976 10.6834 12.0976 10.2929 11.7071L6 7.4142L1.70711 11.7071C1.31658 12.0976 0.68342 12.0976 0.29289 11.7071C-0.09763 11.3166 -0.09763 10.6834 0.29289 10.2929L4.58579 6L0.29289 1.70711C-0.09763 1.31658 -0.09763 0.68342 0.29289 0.29289Z" />
           </svg>
         </button>}
         <div className="relative flex-grow flex-shrink">
           <input ref={this.input} onFocus={this.onInputFocus} onBlur={this.onInputBlur} onChange={this.onInputChange} onKeyPress={this.onInputKeyPress} className="py-2 w-full bg-white text-base text-gray-900 border-0 appearance-none focus:outline-none" type="text" placeholder="Create new list" value={value} disabled={isBusy || doRetry} />
-          <p style={{ bottom: '-0.5rem' }} className="absolute left-0 text-sm text-red-600 font-medium leading-5 truncate">{errMsg}</p>
+          <p style={{ bottom: '-0.5rem' }} className="absolute left-0 right-0 text-sm text-red-600 font-medium leading-5 truncate">{errMsg}</p>
         </div>
         {mode === MODE_EDIT && <button onTouchStart={this.onOkBtnPress} onMouseDown={this.onOkBtnPress} onClick={this.onOkBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-center items-center w-10 h-10 group focus:outline-none-outer">
           <svg className="w-4 text-gray-600 rounded-sm group-hover:text-gray-900 focus:shadow-outline-inner" viewBox="0 0 14 10" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

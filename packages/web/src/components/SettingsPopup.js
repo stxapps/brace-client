@@ -1,12 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import {
-  updatePopup,
-} from '../actions';
-import {
-  SM_WIDTH, MD_WIDTH, SETTINGS_POPUP,
-} from '../types/const';
+import { updatePopup } from '../actions';
+import { SM_WIDTH, MD_WIDTH, SETTINGS_POPUP } from '../types/const';
 
 import SettingsPopupAccount from './SettingsPopupAccount';
 import {
@@ -51,6 +47,13 @@ class SettingsPopup extends React.PureComponent {
 
     if (prevState.viewId !== this.state.viewId) {
       this.panelContent.current.scroll(0, 0);
+    }
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+
+    if (!this.props.isSettingsPopupShown && nextProps.isSettingsPopupShown) {
+      this.setState({ isSidebarShown: window.innerWidth < MD_WIDTH })
     }
   }
 
@@ -223,57 +226,10 @@ class SettingsPopup extends React.PureComponent {
           <h2 className="pb-3 text-3xl text-gray-800 font-semibold leading-none">Settings</h2>
         </div>
         <div className="flex-1 flex overflow-hidden">
-          {/* Off-canvas sidebar for mobile */}
-          <div key="sidebar-for-mobile" className={`md:hidden ${sidebarCanvasStyleClasses}`}>
-            <div className="fixed inset-0 flex z-10">
-              <button onClick={this.onSidebarCloseBtnClick} className={`fixed inset-0 w-full h-full ${sidebarOverlayStyleClasses}`}>
-                <div className="absolute inset-0 bg-gray-300"></div>
-              </button>
-              <div className="absolute top-0 right-0 p-1">
-                <button onClick={this.onPopupCloseBtnClick} className="flex items-center justify-center h-7 w-7 rounded-full group focus:outline-none focus:shadow-outline" aria-label="Close settings popup">
-                  <svg className="h-5 w-5 text-gray-500 group-hover:text-gray-700" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-              <div onTransitionEnd={this.onSidebarTransitionEnd} className={`relative flex-1 flex flex-col max-w-48 w-full bg-white ${sidebarStyleClasses}`}>
-                <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-                  <div className="flex-shrink-0 flex items-center px-4">
-                    <h2 className="text-3xl text-gray-800 font-semibold leading-none">Settings</h2>
-                  </div>
-                  <nav className="mt-5 px-2 space-y-1">
-                    <button onClick={this.onAccountBtnClick} className={`group flex items-center px-2 py-2 w-full text-base leading-6 rounded-md focus:outline-none transition ease-in-out duration-150 ${menuTextStyleClasses}`}>
-                      <svg className={`mr-2 h-6 w-6 transition ease-in-out duration-150 ${menuSvgStyleClasses}`} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM12 7C12 8.10457 11.1046 9 10 9C8.89543 9 8 8.10457 8 7C8 5.89543 8.89543 5 10 5C11.1046 5 12 5.89543 12 7ZM9.99993 11C7.98239 11 6.24394 12.195 5.45374 13.9157C6.55403 15.192 8.18265 16 9.99998 16C11.8173 16 13.4459 15.1921 14.5462 13.9158C13.756 12.195 12.0175 11 9.99993 11Z" />
-                      </svg>
-                      Account
-                    </button>
-                    <button onClick={this.onDataBtnClick} className={`group flex items-center px-2 py-2 w-full text-base leading-6 rounded-md focus:outline-none transition ease-in-out duration-150 ${menuTextStyleClasses}`}>
-                      <svg className={`mr-2 h-6 w-6 transition ease-in-out duration-150 ${menuSvgStyleClasses}`} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path fillRule="evenodd" clipRule="evenodd" d="M3 5C3 4.44772 3.44772 4 4 4H16C16.5523 4 17 4.44772 17 5C17 5.55228 16.5523 6 16 6H4C3.44772 6 3 5.55228 3 5Z" />
-                        <path fillRule="evenodd" clipRule="evenodd" d="M3 10C3 9.44772 3.44772 9 4 9H16C16.5523 9 17 9.44772 17 10C17 10.5523 16.5523 11 16 11H4C3.44772 11 3 10.5523 3 10Z" />
-                        <path fillRule="evenodd" clipRule="evenodd" d="M3 15C3 14.4477 3.44772 14 4 14H16C16.5523 14 17 14.4477 17 15C17 15.5523 16.5523 16 16 16H4C3.44772 16 3 15.5523 3 15Z" />
-                      </svg>
-                      Data
-                    </button>
-                    <button onClick={this.onListsBtnClick} className={`group flex items-center px-2 py-2 w-full text-base leading-6 rounded-md focus:outline-none transition ease-in-out duration-150 ${menuTextStyleClasses}`}>
-                      <svg className={`mr-2 h-6 w-6 transition ease-in-out duration-150 ${menuSvgStyleClasses}`} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M2 6C2 4.89543 2.89543 4 4 4H9L11 6H16C17.1046 6 18 6.89543 18 8V14C18 15.1046 17.1046 16 16 16H4C2.89543 16 2 15.1046 2 14V6Z" />
-                      </svg>
-                      Lists
-                    </button>
-                  </nav>
-                </div>
-              </div>
-              <div className="flex-shrink-0 w-14">
-                {/* Force sidebar to shrink to fit close icon */}
-              </div>
-            </div>
-          </div>
           {/* Static sidebar for desktop */}
           <div key="sidebar-for-desktop" className="hidden md:flex md:flex-shrink-0 md:flex-grow-0">
             <div className="flex flex-col w-48">
-              <div className="mt-2 flex flex-col h-0 flex-1 border-r border-gray-400 bg-white md:ml-6 md:mb-6 lg:ml-8 lg:mb-8">
+              <div className="mt-2 flex flex-col h-0 flex-1 bg-white border-r border-gray-400 md:ml-6 md:mb-6 lg:ml-8 lg:mb-8">
                 <div className="flex-1 flex flex-col overflow-y-auto">
                   <nav className="mt-2 pr-2 flex-1 bg-white space-y-1">
                     <button onClick={this.onAccountBtnClick} className={`group flex items-center px-2 py-2 w-full text-sm leading-5 rounded-md focus:outline-none transition ease-in-out duration-150 ${this.isViewSelected(VIEW_ACCOUNT) ? selectedMenuTextStyleClasses : menuTextStyleClasses}`}>
@@ -283,7 +239,7 @@ class SettingsPopup extends React.PureComponent {
                       Account
                     </button>
                     <button onClick={this.onDataBtnClick} className={`group flex items-center px-2 py-2 w-full text-sm leading-5 rounded-md focus:outline-none transition ease-in-out duration-150 ${this.isViewSelected(VIEW_DATA) ? selectedMenuTextStyleClasses : menuTextStyleClasses}`}>
-                      <svg className={`mr-2 h-6 w-6 transition ease-in-out duration-150 ${menuSvgStyleClasses}`} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <svg className={`mr-3 h-6 w-6 transition ease-in-out duration-150 ${this.isViewSelected(VIEW_DATA) ? selectedMenuSvgStyleClasses : menuSvgStyleClasses}`} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                         <path fillRule="evenodd" clipRule="evenodd" d="M3 5C3 4.44772 3.44772 4 4 4H16C16.5523 4 17 4.44772 17 5C17 5.55228 16.5523 6 16 6H4C3.44772 6 3 5.55228 3 5Z" />
                         <path fillRule="evenodd" clipRule="evenodd" d="M3 10C3 9.44772 3.44772 9 4 9H16C16.5523 9 17 9.44772 17 10C17 10.5523 16.5523 11 16 11H4C3.44772 11 3 10.5523 3 10Z" />
                         <path fillRule="evenodd" clipRule="evenodd" d="M3 15C3 14.4477 3.44772 14 4 14H16C16.5523 14 17 14.4477 17 15C17 15.5523 16.5523 16 16 16H4C3.44772 16 3 15.5523 3 15Z" />
@@ -313,6 +269,53 @@ class SettingsPopup extends React.PureComponent {
               {content}
             </div>
           </div>
+          {/* Off-canvas sidebar for mobile */}
+          <div key="sidebar-for-mobile" className={`md:hidden ${sidebarCanvasStyleClasses}`}>
+            <div className="fixed inset-0 flex z-10">
+              <button onClick={this.onSidebarCloseBtnClick} className={`fixed inset-0 w-full h-full ${sidebarOverlayStyleClasses}`}>
+                <div className="absolute inset-0 bg-gray-300"></div>
+              </button>
+              <div className="absolute top-0 right-0 p-1">
+                <button onClick={this.onPopupCloseBtnClick} className="flex items-center justify-center h-7 w-7 rounded-full group focus:outline-none focus:shadow-outline" aria-label="Close settings popup">
+                  <svg className="h-5 w-5 text-gray-500 group-hover:text-gray-700" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div onTransitionEnd={this.onSidebarTransitionEnd} className={`relative flex-1 flex flex-col max-w-48 w-full bg-white ${sidebarStyleClasses}`}>
+                <div className="pt-5 pb-4 flex-1 h-0 overflow-y-auto">
+                  <div className="px-4 flex-shrink-0 flex items-center">
+                    <h2 className="text-3xl text-gray-800 font-semibold leading-none">Settings</h2>
+                  </div>
+                  <nav className="mt-5 px-2 space-y-1">
+                    <button onClick={this.onAccountBtnClick} className={'px-2 py-2 flex items-center w-full text-base text-gray-700 leading-6 rounded-md group focus:outline-none transition ease-in-out duration-150 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900'}>
+                      <svg className={'mr-2 h-6 w-6 text-gray-600 transition ease-in-out duration-150 group-hover:text-gray-700 group-focus:text-gray-700'} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM12 7C12 8.10457 11.1046 9 10 9C8.89543 9 8 8.10457 8 7C8 5.89543 8.89543 5 10 5C11.1046 5 12 5.89543 12 7ZM9.99993 11C7.98239 11 6.24394 12.195 5.45374 13.9157C6.55403 15.192 8.18265 16 9.99998 16C11.8173 16 13.4459 15.1921 14.5462 13.9158C13.756 12.195 12.0175 11 9.99993 11Z" />
+                      </svg>
+                      Account
+                    </button>
+                    <button onClick={this.onDataBtnClick} className={'px-2 py-2 flex items-center w-full text-base text-gray-700 leading-6 rounded-md group focus:outline-none transition ease-in-out duration-150 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900'}>
+                      <svg className={'mr-2 h-6 w-6 text-gray-600 transition ease-in-out duration-150 group-hover:text-gray-700 group-focus:text-gray-700'} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fillRule="evenodd" clipRule="evenodd" d="M3 5C3 4.44772 3.44772 4 4 4H16C16.5523 4 17 4.44772 17 5C17 5.55228 16.5523 6 16 6H4C3.44772 6 3 5.55228 3 5Z" />
+                        <path fillRule="evenodd" clipRule="evenodd" d="M3 10C3 9.44772 3.44772 9 4 9H16C16.5523 9 17 9.44772 17 10C17 10.5523 16.5523 11 16 11H4C3.44772 11 3 10.5523 3 10Z" />
+                        <path fillRule="evenodd" clipRule="evenodd" d="M3 15C3 14.4477 3.44772 14 4 14H16C16.5523 14 17 14.4477 17 15C17 15.5523 16.5523 16 16 16H4C3.44772 16 3 15.5523 3 15Z" />
+                      </svg>
+                      Data
+                    </button>
+                    <button onClick={this.onListsBtnClick} className={'px-2 py-2 flex items-center w-full text-base text-gray-700 leading-6 rounded-md group focus:outline-none transition ease-in-out duration-150 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900'}>
+                      <svg className={'mr-2 h-6 w-6 text-gray-600 transition ease-in-out duration-150 group-hover:text-gray-700 group-focus:text-gray-700'} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 6C2 4.89543 2.89543 4 4 4H9L11 6H16C17.1046 6 18 6.89543 18 8V14C18 15.1046 17.1046 16 16 16H4C2.89543 16 2 15.1046 2 14V6Z" />
+                      </svg>
+                      Lists
+                    </button>
+                  </nav>
+                </div>
+              </div>
+              <div className="flex-shrink-0 w-14">
+                {/* Force sidebar to shrink to fit close icon */}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -323,7 +326,7 @@ class SettingsPopup extends React.PureComponent {
     const popupStyleClasses = isShown ? 'opacity-100 translate-y-0 ease-out duration-300 sm:scale-100' : 'opacity-0 translate-y-4 ease-in duration-200 sm:translate-y-0 sm:scale-95';
     return (
       <div className="fixed inset-0 overflow-hidden z-30">
-        <div className="p-4 flex items-center justify-center" style={{ minHeight: window.innerHeight }}>
+        <div className="p-4 flex items-center justify-center" style={{ height: window.innerHeight }}>
           <div className={`fixed inset-0 transition-opacity ${backgroundStyleClasses}`}>
             <button onClick={this.onPopupCloseBtnClick} tabIndex={-1} className="absolute inset-0 w-full h-full bg-black opacity-25 cursor-default focus:outline-none"></button>
           </div>
@@ -372,6 +375,8 @@ class SettingsPopup extends React.PureComponent {
 
   render() {
 
+    if (!this.props.isSettingsPopupShown) return null;
+
     const { viewId } = this.state;
 
     if (viewId === VIEW_ACCOUNT) return this.renderAccountView();
@@ -383,8 +388,12 @@ class SettingsPopup extends React.PureComponent {
   }
 }
 
-const mapDispatchToProps = {
-  updatePopup,
+const mapStateToProps = (state, props) => {
+  return {
+    isSettingsPopupShown: state.display.isSettingsPopupShown,
+  };
 };
 
-export default connect(null, mapDispatchToProps)(SettingsPopup);
+const mapDispatchToProps = { updatePopup };
+
+export default connect(mapStateToProps, mapDispatchToProps)(SettingsPopup);

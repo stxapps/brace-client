@@ -291,7 +291,7 @@ class Main extends React.PureComponent {
         <TopBar rightPane={topBarRightPane} isListNameShown={true} fetched={this.fetched} />
         {this.state.columnWidth === PC_100 && <BottomBar />}
         <ConfirmDeletePopup />
-        {this.props.isSettingsPopupShown && <SettingsPopup />}
+        <SettingsPopup />
       </React.Fragment>
     );
   }
@@ -309,7 +309,6 @@ const mapStateToProps = (state, props) => {
     isFetchingMore: state.display.isFetchingMore,
     searchString: state.display.searchString,
     cardItemMenuPopupPosition: state.display.cardItemMenuPopupPosition,
-    isSettingsPopupShown: state.display.isSettingsPopupShown,
   };
 };
 

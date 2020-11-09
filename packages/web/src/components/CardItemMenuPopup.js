@@ -27,7 +27,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
     this.menu = null;
     this.moveTo = null;
-    this.longestListName = null;
+    this.longestDisplayName = null;
 
     this.updateScrollY = throttle(this.updateScrollY, 16);
   }
@@ -38,10 +38,10 @@ class CardItemMenuPopup extends React.PureComponent {
       this.initialScrollY = window.pageYOffset;
       this.setState({ scrollY: this.initialScrollY });
 
-      const { menu, moveTo, longestListName } = this.populateMenu(this.props);
+      const { menu, moveTo, longestDisplayName } = this.populateMenu(this.props);
       this.menu = menu;
       this.moveTo = moveTo;
-      this.longestListName = longestListName;
+      this.longestDisplayName = longestDisplayName;
 
       window.addEventListener('scroll', this.updateScrollY);
 
@@ -76,10 +76,10 @@ class CardItemMenuPopup extends React.PureComponent {
       this.initialScrollY = window.pageYOffset;
       this.setState({ scrollY: this.initialScrollY });
 
-      const { menu, moveTo, longestListName } = this.populateMenu(nextProps);
+      const { menu, moveTo, longestDisplayName } = this.populateMenu(nextProps);
       this.menu = menu;
       this.moveTo = moveTo;
-      this.longestListName = longestListName;
+      this.longestDisplayName = longestDisplayName;
     }
   }
 
@@ -109,11 +109,11 @@ class CardItemMenuPopup extends React.PureComponent {
       }
     }
 
-    const longestListName = getLongestListNameDisplayName(props.listNameMap);
+    const longestDisplayName = getLongestListNameDisplayName(props.listNameMap);
 
     menu = menu.filter(text => text !== MOVE_TO);
 
-    return { menu, moveTo, longestListName };
+    return { menu, moveTo, longestDisplayName };
   }
 
   updateScrollY = () => {
@@ -189,38 +189,38 @@ class CardItemMenuPopup extends React.PureComponent {
     const menuBtnHeight = 48;
     const widthThreshold = 160;
 
-    const menuBtnPosition = {
+    const menuBtnStyle = {
       top: `${anchorPosition.top + offsetScrollY}px`, left: `${anchorPosition.left}px`
     };
 
-    const popupPosition = {
+    const popupStyle = {
       top: `${anchorPosition.top + offsetScrollY + menuBtnHeight}px`,
     };
 
     if (anchorPosition.left + widthThreshold < windowWidth) {
-      popupPosition.left = `${anchorPosition.left}px`;
+      popupStyle.left = `${anchorPosition.left}px`;
     } else {
       const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-      popupPosition.right = `${windowWidth - scrollbarWidth - anchorPosition.right}px`;
+      popupStyle.right = `${windowWidth - scrollbarWidth - anchorPosition.right}px`;
     }
 
-    popupPosition.width = '8rem';
-    popupPosition.maxHeight = '16rem';
-    if (this.longestListName.length > 7) {
+    popupStyle.width = '8rem';
+    popupStyle.maxHeight = '16rem';
+    if (this.longestDisplayName.length > 7) {
       // Approx 10px or 0.625rem per additional character
-      const width = Math.min(8 + 0.625 * (this.longestListName.length - 7), 16);
-      popupPosition.width = `${width}rem`;
+      const width = Math.min(8 + 0.625 * (this.longestDisplayName.length - 7), 16);
+      popupStyle.width = `${width}rem`;
     }
 
     return (
       <div className="relative">
         <button onClick={this.onCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none"></button>
-        <button ref={this.menuBtn} style={menuBtnPosition} className="pt-2 pb-1 pl-4 pr-2 fixed focus:outline-none-outer z-41">
+        <button ref={this.menuBtn} style={menuBtnStyle} className="pt-2 pb-1 pl-4 pr-2 fixed focus:outline-none-outer z-41">
           <svg className="py-2 w-6 w-6 bg-white text-gray-700 rounded-full focus:shadow-outline-inner" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <div ref={this.menuPopup} onClick={this.onMenuPopupClick} style={popupPosition} className="mt-2 ml-4 mr-2 py-2 fixed bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41">
+        <div ref={this.menuPopup} onClick={this.onMenuPopupClick} style={popupStyle} className="mt-2 ml-4 mr-2 py-2 fixed bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41">
           {this.renderMenu()}
         </div>
       </div >

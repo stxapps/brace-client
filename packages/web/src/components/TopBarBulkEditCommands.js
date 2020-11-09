@@ -164,17 +164,17 @@ class TopBarBulkEditCommands extends React.Component {
 
     const longestDisplayNameLength = getLongestListNameDisplayName(moveTo).length;
 
-    const style = { width: '7rem', maxHeight: '16rem' };
+    const popupStyle = { width: '7rem', maxHeight: '16rem' };
     if (longestDisplayNameLength > 7) {
       // Approx 10px or 0.625rem per additional character
       const width = Math.min(7 + 0.625 * (longestDisplayNameLength - 7), 8.25);
-      style.width = `${width}rem`;
+      popupStyle.width = `${width}rem`;
     }
 
     return (
       <React.Fragment>
         <button onClick={this.onBulkEditMoveToCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none"></button>
-        <div onClick={this.onBulkEditMoveToPopupClick} style={style} className="mt-2 py-2 absolute left-29/100 bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41">
+        <div onClick={this.onBulkEditMoveToPopupClick} style={popupStyle} className="mt-2 py-2 absolute left-29/100 bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41">
 
           {moveTo.map(listNameObj => {
             const key = MOVE_TO + ' ' + listNameObj.listName;
@@ -187,14 +187,14 @@ class TopBarBulkEditCommands extends React.Component {
 
   render() {
 
-    const { listName, isBulkEditMoveToPopupShown } = this.props;
+    const { listName, listNameMap, isBulkEditMoveToPopupShown } = this.props;
     const rListName = [MY_LIST, ARCHIVE, TRASH].includes(listName) ? listName : MY_LIST;
 
     const isArchiveBtnShown = [MY_LIST].includes(rListName);
     const isRemoveBtnShown = [MY_LIST, ARCHIVE].includes(rListName);
     const isRestoreBtnShown = [TRASH].includes(rListName);
     const isDeleteBtnShown = [TRASH].includes(rListName);
-    const isMoveToBtnShown = [ARCHIVE].includes(rListName);
+    const isMoveToBtnShown = [ARCHIVE].includes(rListName) || (rListName === MY_LIST && listNameMap.length > 3);
 
     const btnStyle = {
       height: '2.125rem',

@@ -410,16 +410,16 @@ img {
   padding-top: 100%;
 }
 
+.max-w-24 {
+  max-width: 6rem;
+}
+
 .max-w-40 {
   max-width: 10rem;
 }
 
 .max-w-48 {
   max-width: 12rem;
-}
-
-.max-w-24 {
-  max-width: 6rem;
 }
 
 .focus\:outline-none-outer:focus {

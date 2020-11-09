@@ -168,12 +168,12 @@ class BottomBarBulkEditCommands extends React.Component {
       moveTo.push(listNameObj);
     }
 
-    const style = { maxHeight: '18rem' };
+    const popupStyle = { maxHeight: '18rem' };
 
     return (
       <React.Fragment>
         <button onClick={this.onBulkEditMoveToCancelBtnClick} tabIndex={-1} className={`${!isBulkEditMoveToPopupShown ? 'hidden' : ''} fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none`}></button>
-        <div onClick={this.onBulkEditMoveToPopupClick} style={style} className={`py-4 fixed inset-x-0 bottom-0 bg-white border border-gray-200 rounded-t-lg shadow-xl overflow-auto transform ${!isBulkEditMoveToPopupShown ? 'translate-y-full' : ''} transition-transform duration-300 ease-in-out z-41`}>
+        <div onClick={this.onBulkEditMoveToPopupClick} style={popupStyle} className={`py-4 fixed inset-x-0 bottom-0 bg-white border border-gray-200 rounded-t-lg shadow-xl overflow-auto transform ${!isBulkEditMoveToPopupShown ? 'translate-y-full' : ''} transition-transform duration-300 ease-in-out z-41`}>
           <div className="py-4 pl-4 pr-2 block w-full text-gray-800 text-left">Move to...</div>
           {moveTo.map(listNameObj => {
             const key = MOVE_TO + ' ' + listNameObj.listName;
@@ -186,14 +186,14 @@ class BottomBarBulkEditCommands extends React.Component {
 
   render() {
 
-    const { listName } = this.props;
+    const { listName, listNameMap } = this.props;
     const rListName = [MY_LIST, ARCHIVE, TRASH].includes(listName) ? listName : MY_LIST;
 
     const isArchiveBtnShown = [MY_LIST].includes(rListName);
     const isRemoveBtnShown = [MY_LIST, ARCHIVE].includes(rListName);
     const isRestoreBtnShown = [TRASH].includes(rListName);
     const isDeleteBtnShown = [TRASH].includes(rListName);
-    const isMoveToBtnShown = [ARCHIVE].includes(rListName);
+    const isMoveToBtnShown = [ARCHIVE].includes(rListName) || (rListName === MY_LIST && listNameMap.length > 3);
 
     const style = { height: BOTTOM_BAR_HEIGHT };
 
