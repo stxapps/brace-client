@@ -16,9 +16,9 @@ import {
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
   CARD_ITEM_POPUP_MENU, CONFIRM_DELETE_POPUP,
 } from '../types/const';
-import { getListNames } from '../selectors';
+import { getListNameMap } from '../selectors';
 import {
-  ensureContainUrlProtocol,
+  ensureContainUrlProtocol, getLongestListNameDisplayName,
 } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
@@ -29,7 +29,7 @@ import MenuPopupRenderer from './MenuPopupRenderer';
 class CardItemMenuPopup extends React.PureComponent {
 
   populateMenu() {
-    const { link, listName, listNames } = this.props;
+    const { link, listName, listNameMap } = this.props;
 
     let menu = null;
     if (listName in CARD_ITEM_POPUP_MENU) {
@@ -43,11 +43,11 @@ class CardItemMenuPopup extends React.PureComponent {
 
     const moveTo = [];
     if (menu.includes(MOVE_TO)) {
-      for (const name of listNames) {
-        if ([TRASH, ARCHIVE].includes(name)) continue;
-        if (listName === name) continue;
+      for (const listNameObj of listNameMap) {
+        if ([TRASH, ARCHIVE].includes(listNameObj.listName)) continue;
+        if (listName === listNameObj.listName) continue;
 
-        moveTo.push(name);
+        moveTo.push(listNameObj);
       }
     }
 
@@ -106,12 +106,12 @@ class CardItemMenuPopup extends React.PureComponent {
     if (_moveTo && _moveTo.length) {
       moveTo = (
         <React.Fragment>
-          <Text style={tailwind('py-2 pl-4 pr-4 text-gray-800')}>Move to...</Text>
-          {_moveTo.map(text => {
-            const key = MOVE_TO + ' ' + text;
+          <Text style={tailwind('py-2 pl-4 pr-4 w-full text-gray-800')}>Move to...</Text>
+          {_moveTo.map(listNameObj => {
+            const key = MOVE_TO + ' ' + listNameObj.listName;
             return (
               <MenuOption key={key} onSelect={() => this.onMenuPopupClick(key)} customStyles={{ optionWrapper: { padding: 0 } }}>
-                <Text style={tailwind('py-2 pl-8 pr-4 text-gray-800')}>{text}</Text>
+                <Text style={tailwind('py-2 pl-8 pr-2 w-full text-gray-800')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
               </MenuOption>
             );
           })}
@@ -124,7 +124,7 @@ class CardItemMenuPopup extends React.PureComponent {
         {_menu.map(text => {
           return (
             <MenuOption key={text} onSelect={() => this.onMenuPopupClick(text)} customStyles={{ optionWrapper: { padding: 0 } }}>
-              <Text style={tailwind('py-2 pl-4 pr-4 text-gray-800')}>{text}</Text>
+              <Text style={tailwind('py-2 pl-4 pr-2 w-full text-gray-800')}>{text}</Text>
             </MenuOption>
           );
         })}
@@ -135,11 +135,20 @@ class CardItemMenuPopup extends React.PureComponent {
 
   render() {
 
-    const { safeAreaHeight } = this.props;
+    const { listNameMap, safeAreaHeight } = this.props;
+
+    const longestDisplayNameLength = getLongestListNameDisplayName(listNameMap).length;
+
+    const popupScrollViewStyle = { width: 128, maxHeight: Math.min(256, safeAreaHeight) };
+    if (longestDisplayNameLength > 7) {
+      // Approx 10dx per additional character
+      const width = Math.min(128 + 10 * (longestDisplayNameLength - 7), 256);
+      popupScrollViewStyle.width = width;
+    }
 
     return (
       /* value of triggerOffsets needs to be aligned with paddings of the three dots */
-      <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 }, popupStyle: tailwind('py-2 min-w-32 bg-white border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
+      <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 }, popupStyle: tailwind('py-2 bg-white border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
         <MenuTrigger>
           {/* View with paddingBottom is required because there is this space on the web. */}
           <View style={{ paddingBottom: 6 }}>
@@ -152,7 +161,7 @@ class CardItemMenuPopup extends React.PureComponent {
           </View>
         </MenuTrigger>
         <MenuOptions>
-          <ScrollView style={{ maxHeight: safeAreaHeight }}>
+          <ScrollView style={popupScrollViewStyle}>
             {this.renderMenu()}
           </ScrollView>
         </MenuOptions>
@@ -164,7 +173,7 @@ class CardItemMenuPopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
-    listNames: getListNames(state),
+    listNameMap: getListNameMap(state),
     windowWidth: state.window.width,
     windowHeight: state.window.height,
   };

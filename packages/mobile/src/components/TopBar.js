@@ -15,7 +15,7 @@ import {
 } from '../actions';
 import {
   DOMAIN_NAME,
-  ADD_POPUP, PROFILE_POPUP,
+  ADD_POPUP, PROFILE_POPUP, SETTINGS_POPUP,
   SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS,
   NO_URL, ASK_CONFIRM_URL, URL_MSGS,
   TOP_HEADER_HEIGHT, TOP_LIST_NAME_HEIGHT,
@@ -200,6 +200,11 @@ class TopBar extends React.Component {
     this.props.updatePopup(PROFILE_POPUP, false);
   }
 
+  onSettingsBtnClick = () => {
+    this.props.updatePopup(PROFILE_POPUP, false);
+    this.props.updatePopup(SETTINGS_POPUP, true);
+  }
+
   onSignOutBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
     this.props.signOut()
@@ -232,6 +237,9 @@ class TopBar extends React.Component {
   renderProfilePopup() {
     return (
       <View style={tailwind('py-2 w-32')}>
+        <MenuOption onSelect={this.onSettingsBtnClick} customStyles={{ optionWrapper: { padding: 0 } }}>
+          <Text style={tailwind('py-2 pl-4 text-gray-800')}>Settings</Text>
+        </MenuOption>
         <MenuOption onSelect={() => Linking.openURL(DOMAIN_NAME + '/#support')} customStyles={{ optionWrapper: { padding: 0 } }}>
           <Text style={tailwind('py-2 pl-4 text-gray-800')}>Support</Text>
         </MenuOption>

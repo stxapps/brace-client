@@ -17,8 +17,8 @@ import {
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
   SM_WIDTH, MD_WIDTH, LG_WIDTH,
 } from '../types/const';
-import { getLinks } from '../selectors';
-import { toPx, multiplyPercent } from '../utils';
+import { getListNameMap, getLinks } from '../selectors';
+import { toPx, multiplyPercent, getListNameDisplayName } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 
 import { InterText as Text, withSafeAreaContext } from '.';
@@ -28,6 +28,7 @@ import TopBar from './TopBar';
 import BottomBar from './BottomBar';
 import CardItem from './CardItem';
 import ConfirmDeletePopup from './ConfirmDeletePopup';
+import SettingsPopup from './SettingsPopup';
 
 import emptyBox from '../images/empty-box-sided.svg';
 import undrawLink from '../images/undraw-link.svg';
@@ -53,21 +54,27 @@ class Main extends React.Component {
     this.mainFlatList = React.createRef();
 
     this.fetched = [];
+    this.doFetchSettings = true;
     this.scrollY = new Animated.Value(0);
   }
 
   componentDidMount() {
-    this.props.fetch(true, true);
+    this.props.fetch(true, true, this.doFetchSettings);
     this.fetched.push(this.props.listName);
+    this.doFetchSettings = false;
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.listName !== prevProps.listName) {
       if (this.mainFlatList.current) {
-        this.mainFlatList.current.scrollToOffset({
-          offset: 0,
-          animated: true,
-        });
+        setTimeout(() => {
+          if (this.mainFlatList.current) {
+            this.mainFlatList.current.scrollToOffset({
+              offset: 0,
+              animated: true,
+            });
+          }
+        }, 1);
       }
     }
   }
@@ -76,6 +83,7 @@ class Main extends React.Component {
 
     if (
       this.props.listName !== nextProps.listName ||
+      this.props.listNameMap !== nextProps.listNameMap ||
       this.props.links !== nextProps.links ||
       this.props.hasMoreLinks !== nextProps.hasMoreLinks ||
       this.props.isFetchingMore !== nextProps.isFetchingMore ||
@@ -116,7 +124,7 @@ class Main extends React.Component {
 
   renderEmpty = () => {
 
-    const { listName, searchString, safeAreaWidth } = this.props;
+    const { listName, listNameMap, searchString, safeAreaWidth } = this.props;
 
     if (searchString !== '') {
       return (
@@ -167,11 +175,13 @@ class Main extends React.Component {
       );
     }
 
+    const displayName = getListNameDisplayName(listName, listNameMap);
+
     return (
       <View style={tailwind('px-4 pb-6 items-center w-full md:px-6 lg:px-8', safeAreaWidth)}>
         <SvgXml style={tailwind('mt-10')} width={160} height={146.66} xml={emptyBox} />
-        <Text style={tailwind('mt-6 text-lg text-gray-900 text-center')}>No links in {listName}</Text>
-        <Text style={tailwind('mt-4 max-w-md text-base text-gray-900 text-center')}>Click <Text style={tailwind('text-base text-gray-900 font-semibold')}>"{listName}"</Text> from the Link menu to move links here.</Text>
+        <Text style={tailwind('mt-6 text-lg text-gray-900 text-center')}>No links in {displayName}</Text>
+        <Text style={tailwind('mt-4 max-w-md text-base text-gray-900 text-center')}>Click <Text style={tailwind('text-base text-gray-900 font-semibold')}>"{displayName}"</Text> from the Link menu to move links here.</Text>
       </View>
     );
   }
@@ -366,6 +376,7 @@ class Main extends React.Component {
         <TopBar rightPane={topBarRightPane} isListNameShown={true} fetched={this.fetched} scrollY={this.scrollY} />
         {columnWidth === PC_100 && <BottomBar />}
         <ConfirmDeletePopup />
+        <SettingsPopup />
       </React.Fragment>
     );
   }
@@ -377,6 +388,7 @@ const mapStateToProps = (state, props) => {
 
   return {
     listName: listName,
+    listNameMap: getListNameMap(state),
     links: getLinks(state),
     hasMoreLinks: state.hasMoreLinks[listName],
     isFetchingMore: state.display.isFetchingMore,

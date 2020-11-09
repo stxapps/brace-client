@@ -1,6 +1,6 @@
 import React from 'react';
-import { I18nManager, Animated, Easing, StyleSheet } from 'react-native';
-import { OPEN_ANIM_DURATION, CLOSE_ANIM_DURATION, USE_NATIVE_DRIVER } from 'react-native-popup-menu/src/constants';
+import { I18nManager, /*Animated, Easing,*/ View, StyleSheet } from 'react-native';
+/*import { OPEN_ANIM_DURATION, CLOSE_ANIM_DURATION, USE_NATIVE_DRIVER } from 'react-native-popup-menu/src/constants';*/
 
 const axisPosition = (oDim, wDim, tPos, tDim) => {
   // if options are bigger than window dimension, then render at 0
@@ -82,42 +82,43 @@ export default class MenuPopupRenderer extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = {
+    /*this.state = {
       scaleAnim: new Animated.Value(0.1),
-    };
+    };*/
   }
 
   componentDidMount() {
-    Animated.timing(this.state.scaleAnim, {
+    /*Animated.timing(this.state.scaleAnim, {
       duration: OPEN_ANIM_DURATION,
       toValue: 1,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: USE_NATIVE_DRIVER,
-    }).start();
+    }).start();*/
   }
 
   close() {
     return new Promise(resolve => {
-      Animated.timing(this.state.scaleAnim, {
+      /*Animated.timing(this.state.scaleAnim, {
         duration: CLOSE_ANIM_DURATION,
         toValue: 0,
         easing: Easing.in(Easing.cubic),
         useNativeDriver: USE_NATIVE_DRIVER,
-      }).start(resolve);
+      }).start(resolve);*/
+      resolve();
     });
   }
 
   render() {
     const { style, children, layouts, triggerOffsets, popupStyle, ...other } = this.props;
-    const animation = {
+    /*const animation = {
       transform: [{ scale: this.state.scaleAnim }],
       opacity: this.state.scaleAnim,
-    };
+    };*/
     const position = computePosition(layouts, I18nManager.isRTL, triggerOffsets);
     return (
-      <Animated.View {...other} style={[styles.options, style, popupStyle, animation, position]}>
+      <View {...other} style={[styles.options, style, popupStyle, /*animation,*/ position]}>
         {children}
-      </Animated.View>
+      </View>
     );
   }
 

@@ -14,7 +14,7 @@ import {
 } from '../actions';
 import {
   DOMAIN_NAME,
-  ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
+  ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, SETTINGS_POPUP,
   NO_URL, ASK_CONFIRM_URL, URL_MSGS,
   BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
 } from '../types/const';
@@ -130,6 +130,11 @@ class BottomBar extends React.PureComponent {
   componentWillUnmount() {
     this.keyboardWillShowListener.remove();
     this.keyboardWillHideListener.remove();
+
+    if (this.searchPopupBackHandler) {
+      this.searchPopupBackHandler.remove();
+      this.searchPopupBackHandler = null;
+    }
   }
 
   onAddBtnClick = () => {
@@ -223,6 +228,11 @@ class BottomBar extends React.PureComponent {
     this.props.updatePopup(PROFILE_POPUP, false);
   }
 
+  onSettingsBtnClick = () => {
+    this.props.updatePopup(PROFILE_POPUP, false);
+    this.props.updatePopup(SETTINGS_POPUP, true);
+  }
+
   onSignOutBtnClick = () => {
     // No need to update it, will get already unmount
     //this.props.updatePopup(PROFILE_POPUP, false);
@@ -307,6 +317,9 @@ class BottomBar extends React.PureComponent {
     return (
       <Modal isVisible={isProfilePopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onProfileCancelBtnClick} onBackButtonPress={this.onProfileCancelBtnClick} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="slideInUp" animationInTiming={200} animationOut="slideOutDown" animationOutTiming={200} useNativeDriver={true}>
         <View style={tailwind('py-4 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
+          <TouchableOpacity onPress={this.onSettingsBtnClick} style={tailwind('py-4 pl-4 w-full')}>
+            <Text style={tailwind('text-gray-800')}>Settings</Text>
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => Linking.openURL(DOMAIN_NAME + '/#support')} style={tailwind('py-4 pl-4 w-full')}>
             <Text style={tailwind('text-gray-800')}>Support</Text>
           </TouchableOpacity>

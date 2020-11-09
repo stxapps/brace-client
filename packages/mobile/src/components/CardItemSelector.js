@@ -71,7 +71,7 @@ class CardItemSelector extends React.Component {
               </Svg>
             </View>
             <View style={tailwind('ml-3 flex-shrink flex-grow')}>
-              <Text style={tailwind('text-sm leading-5 font-medium text-red-800 text-left')}>To prevent network overload, up to {MAX_SELECTED_LINK_IDS} items can be selected.</Text>
+              <Text style={tailwind('text-sm text-red-800 font-medium leading-5 text-left')}>To prevent network overload, up to {MAX_SELECTED_LINK_IDS} items can be selected.</Text>
             </View>
           </View>
         </View>

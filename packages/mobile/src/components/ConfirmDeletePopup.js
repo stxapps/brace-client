@@ -10,6 +10,7 @@ import Modal from 'react-native-modal';
 
 import {
   updatePopup, deleteLinks, clearSelectedLinkIds, updateBulkEdit,
+  deleteListNames, updateDeletingListName,
 } from '../actions';
 import {
   CONFIRM_DELETE_POPUP,
@@ -36,13 +37,13 @@ class ConfirmDeletePopup extends React.Component {
 
   onConfirmDeleteOkBtnClick = () => {
 
-    const { popupLink, selectedLinkIds, safeAreaWidth } = this.props;
+    const { popupLink, selectedLinkIds, deletingListName, safeAreaWidth } = this.props;
 
-    if (
-      (popupLink && selectedLinkIds.length > 0) ||
-      (!popupLink && selectedLinkIds.length === 0)
-    ) {
-      throw new Error(`Invalid popupLink: ${popupLink} and selectedLinkIds: ${selectedLinkIds}`);
+    const v1 = popupLink ? 1 : 0;
+    const v2 = selectedLinkIds.length > 0 ? 1 : 0;
+    const v3 = deletingListName ? 1 : 0;
+    if (v1 + v2 + v3 !== 1) {
+      throw new Error(`Invalid popupLink: ${popupLink}, selectedLinkIds: ${selectedLinkIds}, and deletingListName: ${deletingListName}`);
     }
 
     if (popupLink) {
@@ -70,11 +71,22 @@ class ConfirmDeletePopup extends React.Component {
       return;
     }
 
+    if (deletingListName) {
+
+      const { deleteListNames, updatePopup, updateDeletingListName } = this.props;
+
+      deleteListNames([deletingListName]);
+      updatePopup(CONFIRM_DELETE_POPUP, false);
+      updateDeletingListName(null);
+      return;
+    }
+
     throw new Error('Must not reach here!');
   }
 
   onConfirmDeleteCancelBtnClick = () => {
     this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+    this.props.updateDeletingListName(null);
   };
 
   render() {
@@ -109,6 +121,7 @@ const mapStateToProps = (state, props) => {
     isConfirmDeletePopupShown: state.display.isConfirmDeletePopupShown,
     popupLink: getPopupLink(state),
     selectedLinkIds: state.display.selectedLinkIds,
+    deletingListName: state.display.deletingListName,
     windowWidth: state.window.width,
     windowHeight: state.window.height,
   }
@@ -116,6 +129,7 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = {
   updatePopup, deleteLinks, clearSelectedLinkIds, updateBulkEdit,
+  deleteListNames, updateDeletingListName,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(withMenuContext(ConfirmDeletePopup)));

@@ -1,8 +1,10 @@
 import { Linking, Dimensions, Platform } from 'react-native';
 import { RESET_STATE as OFFLINE_RESET_STATE } from '@redux-offline/redux-offline/lib/constants';
 import axios from 'axios';
+import RNFS from 'react-native-fs';
 
 import userSession from '../userSession';
+import { batchGetFileWithRetry, batchDeleteFileWithRetry } from '../apis/blockstack';
 import {
   INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW_SIZE,
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
@@ -868,4 +870,170 @@ export const updateSettings = (updatedValues) => async (dispatch, getState) => {
       }
     }
   });
+};
+
+const exportAllDataLoop = async (dispatch, fPaths, doneCount) => {
+
+  if (fPaths.length === 0) throw new Error(`Invalid fPaths: ${fPaths}`);
+
+  const selectedCount = Math.min(fPaths.length - doneCount, N_LINKS);
+  const selectedFPaths = fPaths.slice(doneCount, doneCount + selectedCount);
+  const responses = await batchGetFileWithRetry(selectedFPaths, 0);
+  const data = responses.map((response, i) => {
+    return { path: selectedFPaths[i], data: JSON.parse(response.content) };
+  });
+
+  doneCount = doneCount + selectedCount;
+  if (doneCount > fPaths.length) {
+    throw new Error(`Invalid doneCount: ${doneCount}, total: ${fPaths.length}`);
+  }
+
+  dispatch(updateExportAllDataProgress({
+    total: fPaths.length,
+    done: doneCount,
+  }));
+
+  if (doneCount < fPaths.length) {
+    const remainingData = await exportAllDataLoop(dispatch, fPaths, doneCount);
+    data.push(...remainingData);
+  }
+
+  return data;
+};
+
+export const exportAllData = () => async (dispatch, getState) => {
+
+  dispatch(updateExportAllDataProgress({
+    total: 'calculating...',
+    done: 0,
+  }));
+
+  const fPaths = [];
+  try {
+    await userSession.listFiles((fpath) => {
+      fPaths.push(fpath);
+      return true;
+    });
+  } catch (e) {
+    dispatch(updateExportAllDataProgress({
+      total: -1,
+      done: -1,
+      error: e.name + ': ' + e.message,
+    }));
+    return;
+  }
+
+  dispatch(updateExportAllDataProgress({
+    total: fPaths.length,
+    done: 0,
+  }));
+
+  if (fPaths.length === 0) return;
+
+  try {
+    const data = await exportAllDataLoop(dispatch, fPaths, 0);
+
+    // This will write the file to an app directory, not shared.
+    // On Android, can get permission to write to external storage
+    //   https://reactnative.dev/docs/permissionsandroid.
+    // On iOS, there is no way that I know of
+    //   so no export all data on mobile for now.
+    const path = RNFS.DocumentDirectoryPath + '/brace-data.txt';
+    await RNFS.writeFile(path, JSON.stringify(data), 'utf8');
+  } catch (e) {
+    dispatch(updateExportAllDataProgress({
+      total: -1,
+      done: -1,
+      error: e.name + ': ' + e.message,
+    }));
+    return;
+  }
+};
+
+export const updateExportAllDataProgress = (progress) => {
+  return {
+    type: UPDATE_EXPORT_ALL_DATA_PROGRESS,
+    payload: progress
+  };
+};
+
+const deleteAllDataLoop = async (dispatch, fPaths, doneCount) => {
+
+  if (fPaths.length === 0) throw new Error(`Invalid fPaths: ${fPaths}`);
+
+  const selectedCount = Math.min(fPaths.length - doneCount, N_LINKS);
+  const selectedFPaths = fPaths.slice(doneCount, doneCount + selectedCount);
+  const responses = await batchDeleteFileWithRetry(selectedFPaths, 0);
+
+  doneCount = doneCount + selectedCount;
+  if (doneCount > fPaths.length) {
+    throw new Error(`Invalid doneCount: ${doneCount}, total: ${fPaths.length}`);
+  }
+
+  dispatch(updateDeleteAllDataProgress({
+    total: fPaths.length,
+    done: doneCount,
+  }));
+
+  if (doneCount < fPaths.length) {
+    const remainingResponses = await deleteAllDataLoop(dispatch, fPaths, doneCount);
+    responses.push(...remainingResponses);
+  }
+
+  return responses;
+};
+
+export const deleteAllData = () => async (dispatch, getState) => {
+
+  // redux-offline: Empty outbox
+  dispatch({ type: OFFLINE_RESET_STATE });
+
+  dispatch(updateDeleteAllDataProgress({
+    total: 'calculating...',
+    done: 0,
+  }));
+
+  const fPaths = [];
+  try {
+    await userSession.listFiles((fpath) => {
+      fPaths.push(fpath);
+      return true;
+    });
+  } catch (e) {
+    dispatch(updateDeleteAllDataProgress({
+      total: -1,
+      done: -1,
+      error: e.name + ': ' + e.message,
+    }));
+    return;
+  }
+
+  dispatch(updateDeleteAllDataProgress({
+    total: fPaths.length,
+    done: 0,
+  }));
+
+  if (fPaths.length === 0) return;
+
+  try {
+    await deleteAllDataLoop(dispatch, fPaths, 0);
+
+    dispatch({
+      type: DELETE_ALL_DATA,
+    });
+  } catch (e) {
+    dispatch(updateDeleteAllDataProgress({
+      total: -1,
+      done: -1,
+      error: e.name + ': ' + e.message,
+    }));
+    return;
+  }
+};
+
+export const updateDeleteAllDataProgress = (progress) => {
+  return {
+    type: UPDATE_DELETE_ALL_DATA_PROGRESS,
+    payload: progress
+  };
 };

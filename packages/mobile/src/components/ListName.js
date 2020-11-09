@@ -15,7 +15,8 @@ import {
   LIST_NAME_POPUP,
   MD_WIDTH, LG_WIDTH,
 } from '../types/const';
-import { getListNames } from '../selectors';
+import { getListNameMap } from '../selectors';
+import { getListNameDisplayName, getLongestListNameDisplayName } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 
 import { InterText as Text, withSafeAreaContext } from '.';
@@ -40,11 +41,14 @@ class ListName extends React.PureComponent {
   };
 
   renderListNamePopup() {
+
+    const { listNameMap } = this.props;
+
     return (
-      this.props.listNames.map(listName => {
+      listNameMap.map(listNameObj => {
         return (
-          <MenuOption key={listName} onSelect={() => this.onListNamePopupClick(listName)} customStyles={{ optionWrapper: { padding: 0 } }}>
-            <Text style={tailwind('py-2 pl-4 pr-4 text-gray-800')}>{listName}</Text>
+          <MenuOption key={listNameObj.listName} onSelect={() => this.onListNamePopupClick(listNameObj.listName)} customStyles={{ optionWrapper: { padding: 0 } }}>
+            <Text style={tailwind('py-2 pl-4 pr-2 w-full text-gray-800')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
           </MenuOption>
         );
       })
@@ -53,7 +57,17 @@ class ListName extends React.PureComponent {
 
   render() {
 
-    const { listName, safeAreaWidth, safeAreaHeight } = this.props;
+    const { listName, listNameMap, safeAreaWidth, safeAreaHeight } = this.props;
+
+    const displayName = getListNameDisplayName(listName, listNameMap);
+    const longestDisplayNameLength = getLongestListNameDisplayName(listNameMap).length;
+
+    const popupScrollViewStyle = { width: 112, maxHeight: Math.min(256, safeAreaHeight) };
+    if (longestDisplayNameLength > 7) {
+      // Approx 10dx per additional character
+      const width = Math.min(112 + 10 * (longestDisplayNameLength - 7), 256);
+      popupScrollViewStyle.width = width;
+    }
 
     // value of triggerOffsets needs to be aligned with paddings of the MenuTrigger
     const triggerOffsets = { x: 0, y: 0, width: 0, height: 0 };
@@ -68,18 +82,18 @@ class ListName extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: triggerOffsets, popupStyle: tailwind('py-2 min-w-32 bg-white border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onListNameBtnClick} onClose={this.onListNameCancelBtnClick}>
+        <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: triggerOffsets, popupStyle: tailwind('py-2 bg-white border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onListNameBtnClick} onClose={this.onListNameCancelBtnClick}>
           <MenuTrigger>
             {/* Change the paddings here, need to change triggerOffsets too */}
             <View style={tailwind('flex-row items-center')}>
-              <Text style={tailwind('text-lg text-gray-900 font-semibold leading-7')}>{listName}</Text>
+              <Text style={tailwind('max-w-40 text-lg text-gray-900 font-semibold leading-7 sm:max-w-xs lg:max-w-lg', safeAreaWidth)} numberOfLines={1} ellipsizeMode="tail">{displayName}</Text>
               <Svg style={tailwind('ml-1 w-5 h-5 text-black')} viewBox="0 0 24 24" stroke="currentColor" fill="none">
                 <Path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </Svg>
             </View>
           </MenuTrigger>
           <MenuOptions>
-            <ScrollView style={{ maxHeight: safeAreaHeight }}>
+            <ScrollView style={popupScrollViewStyle}>
               {this.renderListNamePopup()}
             </ScrollView>
           </MenuOptions>
@@ -93,7 +107,7 @@ const mapStateToProps = (state, props) => {
 
   return {
     listName: state.display.listName,
-    listNames: getListNames(state),
+    listNameMap: getListNameMap(state),
     windowWidth: state.window.width,
     windowHeight: state.window.height,
   }

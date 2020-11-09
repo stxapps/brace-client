@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  View, TouchableOpacity, BackHandler, Platform,
+  ScrollView, View, TouchableOpacity, BackHandler, Platform,
 } from 'react-native';
 import {
   Menu, MenuOptions, MenuOption, MenuTrigger, renderers, withMenuContext,
@@ -17,11 +17,11 @@ import {
   MOVE_TO,
   TOP_HEADER_HEIGHT,
 } from '../types/const';
-import { getListNames } from '../selectors';
-import { toPx } from '../utils';
+import { getListNameMap } from '../selectors';
+import { toPx, getLongestListNameDisplayName } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 
-import { InterText as Text } from '.';
+import { InterText as Text, withSafeAreaContext } from '.';
 
 class TopBarBulkEditCommands extends React.Component {
 
@@ -66,7 +66,7 @@ class TopBarBulkEditCommands extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (
       this.props.listName !== nextProps.listName ||
-      this.props.listNames !== nextProps.listNames ||
+      this.props.listNameMap !== nextProps.listNameMap ||
       this.props.isBulkEditMoveToPopupShown !== nextProps.isBulkEditMoveToPopupShown ||
       this.state.isEmptyErrorShown !== nextState.isEmptyErrorShown
     ) {
@@ -191,20 +191,20 @@ class TopBarBulkEditCommands extends React.Component {
   renderBulkEditMoveToPopup() {
 
     const moveTo = [];
-    for (const listName of this.props.listNames) {
-      if ([TRASH, ARCHIVE].includes(listName)) continue;
-      if (this.props.listName === listName) continue;
+    for (const listNameObj of this.props.listNameMap) {
+      if ([TRASH, ARCHIVE].includes(listNameObj.listName)) continue;
+      if (this.props.listName === listNameObj.listName) continue;
 
-      moveTo.push(listName);
+      moveTo.push(listNameObj);
     }
 
     return (
       <React.Fragment>
-        {moveTo.map(text => {
-          const key = MOVE_TO + ' ' + text;
+        {moveTo.map(listNameObj => {
+          const key = MOVE_TO + ' ' + listNameObj.listName;
           return (
             <MenuOption key={key} onSelect={() => this.onBulkEditMoveToPopupClick(key)} customStyles={{ optionWrapper: { padding: 0 } }}>
-              <Text style={tailwind('py-2 pl-4 pr-4 text-gray-800')}>{text}</Text>
+              <Text style={tailwind('py-2 pl-4 pr-2 w-full text-gray-800')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
             </MenuOption>
           );
         })}
@@ -214,13 +214,23 @@ class TopBarBulkEditCommands extends React.Component {
 
   render() {
 
-    const { listName } = this.props;
+    const { listName, listNameMap, safeAreaHeight } = this.props;
+    const rListName = [MY_LIST, ARCHIVE, TRASH].includes(listName) ? listName : MY_LIST;
 
-    const isArchiveBtnShown = [MY_LIST].includes(listName);
-    const isRemoveBtnShown = [MY_LIST, ARCHIVE].includes(listName);
-    const isRestoreBtnShown = [TRASH].includes(listName);
-    const isDeleteBtnShown = [TRASH].includes(listName);
-    const isMoveToBtnShown = [ARCHIVE].includes(listName);
+    const isArchiveBtnShown = [MY_LIST].includes(rListName);
+    const isRemoveBtnShown = [MY_LIST, ARCHIVE].includes(rListName);
+    const isRestoreBtnShown = [TRASH].includes(rListName);
+    const isDeleteBtnShown = [TRASH].includes(rListName);
+    const isMoveToBtnShown = [ARCHIVE].includes(rListName) || (rListName === MY_LIST && listNameMap.length > 3);
+
+    const longestDisplayNameLength = getLongestListNameDisplayName(listNameMap).length;
+
+    const moveToPopupScrollViewStyle = { width: 112, maxHeight: Math.min(256, safeAreaHeight) };
+    if (longestDisplayNameLength > 7) {
+      // Approx 10dx per additional character
+      const width = Math.min(112 + 10 * (longestDisplayNameLength - 7), 256);
+      moveToPopupScrollViewStyle.width = width;
+    }
 
     const btnStyle = {
       height: 34,
@@ -284,8 +294,10 @@ class TopBarBulkEditCommands extends React.Component {
               </View>
             </View>
           </MenuTrigger>
-          <MenuOptions customStyles={{ optionsContainer: tailwind('min-w-32 bg-white rounded-lg shadow-xl') }}>
-            {this.renderBulkEditMoveToPopup()}
+          <MenuOptions customStyles={{ optionsContainer: tailwind('py-2 bg-white rounded-lg shadow-xl') }}>
+            <ScrollView style={moveToPopupScrollViewStyle}>
+              {this.renderBulkEditMoveToPopup()}
+            </ScrollView>
           </MenuOptions>
         </Menu>}
         <TouchableOpacity onPress={this.onBulkEditCancelBtnClick} style={tailwind('ml-1 justify-center items-center w-10 h-10')}>
@@ -302,9 +314,10 @@ class TopBarBulkEditCommands extends React.Component {
 const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
-    listNames: getListNames(state),
+    listNameMap: getListNameMap(state),
     isBulkEditMoveToPopupShown: state.display.isBulkEditMoveToPopupShown,
     selectedLinkIds: state.display.selectedLinkIds,
+    windowHeight: state.window.height,
   };
 };
 
@@ -312,4 +325,4 @@ const mapDispatchToProps = {
   updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withMenuContext(TopBarBulkEditCommands));
+export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(withMenuContext(TopBarBulkEditCommands)));

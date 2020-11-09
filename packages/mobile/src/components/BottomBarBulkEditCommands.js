@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  View, TouchableOpacity, BackHandler,
+  ScrollView, View, TouchableOpacity, BackHandler,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import Modal from 'react-native-modal';
@@ -15,7 +15,7 @@ import {
   MOVE_TO,
   BOTTOM_BAR_HEIGHT,
 } from '../types/const';
-import { getListNames } from '../selectors';
+import { getListNameMap } from '../selectors';
 import { toPx } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 
@@ -64,7 +64,7 @@ class BottomBarBulkEditCommands extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (
       this.props.listName !== nextProps.listName ||
-      this.props.listNames !== nextProps.listNames ||
+      this.props.listNameMap !== nextProps.listNameMap ||
       this.props.isBulkEditMoveToPopupShown !== nextProps.isBulkEditMoveToPopupShown ||
       this.props.windowWidth !== nextProps.windowWidth ||
       this.props.windowHeight !== nextProps.windowHeight ||
@@ -190,25 +190,29 @@ class BottomBarBulkEditCommands extends React.Component {
     const { isBulkEditMoveToPopupShown, windowWidth, windowHeight } = this.props;
 
     const moveTo = [];
-    for (const listName of this.props.listNames) {
-      if ([TRASH, ARCHIVE].includes(listName)) continue;
-      if (this.props.listName === listName) continue;
+    for (const listNameObj of this.props.listNameMap) {
+      if ([TRASH, ARCHIVE].includes(listNameObj.listName)) continue;
+      if (this.props.listName === listNameObj.listName) continue;
 
-      moveTo.push(listName);
+      moveTo.push(listNameObj);
     }
+
+    const scrollViewStyle = { maxHeight: 288 };
 
     return (
       <Modal isVisible={isBulkEditMoveToPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onBulkEditMoveToCancelBtnClick} onBackButtonPress={this.onBulkEditMoveToCancelBtnClick} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="slideInUp" animationInTiming={200} animationOut="slideOutDown" animationOutTiming={200} useNativeDriver={true}>
-        <View style={tailwind('py-4 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
-          <Text style={tailwind('py-4 pl-4 w-full text-gray-800')}>Move to...</Text>
-          {moveTo.map(text => {
-            const key = MOVE_TO + ' ' + text;
-            return (
-              <TouchableOpacity onPress={() => this.onBulkEditMoveToPopupClick(key)} style={tailwind('py-4 pl-8 w-full')} key={key}>
-                <Text style={tailwind('text-gray-800')}>{text}</Text>
-              </TouchableOpacity>
-            );
-          })}
+        <View style={tailwind('pt-4 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
+          <ScrollView style={[tailwind('w-full'), scrollViewStyle]} contentContainerStyle={tailwind('pb-4')}>
+            <Text style={tailwind('py-4 pl-4 pr-2 w-full text-gray-800')}>Move to...</Text>
+            {moveTo.map(listNameObj => {
+              const key = MOVE_TO + ' ' + listNameObj.listName;
+              return (
+                <TouchableOpacity onPress={() => this.onBulkEditMoveToPopupClick(key)} style={tailwind('w-full')} key={key}>
+                  <Text style={tailwind('py-4 pl-8 pr-2 w-full text-gray-800')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
         </View>
       </Modal>
     );
@@ -216,13 +220,14 @@ class BottomBarBulkEditCommands extends React.Component {
 
   render() {
 
-    const { listName } = this.props;
+    const { listName, listNameMap } = this.props;
+    const rListName = [MY_LIST, ARCHIVE, TRASH].includes(listName) ? listName : MY_LIST;
 
-    const isArchiveBtnShown = [MY_LIST].includes(listName);
-    const isRemoveBtnShown = [MY_LIST, ARCHIVE].includes(listName);
-    const isRestoreBtnShown = [TRASH].includes(listName);
-    const isDeleteBtnShown = [TRASH].includes(listName);
-    const isMoveToBtnShown = [ARCHIVE].includes(listName);
+    const isArchiveBtnShown = [MY_LIST].includes(rListName);
+    const isRemoveBtnShown = [MY_LIST, ARCHIVE].includes(rListName);
+    const isRestoreBtnShown = [TRASH].includes(rListName);
+    const isDeleteBtnShown = [TRASH].includes(rListName);
+    const isMoveToBtnShown = [ARCHIVE].includes(rListName) || (rListName === MY_LIST && listNameMap.length > 3);
 
     const style = {
       height: toPx(BOTTOM_BAR_HEIGHT) + this.props.insets.bottom,
@@ -310,7 +315,7 @@ const mapStateToProps = (state, props) => {
 
   return {
     listName: state.display.listName,
-    listNames: getListNames(state),
+    listNameMap: getListNameMap(state),
     isBulkEditMoveToPopupShown: state.display.isBulkEditMoveToPopupShown,
     selectedLinkIds: state.display.selectedLinkIds,
     windowWidth: state.window.width,
