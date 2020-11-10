@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  ScrollView, View, Linking, LayoutAnimation,
+  ScrollView, View, Text, Linking, LayoutAnimation,
 } from 'react-native';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Svg, { Path } from 'react-native-svg'
@@ -23,7 +23,7 @@ import {
 import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
 
-import { InterText as Text, withSafeAreaContext } from '.';
+import { withSafeAreaContext } from '.';
 import MenuPopupRenderer from './MenuPopupRenderer';
 
 class CardItemMenuPopup extends React.PureComponent {
@@ -102,16 +102,18 @@ class CardItemMenuPopup extends React.PureComponent {
   renderMenu() {
     const { menu: _menu, moveTo: _moveTo } = this.populateMenu();
 
+    if (!styles.menuOption) styles.menuOption = { optionWrapper: { padding: 0 } };
+
     let moveTo = null;
     if (_moveTo && _moveTo.length) {
       moveTo = (
         <React.Fragment>
-          <Text style={tailwind('py-2 pl-4 pr-4 w-full text-gray-800')}>Move to...</Text>
+          <Text style={tailwind('py-2 pl-4 pr-4 w-full text-base text-gray-800 font-normal')}>Move to...</Text>
           {_moveTo.map(listNameObj => {
             const key = MOVE_TO + ' ' + listNameObj.listName;
             return (
-              <MenuOption key={key} onSelect={() => this.onMenuPopupClick(key)} customStyles={{ optionWrapper: { padding: 0 } }}>
-                <Text style={tailwind('py-2 pl-8 pr-2 w-full text-gray-800')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
+              <MenuOption key={key} onSelect={() => this.onMenuPopupClick(key)} customStyles={styles.menuOption}>
+                <Text style={tailwind('py-2 pl-8 pr-2 w-full text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
               </MenuOption>
             );
           })}
@@ -123,8 +125,8 @@ class CardItemMenuPopup extends React.PureComponent {
       <React.Fragment>
         {_menu.map(text => {
           return (
-            <MenuOption key={text} onSelect={() => this.onMenuPopupClick(text)} customStyles={{ optionWrapper: { padding: 0 } }}>
-              <Text style={tailwind('py-2 pl-4 pr-2 w-full text-gray-800')}>{text}</Text>
+            <MenuOption key={text} onSelect={() => this.onMenuPopupClick(text)} customStyles={styles.menuOption}>
+              <Text style={tailwind('py-2 pl-4 pr-2 w-full text-base text-gray-800 font-normal')}>{text}</Text>
             </MenuOption>
           );
         })}
@@ -137,6 +139,9 @@ class CardItemMenuPopup extends React.PureComponent {
 
     const { listNameMap, safeAreaHeight } = this.props;
 
+    if (!styles.menuRendererProps) styles.menuRendererProps = { triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 }, popupStyle: tailwind('py-2 bg-white border border-gray-200 rounded-lg shadow-xl') };
+    if (!styles.triggerView) styles.triggerView = { paddingBottom: 6 };
+
     const longestDisplayNameLength = getLongestListNameDisplayName(listNameMap).length;
 
     const popupScrollViewStyle = { width: 128, maxHeight: Math.min(256, safeAreaHeight) };
@@ -148,13 +153,13 @@ class CardItemMenuPopup extends React.PureComponent {
 
     return (
       /* value of triggerOffsets needs to be aligned with paddings of the three dots */
-      <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 }, popupStyle: tailwind('py-2 bg-white border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
+      <Menu renderer={MenuPopupRenderer} rendererProps={styles.menuRendererProps} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
         <MenuTrigger>
           {/* View with paddingBottom is required because there is this space on the web. */}
-          <View style={{ paddingBottom: 6 }}>
+          <View style={styles.triggerView}>
             {/* Change the paddings here, need to change triggerOffsets too */}
             <View style={tailwind('pt-2 pb-0 pl-4 pr-2 flex-shrink-0 flex-grow-0')}>
-              <Svg style={tailwind('py-2 w-6 h-10 text-gray-700 rounded-full')} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <Svg style={tailwind('py-2 w-6 h-10 text-base text-gray-700 font-normal rounded-full')} viewBox="0 0 24 24" stroke="currentColor" fill="none">
                 <Path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </Svg>
             </View>
@@ -169,6 +174,8 @@ class CardItemMenuPopup extends React.PureComponent {
     );
   }
 }
+
+const styles = {}
 
 const mapStateToProps = (state, props) => {
   return {

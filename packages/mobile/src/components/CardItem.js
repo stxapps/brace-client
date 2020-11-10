@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  View, TouchableOpacity, Linking,
+  View, Text, TouchableOpacity, Linking,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg'
 
@@ -22,7 +22,7 @@ import {
 import { PATTERN_MAP } from '../types/patternPaths';
 import { tailwind } from '../stylesheets/tailwind';
 
-import { InterText as Text, withSafeAreaContext } from '.';
+import { withSafeAreaContext } from '.';
 import GracefulImage from './GracefulImage';
 
 import CardItemMenuPopup from './CardItemMenuPopup';
@@ -76,19 +76,26 @@ class CardItem extends React.Component {
 
   renderBusy() {
 
-    const triangleStyle = {
-      transform: [{ 'translateX': 32 }, { 'translateY': -32 }, { 'rotate': '45deg' }],
-    };
-    const svgStyle = {
-      top: 66,
-      left: 34,
-      transform: [{ 'translateX': -12 }, { 'translateY': -24 }, { 'rotate': '-45deg' }],
-    };
+    if (!styles.busyTriangle) {
+      const triangleStyle = {
+        transform: [{ 'translateX': 32 }, { 'translateY': -32 }, { 'rotate': '45deg' }],
+      };
+      styles.busyTriangle = [tailwind('w-16 h-16 bg-white overflow-hidden'), triangleStyle];
+    }
+
+    if (!styles.busySvg) {
+      const svgStyle = {
+        top: 66,
+        left: 34,
+        transform: [{ 'translateX': -12 }, { 'translateY': -24 }, { 'rotate': '-45deg' }],
+      };
+      styles.busySvg = [tailwind('w-6 h-6 text-base text-gray-900 font-normal'), svgStyle];
+    }
 
     return (
       <View style={tailwind('absolute top-0 right-0 w-16 h-16 bg-transparent rounded-tr-lg overflow-hidden')}>
-        <View style={[tailwind('w-16 h-16 bg-white overflow-hidden'), triangleStyle]}>
-          <Svg style={[tailwind('w-6 h-6 text-gray-900'), svgStyle]} viewBox="0 0 24 24" fill="currentColor">
+        <View style={styles.busyTriangle}>
+          <Svg style={styles.busySvg} viewBox="0 0 24 24" fill="currentColor">
             <Path d="M19.479 10.092C19.267 6.141 16.006 3 12 3s-7.267 3.141-7.479 7.092A5.499 5.499 0 005.5 21h13a5.499 5.499 0 00.979-10.908zM18.5 19h-13C3.57 19 2 17.43 2 15.5c0-2.797 2.479-3.833 4.433-3.72C6.266 7.562 8.641 5 12 5c3.453 0 5.891 2.797 5.567 6.78 1.745-.046 4.433.751 4.433 3.72 0 1.93-1.57 3.5-3.5 3.5zm-4.151-2h-2.77l3-3h2.77l-3 3zm-4.697-3h2.806l-3 3H6.652l3-3zM20 15.5a1.5 1.5 0 01-1.5 1.5h-2.03l2.788-2.788c.442.261.742.737.742 1.288zm-16 0A1.5 1.5 0 015.5 14h2.031l-2.788 2.788A1.495 1.495 0 014 15.5z" />
           </Svg>
         </View>
@@ -243,7 +250,7 @@ class CardItem extends React.Component {
               {this.renderFavicon()}
               <View style={tailwind('flex-shrink flex-grow')}>
                 <TouchableOpacity onPress={() => Linking.openURL(origin)}>
-                  <Text style={tailwind('pl-2 text-base text-gray-700')} numberOfLines={1} ellipsizeMode="tail">{host}</Text>
+                  <Text style={tailwind('pl-2 text-base text-gray-700 font-normal')} numberOfLines={1} ellipsizeMode="tail">{host}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -260,6 +267,8 @@ class CardItem extends React.Component {
     );
   }
 }
+
+const styles = {};
 
 const mapStateToProps = (state, props) => {
   return {

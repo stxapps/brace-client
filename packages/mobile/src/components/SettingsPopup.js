@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  ScrollView, View, Animated, TouchableOpacity, TouchableWithoutFeedback, BackHandler,
-  Keyboard,
+  ScrollView, View, Text, TouchableOpacity, TouchableWithoutFeedback, BackHandler,
+  Animated, Keyboard,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg'
 
@@ -10,7 +10,7 @@ import { updatePopup } from '../actions';
 import { MD_WIDTH, SETTINGS_POPUP } from '../types/const';
 import { tailwind } from '../stylesheets/tailwind';
 
-import { InterText as Text, withSafeAreaContext } from '.';
+import { withSafeAreaContext } from '.';
 
 import SettingsPopupAccount from './SettingsPopupAccount';
 import {
@@ -50,6 +50,8 @@ class SettingsPopup extends React.PureComponent {
     this.settingsPopupBackHandler = null;
     this.keyboardDidShowListener = null;
     this.keyboardDidHideListener = null;
+
+    this.panelHeight = null;
   }
 
   componentDidMount() {
@@ -233,19 +235,29 @@ class SettingsPopup extends React.PureComponent {
     const appHeight = safeAreaHeight - statusBarHeight - this.state.keyboardHeight;
     const panelHeight = safeAreaWidth < MD_WIDTH ? appHeight * 0.9 : appHeight * 0.8;
 
+    if (!this.panelHeight || !styles.panelStyle || this.panelHeight !== panelHeight) {
+      styles.panelStyle = { height: panelHeight };
+      this.panelHeight = panelHeight;
+    }
+
     const { isSidebarShown, didSidebarTransitionEnd } = this.state;
 
     const sidebarCanvasStyleClasses = !isSidebarShown && didSidebarTransitionEnd ? 'hidden relative' : 'absolute inset-0 flex flex-row';
-    const sidebarStyle = {
-      transform: [{ translateX: this.sidebarTranslateX }],
-    };
 
-    const changingSidebarCloseBtnOpacity = this.sidebarTranslateX.interpolate({
-      inputRange: [SIDE_BAR_WIDTH * -1, 0],
-      outputRange: [0, 1],
-      extrapolate: 'clamp'
-    });
-    const sidebarCloseBtnStyle = { opacity: changingSidebarCloseBtnOpacity };
+    if (!styles.sidebarStyle) {
+      const sidebarStyle = { transform: [{ translateX: this.sidebarTranslateX }] };
+      styles.sidebarStyle = [tailwind('pt-5 pb-4 flex-1 max-w-48 w-full bg-white'), sidebarStyle];
+    }
+
+    if (!styles.sidebarCloseBtnStyle) {
+      const changingSidebarCloseBtnOpacity = this.sidebarTranslateX.interpolate({
+        inputRange: [SIDE_BAR_WIDTH * -1, 0],
+        outputRange: [0, 1],
+        extrapolate: 'clamp'
+      });
+      const sidebarCloseBtnStyle = { opacity: changingSidebarCloseBtnOpacity };
+      styles.sidebarCloseBtnStyle = [tailwind('absolute inset-0 bg-gray-300'), sidebarCloseBtnStyle];
+    }
 
     const selectedMenuBtnStyleClasses = 'bg-gray-200';
     const menuBtnStyleClasses = '';
@@ -257,10 +269,10 @@ class SettingsPopup extends React.PureComponent {
     const menuSvgStyleClasses = 'text-gray-500';
 
     const panelWithSidebar = (
-      <View key="panel-with-sidebar" style={{ height: panelHeight }}>
+      <View key="panel-with-sidebar" style={styles.panelStyle}>
         <View style={tailwind('hidden relative p-1 md:flex md:absolute md:top-0 md:right-0', safeAreaWidth)}>
           <TouchableOpacity onPress={this.onPopupCloseBtnClick} style={tailwind('items-center justify-center h-7 w-7 rounded-full')}>
-            <Svg style={tailwind('text-gray-500')} width={20} height={20} stroke="currentColor" fill="none" viewBox="0 0 24 24">
+            <Svg style={tailwind('text-base text-gray-500 font-normal')} width={20} height={20} stroke="currentColor" fill="none" viewBox="0 0 24 24">
               <Path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
             </Svg>
           </TouchableOpacity>
@@ -274,24 +286,24 @@ class SettingsPopup extends React.PureComponent {
             <View style={tailwind('mt-2 flex-1 w-48 border-r border-gray-400 md:ml-6 md:mb-6 lg:ml-8 lg:mb-8', safeAreaWidth)}>
               <View style={tailwind('mt-2 pr-2 bg-white')}>
                 <TouchableOpacity onPress={this.onAccountBtnClick} style={tailwind(`px-2 py-2 flex-row items-center w-full rounded-md ${this.isViewSelected(VIEW_ACCOUNT) ? selectedMenuBtnStyleClasses : menuBtnStyleClasses}`)}>
-                  <Svg style={tailwind(`mr-3 ${this.isViewSelected(VIEW_ACCOUNT) ? selectedMenuSvgStyleClasses : menuSvgStyleClasses}`)} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
+                  <Svg style={tailwind(`mr-3 text-base ${this.isViewSelected(VIEW_ACCOUNT) ? selectedMenuSvgStyleClasses : menuSvgStyleClasses} font-normal`)} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
                     <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM12 7C12 8.10457 11.1046 9 10 9C8.89543 9 8 8.10457 8 7C8 5.89543 8.89543 5 10 5C11.1046 5 12 5.89543 12 7ZM9.99993 11C7.98239 11 6.24394 12.195 5.45374 13.9157C6.55403 15.192 8.18265 16 9.99998 16C11.8173 16 13.4459 15.1921 14.5462 13.9158C13.756 12.195 12.0175 11 9.99993 11Z" />
                   </Svg>
-                  <Text style={tailwind(`text-sm leading-5 ${this.isViewSelected(VIEW_ACCOUNT) ? selectedMenuTextStyleClasses : menuTextStyleClasses}`)}>Account</Text>
+                  <Text style={tailwind(`text-sm font-normal leading-5 ${this.isViewSelected(VIEW_ACCOUNT) ? selectedMenuTextStyleClasses : menuTextStyleClasses}`)}>Account</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={this.onDataBtnClick} style={tailwind(`mt-1 px-2 py-2 flex-row items-center w-full rounded-md ${this.isViewSelected(VIEW_DATA) ? selectedMenuBtnStyleClasses : menuBtnStyleClasses}`)}>
-                  <Svg style={tailwind(`mr-3 ${this.isViewSelected(VIEW_DATA) ? selectedMenuSvgStyleClasses : menuSvgStyleClasses}`)} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
+                  <Svg style={tailwind(`mr-3 text-base ${this.isViewSelected(VIEW_DATA) ? selectedMenuSvgStyleClasses : menuSvgStyleClasses} font-normal`)} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
                     <Path fillRule="evenodd" clipRule="evenodd" d="M3 5C3 4.44772 3.44772 4 4 4H16C16.5523 4 17 4.44772 17 5C17 5.55228 16.5523 6 16 6H4C3.44772 6 3 5.55228 3 5Z" />
                     <Path fillRule="evenodd" clipRule="evenodd" d="M3 10C3 9.44772 3.44772 9 4 9H16C16.5523 9 17 9.44772 17 10C17 10.5523 16.5523 11 16 11H4C3.44772 11 3 10.5523 3 10Z" />
                     <Path fillRule="evenodd" clipRule="evenodd" d="M3 15C3 14.4477 3.44772 14 4 14H16C16.5523 14 17 14.4477 17 15C17 15.5523 16.5523 16 16 16H4C3.44772 16 3 15.5523 3 15Z" />
                   </Svg>
-                  <Text style={tailwind(`text-sm leading-5 ${this.isViewSelected(VIEW_DATA) ? selectedMenuTextStyleClasses : menuTextStyleClasses}`)}>Data</Text>
+                  <Text style={tailwind(`text-sm font-normal leading-5 ${this.isViewSelected(VIEW_DATA) ? selectedMenuTextStyleClasses : menuTextStyleClasses}`)}>Data</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={this.onListsBtnClick} style={tailwind(`mt-1 px-2 py-2 flex-row items-center w-full rounded-md ${this.isViewSelected(VIEW_LISTS) ? selectedMenuBtnStyleClasses : menuBtnStyleClasses}`)}>
-                  <Svg style={tailwind(`mr-3 ${this.isViewSelected(VIEW_LISTS) ? selectedMenuSvgStyleClasses : menuSvgStyleClasses}`)} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
+                  <Svg style={tailwind(`mr-3 text-base ${this.isViewSelected(VIEW_LISTS) ? selectedMenuSvgStyleClasses : menuSvgStyleClasses} font-normal`)} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
                     <Path d="M2 6C2 4.89543 2.89543 4 4 4H9L11 6H16C17.1046 6 18 6.89543 18 8V14C18 15.1046 17.1046 16 16 16H4C2.89543 16 2 15.1046 2 14V6Z" />
                   </Svg>
-                  <Text style={tailwind(`text-sm leading-5 ${this.isViewSelected(VIEW_LISTS) ? selectedMenuTextStyleClasses : menuTextStyleClasses}`)}>Lists</Text>
+                  <Text style={tailwind(`text-sm font-normal leading-5 ${this.isViewSelected(VIEW_LISTS) ? selectedMenuTextStyleClasses : menuTextStyleClasses}`)}>Lists</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -300,7 +312,7 @@ class SettingsPopup extends React.PureComponent {
             <ScrollView ref={this.panelContent} style={tailwind('flex-1')} keyboardShouldPersistTaps="handled">
               <View style={tailwind('absolute top-0 right-0 p-1 md:hidden md:relative', safeAreaWidth)}>
                 <TouchableOpacity onPress={this.onPopupCloseBtnClick} style={tailwind('items-center justify-center h-7 w-7 rounded-full')}>
-                  <Svg style={tailwind('text-gray-500')} width={20} height={20} stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                  <Svg style={tailwind('text-base text-gray-500 font-normal')} width={20} height={20} stroke="currentColor" fill="none" viewBox="0 0 24 24">
                     <Path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                   </Svg>
                 </TouchableOpacity>
@@ -311,39 +323,39 @@ class SettingsPopup extends React.PureComponent {
           {/* Off-canvas sidebar for mobile */}
           <View key="sidebar-for-mobile" style={tailwind(`${sidebarCanvasStyleClasses} z-10 md:hidden md:relative`, safeAreaWidth)}>
             <TouchableWithoutFeedback onPress={this.onSidebarCloseBtnClick}>
-              <Animated.View style={[tailwind('absolute inset-0 bg-gray-300'), sidebarCloseBtnStyle]}></Animated.View>
+              <Animated.View style={styles.sidebarCloseBtnStyle}></Animated.View>
             </TouchableWithoutFeedback>
             <View style={tailwind('absolute top-0 right-0 p-1')}>
               <TouchableOpacity onPress={this.onPopupCloseBtnClick} style={tailwind('items-center justify-center h-7 w-7 rounded-full')}>
-                <Svg style={tailwind('text-gray-500')} width={20} height={20} stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <Svg style={tailwind('text-base text-gray-500 font-normal')} width={20} height={20} stroke="currentColor" fill="none" viewBox="0 0 24 24">
                   <Path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                 </Svg>
               </TouchableOpacity>
             </View>
-            <Animated.View style={[tailwind('pt-5 pb-4 flex-1 max-w-48 w-full bg-white'), sidebarStyle]}>
+            <Animated.View style={styles.sidebarStyle}>
               <View style={tailwind('px-4 flex-shrink-0 flex-row items-center')}>
                 <Text style={tailwind('text-3xl text-gray-800 font-semibold')}>Settings</Text>
               </View>
               <View style={tailwind('mt-5 px-2')}>
                 <TouchableOpacity onPress={this.onAccountBtnClick} style={tailwind('px-2 py-2 flex-row items-center w-full rounded-md')}>
-                  <Svg style={tailwind('mr-2 text-gray-600')} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
+                  <Svg style={tailwind('mr-2 text-base text-gray-600 font-normal')} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
                     <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM12 7C12 8.10457 11.1046 9 10 9C8.89543 9 8 8.10457 8 7C8 5.89543 8.89543 5 10 5C11.1046 5 12 5.89543 12 7ZM9.99993 11C7.98239 11 6.24394 12.195 5.45374 13.9157C6.55403 15.192 8.18265 16 9.99998 16C11.8173 16 13.4459 15.1921 14.5462 13.9158C13.756 12.195 12.0175 11 9.99993 11Z" />
                   </Svg>
-                  <Text style={tailwind('text-base leading-6 text-gray-700')}>Account</Text>
+                  <Text style={tailwind('text-base text-gray-700 font-normal leading-6')}>Account</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={this.onDataBtnClick} style={tailwind('mt-1 px-2 py-2 flex-row items-center w-full rounded-md')}>
-                  <Svg style={tailwind('mr-2 text-gray-600')} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
+                  <Svg style={tailwind('mr-2 text-base text-gray-600 font-normal')} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
                     <Path fillRule="evenodd" clipRule="evenodd" d="M3 5C3 4.44772 3.44772 4 4 4H16C16.5523 4 17 4.44772 17 5C17 5.55228 16.5523 6 16 6H4C3.44772 6 3 5.55228 3 5Z" />
                     <Path fillRule="evenodd" clipRule="evenodd" d="M3 10C3 9.44772 3.44772 9 4 9H16C16.5523 9 17 9.44772 17 10C17 10.5523 16.5523 11 16 11H4C3.44772 11 3 10.5523 3 10Z" />
                     <Path fillRule="evenodd" clipRule="evenodd" d="M3 15C3 14.4477 3.44772 14 4 14H16C16.5523 14 17 14.4477 17 15C17 15.5523 16.5523 16 16 16H4C3.44772 16 3 15.5523 3 15Z" />
                   </Svg>
-                  <Text style={tailwind('text-base leading-6 text-gray-700')}>Data</Text>
+                  <Text style={tailwind('text-base text-gray-700 font-normal leading-6')}>Data</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={this.onListsBtnClick} style={tailwind('mt-1 px-2 py-2 flex-row items-center w-full rounded-md')}>
-                  <Svg style={tailwind('mr-2 text-gray-600')} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
+                  <Svg style={tailwind('mr-2 text-base text-gray-600 font-normal')} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
                     <Path d="M2 6C2 4.89543 2.89543 4 4 4H9L11 6H16C17.1046 6 18 6.89543 18 8V14C18 15.1046 17.1046 16 16 16H4C2.89543 16 2 15.1046 2 14V6Z" />
                   </Svg>
-                  <Text style={tailwind('text-base leading-6 text-gray-700')}>Lists</Text>
+                  <Text style={tailwind('text-base text-gray-700 font-normal leading-6')}>Lists</Text>
                 </TouchableOpacity>
               </View>
             </Animated.View>
@@ -423,6 +435,8 @@ class SettingsPopup extends React.PureComponent {
     else throw new Error(`Invalid viewId: ${viewId}`);
   }
 }
+
+const styles = {};
 
 const mapStateToProps = (state, props) => {
   return {

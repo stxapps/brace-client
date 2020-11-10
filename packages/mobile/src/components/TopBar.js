@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  View, TouchableOpacity, Linking, Animated, LayoutAnimation, Platform,
+  View, Text, TouchableOpacity, TextInput, Linking, Animated, LayoutAnimation, Platform,
 } from 'react-native';
 import {
   Menu, MenuOptions, MenuOption, MenuTrigger, renderers, withMenuContext,
@@ -27,7 +27,7 @@ import { validateUrl, isEqual, toPx } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
 
-import { InterText as Text, InterTextInput as TextInput, withSafeAreaContext } from '.';
+import { withSafeAreaContext } from '.';
 import GracefulImage from './GracefulImage';
 
 import ListName from './ListName';
@@ -207,7 +207,11 @@ class TopBar extends React.Component {
 
   onSignOutBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
-    this.props.signOut()
+    this.props.signOut();
+  }
+
+  onSignInBtnClick = () => {
+    this.props.signIn();
   }
 
   renderAddPopup() {
@@ -219,15 +223,15 @@ class TopBar extends React.Component {
         <View style={tailwind('flex-row justify-start items-center')}>
           <Text style={tailwind('flex-none text-sm font-medium text-gray-700')}>Url:</Text>
           {/* onKeyPress event for Enter key only if there is multiline TextInput */}
-          <TextInput onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('ml-3 px-4 py-2 flex-1 bg-white text-gray-900 border border-gray-500 rounded-full')} placeholder="https://" value={url} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} autoFocus />
+          <TextInput onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('ml-3 px-4 py-2 flex-1 bg-white text-base text-gray-900 font-normal border border-gray-500 rounded-full')} placeholder="https://" value={url} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} autoFocus />
         </View>
-        {msg === '' ? <View style={tailwind('w-full h-3')}></View> : <Text style={tailwind('pt-3 text-red-500')}>{msg}</Text>}
+        {msg === '' ? <View style={tailwind('w-full h-3')}></View> : <Text style={tailwind('pt-3 text-base text-red-500 font-normal')}>{msg}</Text>}
         <View style={tailwind('pt-3 flex-row justify-start items-center')}>
           <TouchableOpacity onPress={this.onAddOkBtnClick} style={tailwind('px-5 py-2 justify-center items-center bg-gray-800 rounded-full shadow-sm')}>
             <Text style={tailwind('text-base text-white font-medium')}>{isAskingConfirm ? 'Sure' : 'Save'}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => this.props.ctx.menuActions.closeMenu()} style={tailwind('ml-4 rounded-sm')}>
-            <Text style={tailwind('text-base text-gray-700')}>Cancel</Text>
+            <Text style={tailwind('text-base text-gray-700 font-normal')}>Cancel</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -235,16 +239,19 @@ class TopBar extends React.Component {
   }
 
   renderProfilePopup() {
+
+    if (!styles.profileMenuOption) styles.profileMenuOption = { optionWrapper: { padding: 0 } };
+
     return (
       <View style={tailwind('py-2 w-32')}>
-        <MenuOption onSelect={this.onSettingsBtnClick} customStyles={{ optionWrapper: { padding: 0 } }}>
-          <Text style={tailwind('py-2 pl-4 text-gray-800')}>Settings</Text>
+        <MenuOption onSelect={this.onSettingsBtnClick} customStyles={styles.profileMenuOption}>
+          <Text style={tailwind('py-2 pl-4 text-base text-gray-800 font-normal')}>Settings</Text>
         </MenuOption>
-        <MenuOption onSelect={() => Linking.openURL(DOMAIN_NAME + '/#support')} customStyles={{ optionWrapper: { padding: 0 } }}>
-          <Text style={tailwind('py-2 pl-4 text-gray-800')}>Support</Text>
+        <MenuOption onSelect={() => Linking.openURL(DOMAIN_NAME + '/#support')} customStyles={styles.profileMenuOption}>
+          <Text style={tailwind('py-2 pl-4 text-base text-gray-800 font-normal')}>Support</Text>
         </MenuOption>
-        <MenuOption onSelect={this.onSignOutBtnClick} customStyles={{ optionWrapper: { padding: 0 } }}>
-          <Text style={tailwind('py-2 pl-4 text-gray-800')}>Sign out</Text>
+        <MenuOption onSelect={this.onSignOutBtnClick} customStyles={styles.profileMenuOption}>
+          <Text style={tailwind('py-2 pl-4 text-base text-gray-800 font-normal')}>Sign out</Text>
         </MenuOption>
       </View>
     );
@@ -254,48 +261,58 @@ class TopBar extends React.Component {
 
     const { searchString, safeAreaWidth } = this.props;
 
-    const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' })
+    if (!styles.commandMenuRendererProps) {
+      const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' })
+      styles.commandMenuRendererProps = { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) };
+    }
+
+    if (!styles.commandMenuOptions) styles.commandMenuOptions = { optionsContainer: tailwind('bg-white rounded-lg shadow-xl') };
+
+    if (!styles.addTriggerView) styles.addTriggerView = [tailwind('flex-row justify-center items-center bg-white border border-gray-700 rounded-full shadow-sm'), { height: 32, paddingLeft: 10, paddingRight: 12 }];
+
+    if (!styles.bulkEditBtnView) styles.bulkEditBtnView = [tailwind('px-3 py-1 flex-row justify-center items-center bg-white border border-gray-600 rounded-full shadow-sm'), { height: 32, paddingLeft: 10, paddingRight: 12 }];
+
     const searchClearBtnClasses = searchString.length === 0 ? 'hidden relative' : 'flex absolute';
 
     return (
       <View style={tailwind('flex-row justify-end items-center')}>
-        <Menu renderer={renderers.Popover} rendererProps={{ preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) }} onOpen={this.onAddBtnClick} onClose={this.onAddCancelBtnClick}>
+        <Menu renderer={renderers.Popover} rendererProps={styles.commandMenuRendererProps} onOpen={this.onAddBtnClick} onClose={this.onAddCancelBtnClick}>
           <MenuTrigger>
-            <View style={[tailwind('flex-row justify-center items-center bg-white border border-gray-700 rounded-full shadow-sm'), { height: 32, paddingLeft: 10, paddingRight: 12 }]}>
-              <Svg style={tailwind('text-gray-700')} width={12} height={11} viewBox="0 0 16 14" stroke="currentColor" fill="none">
+            <View style={styles.addTriggerView}>
+              <Svg style={tailwind('text-base text-gray-700 font-normal')} width={12} height={11} viewBox="0 0 16 14" stroke="currentColor" fill="none">
                 <Path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </Svg>
-              <Text style={tailwind('ml-1 text-base text-gray-700')}>Add</Text>
+              <Text style={tailwind('ml-1 text-base text-gray-700 font-normal')}>Add</Text>
             </View>
           </MenuTrigger>
-          <MenuOptions customStyles={{ optionsContainer: tailwind('bg-white rounded-lg shadow-xl') }}>
+          <MenuOptions customStyles={styles.commandMenuOptions}>
             {this.renderAddPopup()}
           </MenuOptions>
         </Menu>
         <View style={tailwind('ml-4 w-48 lg:w-56', safeAreaWidth)}>
-          <TextInput onChange={this.onSearchInputChange} style={tailwind('py-1 pl-10 pr-6 w-full bg-gray-300 text-gray-900 border border-transparent rounded-full')} placeholder="Search" placeholderTextColor="rgba(113, 128, 150, 1)" value={searchString} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
+          <TextInput onChange={this.onSearchInputChange} style={tailwind('py-1 pl-10 pr-6 w-full bg-gray-300 text-base text-gray-900 font-normal border border-transparent rounded-full')} placeholder="Search" placeholderTextColor="rgba(113, 128, 150, 1)" value={searchString} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
           {/* A bug display: none doesn't work with absolute, need to change to relative. https://github.com/facebook/react-native/issues/18415 */}
           <TouchableOpacity onPress={this.onSearchClearBtnClick} style={tailwind(`pr-2 ${searchClearBtnClasses} inset-y-0 right-0 justify-center items-center`)}>
-            <Svg style={tailwind('text-gray-600 rounded-full')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('text-base text-gray-600 font-normal rounded-full')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM8.70711 7.29289C8.31658 6.90237 7.68342 6.90237 7.29289 7.29289C6.90237 7.68342 6.90237 8.31658 7.29289 8.70711L8.58579 10L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L10 11.4142L11.2929 12.7071C11.6834 13.0976 12.3166 13.0976 12.7071 12.7071C13.0976 12.3166 13.0976 11.6834 12.7071 11.2929L11.4142 10L12.7071 8.70711C13.0976 8.31658 13.0976 7.68342 12.7071 7.29289C12.3166 6.90237 11.6834 6.90237 11.2929 7.29289L10 8.58579L8.70711 7.29289Z" />
             </Svg>
           </TouchableOpacity>
           <View style={tailwind('pl-3 absolute inset-y-0 left-0 justify-center')}>
-            <Svg style={tailwind('text-gray-600')} width={24} height={24} viewBox="0 0 24 24" fill="currentColor">
+            <Svg style={tailwind('text-base text-gray-600 font-normal')} width={24} height={24} viewBox="0 0 24 24" fill="currentColor">
               <Path d="M16.32 14.9l1.1 1.1c.4-.02.83.13 1.14.44l3 3a1.5 1.5 0 0 1-2.12 2.12l-3-3a1.5 1.5 0 0 1-.44-1.14l-1.1-1.1a8 8 0 1 1 1.41-1.41l.01-.01zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
             </Svg>
           </View>
         </View>
         <TouchableOpacity onPress={this.onBulkEditBtnClick} style={tailwind('ml-4')}>
-          <View style={[tailwind('px-3 py-1 flex-row justify-center items-center bg-white border border-gray-600 rounded-full shadow-sm'), { height: 32, paddingLeft: 10, paddingRight: 12 }]}>
-            <Svg style={tailwind('text-gray-600')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
+          <View style={styles.bulkEditBtnView}>
+            <Svg style={tailwind('text-base text-gray-600 font-normal')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
               <Path d="M17.4142 2.58579C16.6332 1.80474 15.3668 1.80474 14.5858 2.58579L7 10.1716V13H9.82842L17.4142 5.41421C18.1953 4.63316 18.1953 3.36683 17.4142 2.58579Z" />
               <Path fillRule="evenodd" clipRule="evenodd" d="M2 6C2 4.89543 2.89543 4 4 4H8C8.55228 4 9 4.44772 9 5C9 5.55228 8.55228 6 8 6H4V16H14V12C14 11.4477 14.4477 11 15 11C15.5523 11 16 11.4477 16 12V16C16 17.1046 15.1046 18 14 18H4C2.89543 18 2 17.1046 2 16V6Z" />
             </Svg>
-            <Text style={tailwind('ml-1 text-base text-gray-700')}>Select</Text>
+            <Text style={tailwind('ml-1 text-base text-gray-700 font-normal')}>Select</Text>
           </View>
         </TouchableOpacity>
-        <Menu renderer={renderers.Popover} rendererProps={{ preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) }} onOpen={this.onProfileBtnClick} onClose={this.onProfileCancelBtnClick}>
+        <Menu renderer={renderers.Popover} rendererProps={styles.commandMenuRendererProps} onOpen={this.onProfileBtnClick} onClose={this.onProfileCancelBtnClick}>
           <MenuTrigger>
             <View style={tailwind('ml-4')}>
               <View style={tailwind(`justify-center items-center h-8 w-8 bg-white overflow-hidden border-2 border-gray-200 ${this.profileBtnStyleClasses}`)}>
@@ -303,7 +320,7 @@ class TopBar extends React.Component {
               </View>
             </View>
           </MenuTrigger>
-          <MenuOptions customStyles={{ optionsContainer: tailwind('bg-white rounded-lg shadow-xl') }}>
+          <MenuOptions customStyles={styles.commandMenuOptions}>
             {this.renderProfilePopup()}
           </MenuOptions>
         </Menu>
@@ -312,10 +329,13 @@ class TopBar extends React.Component {
   }
 
   renderSignInBtn() {
+
+    if (!styles.signInBtnView) styles.signInBtnView = [tailwind('bg-white border border-gray-700 rounded-full shadow-sm'), { paddingTop: 5, paddingBottom: 5, paddingLeft: 11, paddingRight: 11 }];
+
     return (
-      <TouchableOpacity onPress={() => this.props.signIn()} style={tailwind('justify-center items-center h-14')}>
-        <View style={[tailwind('bg-white border border-gray-700 rounded-full shadow-sm'), { paddingTop: 5, paddingBottom: 5, paddingLeft: 11, paddingRight: 11 }]}>
-          <Text style={tailwind('text-base text-gray-700')}>Sign in</Text>
+      <TouchableOpacity onPress={this.onSignInBtnClick} style={tailwind('justify-center items-center h-14')}>
+        <View style={styles.signInBtnView}>
+          <Text style={tailwind('text-base text-gray-700 font-normal')}>Sign in</Text>
         </View>
       </TouchableOpacity>
     );
@@ -527,6 +547,8 @@ TopBar.defaultProps = {
   fetched: null,
   scrollY: null,
 };
+
+const styles = {};
 
 const mapStateToProps = (state, props) => {
   return {

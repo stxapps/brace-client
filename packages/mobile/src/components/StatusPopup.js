@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, Animated } from 'react-native';
+import { View, Text, Animated } from 'react-native';
 
 import {
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
@@ -12,7 +12,7 @@ import { SM_WIDTH } from '../types/const';
 import { updateStatus } from '../actions';
 import { tailwind } from '../stylesheets/tailwind';
 
-import { InterText as Text, withSafeAreaContext } from '.';
+import { withSafeAreaContext } from '.';
 
 const AnimatedText = Animated.createAnimatedComponent(Text);
 
@@ -129,18 +129,23 @@ class StatusPopup extends React.PureComponent {
       this.msg = this.msg + ' ';
     }
 
-    const textStyle = {
-      transform: [{ translateX: this.translateX }],
-    };
+    if (!styles.text) {
+      const textStyle = {
+        transform: [{ translateX: this.translateX }],
+      };
+      styles.text = [tailwind('pl-3 bg-white text-base text-gray-900 font-normal leading-6 rounded-l-full'), textStyle];
+    }
 
     return (
       <View style={tailwind('w-48 flex-row justify-start items-center overflow-hidden sm:w-64', safeAreaWidth)}>
         <View style={tailwind('w-full h-full')}></View>
-        <AnimatedText onLayout={this.onTextLayout} style={[tailwind('pl-3 bg-white text-base text-gray-900 leading-6 rounded-l-full'), textStyle]}>{this.msg}</AnimatedText>
+        <AnimatedText onLayout={this.onTextLayout} style={styles.text}>{this.msg}</AnimatedText>
       </View>
     );
   }
 }
+
+const styles = {};
 
 const mapStateToProps = (state, props) => {
   return {

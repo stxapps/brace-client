@@ -1,8 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  ScrollView, View,
-} from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
 import Svg, { Path } from 'react-native-svg'
 import {
   Menu, MenuOptions, MenuOption, MenuTrigger,
@@ -19,7 +17,7 @@ import { getListNameMap } from '../selectors';
 import { getListNameDisplayName, getLongestListNameDisplayName } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 
-import { InterText as Text, withSafeAreaContext } from '.';
+import { withSafeAreaContext } from '.';
 import MenuPopupRenderer from './MenuPopupRenderer';
 
 class ListName extends React.PureComponent {
@@ -43,12 +41,13 @@ class ListName extends React.PureComponent {
   renderListNamePopup() {
 
     const { listNameMap } = this.props;
+    if (!styles.menuOption) styles.menuOption = { optionWrapper: { padding: 0 } };
 
     return (
       listNameMap.map(listNameObj => {
         return (
-          <MenuOption key={listNameObj.listName} onSelect={() => this.onListNamePopupClick(listNameObj.listName)} customStyles={{ optionWrapper: { padding: 0 } }}>
-            <Text style={tailwind('py-2 pl-4 pr-2 w-full text-gray-800')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
+          <MenuOption key={listNameObj.listName} onSelect={() => this.onListNamePopupClick(listNameObj.listName)} customStyles={styles.menuOption}>
+            <Text style={tailwind('py-2 pl-4 pr-2 w-full text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
           </MenuOption>
         );
       })
@@ -87,7 +86,7 @@ class ListName extends React.PureComponent {
             {/* Change the paddings here, need to change triggerOffsets too */}
             <View style={tailwind('flex-row items-center')}>
               <Text style={tailwind('max-w-40 text-lg text-gray-900 font-semibold leading-7 sm:max-w-xs lg:max-w-lg', safeAreaWidth)} numberOfLines={1} ellipsizeMode="tail">{displayName}</Text>
-              <Svg style={tailwind('ml-1 w-5 h-5 text-black')} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <Svg style={tailwind('ml-1 w-5 h-5 text-base text-black font-normal')} viewBox="0 0 24 24" stroke="currentColor" fill="none">
                 <Path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </Svg>
             </View>
@@ -102,6 +101,8 @@ class ListName extends React.PureComponent {
     );
   }
 }
+
+const styles = {};
 
 const mapStateToProps = (state, props) => {
 

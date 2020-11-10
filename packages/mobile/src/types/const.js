@@ -150,3 +150,5 @@ export const LIST_NAME_MSGS = {
 
 export const SWAP_LEFT = 'SWAP_LEFT';
 export const SWAP_RIGHT = 'SWAP_RIGHT';
+
+export const MODAL_SUPPORTED_ORIENTATIONS = /** @type {any} */ (['portrait', 'landscape']);

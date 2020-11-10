@@ -1,4 +1,31 @@
 {
+  "font-hairline": {
+    "fontFamily": "Inter-Thin",
+  },
+  "font-thin": {
+    "fontFamily": "Inter-ExtraLight",
+  },
+  "font-light": {
+    "fontFamily": "Inter-Light"
+  },
+  "font-normal": {
+    "fontFamily": "Inter-Regular"
+  },
+  "font-medium": {
+    "fontFamily": "Inter-Medium"
+  },
+  "font-semibold": {
+    "fontFamily": "Inter-SemiBold"
+  },
+  "font-bold": {
+    "fontFamily": "Inter-Bold"
+  },
+  "font-extrabold": {
+    "fontFamily": "Inter-ExtraBold"
+  },
+  "font-black": {
+    "fontFamily": "Inter-Black"
+  },
   "elevation-xs": {
     "elevation": 1
   },

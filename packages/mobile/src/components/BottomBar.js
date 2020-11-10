@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  View, TouchableOpacity, Animated, Keyboard, BackHandler, Linking, LayoutAnimation,
+  View, Text, TouchableOpacity, TextInput,
+  Animated, Keyboard, BackHandler, Linking, LayoutAnimation,
   KeyboardAvoidingView, Platform,
 } from 'react-native';
 import Svg, { SvgXml, Path } from 'react-native-svg';
@@ -16,14 +17,14 @@ import {
   DOMAIN_NAME,
   ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, SETTINGS_POPUP,
   NO_URL, ASK_CONFIRM_URL, URL_MSGS,
-  BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
+  BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT, MODAL_SUPPORTED_ORIENTATIONS,
 } from '../types/const';
 import { getPopupLink } from '../selectors';
 import { validateUrl, isEqual, toPx } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
 
-import { InterText as Text, InterTextInput as TextInput, withSafeAreaContext } from '.';
+import { withSafeAreaContext } from '.';
 import GracefulImage from './GracefulImage';
 
 import BottomBarBulkEditCommands from './BottomBarBulkEditCommands';
@@ -35,12 +36,12 @@ class BottomBar extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.initialState = {
+    this.state = {
       url: '',
       msg: '',
       isAskingConfirm: false,
+      isKeyboardShown: false,
     };
-    this.state = { ...this.initialState, isKeyboardShown: false };
 
     this.addInput = React.createRef();
     this.searchInput = React.createRef();
@@ -62,6 +63,8 @@ class BottomBar extends React.PureComponent {
     this.searchPopupTranslateY = new Animated.Value(toPx(SEARCH_POPUP_HEIGHT));
 
     this.searchPopupBackHandler = null;
+
+    this.prevInsetsBottom = null;
   }
 
   componentDidMount() {
@@ -121,10 +124,16 @@ class BottomBar extends React.PureComponent {
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (!this.props.isAddPopupShown && nextProps.isAddPopupShown) {
-      if (!isEqual(this.state, this.initialState)) {
-        this.setState({ ...this.initialState });
+      if (
+        this.state.url !== '' ||
+        this.state.msg !== '' ||
+        this.state.isAskingConfirm !== false
+      ) {
+        this.setState({ url: '', msg: '', isAskingConfirm: false, });
       }
     }
+
+    this.prevInsetsBottom = this.props.insets.bottom;
   }
 
   componentWillUnmount() {
@@ -141,6 +150,10 @@ class BottomBar extends React.PureComponent {
     if (this.props.isAddPopupShown) return;
     this.props.updatePopup(ADD_POPUP, true);
   }
+
+  onAddPopupShow = () => setTimeout(() => this.addInput.current.focus(), 1)
+
+  onAddPopupHide = () => this.addInput.current.blur()
 
   onAddInputChange = (e) => {
     this.setState({ url: e.nativeEvent.text, msg: '', isAskingConfirm: false });
@@ -245,20 +258,20 @@ class BottomBar extends React.PureComponent {
     const { url, msg, isAskingConfirm } = this.state;
 
     return (
-      <Modal isVisible={isAddPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={() => setTimeout(() => this.addInput.current.focus(), 1)} onModalWillHide={() => this.addInput.current.blur()} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true} avoidKeyboard={Platform.OS === 'ios' ? true : false}>
+      <Modal isVisible={isAddPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={this.onAddPopupShow} onModalWillHide={this.onAddPopupHide} style={tailwind('justify-end m-0')} supportedOrientations={MODAL_SUPPORTED_ORIENTATIONS} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true} avoidKeyboard={Platform.OS === 'ios' ? true : false}>
         <View style={tailwind('px-4 pt-6 pb-6 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
           <View style={tailwind('flex-row justify-start items-center')}>
-            <Text style={tailwind('flex-none text-sm font-medium text-gray-700')}>Url:</Text>
+            <Text style={tailwind('flex-none text-sm text-gray-700 font-medium')}>Url:</Text>
             {/* onKeyPress event for Enter key only if there is multiline TextInput */}
-            <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('ml-3 px-4 py-2 flex-1 bg-white text-gray-900 border border-gray-500 rounded-full')} placeholder="https://" value={url} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
+            <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('ml-3 px-4 py-2 flex-1 bg-white text-base text-gray-900 font-normal border border-gray-500 rounded-full')} placeholder="https://" value={url} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
           </View>
-          {msg === '' ? <View style={tailwind('w-full h-3')}></View> : <Text style={tailwind('pt-3 text-red-500')}>{msg}</Text>}
+          {msg === '' ? <View style={tailwind('w-full h-3')}></View> : <Text style={tailwind('pt-3 text-base text-red-500 font-normal')}>{msg}</Text>}
           <View style={tailwind('pt-3 flex-row justify-start items-center')}>
             <TouchableOpacity onPress={this.onAddOkBtnClick} style={tailwind('px-5 py-2 justify-center items-center bg-gray-800 rounded-full shadow-sm')}>
               <Text style={tailwind('text-base text-white font-medium')}>{isAskingConfirm ? 'Sure' : 'Save'}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={this.onAddCancelBtnClick} style={tailwind('ml-4 rounded-sm')}>
-              <Text style={tailwind('text-base text-gray-700')}>Cancel</Text>
+              <Text style={tailwind('text-base text-gray-700 font-normal')}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -268,33 +281,37 @@ class BottomBar extends React.PureComponent {
 
   renderSearchPopup() {
 
-    const { searchString } = this.props;
+    const { searchString, insets } = this.props;
 
-    // Only transition when moving with BottomBar
-    //   but when show/hide this search popup, no need animation
-    //   as keyboard is already animated.
-    const style = {
-      transform: [{ translateY: this.searchPopupTranslateY }],
-    };
-    style.bottom = toPx(BOTTOM_BAR_HEIGHT);
-    // On iOS, there is a KeyboardAvoidingView which is already in SafeAreaView.
-    if (Platform.OS !== 'ios') style.bottom += this.props.insets.bottom;
+    if (!styles.searchPopup || this.prevInsetsBottom !== insets.bottom) {
+      // Only transition when moving with BottomBar
+      //   but when show/hide this search popup, no need animation
+      //   as keyboard is already animated.
+      const style = {
+        transform: [{ translateY: this.searchPopupTranslateY }],
+      };
+      style.bottom = toPx(BOTTOM_BAR_HEIGHT);
+      // On iOS, there is a KeyboardAvoidingView which is already in SafeAreaView.
+      if (Platform.OS !== 'ios') style.bottom += insets.bottom;
+
+      styles.searchPopup = [tailwind('px-2 py-2 absolute inset-x-0 flex-row justify-between items-center bg-white border border-gray-200 z-10'), style];
+    }
 
     const searchClearBtnClasses = searchString.length === 0 ? 'hidden relative' : 'flex absolute';
 
     const searchPopup = (
-      <Animated.View style={[tailwind('px-2 py-2 absolute inset-x-0 flex-row justify-between items-center bg-white border border-gray-200 z-10'), style]}>
+      <Animated.View style={styles.searchPopup}>
         <View style={tailwind('flex-grow flex-shrink')}>
-          <TextInput ref={this.searchInput} onChange={this.onSearchInputChange} style={tailwind('pl-4 pr-6 py-1 w-full bg-white text-gray-900 border border-gray-500 rounded-full')} placeholder="Search" value={searchString} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
+          <TextInput ref={this.searchInput} onChange={this.onSearchInputChange} style={tailwind('pl-4 pr-6 py-1 w-full bg-white text-base text-gray-900 font-normal border border-gray-500 rounded-full')} placeholder="Search" value={searchString} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
           {/* A bug display: none doesn't work with absolute, need to change to relative. https://github.com/facebook/react-native/issues/18415 */}
           <TouchableOpacity onPress={this.onSearchClearBtnClick} style={tailwind(`pr-2 ${searchClearBtnClasses} inset-y-0 right-0 justify-center items-center`)}>
-            <Svg style={tailwind('text-gray-600 rounded-full')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('text-base text-gray-600 font-normal rounded-full')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM8.70711 7.29289C8.31658 6.90237 7.68342 6.90237 7.29289 7.29289C6.90237 7.68342 6.90237 8.31658 7.29289 8.70711L8.58579 10L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L10 11.4142L11.2929 12.7071C11.6834 13.0976 12.3166 13.0976 12.7071 12.7071C13.0976 12.3166 13.0976 11.6834 12.7071 11.2929L11.4142 10L12.7071 8.70711C13.0976 8.31658 13.0976 7.68342 12.7071 7.29289C12.3166 6.90237 11.6834 6.90237 11.2929 7.29289L10 8.58579L8.70711 7.29289Z" />
             </Svg>
           </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={this.onSearchCancelBtnClick} style={tailwind('ml-2 flex-grow-0 flex-shrink-0 justify-center items-center h-10 rounded-lg')}>
-          <Text style={tailwind('text-base text-gray-700')}>Cancel</Text>
+          <Text style={tailwind('text-base text-gray-700 font-normal')}>Cancel</Text>
         </TouchableOpacity>
       </Animated.View>
     );
@@ -315,16 +332,16 @@ class BottomBar extends React.PureComponent {
     const { isProfilePopupShown, windowWidth, windowHeight } = this.props;
 
     return (
-      <Modal isVisible={isProfilePopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onProfileCancelBtnClick} onBackButtonPress={this.onProfileCancelBtnClick} style={tailwind('justify-end m-0')} supportedOrientations={['portrait', 'landscape']} backdropOpacity={0.25} animationIn="slideInUp" animationInTiming={200} animationOut="slideOutDown" animationOutTiming={200} useNativeDriver={true}>
+      <Modal isVisible={isProfilePopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onProfileCancelBtnClick} onBackButtonPress={this.onProfileCancelBtnClick} style={tailwind('justify-end m-0')} supportedOrientations={MODAL_SUPPORTED_ORIENTATIONS} backdropOpacity={0.25} animationIn="slideInUp" animationInTiming={200} animationOut="slideOutDown" animationOutTiming={200} useNativeDriver={true}>
         <View style={tailwind('py-4 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
           <TouchableOpacity onPress={this.onSettingsBtnClick} style={tailwind('py-4 pl-4 w-full')}>
-            <Text style={tailwind('text-gray-800')}>Settings</Text>
+            <Text style={tailwind('text-base text-gray-800 font-normal')}>Settings</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => Linking.openURL(DOMAIN_NAME + '/#support')} style={tailwind('py-4 pl-4 w-full')}>
-            <Text style={tailwind('text-gray-800')}>Support</Text>
+            <Text style={tailwind('text-base text-gray-800 font-normal')}>Support</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.onSignOutBtnClick} style={tailwind('py-4 pl-4 w-full')}>
-            <Text style={tailwind('text-gray-800')}>Sign out</Text>
+            <Text style={tailwind('text-base text-gray-800 font-normal')}>Sign out</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -333,49 +350,66 @@ class BottomBar extends React.PureComponent {
 
   render() {
 
-    if (this.props.isBulkEditing) return <BottomBarBulkEditCommands />;
+    const { isBulkEditing, insets } = this.props;
 
-    const style = {
-      height: toPx(BOTTOM_BAR_HEIGHT) + this.props.insets.bottom,
-      transform: [{ translateY: this.bottomBarTranslateY }],
-    };
-    const innerStyle = {
-      height: toPx(BOTTOM_BAR_HEIGHT),
-    };
+    if (isBulkEditing) return <BottomBarBulkEditCommands />;
+
+    if (!styles.bottomBar || this.prevInsetsBottom !== insets.bottom) {
+      const style = {
+        height: toPx(BOTTOM_BAR_HEIGHT) + insets.bottom,
+        transform: [{ translateY: this.bottomBarTranslateY }],
+      };
+
+      styles.bottomBar = [tailwind('absolute inset-x-0 bottom-0 bg-white border-t border-gray-300 z-30'), style]
+    }
+
+    if (!styles.innerBottomBar) {
+      const innerStyle = {
+        height: toPx(BOTTOM_BAR_HEIGHT),
+      };
+      styles.innerBottomBar = [tailwind('relative flex-row justify-evenly w-full overflow-hidden'), innerStyle];
+    }
+
+    if (!styles.addSvg) styles.addSvg = [tailwind('text-base text-gray-600 font-normal'), { marginBottom: 2 }];
+    if (!styles.addText) styles.addText = [tailwind('text-xs text-gray-700 font-normal leading-4'), { marginTop: 2 }];
+
+    if (!styles.searchText) styles.searchText = [tailwind('text-xs text-gray-700 font-normal leading-4'), { marginTop: 2 }]
+
+    if (!styles.selectText) styles.selectText = [tailwind('text-xs text-gray-700 font-normal leading-4'), { marginTop: 2 }];
 
     return (
       <React.Fragment>
-        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 bg-white border-t border-gray-300 z-30'), style]}>
-          <View style={[tailwind('relative flex-row justify-evenly w-full overflow-hidden'), innerStyle]}>
+        <Animated.View style={styles.bottomBar}>
+          <View style={styles.innerBottomBar}>
             <View style={tailwind('p-1 flex-1')}>
               <TouchableOpacity onPress={this.onAddBtnClick} style={tailwind('justify-center items-center w-full h-full')}>
                 <View style={tailwind('justify-center items-center w-6 h-6')}>
-                  <Svg style={[tailwind('text-gray-600'), { marginBottom: 2 }]} width={18} height={17} viewBox="0 0 13 12" stroke="currentColor">
+                  <Svg style={styles.addSvg} width={18} height={17} viewBox="0 0 13 12" stroke="currentColor">
                     <Path d="M6.5 1V10.4286M1 5.67609H12" strokeWidth="1.57143" strokeLinecap="round" strokeLinejoin="round" />
                   </Svg>
                 </View>
-                <Text style={[tailwind('text-xs text-gray-700 leading-4'), { marginTop: 2 }]}>Add</Text>
+                <Text style={styles.addText}>Add</Text>
               </TouchableOpacity>
             </View>
             <View style={tailwind('p-1 flex-1')}>
               <TouchableOpacity onPress={this.onSearchBtnClick} style={tailwind('justify-center items-center w-full h-full')}>
                 <View style={tailwind('justify-center items-center w-6 h-6')}>
-                  <Svg style={tailwind('text-gray-600')} width={22} height={22} viewBox="0 0 24 24" fill="currentColor">
+                  <Svg style={tailwind('text-base text-gray-600 font-normal')} width={22} height={22} viewBox="0 0 24 24" fill="currentColor">
                     <Path d="M16.32 14.9l1.1 1.1c.4-.02.83.13 1.14.44l3 3a1.5 1.5 0 0 1-2.12 2.12l-3-3a1.5 1.5 0 0 1-.44-1.14l-1.1-1.1a8 8 0 1 1 1.41-1.41l.01-.01zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
                   </Svg>
                 </View>
-                <Text style={[tailwind('text-xs text-gray-700 leading-4'), { marginTop: 2 }]}>Search</Text>
+                <Text style={styles.searchText}>Search</Text>
               </TouchableOpacity>
             </View>
             <View style={tailwind('p-1 flex-1')}>
               <TouchableOpacity onPress={this.onBulkEditBtnClick} style={tailwind('justify-center items-center w-full h-full')}>
                 <View style={tailwind('justify-center items-center w-6 h-6')}>
-                  <Svg style={tailwind('text-gray-600')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+                  <Svg style={tailwind('text-base text-gray-600 font-normal')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
                     <Path d="M17.4142 2.58579C16.6332 1.80474 15.3668 1.80474 14.5858 2.58579L7 10.1716V13H9.82842L17.4142 5.41421C18.1953 4.63316 18.1953 3.36683 17.4142 2.58579Z" />
                     <Path fillRule="evenodd" clipRule="evenodd" d="M2 6C2 4.89543 2.89543 4 4 4H8C8.55228 4 9 4.44772 9 5C9 5.55228 8.55228 6 8 6H4V16H14V12C14 11.4477 14.4477 11 15 11C15.5523 11 16 11.4477 16 12V16C16 17.1046 15.1046 18 14 18H4C2.89543 18 2 17.1046 2 16V6Z" />
                   </Svg>
                 </View>
-                <Text style={[tailwind('text-xs text-gray-700 leading-4'), { marginTop: 2 }]}>Select</Text>
+                <Text style={styles.selectText}>Select</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity onPress={this.onProfileBtnClick} style={tailwind('flex-1 justify-center items-center')}>
@@ -392,6 +426,8 @@ class BottomBar extends React.PureComponent {
     );
   }
 }
+
+const styles = {};
 
 const mapStateToProps = (state, props) => {
 

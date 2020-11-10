@@ -38,13 +38,19 @@ const store = createStore(
     offline(offlineConfig),
   )
 );
+const backHandler = (menuProvider) => updateMenuPopupAsBackPressed(menuProvider, store.dispatch, store.getState);
 
 const Root = () => {
+
+  if (!styles.menuProviderStyle) styles.menuProviderStyle = { backdrop: { backgroundColor: 'black', opacity: 0.25 } };
+
+  if (!styles.safeAreaViewStyle) styles.safeAreaViewStyle = { flex: 1, backgroundColor: 'white' };
+
   return (
     <Provider store={store}>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <MenuProvider customStyles={{ backdrop: { backgroundColor: 'black', opacity: 0.25 } }} backHandler={(menuProvider) => updateMenuPopupAsBackPressed(menuProvider, store.dispatch, store.getState)}>
-          <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+        <MenuProvider customStyles={styles.menuProviderStyle} backHandler={backHandler}>
+          <SafeAreaView style={styles.safeAreaViewStyle}>
             <App />
           </SafeAreaView>
         </MenuProvider>
@@ -54,15 +60,20 @@ const Root = () => {
 };
 
 export const ShareRoot = () => {
+
+  if (!styles.shareSafeAreaViewStyle) styles.shareSafeAreaViewStyle = { flex: 1, backgroundColor: 'transparent' };
+
   return (
     <Provider store={store}>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
+        <SafeAreaView style={styles.shareSafeAreaViewStyle}>
           <Share />
         </SafeAreaView>
       </SafeAreaProvider>
     </Provider>
   );
 };
+
+const styles = {};
 
 export default Root;
