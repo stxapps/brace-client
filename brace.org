@@ -767,7 +767,7 @@ This and CI/CD are very important!
 - change minSdkVersion from 16 to 21 in ./android/build.gradle
 - Allow CORS access on https://brace.to/manifest.json
 - Set up Android deep linking: reactnative.dev/docs/linking and developer.android.com/training/app-links/deep-linking
-- yarn add https://github.com/bracedotto/tailwind-rn#f00e5de8b2b16fdbfbea2c7d14d5e52c9b52844b
+- yarn add https://github.com/bracedotto/tailwind-rn#dcc0a394074be452a75f99326ffa36dc5ee32763
 - npx react-native link to link assets i.e. fonts
   + medium.com/@mehrankhandev/ultimate-guide-to-use-custom-fonts-in-react-native-77fcdf859cf4
 - yarn add react-native-popup-menu
@@ -779,6 +779,7 @@ This and CI/CD are very important!
 - yarn add react-native-swiper
 - yarn add https://github.com/bracedotto/react-native-receive-sharing-intent#be4d3410fc96ba8e266a2a27535b3d531e56ef57
 - yarn add @welldone-software/why-did-you-render --dev
+- yarn add react-native-fs
 - ios
   + Edit PodFile: ios target 11.0, pad 'Blockstack'
   + Add RNBlockstackSdk to Bracedotto project with Xcode, select create groups
