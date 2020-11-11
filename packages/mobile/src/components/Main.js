@@ -19,6 +19,7 @@ import {
 } from '../types/const';
 import { getListNameMap, getLinks } from '../selectors';
 import { toPx, multiplyPercent, getListNameDisplayName } from '../utils';
+import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
 import { withSafeAreaContext } from '.';
@@ -154,12 +155,9 @@ class Main extends React.Component {
     }
 
     if (listName === MY_LIST) {
-
-      if (!styles.emptyMyListView) styles.emptyMyListView = [tailwind('pt-16 pb-8 items-center w-full max-w-md bg-gray-100'), BORDER_RADIUS];
-
       return (
         <View style={tailwind('px-4 pb-6 items-center w-full md:px-6 lg:px-8', safeAreaWidth)}>
-          <View style={styles.emptyMyListView}>
+          <View style={cache('M_emptyMyListView', [tailwind('pt-16 pb-8 items-center w-full max-w-md bg-gray-100'), BORDER_RADIUS])}>
             <SvgXml width={64} height={64} xml={undrawLink} />
             <Text style={tailwind('mt-6 text-lg text-gray-900 font-normal text-center')}>Get started saving links</Text>
             <TouchableOpacity onPress={this.onAddBtnClick} style={tailwind('mt-4 px-3 py-1 flex-row justify-center items-center bg-gray-900 rounded-lg shadow-lg')}>
@@ -266,7 +264,7 @@ class Main extends React.Component {
       // There is a bug if removeClippedSubviews is true
       //   as on the doc page, it's said use at your own risk.
       <FlatList
-        style={{ width }}
+        style={cache('M_flatListColumn', { width }, safeAreaWidth)}
         data={item.data}
         keyExtractor={this.getItemId}
         renderItem={this.renderItem}
@@ -284,7 +282,7 @@ class Main extends React.Component {
       let pt = safeAreaWidth < MD_WIDTH ? toPx(TOP_BAR_HEIGHT) : toPx(TOP_BAR_HEIGHT_MD);
       pt += safeAreaWidth < MD_WIDTH ? toPx('1.5rem') : toPx('2.5rem');
       return (
-        <View style={{ paddingTop: pt }}></View>
+        <View style={cache('M_mainHead', { paddingTop: pt }, safeAreaWidth)}></View>
       );
     }
 
@@ -348,7 +346,7 @@ class Main extends React.Component {
     if (item.id === MAIN_PADDING_BOTTOM) {
       const pb = toPx(BOTTOM_BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT);
       return (
-        <View style={{ paddingBottom: pb }}></View>
+        <View style={cache('M_mainPB', { paddingBottom: pb })}></View>
       );
     }
 
@@ -392,8 +390,6 @@ class Main extends React.Component {
     );
   }
 }
-
-const styles = {};
 
 const mapStateToProps = (state, props) => {
 

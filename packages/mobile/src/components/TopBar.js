@@ -24,6 +24,7 @@ import {
   MD_WIDTH,
 } from '../types/const';
 import { validateUrl, isEqual, toPx } from '../utils';
+import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
 
@@ -101,7 +102,7 @@ class TopBar extends React.Component {
 
     if (props.userImage) {
       this.userImage = (
-        <GracefulImage style={tailwind('w-full h-full')} source={{ uri: props.userImage }} />
+        <GracefulImage style={tailwind('w-full h-full')} source={cache('TB_userImage', { uri: props.userImage }, props.userImage)} />
       );
       this.profileBtnStyleClasses = 'rounded-full';
     } else {
@@ -239,18 +240,15 @@ class TopBar extends React.Component {
   }
 
   renderProfilePopup() {
-
-    if (!styles.profileMenuOption) styles.profileMenuOption = { optionWrapper: { padding: 0 } };
-
     return (
       <View style={tailwind('py-2 w-32')}>
-        <MenuOption onSelect={this.onSettingsBtnClick} customStyles={styles.profileMenuOption}>
+        <MenuOption onSelect={this.onSettingsBtnClick} customStyles={cache('TB_profileMenuOption', { optionWrapper: { padding: 0 } })}>
           <Text style={tailwind('py-2 pl-4 text-base text-gray-800 font-normal')}>Settings</Text>
         </MenuOption>
-        <MenuOption onSelect={() => Linking.openURL(DOMAIN_NAME + '/#support')} customStyles={styles.profileMenuOption}>
+        <MenuOption onSelect={() => Linking.openURL(DOMAIN_NAME + '/#support')} customStyles={cache('TB_profileMenuOption', { optionWrapper: { padding: 0 } })}>
           <Text style={tailwind('py-2 pl-4 text-base text-gray-800 font-normal')}>Support</Text>
         </MenuOption>
-        <MenuOption onSelect={this.onSignOutBtnClick} customStyles={styles.profileMenuOption}>
+        <MenuOption onSelect={this.onSignOutBtnClick} customStyles={cache('TB_profileMenuOption', { optionWrapper: { padding: 0 } })}>
           <Text style={tailwind('py-2 pl-4 text-base text-gray-800 font-normal')}>Sign out</Text>
         </MenuOption>
       </View>
@@ -261,31 +259,21 @@ class TopBar extends React.Component {
 
     const { searchString, safeAreaWidth } = this.props;
 
-    if (!styles.commandMenuRendererProps) {
-      const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' })
-      styles.commandMenuRendererProps = { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) };
-    }
-
-    if (!styles.commandMenuOptions) styles.commandMenuOptions = { optionsContainer: tailwind('bg-white rounded-lg shadow-xl') };
-
-    if (!styles.addTriggerView) styles.addTriggerView = [tailwind('flex-row justify-center items-center bg-white border border-gray-700 rounded-full shadow-sm'), { height: 32, paddingLeft: 10, paddingRight: 12 }];
-
-    if (!styles.bulkEditBtnView) styles.bulkEditBtnView = [tailwind('px-3 py-1 flex-row justify-center items-center bg-white border border-gray-600 rounded-full shadow-sm'), { height: 32, paddingLeft: 10, paddingRight: 12 }];
-
+    const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' })
     const searchClearBtnClasses = searchString.length === 0 ? 'hidden relative' : 'flex absolute';
 
     return (
       <View style={tailwind('flex-row justify-end items-center')}>
-        <Menu renderer={renderers.Popover} rendererProps={styles.commandMenuRendererProps} onOpen={this.onAddBtnClick} onClose={this.onAddCancelBtnClick}>
+        <Menu renderer={renderers.Popover} rendererProps={cache('TB_commandMenuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onOpen={this.onAddBtnClick} onClose={this.onAddCancelBtnClick}>
           <MenuTrigger>
-            <View style={styles.addTriggerView}>
+            <View style={cache('TB_addTriggerView', [tailwind('flex-row justify-center items-center bg-white border border-gray-700 rounded-full shadow-sm'), { height: 32, paddingLeft: 10, paddingRight: 12 }])}>
               <Svg style={tailwind('text-base text-gray-700 font-normal')} width={12} height={11} viewBox="0 0 16 14" stroke="currentColor" fill="none">
                 <Path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </Svg>
               <Text style={tailwind('ml-1 text-base text-gray-700 font-normal')}>Add</Text>
             </View>
           </MenuTrigger>
-          <MenuOptions customStyles={styles.commandMenuOptions}>
+          <MenuOptions customStyles={cache('TB_commandMenuOptions', { optionsContainer: tailwind('bg-white rounded-lg shadow-xl') })}>
             {this.renderAddPopup()}
           </MenuOptions>
         </Menu>
@@ -304,7 +292,7 @@ class TopBar extends React.Component {
           </View>
         </View>
         <TouchableOpacity onPress={this.onBulkEditBtnClick} style={tailwind('ml-4')}>
-          <View style={styles.bulkEditBtnView}>
+          <View style={cache('TB_bulkEditBtnView', [tailwind('px-3 py-1 flex-row justify-center items-center bg-white border border-gray-600 rounded-full shadow-sm'), { height: 32, paddingLeft: 10, paddingRight: 12 }])}>
             <Svg style={tailwind('text-base text-gray-600 font-normal')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
               <Path d="M17.4142 2.58579C16.6332 1.80474 15.3668 1.80474 14.5858 2.58579L7 10.1716V13H9.82842L17.4142 5.41421C18.1953 4.63316 18.1953 3.36683 17.4142 2.58579Z" />
               <Path fillRule="evenodd" clipRule="evenodd" d="M2 6C2 4.89543 2.89543 4 4 4H8C8.55228 4 9 4.44772 9 5C9 5.55228 8.55228 6 8 6H4V16H14V12C14 11.4477 14.4477 11 15 11C15.5523 11 16 11.4477 16 12V16C16 17.1046 15.1046 18 14 18H4C2.89543 18 2 17.1046 2 16V6Z" />
@@ -312,7 +300,7 @@ class TopBar extends React.Component {
             <Text style={tailwind('ml-1 text-base text-gray-700 font-normal')}>Select</Text>
           </View>
         </TouchableOpacity>
-        <Menu renderer={renderers.Popover} rendererProps={styles.commandMenuRendererProps} onOpen={this.onProfileBtnClick} onClose={this.onProfileCancelBtnClick}>
+        <Menu renderer={renderers.Popover} rendererProps={cache('TB_commandMenuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onOpen={this.onProfileBtnClick} onClose={this.onProfileCancelBtnClick}>
           <MenuTrigger>
             <View style={tailwind('ml-4')}>
               <View style={tailwind(`justify-center items-center h-8 w-8 bg-white overflow-hidden border-2 border-gray-200 ${this.profileBtnStyleClasses}`)}>
@@ -320,7 +308,7 @@ class TopBar extends React.Component {
               </View>
             </View>
           </MenuTrigger>
-          <MenuOptions customStyles={styles.commandMenuOptions}>
+          <MenuOptions customStyles={cache('TB_commandMenuOptions', { optionsContainer: tailwind('bg-white rounded-lg shadow-xl') })}>
             {this.renderProfilePopup()}
           </MenuOptions>
         </Menu>
@@ -329,12 +317,9 @@ class TopBar extends React.Component {
   }
 
   renderSignInBtn() {
-
-    if (!styles.signInBtnView) styles.signInBtnView = [tailwind('bg-white border border-gray-700 rounded-full shadow-sm'), { paddingTop: 5, paddingBottom: 5, paddingLeft: 11, paddingRight: 11 }];
-
     return (
       <TouchableOpacity onPress={this.onSignInBtnClick} style={tailwind('justify-center items-center h-14')}>
-        <View style={styles.signInBtnView}>
+        <View style={cache('TB_signInBtnView', [tailwind('bg-white border border-gray-700 rounded-full shadow-sm'), { paddingTop: 5, paddingBottom: 5, paddingLeft: 11, paddingRight: 11 }])}>
           <Text style={tailwind('text-base text-gray-700 font-normal')}>Sign in</Text>
         </View>
       </TouchableOpacity>
@@ -537,7 +522,7 @@ class TopBar extends React.Component {
           </Animated.View>
           {listNamePane}
         </View>
-      </Animated.View>
+      </Animated.View >
     );
   }
 }
@@ -547,8 +532,6 @@ TopBar.defaultProps = {
   fetched: null,
   scrollY: null,
 };
-
-const styles = {};
 
 const mapStateToProps = (state, props) => {
   return {

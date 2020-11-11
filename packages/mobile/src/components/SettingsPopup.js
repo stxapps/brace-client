@@ -8,6 +8,7 @@ import Svg, { Path } from 'react-native-svg'
 
 import { updatePopup } from '../actions';
 import { MD_WIDTH, SETTINGS_POPUP } from '../types/const';
+import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
 import { withSafeAreaContext } from '.';
@@ -50,8 +51,6 @@ class SettingsPopup extends React.PureComponent {
     this.settingsPopupBackHandler = null;
     this.keyboardDidShowListener = null;
     this.keyboardDidHideListener = null;
-
-    this.panelHeight = null;
   }
 
   componentDidMount() {
@@ -235,29 +234,18 @@ class SettingsPopup extends React.PureComponent {
     const appHeight = safeAreaHeight - statusBarHeight - this.state.keyboardHeight;
     const panelHeight = safeAreaWidth < MD_WIDTH ? appHeight * 0.9 : appHeight * 0.8;
 
-    if (!this.panelHeight || !styles.panelStyle || this.panelHeight !== panelHeight) {
-      styles.panelStyle = { height: panelHeight };
-      this.panelHeight = panelHeight;
-    }
-
     const { isSidebarShown, didSidebarTransitionEnd } = this.state;
 
     const sidebarCanvasStyleClasses = !isSidebarShown && didSidebarTransitionEnd ? 'hidden relative' : 'absolute inset-0 flex flex-row';
 
-    if (!styles.sidebarStyle) {
-      const sidebarStyle = { transform: [{ translateX: this.sidebarTranslateX }] };
-      styles.sidebarStyle = [tailwind('pt-5 pb-4 flex-1 max-w-48 w-full bg-white'), sidebarStyle];
-    }
+    const sidebarStyle = { transform: [{ translateX: this.sidebarTranslateX }] };
 
-    if (!styles.sidebarCloseBtnStyle) {
-      const changingSidebarCloseBtnOpacity = this.sidebarTranslateX.interpolate({
-        inputRange: [SIDE_BAR_WIDTH * -1, 0],
-        outputRange: [0, 1],
-        extrapolate: 'clamp'
-      });
-      const sidebarCloseBtnStyle = { opacity: changingSidebarCloseBtnOpacity };
-      styles.sidebarCloseBtnStyle = [tailwind('absolute inset-0 bg-gray-300'), sidebarCloseBtnStyle];
-    }
+    const changingSidebarCloseBtnOpacity = this.sidebarTranslateX.interpolate({
+      inputRange: [SIDE_BAR_WIDTH * -1, 0],
+      outputRange: [0, 1],
+      extrapolate: 'clamp'
+    });
+    const sidebarCloseBtnStyle = { opacity: changingSidebarCloseBtnOpacity };
 
     const selectedMenuBtnStyleClasses = 'bg-gray-200';
     const menuBtnStyleClasses = '';
@@ -269,7 +257,7 @@ class SettingsPopup extends React.PureComponent {
     const menuSvgStyleClasses = 'text-gray-500';
 
     const panelWithSidebar = (
-      <View key="panel-with-sidebar" style={styles.panelStyle}>
+      <View key="panel-with-sidebar" style={cache('SP_panel', { height: panelHeight }, panelHeight)}>
         <View style={tailwind('hidden relative p-1 md:flex md:absolute md:top-0 md:right-0', safeAreaWidth)}>
           <TouchableOpacity onPress={this.onPopupCloseBtnClick} style={tailwind('items-center justify-center h-7 w-7 rounded-full')}>
             <Svg style={tailwind('text-base text-gray-500 font-normal')} width={20} height={20} stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -323,7 +311,7 @@ class SettingsPopup extends React.PureComponent {
           {/* Off-canvas sidebar for mobile */}
           <View key="sidebar-for-mobile" style={tailwind(`${sidebarCanvasStyleClasses} z-10 md:hidden md:relative`, safeAreaWidth)}>
             <TouchableWithoutFeedback onPress={this.onSidebarCloseBtnClick}>
-              <Animated.View style={styles.sidebarCloseBtnStyle}></Animated.View>
+              <Animated.View style={[tailwind('absolute inset-0 bg-gray-300'), sidebarCloseBtnStyle]}></Animated.View>
             </TouchableWithoutFeedback>
             <View style={tailwind('absolute top-0 right-0 p-1')}>
               <TouchableOpacity onPress={this.onPopupCloseBtnClick} style={tailwind('items-center justify-center h-7 w-7 rounded-full')}>
@@ -332,7 +320,7 @@ class SettingsPopup extends React.PureComponent {
                 </Svg>
               </TouchableOpacity>
             </View>
-            <Animated.View style={styles.sidebarStyle}>
+            <Animated.View style={[tailwind('pt-5 pb-4 flex-1 max-w-48 w-full bg-white'), sidebarStyle]}>
               <View style={tailwind('px-4 flex-shrink-0 flex-row items-center')}>
                 <Text style={tailwind('text-3xl text-gray-800 font-semibold')}>Settings</Text>
               </View>
@@ -435,8 +423,6 @@ class SettingsPopup extends React.PureComponent {
     else throw new Error(`Invalid viewId: ${viewId}`);
   }
 }
-
-const styles = {};
 
 const mapStateToProps = (state, props) => {
   return {

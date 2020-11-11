@@ -14,6 +14,7 @@ import { MenuProvider } from 'react-native-popup-menu';
 import reducers from './reducers';
 import { init, updateMenuPopupAsBackPressed } from './actions'
 import { queue, discard, effect } from './apis/customOffline'
+import cache from './utils/cache';
 
 import App from './components/App';
 import Share from './components/Share';
@@ -41,16 +42,11 @@ const store = createStore(
 const backHandler = (menuProvider) => updateMenuPopupAsBackPressed(menuProvider, store.dispatch, store.getState);
 
 const Root = () => {
-
-  if (!styles.menuProviderStyle) styles.menuProviderStyle = { backdrop: { backgroundColor: 'black', opacity: 0.25 } };
-
-  if (!styles.safeAreaViewStyle) styles.safeAreaViewStyle = { flex: 1, backgroundColor: 'white' };
-
   return (
     <Provider store={store}>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <MenuProvider customStyles={styles.menuProviderStyle} backHandler={backHandler}>
-          <SafeAreaView style={styles.safeAreaViewStyle}>
+        <MenuProvider customStyles={cache('SI_menuProvider', { backdrop: { backgroundColor: 'black', opacity: 0.25 } })} backHandler={backHandler}>
+          <SafeAreaView style={cache('SI_safeAreaView', { flex: 1, backgroundColor: 'white' })}>
             <App />
           </SafeAreaView>
         </MenuProvider>
@@ -60,20 +56,15 @@ const Root = () => {
 };
 
 export const ShareRoot = () => {
-
-  if (!styles.shareSafeAreaViewStyle) styles.shareSafeAreaViewStyle = { flex: 1, backgroundColor: 'transparent' };
-
   return (
     <Provider store={store}>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <SafeAreaView style={styles.shareSafeAreaViewStyle}>
+        <SafeAreaView style={cache('SI_shareSafeAreaView', { flex: 1, backgroundColor: 'transparent' })}>
           <Share />
         </SafeAreaView>
       </SafeAreaProvider>
     </Provider>
   );
 };
-
-const styles = {};
 
 export default Root;

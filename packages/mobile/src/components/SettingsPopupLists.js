@@ -18,6 +18,7 @@ import {
 import { getListNameMap } from '../selectors';
 import { canDeleteListNames } from '../apis/blockstack';
 import { validateListNameDisplayName } from '../utils';
+import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
 import { withSafeAreaContext } from '.';
@@ -290,10 +291,6 @@ class _ListNameEditor extends React.PureComponent {
       errMsg = msg;
     }
 
-    if (!styles.errMsg) styles.errMsg = [tailwind('absolute left-0 right-0 text-sm text-red-600 font-medium leading-5'), { bottom: -8 }];
-
-    if (!styles.retryRetryBtn) styles.retryRetryBtn = [tailwind('justify-center items-center bg-white border border-gray-700 rounded-full shadow-sm'), { height: 28, paddingLeft: 10, paddingRight: 10 }];
-
     return (
       <View style={tailwind('mt-2 flex-row justify-start items-center')}>
         {(mode === MODE_VIEW && listNameObj === null) && <TouchableOpacity onPress={this.onAddBtnClick} style={tailwind('flex-grow-0 flex-shrink-0 flex-row justify-start items-center w-8 h-10')}>
@@ -309,7 +306,7 @@ class _ListNameEditor extends React.PureComponent {
         </TouchableOpacity>}
         <View style={tailwind('flex-grow flex-shrink')}>
           <TextInput ref={this.input} onFocus={this.onInputFocus} onBlur={this.onInputBlur} onChange={this.onInputChange} onSubmitEditing={this.onInputKeyPress} style={tailwind('py-2 w-full bg-white text-base text-gray-900 font-normal border-0')} placeholder="Create new list" value={value} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} disabled={isBusy || doRetry} />
-          <Text style={styles.errMsg} numberOfLines={1} ellipsizeMode="tail">{errMsg}</Text>
+          <Text style={cache('SPL_errMsg', [tailwind('pl-1 absolute left-0 right-0 text-sm text-red-600 font-medium leading-5'), { bottom: -8 }])} numberOfLines={1} ellipsizeMode="tail">{errMsg}</Text>
         </View>
         {mode === MODE_EDIT && <TouchableOpacity onPressIn={this.onOkBtnPress} onPress={this.onOkBtnClick} style={tailwind('flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10')}>
           <Svg style={tailwind('text-base text-gray-600 font-normal rounded-sm')} width={16} height={12} viewBox="0 0 14 10" fill="currentColor">
@@ -333,7 +330,7 @@ class _ListNameEditor extends React.PureComponent {
           </Svg>
         </TouchableOpacity>}
         {(mode === MODE_VIEW && listNameObj !== null && doRetry) && <TouchableOpacity onPress={this.onRetryRetryBtnClick} style={tailwind('flex-grow-0 flex-shrink-0 justify-center items-center w-20 h-10')} disabled={isBusy}>
-          <View style={styles.retryRetryBtn}>
+          <View style={cache('SPL_retryRetryBtn', [tailwind('justify-center items-center bg-white border border-gray-700 rounded-full shadow-sm'), { height: 28, paddingLeft: 10, paddingRight: 10 }])}>
             <Text style={tailwind('text-base text-gray-700 font-normal')}>Retry</Text>
           </View>
         </TouchableOpacity>}
@@ -344,8 +341,6 @@ class _ListNameEditor extends React.PureComponent {
     );
   }
 }
-
-const styles = {};
 
 const _mapDispatchToProps = {
   addListNames, updateListNames, moveListName, updateDeletingListName,

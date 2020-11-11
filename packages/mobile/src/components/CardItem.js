@@ -19,6 +19,7 @@ import {
   isDiedStatus, extractUrl,
   isEqual,
 } from '../utils';
+import cache from '../utils/cache';
 import { PATTERN_MAP } from '../types/patternPaths';
 import { tailwind } from '../stylesheets/tailwind';
 
@@ -47,7 +48,7 @@ class CardItem extends React.Component {
     if (
       !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
       this.props.link.status !== nextProps.link.status ||
-      !isEqual(this.props.style, nextProps.style) ||
+      this.props.style !== nextProps.style ||
       this.props.safeAreaWidth !== nextProps.safeAreaWidth ||
       this.state.extractedFaviconError !== nextState.extractedFaviconError
     ) {
@@ -76,26 +77,20 @@ class CardItem extends React.Component {
 
   renderBusy() {
 
-    if (!styles.busyTriangle) {
-      const triangleStyle = {
-        transform: [{ 'translateX': 32 }, { 'translateY': -32 }, { 'rotate': '45deg' }],
-      };
-      styles.busyTriangle = [tailwind('w-16 h-16 bg-white overflow-hidden'), triangleStyle];
-    }
+    const triangleStyle = {
+      transform: [{ 'translateX': 32 }, { 'translateY': -32 }, { 'rotate': '45deg' }],
+    };
 
-    if (!styles.busySvg) {
-      const svgStyle = {
-        top: 66,
-        left: 34,
-        transform: [{ 'translateX': -12 }, { 'translateY': -24 }, { 'rotate': '-45deg' }],
-      };
-      styles.busySvg = [tailwind('w-6 h-6 text-base text-gray-900 font-normal'), svgStyle];
-    }
+    const svgStyle = {
+      top: 66,
+      left: 34,
+      transform: [{ 'translateX': -12 }, { 'translateY': -24 }, { 'rotate': '-45deg' }],
+    };
 
     return (
       <View style={tailwind('absolute top-0 right-0 w-16 h-16 bg-transparent rounded-tr-lg overflow-hidden')}>
-        <View style={styles.busyTriangle}>
-          <Svg style={styles.busySvg} viewBox="0 0 24 24" fill="currentColor">
+        <View style={cache('CI_busyTriangle', [tailwind('w-16 h-16 bg-white overflow-hidden'), triangleStyle])}>
+          <Svg style={cache('CI_busySvg', [tailwind('w-6 h-6 text-base text-gray-900 font-normal'), svgStyle])} viewBox="0 0 24 24" fill="currentColor">
             <Path d="M19.479 10.092C19.267 6.141 16.006 3 12 3s-7.267 3.141-7.479 7.092A5.499 5.499 0 005.5 21h13a5.499 5.499 0 00.979-10.908zM18.5 19h-13C3.57 19 2 17.43 2 15.5c0-2.797 2.479-3.833 4.433-3.72C6.266 7.562 8.641 5 12 5c3.453 0 5.891 2.797 5.567 6.78 1.745-.046 4.433.751 4.433 3.72 0 1.93-1.57 3.5-3.5 3.5zm-4.151-2h-2.77l3-3h2.77l-3 3zm-4.697-3h2.806l-3 3H6.652l3-3zM20 15.5a1.5 1.5 0 01-1.5 1.5h-2.03l2.788-2.788c.442.261.742.737.742 1.288zm-16 0A1.5 1.5 0 015.5 14h2.031l-2.788 2.788A1.495 1.495 0 014 15.5z" />
           </Svg>
         </View>
@@ -140,7 +135,7 @@ class CardItem extends React.Component {
 
     if (image) {
       return (
-        <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full aspect-7/12 bg-white rounded-t-lg shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={{ uri: image }} />
+        <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full aspect-7/12 bg-white rounded-t-lg shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_image_${image}`, { uri: image }, image)} />
       );
     }
 
@@ -180,7 +175,7 @@ class CardItem extends React.Component {
     // Random image
     if (decor.image.bg.type === IMAGE) {
       return (
-        <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full aspect-7/12 bg-white rounded-t-lg shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={{ uri: prependDomainName(decor.image.bg.value) }} />
+        <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full aspect-7/12 bg-white rounded-t-lg shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_decorImage_${decor.image.bg.value}`, { uri: prependDomainName(decor.image.bg.value) }, decor.image.bg.value)} />
       );
     }
 
@@ -210,13 +205,13 @@ class CardItem extends React.Component {
     }
 
     if (favicon && !extractedFaviconError) {
-      return <GracefulImage key="favicon-graceful-image-extracted-result" style={tailwind('flex-shrink-0 flex-grow-0 w-4 h-4')} source={{ uri: favicon }} customPlaceholder={placeholder} onError={this.onExtractedFaviconError} />;
+      return <GracefulImage key="favicon-graceful-image-extracted-result" style={tailwind('flex-shrink-0 flex-grow-0 w-4 h-4')} source={cache(`CI_favicon_${favicon}`, { uri: favicon }, favicon)} customPlaceholder={placeholder} onError={this.onExtractedFaviconError} />;
     }
 
     const { origin } = extractUrl(url);
     favicon = ensureContainUrlSecureProtocol(origin) + '/favicon.ico';
 
-    return <GracefulImage key="favicon-graceful-image-ico" style={tailwind('flex-shrink-0 flex-grow-0 w-4 h-4')} source={{ uri: favicon }} customPlaceholder={placeholder} />;
+    return <GracefulImage key="favicon-graceful-image-ico" style={tailwind('flex-shrink-0 flex-grow-0 w-4 h-4')} source={cache(`CI_favicon_${favicon}`, { uri: favicon }, favicon)} customPlaceholder={placeholder} />;
   }
 
   render() {
@@ -267,8 +262,6 @@ class CardItem extends React.Component {
     );
   }
 }
-
-const styles = {};
 
 const mapStateToProps = (state, props) => {
   return {

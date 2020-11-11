@@ -15,6 +15,7 @@ import {
 } from '../types/const';
 import { getListNameMap } from '../selectors';
 import { getListNameDisplayName, getLongestListNameDisplayName } from '../utils';
+import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
 import { withSafeAreaContext } from '.';
@@ -41,12 +42,11 @@ class ListName extends React.PureComponent {
   renderListNamePopup() {
 
     const { listNameMap } = this.props;
-    if (!styles.menuOption) styles.menuOption = { optionWrapper: { padding: 0 } };
 
     return (
       listNameMap.map(listNameObj => {
         return (
-          <MenuOption key={listNameObj.listName} onSelect={() => this.onListNamePopupClick(listNameObj.listName)} customStyles={styles.menuOption}>
+          <MenuOption key={listNameObj.listName} onSelect={() => this.onListNamePopupClick(listNameObj.listName)} customStyles={cache('LN_menuOption', { optionWrapper: { padding: 0 } })}>
             <Text style={tailwind('py-2 pl-4 pr-2 w-full text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
           </MenuOption>
         );
@@ -81,7 +81,7 @@ class ListName extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <Menu renderer={MenuPopupRenderer} rendererProps={{ triggerOffsets: triggerOffsets, popupStyle: tailwind('py-2 bg-white border border-gray-200 rounded-lg shadow-xl') }} onOpen={this.onListNameBtnClick} onClose={this.onListNameCancelBtnClick}>
+        <Menu renderer={MenuPopupRenderer} rendererProps={cache('LN_rendererProps', { triggerOffsets: triggerOffsets, popupStyle: tailwind('py-2 bg-white border border-gray-200 rounded-lg shadow-xl') }, safeAreaWidth)} onOpen={this.onListNameBtnClick} onClose={this.onListNameCancelBtnClick}>
           <MenuTrigger>
             {/* Change the paddings here, need to change triggerOffsets too */}
             <View style={tailwind('flex-row items-center')}>
@@ -92,7 +92,7 @@ class ListName extends React.PureComponent {
             </View>
           </MenuTrigger>
           <MenuOptions>
-            <ScrollView style={popupScrollViewStyle}>
+            <ScrollView style={cache('LN_scrollView', popupScrollViewStyle, [longestDisplayNameLength, safeAreaHeight])}>
               {this.renderListNamePopup()}
             </ScrollView>
           </MenuOptions>
@@ -101,8 +101,6 @@ class ListName extends React.PureComponent {
     );
   }
 }
-
-const styles = {};
 
 const mapStateToProps = (state, props) => {
 

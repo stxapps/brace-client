@@ -17,6 +17,7 @@ import { signUp, signIn, updateHref, addLink, cancelDiedLinks } from '../actions
 import {
   validateUrl, separateUrlAndParam, indexesOf,
 } from '../utils';
+import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
 import { withSafeAreaContext } from '.';
@@ -286,13 +287,11 @@ class Adding extends React.PureComponent {
 
     const { safeAreaWidth } = this.props;
 
-    if (!styles.containerView) styles.containerView = [tailwind('px-4 pt-16 pb-8 items-center w-full max-w-md bg-white'), SHARE_BORDER_RADIUS];
-
     return (
       <View style={tailwind('flex-1 bg-gray-200')}>
         <TopBar rightPane={SHOW_BLANK} />
-        <ScrollView style={{ flex: 1 }} contentContainerStyle={tailwind('px-4 pt-12 pb-16 items-center md:px-6 md:pt-20 lg:px-8', safeAreaWidth)}>
-          <View style={styles.containerView}>
+        <ScrollView style={cache('A_scrollView', { flex: 1 })} contentContainerStyle={tailwind('px-4 pt-12 pb-16 items-center md:px-6 md:pt-20 lg:px-8', safeAreaWidth)}>
+          <View style={cache('A_containerView', [tailwind('px-4 pt-16 pb-8 items-center w-full max-w-md bg-white'), SHARE_BORDER_RADIUS])}>
             {content}
           </View>
         </ScrollView>
@@ -508,8 +507,6 @@ class Adding extends React.PureComponent {
     else throw new Error(`Invalid action type: ${type}`);
   }
 }
-
-const styles = {};
 
 const mapStateToProps = (state) => {
   return {

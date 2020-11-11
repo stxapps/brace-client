@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, Linking } from 'react-native';
 import Svg, { Path, Circle } from 'react-native-svg'
 
 import { MD_WIDTH, LG_WIDTH } from '../types/const';
+import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
 import { withSafeAreaContext } from '.';
@@ -18,7 +19,7 @@ class SettingsPopupAccount extends React.PureComponent {
     let userImage;
     if (this.props.userImage) {
       userImage = (
-        <GracefulImage style={tailwind('w-full h-full')} source={{ uri: this.props.userImage }} />
+        <GracefulImage style={tailwind('w-full h-full')} source={cache('SPA_userImage', { uri: this.props.userImage }, this.props.userImage)} />
       )
     } else {
       userImage = (
@@ -48,7 +49,7 @@ class SettingsPopupAccount extends React.PureComponent {
           </View>
           <View style={tailwind('mt-4 self-stretch md:flex-1 md:mt-0', safeAreaWidth)}>
             <View style={tailwind('flex-row items-start')}>
-              <View style={{ width: profileFirstColWidth }}>
+              <View style={cache('SPA_profileFirstCol', { width: profileFirstColWidth }, safeAreaWidth)}>
                 <Text style={tailwind('text-sm text-gray-700 font-normal text-right leading-6.5')}>ID:</Text>
               </View>
               <View style={tailwind('pl-2 flex-1')}>
@@ -56,7 +57,7 @@ class SettingsPopupAccount extends React.PureComponent {
               </View>
             </View>
             <View style={tailwind('flex-row items-start')}>
-              <View style={{ width: profileFirstColWidth }}>
+              <View style={cache('SPA_profileFirstCol', { width: profileFirstColWidth }, safeAreaWidth)}>
                 <Text style={tailwind('text-sm text-gray-700 font-normal text-right leading-6.5')}>Password:</Text>
               </View>
               <View style={tailwind('pl-2 flex-1')}>

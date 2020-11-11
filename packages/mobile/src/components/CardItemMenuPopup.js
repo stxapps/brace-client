@@ -20,6 +20,7 @@ import { getListNameMap } from '../selectors';
 import {
   ensureContainUrlProtocol, getLongestListNameDisplayName,
 } from '../utils';
+import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
 
@@ -102,8 +103,6 @@ class CardItemMenuPopup extends React.PureComponent {
   renderMenu() {
     const { menu: _menu, moveTo: _moveTo } = this.populateMenu();
 
-    if (!styles.menuOption) styles.menuOption = { optionWrapper: { padding: 0 } };
-
     let moveTo = null;
     if (_moveTo && _moveTo.length) {
       moveTo = (
@@ -112,7 +111,7 @@ class CardItemMenuPopup extends React.PureComponent {
           {_moveTo.map(listNameObj => {
             const key = MOVE_TO + ' ' + listNameObj.listName;
             return (
-              <MenuOption key={key} onSelect={() => this.onMenuPopupClick(key)} customStyles={styles.menuOption}>
+              <MenuOption key={key} onSelect={() => this.onMenuPopupClick(key)} customStyles={cache('CIMP_menuOption', { optionWrapper: { padding: 0 } })}>
                 <Text style={tailwind('py-2 pl-8 pr-2 w-full text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
               </MenuOption>
             );
@@ -125,7 +124,7 @@ class CardItemMenuPopup extends React.PureComponent {
       <React.Fragment>
         {_menu.map(text => {
           return (
-            <MenuOption key={text} onSelect={() => this.onMenuPopupClick(text)} customStyles={styles.menuOption}>
+            <MenuOption key={text} onSelect={() => this.onMenuPopupClick(text)} customStyles={cache('CIMP_menuOption', { optionWrapper: { padding: 0 } })}>
               <Text style={tailwind('py-2 pl-4 pr-2 w-full text-base text-gray-800 font-normal')}>{text}</Text>
             </MenuOption>
           );
@@ -138,10 +137,6 @@ class CardItemMenuPopup extends React.PureComponent {
   render() {
 
     const { listNameMap, safeAreaHeight } = this.props;
-
-    if (!styles.menuRendererProps) styles.menuRendererProps = { triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 }, popupStyle: tailwind('py-2 bg-white border border-gray-200 rounded-lg shadow-xl') };
-    if (!styles.triggerView) styles.triggerView = { paddingBottom: 6 };
-
     const longestDisplayNameLength = getLongestListNameDisplayName(listNameMap).length;
 
     const popupScrollViewStyle = { width: 128, maxHeight: Math.min(256, safeAreaHeight) };
@@ -153,10 +148,10 @@ class CardItemMenuPopup extends React.PureComponent {
 
     return (
       /* value of triggerOffsets needs to be aligned with paddings of the three dots */
-      <Menu renderer={MenuPopupRenderer} rendererProps={styles.menuRendererProps} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
+      <Menu renderer={MenuPopupRenderer} rendererProps={cache('CIMP_menuRendererProps', { triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 }, popupStyle: tailwind('py-2 bg-white border border-gray-200 rounded-lg shadow-xl') })} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
         <MenuTrigger>
           {/* View with paddingBottom is required because there is this space on the web. */}
-          <View style={styles.triggerView}>
+          <View style={cache('CIMP_triggerView', { paddingBottom: 6 })}>
             {/* Change the paddings here, need to change triggerOffsets too */}
             <View style={tailwind('pt-2 pb-0 pl-4 pr-2 flex-shrink-0 flex-grow-0')}>
               <Svg style={tailwind('py-2 w-6 h-10 text-base text-gray-700 font-normal rounded-full')} viewBox="0 0 24 24" stroke="currentColor" fill="none">
@@ -174,8 +169,6 @@ class CardItemMenuPopup extends React.PureComponent {
     );
   }
 }
-
-const styles = {}
 
 const mapStateToProps = (state, props) => {
   return {

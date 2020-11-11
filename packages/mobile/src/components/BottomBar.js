@@ -20,7 +20,8 @@ import {
   BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT, MODAL_SUPPORTED_ORIENTATIONS,
 } from '../types/const';
 import { getPopupLink } from '../selectors';
-import { validateUrl, isEqual, toPx } from '../utils';
+import { validateUrl, toPx } from '../utils';
+import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
 
@@ -48,7 +49,7 @@ class BottomBar extends React.PureComponent {
 
     if (props.userImage) {
       this.userImage = (
-        <GracefulImage style={tailwind('w-full h-full')} source={{ uri: props.userImage }} />
+        <GracefulImage style={tailwind('w-full h-full')} source={cache('BB_userImage', { uri: props.userImage }, props.userImage)} />
       );
       this.profileBtnStyleClasses = 'rounded-full';
     } else {
@@ -63,8 +64,6 @@ class BottomBar extends React.PureComponent {
     this.searchPopupTranslateY = new Animated.Value(toPx(SEARCH_POPUP_HEIGHT));
 
     this.searchPopupBackHandler = null;
-
-    this.prevInsetsBottom = null;
   }
 
   componentDidMount() {
@@ -132,8 +131,6 @@ class BottomBar extends React.PureComponent {
         this.setState({ url: '', msg: '', isAskingConfirm: false, });
       }
     }
-
-    this.prevInsetsBottom = this.props.insets.bottom;
   }
 
   componentWillUnmount() {
@@ -283,24 +280,20 @@ class BottomBar extends React.PureComponent {
 
     const { searchString, insets } = this.props;
 
-    if (!styles.searchPopup || this.prevInsetsBottom !== insets.bottom) {
-      // Only transition when moving with BottomBar
-      //   but when show/hide this search popup, no need animation
-      //   as keyboard is already animated.
-      const style = {
-        transform: [{ translateY: this.searchPopupTranslateY }],
-      };
-      style.bottom = toPx(BOTTOM_BAR_HEIGHT);
-      // On iOS, there is a KeyboardAvoidingView which is already in SafeAreaView.
-      if (Platform.OS !== 'ios') style.bottom += insets.bottom;
-
-      styles.searchPopup = [tailwind('px-2 py-2 absolute inset-x-0 flex-row justify-between items-center bg-white border border-gray-200 z-10'), style];
-    }
+    // Only transition when moving with BottomBar
+    //   but when show/hide this search popup, no need animation
+    //   as keyboard is already animated.
+    const style = {
+      transform: [{ translateY: this.searchPopupTranslateY }],
+    };
+    style.bottom = toPx(BOTTOM_BAR_HEIGHT);
+    // On iOS, there is a KeyboardAvoidingView which is already in SafeAreaView.
+    if (Platform.OS !== 'ios') style.bottom += insets.bottom;
 
     const searchClearBtnClasses = searchString.length === 0 ? 'hidden relative' : 'flex absolute';
 
     const searchPopup = (
-      <Animated.View style={styles.searchPopup}>
+      <Animated.View style={[tailwind('px-2 py-2 absolute inset-x-0 flex-row justify-between items-center bg-white border border-gray-200 z-10'), style]}>
         <View style={tailwind('flex-grow flex-shrink')}>
           <TextInput ref={this.searchInput} onChange={this.onSearchInputChange} style={tailwind('pl-4 pr-6 py-1 w-full bg-white text-base text-gray-900 font-normal border border-gray-500 rounded-full')} placeholder="Search" value={searchString} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
           {/* A bug display: none doesn't work with absolute, need to change to relative. https://github.com/facebook/react-native/issues/18415 */}
@@ -354,41 +347,23 @@ class BottomBar extends React.PureComponent {
 
     if (isBulkEditing) return <BottomBarBulkEditCommands />;
 
-    if (!styles.bottomBar || this.prevInsetsBottom !== insets.bottom) {
-      const style = {
-        height: toPx(BOTTOM_BAR_HEIGHT) + insets.bottom,
-        transform: [{ translateY: this.bottomBarTranslateY }],
-      };
-
-      styles.bottomBar = [tailwind('absolute inset-x-0 bottom-0 bg-white border-t border-gray-300 z-30'), style]
-    }
-
-    if (!styles.innerBottomBar) {
-      const innerStyle = {
-        height: toPx(BOTTOM_BAR_HEIGHT),
-      };
-      styles.innerBottomBar = [tailwind('relative flex-row justify-evenly w-full overflow-hidden'), innerStyle];
-    }
-
-    if (!styles.addSvg) styles.addSvg = [tailwind('text-base text-gray-600 font-normal'), { marginBottom: 2 }];
-    if (!styles.addText) styles.addText = [tailwind('text-xs text-gray-700 font-normal leading-4'), { marginTop: 2 }];
-
-    if (!styles.searchText) styles.searchText = [tailwind('text-xs text-gray-700 font-normal leading-4'), { marginTop: 2 }]
-
-    if (!styles.selectText) styles.selectText = [tailwind('text-xs text-gray-700 font-normal leading-4'), { marginTop: 2 }];
+    const style = {
+      height: toPx(BOTTOM_BAR_HEIGHT) + insets.bottom,
+      transform: [{ translateY: this.bottomBarTranslateY }],
+    };
 
     return (
       <React.Fragment>
-        <Animated.View style={styles.bottomBar}>
-          <View style={styles.innerBottomBar}>
+        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 bg-white border-t border-gray-300 z-30'), style]}>
+          <View style={cache('BB_innerStyle', [tailwind('relative flex-row justify-evenly w-full overflow-hidden'), { height: toPx(BOTTOM_BAR_HEIGHT) }])}>
             <View style={tailwind('p-1 flex-1')}>
               <TouchableOpacity onPress={this.onAddBtnClick} style={tailwind('justify-center items-center w-full h-full')}>
                 <View style={tailwind('justify-center items-center w-6 h-6')}>
-                  <Svg style={styles.addSvg} width={18} height={17} viewBox="0 0 13 12" stroke="currentColor">
+                  <Svg style={cache('BB_addSvg', [tailwind('text-base text-gray-600 font-normal'), { marginBottom: 2 }])} width={18} height={17} viewBox="0 0 13 12" stroke="currentColor">
                     <Path d="M6.5 1V10.4286M1 5.67609H12" strokeWidth="1.57143" strokeLinecap="round" strokeLinejoin="round" />
                   </Svg>
                 </View>
-                <Text style={styles.addText}>Add</Text>
+                <Text style={cache('BB_addText', [tailwind('text-xs text-gray-700 font-normal leading-4'), { marginTop: 2 }])}>Add</Text>
               </TouchableOpacity>
             </View>
             <View style={tailwind('p-1 flex-1')}>
@@ -398,7 +373,7 @@ class BottomBar extends React.PureComponent {
                     <Path d="M16.32 14.9l1.1 1.1c.4-.02.83.13 1.14.44l3 3a1.5 1.5 0 0 1-2.12 2.12l-3-3a1.5 1.5 0 0 1-.44-1.14l-1.1-1.1a8 8 0 1 1 1.41-1.41l.01-.01zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
                   </Svg>
                 </View>
-                <Text style={styles.searchText}>Search</Text>
+                <Text style={cache('BB_searchText', [tailwind('text-xs text-gray-700 font-normal leading-4'), { marginTop: 2 }])}>Search</Text>
               </TouchableOpacity>
             </View>
             <View style={tailwind('p-1 flex-1')}>
@@ -409,7 +384,7 @@ class BottomBar extends React.PureComponent {
                     <Path fillRule="evenodd" clipRule="evenodd" d="M2 6C2 4.89543 2.89543 4 4 4H8C8.55228 4 9 4.44772 9 5C9 5.55228 8.55228 6 8 6H4V16H14V12C14 11.4477 14.4477 11 15 11C15.5523 11 16 11.4477 16 12V16C16 17.1046 15.1046 18 14 18H4C2.89543 18 2 17.1046 2 16V6Z" />
                   </Svg>
                 </View>
-                <Text style={styles.selectText}>Select</Text>
+                <Text style={cache('BB_selectText', [tailwind('text-xs text-gray-700 font-normal leading-4'), { marginTop: 2 }])}>Select</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity onPress={this.onProfileBtnClick} style={tailwind('flex-1 justify-center items-center')}>
@@ -426,8 +401,6 @@ class BottomBar extends React.PureComponent {
     );
   }
 }
-
-const styles = {};
 
 const mapStateToProps = (state, props) => {
 
