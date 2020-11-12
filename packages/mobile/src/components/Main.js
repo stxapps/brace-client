@@ -40,11 +40,6 @@ const MAIN_BODY = 'MAIN_BODY';
 const MAIN_FOOTER = 'MAIN_FOOTER';
 const MAIN_PADDING_BOTTOM = 'MAIN_PADDING_BOTTOM';
 
-const MAIN_DATA1 = [{ id: MAIN_HEAD }, { id: MAIN_BODY }];
-const MAIN_DATA2 = [{ id: MAIN_HEAD }, { id: MAIN_BODY }, { id: MAIN_FOOTER }];
-const MAIN_DATA3 = [{ id: MAIN_HEAD }, { id: MAIN_BODY }, { id: MAIN_PADDING_BOTTOM }];
-const MAIN_DATA4 = [{ id: MAIN_HEAD }, { id: MAIN_BODY }, { id: MAIN_FOOTER }, { id: MAIN_PADDING_BOTTOM }];
-
 const BORDER_RADIUS = {
   borderTopLeftRadius: 24,
   borderTopRightRadius: 24,
@@ -364,10 +359,9 @@ class Main extends React.Component {
 
     const topBarRightPane = [PC_50, PC_33].includes(columnWidth) ? SHOW_COMMANDS : SHOW_BLANK;
 
-    let mainData = MAIN_DATA1;
-    if (hasMoreLinks && columnWidth === PC_100) mainData = MAIN_DATA4;
-    else if (hasMoreLinks) mainData = MAIN_DATA2;
-    else if (columnWidth === PC_100) mainData = MAIN_DATA3;
+    const mainData = [{ id: MAIN_HEAD }, { id: MAIN_BODY }];
+    if (hasMoreLinks) mainData.push({ id: MAIN_FOOTER });
+    if (columnWidth === PC_100) mainData.push({ id: MAIN_PADDING_BOTTOM });
 
     return (
       <React.Fragment>
