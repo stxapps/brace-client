@@ -166,8 +166,8 @@ class TopBarBulkEditCommands extends React.Component {
 
     const popupStyle = { width: '7rem', maxHeight: '16rem' };
     if (longestDisplayNameLength > 7) {
-      // Approx 10px or 0.625rem per additional character
-      const width = Math.min(7 + 0.625 * (longestDisplayNameLength - 7), 8.25);
+      // Approx 8px or 0.5rem per additional character
+      const width = Math.min(7 + 0.5 * (longestDisplayNameLength - 7), 8.25);
       popupStyle.width = `${width}rem`;
     }
 

@@ -5,10 +5,12 @@ import {
   changeListName, updatePopup,
 } from '../actions';
 import {
-  LIST_NAME_POPUP,
+  LIST_NAME_POPUP, SM_WIDTH, LG_WIDTH,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
 import { getListNameDisplayName, getLongestListNameDisplayName } from '../utils';
+
+import { getTopBarSizes } from '.';
 
 class ListName extends React.PureComponent {
 
@@ -38,8 +40,8 @@ class ListName extends React.PureComponent {
 
     const popupStyle = { width: '7rem', maxHeight: '16rem' };
     if (longestDisplayNameLength > 7) {
-      // Approx 10px or 0.625rem per additional character
-      const width = Math.min(7 + 0.625 * (longestDisplayNameLength - 7), 16);
+      // Approx 8px or 0.5rem per additional character
+      const width = Math.min(7 + 0.5 * (longestDisplayNameLength - 7), 16);
       popupStyle.width = `${width}rem`;
     }
 
@@ -58,10 +60,25 @@ class ListName extends React.PureComponent {
     const { listName, listNameMap, isListNamePopupShown } = this.props;
     const displayName = getListNameDisplayName(listName, listNameMap);
 
+    let textMaxWidth = 160;
+    if (window.innerWidth >= SM_WIDTH) textMaxWidth = 320;
+    if (window.innerWidth >= LG_WIDTH) textMaxWidth = 512;
+
+    if (window.innerWidth >= SM_WIDTH) {
+      const {
+        headerPaddingX, commandsWidth,
+        listNameDistanceX, listNameArrowWidth, listNameArrowSpace,
+      } = getTopBarSizes(window.innerWidth);
+      const headerSpaceLeftover = window.innerWidth - headerPaddingX - listNameDistanceX - listNameArrowWidth - listNameArrowSpace - commandsWidth - 4;
+
+      textMaxWidth = Math.min(textMaxWidth, headerSpaceLeftover)
+    }
+    const textStyle = { maxWidth: textMaxWidth };
+
     return (
       <div className="inline-block relative">
         <button onClick={this.onListNameBtnClick} className={`relative flex items-center rounded ${isListNamePopupShown ? 'z-41' : ''} hover:shadow-outline focus:outline-none focus:shadow-outline`}>
-          <h2 className="max-w-40 text-lg text-gray-900 font-semibold leading-7 truncate sm:max-w-xs lg:max-w-lg">{displayName}</h2>
+          <h2 style={textStyle} className="max-w-40 text-lg text-gray-900 font-semibold leading-7 truncate sm:max-w-xs lg:max-w-lg">{displayName}</h2>
           <svg className="ml-1 w-5 text-black" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>

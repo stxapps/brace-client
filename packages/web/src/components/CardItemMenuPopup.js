@@ -109,9 +109,12 @@ class CardItemMenuPopup extends React.PureComponent {
       }
     }
 
-    const longestDisplayName = getLongestListNameDisplayName(props.listNameMap);
-
     menu = menu.filter(text => text !== MOVE_TO);
+
+    const _listNameMap = [];
+    menu.forEach(text => _listNameMap.push({ listName: text, displayName: text }));
+    moveTo.forEach(listNameObj => _listNameMap.push(listNameObj));
+    const longestDisplayName = getLongestListNameDisplayName(_listNameMap);
 
     return { menu, moveTo, longestDisplayName };
   }
@@ -206,9 +209,9 @@ class CardItemMenuPopup extends React.PureComponent {
 
     popupStyle.width = '8rem';
     popupStyle.maxHeight = '16rem';
-    if (this.longestDisplayName.length > 7) {
-      // Approx 10px or 0.625rem per additional character
-      const width = Math.min(8 + 0.625 * (this.longestDisplayName.length - 7), 16);
+    if (this.longestDisplayName.length > 10) {
+      // Approx 8px or 0.5rem per additional character
+      const width = Math.min(8 + 0.5 * (this.longestDisplayName.length - 10), 16);
       popupStyle.width = `${width}rem`;
     }
 
