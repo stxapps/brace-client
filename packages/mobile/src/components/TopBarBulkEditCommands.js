@@ -187,16 +187,29 @@ class TopBarBulkEditCommands extends React.Component {
 
   renderBulkEditMoveToPopup() {
 
+    const { listName, listNameMap, safeAreaHeight } = this.props;
+
     const moveTo = [];
     for (const listNameObj of this.props.listNameMap) {
       if ([TRASH, ARCHIVE].includes(listNameObj.listName)) continue;
-      if (this.props.listName === listNameObj.listName) continue;
+      if (listName === listNameObj.listName) continue;
 
       moveTo.push(listNameObj);
     }
 
+    const longestDisplayNameLength = getLongestListNameDisplayName(listNameMap).length;
+
+    const moveToPopupScrollViewStyle = { width: 112 };
+    if (longestDisplayNameLength > 7) {
+      // Approx 8dp per additional character
+      const width = Math.min(112 + 8 * (longestDisplayNameLength - 7), 256);
+      moveToPopupScrollViewStyle.width = width;
+    }
+    // 39dp per row
+    moveToPopupScrollViewStyle.maxHeight = Math.min(39 * moveTo.length, 256, safeAreaHeight);
+
     return (
-      <React.Fragment>
+      <ScrollView style={moveToPopupScrollViewStyle}>
         {moveTo.map(listNameObj => {
           const key = MOVE_TO + ' ' + listNameObj.listName;
           return (
@@ -205,13 +218,13 @@ class TopBarBulkEditCommands extends React.Component {
             </MenuOption>
           );
         })}
-      </React.Fragment>
+      </ScrollView>
     );
   }
 
   render() {
 
-    const { listName, listNameMap, safeAreaHeight } = this.props;
+    const { listName, listNameMap } = this.props;
     const rListName = [MY_LIST, ARCHIVE, TRASH].includes(listName) ? listName : MY_LIST;
 
     const isArchiveBtnShown = [MY_LIST].includes(rListName);
@@ -219,15 +232,6 @@ class TopBarBulkEditCommands extends React.Component {
     const isRestoreBtnShown = [TRASH].includes(rListName);
     const isDeleteBtnShown = [TRASH].includes(rListName);
     const isMoveToBtnShown = [ARCHIVE].includes(rListName) || (rListName === MY_LIST && listNameMap.length > 3);
-
-    const longestDisplayNameLength = getLongestListNameDisplayName(listNameMap).length;
-
-    const moveToPopupScrollViewStyle = { width: 112, maxHeight: Math.min(256, safeAreaHeight) };
-    if (longestDisplayNameLength > 7) {
-      // Approx 10dx per additional character
-      const width = Math.min(112 + 10 * (longestDisplayNameLength - 7), 256);
-      moveToPopupScrollViewStyle.width = width;
-    }
 
     let btnStyle = {
       height: 34,
@@ -294,9 +298,7 @@ class TopBarBulkEditCommands extends React.Component {
             </View>
           </MenuTrigger>
           <MenuOptions customStyles={cache('TBBEC_moveToMenuOptions', { optionsContainer: tailwind('py-2 bg-white rounded-lg shadow-xl') })}>
-            <ScrollView style={moveToPopupScrollViewStyle}>
-              {this.renderBulkEditMoveToPopup()}
-            </ScrollView>
+            {this.renderBulkEditMoveToPopup()}
           </MenuOptions>
         </Menu>}
         <TouchableOpacity onPress={this.onBulkEditCancelBtnClick} style={tailwind('ml-1 justify-center items-center w-10 h-10')}>

@@ -18,17 +18,14 @@ import {
   ADD_POPUP, PROFILE_POPUP, SETTINGS_POPUP,
   SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS,
   NO_URL, ASK_CONFIRM_URL, URL_MSGS,
-  TOP_HEADER_HEIGHT, TOP_LIST_NAME_HEIGHT,
-  TOP_HEADER_LIST_NAME_SPACE, TOP_HEADER_LIST_NAME_SPACE_MD,
-  TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD,
   MD_WIDTH,
 } from '../types/const';
-import { validateUrl, isEqual, toPx } from '../utils';
+import { validateUrl, isEqual } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
 
-import { withSafeAreaContext } from '.';
+import { withSafeAreaContext, getTopBarSizes } from '.';
 import GracefulImage from './GracefulImage';
 
 import ListName from './ListName';
@@ -37,56 +34,6 @@ import TopBarBulkEditCommands from './TopBarBulkEditCommands';
 
 import shortLogo from '../images/logo-short.svg';
 import fullLogo from '../images/logo-full.svg';
-
-const getSizes = (safeAreaWidth) => {
-
-  const topBarHeight = toPx(safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD);
-  const headerHeight = toPx(TOP_HEADER_HEIGHT);
-  const listNameHeight = toPx(TOP_LIST_NAME_HEIGHT); // From ListName -> Text -> leading-7
-  const statusPopupHeight = 24; // From StatusPopup -> AnimatedText -> leading-6
-  const commandsHeight = 38; // From onLayout
-
-  const headerListNameSpace = toPx(safeAreaWidth < MD_WIDTH ? TOP_HEADER_LIST_NAME_SPACE : TOP_HEADER_LIST_NAME_SPACE_MD);
-
-  const laidStatusPopupHeight = 28; // From render -> listNamePane -> View -> h-7
-  const laidListNameCommandsHeight = 109; // From describe below
-
-  // header: 56, border: 1, status: 28, list name + commands: 109
-  // Touchable and TextInput work only within its parent's bound
-  //   so height needs to be enough for translateY.
-  //   56 (header) + 1 (borderBottom) + 24 (headerListNamespaceMd) + 28 (listName) = 109
-  //   commands need to be translated from bottom to that height!
-  const laidTopBarHeight = headerHeight + 1 + laidStatusPopupHeight + laidListNameCommandsHeight;
-
-  const LIST_NAME_DISTANCE_X = toPx('3rem');
-  const LIST_NAME_DISTANCE_X_MD = toPx('9rem');
-  const listNameDistanceX = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_X : LIST_NAME_DISTANCE_X_MD;
-
-  const LIST_NAME_START_Y = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE);
-  const LIST_NAME_START_Y_MD = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE_MD);
-
-  const LIST_NAME_END_Y = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2);
-  const LIST_NAME_END_Y_MD = (toPx(TOP_HEADER_HEIGHT) / 2 - toPx(TOP_LIST_NAME_HEIGHT) / 2);
-
-  const listNameDistanceY = safeAreaWidth < MD_WIDTH ? Math.abs(LIST_NAME_END_Y - LIST_NAME_START_Y) : Math.abs(LIST_NAME_END_Y_MD - LIST_NAME_START_Y_MD);
-
-  const statusPopupDistanceY = 36;
-
-  return {
-    topBarHeight,
-    headerHeight,
-    listNameHeight,
-    statusPopupHeight,
-    commandsHeight,
-    headerListNameSpace,
-    laidStatusPopupHeight,
-    laidListNameCommandsHeight,
-    laidTopBarHeight,
-    listNameDistanceX,
-    listNameDistanceY,
-    statusPopupDistanceY,
-  };
-};
 
 class TopBar extends React.Component {
 
@@ -333,7 +280,7 @@ class TopBar extends React.Component {
       topBarHeight, headerHeight, listNameHeight, headerListNameSpace,
       laidStatusPopupHeight, laidListNameCommandsHeight, laidTopBarHeight,
       listNameDistanceX, listNameDistanceY,
-    } = getSizes(safeAreaWidth);
+    } = getTopBarSizes(safeAreaWidth);
 
     const space1 = (laidListNameCommandsHeight - listNameHeight) / 2;
     const space2 = laidStatusPopupHeight;
@@ -375,7 +322,7 @@ class TopBar extends React.Component {
       topBarHeight, headerHeight, listNameHeight, statusPopupHeight, headerListNameSpace,
       laidStatusPopupHeight, laidTopBarHeight,
       statusPopupDistanceY,
-    } = getSizes(safeAreaWidth);
+    } = getTopBarSizes(safeAreaWidth);
 
     const space1 = (laidStatusPopupHeight - statusPopupHeight) / 2;
     const space2 = listNameHeight - statusPopupHeight;
@@ -412,7 +359,7 @@ class TopBar extends React.Component {
       topBarHeight, headerHeight, commandsHeight,
       laidStatusPopupHeight, laidListNameCommandsHeight, laidTopBarHeight,
       listNameDistanceY,
-    } = getSizes(safeAreaWidth);
+    } = getTopBarSizes(safeAreaWidth);
 
     const space1 = (laidListNameCommandsHeight - commandsHeight) / 2;
     const space2 = laidStatusPopupHeight;
@@ -455,7 +402,7 @@ class TopBar extends React.Component {
         topBarHeight, headerHeight,
         laidTopBarHeight, laidListNameCommandsHeight,
         listNameDistanceY,
-      } = getSizes(safeAreaWidth);
+      } = getTopBarSizes(safeAreaWidth);
 
       const changingTopBarTranslateY = scrollY.interpolate({
         inputRange: [0, listNameDistanceY],

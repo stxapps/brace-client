@@ -101,7 +101,14 @@ class CardItemMenuPopup extends React.PureComponent {
   }
 
   renderMenu() {
+
+    const { safeAreaHeight } = this.props;
     const { menu: _menu, moveTo: _moveTo } = this.populateMenu();
+
+    const _listNameMap = [];
+    _menu.forEach(text => _listNameMap.push({ listName: text, displayName: text }));
+    _moveTo.forEach(listNameObj => _listNameMap.push(listNameObj));
+    const longestDisplayNameLength = getLongestListNameDisplayName(_listNameMap).length;
 
     let moveTo = null;
     if (_moveTo && _moveTo.length) {
@@ -120,8 +127,15 @@ class CardItemMenuPopup extends React.PureComponent {
       );
     }
 
+    const popupScrollViewStyle = { width: 128, maxHeight: Math.min(256, safeAreaHeight) };
+    if (longestDisplayNameLength > 10) {
+      // Approx 8dp per additional character
+      const width = Math.min(128 + 8 * (longestDisplayNameLength - 10), 256);
+      popupScrollViewStyle.width = width;
+    }
+
     return (
-      <React.Fragment>
+      <ScrollView style={popupScrollViewStyle}>
         {_menu.map(text => {
           return (
             <MenuOption key={text} onSelect={() => this.onMenuPopupClick(text)} customStyles={cache('CIMP_menuOption', { optionWrapper: { padding: 0 } })}>
@@ -130,21 +144,11 @@ class CardItemMenuPopup extends React.PureComponent {
           );
         })}
         {moveTo && moveTo}
-      </React.Fragment>
+      </ScrollView>
     );
   }
 
   render() {
-
-    const { listNameMap, safeAreaHeight } = this.props;
-    const longestDisplayNameLength = getLongestListNameDisplayName(listNameMap).length;
-
-    const popupScrollViewStyle = { width: 128, maxHeight: Math.min(256, safeAreaHeight) };
-    if (longestDisplayNameLength > 7) {
-      // Approx 10dx per additional character
-      const width = Math.min(128 + 10 * (longestDisplayNameLength - 7), 256);
-      popupScrollViewStyle.width = width;
-    }
 
     return (
       /* value of triggerOffsets needs to be aligned with paddings of the three dots */
@@ -161,9 +165,7 @@ class CardItemMenuPopup extends React.PureComponent {
           </View>
         </MenuTrigger>
         <MenuOptions>
-          <ScrollView style={popupScrollViewStyle}>
-            {this.renderMenu()}
-          </ScrollView>
+          {this.renderMenu()}
         </MenuOptions>
       </Menu>
     );
