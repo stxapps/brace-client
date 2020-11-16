@@ -30,6 +30,7 @@ import {
   RETRY_ADD_LIST_NAMES, RETRY_UPDATE_LIST_NAMES, RETRY_MOVE_LIST_NAME,
   RETRY_DELETE_LIST_NAMES, CANCEL_DIED_LIST_NAMES,
   UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
+  UPDATE_UPDATE_SETTINGS_PROGRESS,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -263,15 +264,27 @@ export const updatePopup = (id, isShown, anchorPosition = null) => {
   };
 };
 
-export const fetch = (doDeleteOldLinks, doExtractContents, doFetchSettings = false) => async (dispatch, getState) => {
+export const fetch = (
+  doDeleteOldLinksInTrash, doExtractContents, doFetchSettings = false
+) => async (dispatch, getState) => {
 
   const listName = getState().display.listName;
+  if (doDeleteOldLinksInTrash === null) {
+    doDeleteOldLinksInTrash = getState().settings.doDeleteOldLinksInTrash;
+  }
+  if (doExtractContents === null) {
+    doExtractContents = getState().settings.doExtractContents;
+  }
+
   dispatch({
     type: FETCH,
     meta: {
       offline: {
         effect: { method: FETCH, params: { listName, doFetchSettings } },
-        commit: { type: FETCH_COMMIT, meta: { doDeleteOldLinks, doExtractContents } },
+        commit: {
+          type: FETCH_COMMIT,
+          meta: { doDeleteOldLinksInTrash, doExtractContents }
+        },
         rollback: { type: FETCH_ROLLBACK },
       }
     },
@@ -316,6 +329,8 @@ export const addLink = (url, doExtractContents = false) => async (dispatch, getS
   const link = { id, url, addedDT, decor, };
   const links = [link];
   const payload = { listName, links };
+
+  if (doExtractContents === null) doExtractContents = getState().settings.doExtractContents;
 
   dispatch({
     type: ADD_LINKS,
@@ -478,7 +493,7 @@ export const changeListName = (listName, fetched) => async (dispatch, getState) 
   })
 
   if (!fetched.includes(listName)) {
-    dispatch(fetch(false, true));
+    dispatch(fetch(false, null));
   }
 };
 
@@ -490,6 +505,9 @@ export const updateSearchString = (searchString) => {
 };
 
 export const deleteOldLinksInTrash = (doExtractContents = false) => async (dispatch, getState) => {
+
+  if (doExtractContents === null) doExtractContents = getState().settings.doExtractContents;
+
   dispatch({
     type: DELETE_OLD_LINKS_IN_TRASH,
     meta: {
@@ -643,7 +661,7 @@ export const addListNames = (newNames) => async (dispatch, getState) => {
     i += 1;
   }
 
-  const settings = { ...getState()['settings'] };
+  const settings = { ...getState().settings };
   settings.listNameMap = [
     ...settings.listNameMap.map(listNameObj => {
       return { listName: listNameObj.listName, displayName: listNameObj.displayName };
@@ -667,7 +685,7 @@ export const addListNames = (newNames) => async (dispatch, getState) => {
 
 export const updateListNames = (listNames, newNames) => async (dispatch, getState) => {
 
-  const settings = { ...getState()['settings'] };
+  const settings = { ...getState().settings };
   settings.listNameMap = settings.listNameMap.map(listNameObj => {
 
     const i = listNames.indexOf(listNameObj.listName);
@@ -694,7 +712,7 @@ export const updateListNames = (listNames, newNames) => async (dispatch, getStat
 
 export const moveListName = (listName, direction) => async (dispatch, getState) => {
 
-  const settings = { ...getState()['settings'] };
+  const settings = { ...getState().settings };
   settings.listNameMap = settings.listNameMap.map(listNameObj => {
     return { listName: listNameObj.listName, displayName: listNameObj.displayName };
   });
@@ -728,7 +746,7 @@ export const moveListName = (listName, direction) => async (dispatch, getState) 
 
 export const deleteListNames = (listNames) => async (dispatch, getState) => {
 
-  const settings = { ...getState()['settings'] };
+  const settings = { ...getState().settings };
   settings.listNameMap = settings.listNameMap.filter(listNameObj => {
     return !listNames.includes(listNameObj.listName);
   });
@@ -759,7 +777,7 @@ export const updateDeletingListName = (listName) => {
 
 export const retryDiedListNames = (listNames) => async (dispatch, getState) => {
 
-  const settings = { ...getState()['settings'] };
+  const settings = { ...getState().settings };
 
   const listNameObjs = settings.listNameMap.filter(obj => {
     return listNames.includes(obj.listName)
@@ -859,17 +877,32 @@ export const cancelDiedListNames = (listNames) => {
 
 export const updateSettings = (updatedValues) => async (dispatch, getState) => {
 
-  const settings = { ...getState()['settings'], ...updatedValues };
+  const rollbackValues = {};
+  for (const k of Object.keys(updatedValues)) {
+    rollbackValues[k] = getState().settings[k];
+  }
+
+  const settings = { ...getState().settings, ...updatedValues };
+
+  const payload = { settings, rollbackValues };
   dispatch({
     type: UPDATE_SETTINGS,
+    payload: payload,
     meta: {
       offline: {
         effect: { method: UPDATE_SETTINGS, params: settings },
-        commit: { type: UPDATE_SETTINGS_COMMIT },
-        rollback: { type: UPDATE_SETTINGS_ROLLBACK }
+        commit: { type: UPDATE_SETTINGS_COMMIT, meta: payload },
+        rollback: { type: UPDATE_SETTINGS_ROLLBACK, meta: payload }
       }
     }
   });
+};
+
+export const updateUpdateSettingsProgress = (progress) => {
+  return {
+    type: UPDATE_UPDATE_SETTINGS_PROGRESS,
+    payload: progress
+  };
 };
 
 const exportAllDataLoop = async (dispatch, fPaths, doneCount) => {

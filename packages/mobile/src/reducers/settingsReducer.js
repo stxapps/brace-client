@@ -8,6 +8,7 @@ import {
   DELETE_LIST_NAMES, DELETE_LIST_NAMES_COMMIT, DELETE_LIST_NAMES_ROLLBACK,
   RETRY_ADD_LIST_NAMES, RETRY_UPDATE_LIST_NAMES, RETRY_MOVE_LIST_NAME,
   RETRY_DELETE_LIST_NAMES, CANCEL_DIED_LIST_NAMES,
+  UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -21,7 +22,7 @@ import { doContainListName, swapArrayElements, getInsertIndex } from '../utils';
 const initialState = {
   defaultListName: MY_LIST,
   doEncrypt: true,
-  doExtractContent: true,
+  doExtractContents: true,
   doDeleteOldLinksInTrash: true,
   doDescendingOrder: true,
   doRemoveAfterClick: false,
@@ -373,6 +374,20 @@ export default (state = initialState, action) => {
     }
 
     return newState;
+  }
+
+  if (action.type === UPDATE_SETTINGS) {
+    const { settings } = action.payload;
+    return settings;
+  }
+
+  if (action.type === UPDATE_SETTINGS_COMMIT) {
+    // Do nothing
+  }
+
+  if (action.type === UPDATE_SETTINGS_ROLLBACK) {
+    const { rollbackValues } = action.meta;
+    return { ...state, ...rollbackValues };
   }
 
   if (action.type === DELETE_ALL_DATA || action.type === RESET_STATE) {

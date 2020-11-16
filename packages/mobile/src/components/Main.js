@@ -64,7 +64,7 @@ class Main extends React.Component {
   }
 
   componentDidMount() {
-    this.props.fetch(true, true, this.doFetchSettings);
+    this.props.fetch(null, null, this.doFetchSettings);
     this.fetched.push(this.props.listName);
     this.doFetchSettings = false;
   }

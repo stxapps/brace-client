@@ -118,7 +118,7 @@ class TopBar extends React.Component {
     const animConfig = cardItemAnimConfig(safeAreaWidth);
 
     LayoutAnimation.configureNext(animConfig);
-    this.props.addLink(this.state.url, true);
+    this.props.addLink(this.state.url, null);
     this.props.ctx.menuActions.closeMenu();
     this.props.updatePopup(ADD_POPUP, false);
   }

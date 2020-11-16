@@ -54,6 +54,10 @@ const createSelectorLinks = createSelectorCreator(
   defaultMemoize,
   (prevVal, val) => {
 
+    if (prevVal['settings'].doDescendingOrder !== val['settings'].doDescendingOrder) {
+      return false;
+    }
+
     if (prevVal['display'].listName !== val['display'].listName) return false;
     if (prevVal['display'].searchString !== val['display'].searchString) return false;
 
@@ -88,6 +92,7 @@ export const getLinks = createSelectorLinks(
     const links = state.links;
     const listName = state.display.listName;
     const searchString = state.display.searchString;
+    const doDescendingOrder = state.settings.doDescendingOrder;
 
     if (!links || !links[listName]) return null;
 
@@ -111,6 +116,7 @@ export const getLinks = createSelectorLinks(
       }
       return 0;
     });
+    if (!doDescendingOrder) sortedLinks.reverse();
 
     if (searchString === '') {
       return sortedLinks;

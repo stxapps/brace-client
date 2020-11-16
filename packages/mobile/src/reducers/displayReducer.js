@@ -11,6 +11,8 @@ import {
   UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, CLEAR_SELECTED_LINK_IDS,
   DELETE_LIST_NAMES_COMMIT, UPDATE_DELETING_LIST_NAME,
+  UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
+  UPDATE_UPDATE_SETTINGS_PROGRESS,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   RESET_STATE,
 } from '../types/actionTypes';
@@ -19,6 +21,7 @@ import {
   CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
   BULK_EDIT_MOVE_TO_POPUP,
   MY_LIST,
+  UPDATING, DIED_UPDATING,
 } from '../types/const';
 
 const initialState = {
@@ -40,6 +43,7 @@ const initialState = {
   deletingListName: null,
   exportAllDataProgress: null,
   deleteAllDataProgress: null,
+  updateSettingsProgress: null,
 };
 
 export default (state = initialState, action) => {
@@ -64,6 +68,8 @@ export default (state = initialState, action) => {
       deletingListName: null,
       exportAllDataProgress: null,
       deleteAllDataProgress: null,
+      // If in outbox, continue after reload
+      //updateSettingsProgress: null,
     };
   }
 
@@ -215,6 +221,22 @@ export default (state = initialState, action) => {
 
   if (action.type === UPDATE_DELETE_ALL_DATA_PROGRESS) {
     return { ...state, deleteAllDataProgress: action.payload };
+  }
+
+  if (action.type === UPDATE_SETTINGS) {
+    return { ...state, updateSettingsProgress: { status: UPDATING } };
+  }
+
+  if (action.type === UPDATE_SETTINGS_COMMIT) {
+    return { ...state, updateSettingsProgress: null };
+  }
+
+  if (action.type === UPDATE_SETTINGS_ROLLBACK) {
+    return { ...state, updateSettingsProgress: { status: DIED_UPDATING } };
+  }
+
+  if (action.type === UPDATE_UPDATE_SETTINGS_PROGRESS) {
+    return { ...state, updateSettingsProgress: action.payload };
   }
 
   if (action.type === RESET_STATE) {
