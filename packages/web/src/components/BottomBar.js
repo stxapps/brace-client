@@ -88,7 +88,7 @@ class BottomBar extends React.PureComponent {
       }
     }
 
-    this.props.addLink(this.state.url, true);
+    this.props.addLink(this.state.url, null);
     this.props.updatePopup(ADD_POPUP, false);
   }
 

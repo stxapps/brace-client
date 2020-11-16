@@ -62,7 +62,7 @@ class Main extends React.PureComponent {
     window.addEventListener('resize', this.updateColumnWidth);
     window.addEventListener('scroll', this.updateScrollY);
 
-    this.props.fetch(true, true, this.doFetchSettings);
+    this.props.fetch(null, null, this.doFetchSettings);
     this.fetched.push(this.props.listName);
     this.doFetchSettings = false;
   }

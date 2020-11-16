@@ -80,8 +80,8 @@ export default (state = initialState, action) => {
       }
     }
 
-    const { doDeleteOldLinks, doExtractContents } = action.meta;
-    if (doDeleteOldLinks) {
+    const { doDeleteOldLinksInTrash, doExtractContents } = action.meta;
+    if (doDeleteOldLinksInTrash) {
       return loop(
         newState,
         Cmd.run(
