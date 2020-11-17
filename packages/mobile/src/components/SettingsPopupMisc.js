@@ -98,7 +98,7 @@ class SettingsPopupMisc extends React.PureComponent {
 
     const switchThumbColorOn = 'rgba(49, 130, 206, 1)';
     const switchThumbColorOff = 'rgba(237, 242, 247, 1)';
-    const switchTrackColorOn = 'rgba(190, 227, 248, 1)';
+    const switchTrackColorOn = Platform.OS === 'android' ? 'rgba(190, 227, 248, 1)' : 'rgba(49, 130, 206, 1)';
     const switchTrackColorOff = 'rgba(160, 174, 192, 1)';
 
     return (
