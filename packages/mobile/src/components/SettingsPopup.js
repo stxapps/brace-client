@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import {
   ScrollView, View, Text, TouchableOpacity, TouchableWithoutFeedback, BackHandler,
-  Animated, Keyboard,
+  Animated, Keyboard, Platform,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg'
 
@@ -380,12 +380,17 @@ class SettingsPopup extends React.PureComponent {
       </View>
     );
 
+    let dialogTranslateY = 0;
+    if (Platform.OS === 'ios' && this.state.keyboardHeight > 0) {
+      dialogTranslateY = -1 * this.state.keyboardHeight / 2;
+    }
+
     return (
       <View style={tailwind('p-4 absolute inset-0 items-center justify-center z-30')}>
         <TouchableWithoutFeedback onPress={this.onPopupCloseBtnClick}>
           <View style={tailwind('absolute inset-0 bg-black opacity-25')}></View>
         </TouchableWithoutFeedback>
-        <View style={tailwind('w-full max-w-4xl bg-white rounded-lg shadow-xl')}>
+        <View style={cache('SP_dialog', [tailwind('w-full max-w-4xl bg-white rounded-lg shadow-xl'), { transform: [{ translateY: dialogTranslateY }] }], dialogTranslateY)}>
           <View style={tailwind('w-full bg-white rounded-lg overflow-hidden')}>
             {panelWithSidebar}
           </View>

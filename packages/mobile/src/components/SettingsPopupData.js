@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, Text, TouchableOpacity, Switch, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, Switch, Linking, Platform } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { Circle } from 'react-native-animated-spinkit'
 
@@ -138,7 +138,7 @@ class _SettingsPopupDataExport extends React.PureComponent {
       <View style={tailwind('p-4 md:p-6 md:pt-4', safeAreaWidth)}>
         <View style={tailwind('border-b border-gray-400 md:border-b-0', safeAreaWidth)}>
           <TouchableOpacity onPress={this.props.onBackToDataViewBtnClick} style={tailwind('pb-1 md:pb-0', safeAreaWidth)}>
-            <Text style={tailwind('text-sm text-gray-700 font-normal')}>{'<'} {safeAreaWidth < SM_WIDTH ? 'Settings /' : ''} Data</Text>
+            <Text style={tailwind('text-sm text-gray-700 font-normal')}>{'<'} {safeAreaWidth < SM_WIDTH ? 'Settings / ' : ' '}Data</Text>
           </TouchableOpacity>
           <Text style={tailwind('pb-2 text-2xl text-gray-800 font-medium leading-6 md:pb-0', safeAreaWidth)}>Export All Data</Text>
         </View>
@@ -204,12 +204,19 @@ class _SettingsPopupDataDelete extends React.PureComponent {
 
     const { deleteAllDataProgress, safeAreaWidth } = this.props;
 
+    const switchThumbColorOn = 'rgba(49, 130, 206, 1)';
+    const switchThumbColorOff = 'rgba(237, 242, 247, 1)';
+    const switchTrackColorOn = Platform.OS === 'android' ? 'rgba(190, 227, 248, 1)' : 'rgba(49, 130, 206, 1)';
+    const switchTrackColorOff = 'rgba(160, 174, 192, 1)';
+
     let actionPanel;
     if (!deleteAllDataProgress) {
       actionPanel = (
         <View style={tailwind('mt-6 mb-4')}>
           <TouchableOpacity onPress={this.onDeleteAllDataBtnClick} style={tailwind('justify-start items-start')}>
-            <Text style={tailwind('px-4 py-2 bg-red-600 text-base text-white font-normal rounded-full shadow')}>Delete All My Data</Text>
+            <View style={tailwind('px-4 py-2 bg-red-600 rounded-full shadow')}>
+              <Text style={tailwind('text-base text-white font-normal')}>Delete All My Data</Text>
+            </View>
           </TouchableOpacity>
           {this.state.isRequireConfirmShown && <Text style={tailwind('mt-2 text-base text-red-700 font-normal')}>Please confirm by checking the box above first.</Text>}
         </View>
@@ -272,7 +279,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
       <View style={tailwind('p-4 md:p-6 md:pt-4', safeAreaWidth)}>
         <View style={tailwind('border-b border-gray-400 md:border-b-0', safeAreaWidth)}>
           <TouchableOpacity onPress={this.props.onBackToDataViewBtnClick} style={tailwind('pb-1 md:pb-0', safeAreaWidth)}>
-            <Text style={tailwind('text-sm text-gray-700 font-normal')}>{'<'} {safeAreaWidth < SM_WIDTH ? 'Settings /' : ''} Data</Text>
+            <Text style={tailwind('text-sm text-gray-700 font-normal')}>{'<'} {safeAreaWidth < SM_WIDTH ? 'Settings / ' : ' '}Data</Text>
           </TouchableOpacity>
           <Text style={tailwind('pb-2 text-2xl text-gray-800 font-medium leading-6 md:pb-0', safeAreaWidth)}>Delete All Data</Text>
         </View>
@@ -281,7 +288,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
         <Text style={tailwind('mt-6 text-base text-gray-700 font-normal leading-6.5')}>It may take several minutes to delete all your data.</Text>
         <Text style={tailwind('mt-6 text-base text-red-700 font-normal leading-6.5')}>This action CANNOT be undone.</Text>
         <View style={tailwind('mt-6 flex-row items-center')}>
-          <Switch onValueChange={this.onConfirmInputChange} value={this.state.didCheckConfirm} />
+          <Switch onValueChange={this.onConfirmInputChange} value={this.state.didCheckConfirm} thumbColor={Platform.OS === 'android' ? this.state.didCheckConfirm ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} />
           <Text style={tailwind('ml-2 text-base text-gray-700 font-normal')}>Yes, I’m absolutely sure I want to delete all my data.</Text>
         </View>
         {actionPanel}
