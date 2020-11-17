@@ -18,12 +18,14 @@ import {
   SettingsPopupData, SettingsPopupDataExport, SettingsPopupDataDelete,
 } from './SettingsPopupData';
 import SettingsPopupLists from './SettingsPopupLists';
+import SettingsPopupMisc from './SettingsPopupMisc';
 
 const VIEW_ACCOUNT = 1;
 const VIEW_DATA = 2;
 const VIEW_DATA_EXPORT = 3;
 const VIEW_DATA_DELETE = 4;
 const VIEW_LISTS = 5;
+const VIEW_MISC = 6;
 
 // This value comes from max-w-48.
 // If screen width is too narrow, the value might be less than this.
@@ -166,7 +168,6 @@ class SettingsPopup extends React.PureComponent {
   }
 
   onPopupCloseBtnClick = () => {
-
     this.props.updatePopup(SETTINGS_POPUP, false);
   }
 
@@ -205,6 +206,14 @@ class SettingsPopup extends React.PureComponent {
   onListsBtnClick = () => {
     this.setState({
       viewId: VIEW_LISTS,
+      isSidebarShown: false,
+      didSidebarTransitionEnd: false,
+    });
+  }
+
+  onMiscBtnClick = () => {
+    this.setState({
+      viewId: VIEW_MISC,
       isSidebarShown: false,
       didSidebarTransitionEnd: false,
     });
@@ -293,6 +302,14 @@ class SettingsPopup extends React.PureComponent {
                   </Svg>
                   <Text style={tailwind(`text-sm font-normal leading-5 ${this.isViewSelected(VIEW_LISTS) ? selectedMenuTextStyleClasses : menuTextStyleClasses}`)}>Lists</Text>
                 </TouchableOpacity>
+                <TouchableOpacity onPress={this.onMiscBtnClick} style={tailwind(`mt-1 px-2 py-2 flex-row items-center w-full rounded-md ${this.isViewSelected(VIEW_MISC) ? selectedMenuBtnStyleClasses : menuBtnStyleClasses}`)}>
+                  <Svg style={tailwind(`mr-3 text-base ${this.isViewSelected(VIEW_MISC) ? selectedMenuSvgStyleClasses : menuSvgStyleClasses} font-normal`)} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
+                    <Path d="M5 4C5 3.44772 4.55228 3 4 3C3.44772 3 3 3.44772 3 4V11.2676C2.4022 11.6134 2 12.2597 2 13C2 13.7403 2.4022 14.3866 3 14.7324V16C3 16.5523 3.44772 17 4 17C4.55228 17 5 16.5523 5 16V14.7324C5.5978 14.3866 6 13.7403 6 13C6 12.2597 5.5978 11.6134 5 11.2676V4Z" />
+                    <Path d="M11 4C11 3.44772 10.5523 3 10 3C9.44772 3 9 3.44772 9 4V5.26756C8.4022 5.61337 8 6.25972 8 7C8 7.74028 8.4022 8.38663 9 8.73244V16C9 16.5523 9.44772 17 10 17C10.5523 17 11 16.5523 11 16V8.73244C11.5978 8.38663 12 7.74028 12 7C12 6.25972 11.5978 5.61337 11 5.26756V4Z" />
+                    <Path d="M16 3C16.5523 3 17 3.44772 17 4V11.2676C17.5978 11.6134 18 12.2597 18 13C18 13.7403 17.5978 14.3866 17 14.7324V16C17 16.5523 16.5523 17 16 17C15.4477 17 15 16.5523 15 16V14.7324C14.4022 14.3866 14 13.7403 14 13C14 12.2597 14.4022 11.6134 15 11.2676V4C15 3.44772 15.4477 3 16 3Z" />
+                  </Svg>
+                  <Text style={tailwind(`text-sm font-normal leading-5 ${this.isViewSelected(VIEW_MISC) ? selectedMenuTextStyleClasses : menuTextStyleClasses}`)}>Misc.</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -344,6 +361,14 @@ class SettingsPopup extends React.PureComponent {
                     <Path d="M2 6C2 4.89543 2.89543 4 4 4H9L11 6H16C17.1046 6 18 6.89543 18 8V14C18 15.1046 17.1046 16 16 16H4C2.89543 16 2 15.1046 2 14V6Z" />
                   </Svg>
                   <Text style={tailwind('text-base text-gray-700 font-normal leading-6')}>Lists</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={this.onMiscBtnClick} style={tailwind('mt-1 px-2 py-2 flex-row items-center w-full rounded-md')}>
+                  <Svg style={tailwind('mr-2 text-base text-gray-600 font-normal')} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
+                    <Path d="M5 4C5 3.44772 4.55228 3 4 3C3.44772 3 3 3.44772 3 4V11.2676C2.4022 11.6134 2 12.2597 2 13C2 13.7403 2.4022 14.3866 3 14.7324V16C3 16.5523 3.44772 17 4 17C4.55228 17 5 16.5523 5 16V14.7324C5.5978 14.3866 6 13.7403 6 13C6 12.2597 5.5978 11.6134 5 11.2676V4Z" />
+                    <Path d="M11 4C11 3.44772 10.5523 3 10 3C9.44772 3 9 3.44772 9 4V5.26756C8.4022 5.61337 8 6.25972 8 7C8 7.74028 8.4022 8.38663 9 8.73244V16C9 16.5523 9.44772 17 10 17C10.5523 17 11 16.5523 11 16V8.73244C11.5978 8.38663 12 7.74028 12 7C12 6.25972 11.5978 5.61337 11 5.26756V4Z" />
+                    <Path d="M16 3C16.5523 3 17 3.44772 17 4V11.2676C17.5978 11.6134 18 12.2597 18 13C18 13.7403 17.5978 14.3866 17 14.7324V16C17 16.5523 16.5523 17 16 17C15.4477 17 15 16.5523 15 16V14.7324C14.4022 14.3866 14 13.7403 14 13C14 12.2597 14.4022 11.6134 15 11.2676V4C15 3.44772 15.4477 3 16 3Z" />
+                  </Svg>
+                  <Text style={tailwind('text-base text-gray-700 font-normal leading-6')}>Misc.</Text>
                 </TouchableOpacity>
               </View>
             </Animated.View>
@@ -409,6 +434,14 @@ class SettingsPopup extends React.PureComponent {
     return this._render(content);
   }
 
+  renderMiscView() {
+    const content = (
+      /* @ts-ignore */
+      <SettingsPopupMisc onSidebarOpenBtnClick={this.onSidebarOpenBtnClick} />
+    );
+    return this._render(content);
+  }
+
   render() {
 
     if (!this.props.isSettingsPopupShown) return null;
@@ -420,6 +453,7 @@ class SettingsPopup extends React.PureComponent {
     else if (viewId === VIEW_DATA_EXPORT) return this.renderExportAllDataView();
     else if (viewId === VIEW_DATA_DELETE) return this.renderDeleteAllDataView();
     else if (viewId === VIEW_LISTS) return this.renderListsView();
+    else if (viewId === VIEW_MISC) return this.renderMiscView();
     else throw new Error(`Invalid viewId: ${viewId}`);
   }
 }

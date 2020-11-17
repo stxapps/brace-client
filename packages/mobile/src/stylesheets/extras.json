@@ -101,6 +101,9 @@
   "leading-6.5": {
     "lineHeight": 26
   },
+  "w-11": {
+    "width": 44
+  },
   "max-w-40": {
     "maxWidth": 160
   },
