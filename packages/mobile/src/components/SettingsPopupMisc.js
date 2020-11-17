@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, Text, TouchableOpacity, Switch, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, Switch, Linking, Platform } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { UPDATING, DIED_UPDATING, SM_WIDTH } from '../types/const';
@@ -96,6 +96,11 @@ class SettingsPopupMisc extends React.PureComponent {
     const descendingRBtnClassNames = doDescendingOrder ? 'border-blue-600' : 'border-gray-200';
     const descendingRBtnInnerClassNames = doDescendingOrder ? 'bg-blue-600' : 'bg-gray-200';
 
+    const switchThumbColorOn = 'rgba(49, 130, 206, 1)';
+    const switchThumbColorOff = 'rgba(237, 242, 247, 1)';
+    const switchTrackColorOn = 'rgba(190, 227, 248, 1)';
+    const switchTrackColorOff = 'rgba(160, 174, 192, 1)';
+
     return (
       <View style={tailwind('p-4 relative md:p-6 md:pt-4 lg:p-8 lg:pt-6', safeAreaWidth)}>
         <View style={tailwind('border-b border-gray-400 md:hidden', safeAreaWidth)}>
@@ -110,7 +115,7 @@ class SettingsPopupMisc extends React.PureComponent {
             <Text style={tailwind('mt-2 text-base text-gray-700 font-normal leading-6.5')}>Allow your saved links to be sent to our server for extracting their representative title and image. No your personal information involved at all so there is no way to know who saves what links. These titles and images are used in our website and app for you to easily find and recognize your saved links. For more information, please visit <Text onPress={() => Linking.openURL('https://brace.to/#privacy')} style={tailwind('text-base text-gray-700 font-normal underline')}>our privacy policy page</Text></Text>
           </View>
           <View style={tailwind('ml-4 flex-grow-0 flex-shrink-0 w-11 h-6')}>
-            <Switch onValueChange={this.onDoExtractBtnClick} value={doExtractContents} />
+            <Switch onValueChange={this.onDoExtractBtnClick} value={doExtractContents} thumbColor={Platform.OS === 'android' ? doExtractContents ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} />
           </View>
         </View>
         <View style={tailwind('mt-8 flex-row items-center justify-between')}>
@@ -119,7 +124,7 @@ class SettingsPopupMisc extends React.PureComponent {
             <Text style={tailwind('mt-2 text-base text-gray-700 font-normal leading-6.5')}>Allow old removed links in Trash to be automatically deleted after 45 days</Text>
           </View>
           <View style={tailwind('ml-4 flex-grow-0 flex-shrink-0 w-11 h-6')}>
-            <Switch onValueChange={this.onDoDeleteBtnClick} value={doDeleteOldLinksInTrash} />
+            <Switch onValueChange={this.onDoDeleteBtnClick} value={doDeleteOldLinksInTrash} thumbColor={Platform.OS === 'android' ? doDeleteOldLinksInTrash ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} />
           </View>
         </View>
         <View style={tailwind('mt-8 mb-4')}>
