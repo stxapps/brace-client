@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Platform } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { Circle } from 'react-native-animated-spinkit';
+import KeyboardManager from 'react-native-keyboard-manager';
 
 import {
   MY_LIST, TRASH, ARCHIVE,
@@ -24,6 +25,14 @@ import { tailwind } from '../stylesheets/tailwind';
 import { withSafeAreaContext } from '.';
 
 class SettingsPopupLists extends React.PureComponent {
+
+  componentDidMount() {
+    if (Platform.OS === 'ios') KeyboardManager.setEnable(true);
+  }
+
+  componentWillUnmount() {
+    if (Platform.OS === 'ios') KeyboardManager.setEnable(false);
+  }
 
   validateDisplayName = (displayName) => {
     return validateListNameDisplayName(displayName, this.props.listNameMap);

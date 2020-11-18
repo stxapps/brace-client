@@ -1097,6 +1097,24 @@
 		"borderBottomRightRadius": 8,
 		"borderBottomLeftRadius": 8
 	},
+	"rounded-xl": {
+		"borderTopLeftRadius": 12,
+		"borderTopRightRadius": 12,
+		"borderBottomRightRadius": 12,
+		"borderBottomLeftRadius": 12
+	},
+	"rounded-2xl": {
+		"borderTopLeftRadius": 16,
+		"borderTopRightRadius": 16,
+		"borderBottomRightRadius": 16,
+		"borderBottomLeftRadius": 16
+	},
+	"rounded-3xl": {
+		"borderTopLeftRadius": 24,
+		"borderTopRightRadius": 24,
+		"borderBottomRightRadius": 24,
+		"borderBottomLeftRadius": 24
+	},
 	"rounded-full": {
 		"borderTopLeftRadius": 9999,
 		"borderTopRightRadius": 9999,
@@ -1183,6 +1201,54 @@
 		"borderTopLeftRadius": 8,
 		"borderBottomLeftRadius": 8
 	},
+	"rounded-t-xl": {
+		"borderTopLeftRadius": 12,
+		"borderTopRightRadius": 12
+	},
+	"rounded-r-xl": {
+		"borderTopRightRadius": 12,
+		"borderBottomRightRadius": 12
+	},
+	"rounded-b-xl": {
+		"borderBottomRightRadius": 12,
+		"borderBottomLeftRadius": 12
+	},
+	"rounded-l-xl": {
+		"borderTopLeftRadius": 12,
+		"borderBottomLeftRadius": 12
+	},
+	"rounded-t-2xl": {
+		"borderTopLeftRadius": 16,
+		"borderTopRightRadius": 16
+	},
+	"rounded-r-2xl": {
+		"borderTopRightRadius": 16,
+		"borderBottomRightRadius": 16
+	},
+	"rounded-b-2xl": {
+		"borderBottomRightRadius": 16,
+		"borderBottomLeftRadius": 16
+	},
+	"rounded-l-2xl": {
+		"borderTopLeftRadius": 16,
+		"borderBottomLeftRadius": 16
+	},
+	"rounded-t-3xl": {
+		"borderTopLeftRadius": 24,
+		"borderTopRightRadius": 24
+	},
+	"rounded-r-3xl": {
+		"borderTopRightRadius": 24,
+		"borderBottomRightRadius": 24
+	},
+	"rounded-b-3xl": {
+		"borderBottomRightRadius": 24,
+		"borderBottomLeftRadius": 24
+	},
+	"rounded-l-3xl": {
+		"borderTopLeftRadius": 24,
+		"borderBottomLeftRadius": 24
+	},
 	"rounded-t-full": {
 		"borderTopLeftRadius": 9999,
 		"borderTopRightRadius": 9999
@@ -1258,6 +1324,42 @@
 	},
 	"rounded-bl-lg": {
 		"borderBottomLeftRadius": 8
+	},
+	"rounded-tl-xl": {
+		"borderTopLeftRadius": 12
+	},
+	"rounded-tr-xl": {
+		"borderTopRightRadius": 12
+	},
+	"rounded-br-xl": {
+		"borderBottomRightRadius": 12
+	},
+	"rounded-bl-xl": {
+		"borderBottomLeftRadius": 12
+	},
+	"rounded-tl-2xl": {
+		"borderTopLeftRadius": 16
+	},
+	"rounded-tr-2xl": {
+		"borderTopRightRadius": 16
+	},
+	"rounded-br-2xl": {
+		"borderBottomRightRadius": 16
+	},
+	"rounded-bl-2xl": {
+		"borderBottomLeftRadius": 16
+	},
+	"rounded-tl-3xl": {
+		"borderTopLeftRadius": 24
+	},
+	"rounded-tr-3xl": {
+		"borderTopRightRadius": 24
+	},
+	"rounded-br-3xl": {
+		"borderBottomRightRadius": 24
+	},
+	"rounded-bl-3xl": {
+		"borderBottomLeftRadius": 24
 	},
 	"rounded-tl-full": {
 		"borderTopLeftRadius": 9999
@@ -1418,6 +1520,24 @@
 	"items-stretch": {
 		"alignItems": "stretch"
 	},
+	"content-center": {
+		"alignContent": "center"
+	},
+	"content-start": {
+		"alignContent": "flex-start"
+	},
+	"content-end": {
+		"alignContent": "flex-end"
+	},
+	"content-between": {
+		"alignContent": "space-between"
+	},
+	"content-around": {
+		"alignContent": "space-around"
+	},
+	"content-evenly": {
+		"alignContent": "space-evenly"
+	},
 	"self-auto": {
 		"alignSelf": "auto"
 	},
@@ -1432,6 +1552,21 @@
 	},
 	"self-stretch": {
 		"alignSelf": "stretch"
+	},
+	"justify-items-auto": {
+		"justifyItems": "auto"
+	},
+	"justify-items-start": {
+		"justifyItems": "start"
+	},
+	"justify-items-end": {
+		"justifyItems": "end"
+	},
+	"justify-items-center": {
+		"justifyItems": "center"
+	},
+	"justify-items-stretch": {
+		"justifyItems": "stretch"
 	},
 	"justify-start": {
 		"justifyContent": "flex-start"
@@ -1451,20 +1586,20 @@
 	"justify-evenly": {
 		"justifyContent": "space-evenly"
 	},
-	"content-center": {
-		"alignContent": "center"
+	"justify-self-auto": {
+		"justifySelf": "auto"
 	},
-	"content-start": {
-		"alignContent": "flex-start"
+	"justify-self-start": {
+		"justifySelf": "start"
 	},
-	"content-end": {
-		"alignContent": "flex-end"
+	"justify-self-end": {
+		"justifySelf": "end"
 	},
-	"content-between": {
-		"alignContent": "space-between"
+	"justify-self-center": {
+		"justifySelf": "center"
 	},
-	"content-around": {
-		"alignContent": "space-around"
+	"justify-self-stretch": {
+		"justifySelf": "stretch"
 	},
 	"flex-1": {
 		"flexGrow": 1,
@@ -2929,6 +3064,9 @@
 	},
 	"min-h-0": {
 		"minHeight": 0
+	},
+	"min-h-14": {
+		"minHeight": 56
 	},
 	"min-h-full": {
 		"minHeight": "100%"

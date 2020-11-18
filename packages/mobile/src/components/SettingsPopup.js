@@ -237,11 +237,14 @@ class SettingsPopup extends React.PureComponent {
 
   _render(content) {
 
-    const { safeAreaWidth, safeAreaHeight } = this.props;
+    const { safeAreaWidth, safeAreaHeight, insets } = this.props;
 
     const statusBarHeight = 24;
-    const appHeight = safeAreaHeight - statusBarHeight - this.state.keyboardHeight;
-    const panelHeight = safeAreaWidth < MD_WIDTH ? appHeight * 0.9 : appHeight * 0.8;
+    let appHeight = safeAreaHeight - statusBarHeight;
+    if (Platform.OS === 'android' && this.state.keyboardHeight > 0) {
+      appHeight -= this.state.keyboardHeight;
+    }
+    const panelHeight = appHeight * 0.9;
 
     const { isSidebarShown, didSidebarTransitionEnd } = this.state;
 
@@ -315,6 +318,7 @@ class SettingsPopup extends React.PureComponent {
           </View>
           <View key="panel-content" style={tailwind('flex-shrink flex-grow')}>
             <ScrollView ref={this.panelContent} style={tailwind('flex-1')} keyboardShouldPersistTaps="handled">
+              {content}
               <View style={tailwind('absolute top-0 right-0 p-1 md:hidden md:relative', safeAreaWidth)}>
                 <TouchableOpacity onPress={this.onPopupCloseBtnClick} style={tailwind('items-center justify-center h-7 w-7 rounded-full')}>
                   <Svg style={tailwind('text-base text-gray-500 font-normal')} width={20} height={20} stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -322,7 +326,6 @@ class SettingsPopup extends React.PureComponent {
                   </Svg>
                 </TouchableOpacity>
               </View>
-              {content}
             </ScrollView>
           </View>
           {/* Off-canvas sidebar for mobile */}
@@ -380,17 +383,14 @@ class SettingsPopup extends React.PureComponent {
       </View>
     );
 
-    let dialogTranslateY = 0;
-    if (Platform.OS === 'ios' && this.state.keyboardHeight > 0) {
-      dialogTranslateY = -1 * this.state.keyboardHeight / 2;
-    }
+    const modalStyle = { paddingLeft: 16 + insets.left, paddingRight: 16 + insets.right };
 
     return (
-      <View style={tailwind('p-4 absolute inset-0 items-center justify-center z-30')}>
+      <View style={cache('SP_modal', [tailwind('absolute inset-0 items-center justify-center z-30'), modalStyle], [insets.left, insets.right])}>
         <TouchableWithoutFeedback onPress={this.onPopupCloseBtnClick}>
           <View style={tailwind('absolute inset-0 bg-black opacity-25')}></View>
         </TouchableWithoutFeedback>
-        <View style={cache('SP_dialog', [tailwind('w-full max-w-4xl bg-white rounded-lg shadow-xl'), { transform: [{ translateY: dialogTranslateY }] }], dialogTranslateY)}>
+        <View style={tailwind('w-full max-w-4xl bg-white rounded-lg shadow-xl')}>
           <View style={tailwind('w-full bg-white rounded-lg overflow-hidden')}>
             {panelWithSidebar}
           </View>

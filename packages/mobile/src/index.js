@@ -1,6 +1,7 @@
 //import './wdyr';
 
 import React from 'react';
+import { Platform } from 'react-native';
 import { Provider } from 'react-redux';
 import { createStore, compose } from 'redux';
 import { install as installReduxLoop } from 'redux-loop';
@@ -10,6 +11,7 @@ import {
   SafeAreaProvider, initialWindowMetrics, SafeAreaView,
 } from 'react-native-safe-area-context';
 import { MenuProvider } from 'react-native-popup-menu';
+import KeyboardManager from 'react-native-keyboard-manager';
 
 import reducers from './reducers';
 import { init, updateMenuPopupAsBackPressed } from './actions'
@@ -40,6 +42,10 @@ const store = createStore(
   )
 );
 const backHandler = (menuProvider) => updateMenuPopupAsBackPressed(menuProvider, store.dispatch, store.getState);
+
+if (Platform.OS === 'ios') {
+  KeyboardManager.setEnable(false);
+}
 
 const Root = () => {
   return (

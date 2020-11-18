@@ -6023,6 +6023,11 @@ react-native-fs@^2.16.6:
     base-64 "^0.1.0"
     utf8 "^3.0.0"
 
+react-native-keyboard-manager@^4.0.13-17:
+  version "4.0.13-17"
+  resolved "https://registry.yarnpkg.com/react-native-keyboard-manager/-/react-native-keyboard-manager-4.0.13-17.tgz#abb4038ad5a404aad087d3ecf69f9a60fd2fb899"
+  integrity sha512-otrAg02z1zulqTUL/CyvRzVZDb68v3I30PfdjQlocfVchfn/VOQUeHr/XFAeTo7dv8XBxBzcspYxCzE48fPC+A==
+
 react-native-modal@^11.5.6:
   version "11.5.6"
   resolved "https://registry.yarnpkg.com/react-native-modal/-/react-native-modal-11.5.6.tgz#bb25a78c35a5e24f45de060e5f64284397d38a87"

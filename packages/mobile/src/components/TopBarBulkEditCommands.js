@@ -199,26 +199,28 @@ class TopBarBulkEditCommands extends React.Component {
 
     const longestDisplayNameLength = getLongestListNameDisplayName(listNameMap).length;
 
-    const moveToPopupScrollViewStyle = { width: 112 };
+    const moveToPopupStyle = { width: 112 };
     if (longestDisplayNameLength > 7) {
       // Approx 8dp per additional character
       const width = Math.min(112 + 8 * (longestDisplayNameLength - 7), 256);
-      moveToPopupScrollViewStyle.width = width;
+      moveToPopupStyle.width = width;
     }
     // 39dp per row
-    moveToPopupScrollViewStyle.maxHeight = Math.min(39 * moveTo.length, 256, safeAreaHeight);
+    moveToPopupStyle.maxHeight = Math.min(39 * moveTo.length, 256, safeAreaHeight);
 
     return (
-      <ScrollView style={moveToPopupScrollViewStyle}>
-        {moveTo.map(listNameObj => {
-          const key = MOVE_TO + ' ' + listNameObj.listName;
-          return (
-            <MenuOption key={key} onSelect={() => this.onBulkEditMoveToPopupClick(key)} customStyles={cache('TBBEC_moveToMenuOption', { optionWrapper: { padding: 0 } })}>
-              <Text style={tailwind('py-2 pl-4 pr-2 w-full text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
-            </MenuOption>
-          );
-        })}
-      </ScrollView>
+      <MenuOptions customStyles={cache('TBBEC_moveToMenuOptions', { optionsContainer: [tailwind('py-2 bg-white rounded-lg shadow-xl'), moveToPopupStyle] }, [longestDisplayNameLength, moveTo.length, safeAreaHeight])}>
+        <ScrollView>
+          {moveTo.map(listNameObj => {
+            const key = MOVE_TO + ' ' + listNameObj.listName;
+            return (
+              <MenuOption key={key} onSelect={() => this.onBulkEditMoveToPopupClick(key)} customStyles={cache('TBBEC_moveToMenuOption', { optionWrapper: { padding: 0 } })}>
+                <Text style={tailwind('py-2 pl-4 pr-2 w-full text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
+              </MenuOption>
+            );
+          })}
+        </ScrollView>
+      </MenuOptions>
     );
   }
 
@@ -297,9 +299,7 @@ class TopBarBulkEditCommands extends React.Component {
               </View>
             </View>
           </MenuTrigger>
-          <MenuOptions customStyles={cache('TBBEC_moveToMenuOptions', { optionsContainer: tailwind('py-2 bg-white rounded-lg shadow-xl') })}>
-            {this.renderBulkEditMoveToPopup()}
-          </MenuOptions>
+          {this.renderBulkEditMoveToPopup()}
         </Menu>}
         <TouchableOpacity onPress={this.onBulkEditCancelBtnClick} style={tailwind('ml-1 justify-center items-center w-10 h-10')}>
           <Svg style={tailwind('text-base text-gray-600 font-normal rounded-full')} width={28} height={28} viewBox="0 0 28 28" fill="currentColor">
