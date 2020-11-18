@@ -45,6 +45,8 @@ const backHandler = (menuProvider) => updateMenuPopupAsBackPressed(menuProvider,
 
 if (Platform.OS === 'ios') {
   KeyboardManager.setEnable(false);
+  KeyboardManager.setEnableDebugging(false);
+  KeyboardManager.setEnableAutoToolbar(false);
 }
 
 const Root = () => {
