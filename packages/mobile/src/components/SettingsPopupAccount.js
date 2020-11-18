@@ -19,7 +19,7 @@ class SettingsPopupAccount extends React.PureComponent {
     let userImage;
     if (this.props.userImage) {
       userImage = (
-        <GracefulImage style={tailwind('w-full h-full')} source={cache('SPA_userImage', { uri: this.props.userImage }, this.props.userImage)} />
+        <GracefulImage style={tailwind('w-24 h-24 border-2 border-gray-200 rounded-full overflow-hidden')} source={cache('SPA_userImage', { uri: this.props.userImage }, this.props.userImage)} />
       )
     } else {
       userImage = (

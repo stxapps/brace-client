@@ -598,6 +598,7 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
 
     // Some links might be moved while extracting.
     // If that the case, ignore them.
+    if (!getState().links[listName]) continue;
     if (!Object.keys(getState().links[listName]).includes(links[i][ID])) continue;
 
     links[i].extractedResult = extractedResult;

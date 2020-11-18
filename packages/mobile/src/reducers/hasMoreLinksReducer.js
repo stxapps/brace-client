@@ -35,8 +35,8 @@ export default (state = initialState, action) => {
 
   if (action.type === DELETE_ALL_DATA) {
     const newState = {};
-    for (const k in state) {
-      if (state.hasOwnProperty(k)) {
+    for (const k in initialState) {
+      if (initialState.hasOwnProperty(k)) {
         newState[k] = false;
       }
     }

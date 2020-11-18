@@ -54,6 +54,8 @@ class Main extends React.Component {
 
     this.mainFlatList = React.createRef();
 
+    // BUG alert
+    // When delete all data, fetched is not cleared!
     this.fetched = [];
     this.doFetchSettings = true;
 
