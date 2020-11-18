@@ -269,18 +269,23 @@ export const fetch = (
 ) => async (dispatch, getState) => {
 
   const listName = getState().display.listName;
+
   if (doDeleteOldLinksInTrash === null) {
     doDeleteOldLinksInTrash = getState().settings.doDeleteOldLinksInTrash;
   }
   if (doExtractContents === null) {
     doExtractContents = getState().settings.doExtractContents;
   }
+  const doDescendingOrder = getState().settings.doDescendingOrder;
 
   dispatch({
     type: FETCH,
     meta: {
       offline: {
-        effect: { method: FETCH, params: { listName, doFetchSettings } },
+        effect: {
+          method: FETCH,
+          params: { listName, doDescendingOrder, doFetchSettings }
+        },
         commit: {
           type: FETCH_COMMIT,
           meta: { doDeleteOldLinksInTrash, doExtractContents }
@@ -296,12 +301,15 @@ export const fetchMore = () => async (dispatch, getState) => {
   const listName = getState().display.listName;
   const ids = Object.keys(getState().links[listName]);
 
+  const doDescendingOrder = getState().settings.doDescendingOrder;
+  const doExtractContents = getState().settings.doExtractContents;
+
   dispatch({
     type: FETCH_MORE,
     meta: {
       offline: {
-        effect: { method: FETCH_MORE, params: { listName, ids } },
-        commit: { type: FETCH_MORE_COMMIT },
+        effect: { method: FETCH_MORE, params: { listName, ids, doDescendingOrder } },
+        commit: { type: FETCH_MORE_COMMIT, meta: { doExtractContents } },
         rollback: { type: FETCH_MORE_ROLLBACK },
       }
     },

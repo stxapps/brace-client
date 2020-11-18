@@ -125,12 +125,16 @@ export const batchGetFileWithRetry = async (fpaths, callCount) => {
 
 const fetch = async (params) => {
 
-  const { listName, doFetchSettings } = params;
+  const { listName, doDescendingOrder, doFetchSettings } = params;
 
   const { linkFPaths, settingsFPath } = await listFPaths();
 
   const namedLinkFPaths = linkFPaths[listName] || [];
-  const selectedLinkFPaths = namedLinkFPaths.sort().reverse().slice(0, N_LINKS);
+
+  let selectedLinkFPaths = namedLinkFPaths.sort();
+  if (doDescendingOrder) selectedLinkFPaths.reverse();
+  selectedLinkFPaths = selectedLinkFPaths.slice(0, N_LINKS);
+
   const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0);
   const links = responses.map(response => JSON.parse(response.content));
   const hasMore = namedLinkFPaths.length > N_LINKS;
@@ -150,7 +154,7 @@ const fetch = async (params) => {
 
 const fetchMore = async (params) => {
 
-  const { listName, ids } = params;
+  const { listName, ids, doDescendingOrder } = params;
 
   const { linkFPaths } = await listFPaths();
 
@@ -159,7 +163,10 @@ const fetchMore = async (params) => {
     return !ids.includes(extractLinkFPath(fpath).fname);
   });
 
-  const selectedLinkFPaths = filteredLinkFPaths.sort().reverse().slice(0, N_LINKS);
+  let selectedLinkFPaths = filteredLinkFPaths.sort();
+  if (doDescendingOrder) selectedLinkFPaths.reverse();
+  selectedLinkFPaths = selectedLinkFPaths.slice(0, N_LINKS);
+
   const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0);
   const links = responses.map(response => JSON.parse(response.content));
   const hasMore = filteredLinkFPaths.length > N_LINKS;

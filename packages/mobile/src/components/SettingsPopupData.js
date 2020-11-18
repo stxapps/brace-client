@@ -138,7 +138,7 @@ class _SettingsPopupDataExport extends React.PureComponent {
       <View style={tailwind('p-4 md:p-6 md:pt-4', safeAreaWidth)}>
         <View style={tailwind('border-b border-gray-400 md:border-b-0', safeAreaWidth)}>
           <TouchableOpacity onPress={this.props.onBackToDataViewBtnClick} style={tailwind('pb-1 md:pb-0', safeAreaWidth)}>
-            <Text style={tailwind('text-sm text-gray-700 font-normal')}>{'<'} {safeAreaWidth < SM_WIDTH ? 'Settings / ' : ' '}Data</Text>
+            <Text style={tailwind('text-sm text-gray-700 font-normal')}>{'<'} {safeAreaWidth < SM_WIDTH ? 'Settings / ' : ''}Data</Text>
           </TouchableOpacity>
           <Text style={tailwind('pb-2 text-2xl text-gray-800 font-medium leading-6 md:pb-0', safeAreaWidth)}>Export All Data</Text>
         </View>
@@ -279,7 +279,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
       <View style={tailwind('p-4 md:p-6 md:pt-4', safeAreaWidth)}>
         <View style={tailwind('border-b border-gray-400 md:border-b-0', safeAreaWidth)}>
           <TouchableOpacity onPress={this.props.onBackToDataViewBtnClick} style={tailwind('pb-1 md:pb-0', safeAreaWidth)}>
-            <Text style={tailwind('text-sm text-gray-700 font-normal')}>{'<'} {safeAreaWidth < SM_WIDTH ? 'Settings / ' : ' '}Data</Text>
+            <Text style={tailwind('text-sm text-gray-700 font-normal')}>{'<'} {safeAreaWidth < SM_WIDTH ? 'Settings / ' : ''}Data</Text>
           </TouchableOpacity>
           <Text style={tailwind('pb-2 text-2xl text-gray-800 font-medium leading-6 md:pb-0', safeAreaWidth)}>Delete All Data</Text>
         </View>

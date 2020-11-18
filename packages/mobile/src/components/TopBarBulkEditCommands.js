@@ -206,7 +206,7 @@ class TopBarBulkEditCommands extends React.Component {
       moveToPopupStyle.width = width;
     }
     // 39dp per row
-    moveToPopupStyle.maxHeight = Math.min(39 * moveTo.length, 256, safeAreaHeight);
+    moveToPopupStyle.maxHeight = Math.min((39 * moveTo.length) + 16, 256, safeAreaHeight);
 
     return (
       <MenuOptions customStyles={cache('TBBEC_moveToMenuOptions', { optionsContainer: [tailwind('py-2 bg-white rounded-lg shadow-xl'), moveToPopupStyle] }, [longestDisplayNameLength, moveTo.length, safeAreaHeight])}>

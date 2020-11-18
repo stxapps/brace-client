@@ -109,12 +109,16 @@ export default (state = initialState, action) => {
       ...toObjAndAddAttrs(links, ADDED, false, null)
     };
 
-    return loop(
-      newState,
-      Cmd.run(
-        extractContents(null, null),
-        { args: [Cmd.dispatch, Cmd.getState] })
-    );
+    const { doExtractContents } = action.meta;
+    if (doExtractContents) {
+      return loop(
+        newState,
+        Cmd.run(
+          extractContents(null, null),
+          { args: [Cmd.dispatch, Cmd.getState] })
+      );
+    }
+    return newState;
   }
 
   if (action.type === ADD_LINKS) {

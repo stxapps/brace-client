@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, Text, TouchableOpacity, TextInput, Platform } from 'react-native';
+import {
+  View, Text, TouchableOpacity, TextInput, Keyboard, Platform,
+} from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { Circle } from 'react-native-animated-spinkit';
 import KeyboardManager from 'react-native-keyboard-manager';
@@ -32,6 +34,7 @@ class SettingsPopupLists extends React.PureComponent {
 
   componentWillUnmount() {
     if (Platform.OS === 'ios') KeyboardManager.setEnable(false);
+    if (Platform.OS === 'android') Keyboard.dismiss();
   }
 
   validateDisplayName = (displayName) => {

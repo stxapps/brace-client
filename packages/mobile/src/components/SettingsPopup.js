@@ -8,6 +8,7 @@ import Svg, { Path } from 'react-native-svg'
 
 import { updatePopup } from '../actions';
 import { MD_WIDTH, SETTINGS_POPUP } from '../types/const';
+import { isEqual } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
@@ -37,12 +38,13 @@ class SettingsPopup extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = {
+    this.initialState = {
       viewId: VIEW_ACCOUNT,
       isSidebarShown: props.safeAreaWidth < MD_WIDTH,
       didSidebarTransitionEnd: true,
       keyboardHeight: 0,
     };
+    this.state = { ...this.initialState };
 
     this.panelContent = React.createRef();
 
@@ -103,7 +105,9 @@ class SettingsPopup extends React.PureComponent {
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (!this.props.isSettingsPopupShown && nextProps.isSettingsPopupShown) {
-      this.setState({ isSidebarShown: nextProps.safeAreaWidth < MD_WIDTH })
+      if (!isEqual(this.state, this.initialState)) {
+        this.setState({ ...this.initialState })
+      }
     }
   }
 
