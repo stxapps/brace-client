@@ -7,7 +7,7 @@ import Svg, { SvgXml, Path } from 'react-native-svg'
 import { Flow } from 'react-native-animated-spinkit'
 
 import {
-  fetch, fetchMore,
+  fetch, fetchMore, updatePopup,
 } from '../actions';
 import {
   ADD_POPUP,
@@ -403,7 +403,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
-  fetch, fetchMore,
+  fetch, fetchMore, updatePopup,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(Main));
