@@ -20,6 +20,8 @@ import { cardItemAnimConfig } from '../types/animConfigs';
 
 import { withSafeAreaContext } from '.';
 
+const ADD_POPUP_MENU_NAME = 'addPopup';
+
 class TopBarAddPopup extends React.PureComponent {
 
   constructor(props) {
@@ -31,6 +33,14 @@ class TopBarAddPopup extends React.PureComponent {
       isAskingConfirm: false,
     };
     this.state = { ...this.initialState };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!prevProps.isAddPopupShown && this.props.isAddPopupShown) {
+      if (!this.props.ctx.menuActions.isMenuOpen()) {
+        this.props.ctx.menuActions.openMenu(ADD_POPUP_MENU_NAME);
+      }
+    }
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -109,7 +119,7 @@ class TopBarAddPopup extends React.PureComponent {
     const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' })
 
     return (
-      <Menu renderer={renderers.Popover} rendererProps={cache('TBAP_addCommandMenuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onOpen={this.onAddBtnClick} onClose={this.onAddCancelBtnClick}>
+      <Menu name={ADD_POPUP_MENU_NAME} renderer={renderers.Popover} rendererProps={cache('TBAP_addCommandMenuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onOpen={this.onAddBtnClick} onClose={this.onAddCancelBtnClick}>
         <MenuTrigger>
           <View style={cache('TBAP_addTriggerView', [tailwind('flex-row justify-center items-center bg-white border border-gray-700 rounded-full shadow-sm'), { height: 32, paddingLeft: 10, paddingRight: 12 }])}>
             <Svg style={tailwind('text-base text-gray-700 font-normal')} width={12} height={11} viewBox="0 0 16 14" stroke="currentColor" fill="none">
