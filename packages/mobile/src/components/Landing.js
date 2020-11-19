@@ -221,7 +221,7 @@ class Landing extends React.PureComponent {
         <React.Fragment>
           <TopBar rightPane={SHOW_SIGN_IN} />
           <View style={tailwind('flex-1 justify-center')}>
-            {this.renderSwiper(SWIPER_HEIGHT)}
+            {this.renderSwiper(undefined)}
             {this.renderSignUp()}
           </View>
         </React.Fragment>
