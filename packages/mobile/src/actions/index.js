@@ -1,7 +1,7 @@
 import { Linking, Dimensions, Platform } from 'react-native';
 import { RESET_STATE as OFFLINE_RESET_STATE } from '@redux-offline/redux-offline/lib/constants';
 import axios from 'axios';
-import RNFS from 'react-native-fs';
+//import RNFS from 'react-native-fs';
 
 import userSession from '../userSession';
 import { batchGetFileWithRetry, batchDeleteFileWithRetry } from '../apis/blockstack';
@@ -980,8 +980,8 @@ export const exportAllData = () => async (dispatch, getState) => {
     //   https://reactnative.dev/docs/permissionsandroid.
     // On iOS, there is no way that I know of
     //   so no export all data on mobile for now.
-    const path = RNFS.DocumentDirectoryPath + '/brace-data.txt';
-    await RNFS.writeFile(path, JSON.stringify(data), 'utf8');
+    //const path = RNFS.DocumentDirectoryPath + '/brace-data.txt';
+    //await RNFS.writeFile(path, JSON.stringify(data), 'utf8');
   } catch (e) {
     dispatch(updateExportAllDataProgress({
       total: -1,
