@@ -207,11 +207,14 @@ class CardItemMenuPopup extends React.PureComponent {
       popupStyle.right = `${windowWidth - scrollbarWidth - anchorPosition.right}px`;
     }
 
+    // As under Move to... and indent so plus 1
+    const longestDisplayNameLength = this.longestDisplayName.length + 1;
+
     popupStyle.width = '8rem';
     popupStyle.maxHeight = '16rem';
-    if (this.longestDisplayName.length > 10) {
+    if (longestDisplayNameLength > 10) {
       // Approx 8px or 0.5rem per additional character
-      const width = Math.min(8 + 0.5 * (this.longestDisplayName.length - 10), 16);
+      const width = Math.min(8 + 0.5 * (longestDisplayNameLength - 10), 16);
       popupStyle.width = `${width}rem`;
     }
 
