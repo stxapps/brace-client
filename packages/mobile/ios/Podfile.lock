@@ -332,8 +332,6 @@ PODS:
     - React
     - SDWebImage (~> 5.8)
     - SDWebImageWebPCoder (~> 0.6.1)
-  - RNFS (2.16.6):
-    - React
   - RNSVG (12.1.0):
     - React
   - SDWebImage (5.9.0):
@@ -403,7 +401,6 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-community/clipboard`)"
   - RNFastImage (from `../node_modules/react-native-fast-image`)
-  - RNFS (from `../node_modules/react-native-fs`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -496,8 +493,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/clipboard"
   RNFastImage:
     :path: "../node_modules/react-native-fast-image"
-  RNFS:
-    :path: "../node_modules/react-native-fs"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   Yoga:
@@ -553,7 +548,6 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 2a692bcb9b69b76a2f1a95f33db057129700af64
   RNCClipboard: 48eaf27bea3de7c9a265529725434268d47a2ee9
   RNFastImage: e19ba191922e7dab9d932a4d59d62d76660aa222
-  RNFS: 2bd9eb49dc82fa9676382f0585b992c424cd59df
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   SDWebImage: 62ae4a18473520c67b79e9724c31a63599cc9423
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21

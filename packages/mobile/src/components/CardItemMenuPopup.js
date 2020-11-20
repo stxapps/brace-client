@@ -108,7 +108,8 @@ class CardItemMenuPopup extends React.PureComponent {
     const _listNameMap = [];
     _menu.forEach(text => _listNameMap.push({ listName: text, displayName: text }));
     _moveTo.forEach(listNameObj => _listNameMap.push(listNameObj));
-    const longestDisplayNameLength = getLongestListNameDisplayName(_listNameMap).length;
+    // As under Move to... and indent so plus 2
+    const longestDisplayNameLength = getLongestListNameDisplayName(_listNameMap).length + 2;
 
     let moveTo = null;
     if (_moveTo && _moveTo.length) {
