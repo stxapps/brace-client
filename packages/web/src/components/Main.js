@@ -46,6 +46,8 @@ class Main extends React.PureComponent {
     this.updateColumnWidth = throttle(this.updateColumnWidth, 16);
     this.updateScrollY = throttle(this.updateScrollY, 16);
 
+    // BUG alert
+    // When delete all data, fetched is not cleared!
     this.fetched = [];
     this.doFetchSettings = true;
   }

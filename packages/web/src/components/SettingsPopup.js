@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import { updatePopup } from '../actions';
 import { SM_WIDTH, MD_WIDTH, SETTINGS_POPUP } from '../types/const';
+import { isEqual } from '../utils';
 
 import SettingsPopupAccount from './SettingsPopupAccount';
 import {
@@ -23,12 +24,13 @@ class SettingsPopup extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = {
+    this.initialState = {
       viewId: VIEW_ACCOUNT,
       isSidebarShown: window.innerWidth < MD_WIDTH,
       didSidebarTransitionStart: true,
       didSidebarTransitionEnd: true,
     };
+    this.state = { ...this.initialState };
 
     this.panelContent = React.createRef();
 
@@ -43,14 +45,17 @@ class SettingsPopup extends React.PureComponent {
     }
 
     if (prevState.viewId !== this.state.viewId) {
-      this.panelContent.current.scroll(0, 0);
+      if (this.panelContent.current) {
+        this.panelContent.current.scroll(0, 0);
+      }
     }
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-
     if (!this.props.isSettingsPopupShown && nextProps.isSettingsPopupShown) {
-      this.setState({ isSidebarShown: window.innerWidth < MD_WIDTH })
+      if (!isEqual(this.state, this.initialState)) {
+        this.setState({ ...this.initialState })
+      }
     }
   }
 
@@ -194,7 +199,7 @@ class SettingsPopup extends React.PureComponent {
     const { isSidebarShown } = this.state;
     const { didSidebarTransitionStart, didSidebarTransitionEnd } = this.state;
 
-    const panelHeight = window.innerWidth < MD_WIDTH ? window.innerHeight * 0.9 : window.innerHeight * 0.8;
+    const panelHeight = window.innerHeight * 0.9;
 
     let sidebarCanvasStyleClasses, sidebarOverlayStyleClasses, sidebarStyleClasses;
     if (!isSidebarShown) {
@@ -279,6 +284,7 @@ class SettingsPopup extends React.PureComponent {
           </div>
           <div key="panel-content" className="flex flex-col flex-shrink flex-grow overflow-hidden">
             <div ref={this.panelContent} className="flex-1 relative overflow-y-auto focus:outline-none">
+              {content}
               <div className="absolute top-0 right-0 p-1 md:hidden">
                 <button onClick={this.onPopupCloseBtnClick} className="flex items-center justify-center h-7 w-7 rounded-full group focus:outline-none focus:shadow-outline" aria-label="Close settings popup">
                   <svg className="h-5 w-5 text-gray-500 group-hover:text-gray-700" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -286,7 +292,6 @@ class SettingsPopup extends React.PureComponent {
                   </svg>
                 </button>
               </div>
-              {content}
             </div>
           </div>
           {/* Off-canvas sidebar for mobile */}

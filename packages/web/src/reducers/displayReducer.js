@@ -14,7 +14,7 @@ import {
   UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
   UPDATE_UPDATE_SETTINGS_PROGRESS,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
-  RESET_STATE,
+  DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
@@ -239,7 +239,7 @@ export default (state = initialState, action) => {
     return { ...state, updateSettingsProgress: action.payload };
   }
 
-  if (action.type === RESET_STATE) {
+  if (action.type === DELETE_ALL_DATA || action.type === RESET_STATE) {
     return { ...initialState };
   }
 
