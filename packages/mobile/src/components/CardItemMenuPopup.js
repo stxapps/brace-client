@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
   ScrollView, View, Text, Linking, LayoutAnimation,
@@ -172,6 +173,10 @@ class CardItemMenuPopup extends React.PureComponent {
     );
   }
 }
+
+CardItemMenuPopup.propTypes = {
+  link: PropTypes.object.isRequired,
+};
 
 const mapStateToProps = (state, props) => {
   return {

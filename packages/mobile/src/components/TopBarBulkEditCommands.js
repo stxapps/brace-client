@@ -69,6 +69,7 @@ class TopBarBulkEditCommands extends React.Component {
       this.props.listName !== nextProps.listName ||
       this.props.listNameMap !== nextProps.listNameMap ||
       this.props.isBulkEditMoveToPopupShown !== nextProps.isBulkEditMoveToPopupShown ||
+      this.props.safeAreaHeight !== nextProps.safeAreaHeight ||
       this.state.isEmptyErrorShown !== nextState.isEmptyErrorShown
     ) {
       return true;

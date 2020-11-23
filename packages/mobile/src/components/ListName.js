@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { ScrollView, View, Text } from 'react-native';
 import Svg, { Path } from 'react-native-svg'
@@ -117,6 +118,10 @@ class ListName extends React.PureComponent {
     );
   }
 }
+
+ListName.propTypes = {
+  fetched: PropTypes.arrayOf(PropTypes.string),
+};
 
 const mapStateToProps = (state, props) => {
 

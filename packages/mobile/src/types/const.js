@@ -102,6 +102,8 @@ export const TOP_BAR_HEIGHT_MD = '6.75rem';
 export const BOTTOM_BAR_HEIGHT = '3.5rem';
 export const SEARCH_POPUP_HEIGHT = '3.625rem';
 
+export const BOTTOM_BAR_DURATION = 225;
+
 export const SHARE_BORDER_RADIUS = {
   borderTopLeftRadius: 16,
   borderTopRightRadius: 16,

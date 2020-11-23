@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Svg, { Path } from 'react-native-svg'
@@ -100,6 +101,10 @@ class CardItemSelector extends React.Component {
     );
   }
 }
+
+CardItemSelector.propTypes = {
+  linkId: PropTypes.string.isRequired,
+};
 
 const makeMapStateToProps = () => {
 
