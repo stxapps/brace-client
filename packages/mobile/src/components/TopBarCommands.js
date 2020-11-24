@@ -55,6 +55,11 @@ class TopBarCommands extends React.PureComponent {
     this.props.updatePopup(SETTINGS_POPUP, true);
   }
 
+  onSupportBtnClick = () => {
+    this.props.updatePopup(PROFILE_POPUP, false);
+    Linking.openURL(DOMAIN_NAME + '/#support');
+  }
+
   onSignOutBtnClick = () => {
     // No need to update it, will get already unmount
     //this.props.updatePopup(PROFILE_POPUP, false);
@@ -67,7 +72,7 @@ class TopBarCommands extends React.PureComponent {
         <MenuOption onSelect={this.onSettingsBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
           <Text style={tailwind('py-2 pl-4 text-base text-gray-800 font-normal')}>Settings</Text>
         </MenuOption>
-        <MenuOption onSelect={() => Linking.openURL(DOMAIN_NAME + '/#support')} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
+        <MenuOption onSelect={this.onSupportBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
           <Text style={tailwind('py-2 pl-4 text-base text-gray-800 font-normal')}>Support</Text>
         </MenuOption>
         <MenuOption onSelect={this.onSignOutBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>

@@ -30,10 +30,10 @@ import emptyBox from '../images/empty-box-sided.svg';
 import undrawLink from '../images/undraw-link.svg';
 import saveLinkAtUrlBar from '../images/save-link-at-url-bar.svg';
 
-const MAIN_HEAD = 'MAIN_HEAD';
-const MAIN_BODY = 'MAIN_BODY';
-const MAIN_FOOTER = 'MAIN_FOOTER';
-const MAIN_PADDING_BOTTOM = 'MAIN_PADDING_BOTTOM';
+const PANEL_HEAD = 'PANEL_HEAD';
+const PANEL_BODY = 'PANEL_BODY';
+const PANEL_FOOTER = 'PANEL_FOOTER';
+const PANEL_PADDING_BOTTOM = 'PANEL_PADDING_BOTTOM';
 
 const BORDER_RADIUS = {
   borderTopLeftRadius: 24,
@@ -47,7 +47,7 @@ class CardPanel extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.mainFlatList = React.createRef();
+    this.panelFlatList = React.createRef();
 
     this.doFetchSettings = true;
   }
@@ -60,10 +60,10 @@ class CardPanel extends React.PureComponent {
 
   componentDidUpdate(prevProps) {
     if (this.props.listName !== prevProps.listName) {
-      if (this.mainFlatList.current) {
+      if (this.panelFlatList.current) {
         setTimeout(() => {
-          if (this.mainFlatList.current) {
-            this.mainFlatList.current.scrollToOffset({
+          if (this.panelFlatList.current) {
+            this.panelFlatList.current.scrollToOffset({
               offset: 0,
               animated: true,
             });
@@ -232,19 +232,19 @@ class CardPanel extends React.PureComponent {
     );
   }
 
-  renderMain = ({ item }) => {
+  renderPanel = ({ item }) => {
 
     const { isFetchingMore, safeAreaWidth } = this.props;
 
-    if (item.id === MAIN_HEAD) {
+    if (item.id === PANEL_HEAD) {
       let pt = safeAreaWidth < MD_WIDTH ? toPx(TOP_BAR_HEIGHT) : toPx(TOP_BAR_HEIGHT_MD);
       pt += safeAreaWidth < MD_WIDTH ? toPx('1.5rem') : toPx('2.5rem');
       return (
-        <View style={cache('CP_mainHead', { paddingTop: pt }, safeAreaWidth)}></View>
+        <View style={cache('CP_panelHead', { paddingTop: pt }, safeAreaWidth)}></View>
       );
     }
 
-    if (item.id === MAIN_BODY) {
+    if (item.id === PANEL_BODY) {
 
       const { links, columnWidth } = this.props;
 
@@ -296,14 +296,14 @@ class CardPanel extends React.PureComponent {
       );
     }
 
-    if (item.id === MAIN_FOOTER) {
+    if (item.id === PANEL_FOOTER) {
       return isFetchingMore ? this.renderFetchingMore() : this.renderFetchMoreBtn();
     }
 
-    if (item.id === MAIN_PADDING_BOTTOM) {
+    if (item.id === PANEL_PADDING_BOTTOM) {
       const pb = toPx(BOTTOM_BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT);
       return (
-        <View style={cache('CP_mainPB', { paddingBottom: pb })}></View>
+        <View style={cache('CP_panelPB', { paddingBottom: pb })}></View>
       );
     }
 
@@ -318,17 +318,17 @@ class CardPanel extends React.PureComponent {
       throw new Error(`Invalid links: ${links}. Links cannot be undefined as in LinkSelector and if links is null, it should be handled in Main, not in CardPanel.`);
     }
 
-    const mainData = [{ id: MAIN_HEAD }, { id: MAIN_BODY }];
-    if (hasMoreLinks) mainData.push({ id: MAIN_FOOTER });
-    if (columnWidth === PC_100) mainData.push({ id: MAIN_PADDING_BOTTOM });
+    const panelData = [{ id: PANEL_HEAD }, { id: PANEL_BODY }];
+    if (hasMoreLinks) panelData.push({ id: PANEL_FOOTER });
+    if (columnWidth === PC_100) panelData.push({ id: PANEL_PADDING_BOTTOM });
 
     return (
       <Animated.FlatList
-        ref={this.mainFlatList}
+        ref={this.panelFlatList}
         contentContainerStyle={tailwind('max-w-6xl self-center')}
-        data={mainData}
+        data={panelData}
         keyExtractor={this.getItemId}
-        renderItem={this.renderMain}
+        renderItem={this.renderPanel}
         onEndReached={this.onEndReached}
         onEndReachedThreshold={0.9}
         removeClippedSubviews={false}

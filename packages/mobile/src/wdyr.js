@@ -6,7 +6,5 @@ if (process.env.NODE_ENV === 'development') {
     trackAllPureComponents: true,
     include: [/^TopBarBulkEditCommands$/, /^BottomBarBulkEditCommands$/, /^CardItemSelector$/, /^CardItemContent$/, /^ConfirmDeletePopup$/],
     exclude: [/^Connect/, /^LogBox/,],
-    /*include: [/^((?!(MenuOptions|MenuTrigger)).)*$/],
-    exclude: [/^Connect/, /^LogBox/, /^EnhanceContext$/, /^ScrollView$/, /^View$/, /^Text$/, /^TouchableText$/, /^TouchableOpacity$/, /^TouchableWithoutFeedback$/, /^TouchableNativeFeedback$/, /^TextInput$ /, /^InternalTextInput$/, /^VirtualizedList$/, /^CellRenderer$/, /^MenuPlaceholder$/, /^Backdrop$/, /^Modal$/, /^ReactNativeModal$/, /^AppContainer$/, /^AnimatedComponentWrapper$/, /^AnimatedComponent$/, /^Svg$/, /^G$/, /^Path$/, /^Circle$/, /^undefined$/],*/
   });
 }

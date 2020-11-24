@@ -61,6 +61,11 @@ class BottomBarCommands extends React.PureComponent {
     this.props.updatePopup(SETTINGS_POPUP, true);
   }
 
+  onSupportBtnClick = () => {
+    this.props.updatePopup(PROFILE_POPUP, false);
+    Linking.openURL(DOMAIN_NAME + '/#support');
+  }
+
   onSignOutBtnClick = () => {
     // No need to update it, will get already unmount
     //this.props.updatePopup(PROFILE_POPUP, false);
@@ -77,7 +82,7 @@ class BottomBarCommands extends React.PureComponent {
           <TouchableOpacity onPress={this.onSettingsBtnClick} style={tailwind('py-4 pl-4 w-full')}>
             <Text style={tailwind('text-base text-gray-800 font-normal')}>Settings</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => Linking.openURL(DOMAIN_NAME + '/#support')} style={tailwind('py-4 pl-4 w-full')}>
+          <TouchableOpacity onPress={this.onSupportBtnClick} style={tailwind('py-4 pl-4 w-full')}>
             <Text style={tailwind('text-base text-gray-800 font-normal')}>Support</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.onSignOutBtnClick} style={tailwind('py-4 pl-4 w-full')}>
