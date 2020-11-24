@@ -41,6 +41,7 @@ export const STATUS = 'status';
 export const ADDING = 'ADDING';
 export const ADDED = 'ADDED';
 export const MOVING = 'MOVING';
+export const MOVED = 'MOVED';
 export const REMOVING = 'REMOVING';
 export const DELETING = 'DELETING';
 export const UPDATING = 'UPDATING';

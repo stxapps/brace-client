@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { motion, AnimateSharedLayout, AnimatePresence } from "framer-motion"
+import { motion, AnimateSharedLayout } from "framer-motion"
 
 import {
   fetch, fetchMore, updatePopup,
@@ -243,21 +243,19 @@ class CardPanel extends React.PureComponent {
     return (
       <div className={`flex justify-evenly items-start ${panelClassNames}`}>
         <AnimateSharedLayout>
-          <AnimatePresence>
-            {colData.map((colItems, i) => {
-              return (
-                <div key={`col-${i}`} className={`w-full ${columnClassNames}`}>
-                  {colItems.map(link => {
-                    return (
-                      <motion.div key={link.id} layoutId={link.id}>
-                        <CardItem link={link} />
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              );
-            })}
-          </AnimatePresence>
+          {colData.map((colItems, i) => {
+            return (
+              <div key={`col-${i}`} className={`w-full ${columnClassNames}`}>
+                {colItems.map(link => {
+                  return (
+                    <motion.div key={link.id} layoutId={link.id} variants={cardItemFMV} initial="hidden" animate="visible">
+                      <CardItem link={link} />
+                    </motion.div>
+                  );
+                })}
+              </div>
+            );
+          })}
         </AnimateSharedLayout>
       </div>
     );
@@ -297,6 +295,11 @@ class CardPanel extends React.PureComponent {
 CardPanel.propTypes = {
   columnWidth: PropTypes.string.isRequired,
   fetched: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
+
+const cardItemFMV = {
+  hidden: { scale: 0 },
+  visible: { scale: 1 },
 };
 
 const mapStateToProps = (state, props) => {

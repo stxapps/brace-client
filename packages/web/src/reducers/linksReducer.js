@@ -18,7 +18,7 @@ import {
   IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE,
   ID, STATUS,
-  ADDED, ADDING, MOVING, REMOVING, DELETING,
+  ADDED, MOVED, ADDING, MOVING, REMOVING, DELETING,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
 } from '../types/const';
 import { _, isEqual } from '../utils';
@@ -178,18 +178,19 @@ export default (state = initialState, action) => {
 
   if (action.type === MOVE_LINKS_ADD_STEP_COMMIT) {
     const { listName, links } = action.payload;
+    const ids = _.extract(links, ID);
 
     const newState = { ...state };
     newState[listName] = _.update(
-      state[listName], ID, _.extract(links, ID), STATUS, ADDED
+      state[listName], ID, ids, STATUS, MOVED
     );
 
-    const { fromListName, ids } = action.meta;
+    const { fromListName, fromIds } = action.meta;
 
     return loop(
       newState,
       Cmd.run(
-        moveLinksDeleteStep(fromListName, ids),
+        moveLinksDeleteStep(fromListName, fromIds, listName, ids),
         { args: [Cmd.dispatch, Cmd.getState] })
     );
   }
@@ -206,11 +207,14 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === MOVE_LINKS_DELETE_STEP) {
-    const { listName, ids } = action.payload;
+    const { listName, ids, toListName, toIds } = action.payload;
 
     const newState = { ...state };
     newState[listName] = _.update(
       state[listName], ID, ids, STATUS, REMOVING
+    );
+    newState[toListName] = _.update(
+      state[toListName], ID, toIds, STATUS, ADDED
     );
 
     return newState;

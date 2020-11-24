@@ -2,7 +2,7 @@ import { createSelectorCreator, defaultMemoize, createSelector } from 'reselect'
 
 import {
   ID, STATUS,
-  ADDED, ADDING, UPDATING, MOVING, DIED_ADDING, DIED_UPDATING, DIED_MOVING,
+  ADDED, MOVED, ADDING, UPDATING, MOVING, DIED_ADDING, DIED_UPDATING, DIED_MOVING,
   DIED_REMOVING, DIED_DELETING,
   IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
 } from '../types/const';
@@ -96,14 +96,14 @@ export const getLinks = createSelectorLinks(
 
     if (!links || !links[listName]) return null;
 
-    const selectedLinks = _.select(links[listName], STATUS, [ADDED, ADDING, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING]);
+    const selectedLinks = _.select(links[listName], STATUS, [ADDED, MOVED, ADDING, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING]);
 
     const moving_ids = [];
     for (const key in links) {
       if (key === listName || !links[key]) {
         continue;
       }
-      moving_ids.push(..._.extract(_.select(links[key], STATUS, [MOVING, DIED_MOVING]), ID));
+      moving_ids.push(..._.extract(_.select(links[key], STATUS, [MOVED, MOVING, DIED_MOVING]), ID));
     }
 
     const filteredLinks = excludeWithMainIds(selectedLinks, moving_ids);
@@ -171,14 +171,14 @@ export const getPopupLink = createSelectorPopupLink(
 
     if (!links || !links[listName]) return null;
 
-    const selectedLinks = _.select(links[listName], STATUS, [ADDING, ADDED, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING]);
+    const selectedLinks = _.select(links[listName], STATUS, [ADDED, MOVED, ADDING, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING]);
 
     const moving_ids = [];
     for (const key in links) {
       if (key === listName || !links[key]) {
         continue;
       }
-      moving_ids.push(..._.extract(_.select(links[key], STATUS, [MOVING, DIED_MOVING]), ID));
+      moving_ids.push(..._.extract(_.select(links[key], STATUS, [MOVED, MOVING, DIED_MOVING]), ID));
     }
 
     const filteredLinks = excludeWithMainIds(selectedLinks, moving_ids);

@@ -448,16 +448,18 @@ export const moveLinks = (toListName, ids, fromListName = null) => async (dispat
     meta: {
       offline: {
         effect: { method: ADD_LINKS, params: payload },
-        commit: { type: MOVE_LINKS_ADD_STEP_COMMIT, meta: { fromListName, ids } },
+        commit: {
+          type: MOVE_LINKS_ADD_STEP_COMMIT, meta: { fromListName, fromIds: ids }
+        },
         rollback: { type: MOVE_LINKS_ADD_STEP_ROLLBACK, meta: payload },
       }
     },
   });
 };
 
-export const moveLinksDeleteStep = (listName, ids) => async (dispatch, getState) => {
+export const moveLinksDeleteStep = (listName, ids, toListName, toIds) => async (dispatch, getState) => {
 
-  const payload = { listName, ids };
+  const payload = { listName, ids, toListName, toIds };
 
   dispatch({
     type: MOVE_LINKS_DELETE_STEP,
