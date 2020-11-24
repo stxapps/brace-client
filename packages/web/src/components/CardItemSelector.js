@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { MAX_SELECTED_LINK_IDS } from '../types/const';
@@ -97,6 +98,10 @@ class CardItemSelector extends React.Component {
     );
   }
 }
+
+CardItemSelector.propTypes = {
+  linkId: PropTypes.string.isRequired,
+};
 
 const makeMapStateToProps = () => {
 

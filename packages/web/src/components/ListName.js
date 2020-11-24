@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import {
@@ -88,6 +89,10 @@ class ListName extends React.PureComponent {
     );
   }
 }
+
+ListName.propTypes = {
+  fetched: PropTypes.arrayOf(PropTypes.string),
+};
 
 const mapStateToProps = (state, props) => {
 

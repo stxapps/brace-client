@@ -4,7 +4,7 @@ if (process.env.NODE_ENV === 'development') {
   const whyDidYouRender = require('@welldone-software/why-did-you-render');
   whyDidYouRender(React, {
     trackAllPureComponents: true,
-    include: [/^TopBarBulkEditCommands$/, /^BottomBarBulkEditCommands$/, /^CardItemSelector$/, /^CardItem$/, /^ConfirmDeletePopup$/,],
+    include: [/^TopBarBulkEditCommands$/, /^BottomBarBulkEditCommands$/, /^CardItemSelector$/, /^CardItemContent$/, /^ConfirmDeletePopup$/,],
     exclude: [/^Connect/, /^LogBox/,],
   });
 }
