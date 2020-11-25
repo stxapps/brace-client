@@ -7,8 +7,7 @@ import {
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK, EXTRACT_CONTENTS_COMMIT,
-  UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
-  UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
+  UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, CLEAR_SELECTED_LINK_IDS,
   DELETE_LIST_NAMES_COMMIT, UPDATE_DELETING_LIST_NAME,
   UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
@@ -35,7 +34,6 @@ const initialState = {
   isSettingsPopupShown: false,
   isFetchingMore: false,
   status: null,
-  cardItemMenuPopupPosition: null,
   isHandlingSignIn: false,
   isBulkEditing: false,
   selectedLinkIds: [],
@@ -60,7 +58,6 @@ export default (state = initialState, action) => {
       isConfirmDeletePopupShown: false,
       isSettingsPopupShown: false,
       status: null,
-      cardItemMenuPopupPosition: null,
       isHandlingSignIn: false,
       isBulkEditing: false,
       selectedLinkIds: [],
@@ -170,10 +167,6 @@ export default (state = initialState, action) => {
 
   if (action.type === UPDATE_STATUS) {
     return { ...state, status: action.payload };
-  }
-
-  if (action.type === UPDATE_CARD_ITEM_MENU_POPUP_POSITION) {
-    return { ...state, cardItemMenuPopupPosition: action.payload };
   }
 
   if (action.type === UPDATE_HANDLING_SIGN_IN) {

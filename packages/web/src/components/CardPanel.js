@@ -30,14 +30,9 @@ class CardPanel extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = {
-      paddingBottom: this.getDefaultPaddingBottom(),
-    };
-
     this.panel = React.createRef();
 
     this.updateScrollY = throttle(this.updateScrollY, 16);
-
     this.doFetchSettings = true;
   }
 
@@ -50,8 +45,6 @@ class CardPanel extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    this.updatePaddingBottom();
-
     if (this.props.listName !== prevProps.listName) {
       window.scrollTo(0, 0);
     }
@@ -78,46 +71,6 @@ class CardPanel extends React.PureComponent {
       this.props.fetchMore();
     }
   }
-
-  getDefaultPaddingBottom = () => {
-    if (this.props.columnWidth === PC_100) {
-      return addRem(SEARCH_POPUP_HEIGHT, addRem(BOTTOM_BAR_HEIGHT, '1.5rem'));
-    }
-    return '1.5rem';
-  };
-
-  updatePaddingBottom = () => {
-
-    if (!this.props.cardItemMenuPopupPosition) {
-      const paddingBottom = this.getDefaultPaddingBottom()
-      if (paddingBottom !== this.state.paddingBottom) {
-        this.setState({ paddingBottom: paddingBottom });
-      }
-      return;
-    }
-
-    const scrollHeight = getWindowScrollHeight();
-    const menuBottom = this.props.cardItemMenuPopupPosition.bottom + window.pageYOffset;
-
-    if (menuBottom > scrollHeight) {
-
-      const fontSize = parseFloat(window.getComputedStyle(window.document.documentElement).fontSize);
-
-      let paddingBottom = ((menuBottom - scrollHeight) / fontSize).toString() + 'rem';
-      paddingBottom = addRem(paddingBottom, this.getDefaultPaddingBottom());
-      paddingBottom = addRem(paddingBottom, '1.5rem');
-
-      const panelBottom = this.panel.current.getBoundingClientRect().bottom + window.pageYOffset;
-      if (panelBottom < scrollHeight) {
-        const space = ((scrollHeight - panelBottom) / fontSize).toString() + 'rem';
-        paddingBottom = addRem(paddingBottom, space);
-      }
-
-      if (paddingBottom !== this.state.paddingBottom) {
-        this.setState({ paddingBottom: paddingBottom });
-      }
-    }
-  };
 
   onAddBtnClick = () => {
     this.props.updatePopup(ADD_POPUP, true);
@@ -263,7 +216,7 @@ class CardPanel extends React.PureComponent {
 
   render() {
 
-    const { links, hasMoreLinks, isFetchingMore } = this.props;
+    const { links, hasMoreLinks, isFetchingMore, columnWidth } = this.props;
 
     if (links === null) {
       throw new Error(`Invalid links: ${links}. Links cannot be undefined as in LinkSelector and if links is null, it should be handled in Main, not in CardPanel.`);
@@ -272,10 +225,14 @@ class CardPanel extends React.PureComponent {
     const showFetchMoreBtn = hasMoreLinks && !isFetchingMore;
     const showFetchingMore = hasMoreLinks && isFetchingMore;
 
+    let paddingBottom = '1.5rem';
+    if (columnWidth === PC_100) {
+      paddingBottom = addRem(SEARCH_POPUP_HEIGHT, addRem(BOTTOM_BAR_HEIGHT, '1.5rem'));
+    }
+
     const style = {
       paddingTop: window.innerWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD,
-      paddingBottom: this.state.paddingBottom,
-      transitionProperty: 'padding-bottom',
+      paddingBottom,
     };
 
     return (
@@ -313,7 +270,6 @@ const mapStateToProps = (state, props) => {
     hasMoreLinks: state.hasMoreLinks[listName],
     isFetchingMore: state.display.isFetchingMore,
     searchString: state.display.searchString,
-    cardItemMenuPopupPosition: state.display.cardItemMenuPopupPosition,
   };
 };
 

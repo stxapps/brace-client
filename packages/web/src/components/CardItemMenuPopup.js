@@ -1,9 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { motion, AnimatePresence } from "framer-motion"
 
-import {
-  updatePopup, moveLinks, updateCardItemMenuPopupPosition,
-} from '../actions';
+import { updatePopup, moveLinks } from '../actions';
 import {
   CONFIRM_DELETE_POPUP,
   MY_LIST, TRASH,
@@ -12,61 +11,52 @@ import {
   CARD_ITEM_POPUP_MENU,
 } from '../types/const';
 import { getListNameMap, getPopupLink } from '../selectors';
-import { copyTextToClipboard, ensureContainUrlProtocol, getLongestListNameDisplayName, throttle } from '../utils';
+import {
+  copyTextToClipboard, ensureContainUrlProtocol, getLongestListNameDisplayName,
+  isEqual, throttle,
+} from '../utils';
+import {
+  computePosition, createLayouts, AT_TRIGGER, EDGE_TRIGGER,
+} from './MenuPopupRenderer';
 
 class CardItemMenuPopup extends React.PureComponent {
 
   constructor(props) {
     super(props);
 
-    this.initialScrollY = 0;
-    this.state = { scrollY: this.initialScrollY };
+    this.initialScrollY = window.pageYOffset;
+    this.state = {
+      scrollY: this.initialScrollY,
+      menuPopupSize: null,
+    };
 
     this.menuPopup = React.createRef();
-    this.menuBtn = React.createRef();
 
     this.menu = null;
     this.moveTo = null;
     this.longestDisplayName = null;
 
     this.updateScrollY = throttle(this.updateScrollY, 16);
-  }
 
-  componentDidMount() {
-    if (this.props.popupLink) {
-
-      this.initialScrollY = window.pageYOffset;
-      this.setState({ scrollY: this.initialScrollY });
-
-      const { menu, moveTo, longestDisplayName } = this.populateMenu(this.props);
+    if (props.popupLink) {
+      const { menu, moveTo, longestDisplayName } = this.populateMenu(props);
       this.menu = menu;
       this.moveTo = moveTo;
       this.longestDisplayName = longestDisplayName;
-
-      window.addEventListener('scroll', this.updateScrollY);
-
-      this.props.updateCardItemMenuPopupPosition(
-        this.menuPopup.current.getBoundingClientRect()
-      );
-
-      this.menuBtn.current.focus();
     }
+  }
+
+  componentDidMount() {
+    this.updateState(this.props.popupLink !== null);
   }
 
   componentDidUpdate(prevProps) {
     if (!prevProps.popupLink && this.props.popupLink) {
-      window.addEventListener('scroll', this.updateScrollY);
-
-      this.props.updateCardItemMenuPopupPosition(
-        this.menuPopup.current.getBoundingClientRect()
-      );
-
-      this.menuBtn.current.focus();
+      this.updateState(true);
     }
 
     if (prevProps.popupLink && !this.props.popupLink) {
-      window.removeEventListener('scroll', this.updateScrollY);
-      this.props.updateCardItemMenuPopupPosition(null);
+      this.updateState(false);
     }
   }
 
@@ -74,7 +64,10 @@ class CardItemMenuPopup extends React.PureComponent {
     if (!this.props.popupLink && nextProps.popupLink) {
 
       this.initialScrollY = window.pageYOffset;
-      this.setState({ scrollY: this.initialScrollY });
+      this.setState({
+        scrollY: this.initialScrollY,
+        menuPopupSize: null,
+      });
 
       const { menu, moveTo, longestDisplayName } = this.populateMenu(nextProps);
       this.menu = menu;
@@ -84,8 +77,7 @@ class CardItemMenuPopup extends React.PureComponent {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.updateScrollY);
-    this.props.updateCardItemMenuPopupPosition(null);
+    this.updateState(false);
   }
 
   populateMenu(props) {
@@ -119,11 +111,26 @@ class CardItemMenuPopup extends React.PureComponent {
     return { menu, moveTo, longestDisplayName };
   }
 
+  updateState(isShown) {
+    if (isShown) {
+      const menuPopupSize = this.menuPopup.current.getBoundingClientRect();
+      if (!isEqual(menuPopupSize, this.state.menuPopupSize)) {
+        this.setState({ menuPopupSize });
+      }
+      window.addEventListener('scroll', this.updateScrollY);
+    } else {
+      window.removeEventListener('scroll', this.updateScrollY);
+    }
+  }
+
   updateScrollY = () => {
     this.setState({ scrollY: window.pageYOffset });
   }
 
   onMenuPopupClick = (e) => {
+
+    // As animation takes time, increase chance to several clicks
+    if (!this.props.popupLink) return;
 
     const text = e.target.getAttribute('data-key');
     if (!text) return;
@@ -153,6 +160,8 @@ class CardItemMenuPopup extends React.PureComponent {
   };
 
   onCancelBtnClick = () => {
+    // As animation takes time, increase chance to several clicks
+    if (!this.props.popupLink) return;
     this.props.updatePopup(this.props.popupLink.id, false);
   };
 
@@ -182,56 +191,90 @@ class CardItemMenuPopup extends React.PureComponent {
   render() {
 
     const { popupLink } = this.props;
-    if (!popupLink) return null;
-
-    const anchorPosition = popupLink.popupAnchorPosition;
-
-    const offsetScrollY = this.initialScrollY - this.state.scrollY;
-    const windowWidth = window.innerWidth;
-
-    const menuBtnHeight = 48;
-    const widthThreshold = 160;
-
-    const menuBtnStyle = {
-      top: `${anchorPosition.top + offsetScrollY}px`, left: `${anchorPosition.left}px`
-    };
-
-    const popupStyle = {
-      top: `${anchorPosition.top + offsetScrollY + menuBtnHeight}px`,
-    };
-
-    if (anchorPosition.left + widthThreshold < windowWidth) {
-      popupStyle.left = `${anchorPosition.left}px`;
-    } else {
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-      popupStyle.right = `${windowWidth - scrollbarWidth - anchorPosition.right}px`;
-    }
+    if (!popupLink) return (
+      <AnimatePresence key="AnimatePresence_CardItemMenuPopup"></AnimatePresence>
+    );
 
     // As under Move to... and indent so plus 1
     const longestDisplayNameLength = this.longestDisplayName.length + 1;
 
+    const popupStyle = {};
     popupStyle.width = '8rem';
-    popupStyle.maxHeight = '16rem';
+    popupStyle.maxHeight = '18rem';
     if (longestDisplayNameLength > 10) {
       // Approx 8px or 0.5rem per additional character
       const width = Math.min(8 + 0.5 * (longestDisplayNameLength - 10), 16);
       popupStyle.width = `${width}rem`;
     }
 
-    return (
-      <div className="relative">
-        <button onClick={this.onCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none"></button>
-        <button ref={this.menuBtn} style={menuBtnStyle} className="pt-2 pb-1 pl-4 pr-2 fixed focus:outline-none-outer z-41">
-          <svg className="py-2 w-6 w-6 bg-white text-gray-700 rounded-full focus:shadow-outline-inner" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-        <div ref={this.menuPopup} onClick={this.onMenuPopupClick} style={popupStyle} className="mt-2 ml-4 mr-2 py-2 fixed bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41">
+    const { scrollY, menuPopupSize } = this.state;
+    const menuPopupClassNames = 'py-2 fixed bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41';
+
+    let menuPopup;
+    if (menuPopupSize) {
+
+      const anchorPosition = popupLink.popupAnchorPosition;
+      const offsetScrollY = this.initialScrollY - scrollY;
+
+      const layouts = createLayouts(anchorPosition, menuPopupSize);
+      const triggerOffsets = { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 };
+      const popupPosition = computePosition(layouts, triggerOffsets);
+
+      const { top, left, topOrigin, leftOrigin } = popupPosition;
+      popupStyle.top = top + offsetScrollY;
+      popupStyle.left = left;
+
+      let hiddenTranslateX, hiddenTranslateY;
+      if (topOrigin === AT_TRIGGER && leftOrigin === AT_TRIGGER) {
+        [hiddenTranslateX, hiddenTranslateY] = ['-50%', '-50%'];
+      } else if (topOrigin === AT_TRIGGER && leftOrigin === EDGE_TRIGGER) {
+        [hiddenTranslateX, hiddenTranslateY] = ['50%', '-50%'];
+      } else if (topOrigin === EDGE_TRIGGER && leftOrigin === AT_TRIGGER) {
+        [hiddenTranslateX, hiddenTranslateY] = ['-50%', '50%'];
+      } else if (topOrigin === EDGE_TRIGGER && leftOrigin === EDGE_TRIGGER) {
+        [hiddenTranslateX, hiddenTranslateY] = ['50%', '50%'];
+      } else {
+        hiddenTranslateX = '0%';
+        hiddenTranslateY = '0%';
+      }
+
+      const menuPopupFMV = {
+        hidden: {
+          scale: 0,
+          translateX: hiddenTranslateX,
+          translateY: hiddenTranslateY,
+          transition: { duration: 0.25 },
+        },
+        visible: { scale: 1, translateX: '0%', translateY: '0%' }
+      }
+
+      menuPopup = (
+        <motion.div ref={this.menuPopup} onClick={this.onMenuPopupClick} style={popupStyle} className={menuPopupClassNames} variants={menuPopupFMV} initial="hidden" animate="visible" exit="hidden">
+          {this.renderMenu()}
+        </motion.div>
+      )
+    } else {
+      menuPopup = (
+        <div ref={this.menuPopup} onClick={this.onMenuPopupClick} style={popupStyle} className={menuPopupClassNames}>
           {this.renderMenu()}
         </div>
-      </div >
+      );
+    }
+
+    return (
+      <AnimatePresence key="AnimatePresence_CardItemMenuPopup">
+        <div key="CardItemMenuPopup" className="relative">
+          <motion.button onClick={this.onCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={cancelBtnFMV} initial="hidden" animate="visible" exit="hidden"></motion.button>
+          {menuPopup}
+        </div >
+      </AnimatePresence>
     );
   }
+}
+
+const cancelBtnFMV = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 0.25 }
 }
 
 const mapStateToProps = (state, props) => {
@@ -242,8 +285,6 @@ const mapStateToProps = (state, props) => {
   }
 };
 
-const mapDispatchToProps = {
-  updatePopup, moveLinks, updateCardItemMenuPopupPosition,
-};
+const mapDispatchToProps = { updatePopup, moveLinks };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardItemMenuPopup);
