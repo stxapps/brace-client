@@ -15,6 +15,7 @@ import Loading from './Loading';
 import TopBar from './TopBar';
 import BottomBar from './BottomBar';
 import CardPanel from './CardPanel';
+import CardItemMenuPopup from './CardItemMenuPopup';
 import ConfirmDeletePopup from './ConfirmDeletePopup';
 import SettingsPopup from './SettingsPopup';
 
@@ -78,6 +79,7 @@ class Main extends React.PureComponent {
         <CardPanel columnWidth={columnWidth} fetched={this.fetched} />
         <TopBar rightPane={topBarRightPane} isListNameShown={true} fetched={this.fetched} />
         {columnWidth === PC_100 && <BottomBar />}
+        <CardItemMenuPopup />
         <ConfirmDeletePopup />
         <SettingsPopup />
       </React.Fragment>

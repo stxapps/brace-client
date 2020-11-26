@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { motion, AnimatePresence } from "framer-motion"
 
 import {
   updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks,
@@ -7,10 +8,11 @@ import {
 import {
   CONFIRM_DELETE_POPUP, BULK_EDIT_MOVE_TO_POPUP,
   MY_LIST, ARCHIVE, TRASH,
-  MOVE_TO,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
-import { getLongestListNameDisplayName } from '../utils';
+import { ccPopupFMV } from '../types/animConfigs';
+
+import TopBarBulkEditMoveToPopup from './TopBarBulkEditMoveToPopup';
 
 class TopBarBulkEditCommands extends React.Component {
 
@@ -36,7 +38,6 @@ class TopBarBulkEditCommands extends React.Component {
     if (
       this.props.listName !== nextProps.listName ||
       this.props.listNameMap !== nextProps.listNameMap ||
-      this.props.isBulkEditMoveToPopupShown !== nextProps.isBulkEditMoveToPopupShown ||
       this.state.isEmptyErrorShown !== nextState.isEmptyErrorShown
     ) {
       return true;
@@ -101,30 +102,6 @@ class TopBarBulkEditCommands extends React.Component {
     this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, true);
   }
 
-  onBulkEditMoveToCancelBtnClick = () => {
-    this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, false);
-  }
-
-  onBulkEditMoveToPopupClick = (e) => {
-
-    const {
-      selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
-    } = this.props;
-
-    const text = e.target.getAttribute('data-key');
-    if (!text) return;
-
-    if (text.startsWith(MOVE_TO)) {
-      moveLinks(text.substring(MOVE_TO.length + 1), selectedLinkIds);
-      clearSelectedLinkIds();
-      updateBulkEdit(false);
-    } else {
-      throw new Error(`Invalid text: ${text}`);
-    }
-
-    this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, false);
-  }
-
   onBulkEditCancelBtnClick = () => {
     this.props.clearSelectedLinkIds();
     this.props.updateBulkEdit(false);
@@ -132,62 +109,33 @@ class TopBarBulkEditCommands extends React.Component {
 
   renderEmptyError() {
 
-    if (!this.state.isEmptyErrorShown) return null;
+    if (!this.state.isEmptyErrorShown) return (
+      <AnimatePresence key="AnimatePresence_TBBEC_emptyError"></AnimatePresence>
+    );
 
     return (
-      <div className="absolute top-full left-0 flex justify-center items-start">
-        <div className="mt-3 ml-4 p-4 rounded-md bg-red-100">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm leading-5 font-medium text-red-800 text-left">Please select item(s) below first before continuing.</h3>
+      <AnimatePresence key="AnimatePresence_TBBEC_emptyError">
+        <motion.div className="absolute top-full left-0 flex justify-center items-start" variants={ccPopupFMV} initial="hidden" animate="visible" exit="hidden">
+          <div className="mt-3 ml-4 p-4 rounded-md bg-red-100">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm leading-5 font-medium text-red-800 text-left">Please select item(s) below first before continuing.</h3>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  renderBulkEditMoveToPopup() {
-
-    const moveTo = [];
-    for (const listNameObj of this.props.listNameMap) {
-      if ([TRASH, ARCHIVE].includes(listNameObj.listName)) continue;
-      if (this.props.listName === listNameObj.listName) continue;
-
-      moveTo.push(listNameObj);
-    }
-
-    const longestDisplayNameLength = getLongestListNameDisplayName(moveTo).length;
-
-    const popupStyle = { width: '7rem', maxHeight: '16rem' };
-    if (longestDisplayNameLength > 7) {
-      // Approx 8px or 0.5rem per additional character
-      const width = Math.min(7 + 0.5 * (longestDisplayNameLength - 7), 8.25);
-      popupStyle.width = `${width}rem`;
-    }
-
-    return (
-      <React.Fragment>
-        <button onClick={this.onBulkEditMoveToCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none"></button>
-        <div onClick={this.onBulkEditMoveToPopupClick} style={popupStyle} className="mt-2 py-2 absolute left-29/100 bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41">
-
-          {moveTo.map(listNameObj => {
-            const key = MOVE_TO + ' ' + listNameObj.listName;
-            return <button className="py-2 pl-4 pr-2 block w-full text-gray-800 text-left truncate hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={key} data-key={key}>{listNameObj.displayName}</button>;
-          })}
-        </div>
-      </React.Fragment>
+        </motion.div>
+      </AnimatePresence>
     );
   }
 
   render() {
 
-    const { listName, listNameMap, isBulkEditMoveToPopupShown } = this.props;
+    const { listName, listNameMap } = this.props;
     const rListName = [MY_LIST, ARCHIVE, TRASH].includes(listName) ? listName : MY_LIST;
 
     const isArchiveBtnShown = [MY_LIST].includes(rListName);
@@ -254,7 +202,7 @@ class TopBarBulkEditCommands extends React.Component {
               <span className="ml-1 text-base text-gray-700 group-hover:text-gray-900">Move to...</span>
             </div>
           </button>
-          {isBulkEditMoveToPopupShown && this.renderBulkEditMoveToPopup()}
+          <TopBarBulkEditMoveToPopup />
         </div>}
         <button onClick={this.onBulkEditCancelBtnClick} className={`ml-1 w-10 h-10 group focus:outline-none-outer`}>
           <svg className="mx-auto w-7 h-7 text-gray-600 rounded-full group-hover:text-gray-700 focus:shadow-outline-inner" viewBox="0 0 28 28" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -271,7 +219,6 @@ const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
     listNameMap: getListNameMap(state),
-    isBulkEditMoveToPopupShown: state.display.isBulkEditMoveToPopupShown,
     selectedLinkIds: state.display.selectedLinkIds,
   };
 };

@@ -17,9 +17,9 @@ import { getListNameMap, getLinks } from '../selectors';
 import {
   addRem, getWindowHeight, getWindowScrollHeight, throttle, getListNameDisplayName,
 } from '../utils';
+import { cardItemFMV } from '../types/animConfigs';
 
 import CardItem from './CardItem';
-import CardItemMenuPopup from './CardItemMenuPopup';
 
 import emptyBox from '../images/empty-box-sided.svg';
 import undrawLink from '../images/undraw-link.svg';
@@ -240,7 +240,6 @@ class CardPanel extends React.PureComponent {
         <div className="pt-6 md:pt-10">
           {links.length === 0 && this.renderEmpty()}
           {links.length > 0 && this.renderPanel()}
-          <CardItemMenuPopup />
           {showFetchMoreBtn && this.renderFetchMoreBtn()}
           {showFetchingMore && this.renderFetchingMore()}
         </div>
@@ -252,11 +251,6 @@ class CardPanel extends React.PureComponent {
 CardPanel.propTypes = {
   columnWidth: PropTypes.string.isRequired,
   fetched: PropTypes.arrayOf(PropTypes.string).isRequired,
-};
-
-const cardItemFMV = {
-  hidden: { scale: 0 },
-  visible: { scale: 1 },
 };
 
 const mapStateToProps = (state, props) => {

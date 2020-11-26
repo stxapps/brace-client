@@ -1,8 +1,4 @@
-export const ZERO = 'ZERO'; // top or left of the window
-export const CENTER = 'CENTER'; // center of the window
-export const EDGE = 'EDGE'; // bottom or right of the window
-export const AT_TRIGGER = 'AT_TRIGGER'; // top or left of the trigger
-export const EDGE_TRIGGER = 'EDGE_TRIGGER'; // bottom or right of the trigger
+import { ZERO, CENTER, EDGE, AT_TRIGGER, EDGE_TRIGGER } from '../types/const';
 
 const axisPosition = (oDim, wDim, tPos, tDim) => {
   // if options are bigger than window dimension, then render at 0
@@ -31,10 +27,11 @@ const axisPosition = (oDim, wDim, tPos, tDim) => {
   return [pos, CENTER];
 };
 
-export const computePosition = (layouts, triggerOffsets) => {
-  const { windowLayout, triggerLayout, optionsLayout } = layouts;
-  const { x: wX, y: wY, width: wWidth, height: wHeight } = windowLayout;
+export const computePosition = (layouts, triggerOffsets, popupMargin = 0) => {
 
+  const { windowLayout, triggerLayout, optionsLayout } = layouts;
+
+  const { x: wX, y: wY, width: wWidth, height: wHeight } = windowLayout;
   let { x: tX, y: tY, height: tHeight, width: tWidth } = triggerLayout;
   if (triggerOffsets) {
     const { x: xOffset, y: yOffset, width: wOffset, height: hOffset } = triggerOffsets;
@@ -43,10 +40,16 @@ export const computePosition = (layouts, triggerOffsets) => {
     tWidth = tWidth + wOffset;
     tHeight = tHeight + hOffset;
   }
-
   const { height: oHeight, width: oWidth } = optionsLayout;
-  const [top, topOrigin] = axisPosition(oHeight, wHeight, tY - wY, tHeight);
-  const [left, leftOrigin] = axisPosition(oWidth, wWidth, tX - wX, tWidth);
+
+  let [top, topOrigin] = axisPosition(oHeight, wHeight, tY - wY, tHeight);
+  let [left, leftOrigin] = axisPosition(oWidth, wWidth, tX - wX, tWidth);
+
+  if (topOrigin === ZERO) top += popupMargin;
+  else if (topOrigin === EDGE) top -= popupMargin;
+
+  if (leftOrigin === ZERO) left += popupMargin;
+  else if (leftOrigin === EDGE) left -= popupMargin;
 
   return { top, left, topOrigin, leftOrigin };
 };

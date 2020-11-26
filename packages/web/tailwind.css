@@ -442,10 +442,6 @@ img {
   top: 100%;
 }
 
-.left-29\/100 {
-  left: 29%;
-}
-
 .right-full {
   right: 100%;
 }
@@ -474,22 +470,6 @@ img {
 
 .p-1\.5 {
   padding: 0.375rem;
-}
-
-.max-w-24 {
-  max-width: 6rem;
-}
-
-.max-w-40 {
-  max-width: 10rem;
-}
-
-.max-w-48 {
-  max-width: 12rem;
-}
-
-.w-11 {
-  width: 2.75rem;
 }
 
 .focus\:outline-none-outer:focus {

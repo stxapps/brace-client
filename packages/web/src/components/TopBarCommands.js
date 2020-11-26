@@ -2,9 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import GracefulImage from 'react-graceful-image';
 import jdenticon from 'jdenticon';
+import { motion, AnimatePresence } from "framer-motion"
 
 import { signOut, updatePopup, updateBulkEdit } from '../actions';
 import { PROFILE_POPUP, SETTINGS_POPUP } from '../types/const';
+import { popupBgFMV, trPopupFMV } from '../types/animConfigs';
 
 import TopBarAddPopup from './TopBarAddPopup';
 import TopBarSearchInput from './TopBarSearchInput';
@@ -53,15 +55,21 @@ class TopBarCommands extends React.PureComponent {
   }
 
   renderProfilePopup() {
+
+    const { isProfilePopupShown } = this.props;
+    if (!isProfilePopupShown) return (
+      <AnimatePresence key="AnimatePresence_ProfilePopup"></AnimatePresence>
+    );
+
     return (
-      <React.Fragment>
-        <button onClick={this.onProfileCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none"></button>
-        <div className="mt-2 py-2 absolute right-0 w-32 bg-white border border-gray-200 rounded-lg shadow-xl z-41">
+      <AnimatePresence key="AnimatePresence_ProfilePopup">
+        <motion.button key="ProfilePopup_cancelBtn" onClick={this.onProfileCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden"></motion.button>
+        <motion.div key="ProfilePopup_menuPopup" className="mt-2 py-2 absolute right-0 w-32 bg-white border border-gray-200 rounded-lg shadow-xl z-41" variants={trPopupFMV} initial="hidden" animate="visible" exit="hidden">
           <button onClick={this.onSettingsBtnClick} className="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline">Settings</button>
           <button onClick={this.onSupportBtnClick} className="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline">Support</button>
           <button onClick={this.onSignOutBtnClick} className="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline">Sign out</button>
-        </div>
-      </React.Fragment>
+        </motion.div>
+      </AnimatePresence>
     );
   }
 
@@ -87,7 +95,7 @@ class TopBarCommands extends React.PureComponent {
           <button onClick={this.onProfileBtnClick} className={`relative block h-8 w-8 overflow-hidden border-2 border-gray-200 ${isProfilePopupShown ? 'z-41' : ''} hover:shadow-outline focus:outline-none focus:shadow-outline ${this.profileBtnStyleClasses}`}>
             <GracefulImage className="h-full w-full bg-white object-cover" src={this.userImage} alt="Profile" />
           </button>
-          {isProfilePopupShown && this.renderProfilePopup()}
+          {this.renderProfilePopup()}
         </div>
       </div>
     );

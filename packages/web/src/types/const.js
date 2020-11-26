@@ -156,3 +156,9 @@ export const SWAP_LEFT = 'SWAP_LEFT';
 export const SWAP_RIGHT = 'SWAP_RIGHT';
 
 export const MODAL_SUPPORTED_ORIENTATIONS = /** @type {any} */ (['portrait', 'landscape']);
+
+export const ZERO = 'ZERO'; // top or left of the window
+export const CENTER = 'CENTER'; // center of the window
+export const EDGE = 'EDGE'; // bottom or right of the window
+export const AT_TRIGGER = 'AT_TRIGGER'; // top or left of the trigger
+export const EDGE_TRIGGER = 'EDGE_TRIGGER'; // bottom or right of the trigger

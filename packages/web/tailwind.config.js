@@ -11,6 +11,7 @@ module.exports = {
       },
       spacing: {
         '7': '1.75rem',
+        '11': '2.75rem',
         '14': '3.5rem',
         '28': '7rem',
         '36': '9rem',
@@ -51,10 +52,21 @@ module.exports = {
         '1/2': '50%',
       },
       minWidth: {
+        '28': '7rem',
         '32': '8rem',
       },
       minHeight: {
         '14': '3.5rem',
+      },
+      maxWidth: {
+        '24': '6rem',
+        '40': '10rem',
+        '48': '12rem',
+        '64': '16rem',
+      },
+      maxHeight: {
+        '64': '16rem',
+        '72': '18rem',
       },
       fontSize: {
         '2xl-extra': '1.625rem',
