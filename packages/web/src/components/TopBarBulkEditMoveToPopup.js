@@ -5,16 +5,12 @@ import { motion, AnimatePresence } from "framer-motion"
 import {
   updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks,
 } from '../actions';
-import {
-  BULK_EDIT_MOVE_TO_POPUP,
-  ARCHIVE, TRASH,
-  MOVE_TO,
-} from '../types/const';
+import { BULK_EDIT_MOVE_TO_POPUP, ARCHIVE, TRASH, MOVE_TO } from '../types/const';
 import { getListNameMap } from '../selectors';
 import { isEqual } from '../utils';
 import { popupBgFMV, tlPopupFMV, tcPopupFMV } from '../types/animConfigs';
 
-class TopBarBulkEditMoveToPopup extends React.Component {
+class TopBarBulkEditMoveToPopup extends React.PureComponent {
 
   constructor(props) {
     super(props);

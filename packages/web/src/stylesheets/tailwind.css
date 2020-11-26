@@ -1118,6 +1118,10 @@ img {
   right: 100%;
 }
 
+.-bottom-8 {
+  bottom: -2rem;
+}
+
 .mt-1\.5 {
   margin-top: 0.375rem;
 }
@@ -16162,6 +16166,14 @@ img {
 
 .max-h-64 {
   max-height: 16rem;
+}
+
+.max-h-72 {
+  max-height: 18rem;
+}
+
+.max-h-80 {
+  max-height: 20rem;
 }
 
 .max-h-full {
@@ -41648,6 +41660,14 @@ img {
     max-height: 16rem;
   }
 
+  .sm\:max-h-72 {
+    max-height: 18rem;
+  }
+
+  .sm\:max-h-80 {
+    max-height: 20rem;
+  }
+
   .sm\:max-h-full {
     max-height: 100%;
   }
@@ -67100,6 +67120,14 @@ img {
 
   .md\:max-h-64 {
     max-height: 16rem;
+  }
+
+  .md\:max-h-72 {
+    max-height: 18rem;
+  }
+
+  .md\:max-h-80 {
+    max-height: 20rem;
   }
 
   .md\:max-h-full {
@@ -92556,6 +92584,14 @@ img {
     max-height: 16rem;
   }
 
+  .lg\:max-h-72 {
+    max-height: 18rem;
+  }
+
+  .lg\:max-h-80 {
+    max-height: 20rem;
+  }
+
   .lg\:max-h-full {
     max-height: 100%;
   }
@@ -118008,6 +118044,14 @@ img {
 
   .xl\:max-h-64 {
     max-height: 16rem;
+  }
+
+  .xl\:max-h-72 {
+    max-height: 18rem;
+  }
+
+  .xl\:max-h-80 {
+    max-height: 20rem;
   }
 
   .xl\:max-h-full {

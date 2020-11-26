@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { motion } from 'framer-motion';
 
 import { updatePopup, updateSearchString } from '../actions';
-import {
-  SEARCH_POPUP, BOTTOM_BAR_HEIGHT, BOTTOM_BAR_DURATION_CLASSNAME,
-} from '../types/const';
+import { SEARCH_POPUP } from '../types/const';
 import { getPopupLink } from '../selectors';
+import { bbSearchPopupFMV } from '../types/animConfigs';
 
 class BottomBarSearchPopup extends React.PureComponent {
 
@@ -13,6 +13,7 @@ class BottomBarSearchPopup extends React.PureComponent {
     super(props);
 
     this.searchInput = React.createRef();
+    this.animate = this.getAnimate(null, props);
   }
 
   componentDidUpdate(prevProps) {
@@ -25,6 +26,22 @@ class BottomBarSearchPopup extends React.PureComponent {
     if (prevProps.isSearchPopupShown && !isSearchPopupShown) {
       this.searchInput.current.blur();
     }
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    this.animate = this.getAnimate(this.props, nextProps);
+  }
+
+  getAnimate(prevProps, props) {
+
+    const isPrevBottomBarShown = prevProps ? prevProps.isBottomBarShown : true;
+    const { isBottomBarShown, isSearchPopupShown } = props;
+
+    if (!isBottomBarShown) return 'bbHidden';
+    if (!isPrevBottomBarShown && isBottomBarShown) return 'bbVisible';
+
+    if (isSearchPopupShown) return 'visible';
+    return 'hidden';
   }
 
   onSearchInputChange = (e) => {
@@ -43,20 +60,16 @@ class BottomBarSearchPopup extends React.PureComponent {
 
   render() {
 
-    const { isBottomBarShown, isSearchPopupShown, searchString } = this.props;
+    const { searchString } = this.props;
 
     // Only transition when moving with BottomBar
     //   but when show/hide this search popup, no need animation
     //   as keyboard is already animated.
-    const style = {};
-    if (isBottomBarShown) style.bottom = BOTTOM_BAR_HEIGHT;
-    else style.bottom = 0;
-    style.transitionProperty = 'bottom';
 
     const searchClearBtnClasses = searchString.length === 0 ? 'hidden' : '';
 
     return (
-      <div style={style} className={`px-2 py-2 fixed inset-x-0 flex justify-between items-center bg-white border border-gray-200 transform ${!isSearchPopupShown ? 'translate-y-full' : ''} ${BOTTOM_BAR_DURATION_CLASSNAME} ease-in-out z-10`}>
+      <motion.div className={`px-2 py-2 fixed inset-x-0 bottom-0 flex justify-between items-center bg-white border border-gray-200 z-10`} variants={bbSearchPopupFMV} initial={false} animate={this.animate}>
         <div className="relative w-full">
           <input ref={this.searchInput} onChange={this.onSearchInputChange} className="pl-4 pr-6 py-1 form-input flex-grow-1 flex-shrink w-full bg-white text-gray-900 border border-gray-500 rounded-full appearance-none focus:outline-none focus:shadow-outline" type="search" placeholder="Search" value={searchString} />
           <button onClick={this.onSearchClearBtnClick} className={`pr-2 ${searchClearBtnClasses} absolute inset-y-0 right-0 flex items-center focus:outline-none-outer`}>
@@ -66,7 +79,7 @@ class BottomBarSearchPopup extends React.PureComponent {
           </button>
         </div>
         <button onClick={this.onSearchCancelBtnClick} className="ml-2 flex-grow-0 flex-shrink-0 h-10 text-gray-700 rounded-lg hover:text-gray-900 hover:underline focus:outline-none focus:shadow-outline">Cancel</button>
-      </div>
+      </motion.div>
     );
   }
 }

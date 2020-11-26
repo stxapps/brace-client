@@ -172,7 +172,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
     const { popupLink } = this.props;
     if (!popupLink) return (
-      <AnimatePresence key="AnimatePresence_CardItemMenuPopup"></AnimatePresence>
+      <AnimatePresence key="AnimatePresence_CIMP_menuPopup"></AnimatePresence>
     );
 
     const { scrollY, menuPopupSize } = this.state;

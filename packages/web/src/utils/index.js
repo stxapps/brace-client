@@ -421,6 +421,19 @@ export const addRem = (a, b) => {
   return (a + b).toString() + 'rem';
 };
 
+export const subtractRem = (a, b) => {
+  a = parseFloat(a.slice(0, -3));
+  b = parseFloat(b.slice(0, -3));
+
+  return (a - b).toString() + 'rem';
+};
+
+export const negRem = (a) => {
+  a = parseFloat(a.slice(0, -3));
+
+  return (-1 * a).toString() + 'rem';
+};
+
 export const toPx = (rem, fontSize = 16) => {
   if (rem.endsWith('rem')) rem = rem.slice(0, -3);
   return parseFloat(rem) * fontSize;

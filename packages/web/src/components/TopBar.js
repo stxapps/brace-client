@@ -110,8 +110,7 @@ class TopBar extends React.PureComponent {
     if (rightPaneProp === SHOW_BLANK) rightPane = null;
     else if (rightPaneProp === SHOW_SIGN_IN) rightPane = this.renderSignInBtn();
     else if (rightPaneProp === SHOW_COMMANDS) {
-      if (isBulkEditing) rightPane = <TopBarBulkEditCommands />;
-      else rightPane = <TopBarCommands />;
+      rightPane = isBulkEditing ? <TopBarBulkEditCommands /> : <TopBarCommands />;
     } else throw new Error(`Invalid rightPane: ${rightPaneProp}`);
 
     const { isListNameShown } = this.props;

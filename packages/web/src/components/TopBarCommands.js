@@ -35,20 +35,29 @@ class TopBarCommands extends React.PureComponent {
   }
 
   onProfileCancelBtnClick = () => {
+    // As animation takes time, increase chance to duplicate clicks
+    if (!this.props.isProfilePopupShown) return;
     this.props.updatePopup(PROFILE_POPUP, false);
   }
 
   onSettingsBtnClick = () => {
+    // As animation takes time, increase chance to duplicate clicks
+    if (!this.props.isProfilePopupShown) return;
     this.props.updatePopup(PROFILE_POPUP, false);
     this.props.updatePopup(SETTINGS_POPUP, true);
   }
 
   onSupportBtnClick = () => {
+    // As animation takes time, increase chance to duplicate clicks
+    if (!this.props.isProfilePopupShown) return;
     this.props.updatePopup(PROFILE_POPUP, false);
     window.location.href = '/#support';
   }
 
   onSignOutBtnClick = () => {
+    // As animation takes time, increase chance to duplicate clicks
+    if (!this.props.isProfilePopupShown) return;
+
     // No need to update it, will get already unmount
     //this.props.updatePopup(PROFILE_POPUP, false);
     this.props.signOut();

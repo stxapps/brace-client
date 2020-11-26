@@ -3,10 +3,8 @@ import { connect } from 'react-redux';
 import GracefulImage from 'react-graceful-image';
 import jdenticon from 'jdenticon';
 
-import { signOut, updatePopup, updateBulkEdit } from '../actions';
-import {
-  ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, SETTINGS_POPUP,
-} from '../types/const';
+import { updatePopup, updateBulkEdit } from '../actions';
+import { ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP } from '../types/const';
 
 class BottomBarCommands extends React.PureComponent {
 
@@ -36,42 +34,6 @@ class BottomBarCommands extends React.PureComponent {
 
   onProfileBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, true);
-  }
-
-  onProfileCancelBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, false);
-  }
-
-  onSettingsBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, false);
-    this.props.updatePopup(SETTINGS_POPUP, true);
-  }
-
-  onSupportBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, false);
-    window.location.href = '/#support';
-  }
-
-  onSignOutBtnClick = () => {
-    // No need to update it, will get already unmount
-    //this.props.updatePopup(PROFILE_POPUP, false);
-    this.props.signOut()
-  }
-
-  renderProfilePopup() {
-
-    const { isProfilePopupShown } = this.props;
-
-    return (
-      <React.Fragment>
-        <button onClick={this.onProfileCancelBtnClick} tabIndex={-1} className={`${!isProfilePopupShown ? 'hidden' : ''} fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none`}></button>
-        <div className={`py-4 fixed inset-x-0 bottom-0 bg-white border border-gray-200 rounded-t-lg shadow-xl transform ${!isProfilePopupShown ? 'translate-y-full' : ''} transition-transform duration-300 ease-in-out z-41`}>
-          <button onClick={this.onSettingsBtnClick} className="py-4 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline">Settings</button>
-          <button onClick={this.onSupportBtnClick} className="py-4 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline">Support</button>
-          <button onClick={this.onSignOutBtnClick} className="py-4 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline">Sign out</button>
-        </div>
-      </React.Fragment>
-    );
   }
 
   render() {
@@ -116,7 +78,6 @@ class BottomBarCommands extends React.PureComponent {
             </div>
           </button>
         </div>
-        {this.renderProfilePopup()}
       </React.Fragment>
     );
   }
@@ -126,10 +87,9 @@ const mapStateToProps = (state, props) => {
   return {
     username: state.user.username,
     userImage: state.user.image,
-    isProfilePopupShown: state.display.isProfilePopupShown,
   };
 };
 
-const mapDispatchToProps = { signOut, updatePopup, updateBulkEdit };
+const mapDispatchToProps = { updatePopup, updateBulkEdit };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BottomBarCommands);

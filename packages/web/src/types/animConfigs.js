@@ -1,4 +1,8 @@
-import { AT_TRIGGER, EDGE_TRIGGER } from './const';
+import {
+  AT_TRIGGER, EDGE_TRIGGER,
+  BOTTOM_BAR_DURATION, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
+} from './const';
+import { subtractRem, negRem } from '../utils';
 
 export const cardItemFMV = {
   hidden: { scale: 0 },
@@ -83,4 +87,43 @@ export const getPopupFMV = (topOrigin, leftOrigin) => {
   } else {
     return ccPopupFMV;
   }
+};
+
+export const bbFMV = {
+  hidden: {
+    translateY: '100%',
+    transition: { duration: BOTTOM_BAR_DURATION / 1000 },
+  },
+  visible: {
+    translateY: '0%',
+    transition: { duration: BOTTOM_BAR_DURATION / 1000 },
+  },
+};
+
+export const bbSearchPopupFMV = {
+  hidden: {
+    translateY: negRem(subtractRem(BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT)),
+    transition: { duration: 0 },
+  },
+  visible: {
+    translateY: negRem(BOTTOM_BAR_HEIGHT),
+    transition: { duration: 0 },
+  },
+  bbHidden: {
+    translateY: SEARCH_POPUP_HEIGHT,
+    transition: { duration: BOTTOM_BAR_DURATION / 1000 },
+  },
+  bbVisible: {
+    translateY: negRem(subtractRem(BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT)),
+    transition: { duration: BOTTOM_BAR_DURATION / 1000 },
+  },
+};
+
+export const bModalFMV = {
+  hidden: {
+    translateY: '100%',
+  },
+  visible: {
+    translateY: '0%',
+  },
 };

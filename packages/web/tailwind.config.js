@@ -67,6 +67,7 @@ module.exports = {
       maxHeight: {
         '64': '16rem',
         '72': '18rem',
+        '80': '20rem',
       },
       fontSize: {
         '2xl-extra': '1.625rem',
