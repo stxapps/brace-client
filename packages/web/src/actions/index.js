@@ -385,12 +385,10 @@ export const fetchMore = () => async (dispatch, getState) => {
   });
 };
 
-export const addLink = (url, doExtractContents = false) => async (dispatch, getState) => {
+export const addLink = (url, listName, doExtractContents) => async (dispatch, getState) => {
 
-  let listName = getState().display.listName;
-  if (listName === TRASH || listName === ARCHIVE) {
-    listName = MY_LIST;
-  }
+  if (listName === null) listName = getState().display.listName;
+  if (listName === TRASH) listName = MY_LIST;
 
   // First 2 terms are main of an id, should always be unique.
   // The third term is changed when move around

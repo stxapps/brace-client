@@ -66,7 +66,7 @@ class TopBarAddPopup extends React.PureComponent {
       }
     }
 
-    this.props.addLink(this.state.url, null);
+    this.props.addLink(this.state.url, null, null);
     this.props.updatePopup(ADD_POPUP, false);
   }
 

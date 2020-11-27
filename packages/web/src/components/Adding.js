@@ -67,7 +67,7 @@ class Adding extends React.PureComponent {
         link = null;
       }
     }
-    if (!link) this.props.addLink(addingUrl);
+    if (!link) this.props.addLink(addingUrl, MY_LIST, false);
 
     this.updateState({ urlValidatedResult, addingUrl, param });
   }
