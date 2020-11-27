@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { motion } from 'framer-motion';
 
 import {
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
@@ -7,7 +8,9 @@ import {
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
 } from '../types/actionTypes';
+import { SM_WIDTH } from '../types/const';
 import { updateStatus } from '../actions';
+import { statusPopupFMV } from '../types/animConfigs';
 
 const MSGS = {
   [FETCH]: 'Fetching data from server...',
@@ -38,14 +41,8 @@ class StatusPopup extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = { isReady: false };
     this.msg = '';
-    this.msgShrt = '';
     this.timeout = null;
-  }
-
-  componentDidMount() {
-    this.setState({ isReady: true });
   }
 
   onTimeout = () => {
@@ -58,30 +55,26 @@ class StatusPopup extends React.PureComponent {
       this.timeout = null;
     }
 
-    let translate = 'translate-x-full';
-    if (this.state.isReady) {
-      const { status } = this.props;
-      if (status) {
-        this.msg = MSGS[status];
-        this.msgShrt = MSGS_SHRT[status];
-        translate = '';
+    const { status } = this.props;
 
-        if ([
-          FETCH_COMMIT,
-          DELETE_OLD_LINKS_IN_TRASH_COMMIT,
-          EXTRACT_CONTENTS_COMMIT,
-        ].includes(status)) {
-          this.timeout = window.setTimeout(this.onTimeout, 1000);
-        }
+    let animate = 'hidden';
+    if (status) {
+      this.msg = window.innerWidth < SM_WIDTH ? MSGS_SHRT[status] : MSGS[status];
+      animate = 'visible';
+
+      if ([
+        FETCH_COMMIT,
+        DELETE_OLD_LINKS_IN_TRASH_COMMIT,
+        EXTRACT_CONTENTS_COMMIT,
+      ].includes(status)) {
+        this.timeout = window.setTimeout(this.onTimeout, 1000);
       }
     }
-
-    const transition = window.pageYOffset <= 100 ? 'transition-transform duration-300 ease-in-out' : '';
+    if (window.pageYOffset > 100) animate += 'NoAnim';
 
     return (
       <div className="w-48 text-right overflow-hidden sm:w-64">
-        <span className={`pl-3 hidden bg-white text-gray-700 rounded-l-full transform ${translate} ${transition} sm:inline-block`}>{this.msg}</span>
-        <span className={`pl-3 inline-block bg-white text-gray-700 rounded-l-full transform ${translate} ${transition} sm:hidden`}>{this.msgShrt}</span>
+        <motion.span className="pl-3 inline-block bg-white text-gray-700 rounded-l-full" variants={statusPopupFMV} initial={false} animate={animate}>{this.msg}</motion.span>
       </div>
     );
   }
@@ -93,8 +86,6 @@ const mapStateToProps = (state, props) => {
   }
 };
 
-const mapDispatchToProps = {
-  updateStatus,
-};
+const mapDispatchToProps = { updateStatus };
 
 export default connect(mapStateToProps, mapDispatchToProps)(StatusPopup);

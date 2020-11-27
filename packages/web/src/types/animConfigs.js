@@ -11,7 +11,7 @@ export const cardItemFMV = {
 
 export const popupBgFMV = {
   hidden: { opacity: 0 },
-  visible: { opacity: 0.25 }
+  visible: { opacity: 0.25 },
 };
 
 export const tlPopupFMV = {
@@ -21,7 +21,7 @@ export const tlPopupFMV = {
     translateY: '-50%',
     transition: { duration: 0.25 },
   },
-  visible: { scale: 1, translateX: '0%', translateY: '0%' }
+  visible: { scale: 1, translateX: '0%', translateY: '0%' },
 };
 
 export const trPopupFMV = {
@@ -31,7 +31,7 @@ export const trPopupFMV = {
     translateY: '-50%',
     transition: { duration: 0.25 },
   },
-  visible: { scale: 1, translateX: '0%', translateY: '0%' }
+  visible: { scale: 1, translateX: '0%', translateY: '0%' },
 };
 
 export const blPopupFMV = {
@@ -41,7 +41,7 @@ export const blPopupFMV = {
     translateY: '50%',
     transition: { duration: 0.25 },
   },
-  visible: { scale: 1, translateX: '0%', translateY: '0%' }
+  visible: { scale: 1, translateX: '0%', translateY: '0%' },
 };
 
 export const brPopupFMV = {
@@ -51,7 +51,7 @@ export const brPopupFMV = {
     translateY: '50%',
     transition: { duration: 0.25 },
   },
-  visible: { scale: 1, translateX: '0%', translateY: '0%' }
+  visible: { scale: 1, translateX: '0%', translateY: '0%' },
 };
 
 export const tcPopupFMV = {
@@ -61,7 +61,7 @@ export const tcPopupFMV = {
     translateY: '-50%',
     transition: { duration: 0.25 },
   },
-  visible: { scale: 1, translateX: '0%', translateY: '0%' }
+  visible: { scale: 1, translateX: '0%', translateY: '0%' },
 };
 
 export const ccPopupFMV = {
@@ -71,7 +71,7 @@ export const ccPopupFMV = {
     //translateY: '0%',
     transition: { duration: 0.25 },
   },
-  visible: { scale: 1, /*translateX: '0%', translateY: '0%'*/ }
+  visible: { scale: 1, /*translateX: '0%', translateY: '0%'*/ },
 };
 
 export const getPopupFMV = (topOrigin, leftOrigin) => {
@@ -125,5 +125,60 @@ export const bModalFMV = {
   },
   visible: {
     translateY: '0%',
+  },
+};
+
+export const spSideBarCanvasFMV = /** @type {any} */ ({
+  hidden: {
+    transition: { when: 'afterChildren' },
+    transitionEnd: { visibility: 'hidden' },
+  },
+  visible: {
+    visibility: 'visible',
+  },
+});
+
+export const spSideBarOverlayFMV = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
+export const spSideBarFMV = {
+  hidden: {
+    translateX: '-100%',
+  },
+  visible: {
+    translateX: '0%',
+  },
+};
+
+export const spListsFMV = {
+  hidden: {
+    scaleY: 0,
+    translateY: '-100%',
+  },
+  visible: {
+    scaleY: 1,
+    translateY: '0%',
+  },
+  exit: {
+    opacity: 0,
+  },
+};
+
+export const statusPopupFMV = {
+  hidden: {
+    translateX: '100%',
+  },
+  visible: {
+    translateX: '0%',
+  },
+  hiddenNoAnim: {
+    translateX: '100%',
+    transition: { duration: 0 },
+  },
+  visibleNoAnim: {
+    translateX: '0%',
+    transition: { duration: 0 },
   },
 };

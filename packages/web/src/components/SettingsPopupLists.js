@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { motion, AnimateSharedLayout, AnimatePresence } from 'framer-motion';
 
 import {
   MY_LIST, TRASH, ARCHIVE,
@@ -15,6 +16,7 @@ import {
 import { getListNameMap } from '../selectors';
 import { canDeleteListNames } from '../apis/blockstack';
 import { validateListNameDisplayName } from '../utils';
+import { spListsFMV } from '../types/animConfigs';
 
 class SettingsPopupLists extends React.PureComponent {
 
@@ -36,8 +38,18 @@ class SettingsPopupLists extends React.PureComponent {
           <h4 className="text-xl text-gray-800 font-medium leading-none">Lists</h4>
         </div>
         <div className="pt-2">
-          <ListNameEditor key="newListNameEditor" listNameObj={null} validateDisplayName={this.validateDisplayName} />
-          {this.props.listNameMap.map(listNameObj => <ListNameEditor key={listNameObj.listName} listNameObj={listNameObj} validateDisplayName={this.validateDisplayName} />)}
+          <ListNameEditor key="SPL_newListNameEditor" listNameObj={null} validateDisplayName={this.validateDisplayName} />
+          <AnimateSharedLayout>
+            <AnimatePresence initial={false}>
+              {this.props.listNameMap.map(listNameObj => {
+                return (
+                  <motion.div key={listNameObj.listName} className="overflow-hidden" layoutId={listNameObj.listName} variants={spListsFMV} initial="hidden" animate="visible" exit="exit">
+                    <ListNameEditor listNameObj={listNameObj} validateDisplayName={this.validateDisplayName} />
+                  </motion.div>
+                )
+              })}
+            </AnimatePresence>
+          </AnimateSharedLayout>
         </div>
       </div>
     );
