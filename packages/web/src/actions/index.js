@@ -332,12 +332,15 @@ export const fetch = (
 
   const listName = getState().display.listName;
 
-  if (doDeleteOldLinksInTrash === null) {
+  // Always call deleteOldlinksintrash and extractContents
+  //   and check at that time to actually do it or not.
+  // So it's real time with updated settings from fetch.
+  /*if (doDeleteOldLinksInTrash === null) {
     doDeleteOldLinksInTrash = getState().settings.doDeleteOldLinksInTrash;
   }
   if (doExtractContents === null) {
     doExtractContents = getState().settings.doExtractContents;
-  }
+  }*/
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
   dispatch({
@@ -364,14 +367,18 @@ export const fetchMore = () => async (dispatch, getState) => {
   const ids = Object.keys(getState().links[listName]);
 
   const doDescendingOrder = getState().settings.doDescendingOrder;
-  const doExtractContents = getState().settings.doExtractContents;
+
+  // Always call extractContents
+  //   and check at that time to actually do it or not.
+  // So it's real time with updated settings from fetch.
+  //const doExtractContents = getState().settings.doExtractContents;
 
   dispatch({
     type: FETCH_MORE,
     meta: {
       offline: {
         effect: { method: FETCH_MORE, params: { listName, ids, doDescendingOrder } },
-        commit: { type: FETCH_MORE_COMMIT, meta: { doExtractContents } },
+        commit: { type: FETCH_MORE_COMMIT },
         rollback: { type: FETCH_MORE_ROLLBACK },
       }
     },
@@ -400,7 +407,10 @@ export const addLink = (url, doExtractContents = false) => async (dispatch, getS
   const links = [link];
   const payload = { listName, links };
 
-  if (doExtractContents === null) doExtractContents = getState().settings.doExtractContents;
+  // Always call extractContents
+  //   and check at that time to actually do it or not.
+  // So it's real time with updated settings from fetch.
+  //if (doExtractContents === null) doExtractContents = getState().settings.doExtractContents;
 
   dispatch({
     type: ADD_LINKS,
@@ -576,9 +586,16 @@ export const updateSearchString = (searchString) => {
   };
 };
 
-export const deleteOldLinksInTrash = (doExtractContents = false) => async (dispatch, getState) => {
+export const deleteOldLinksInTrash = (doDeleteOldLinksInTrash, doExtractContents) => async (dispatch, getState) => {
 
-  if (doExtractContents === null) doExtractContents = getState().settings.doExtractContents;
+  // If not specified, get from settings. Get it here so that it's the most updated.
+  if (doDeleteOldLinksInTrash === null) {
+    doDeleteOldLinksInTrash = getState().settings.doDeleteOldLinksInTrash;
+  }
+  if (!doDeleteOldLinksInTrash) {
+    extractContents(doExtractContents, null, null)(dispatch, getState);
+    return;
+  }
 
   dispatch({
     type: DELETE_OLD_LINKS_IN_TRASH,
@@ -599,7 +616,13 @@ export const updateStatus = (status) => {
   };
 };
 
-export const extractContents = (listName, ids) => async (dispatch, getState) => {
+export const extractContents = (doExtractContents, listName, ids) => async (dispatch, getState) => {
+
+  // If not specified, get from settings. Get it here so that it's the most updated.
+  if (doExtractContents === null) {
+    doExtractContents = getState().settings.doExtractContents;
+  }
+  if (!doExtractContents) return;
 
   // IMPORTANT: didBeautify is removed as it's not needed
   //   Legacy old link contains didBeautify

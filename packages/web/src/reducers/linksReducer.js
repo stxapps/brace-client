@@ -81,23 +81,12 @@ export default (state = initialState, action) => {
     }
 
     const { doDeleteOldLinksInTrash, doExtractContents } = action.meta;
-    if (doDeleteOldLinksInTrash) {
-      return loop(
-        newState,
-        Cmd.run(
-          deleteOldLinksInTrash(doExtractContents),
-          { args: [Cmd.dispatch, Cmd.getState] })
-      );
-    }
-    if (doExtractContents) {
-      return loop(
-        newState,
-        Cmd.run(
-          extractContents(null, null),
-          { args: [Cmd.dispatch, Cmd.getState] })
-      );
-    }
-    return newState;
+    return loop(
+      newState,
+      Cmd.run(
+        deleteOldLinksInTrash(doDeleteOldLinksInTrash, doExtractContents),
+        { args: [Cmd.dispatch, Cmd.getState] })
+    );
   }
 
   if (action.type === FETCH_MORE_COMMIT) {
@@ -109,16 +98,12 @@ export default (state = initialState, action) => {
       ...toObjAndAddAttrs(links, ADDED, false, null)
     };
 
-    const { doExtractContents } = action.meta;
-    if (doExtractContents) {
-      return loop(
-        newState,
-        Cmd.run(
-          extractContents(null, null),
-          { args: [Cmd.dispatch, Cmd.getState] })
-      );
-    }
-    return newState;
+    return loop(
+      newState,
+      Cmd.run(
+        extractContents(null, null, null),
+        { args: [Cmd.dispatch, Cmd.getState] })
+    );
   }
 
   if (action.type === ADD_LINKS) {
@@ -142,15 +127,12 @@ export default (state = initialState, action) => {
     );
 
     const { doExtractContents } = action.meta;
-    if (doExtractContents) {
-      return loop(
-        newState,
-        Cmd.run(
-          extractContents(listName, _.extract(links, ID)),
-          { args: [Cmd.dispatch, Cmd.getState] })
-      );
-    }
-    return newState;
+    return loop(
+      newState,
+      Cmd.run(
+        extractContents(doExtractContents, listName, _.extract(links, ID)),
+        { args: [Cmd.dispatch, Cmd.getState] })
+    );
   }
 
   if (action.type === ADD_LINKS_ROLLBACK) {
@@ -302,15 +284,12 @@ export default (state = initialState, action) => {
     newState[listName] = _.exclude(state[listName], ID, ids);
 
     const { doExtractContents } = action.meta;
-    if (doExtractContents) {
-      return loop(
-        newState,
-        Cmd.run(
-          extractContents(null, null),
-          { args: [Cmd.dispatch, Cmd.getState] })
-      );
-    }
-    return newState;
+    return loop(
+      newState,
+      Cmd.run(
+        extractContents(doExtractContents, null, null),
+        { args: [Cmd.dispatch, Cmd.getState] })
+    );
   }
 
   if (action.type === EXTRACT_CONTENTS_COMMIT) {
