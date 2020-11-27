@@ -189,6 +189,10 @@ class CardItemMenuPopup extends React.PureComponent {
       const { top, left, topOrigin, leftOrigin } = popupPosition;
       const offsetScrollY = this.initialScrollY - scrollY;
       const popupStyle = { top: top + offsetScrollY, left: left };
+      if (menuPopupSize.height > window.innerHeight) {
+        popupStyle.maxHeight = window.innerHeight - 16;
+      }
+
       const popupFMV = getPopupFMV(topOrigin, leftOrigin);
 
       menuPopup = (

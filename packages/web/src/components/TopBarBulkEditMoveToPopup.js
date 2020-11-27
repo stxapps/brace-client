@@ -111,6 +111,10 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
     if (menuPopupSize) {
 
       const popupStyle = {};
+      if (menuPopupSize.height > window.innerHeight - menuPopupSize.top) {
+        popupStyle.maxHeight = window.innerHeight - menuPopupSize.top - 8;
+      }
+
       let popupFMV;
       if (menuPopupSize.width <= 132) {
         popupStyle.left = '29%';

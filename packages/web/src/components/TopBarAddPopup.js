@@ -86,6 +86,8 @@ class TopBarAddPopup extends React.PureComponent {
     const { url, msg, isAskingConfirm } = this.state;
 
     const style = window.innerWidth < 832 ? { left: 0 } : { right: 0 };
+    if (window.innerHeight <= 360) style.top = -12;
+
     const popupFMV = window.innerWidth < 832 ? tlPopupFMV : trPopupFMV;
 
     return (

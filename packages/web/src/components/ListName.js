@@ -3,19 +3,57 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion"
 
-import {
-  changeListName, updatePopup,
-} from '../actions';
+import { changeListName, updatePopup } from '../actions';
 import {
   LIST_NAME_POPUP, SM_WIDTH, LG_WIDTH,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
-import { getListNameDisplayName } from '../utils';
+import { getListNameDisplayName, isEqual } from '../utils';
 import { popupBgFMV, tlPopupFMV } from '../types/animConfigs';
 
 import { getTopBarSizes } from '.';
 
 class ListName extends React.PureComponent {
+
+  constructor(props) {
+    super(props);
+
+    this.state = { menuPopupSize: null };
+    this.menuPopup = React.createRef();
+  }
+
+  componentDidMount() {
+    this.updateState(this.props.isListNamePopupShown);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!prevProps.isListNamePopupShown && this.props.isListNamePopupShown) {
+      this.updateState(true);
+    }
+
+    if (prevProps.isListNamePopupShown && !this.props.isListNamePopupShown) {
+      this.updateState(false);
+    }
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (!this.props.isListNamePopupShown && nextProps.isListNamePopupShown) {
+      this.setState({ menuPopupSize: null });
+    }
+  }
+
+  componentWillUnmount() {
+    this.updateState(false);
+  }
+
+  updateState(isShown) {
+    if (isShown) {
+      const menuPopupSize = this.menuPopup.current.getBoundingClientRect();
+      if (!isEqual(menuPopupSize, this.state.menuPopupSize)) {
+        this.setState({ menuPopupSize });
+      }
+    }
+  }
 
   onListNameBtnClick = () => {
     this.props.updatePopup(LIST_NAME_POPUP, true);
@@ -44,19 +82,48 @@ class ListName extends React.PureComponent {
     this.props.updatePopup(LIST_NAME_POPUP, false);
   };
 
+  renderMenu() {
+
+    const { listNameMap } = this.props;
+
+    return listNameMap.map(listNameObj => <button className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left truncate hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={listNameObj.listName} data-key={listNameObj.listName}>{listNameObj.displayName}</button>);
+  }
+
   renderListNamePopup() {
 
-    const { isListNamePopupShown, listNameMap } = this.props;
+    const { isListNamePopupShown } = this.props;
     if (!isListNamePopupShown) return (
       <AnimatePresence key="AnimatePresence_ListNamePopup"></AnimatePresence>
     );
 
+    const { menuPopupSize } = this.state;
+    const menuPopupClassNames = 'py-2 absolute top-0 left-0 min-w-28 max-w-64 max-h-64 bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41';
+
+    let menuPopup;
+    if (menuPopupSize) {
+
+      const popupStyle = {};
+      if (menuPopupSize.height > window.innerHeight - menuPopupSize.top) {
+        popupStyle.maxHeight = window.innerHeight - menuPopupSize.top - 16;
+      }
+
+      menuPopup = (
+        <motion.div key="ListNamePopup_menuPopup" ref={this.menuPopup} onClick={this.onListNamePopupClick} style={popupStyle} className={menuPopupClassNames} variants={tlPopupFMV} initial="hidden" animate="visible" exit="hidden">
+          {this.renderMenu()}
+        </motion.div>
+      );
+    } else {
+      menuPopup = (
+        <div key="ListNamePopup_menuPopup" ref={this.menuPopup} onClick={this.onListNamePopupClick} className={menuPopupClassNames}>
+          {this.renderMenu()}
+        </div>
+      );
+    }
+
     return (
       <AnimatePresence key="AnimatePresence_ListNamePopup">
         <motion.button key="ListNamePopup_cancelBtn" onClick={this.onListNameCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden"></motion.button>
-        <motion.div key="ListNamePopup_menuPopup" onClick={this.onListNamePopupClick} className="py-2 absolute top-0 left-0 min-w-28 max-w-64 max-h-64 bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41" variants={tlPopupFMV} initial="hidden" animate="visible" exit="hidden">
-          {listNameMap.map(listNameObj => <button className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left truncate hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={listNameObj.listName} data-key={listNameObj.listName}>{listNameObj.displayName}</button>)}
-        </motion.div>
+        {menuPopup}
       </AnimatePresence>
     );
   }
