@@ -62,7 +62,7 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === FETCH_COMMIT) {
-    const { listName, links, listNames } = action.payload;
+    const { listName, links, listNames, doFetchSettings, settings } = action.payload;
 
     const processingLinks = _.exclude(state[listName], STATUS, ADDED);
     const fetchedLinks = _.copyAttr(
@@ -71,13 +71,27 @@ export default (state = initialState, action) => {
       [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]
     );
 
-    const newState = { ...state };
-    newState[listName] = { ...processingLinks, ...fetchedLinks };
+    const newState = {};
+    if (doFetchSettings) {
+      if (settings) {
+        for (const k of settings.listNameMap.map(obj => obj.listName)) {
+          newState[k] = state[k] || null;
+        }
+      } else {
+        for (const k of [MY_LIST, TRASH, ARCHIVE]) newState[k] = state[k];
+      }
+    } else {
+      for (const k in state) newState[k] = state[k];
+    }
 
     for (const name of listNames) {
       if (!(name in newState)) {
         newState[name] = null;
       }
+    }
+
+    if (listName in newState) {
+      newState[listName] = { ...processingLinks, ...fetchedLinks };
     }
 
     const { doDeleteOldLinksInTrash, doExtractContents } = action.meta;

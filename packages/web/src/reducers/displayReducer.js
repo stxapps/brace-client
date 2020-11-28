@@ -9,7 +9,7 @@ import {
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK, EXTRACT_CONTENTS_COMMIT,
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, CLEAR_SELECTED_LINK_IDS,
-  DELETE_LIST_NAMES_COMMIT, UPDATE_DELETING_LIST_NAME,
+  DELETE_LIST_NAMES, UPDATE_DELETING_LIST_NAME,
   UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
   UPDATE_UPDATE_SETTINGS_PROGRESS,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
@@ -19,7 +19,7 @@ import {
   ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
   CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
   BULK_EDIT_MOVE_TO_POPUP,
-  MY_LIST,
+  MY_LIST, TRASH, ARCHIVE,
   UPDATING, DIED_UPDATING,
 } from '../types/const';
 
@@ -126,7 +126,24 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === FETCH_COMMIT) {
-    return { ...state, status: FETCH_COMMIT };
+
+    const newState = { ...state, status: FETCH_COMMIT };
+
+    // Make sure listName is in listNameMap, if not, set to My List.
+    const { doFetchSettings, settings } = action.payload;
+    if (!doFetchSettings) return newState;
+
+    if (settings) {
+      if (!settings.listNameMap.map(obj => obj.listName).includes(newState.listName)) {
+        newState.listName = MY_LIST;
+      }
+    } else {
+      if (![MY_LIST, TRASH, ARCHIVE].includes(newState.listName)) {
+        newState.listName = MY_LIST;
+      }
+    }
+
+    return newState;
   }
 
   if (action.type === FETCH_ROLLBACK) {
@@ -197,8 +214,8 @@ export default (state = initialState, action) => {
     return { ...state, selectedLinkIds: [] };
   }
 
-  if (action.type === DELETE_LIST_NAMES_COMMIT) {
-    const { listNames } = action.meta;
+  if (action.type === DELETE_LIST_NAMES) {
+    const { listNames } = action.payload;
     if (listNames.includes(state.listName)) {
       return { ...state, listName: MY_LIST };
     }

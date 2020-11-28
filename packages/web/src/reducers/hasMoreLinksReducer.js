@@ -15,7 +15,34 @@ const initialState = {
 
 export default (state = initialState, action) => {
 
-  if (action.type === FETCH_COMMIT || action.type === FETCH_MORE_COMMIT) {
+  if (action.type === FETCH_COMMIT) {
+    const { listName, hasMore, listNames, doFetchSettings, settings } = action.payload;
+
+    const newState = {};
+    if (doFetchSettings) {
+      if (settings) {
+        for (const k of settings.listNameMap.map(obj => obj.listName)) {
+          newState[k] = state[k] || null;
+        }
+      } else {
+        for (const k of [MY_LIST, TRASH, ARCHIVE]) newState[k] = state[k];
+      }
+    } else {
+      for (const k in state) newState[k] = state[k];
+    }
+
+    for (const name of listNames) {
+      if (!(name in newState)) {
+        newState[name] = null;
+      }
+    }
+
+    if (listName in newState) newState[listName] = hasMore;
+
+    return newState;
+  }
+
+  if (action.type === FETCH_MORE_COMMIT) {
     const { listName, hasMore } = action.payload;
     return { ...state, [listName]: hasMore };
   }

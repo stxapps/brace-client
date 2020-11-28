@@ -149,7 +149,7 @@ const fetch = async (params) => {
     settings = JSON.parse(/** @type {string} */(await userSession.getFile(settingsFPath)));
   }
 
-  return { listName, links, hasMore, listNames, settings };
+  return { listName, links, hasMore, listNames, doFetchSettings, settings };
 };
 
 const fetchMore = async (params) => {
