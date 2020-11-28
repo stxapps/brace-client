@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Animated } from 'react-native';
 
+import { fetch } from '../actions';
 import {
   PC_100, PC_50, PC_33,
   SHOW_BLANK, SHOW_COMMANDS,
@@ -26,11 +27,18 @@ class Main extends React.PureComponent {
     // BUG alert
     // When delete all data, fetched is not cleared!
     this.fetched = [];
+    this.doFetchSettings = true;
 
     this.scrollY = new Animated.Value(0);
     this.scrollYEvent = Animated.event([{
       nativeEvent: { contentOffset: { y: this.scrollY } }
     }], { useNativeDriver: true });
+  }
+
+  componentDidMount() {
+    this.props.fetch(null, null, this.doFetchSettings);
+    this.fetched.push(this.props.listName);
+    this.doFetchSettings = false;
   }
 
   getColumnWidth = (safeAreaWidth) => {
@@ -54,7 +62,7 @@ class Main extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <CardPanel columnWidth={columnWidth} fetched={this.fetched} scrollYEvent={this.scrollYEvent} />
+        <CardPanel columnWidth={columnWidth} scrollYEvent={this.scrollYEvent} />
         <TopBar rightPane={topBarRightPane} isListNameShown={true} fetched={this.fetched} scrollY={this.scrollY} />
         {columnWidth === PC_100 && <BottomBar />}
         <ConfirmDeletePopup />
@@ -71,4 +79,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-export default connect(mapStateToProps)(withSafeAreaContext(Main));
+const mapDispatchToProps = { fetch };
+
+export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(Main));

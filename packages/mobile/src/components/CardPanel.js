@@ -7,9 +7,7 @@ import {
 import Svg, { SvgXml, Path } from 'react-native-svg'
 import { Flow } from 'react-native-animated-spinkit'
 
-import {
-  fetch, fetchMore, updatePopup,
-} from '../actions';
+import { fetchMore, updatePopup } from '../actions';
 import {
   ADD_POPUP,
   PC_100, PC_50, PC_33,
@@ -48,14 +46,6 @@ class CardPanel extends React.PureComponent {
     super(props);
 
     this.panelFlatList = React.createRef();
-
-    this.doFetchSettings = true;
-  }
-
-  componentDidMount() {
-    this.props.fetch(null, null, this.doFetchSettings);
-    this.props.fetched.push(this.props.listName);
-    this.doFetchSettings = false;
   }
 
   componentDidUpdate(prevProps) {
@@ -340,7 +330,6 @@ class CardPanel extends React.PureComponent {
 
 CardPanel.propTypes = {
   columnWidth: PropTypes.string.isRequired,
-  fetched: PropTypes.arrayOf(PropTypes.string).isRequired,
   scrollYEvent: PropTypes.object.isRequired,
 };
 
@@ -359,8 +348,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = {
-  fetch, fetchMore, updatePopup,
-};
+const mapDispatchToProps = { fetchMore, updatePopup };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(CardPanel));

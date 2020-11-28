@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { updateHistoryPosition } from '../actions';
+import { updateHistoryPosition, fetch } from '../actions';
 import {
   BACK_DECIDER, BACK_POPUP,
   PC_100, PC_50, PC_33,
@@ -31,6 +31,7 @@ class Main extends React.PureComponent {
     // BUG alert
     // When delete all data, fetched is not cleared!
     this.fetched = [];
+    this.doFetchSettings = true;
 
     this.updateColumnWidth = throttle(this.updateColumnWidth, 16);
   }
@@ -45,6 +46,10 @@ class Main extends React.PureComponent {
     }
 
     window.addEventListener('resize', this.updateColumnWidth);
+
+    this.props.fetch(null, null, this.doFetchSettings);
+    this.fetched.push(this.props.listName);
+    this.doFetchSettings = false;
   }
 
   componentWillUnmount() {
@@ -76,7 +81,7 @@ class Main extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <CardPanel columnWidth={columnWidth} fetched={this.fetched} />
+        <CardPanel columnWidth={columnWidth} />
         <TopBar rightPane={topBarRightPane} isListNameShown={true} fetched={this.fetched} />
         {columnWidth === PC_100 && <BottomBar />}
         <CardItemMenuPopup />
@@ -93,6 +98,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { updateHistoryPosition };
+const mapDispatchToProps = { updateHistoryPosition, fetch };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);
