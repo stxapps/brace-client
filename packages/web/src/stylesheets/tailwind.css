@@ -16184,8 +16184,8 @@ img {
   max-height: 100vh;
 }
 
-.max-w-24 {
-  max-width: 6rem;
+.max-w-16 {
+  max-width: 4rem;
 }
 
 .max-w-40 {
@@ -41676,8 +41676,8 @@ img {
     max-height: 100vh;
   }
 
-  .sm\:max-w-24 {
-    max-width: 6rem;
+  .sm\:max-w-16 {
+    max-width: 4rem;
   }
 
   .sm\:max-w-40 {
@@ -67138,8 +67138,8 @@ img {
     max-height: 100vh;
   }
 
-  .md\:max-w-24 {
-    max-width: 6rem;
+  .md\:max-w-16 {
+    max-width: 4rem;
   }
 
   .md\:max-w-40 {
@@ -92600,8 +92600,8 @@ img {
     max-height: 100vh;
   }
 
-  .lg\:max-w-24 {
-    max-width: 6rem;
+  .lg\:max-w-16 {
+    max-width: 4rem;
   }
 
   .lg\:max-w-40 {
@@ -118062,8 +118062,8 @@ img {
     max-height: 100vh;
   }
 
-  .xl\:max-w-24 {
-    max-width: 6rem;
+  .xl\:max-w-16 {
+    max-width: 4rem;
   }
 
   .xl\:max-w-40 {

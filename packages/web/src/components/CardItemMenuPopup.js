@@ -12,7 +12,8 @@ import {
 } from '../types/const';
 import { getListNameMap, getPopupLink } from '../selectors';
 import {
-  copyTextToClipboard, ensureContainUrlProtocol, isEqual, throttle,
+  copyTextToClipboard, ensureContainUrlProtocol, getListNameDisplayName,
+  isEqual, throttle,
 } from '../utils';
 import { popupBgFMV, getPopupFMV } from '../types/animConfigs';
 import { computePosition, createLayouts } from './MenuPopupRenderer';
@@ -145,6 +146,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
   renderMenu() {
 
+    const { listNameMap } = this.props;
     const { menu, moveTo } = this.populateMenu();
 
     let _moveTo = null;
@@ -162,7 +164,11 @@ class CardItemMenuPopup extends React.PureComponent {
 
     return (
       <React.Fragment>
-        {menu.map(text => <button className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={text} data-key={text}>{text}</button>)}
+        {menu.map(text => {
+          let displayText = text;
+          if (text === ARCHIVE) displayText = getListNameDisplayName(text, listNameMap);
+          return <button className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left truncate hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={text} data-key={text}>{displayText}</button>;
+        })}
         {_moveTo}
       </React.Fragment>
     );

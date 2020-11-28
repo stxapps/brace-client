@@ -59,7 +59,7 @@ module.exports = {
         '14': '3.5rem',
       },
       maxWidth: {
-        '24': '6rem',
+        '16': '4rem',
         '40': '10rem',
         '48': '12rem',
         '64': '16rem',
