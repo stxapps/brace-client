@@ -44,7 +44,7 @@ class FetchedPopup extends React.PureComponent {
 
     const initialTop = window.innerWidth < MD_WIDTH ? '4.625rem' : '5.125rem';
     const style = { top: initialTop };
-    const updateBtnStyle = { padding: '0.25rem 0rem 0.25rem 0.875rem' };
+    const updateBtnStyle = { padding: '0.25rem 0rem 0.3125rem 0.75rem' };
     const closeBtnStyle = { marginRight: '0.5rem' };
 
     return (

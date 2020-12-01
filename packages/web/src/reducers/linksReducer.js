@@ -9,7 +9,7 @@ import {
   MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
   CANCEL_DIED_LINKS,
-  DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT,
+  DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT, UPDATE_EXTRACTED_CONTENTS,
   DELETE_LIST_NAMES_COMMIT,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -23,7 +23,8 @@ import {
 } from '../types/const';
 import { _, isEqual } from '../utils';
 import {
-  tryUpdateFetched, moveLinksDeleteStep, deleteOldLinksInTrash, extractContents,
+  tryUpdateFetched, moveLinksDeleteStep, deleteOldLinksInTrash,
+  extractContents, tryUpdateExtractedContents,
 } from '../actions';
 
 const initialState = {
@@ -344,18 +345,35 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === EXTRACT_CONTENTS_COMMIT) {
-    const { listName, links } = action.payload;
+    return loop(
+      state,
+      Cmd.run(
+        tryUpdateExtractedContents(action.payload),
+        { args: [Cmd.dispatch, Cmd.getState] })
+    );
+  }
 
-    const newState = { ...state };
-    newState[listName] = { ...newState[listName] };
-    for (const link of links) {
-      newState[listName][link.id] = { ...newState[listName][link.id] };
-      for (const key of ['extractedResult']) {
-        newState[listName][link.id][key] = link[key];
+  if (action.type === UPDATE_EXTRACTED_CONTENTS) {
+    const { listName, links, canRerender } = action.payload;
+
+    if (canRerender) {
+      const newState = { ...state };
+      newState[listName] = { ...newState[listName] };
+      for (const link of links) {
+        newState[listName][link.id] = { ...newState[listName][link.id] };
+        for (const key of ['extractedResult']) {
+          newState[listName][link.id][key] = link[key];
+        }
       }
+
+      return newState;
     }
 
-    return newState;
+    // If should not update views (re-render), just update the state.
+    for (const link of links) {
+      state[listName][link.id].extractedResult = link.extractedResult;
+    }
+    return state;
   }
 
   if (action.type === UPDATE_POPUP &&

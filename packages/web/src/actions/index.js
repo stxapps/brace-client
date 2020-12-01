@@ -19,6 +19,7 @@ import {
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
+  UPDATE_EXTRACTED_CONTENTS,
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, CLEAR_SELECTED_LINK_IDS,
   ADD_LIST_NAMES, ADD_LIST_NAMES_COMMIT, ADD_LIST_NAMES_ROLLBACK,
@@ -772,6 +773,16 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
         rollback: { type: EXTRACT_CONTENTS_ROLLBACK, meta: payload },
       }
     },
+  });
+};
+
+export const tryUpdateExtractedContents = (payload) => async (dispatch, getState) => {
+
+  const canRerender = window.pageYOffset === 0 && !isPopupShown(getState());
+
+  dispatch({
+    type: UPDATE_EXTRACTED_CONTENTS,
+    payload: { ...payload, canRerender },
   });
 };
 
