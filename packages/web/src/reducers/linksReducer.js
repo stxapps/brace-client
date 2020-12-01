@@ -3,7 +3,7 @@ import { loop, Cmd } from 'redux-loop';
 
 import {
   UPDATE_POPUP,
-  FETCH_COMMIT, FETCH_MORE_COMMIT,
+  FETCH_COMMIT, UPDATE_FETCHED, FETCH_MORE_COMMIT,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
   MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
   MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
@@ -17,12 +17,14 @@ import {
   ALL, ADD_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
   IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE,
-  ID, STATUS,
+  ID, STATUS, N_LINKS,
   ADDED, MOVED, ADDING, MOVING, REMOVING, DELETING,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
 } from '../types/const';
 import { _, isEqual } from '../utils';
-import { moveLinksDeleteStep, deleteOldLinksInTrash, extractContents } from '../actions';
+import {
+  tryUpdateFetched, moveLinksDeleteStep, deleteOldLinksInTrash, extractContents,
+} from '../actions';
 
 const initialState = {
   [MY_LIST]: null,
@@ -49,27 +51,42 @@ export default (state = initialState, action) => {
   if (action.type === REHYDRATE) {
     const newState = { ...state };
     for (const listName in action.payload.links) {
-      newState[listName] = _.update(
-        action.payload.links[listName],
+
+      const processingLinks = _.update(
+        _.exclude(action.payload.links[listName], STATUS, ADDED),
         null,
         null,
         [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION],
         [false, null]
       );
+      const fetchedLinks = _.update(
+        _.select(action.payload.links[listName], STATUS, ADDED),
+        null,
+        null,
+        [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION],
+        [false, null]
+      );
+
+      // Care only status ADDED.
+      // Sort and get just first N based on doDescendingorder
+      //   so be able to compare and do update or not.
+      const ids = Object.keys(fetchedLinks).sort();
+      if (action.payload.settings.doDescendingOrder) ids.reverse();
+
+      const selectedIds = ids.slice(0, N_LINKS);
+      const selectedLinks = {};
+      for (const k in fetchedLinks) {
+        if (selectedIds.includes(k)) selectedLinks[k] = fetchedLinks[k];
+      }
+
+      newState[listName] = { ...processingLinks, ...selectedLinks };
     }
 
     return newState;
   }
 
   if (action.type === FETCH_COMMIT) {
-    const { listName, links, listNames, doFetchSettings, settings } = action.payload;
-
-    const processingLinks = _.exclude(state[listName], STATUS, ADDED);
-    const fetchedLinks = _.copyAttr(
-      toObjAndAddAttrs(links, ADDED, false, null),
-      state[listName],
-      [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]
-    );
+    const { listNames, doFetchSettings, settings } = action.payload;
 
     const newState = {};
     if (doFetchSettings) {
@@ -89,12 +106,32 @@ export default (state = initialState, action) => {
         newState[name] = null;
       }
     }
+    console.log(`linksReducer: in FETCH_COMMIT, calling tryUpdateFetched`);
+    return loop(
+      newState,
+      Cmd.run(
+        tryUpdateFetched(action.payload, action.meta),
+        { args: [Cmd.dispatch, Cmd.getState] })
+    );
+  }
 
+  if (action.type === UPDATE_FETCHED) {
+    const { listName, links } = action.payload;
+
+    const processingLinks = _.exclude(state[listName], STATUS, ADDED);
+    const fetchedLinks = _.copyAttr(
+      toObjAndAddAttrs(links, ADDED, false, null),
+      state[listName],
+      [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]
+    );
+
+    const newState = { ...state };
     if (listName in newState) {
       newState[listName] = { ...processingLinks, ...fetchedLinks };
     }
 
     const { doDeleteOldLinksInTrash, doExtractContents } = action.meta;
+    console.log(`linksReducer: in UPDATE_FETCHED, calling deleteOldLinksInTrash with doDeleteOldLinksInTrash: ${doDeleteOldLinksInTrash} and doExtractContents: ${doExtractContents}`);
     return loop(
       newState,
       Cmd.run(

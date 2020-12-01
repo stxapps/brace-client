@@ -74,6 +74,7 @@ class Main extends React.PureComponent {
 
 const mapStateToProps = (state, props) => {
   return {
+    listName: state.display.listName,
     links: getLinks(state),
     windowWidth: state.window.width,
   };

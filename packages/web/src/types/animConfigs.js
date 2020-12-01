@@ -182,3 +182,14 @@ export const statusPopupFMV = {
     transition: { duration: 0 },
   },
 };
+
+export const fetchedPopupFMV = {
+  hidden: {
+    translateY: '-8rem',
+    translateX: '-50%',
+  },
+  visible: {
+    translateY: '0rem',
+    translateX: '-50%',
+  },
+};

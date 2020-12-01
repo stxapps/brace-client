@@ -476,6 +476,10 @@ img {
   padding: 0.375rem;
 }
 
+.focus\:shadow-outline-outer:focus-within {
+  @apply shadow-outline;
+}
+
 .focus\:outline-none-outer:focus {
   @apply outline-none;
 }

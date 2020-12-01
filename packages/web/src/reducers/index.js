@@ -6,6 +6,7 @@ import hasMoreLinksReducer from './hasMoreLinksReducer';
 import displayReducer from './displayReducer';
 import userReducer from './userReducer';
 import settingsReducer from './settingsReducer';
+import fetchedReducer from './fetchedReducer';
 
 export default combineReducers({
   window: windowReducer,
@@ -14,4 +15,5 @@ export default combineReducers({
   display: displayReducer,
   user: userReducer,
   settings: settingsReducer,
+  fetched: fetchedReducer,
 });

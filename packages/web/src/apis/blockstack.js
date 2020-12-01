@@ -159,13 +159,16 @@ const fetchMore = async (params) => {
   const { linkFPaths } = await listFPaths();
 
   const namedLinkFPaths = linkFPaths[listName] || [];
-  const filteredLinkFPaths = namedLinkFPaths.filter(fpath => {
-    return !ids.includes(extractLinkFPath(fpath).fname);
-  });
 
-  let selectedLinkFPaths = filteredLinkFPaths.sort();
-  if (doDescendingOrder) selectedLinkFPaths.reverse();
-  selectedLinkFPaths = selectedLinkFPaths.slice(0, N_LINKS);
+  // Fetch further from the current point, not causing scroll jumpy
+  const sortedLinkFPaths = namedLinkFPaths.sort();
+  if (doDescendingOrder) sortedLinkFPaths.reverse();
+
+  const indexes = ids.map(id => sortedLinkFPaths.indexOf(createLinkFPath(listName, id)));
+  const maxIndex = Math.max(...indexes);
+
+  const filteredLinkFPaths = sortedLinkFPaths.slice(maxIndex + 1);
+  const selectedLinkFPaths = filteredLinkFPaths.slice(0, N_LINKS);
 
   const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0);
   const links = responses.map(response => JSON.parse(response.content));

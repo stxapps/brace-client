@@ -38,7 +38,7 @@ class CardPanel extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.listName !== prevProps.listName) {
+    if (this.props.listChangedCount !== prevProps.listChangedCount) {
       window.scrollTo(0, 0);
     }
   }
@@ -256,6 +256,7 @@ const mapStateToProps = (state, props) => {
     hasMoreLinks: state.hasMoreLinks[listName],
     isFetchingMore: state.display.isFetchingMore,
     searchString: state.display.searchString,
+    listChangedCount: state.display.listChangedCount,
   };
 };
 

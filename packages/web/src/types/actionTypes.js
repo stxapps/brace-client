@@ -13,6 +13,9 @@ export const FETCH = 'FETCH';
 export const FETCH_COMMIT = 'FETCH_COMMIT';
 export const FETCH_ROLLBACK = 'FETCH_ROLLBACK';
 
+export const CACHE_FETCHED = 'CACHE_FETCHED';
+export const UPDATE_FETCHED = 'UPDATE_FETCHED';
+
 export const FETCH_MORE = 'FETCH_MORE';
 export const FETCH_MORE_COMMIT = 'FETCH_MORE_COMMIT';
 export const FETCH_MORE_ROLLBACK = 'FETCH_MORE_ROLLBACK';

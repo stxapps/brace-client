@@ -15,6 +15,7 @@ import Loading from './Loading';
 import TopBar from './TopBar';
 import BottomBar from './BottomBar';
 import CardPanel from './CardPanel';
+import FetchedPopup from './FetchedPopup';
 import CardItemMenuPopup from './CardItemMenuPopup';
 import ConfirmDeletePopup from './ConfirmDeletePopup';
 import SettingsPopup from './SettingsPopup';
@@ -84,6 +85,7 @@ class Main extends React.PureComponent {
         <CardPanel columnWidth={columnWidth} />
         <TopBar rightPane={topBarRightPane} isListNameShown={true} fetched={this.fetched} />
         {columnWidth === PC_100 && <BottomBar />}
+        <FetchedPopup />
         <CardItemMenuPopup />
         <ConfirmDeletePopup />
         <SettingsPopup />
@@ -94,6 +96,7 @@ class Main extends React.PureComponent {
 
 const mapStateToProps = (state, props) => {
   return {
+    listName: state.display.listName,
     links: getLinks(state),
   };
 };

@@ -1,11 +1,15 @@
+import { REHYDRATE } from 'redux-persist/constants'
+
 import {
-  FETCH_COMMIT, FETCH_MORE_COMMIT,
+  FETCH_COMMIT, UPDATE_FETCHED, FETCH_MORE_COMMIT,
   DELETE_LIST_NAMES_COMMIT,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   MY_LIST, TRASH, ARCHIVE,
+  STATUS, ADDED, N_LINKS,
 } from '../types/const';
+import { _ } from '../utils';
 
 const initialState = {
   [MY_LIST]: null,
@@ -15,8 +19,18 @@ const initialState = {
 
 export default (state = initialState, action) => {
 
+  if (action.type === REHYDRATE) {
+    const newState = { ...state };
+    for (const k in action.payload.hasMoreLinks) {
+      // Links is cut down to first N_LINKS to be able to compare and do update or not
+      //   so hasMore needs to be updated to make sure can fetch more if any.
+      newState[k] = action.payload.hasMoreLinks[k] || Object.keys(_.select(action.payload.links[k], STATUS, ADDED)).length > N_LINKS;
+    }
+    return newState;
+  }
+
   if (action.type === FETCH_COMMIT) {
-    const { listName, hasMore, listNames, doFetchSettings, settings } = action.payload;
+    const { listNames, doFetchSettings, settings } = action.payload;
 
     const newState = {};
     if (doFetchSettings) {
@@ -37,6 +51,13 @@ export default (state = initialState, action) => {
       }
     }
 
+    return newState;
+  }
+
+  if (action.type === UPDATE_FETCHED) {
+    const { listName, hasMore } = action.payload;
+
+    const newState = { ...state };
     if (listName in newState) newState[listName] = hasMore;
 
     return newState;

@@ -2,7 +2,7 @@ import { REHYDRATE } from 'redux-persist/constants'
 
 import {
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
-  FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
+  FETCH, FETCH_COMMIT, FETCH_ROLLBACK, UPDATE_FETCHED,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
@@ -39,6 +39,8 @@ const initialState = {
   selectedLinkIds: [],
   isBulkEditMoveToPopupShown: false,
   deletingListName: null,
+  // Need listChangedCount to scroll to top, even on the same list name.
+  listChangedCount: 0,
   exportAllDataProgress: null,
   deleteAllDataProgress: null,
   updateSettingsProgress: null,
@@ -63,6 +65,7 @@ export default (state = initialState, action) => {
       selectedLinkIds: [],
       isBulkEditMoveToPopupShown: false,
       deletingListName: null,
+      listChangedCount: 0,
       exportAllDataProgress: null,
       deleteAllDataProgress: null,
       // If in outbox, continue after reload
@@ -71,7 +74,11 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_LIST_NAME) {
-    return { ...state, listName: action.payload };
+    return {
+      ...state,
+      listName: action.payload,
+      listChangedCount: state.listChangedCount + 1,
+    };
   }
 
   if (action.type === UPDATE_SEARCH_STRING) {
@@ -148,6 +155,14 @@ export default (state = initialState, action) => {
 
   if (action.type === FETCH_ROLLBACK) {
     return { ...state, status: FETCH_ROLLBACK };
+  }
+
+  if (action.type === UPDATE_FETCHED) {
+    const { doChangeListCount } = action.payload;
+    if (doChangeListCount) {
+      return { ...state, listChangedCount: state.listChangedCount + 1 };
+    }
+    return state;
   }
 
   if (action.type === FETCH_MORE) {

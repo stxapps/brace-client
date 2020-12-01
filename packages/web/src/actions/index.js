@@ -8,7 +8,7 @@ import { batchGetFileWithRetry, batchDeleteFileWithRetry } from '../apis/blockst
 import {
   INIT, UPDATE_WINDOW, UPDATE_HISTORY_POSITION, UPDATE_USER, UPDATE_HREF,
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
-  FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
+  FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
   UPDATE_LINKS,
@@ -40,12 +40,12 @@ import {
   CONFIRM_DELETE_POPUP, SETTINGS_POPUP, BULK_EDIT_MOVE_TO_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH,
-  DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
+  ADDED, DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   BRACE_EXTRACT_URL, EXTRACT_EXCEEDING_N_URLS,
   N_LINKS, SWAP_LEFT, SWAP_RIGHT,
 } from '../types/const';
 import {
-  _,
+  _, isEqual,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam, extractUrl, getUrlPathQueryHash,
   getUserImageUrl, randomDecor, swapArrayElements,
@@ -361,6 +361,78 @@ export const fetch = (
   });
 };
 
+export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) => {
+
+  const { listName, links } = payload;
+
+  // If the links in state is undefined, null, or an empty object,
+  //   just update the state as no scrolling or popup shown.
+  let _links = getState().links[listName];
+  if (_links === undefined || _links === null || isEqual(_links, {})) {
+    console.log(`tryUpdateFetched: _links is false, call updateFetched right away.`);
+    dispatch(updateFetched(payload, meta));
+    return;
+  }
+  _links = _.select(_links, STATUS, ADDED);
+
+  const _ids = Object.keys(_links);
+
+  let doUpdate = false;
+  if (_ids.length !== links.length) doUpdate = true;
+  else {
+    for (const link of links) {
+      if (!_ids.includes(link.id)) {
+        doUpdate = true;
+        break;
+      }
+      if (!isEqual(link.extractedResult, _links[link.id].extractedResult)) {
+        doUpdate = true;
+        break;
+      }
+    }
+  }
+
+  if (!doUpdate) {
+    console.log(`tryUpdateFetched: doUpdate is false, call deleteOldLinksInTrash.`);
+    const { doDeleteOldLinksInTrash, doExtractContents } = meta;
+    dispatch(deleteOldLinksInTrash(doDeleteOldLinksInTrash, doExtractContents));
+    return;
+  }
+
+  if (window.pageYOffset === 0 && !isPopupShown(getState())) {
+    console.log(`tryUpdateFetched: no scroll and popup, call updateFetched right away.`);
+    dispatch(updateFetched(payload, meta));
+    return;
+  }
+
+  console.log(`tryUpdateFetched: call CACHE_FETCHED.`);
+  dispatch({
+    type: CACHE_FETCHED,
+    payload,
+    meta,
+  });
+};
+
+export const updateFetched = (payload, meta, listName = null, doChangeListCount = false) => async (dispatch, getState) => {
+
+  if (!payload) {
+    if (!listName) listName = getState().display.listName;
+
+    const fetched = getState().fetched[listName];
+    if (fetched) ({ payload, meta } = fetched);
+  }
+  if (!payload) {
+    console.log(`updateFetched: no payload, just return.`);
+    return;
+  }
+  console.log(`updateFetched: dispatch UPDATE_FETCHED.`);
+  dispatch({
+    type: UPDATE_FETCHED,
+    payload: { ...payload, doChangeListCount },
+    meta,
+  });
+};
+
 export const fetchMore = () => async (dispatch, getState) => {
 
   const listName = getState().display.listName;
@@ -567,14 +639,20 @@ export const cancelDiedLinks = (ids, listName = null) => async (dispatch, getSta
 
 export const changeListName = (listName, fetched) => async (dispatch, getState) => {
 
+  const _listName = getState().display.listName;
+
   dispatch({
     type: UPDATE_LIST_NAME,
     payload: listName,
   })
 
   if (!fetched.includes(listName)) {
+    console.log(`changeListName: fetch with doDeleteOldLinksInTrash: false and doExtractContents: null`);
     dispatch(fetch(false, null));
   }
+
+  console.log(`changeListName: call updateFetched with listName: ${_listName}`);
+  dispatch(updateFetched(null, null, _listName));
 };
 
 export const updateSearchString = (searchString) => {
@@ -591,7 +669,7 @@ export const deleteOldLinksInTrash = (doDeleteOldLinksInTrash, doExtractContents
     doDeleteOldLinksInTrash = getState().settings.doDeleteOldLinksInTrash;
   }
   if (!doDeleteOldLinksInTrash) {
-    extractContents(doExtractContents, null, null)(dispatch, getState);
+    dispatch(extractContents(doExtractContents, null, null));
     return;
   }
 
