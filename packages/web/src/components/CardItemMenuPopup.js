@@ -106,12 +106,10 @@ class CardItemMenuPopup extends React.PureComponent {
     return { menu, moveTo };
   }
 
-  onMenuPopupClick = (e) => {
+  onMenuPopupClick = (text) => {
 
     // As animation takes time, increase chance to several clicks
     if (!this.props.popupLink) return;
-
-    const text = e.target.getAttribute('data-key');
     if (!text) return;
 
     const { id, url } = this.props.popupLink;
@@ -156,7 +154,7 @@ class CardItemMenuPopup extends React.PureComponent {
           <div className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left">Move to...</div>
           {moveTo.map(listNameObj => {
             const key = MOVE_TO + ' ' + listNameObj.listName;
-            return <button className="py-2 pl-8 pr-4 block w-full text-gray-800 text-left truncate hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={key} data-key={key}>{listNameObj.displayName}</button>;
+            return <button key={key} onClick={() => this.onMenuPopupClick(key)} className="py-2 pl-8 pr-4 block w-full text-gray-800 text-left truncate hover:bg-gray-400 focus:outline-none focus:shadow-outline">{listNameObj.displayName}</button>;
           })}
         </React.Fragment>
       );
@@ -167,7 +165,7 @@ class CardItemMenuPopup extends React.PureComponent {
         {menu.map(text => {
           let displayText = text;
           if (text === ARCHIVE) displayText = getListNameDisplayName(text, listNameMap);
-          return <button className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left truncate hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={text} data-key={text}>{displayText}</button>;
+          return <button key={text} onClick={() => this.onMenuPopupClick(text)} className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left truncate hover:bg-gray-400 focus:outline-none focus:shadow-outline">{displayText}</button>;
         })}
         {_moveTo}
       </React.Fragment>
@@ -202,13 +200,13 @@ class CardItemMenuPopup extends React.PureComponent {
       const popupFMV = getPopupFMV(topOrigin, leftOrigin);
 
       menuPopup = (
-        <motion.div key="CIMP_menuPopup" ref={this.menuPopup} onClick={this.onMenuPopupClick} style={popupStyle} className={menuPopupClassNames} variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
+        <motion.div key="CIMP_menuPopup" ref={this.menuPopup} style={popupStyle} className={menuPopupClassNames} variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
           {this.renderMenu()}
         </motion.div>
       )
     } else {
       menuPopup = (
-        <div key="CIMP_menuPopup" ref={this.menuPopup} onClick={this.onMenuPopupClick} className={menuPopupClassNames}>
+        <div key="CIMP_menuPopup" ref={this.menuPopup} className={menuPopupClassNames}>
           {this.renderMenu()}
         </div>
       );

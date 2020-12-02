@@ -52,17 +52,15 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
     }
   }
 
-  onBulkEditMoveToPopupClick = (e) => {
+  onBulkEditMoveToPopupClick = (text) => {
 
     // As animation takes time, increase chance to several clicks
     if (!this.props.isBulkEditMoveToPopupShown) return;
+    if (!text) return;
 
     const {
       selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
     } = this.props;
-
-    const text = e.target.getAttribute('data-key');
-    if (!text) return;
 
     if (text.startsWith(MOVE_TO)) {
       moveLinks(text.substring(MOVE_TO.length + 1), selectedLinkIds);
@@ -93,7 +91,7 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
 
     return moveTo.map(listNameObj => {
       const key = MOVE_TO + ' ' + listNameObj.listName;
-      return <button className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left truncate hover:bg-gray-400 focus:outline-none focus:shadow-outline" key={key} data-key={key}>{listNameObj.displayName}</button>;
+      return <button key={key} onClick={() => this.onBulkEditMoveToPopupClick(key)} className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left truncate hover:bg-gray-400 focus:outline-none focus:shadow-outline">{listNameObj.displayName}</button>;
     });
   }
 
@@ -128,13 +126,13 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
       }
 
       menuPopup = (
-        <motion.div key="TBBEC_moveToPopup" ref={this.menuPopup} onClick={this.onBulkEditMoveToPopupClick} style={popupStyle} className={menuPopupClassNames} variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
+        <motion.div key="TBBEC_moveToPopup" ref={this.menuPopup} style={popupStyle} className={menuPopupClassNames} variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
           {this.renderMenu()}
         </motion.div>
       );
     } else {
       menuPopup = (
-        <div key="TBBEC_moveToPopup" ref={this.menuPopup} onClick={this.onBulkEditMoveToPopupClick} className={menuPopupClassNames}>
+        <div key="TBBEC_moveToPopup" ref={this.menuPopup} className={menuPopupClassNames}>
           {this.renderMenu()}
         </div>
       );
