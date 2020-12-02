@@ -4,12 +4,23 @@ import { connect } from 'react-redux';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
 import { ADDING, MOVING } from '../types/const';
-import { ensureContainUrlProtocol, isDiedStatus } from '../utils';
+import { ensureContainUrlProtocol, isDiedStatus, isEqual } from '../utils';
 
 import CardItemContent from './CardItemContent';
 import CardItemSelector from './CardItemSelector';
 
-class CardItem extends React.PureComponent {
+class CardItem extends React.Component {
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      this.props.link.status !== nextProps.link.status ||
+      !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult)
+    ) {
+      return true;
+    }
+
+    return false;
+  }
 
   onRetryRetryBtnClick = () => {
     this.props.retryDiedLinks([this.props.link.id]);

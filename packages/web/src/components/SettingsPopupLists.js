@@ -43,7 +43,7 @@ class SettingsPopupLists extends React.PureComponent {
             <AnimatePresence initial={false}>
               {this.props.listNameMap.map(listNameObj => {
                 return (
-                  <motion.div key={listNameObj.listName} className="overflow-hidden" layoutId={listNameObj.listName} variants={spListsFMV} initial="hidden" animate="visible" exit="exit">
+                  <motion.div key={listNameObj.listName} layoutId={listNameObj.listName} variants={spListsFMV} initial="hidden" animate="visible" exit="exit">
                     <ListNameEditor listNameObj={listNameObj} validateDisplayName={this.validateDisplayName} />
                   </motion.div>
                 )
