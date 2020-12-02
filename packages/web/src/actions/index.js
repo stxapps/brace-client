@@ -370,7 +370,6 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
   //   just update the state as no scrolling or popup shown.
   let _links = getState().links[listName];
   if (_links === undefined || _links === null || isEqual(_links, {})) {
-    console.log(`tryUpdateFetched: _links is false, call updateFetched right away.`);
     dispatch(updateFetched(payload, meta));
     return;
   }
@@ -394,19 +393,16 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
   }
 
   if (!doUpdate) {
-    console.log(`tryUpdateFetched: doUpdate is false, call deleteOldLinksInTrash.`);
     const { doDeleteOldLinksInTrash, doExtractContents } = meta;
     dispatch(deleteOldLinksInTrash(doDeleteOldLinksInTrash, doExtractContents));
     return;
   }
 
   if (window.pageYOffset === 0 && !isPopupShown(getState())) {
-    console.log(`tryUpdateFetched: no scroll and popup, call updateFetched right away.`);
     dispatch(updateFetched(payload, meta));
     return;
   }
 
-  console.log(`tryUpdateFetched: call CACHE_FETCHED.`);
   dispatch({
     type: CACHE_FETCHED,
     payload,
@@ -422,11 +418,8 @@ export const updateFetched = (payload, meta, listName = null, doChangeListCount 
     const fetched = getState().fetched[listName];
     if (fetched) ({ payload, meta } = fetched);
   }
-  if (!payload) {
-    console.log(`updateFetched: no payload, just return.`);
-    return;
-  }
-  console.log(`updateFetched: dispatch UPDATE_FETCHED.`);
+  if (!payload) return;
+
   dispatch({
     type: UPDATE_FETCHED,
     payload: { ...payload, doChangeListCount },
@@ -648,11 +641,9 @@ export const changeListName = (listName, fetched) => async (dispatch, getState) 
   })
 
   if (!fetched.includes(listName)) {
-    console.log(`changeListName: fetch with doDeleteOldLinksInTrash: false and doExtractContents: null`);
     dispatch(fetch(false, null));
   }
 
-  console.log(`changeListName: call updateFetched with listName: ${_listName}`);
   dispatch(updateFetched(null, null, _listName));
 };
 

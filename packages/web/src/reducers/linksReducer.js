@@ -107,7 +107,7 @@ export default (state = initialState, action) => {
         newState[name] = null;
       }
     }
-    console.log(`linksReducer: in FETCH_COMMIT, calling tryUpdateFetched`);
+
     return loop(
       newState,
       Cmd.run(
@@ -132,7 +132,7 @@ export default (state = initialState, action) => {
     }
 
     const { doDeleteOldLinksInTrash, doExtractContents } = action.meta;
-    console.log(`linksReducer: in UPDATE_FETCHED, calling deleteOldLinksInTrash with doDeleteOldLinksInTrash: ${doDeleteOldLinksInTrash} and doExtractContents: ${doExtractContents}`);
+
     return loop(
       newState,
       Cmd.run(
