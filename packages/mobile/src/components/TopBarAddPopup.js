@@ -3,9 +3,7 @@ import { connect } from 'react-redux';
 import {
   View, Text, TouchableOpacity, TextInput, LayoutAnimation, Platform,
 } from 'react-native';
-import {
-  Menu, MenuOptions, MenuTrigger, renderers, withMenuContext,
-} from 'react-native-popup-menu';
+import { Menu, MenuOptions, MenuTrigger, withMenuContext } from 'react-native-popup-menu';
 import Svg, { Path } from 'react-native-svg'
 
 import { updatePopup, addLink } from '../actions';
@@ -19,6 +17,7 @@ import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
 
 import { withSafeAreaContext } from '.';
+import MenuPopoverRenderers from './MenuPopoverRenderer';
 
 const ADD_POPUP_MENU_NAME = 'addPopup';
 
@@ -119,7 +118,7 @@ class TopBarAddPopup extends React.PureComponent {
     const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' })
 
     return (
-      <Menu name={ADD_POPUP_MENU_NAME} renderer={renderers.Popover} rendererProps={cache('TBAP_menuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onOpen={this.onAddBtnClick} onClose={this.onAddCancelBtnClick}>
+      <Menu name={ADD_POPUP_MENU_NAME} renderer={MenuPopoverRenderers} rendererProps={cache('TBAP_menuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onOpen={this.onAddBtnClick} onClose={this.onAddCancelBtnClick}>
         <MenuTrigger>
           <View style={cache('TBAP_menuTriggerViewStyle', [tailwind('flex-row justify-center items-center bg-white border border-gray-700 rounded-full shadow-sm'), { height: 32, paddingLeft: 10, paddingRight: 12 }])}>
             <Svg style={tailwind('text-base text-gray-700 font-normal')} width={12} height={11} viewBox="0 0 16 14" stroke="currentColor" fill="none">

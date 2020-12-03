@@ -5,7 +5,7 @@ import { FlatList, View, Text, TouchableOpacity, Animated } from 'react-native';
 import Svg, { SvgXml, Path } from 'react-native-svg'
 import { Flow } from 'react-native-animated-spinkit'
 
-import { fetchMore, updatePopup } from '../actions';
+import { fetchMore, updatePopup, updatePageYOffset } from '../actions';
 import {
   ADD_POPUP,
   PC_100, PC_50, PC_33,
@@ -59,6 +59,10 @@ class CardPanel extends React.PureComponent {
         }, 1);
       }
     }
+  }
+
+  updatePageYOffset = (e) => {
+    this.props.updatePageYOffset(e.nativeEvent.contentOffset.y);
   }
 
   getItemId = (item) => {
@@ -321,7 +325,9 @@ class CardPanel extends React.PureComponent {
         onEndReachedThreshold={0.9}
         removeClippedSubviews={false}
         onScroll={this.props.scrollYEvent}
-        scrollEventThrottle={16} />
+        scrollEventThrottle={16}
+        onScrollEndDrag={this.updatePageYOffset}
+        onMomentumScrollEnd={this.updatePageYOffset} />
     );
   }
 }
@@ -347,6 +353,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { fetchMore, updatePopup };
+const mapDispatchToProps = { fetchMore, updatePopup, updatePageYOffset };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(CardPanel));

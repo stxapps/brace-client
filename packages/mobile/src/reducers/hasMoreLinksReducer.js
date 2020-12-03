@@ -6,8 +6,9 @@ import {
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
-  MY_LIST, TRASH, ARCHIVE,
+  MY_LIST, TRASH, ARCHIVE, STATUS, ADDED, N_LINKS,
 } from '../types/const';
+import { _ } from '../utils';
 
 const initialState = {
   [MY_LIST]: null,
@@ -27,8 +28,10 @@ export default (state = initialState, action) => {
       // If there are new links remotely, when fetch 10 updated links,
       //   they will be the same as new links are in the back.
       // doUpdate will be false and hasMoreLinks will also be false which is incorrect!
-      //newState[k] = action.payload.hasMoreLinks[k] || Object.keys(_.select(action.payload.links[k], STATUS, ADDED)).length > N_LINKS;
-      newState[k] = true;
+      //
+      // If links is empty or too less to have a scroll and set hasMore to true,
+      //   loading more will be shown with empty message or CardItems!
+      newState[k] = action.payload.hasMoreLinks[k] || Object.keys(_.select(action.payload.links[k], STATUS, ADDED)).length > N_LINKS - 1;
     }
     return newState;
   }

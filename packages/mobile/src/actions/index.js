@@ -30,7 +30,7 @@ import {
   RETRY_ADD_LIST_NAMES, RETRY_UPDATE_LIST_NAMES, RETRY_MOVE_LIST_NAME,
   RETRY_DELETE_LIST_NAMES, CANCEL_DIED_LIST_NAMES,
   UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
-  UPDATE_UPDATE_SETTINGS_PROGRESS,
+  UPDATE_UPDATE_SETTINGS_PROGRESS, UPDATE_PAGE_Y_OFFSET,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -339,13 +339,7 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
     return;
   }
 
-
-
-  // TODO: BUG
   const pageYOffset = getState().window.pageYOffset;
-
-
-
   if (pageYOffset === 0 && !isPopupShown(getState())) {
     dispatch(updateFetched(payload, meta));
     return;
@@ -718,11 +712,7 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
 
 export const tryUpdateExtractedContents = (payload) => async (dispatch, getState) => {
 
-
-  // BUG
   const pageYOffset = getState().window.pageYOffset;
-
-
   const canRerender = pageYOffset === 0 && !isPopupShown(getState());
 
   dispatch({
@@ -1022,6 +1012,13 @@ export const updateUpdateSettingsProgress = (progress) => {
   return {
     type: UPDATE_UPDATE_SETTINGS_PROGRESS,
     payload: progress
+  };
+};
+
+export const updatePageYOffset = (pageYOffset) => {
+  return {
+    type: UPDATE_PAGE_Y_OFFSET,
+    payload: pageYOffset
   };
 };
 

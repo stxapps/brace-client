@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { ScrollView, View, Text, Platform } from 'react-native';
 import {
-  Menu, MenuOptions, MenuOption, MenuTrigger, renderers, withMenuContext,
+  Menu, MenuOptions, MenuOption, MenuTrigger, withMenuContext,
 } from 'react-native-popup-menu';
 import Svg, { Path } from 'react-native-svg'
 
@@ -16,6 +16,7 @@ import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
 import { withSafeAreaContext } from '.';
+import MenuPopoverRenderers from './MenuPopoverRenderer';
 
 class TopBarBulkEditMoveToPopup extends React.PureComponent {
 
@@ -49,15 +50,7 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
     this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, false);
   }
 
-  renderMenu() {
-
-    const moveTo = [];
-    for (const listNameObj of this.props.listNameMap) {
-      if ([TRASH, ARCHIVE].includes(listNameObj.listName)) continue;
-      if (this.props.listName === listNameObj.listName) continue;
-
-      moveTo.push(listNameObj);
-    }
+  renderMenu(moveTo) {
 
     return moveTo.map(listNameObj => {
       const key = MOVE_TO + ' ' + listNameObj.listName;
@@ -73,13 +66,25 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
 
     const { safeAreaHeight } = this.props;
 
-    const popupStyle = {};
-    if (256 > safeAreaHeight - 16) popupStyle.maxHeight = safeAreaHeight - 16;
+    const moveTo = [];
+    for (const listNameObj of this.props.listNameMap) {
+      if ([TRASH, ARCHIVE].includes(listNameObj.listName)) continue;
+      if (this.props.listName === listNameObj.listName) continue;
+
+      moveTo.push(listNameObj);
+    }
+
+    // As popover has an anchor laying out with flex (different to Popup),
+    //   max height is used for height.
+    // 39dp per row plus padding
+    const popupStyle = {
+      height: Math.min((39 * moveTo.length) + 16, 256, safeAreaHeight - 16),
+    };
 
     return (
-      <MenuOptions customStyles={cache('TBBEMTP_menuOptionsCustomStyles', { optionsContainer: [tailwind('py-2 min-w-28 max-w-64 max-h-64 bg-white border border-gray-200 rounded-lg shadow-xl z-41'), popupStyle] }, safeAreaHeight)}>
+      <MenuOptions customStyles={cache('TBBEMTP_menuOptionsCustomStyles', { optionsContainer: [tailwind('py-2 min-w-28 max-w-64 bg-white rounded-lg shadow-xl z-41'), popupStyle] }, safeAreaHeight)}>
         <ScrollView>
-          {this.renderMenu()}
+          {this.renderMenu(moveTo)}
         </ScrollView>
       </MenuOptions>
     );
@@ -96,7 +101,7 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
     const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' })
 
     return (
-      <Menu renderer={renderers.Popover} rendererProps={cache('TBBEMTP_menuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onOpen={this.onBulkEditMoveToBtnClick} onClose={this.onBulkEditMoveToCancelBtnClick}>
+      <Menu renderer={MenuPopoverRenderers} rendererProps={cache('TBBEMTP_menuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onOpen={this.onBulkEditMoveToBtnClick} onClose={this.onBulkEditMoveToCancelBtnClick}>
         <MenuTrigger>
           <View style={tailwind('ml-4')}>
             <View style={btnStyle}>

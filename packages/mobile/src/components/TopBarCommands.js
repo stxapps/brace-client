@@ -3,9 +3,7 @@ import { connect } from 'react-redux';
 import {
   View, Text, TouchableOpacity, Linking, Platform,
 } from 'react-native';
-import {
-  Menu, MenuOptions, MenuOption, MenuTrigger, renderers,
-} from 'react-native-popup-menu';
+import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Svg, { SvgXml, Path } from 'react-native-svg'
 import jdenticon from 'jdenticon';
 
@@ -15,6 +13,7 @@ import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
 import GracefulImage from './GracefulImage';
+import MenuPopoverRenderers from './MenuPopoverRenderer';
 
 import TopBarAddPopup from './TopBarAddPopup';
 import TopBarSearchInput from './TopBarSearchInput';
@@ -99,7 +98,7 @@ class TopBarCommands extends React.PureComponent {
             <Text style={tailwind('ml-1 text-base text-gray-700 font-normal')}>Select</Text>
           </View>
         </TouchableOpacity>
-        <Menu renderer={renderers.Popover} rendererProps={cache('TBC_profileCommandMenuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onOpen={this.onProfileBtnClick} onClose={this.onProfileCancelBtnClick}>
+        <Menu renderer={MenuPopoverRenderers} rendererProps={cache('TBC_profileCommandMenuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onOpen={this.onProfileBtnClick} onClose={this.onProfileCancelBtnClick}>
           <MenuTrigger>
             <View style={tailwind('ml-4')}>
               <View style={tailwind(`justify-center items-center h-8 w-8 bg-white overflow-hidden border-2 border-gray-200 ${this.profileBtnStyleClasses}`)}>
@@ -107,7 +106,7 @@ class TopBarCommands extends React.PureComponent {
               </View>
             </View>
           </MenuTrigger>
-          <MenuOptions customStyles={cache('TBC_profileCommandMenuOptions', { optionsContainer: tailwind('py-2 w-32 bg-white border border-gray-200 rounded-lg shadow-xl z-41') })}>
+          <MenuOptions customStyles={cache('TBC_profileCommandMenuOptions', { optionsContainer: tailwind('py-2 w-32 bg-white rounded-lg shadow-xl z-41') })}>
             {this.renderProfilePopup()}
           </MenuOptions>
         </Menu>

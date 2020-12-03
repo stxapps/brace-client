@@ -4396,8 +4396,14 @@
 	"z-40": {
 		"zIndex": 40
 	},
+	"z-41": {
+		"zIndex": 41
+	},
 	"z-50": {
 		"zIndex": 50
+	},
+	"z-51": {
+		"zIndex": 51
 	},
 	"underline": {
 		"textDecorationLine": "underline"

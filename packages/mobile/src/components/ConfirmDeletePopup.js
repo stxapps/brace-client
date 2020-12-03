@@ -87,7 +87,7 @@ class ConfirmDeletePopup extends React.Component {
 
     return (
       <Modal isVisible={isConfirmDeletePopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onConfirmDeleteCancelBtnClick} onBackButtonPress={this.onConfirmDeleteCancelBtnClick} supportedOrientations={MODAL_SUPPORTED_ORIENTATIONS} backdropOpacity={0.1} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true}>
-        <View style={tailwind('p-4 self-center w-48 bg-white border border-gray-200 rounded-lg shadow-xl')}>
+        <View style={tailwind('p-4 self-center w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-51')}>
           <Text style={tailwind('py-2 text-lg text-gray-900 font-normal text-center')}>Confirm delete?</Text>
           <View style={tailwind('py-2 flex-row items-center justify-center')}>
             <TouchableOpacity onPress={this.onConfirmDeleteOkBtnClick} style={tailwind('mr-2 py-2')}>
