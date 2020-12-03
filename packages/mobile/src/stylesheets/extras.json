@@ -104,16 +104,6 @@
   "w-11": {
     "width": 44
   },
-  "max-w-40": {
-    "maxWidth": 160
-  },
-  "max-w-48": {
-    "maxWidth": 192
-  },
-  /* min-h-14 is filtered out by tailwind-rn/build.js:57 so need to add here for now */
-  "min-h-14": {
-    "minHeight": 56
-  },
   "mt-1.5": {
     "marginTop": 6
   },

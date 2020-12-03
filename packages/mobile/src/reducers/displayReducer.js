@@ -2,15 +2,14 @@ import { REHYDRATE } from 'redux-persist/constants'
 
 import {
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
-  FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
+  FETCH, FETCH_COMMIT, FETCH_ROLLBACK, UPDATE_FETCHED,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK, EXTRACT_CONTENTS_COMMIT,
-  UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
-  UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
+  UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, CLEAR_SELECTED_LINK_IDS,
-  DELETE_LIST_NAMES_COMMIT, UPDATE_DELETING_LIST_NAME,
+  DELETE_LIST_NAMES, UPDATE_DELETING_LIST_NAME,
   UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
   UPDATE_UPDATE_SETTINGS_PROGRESS,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
@@ -20,7 +19,7 @@ import {
   ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
   CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
   BULK_EDIT_MOVE_TO_POPUP,
-  MY_LIST,
+  MY_LIST, TRASH, ARCHIVE,
   UPDATING, DIED_UPDATING,
 } from '../types/const';
 
@@ -35,12 +34,13 @@ const initialState = {
   isSettingsPopupShown: false,
   isFetchingMore: false,
   status: null,
-  cardItemMenuPopupPosition: null,
   isHandlingSignIn: false,
   isBulkEditing: false,
   selectedLinkIds: [],
   isBulkEditMoveToPopupShown: false,
   deletingListName: null,
+  // Need listChangedCount to scroll to top, even on the same list name.
+  listChangedCount: 0,
   exportAllDataProgress: null,
   deleteAllDataProgress: null,
   updateSettingsProgress: null,
@@ -60,12 +60,12 @@ export default (state = initialState, action) => {
       isConfirmDeletePopupShown: false,
       isSettingsPopupShown: false,
       status: null,
-      cardItemMenuPopupPosition: null,
       isHandlingSignIn: false,
       isBulkEditing: false,
       selectedLinkIds: [],
       isBulkEditMoveToPopupShown: false,
       deletingListName: null,
+      listChangedCount: 0,
       exportAllDataProgress: null,
       deleteAllDataProgress: null,
       // If in outbox, continue after reload
@@ -74,7 +74,11 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_LIST_NAME) {
-    return { ...state, listName: action.payload };
+    return {
+      ...state,
+      listName: action.payload,
+      listChangedCount: state.listChangedCount + 1,
+    };
   }
 
   if (action.type === UPDATE_SEARCH_STRING) {
@@ -129,11 +133,36 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === FETCH_COMMIT) {
-    return { ...state, status: FETCH_COMMIT };
+
+    const newState = { ...state, status: FETCH_COMMIT };
+
+    // Make sure listName is in listNameMap, if not, set to My List.
+    const { doFetchSettings, settings } = action.payload;
+    if (!doFetchSettings) return newState;
+
+    if (settings) {
+      if (!settings.listNameMap.map(obj => obj.listName).includes(newState.listName)) {
+        newState.listName = MY_LIST;
+      }
+    } else {
+      if (![MY_LIST, TRASH, ARCHIVE].includes(newState.listName)) {
+        newState.listName = MY_LIST;
+      }
+    }
+
+    return newState;
   }
 
   if (action.type === FETCH_ROLLBACK) {
     return { ...state, status: FETCH_ROLLBACK };
+  }
+
+  if (action.type === UPDATE_FETCHED) {
+    const { doChangeListCount } = action.payload;
+    if (doChangeListCount) {
+      return { ...state, listChangedCount: state.listChangedCount + 1 };
+    }
+    return state;
   }
 
   if (action.type === FETCH_MORE) {
@@ -172,10 +201,6 @@ export default (state = initialState, action) => {
     return { ...state, status: action.payload };
   }
 
-  if (action.type === UPDATE_CARD_ITEM_MENU_POPUP_POSITION) {
-    return { ...state, cardItemMenuPopupPosition: action.payload };
-  }
-
   if (action.type === UPDATE_HANDLING_SIGN_IN) {
     return { ...state, isHandlingSignIn: action.payload };
   }
@@ -204,8 +229,8 @@ export default (state = initialState, action) => {
     return { ...state, selectedLinkIds: [] };
   }
 
-  if (action.type === DELETE_LIST_NAMES_COMMIT) {
-    const { listNames } = action.meta;
+  if (action.type === DELETE_LIST_NAMES) {
+    const { listNames } = action.payload;
     if (listNames.includes(state.listName)) {
       return { ...state, listName: MY_LIST };
     }

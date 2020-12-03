@@ -7,9 +7,7 @@ import {
 } from '../types/actionTypes';
 import {
   MY_LIST, TRASH, ARCHIVE,
-  STATUS, ADDED, N_LINKS,
 } from '../types/const';
-import { _ } from '../utils';
 
 const initialState = {
   [MY_LIST]: null,
@@ -24,7 +22,13 @@ export default (state = initialState, action) => {
     for (const k in action.payload.hasMoreLinks) {
       // Links is cut down to first N_LINKS to be able to compare and do update or not
       //   so hasMore needs to be updated to make sure can fetch more if any.
-      newState[k] = action.payload.hasMoreLinks[k] || Object.keys(_.select(action.payload.links[k], STATUS, ADDED)).length > N_LINKS;
+      //
+      // If doDescendingorder = false and has 10 links at local, hasMoreLinks is false.
+      // If there are new links remotely, when fetch 10 updated links,
+      //   they will be the same as new links are in the back.
+      // doUpdate will be false and hasMoreLinks will also be false which is incorrect!
+      //newState[k] = action.payload.hasMoreLinks[k] || Object.keys(_.select(action.payload.links[k], STATUS, ADDED)).length > N_LINKS;
+      newState[k] = true;
     }
     return newState;
   }

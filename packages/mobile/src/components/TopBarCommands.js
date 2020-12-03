@@ -68,7 +68,7 @@ class TopBarCommands extends React.PureComponent {
 
   renderProfilePopup() {
     return (
-      <View style={tailwind('py-2 w-32')}>
+      <React.Fragment>
         <MenuOption onSelect={this.onSettingsBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
           <Text style={tailwind('py-2 pl-4 text-base text-gray-800 font-normal')}>Settings</Text>
         </MenuOption>
@@ -78,7 +78,7 @@ class TopBarCommands extends React.PureComponent {
         <MenuOption onSelect={this.onSignOutBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
           <Text style={tailwind('py-2 pl-4 text-base text-gray-800 font-normal')}>Sign out</Text>
         </MenuOption>
-      </View>
+      </React.Fragment>
     );
   }
 
@@ -107,7 +107,7 @@ class TopBarCommands extends React.PureComponent {
               </View>
             </View>
           </MenuTrigger>
-          <MenuOptions customStyles={cache('TBC_profileCommandMenuOptions', { optionsContainer: tailwind('bg-white rounded-lg shadow-xl') })}>
+          <MenuOptions customStyles={cache('TBC_profileCommandMenuOptions', { optionsContainer: tailwind('py-2 w-32 bg-white border border-gray-200 rounded-lg shadow-xl z-41') })}>
             {this.renderProfilePopup()}
           </MenuOptions>
         </Menu>

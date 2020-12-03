@@ -50,7 +50,6 @@ class TopBar extends React.PureComponent {
   }
 
   renderSignInBtn() {
-
     return (
       <button onClick={() => this.props.signIn()} className="block h-14 focus:outline-none-outer">
         <span style={{ padding: '0.3125rem 0.6875rem' }} className="bg-white text-base text-gray-700 border border-gray-700 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Sign in</span>

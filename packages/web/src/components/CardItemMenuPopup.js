@@ -4,11 +4,9 @@ import { motion, AnimatePresence } from "framer-motion"
 
 import { updatePopup, moveLinks } from '../actions';
 import {
-  CONFIRM_DELETE_POPUP,
-  MY_LIST, TRASH,
-  ADDING, MOVING,
+  MY_LIST, TRASH, ADDING, MOVING,
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
-  CARD_ITEM_POPUP_MENU,
+  CARD_ITEM_POPUP_MENU, CONFIRM_DELETE_POPUP,
 } from '../types/const';
 import { getListNameMap, getPopupLink } from '../selectors';
 import {

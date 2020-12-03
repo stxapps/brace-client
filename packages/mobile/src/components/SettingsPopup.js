@@ -162,7 +162,6 @@ class SettingsPopup extends React.PureComponent {
   }
 
   isViewSelected = (viewId) => {
-
     const dataViews = [VIEW_DATA, VIEW_DATA_EXPORT, VIEW_DATA_DELETE];
     if (viewId === VIEW_DATA) {
       return dataViews.includes(this.state.viewId);
@@ -183,7 +182,6 @@ class SettingsPopup extends React.PureComponent {
   }
 
   onSidebarCloseBtnClick = () => {
-
     this.setState({
       isSidebarShown: false,
       didSidebarTransitionEnd: false,
@@ -191,7 +189,6 @@ class SettingsPopup extends React.PureComponent {
   }
 
   onAccountBtnClick = () => {
-
     this.setState({
       viewId: VIEW_ACCOUNT,
       isSidebarShown: false,

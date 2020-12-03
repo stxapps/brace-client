@@ -88,7 +88,7 @@ class ListName extends React.PureComponent {
       return (
         <button key={listNameObj.listName} onClick={() => this.onListNamePopupClick(listNameObj.listName)} className="py-2 pl-4 pr-4 flex items-center w-full hover:bg-gray-400 focus:outline-none focus:shadow-outline">
           <div className="text-base text-gray-800 truncate">{listNameObj.displayName}</div>
-          {(listNameObj.listName) in updates && <div className="ml-1 flex-grow-0 flex-shrink-0 self-start w-2 h-2 bg-blue-500 rounded-full"></div>}
+          {listNameObj.listName in updates && <div className="ml-1 flex-grow-0 flex-shrink-0 self-start w-2 h-2 bg-blue-500 rounded-full"></div>}
         </button>
       );
     });
@@ -150,15 +150,15 @@ class ListName extends React.PureComponent {
       let headerSpaceLeftover = window.innerWidth - headerPaddingX - listNameDistanceX - listNameArrowWidth - listNameArrowSpace - commandsWidth - 4;
       if (listName in updates) headerSpaceLeftover -= 8;
 
-      textMaxWidth = Math.min(textMaxWidth, headerSpaceLeftover)
+      textMaxWidth = Math.min(textMaxWidth, headerSpaceLeftover);
     }
     const textStyle = { maxWidth: textMaxWidth };
 
     return (
       <div className="inline-block relative">
         <button onClick={this.onListNameBtnClick} className="flex items-center rounded hover:shadow-outline focus:outline-none focus:shadow-outline">
-          <h2 style={textStyle} className="mr-1 max-w-40 text-lg text-gray-900 font-semibold leading-7 truncate sm:max-w-xs lg:max-w-lg">{displayName}</h2>
-          {(listName in updates) && <div className="self-start w-2 h-2 bg-blue-500 rounded-full"></div>}
+          <h2 style={textStyle} className="mr-1 text-lg text-gray-900 font-semibold leading-7 truncate">{displayName}</h2>
+          {listName in updates && <div className="self-start w-2 h-2 bg-blue-500 rounded-full"></div>}
           <svg className="w-5 text-black" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -182,8 +182,6 @@ const mapStateToProps = (state, props) => {
   }
 };
 
-const mapDispatchToProps = {
-  changeListName, updatePopup,
-};
+const mapDispatchToProps = { changeListName, updatePopup };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListName);

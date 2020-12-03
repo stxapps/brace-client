@@ -6,7 +6,7 @@ import Svg, { Path } from 'react-native-svg'
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
 import { ADDING, MOVING, SM_WIDTH } from '../types/const';
-import { ensureContainUrlProtocol, isDiedStatus } from '../utils';
+import { ensureContainUrlProtocol, isDiedStatus, isEqual } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
@@ -15,7 +15,18 @@ import { withSafeAreaContext } from '.';
 import CardItemContent from './CardItemContent';
 import CardItemSelector from './CardItemSelector';
 
-class CardItem extends React.PureComponent {
+class CardItem extends React.Component {
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      this.props.link.status !== nextProps.link.status ||
+      !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult)
+    ) {
+      return true;
+    }
+
+    return false;
+  }
 
   onRetryRetryBtnClick = () => {
     this.props.retryDiedLinks([this.props.link.id]);

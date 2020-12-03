@@ -69,7 +69,7 @@ class BottomBarAddPopup extends React.PureComponent {
     const animConfig = cardItemAnimConfig(safeAreaWidth);
 
     LayoutAnimation.configureNext(animConfig);
-    this.props.addLink(this.state.url, null);
+    this.props.addLink(this.state.url, null, null);
     this.props.updatePopup(ADD_POPUP, false);
   }
 

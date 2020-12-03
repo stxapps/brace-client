@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {
-  View, Text, TouchableOpacity, Linking,
-} from 'react-native';
+import { View, Text, TouchableOpacity, Linking } from 'react-native';
 
 import { updateBulkEdit, addSelectedLinkIds } from '../actions';
 import { DOMAIN_NAME, COLOR, PATTERN, IMAGE } from '../types/const';
@@ -63,9 +61,7 @@ class CardItemContent extends React.Component {
     if (extractedResult && extractedResult.image) image = extractedResult.image;
 
     if (image) {
-      return (
-        <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full aspect-7/12 bg-white rounded-t-lg shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_image_${image}`, { uri: image }, image)} />
-      );
+      return <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full aspect-7/12 bg-white rounded-t-lg shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_image_${image}`, { uri: image }, image)} />;
     }
 
     let fg = null;
@@ -103,9 +99,7 @@ class CardItemContent extends React.Component {
 
     // Random image
     if (decor.image.bg.type === IMAGE) {
-      return (
-        <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full aspect-7/12 bg-white rounded-t-lg shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_decorImage_${decor.image.bg.value}`, { uri: prependDomainName(decor.image.bg.value) }, decor.image.bg.value)} />
-      );
+      return <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full aspect-7/12 bg-white rounded-t-lg shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_decorImage_${decor.image.bg.value}`, { uri: prependDomainName(decor.image.bg.value) }, decor.image.bg.value)} />;
     }
 
     throw new Error(`Invalid decor: ${JSON.stringify(decor)}`);

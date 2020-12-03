@@ -24,13 +24,9 @@ import fullLogo from '../images/logo-full.svg';
 
 class TopBar extends React.PureComponent {
 
-  onSignInBtnClick = () => {
-    this.props.signIn();
-  }
-
   renderSignInBtn() {
     return (
-      <TouchableOpacity onPress={this.onSignInBtnClick} style={tailwind('justify-center items-center h-14')}>
+      <TouchableOpacity onPress={() => this.props.signIn()} style={tailwind('justify-center items-center h-14')}>
         <View style={cache('TB_signInBtnView', [tailwind('bg-white border border-gray-700 rounded-full shadow-sm'), { paddingTop: 5, paddingBottom: 5, paddingLeft: 11, paddingRight: 11 }])}>
           <Text style={tailwind('text-base text-gray-700 font-normal')}>Sign in</Text>
         </View>

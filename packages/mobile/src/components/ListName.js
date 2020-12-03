@@ -3,19 +3,14 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { ScrollView, View, Text } from 'react-native';
 import Svg, { Path } from 'react-native-svg'
-import {
-  Menu, MenuOptions, MenuOption, MenuTrigger,
-} from 'react-native-popup-menu';
+import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 
+import { changeListName, updatePopup } from '../actions';
 import {
-  changeListName, updatePopup,
-} from '../actions';
-import {
-  LIST_NAME_POPUP,
-  SM_WIDTH, MD_WIDTH, LG_WIDTH,
+  LIST_NAME_POPUP, SM_WIDTH, MD_WIDTH, LG_WIDTH,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
-import { getListNameDisplayName, getLongestListNameDisplayName } from '../utils';
+import { getListNameDisplayName } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
@@ -40,36 +35,41 @@ class ListName extends React.PureComponent {
     this.props.updatePopup(LIST_NAME_POPUP, false);
   };
 
+  renderMenu() {
+
+    const { listNameMap, updates } = this.props;
+
+    return listNameMap.map(listNameObj => {
+      return (
+        <MenuOption key={listNameObj.listName} onSelect={() => this.onListNamePopupClick(listNameObj.listName)} customStyles={cache('LN_menuOption', { optionWrapper: { padding: 0 } })}>
+          <View style={tailwind('py-2 pl-4 pr-4 flex-row items-center w-full')}>
+            <Text style={tailwind('text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
+            {listNameObj.listName in updates && <View style={tailwind('ml-1 flex-grow-0 flex-shrink-0 self-start w-2 h-2 bg-blue-500 rounded-full')}></View>}
+          </View>
+        </MenuOption>
+      );
+    });
+  }
+
   renderListNamePopup() {
 
-    const { listNameMap, safeAreaHeight } = this.props;
+    const { safeAreaHeight } = this.props;
 
-    const longestDisplayNameLength = getLongestListNameDisplayName(listNameMap).length;
-
-    const popupScrollViewStyle = { width: 112, maxHeight: Math.min(256, safeAreaHeight) };
-    if (longestDisplayNameLength > 7) {
-      // Approx 8dp per additional character
-      const width = Math.min(112 + 8 * (longestDisplayNameLength - 7), 256);
-      popupScrollViewStyle.width = width;
-    }
+    const popupStyle = {};
+    if (256 > safeAreaHeight - 16) popupStyle.maxHeight = safeAreaHeight - 16;
 
     return (
-      <ScrollView style={cache('LN_scrollView', popupScrollViewStyle, [longestDisplayNameLength, safeAreaHeight])}>
-        {listNameMap.map(listNameObj => {
-          return (
-            <MenuOption key={listNameObj.listName} onSelect={() => this.onListNamePopupClick(listNameObj.listName)} customStyles={cache('LN_menuOption', { optionWrapper: { padding: 0 } })}>
-              <Text style={tailwind('py-2 pl-4 pr-2 w-full text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
-            </MenuOption>
-          );
-        })}
-      </ScrollView>
+      <MenuOptions customStyles={cache('LN_menuOptionsCustomStyles', { optionsContainer: [tailwind('py-2 min-w-28 max-w-64 max-h-64 bg-white border border-gray-200 rounded-lg shadow-xl z-41'), popupStyle] }, safeAreaHeight)}>
+        <ScrollView>
+          {this.renderMenu()}
+        </ScrollView>
+      </MenuOptions>
     );
   }
 
   render() {
 
-    const { listName, listNameMap, safeAreaWidth } = this.props;
-
+    const { listName, listNameMap, updates, safeAreaWidth } = this.props;
     const displayName = getListNameDisplayName(listName, listNameMap);
 
     // value of triggerOffsets needs to be aligned with paddings of the MenuTrigger
@@ -92,29 +92,27 @@ class ListName extends React.PureComponent {
         headerPaddingX, commandsWidth,
         listNameDistanceX, listNameArrowWidth, listNameArrowSpace,
       } = getTopBarSizes(safeAreaWidth);
-      const headerSpaceLeftover = safeAreaWidth - headerPaddingX - listNameDistanceX - listNameArrowWidth - listNameArrowSpace - commandsWidth - 4;
+      let headerSpaceLeftover = safeAreaWidth - headerPaddingX - listNameDistanceX - listNameArrowWidth - listNameArrowSpace - commandsWidth - 4;
+      if (listName in updates) headerSpaceLeftover -= 8;
 
-      textMaxWidth = Math.min(textMaxWidth, headerSpaceLeftover)
+      textMaxWidth = Math.min(textMaxWidth, headerSpaceLeftover);
     }
     const textStyle = { maxWidth: textMaxWidth };
 
     return (
-      <React.Fragment>
-        <Menu renderer={MenuPopupRenderer} rendererProps={cache('LN_rendererProps', { triggerOffsets: triggerOffsets, popupStyle: tailwind('py-2 bg-white border border-gray-200 rounded-lg shadow-xl') }, safeAreaWidth)} onOpen={this.onListNameBtnClick} onClose={this.onListNameCancelBtnClick}>
-          <MenuTrigger>
-            {/* Change the paddings here, need to change triggerOffsets too */}
-            <View style={tailwind('flex-row items-center')}>
-              <Text style={cache('LN_text', [tailwind('text-lg text-gray-900 font-semibold leading-7', safeAreaWidth), textStyle], safeAreaWidth)} numberOfLines={1} ellipsizeMode="tail">{displayName}</Text>
-              <Svg style={tailwind('ml-1 w-5 h-5 text-base text-black font-normal')} viewBox="0 0 24 24" stroke="currentColor" fill="none">
-                <Path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </Svg>
-            </View>
-          </MenuTrigger>
-          <MenuOptions>
-            {this.renderListNamePopup()}
-          </MenuOptions>
-        </Menu>
-      </React.Fragment>
+      <Menu renderer={MenuPopupRenderer} rendererProps={cache('LN_menuRendererProps', { triggerOffsets: triggerOffsets }, safeAreaWidth)} onOpen={this.onListNameBtnClick} onClose={this.onListNameCancelBtnClick}>
+        <MenuTrigger>
+          {/* Change the paddings here, need to change triggerOffsets too */}
+          <View style={tailwind('flex-row items-center')}>
+            <Text style={cache('LN_text', [tailwind('mr-1 text-lg text-gray-900 font-semibold leading-7', safeAreaWidth), textStyle], safeAreaWidth)} numberOfLines={1} ellipsizeMode="tail">{displayName}</Text>
+            {listName in updates && <View style={tailwind('self-start w-2 h-2 bg-blue-500 rounded-full')}></View>}
+            <Svg style={tailwind('text-base text-black font-normal')} width={20} height={20} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <Path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </Svg>
+          </View>
+        </MenuTrigger>
+        {this.renderListNamePopup()}
+      </Menu>
     );
   }
 }
@@ -124,17 +122,15 @@ ListName.propTypes = {
 };
 
 const mapStateToProps = (state, props) => {
-
   return {
     listName: state.display.listName,
     listNameMap: getListNameMap(state),
+    updates: state.fetched,
     windowWidth: state.window.width,
     windowHeight: state.window.height,
   }
 };
 
-const mapDispatchToProps = {
-  changeListName, updatePopup,
-};
+const mapDispatchToProps = { changeListName, updatePopup };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(ListName));

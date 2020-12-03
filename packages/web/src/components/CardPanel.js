@@ -71,7 +71,7 @@ class CardPanel extends React.PureComponent {
 
   onFetchMoreBtnClick = () => {
     this.props.fetchMore();
-  };
+  }
 
   renderEmpty() {
 

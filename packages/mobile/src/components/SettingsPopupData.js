@@ -70,7 +70,6 @@ class _SettingsPopupDataExport extends React.PureComponent {
   }
 
   render() {
-
     const { exportAllDataProgress, safeAreaWidth } = this.props;
 
     let actionPanel;

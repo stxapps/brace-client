@@ -8,9 +8,7 @@ import {
   updatePopup, deleteLinks, clearSelectedLinkIds, updateBulkEdit,
   deleteListNames, updateDeletingListName,
 } from '../actions';
-import {
-  CONFIRM_DELETE_POPUP, MODAL_SUPPORTED_ORIENTATIONS,
-} from '../types/const';
+import { CONFIRM_DELETE_POPUP, MODAL_SUPPORTED_ORIENTATIONS } from '../types/const';
 import { getPopupLink } from '../selectors';
 import { cardItemAnimConfig } from '../types/animConfigs';
 import { tailwind } from '../stylesheets/tailwind';
@@ -55,7 +53,6 @@ class ConfirmDeletePopup extends React.Component {
     }
 
     if (selectedLinkIds.length > 0) {
-
       const {
         deleteLinks, updatePopup, clearSelectedLinkIds, updateBulkEdit,
       } = this.props;
@@ -68,7 +65,6 @@ class ConfirmDeletePopup extends React.Component {
     }
 
     if (deletingListName) {
-
       const { deleteListNames, updatePopup, updateDeletingListName } = this.props;
 
       deleteListNames([deletingListName]);
@@ -83,7 +79,7 @@ class ConfirmDeletePopup extends React.Component {
   onConfirmDeleteCancelBtnClick = () => {
     this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
     this.props.updateDeletingListName(null);
-  };
+  }
 
   render() {
 
@@ -112,7 +108,6 @@ class ConfirmDeletePopup extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
-
   return {
     isConfirmDeletePopupShown: state.display.isConfirmDeletePopupShown,
     popupLink: getPopupLink(state),

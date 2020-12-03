@@ -1,21 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  ScrollView, View, Text, TouchableOpacity, BackHandler,
-} from 'react-native';
+import { View, Text, TouchableOpacity, BackHandler } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
-import Modal from 'react-native-modal';
 
 import {
   updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks,
 } from '../actions';
 import {
   CONFIRM_DELETE_POPUP, BULK_EDIT_MOVE_TO_POPUP,
-  MY_LIST, ARCHIVE, TRASH, MOVE_TO,
-  BOTTOM_BAR_HEIGHT, MODAL_SUPPORTED_ORIENTATIONS
+  MY_LIST, ARCHIVE, TRASH,
+  BOTTOM_BAR_HEIGHT,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
-import { toPx } from '../utils';
+import { getListNameDisplayName, toPx } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
@@ -64,7 +61,6 @@ class BottomBarBulkEditCommands extends React.Component {
     if (
       this.props.listName !== nextProps.listName ||
       this.props.listNameMap !== nextProps.listNameMap ||
-      this.props.isBulkEditMoveToPopupShown !== nextProps.isBulkEditMoveToPopupShown ||
       this.props.windowWidth !== nextProps.windowWidth ||
       this.props.windowHeight !== nextProps.windowHeight ||
       this.state.isEmptyErrorShown !== nextState.isEmptyErrorShown
@@ -131,28 +127,6 @@ class BottomBarBulkEditCommands extends React.Component {
     this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, true);
   }
 
-  onBulkEditMoveToCancelBtnClick = () => {
-    this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, false);
-  }
-
-  onBulkEditMoveToPopupClick = (text) => {
-    if (!text) return;
-
-    const {
-      selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
-    } = this.props;
-
-    if (text.startsWith(MOVE_TO)) {
-      moveLinks(text.substring(MOVE_TO.length + 1), selectedLinkIds);
-      clearSelectedLinkIds();
-      updateBulkEdit(false);
-    } else {
-      throw new Error(`Invalid text: ${text}`);
-    }
-
-    this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, false);
-  }
-
   onBulkEditCancelBtnClick = () => {
     this.props.clearSelectedLinkIds();
     this.props.updateBulkEdit(false);
@@ -180,37 +154,6 @@ class BottomBarBulkEditCommands extends React.Component {
     );
   }
 
-  renderBulkEditMoveToPopup() {
-
-    const { isBulkEditMoveToPopupShown, windowWidth, windowHeight } = this.props;
-
-    const moveTo = [];
-    for (const listNameObj of this.props.listNameMap) {
-      if ([TRASH, ARCHIVE].includes(listNameObj.listName)) continue;
-      if (this.props.listName === listNameObj.listName) continue;
-
-      moveTo.push(listNameObj);
-    }
-
-    return (
-      <Modal isVisible={isBulkEditMoveToPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onBulkEditMoveToCancelBtnClick} onBackButtonPress={this.onBulkEditMoveToCancelBtnClick} style={tailwind('justify-end m-0')} supportedOrientations={MODAL_SUPPORTED_ORIENTATIONS} backdropOpacity={0.25} animationIn="slideInUp" animationInTiming={200} animationOut="slideOutDown" animationOutTiming={200} useNativeDriver={true}>
-        <View style={tailwind('pt-4 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
-          <ScrollView style={cache('BBBEC_moveToScrollView', [tailwind('w-full'), { maxHeight: 288 }])} contentContainerStyle={tailwind('pb-4')}>
-            <Text style={tailwind('py-4 pl-4 pr-2 w-full text-base text-gray-800 font-normal')}>Move to...</Text>
-            {moveTo.map(listNameObj => {
-              const key = MOVE_TO + ' ' + listNameObj.listName;
-              return (
-                <TouchableOpacity onPress={() => this.onBulkEditMoveToPopupClick(key)} style={tailwind('w-full')} key={key}>
-                  <Text style={tailwind('py-4 pl-8 pr-2 w-full text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        </View>
-      </Modal>
-    );
-  }
-
   render() {
 
     const { listName, listNameMap } = this.props;
@@ -233,7 +176,7 @@ class BottomBarBulkEditCommands extends React.Component {
                   <Path fillRule="evenodd" clipRule="evenodd" d="M3 8H17V15C17 16.1046 16.1046 17 15 17H5C3.89543 17 3 16.1046 3 15V8ZM8 11C8 10.4477 8.44772 10 9 10H11C11.5523 10 12 10.4477 12 11C12 11.5523 11.5523 12 11 12H9C8.44772 12 8 11.5523 8 11Z" />
                 </Svg>
               </View>
-              <Text style={cache('BBBEC_archiveText', [tailwind('text-xs text-gray-700 font-normal leading-4'), { marginTop: 2 }])}>Archive</Text>
+              <Text style={cache('BBBEC_archiveText', [tailwind('w-full text-xs text-gray-700 font-normal leading-4'), { marginTop: 2 }])} numberOfLines={1} ellipsizeMode="tail">{getListNameDisplayName(ARCHIVE, listNameMap)}</Text>
             </TouchableOpacity>
           </View>}
           {isRemoveBtnShown && <View style={tailwind('p-1 flex-1')}>
@@ -289,18 +232,15 @@ class BottomBarBulkEditCommands extends React.Component {
           </View>
           {this.renderEmptyError()}
         </View>
-        {this.renderBulkEditMoveToPopup()}
       </React.Fragment>
     );
   }
 }
 
 const mapStateToProps = (state, props) => {
-
   return {
     listName: state.display.listName,
     listNameMap: getListNameMap(state),
-    isBulkEditMoveToPopupShown: state.display.isBulkEditMoveToPopupShown,
     selectedLinkIds: state.display.selectedLinkIds,
     windowWidth: state.window.width,
     windowHeight: state.window.height,

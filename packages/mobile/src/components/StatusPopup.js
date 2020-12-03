@@ -10,7 +10,6 @@ import {
 } from '../types/actionTypes';
 import { SM_WIDTH } from '../types/const';
 import { updateStatus } from '../actions';
-import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
 import { withSafeAreaContext } from '.';
@@ -48,6 +47,7 @@ class StatusPopup extends React.PureComponent {
 
     this.msg = '';
     this.timeout = null;
+    this.doClearTimeout = true;
 
     this.doShow = false;
     this.isShowing = false;
@@ -60,6 +60,9 @@ class StatusPopup extends React.PureComponent {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
+
+    this.doClearTimeout = this.props.status !== nextProps.status;
+
     if (this.props.status === null && nextProps.status !== null) {
       this.doShow = true;
     }
@@ -108,15 +111,16 @@ class StatusPopup extends React.PureComponent {
   }
 
   render() {
+    const { status, safeAreaWidth } = this.props;
 
-    if (this.timeout) {
+    // Clear timeout only when status changed, not when only safeAreaWidth changed.
+    if (this.timeout && this.doClearTimeout) {
       clearTimeout(this.timeout);
       this.timeout = null;
     }
 
-    const { status, safeAreaWidth } = this.props;
     if (status) {
-      this.msg = safeAreaWidth >= SM_WIDTH ? MSGS[status] : MSGS_SHRT[status];
+      this.msg = safeAreaWidth < SM_WIDTH ? MSGS_SHRT[status] : MSGS[status];
 
       if ([
         FETCH_COMMIT,
@@ -150,8 +154,6 @@ const mapStateToProps = (state, props) => {
   }
 };
 
-const mapDispatchToProps = {
-  updateStatus,
-};
+const mapDispatchToProps = { updateStatus };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(StatusPopup));

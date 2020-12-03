@@ -398,7 +398,8 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
     return;
   }
 
-  if (window.pageYOffset === 0 && !isPopupShown(getState())) {
+  const pageYOffset = window.pageYOffset;
+  if (pageYOffset === 0 && !isPopupShown(getState())) {
     dispatch(updateFetched(payload, meta));
     return;
   }
@@ -769,7 +770,8 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
 
 export const tryUpdateExtractedContents = (payload) => async (dispatch, getState) => {
 
-  const canRerender = window.pageYOffset === 0 && !isPopupShown(getState());
+  const pageYOffset = window.pageYOffset;
+  const canRerender = pageYOffset === 0 && !isPopupShown(getState());
 
   dispatch({
     type: UPDATE_EXTRACTED_CONTENTS,

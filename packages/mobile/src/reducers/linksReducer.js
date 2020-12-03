@@ -3,13 +3,13 @@ import { loop, Cmd } from 'redux-loop';
 
 import {
   UPDATE_POPUP,
-  FETCH_COMMIT, FETCH_MORE_COMMIT,
+  FETCH_COMMIT, UPDATE_FETCHED, FETCH_MORE_COMMIT,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
   MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
   MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
   CANCEL_DIED_LINKS,
-  DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT,
+  DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT, UPDATE_EXTRACTED_CONTENTS,
   DELETE_LIST_NAMES_COMMIT,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -17,12 +17,15 @@ import {
   ALL, ADD_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
   IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE,
-  ID, STATUS,
-  ADDED, ADDING, MOVING, REMOVING, DELETING,
+  ID, STATUS, N_LINKS,
+  ADDED, MOVED, ADDING, MOVING, REMOVING, DELETING,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
 } from '../types/const';
 import { _, isEqual } from '../utils';
-import { moveLinksDeleteStep, deleteOldLinksInTrash, extractContents } from '../actions';
+import {
+  tryUpdateFetched, moveLinksDeleteStep, deleteOldLinksInTrash,
+  extractContents, tryUpdateExtractedContents,
+} from '../actions';
 
 const initialState = {
   [MY_LIST]: null,
@@ -49,20 +52,72 @@ export default (state = initialState, action) => {
   if (action.type === REHYDRATE) {
     const newState = { ...state };
     for (const listName in action.payload.links) {
-      newState[listName] = _.update(
-        action.payload.links[listName],
+
+      const processingLinks = _.update(
+        _.exclude(action.payload.links[listName], STATUS, ADDED),
         null,
         null,
         [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION],
         [false, null]
       );
+      const fetchedLinks = _.update(
+        _.select(action.payload.links[listName], STATUS, ADDED),
+        null,
+        null,
+        [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION],
+        [false, null]
+      );
+
+      // Care only status ADDED.
+      // Sort and get just first N based on doDescendingorder
+      //   so be able to compare and do update or not.
+      const ids = Object.keys(fetchedLinks).sort();
+      if (action.payload.settings.doDescendingOrder) ids.reverse();
+
+      const selectedIds = ids.slice(0, N_LINKS);
+      const selectedLinks = {};
+      for (const k in fetchedLinks) {
+        if (selectedIds.includes(k)) selectedLinks[k] = fetchedLinks[k];
+      }
+
+      newState[listName] = { ...processingLinks, ...selectedLinks };
     }
 
     return newState;
   }
 
   if (action.type === FETCH_COMMIT) {
-    const { listName, links, listNames } = action.payload;
+    const { listNames, doFetchSettings, settings } = action.payload;
+
+    const newState = {};
+    if (doFetchSettings) {
+      if (settings) {
+        for (const k of settings.listNameMap.map(obj => obj.listName)) {
+          newState[k] = state[k] || null;
+        }
+      } else {
+        for (const k of [MY_LIST, TRASH, ARCHIVE]) newState[k] = state[k];
+      }
+    } else {
+      for (const k in state) newState[k] = state[k];
+    }
+
+    for (const name of listNames) {
+      if (!(name in newState)) {
+        newState[name] = null;
+      }
+    }
+
+    return loop(
+      newState,
+      Cmd.run(
+        tryUpdateFetched(action.payload, action.meta),
+        { args: [Cmd.dispatch, Cmd.getState] })
+    );
+  }
+
+  if (action.type === UPDATE_FETCHED) {
+    const { listName, links } = action.payload;
 
     const processingLinks = _.exclude(state[listName], STATUS, ADDED);
     const fetchedLinks = _.copyAttr(
@@ -72,32 +127,18 @@ export default (state = initialState, action) => {
     );
 
     const newState = { ...state };
-    newState[listName] = { ...processingLinks, ...fetchedLinks };
-
-    for (const name of listNames) {
-      if (!(name in newState)) {
-        newState[name] = null;
-      }
+    if (listName in newState) {
+      newState[listName] = { ...processingLinks, ...fetchedLinks };
     }
 
     const { doDeleteOldLinksInTrash, doExtractContents } = action.meta;
-    if (doDeleteOldLinksInTrash) {
-      return loop(
-        newState,
-        Cmd.run(
-          deleteOldLinksInTrash(doExtractContents),
-          { args: [Cmd.dispatch, Cmd.getState] })
-      );
-    }
-    if (doExtractContents) {
-      return loop(
-        newState,
-        Cmd.run(
-          extractContents(null, null),
-          { args: [Cmd.dispatch, Cmd.getState] })
-      );
-    }
-    return newState;
+
+    return loop(
+      newState,
+      Cmd.run(
+        deleteOldLinksInTrash(doDeleteOldLinksInTrash, doExtractContents),
+        { args: [Cmd.dispatch, Cmd.getState] })
+    );
   }
 
   if (action.type === FETCH_MORE_COMMIT) {
@@ -109,16 +150,12 @@ export default (state = initialState, action) => {
       ...toObjAndAddAttrs(links, ADDED, false, null)
     };
 
-    const { doExtractContents } = action.meta;
-    if (doExtractContents) {
-      return loop(
-        newState,
-        Cmd.run(
-          extractContents(null, null),
-          { args: [Cmd.dispatch, Cmd.getState] })
-      );
-    }
-    return newState;
+    return loop(
+      newState,
+      Cmd.run(
+        extractContents(null, null, null),
+        { args: [Cmd.dispatch, Cmd.getState] })
+    );
   }
 
   if (action.type === ADD_LINKS) {
@@ -142,15 +179,12 @@ export default (state = initialState, action) => {
     );
 
     const { doExtractContents } = action.meta;
-    if (doExtractContents) {
-      return loop(
-        newState,
-        Cmd.run(
-          extractContents(listName, _.extract(links, ID)),
-          { args: [Cmd.dispatch, Cmd.getState] })
-      );
-    }
-    return newState;
+    return loop(
+      newState,
+      Cmd.run(
+        extractContents(doExtractContents, listName, _.extract(links, ID)),
+        { args: [Cmd.dispatch, Cmd.getState] })
+    );
   }
 
   if (action.type === ADD_LINKS_ROLLBACK) {
@@ -178,18 +212,19 @@ export default (state = initialState, action) => {
 
   if (action.type === MOVE_LINKS_ADD_STEP_COMMIT) {
     const { listName, links } = action.payload;
+    const ids = _.extract(links, ID);
 
     const newState = { ...state };
     newState[listName] = _.update(
-      state[listName], ID, _.extract(links, ID), STATUS, ADDED
+      state[listName], ID, ids, STATUS, MOVED
     );
 
-    const { fromListName, ids } = action.meta;
+    const { fromListName, fromIds } = action.meta;
 
     return loop(
       newState,
       Cmd.run(
-        moveLinksDeleteStep(fromListName, ids),
+        moveLinksDeleteStep(fromListName, fromIds, listName, ids),
         { args: [Cmd.dispatch, Cmd.getState] })
     );
   }
@@ -206,11 +241,14 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === MOVE_LINKS_DELETE_STEP) {
-    const { listName, ids } = action.payload;
+    const { listName, ids, toListName, toIds } = action.payload;
 
     const newState = { ...state };
     newState[listName] = _.update(
       state[listName], ID, ids, STATUS, REMOVING
+    );
+    newState[toListName] = _.update(
+      state[toListName], ID, toIds, STATUS, ADDED
     );
 
     return newState;
@@ -298,30 +336,44 @@ export default (state = initialState, action) => {
     newState[listName] = _.exclude(state[listName], ID, ids);
 
     const { doExtractContents } = action.meta;
-    if (doExtractContents) {
-      return loop(
-        newState,
-        Cmd.run(
-          extractContents(null, null),
-          { args: [Cmd.dispatch, Cmd.getState] })
-      );
-    }
-    return newState;
+    return loop(
+      newState,
+      Cmd.run(
+        extractContents(doExtractContents, null, null),
+        { args: [Cmd.dispatch, Cmd.getState] })
+    );
   }
 
   if (action.type === EXTRACT_CONTENTS_COMMIT) {
-    const { listName, links } = action.payload;
+    return loop(
+      state,
+      Cmd.run(
+        tryUpdateExtractedContents(action.payload),
+        { args: [Cmd.dispatch, Cmd.getState] })
+    );
+  }
 
-    const newState = { ...state };
-    newState[listName] = { ...newState[listName] };
-    for (const link of links) {
-      newState[listName][link.id] = { ...newState[listName][link.id] };
-      for (const key of ['extractedResult']) {
-        newState[listName][link.id][key] = link[key];
+  if (action.type === UPDATE_EXTRACTED_CONTENTS) {
+    const { listName, links, canRerender } = action.payload;
+
+    if (canRerender) {
+      const newState = { ...state };
+      newState[listName] = { ...newState[listName] };
+      for (const link of links) {
+        newState[listName][link.id] = { ...newState[listName][link.id] };
+        for (const key of ['extractedResult']) {
+          newState[listName][link.id][key] = link[key];
+        }
       }
+
+      return newState;
     }
 
-    return newState;
+    // If should not update views (re-render), just update the state.
+    for (const link of links) {
+      state[listName][link.id].extractedResult = link.extractedResult;
+    }
+    return state;
   }
 
   if (action.type === UPDATE_POPUP &&

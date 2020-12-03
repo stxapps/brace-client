@@ -12,7 +12,9 @@ import { withSafeAreaContext } from '.';
 import BottomBarCommands from './BottomBarCommands';
 import BottomBarAddPopup from './BottomBarAddPopup';
 import BottomBarSearchPopup from './BottomBarSearchPopup';
+import BottomBarProfilePopup from './BottomBarProfilePopup';
 import BottomBarBulkEditCommands from './BottomBarBulkEditCommands';
+import BottomBarBulkEditMoveToPopup from './BottomBarBulkEditMoveToPopup';
 
 class BottomBar extends React.PureComponent {
 
@@ -56,6 +58,8 @@ class BottomBar extends React.PureComponent {
         </Animated.View>
         <BottomBarAddPopup />
         <BottomBarSearchPopup />
+        <BottomBarProfilePopup />
+        <BottomBarBulkEditMoveToPopup />
       </React.Fragment>
     );
   }

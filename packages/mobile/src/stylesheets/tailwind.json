@@ -3011,8 +3011,29 @@
 	"-ml-px": {
 		"marginLeft": -1
 	},
+	"max-h-64": {
+		"maxHeight": 256
+	},
+	"max-h-72": {
+		"maxHeight": 288
+	},
+	"max-h-80": {
+		"maxHeight": 320
+	},
 	"max-h-full": {
 		"maxHeight": "100%"
+	},
+	"max-w-16": {
+		"maxWidth": 64
+	},
+	"max-w-40": {
+		"maxWidth": 160
+	},
+	"max-w-48": {
+		"maxWidth": 192
+	},
+	"max-w-64": {
+		"maxWidth": 256
 	},
 	"max-w-none": {
 		"maxWidth": "none"
@@ -3073,6 +3094,9 @@
 	},
 	"min-w-0": {
 		"minWidth": 0
+	},
+	"min-w-28": {
+		"minWidth": 112
 	},
 	"min-w-32": {
 		"minWidth": 128

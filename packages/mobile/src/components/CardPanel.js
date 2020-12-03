@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {
-  FlatList, View, Text, TouchableOpacity, Animated,
-} from 'react-native';
+import { FlatList, View, Text, TouchableOpacity, Animated } from 'react-native';
 import Svg, { SvgXml, Path } from 'react-native-svg'
 import { Flow } from 'react-native-animated-spinkit'
 
@@ -49,7 +47,7 @@ class CardPanel extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.listName !== prevProps.listName) {
+    if (this.props.listChangedCount !== prevProps.listChangedCount) {
       if (this.panelFlatList.current) {
         setTimeout(() => {
           if (this.panelFlatList.current) {
@@ -344,6 +342,7 @@ const mapStateToProps = (state, props) => {
     hasMoreLinks: state.hasMoreLinks[listName],
     isFetchingMore: state.display.isFetchingMore,
     searchString: state.display.searchString,
+    listChangedCount: state.display.listChangedCount,
     windowWidth: state.window.width,
   };
 };

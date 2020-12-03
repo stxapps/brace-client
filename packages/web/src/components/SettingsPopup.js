@@ -55,7 +55,6 @@ class SettingsPopup extends React.PureComponent {
   }
 
   isViewSelected = (viewId) => {
-
     const dataViews = [VIEW_DATA, VIEW_DATA_EXPORT, VIEW_DATA_DELETE];
     if (viewId === VIEW_DATA) {
       return dataViews.includes(this.state.viewId);
@@ -66,7 +65,7 @@ class SettingsPopup extends React.PureComponent {
 
   onPopupCloseBtnClick = () => {
     this.props.updatePopup(SETTINGS_POPUP, false);
-  };
+  }
 
   onSidebarOpenBtnClick = () => {
     this.setState({

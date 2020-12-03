@@ -50,12 +50,12 @@ class StatusPopup extends React.PureComponent {
   }
 
   render() {
+    const { status } = this.props;
+
     if (this.timeout) {
       window.clearTimeout(this.timeout);
       this.timeout = null;
     }
-
-    const { status } = this.props;
 
     let animate = 'hidden';
     if (status) {

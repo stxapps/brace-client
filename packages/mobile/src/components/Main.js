@@ -16,6 +16,7 @@ import Loading from './Loading';
 import TopBar from './TopBar';
 import BottomBar from './BottomBar';
 import CardPanel from './CardPanel';
+import FetchedPopup from './FetchedPopup';
 import ConfirmDeletePopup from './ConfirmDeletePopup';
 import SettingsPopup from './SettingsPopup';
 
@@ -65,6 +66,7 @@ class Main extends React.PureComponent {
         <CardPanel columnWidth={columnWidth} scrollYEvent={this.scrollYEvent} />
         <TopBar rightPane={topBarRightPane} isListNameShown={true} fetched={this.fetched} scrollY={this.scrollY} />
         {columnWidth === PC_100 && <BottomBar />}
+        <FetchedPopup />
         <ConfirmDeletePopup />
         <SettingsPopup />
       </React.Fragment>

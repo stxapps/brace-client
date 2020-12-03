@@ -126,8 +126,6 @@ const makeMapStateToProps = () => {
   return mapStateToProps
 };
 
-const mapDispatchToProps = {
-  addSelectedLinkIds, deleteSelectedLinkIds,
-};
+const mapDispatchToProps = { addSelectedLinkIds, deleteSelectedLinkIds };
 
 export default connect(makeMapStateToProps, mapDispatchToProps)(CardItemSelector);

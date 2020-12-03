@@ -1,28 +1,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  ScrollView, View, Text, TouchableOpacity, BackHandler, Platform,
-} from 'react-native';
-import {
-  Menu, MenuOptions, MenuOption, MenuTrigger, renderers, withMenuContext,
-} from 'react-native-popup-menu';
+import { View, Text, TouchableOpacity, BackHandler } from 'react-native';
 import Svg, { Path } from 'react-native-svg'
 
 import {
   updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks,
 } from '../actions';
 import {
-  CONFIRM_DELETE_POPUP, BULK_EDIT_MOVE_TO_POPUP,
-  MY_LIST, ARCHIVE, TRASH,
-  MOVE_TO,
-  TOP_HEADER_HEIGHT,
+  CONFIRM_DELETE_POPUP, MY_LIST, ARCHIVE, TRASH, TOP_HEADER_HEIGHT,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
-import { toPx, getLongestListNameDisplayName } from '../utils';
+import { getListNameDisplayName, toPx } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
-import { withSafeAreaContext } from '.';
+import TopBarBulkEditMoveToPopup from './TopBarBulkEditMoveToPopup';
 
 class TopBarBulkEditCommands extends React.Component {
 
@@ -68,8 +60,6 @@ class TopBarBulkEditCommands extends React.Component {
     if (
       this.props.listName !== nextProps.listName ||
       this.props.listNameMap !== nextProps.listNameMap ||
-      this.props.isBulkEditMoveToPopupShown !== nextProps.isBulkEditMoveToPopupShown ||
-      this.props.safeAreaHeight !== nextProps.safeAreaHeight ||
       this.state.isEmptyErrorShown !== nextState.isEmptyErrorShown
     ) {
       return true;
@@ -129,36 +119,6 @@ class TopBarBulkEditCommands extends React.Component {
     this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
   }
 
-  onBulkEditMoveToBtnClick = () => {
-    if (this.checkNoLinkIdSelected()) {
-      this.props.ctx.menuActions.closeMenu();
-      return;
-    }
-    this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, true);
-  }
-
-  onBulkEditMoveToCancelBtnClick = () => {
-    this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, false);
-  }
-
-  onBulkEditMoveToPopupClick = (text) => {
-    if (!text) return;
-
-    const {
-      selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
-    } = this.props;
-
-    if (text.startsWith(MOVE_TO)) {
-      moveLinks(text.substring(MOVE_TO.length + 1), selectedLinkIds);
-      clearSelectedLinkIds();
-      updateBulkEdit(false);
-    } else {
-      throw new Error(`Invalid text: ${text}`);
-    }
-
-    this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, false);
-  }
-
   onBulkEditCancelBtnClick = () => {
     this.props.clearSelectedLinkIds();
     this.props.updateBulkEdit(false);
@@ -186,45 +146,6 @@ class TopBarBulkEditCommands extends React.Component {
     );
   }
 
-  renderBulkEditMoveToPopup() {
-
-    const { listName, listNameMap, safeAreaHeight } = this.props;
-
-    const moveTo = [];
-    for (const listNameObj of this.props.listNameMap) {
-      if ([TRASH, ARCHIVE].includes(listNameObj.listName)) continue;
-      if (listName === listNameObj.listName) continue;
-
-      moveTo.push(listNameObj);
-    }
-
-    const longestDisplayNameLength = getLongestListNameDisplayName(listNameMap).length;
-
-    const moveToPopupStyle = { width: 112 };
-    if (longestDisplayNameLength > 7) {
-      // Approx 8dp per additional character
-      const width = Math.min(112 + 8 * (longestDisplayNameLength - 7), 256);
-      moveToPopupStyle.width = width;
-    }
-    // 39dp per row
-    moveToPopupStyle.maxHeight = Math.min((39 * moveTo.length) + 16, 256, safeAreaHeight);
-
-    return (
-      <MenuOptions customStyles={cache('TBBEC_moveToMenuOptions', { optionsContainer: [tailwind('py-2 bg-white rounded-lg shadow-xl'), moveToPopupStyle] }, [longestDisplayNameLength, moveTo.length, safeAreaHeight])}>
-        <ScrollView>
-          {moveTo.map(listNameObj => {
-            const key = MOVE_TO + ' ' + listNameObj.listName;
-            return (
-              <MenuOption key={key} onSelect={() => this.onBulkEditMoveToPopupClick(key)} customStyles={cache('TBBEC_moveToMenuOption', { optionWrapper: { padding: 0 } })}>
-                <Text style={tailwind('py-2 pl-4 pr-2 w-full text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
-              </MenuOption>
-            );
-          })}
-        </ScrollView>
-      </MenuOptions>
-    );
-  }
-
   render() {
 
     const { listName, listNameMap } = this.props;
@@ -243,8 +164,6 @@ class TopBarBulkEditCommands extends React.Component {
     };
     btnStyle = cache('TBBEC_btn', [tailwind('flex-row justify-center items-center bg-white border border-gray-700 rounded-full shadow-sm'), btnStyle]);
 
-    const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' })
-
     return (
       <View style={tailwind('flex-row justify-end items-center')}>
         {isArchiveBtnShown && <View style={tailwind('ml-4')}>
@@ -254,7 +173,7 @@ class TopBarBulkEditCommands extends React.Component {
                 <Path d="M4 3C2.89543 3 2 3.89543 2 5C2 6.10457 2.89543 7 4 7H16C17.1046 7 18 6.10457 18 5C18 3.89543 17.1046 3 16 3H4Z" />
                 <Path fillRule="evenodd" clipRule="evenodd" d="M3 8H17V15C17 16.1046 16.1046 17 15 17H5C3.89543 17 3 16.1046 3 15V8ZM8 11C8 10.4477 8.44772 10 9 10H11C11.5523 10 12 10.4477 12 11C12 11.5523 11.5523 12 11 12H9C8.44772 12 8 11.5523 8 11Z" />
               </Svg>
-              <Text style={tailwind('ml-1 text-base text-gray-700 font-normal')}>Archive</Text>
+              <Text style={tailwind('ml-1 max-w-16 text-base text-gray-700 font-normal')} numberOfLines={1} ellipsizeMode="tail">{getListNameDisplayName(ARCHIVE, listNameMap)}</Text>
             </View>
           </TouchableOpacity>
         </View>}
@@ -288,20 +207,7 @@ class TopBarBulkEditCommands extends React.Component {
             </View>
           </TouchableOpacity>
         </View>}
-        {isMoveToBtnShown && <Menu renderer={renderers.Popover} rendererProps={cache('TBBEC_moveToRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onOpen={this.onBulkEditMoveToBtnClick} onClose={this.onBulkEditMoveToCancelBtnClick}>
-          <MenuTrigger>
-            <View style={tailwind('ml-4')}>
-              <View style={btnStyle}>
-                <Svg style={tailwind('text-base text-gray-600 font-normal')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
-                  <Path d="M4 3C2.89543 3 2 3.89543 2 5C2 6.10457 2.89543 7 4 7H16C17.1046 7 18 6.10457 18 5C18 3.89543 17.1046 3 16 3H4Z" />
-                  <Path fillRule="evenodd" clipRule="evenodd" d="M3 8H17V15C17 16.1046 16.1046 17 15 17H5C3.89543 17 3 16.1046 3 15V8ZM8 11C8 10.4477 8.44772 10 9 10H11C11.5523 10 12 10.4477 12 11C12 11.5523 11.5523 12 11 12H9C8.44772 12 8 11.5523 8 11Z" />
-                </Svg>
-                <Text style={tailwind('ml-1 text-base text-gray-700 font-normal')}>Move to...</Text>
-              </View>
-            </View>
-          </MenuTrigger>
-          {this.renderBulkEditMoveToPopup()}
-        </Menu>}
+        {isMoveToBtnShown && <TopBarBulkEditMoveToPopup checkNoLinkIdSelected={this.checkNoLinkIdSelected} />}
         <TouchableOpacity onPress={this.onBulkEditCancelBtnClick} style={tailwind('ml-1 justify-center items-center w-10 h-10')}>
           <Svg style={tailwind('text-base text-gray-600 font-normal rounded-full')} width={28} height={28} viewBox="0 0 28 28" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M14 25.2001C20.1857 25.2001 25.2001 20.1857 25.2001 14C25.2001 7.81446 20.1857 2.80005 14 2.80005C7.81446 2.80005 2.80005 7.81446 2.80005 14C2.80005 20.1857 7.81446 25.2001 14 25.2001ZM12.19 10.2101C11.6433 9.66337 10.7568 9.66337 10.2101 10.2101C9.66337 10.7568 9.66337 11.6433 10.2101 12.19L12.0202 14L10.2101 15.8101C9.66337 16.3568 9.66337 17.2433 10.2101 17.79C10.7568 18.3367 11.6433 18.3367 12.19 17.79L14 15.9799L15.8101 17.79C16.3568 18.3367 17.2433 18.3367 17.79 17.79C18.3367 17.2433 18.3367 16.3568 17.79 15.8101L15.9799 14L17.79 12.19C18.3367 11.6433 18.3367 10.7568 17.79 10.2101C17.2433 9.66337 16.3568 9.66337 15.8101 10.2101L14 12.0202L12.19 10.2101Z" />
@@ -317,9 +223,7 @@ const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
     listNameMap: getListNameMap(state),
-    isBulkEditMoveToPopupShown: state.display.isBulkEditMoveToPopupShown,
     selectedLinkIds: state.display.selectedLinkIds,
-    windowHeight: state.window.height,
   };
 };
 
@@ -327,4 +231,4 @@ const mapDispatchToProps = {
   updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(withMenuContext(TopBarBulkEditCommands)));
+export default connect(mapStateToProps, mapDispatchToProps)(TopBarBulkEditCommands);

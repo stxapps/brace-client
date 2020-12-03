@@ -8,18 +8,15 @@ import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-m
 import Svg, { Path } from 'react-native-svg'
 import Clipboard from '@react-native-community/clipboard'
 
+import { updatePopup, moveLinks } from '../actions';
 import {
-  updatePopup, moveLinks,
-} from '../actions';
-import {
-  MY_LIST, TRASH,
-  ADDING, MOVING,
+  MY_LIST, TRASH, ADDING, MOVING,
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
   CARD_ITEM_POPUP_MENU, CONFIRM_DELETE_POPUP,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
 import {
-  ensureContainUrlProtocol, getLongestListNameDisplayName,
+  ensureContainUrlProtocol, getListNameDisplayName,
 } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
@@ -31,6 +28,7 @@ import MenuPopupRenderer from './MenuPopupRenderer';
 class CardItemMenuPopup extends React.PureComponent {
 
   populateMenu() {
+
     const { link, listName, listNameMap } = this.props;
 
     let menu = null;
@@ -103,25 +101,19 @@ class CardItemMenuPopup extends React.PureComponent {
 
   renderMenu() {
 
-    const { safeAreaHeight } = this.props;
-    const { menu: _menu, moveTo: _moveTo } = this.populateMenu();
+    const { listNameMap } = this.props;
+    const { menu, moveTo } = this.populateMenu();
 
-    const _listNameMap = [];
-    _menu.forEach(text => _listNameMap.push({ listName: text, displayName: text }));
-    _moveTo.forEach(listNameObj => _listNameMap.push(listNameObj));
-    // As under Move to... and indent so plus 1
-    const longestDisplayNameLength = getLongestListNameDisplayName(_listNameMap).length + 1;
-
-    let moveTo = null;
-    if (_moveTo && _moveTo.length) {
-      moveTo = (
+    let _moveTo = null;
+    if (moveTo && moveTo.length) {
+      _moveTo = (
         <React.Fragment>
           <Text style={tailwind('py-2 pl-4 pr-4 w-full text-base text-gray-800 font-normal')}>Move to...</Text>
-          {_moveTo.map(listNameObj => {
+          {moveTo.map(listNameObj => {
             const key = MOVE_TO + ' ' + listNameObj.listName;
             return (
               <MenuOption key={key} onSelect={() => this.onMenuPopupClick(key)} customStyles={cache('CIMP_menuOption', { optionWrapper: { padding: 0 } })}>
-                <Text style={tailwind('py-2 pl-8 pr-2 w-full text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
+                <Text style={tailwind('py-2 pl-8 pr-4 w-full text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
               </MenuOption>
             );
           })}
@@ -129,35 +121,34 @@ class CardItemMenuPopup extends React.PureComponent {
       );
     }
 
-    const popupScrollViewStyle = { width: 128, maxHeight: Math.min(256, safeAreaHeight) };
-    if (longestDisplayNameLength > 10) {
-      // Approx 8dp per additional character
-      const width = Math.min(128 + 8 * (longestDisplayNameLength - 10), 256);
-      popupScrollViewStyle.width = width;
-    }
-
     return (
-      <ScrollView style={popupScrollViewStyle}>
-        {_menu.map(text => {
+      <React.Fragment>
+        {menu.map(text => {
+          let displayText = text;
+          if (text === ARCHIVE) displayText = getListNameDisplayName(text, listNameMap);
           return (
             <MenuOption key={text} onSelect={() => this.onMenuPopupClick(text)} customStyles={cache('CIMP_menuOption', { optionWrapper: { padding: 0 } })}>
-              <Text style={tailwind('py-2 pl-4 pr-2 w-full text-base text-gray-800 font-normal')}>{text}</Text>
+              <Text style={tailwind('py-2 pl-4 pr-4 w-full text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{displayText}</Text>
             </MenuOption>
           );
         })}
-        {moveTo && moveTo}
-      </ScrollView>
+        {_moveTo}
+      </React.Fragment>
     );
   }
 
   render() {
 
+    const { safeAreaHeight } = this.props;
+    const popupStyle = {};
+    if (288 > safeAreaHeight - 16) popupStyle.maxHeight = safeAreaHeight - 16;
+
     return (
       /* value of triggerOffsets needs to be aligned with paddings of the three dots */
-      <Menu renderer={MenuPopupRenderer} rendererProps={cache('CIMP_menuRendererProps', { triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 }, popupStyle: tailwind('py-2 bg-white border border-gray-200 rounded-lg shadow-xl') })} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
+      <Menu renderer={MenuPopupRenderer} rendererProps={cache('CIMP_menuRendererProps', { triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 } })} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
         <MenuTrigger>
           {/* View with paddingBottom is required because there is this space on the web. */}
-          <View style={cache('CIMP_triggerView', { paddingBottom: 6 })}>
+          <View style={cache('CIMP_menuTriggerViewStyle', { paddingBottom: 6 })}>
             {/* Change the paddings here, need to change triggerOffsets too */}
             <View style={tailwind('pt-2 pb-0 pl-4 pr-2 flex-shrink-0 flex-grow-0')}>
               <Svg style={tailwind('py-2 w-6 h-10 text-base text-gray-700 font-normal rounded-full')} viewBox="0 0 24 24" stroke="currentColor" fill="none">
@@ -166,8 +157,10 @@ class CardItemMenuPopup extends React.PureComponent {
             </View>
           </View>
         </MenuTrigger>
-        <MenuOptions>
-          {this.renderMenu()}
+        <MenuOptions customStyles={cache('CIMP_menuOptionsCustomStyles', { optionsContainer: [tailwind('py-2 min-w-32 max-w-64 max-h-72 bg-white border border-gray-200 rounded-lg shadow-xl z-41'), popupStyle] }, safeAreaHeight)}>
+          <ScrollView>
+            {this.renderMenu()}
+          </ScrollView>
         </MenuOptions>
       </Menu>
     );
@@ -187,8 +180,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = {
-  updatePopup, moveLinks,
-};
+const mapDispatchToProps = { updatePopup, moveLinks };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(CardItemMenuPopup));

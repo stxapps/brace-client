@@ -193,7 +193,7 @@ class TranslucentAdding extends React.PureComponent {
         this.props.cancelDiedLinks([link.id]);
         link = null;
       }
-      if (!link) this.props.addLink(addingUrl);
+      if (!link) this.props.addLink(addingUrl, MY_LIST, false);
     }
   }
 

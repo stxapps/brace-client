@@ -5,8 +5,7 @@ import { Flow } from 'react-native-animated-spinkit'
 import Svg, { Path } from 'react-native-svg'
 
 import {
-  DOMAIN_NAME,
-  MY_LIST,
+  DOMAIN_NAME, MY_LIST,
   ADDING, ADDED, DIED_ADDING,
   NO_URL, ASK_CONFIRM_URL, VALID_URL,
   SHARE_BORDER_RADIUS,
@@ -153,7 +152,7 @@ class Adding extends React.PureComponent {
         this.props.cancelDiedLinks([link.id]);
         link = null;
       }
-      if (!link) this.props.addLink(addingUrl);
+      if (!link) this.props.addLink(addingUrl, MY_LIST, false);
     }
   }
 

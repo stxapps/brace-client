@@ -42,10 +42,10 @@ export default (state = initialState, action) => {
 
   if (action.type === FETCH_COMMIT) {
 
-    const { settings } = action.payload;
-    if (!settings) {
-      return state;
-    }
+    const { doFetchSettings, settings } = action.payload;
+    if (!doFetchSettings) return state;
+
+    if (!settings) return { ...initialState };
 
     const newState = settings;
     newState.listNameMap = settings.listNameMap.map(listNameObj => {

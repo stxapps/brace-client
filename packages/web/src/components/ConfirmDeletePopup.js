@@ -5,9 +5,7 @@ import {
   updatePopup, deleteLinks, clearSelectedLinkIds, updateBulkEdit,
   deleteListNames, updateDeletingListName,
 } from '../actions';
-import {
-  CONFIRM_DELETE_POPUP,
-} from '../types/const';
+import { CONFIRM_DELETE_POPUP } from '../types/const';
 import { getPopupLink } from '../selectors';
 
 class ConfirmDeletePopup extends React.Component {
@@ -32,7 +30,6 @@ class ConfirmDeletePopup extends React.Component {
     }
 
     if (popupLink) {
-
       const { deleteLinks, updatePopup } = this.props;
 
       deleteLinks([popupLink.id]);
@@ -42,7 +39,6 @@ class ConfirmDeletePopup extends React.Component {
     }
 
     if (selectedLinkIds.length > 0) {
-
       const {
         deleteLinks, updatePopup, clearSelectedLinkIds, updateBulkEdit,
       } = this.props;
@@ -55,7 +51,6 @@ class ConfirmDeletePopup extends React.Component {
     }
 
     if (deletingListName) {
-
       const { deleteListNames, updatePopup, updateDeletingListName } = this.props;
 
       deleteListNames([deletingListName]);
@@ -65,12 +60,12 @@ class ConfirmDeletePopup extends React.Component {
     }
 
     throw new Error('Must not reach here!');
-  };
+  }
 
   onConfirmDeleteCancelBtnClick = () => {
     this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
     this.props.updateDeletingListName(null);
-  };
+  }
 
   render() {
 

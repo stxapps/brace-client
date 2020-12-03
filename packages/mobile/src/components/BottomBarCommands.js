@@ -1,15 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, Text, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import Svg, { SvgXml, Path } from 'react-native-svg';
 import jdenticon from 'jdenticon';
-import Modal from 'react-native-modal';
 
-import { signOut, updatePopup, updateBulkEdit } from '../actions';
+import { updatePopup, updateBulkEdit } from '../actions';
 import {
-  DOMAIN_NAME,
-  ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, SETTINGS_POPUP,
-  BOTTOM_BAR_HEIGHT, MODAL_SUPPORTED_ORIENTATIONS,
+  ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, BOTTOM_BAR_HEIGHT,
 } from '../types/const';
 import { toPx } from '../utils';
 import cache from '../utils/cache';
@@ -50,47 +47,6 @@ class BottomBarCommands extends React.PureComponent {
 
   onProfileBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, true);
-  }
-
-  onProfileCancelBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, false);
-  }
-
-  onSettingsBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, false);
-    this.props.updatePopup(SETTINGS_POPUP, true);
-  }
-
-  onSupportBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, false);
-    Linking.openURL(DOMAIN_NAME + '/#support');
-  }
-
-  onSignOutBtnClick = () => {
-    // No need to update it, will get already unmount
-    //this.props.updatePopup(PROFILE_POPUP, false);
-    this.props.signOut()
-  }
-
-  renderProfilePopup() {
-
-    const { isProfilePopupShown, windowWidth, windowHeight } = this.props;
-
-    return (
-      <Modal isVisible={isProfilePopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onProfileCancelBtnClick} onBackButtonPress={this.onProfileCancelBtnClick} style={tailwind('justify-end m-0')} supportedOrientations={MODAL_SUPPORTED_ORIENTATIONS} backdropOpacity={0.25} animationIn="slideInUp" animationInTiming={200} animationOut="slideOutDown" animationOutTiming={200} useNativeDriver={true}>
-        <View style={tailwind('py-4 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
-          <TouchableOpacity onPress={this.onSettingsBtnClick} style={tailwind('py-4 pl-4 w-full')}>
-            <Text style={tailwind('text-base text-gray-800 font-normal')}>Settings</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={this.onSupportBtnClick} style={tailwind('py-4 pl-4 w-full')}>
-            <Text style={tailwind('text-base text-gray-800 font-normal')}>Support</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={this.onSignOutBtnClick} style={tailwind('py-4 pl-4 w-full')}>
-            <Text style={tailwind('text-base text-gray-800 font-normal')}>Sign out</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
-    );
   }
 
   render() {
@@ -135,7 +91,6 @@ class BottomBarCommands extends React.PureComponent {
             </View>
           </TouchableOpacity>
         </View>
-        {this.renderProfilePopup()}
       </React.Fragment>
     );
   }
@@ -145,12 +100,9 @@ const mapStateToProps = (state, props) => {
   return {
     username: state.user.username,
     userImage: state.user.image,
-    isProfilePopupShown: state.display.isProfilePopupShown,
-    windowWidth: state.window.width,
-    windowHeight: state.window.height,
   };
 };
 
-const mapDispatchToProps = { signOut, updatePopup, updateBulkEdit };
+const mapDispatchToProps = { updatePopup, updateBulkEdit };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BottomBarCommands);

@@ -12,10 +12,22 @@ module.exports = {
         '96': '24rem',
       },
       minWidth: {
+        '28': '7rem',
         '32': '8rem',
       },
       minHeight: {
         '14': '3.5rem',
+      },
+      maxWidth: {
+        '16': '4rem',
+        '40': '10rem',
+        '48': '12rem',
+        '64': '16rem',
+      },
+      maxHeight: {
+        '64': '16rem',
+        '72': '18rem',
+        '80': '20rem',
       },
     }
   },

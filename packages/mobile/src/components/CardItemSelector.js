@@ -11,8 +11,6 @@ import {
 import { makeIsLinkIdSelected, getSelectedLinkIdsLength } from '../selectors';
 import { tailwind } from '../stylesheets/tailwind';
 
-import { withSafeAreaContext } from '.';
-
 class CardItemSelector extends React.Component {
 
   constructor(props) {
@@ -121,8 +119,6 @@ const makeMapStateToProps = () => {
   return mapStateToProps
 };
 
-const mapDispatchToProps = {
-  addSelectedLinkIds, deleteSelectedLinkIds,
-};
+const mapDispatchToProps = { addSelectedLinkIds, deleteSelectedLinkIds };
 
-export default connect(makeMapStateToProps, mapDispatchToProps)(withSafeAreaContext(CardItemSelector));
+export default connect(makeMapStateToProps, mapDispatchToProps)(CardItemSelector);

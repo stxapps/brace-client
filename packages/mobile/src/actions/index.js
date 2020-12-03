@@ -8,7 +8,7 @@ import { batchGetFileWithRetry, batchDeleteFileWithRetry } from '../apis/blockst
 import {
   INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW_SIZE,
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
-  FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
+  FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
   UPDATE_LINKS,
@@ -19,8 +19,8 @@ import {
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
-  UPDATE_STATUS, UPDATE_CARD_ITEM_MENU_POPUP_POSITION, UPDATE_HANDLING_SIGN_IN,
-  UPDATE_BULK_EDITING,
+  UPDATE_EXTRACTED_CONTENTS,
+  UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, CLEAR_SELECTED_LINK_IDS,
   ADD_LIST_NAMES, ADD_LIST_NAMES_COMMIT, ADD_LIST_NAMES_ROLLBACK,
   UPDATE_LIST_NAMES, UPDATE_LIST_NAMES_COMMIT, UPDATE_LIST_NAMES_ROLLBACK,
@@ -39,13 +39,13 @@ import {
   ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
   CONFIRM_DELETE_POPUP, SETTINGS_POPUP, BULK_EDIT_MOVE_TO_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
-  MY_LIST, TRASH, ARCHIVE,
-  DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
+  MY_LIST, TRASH,
+  ADDED, DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   BRACE_EXTRACT_URL, EXTRACT_EXCEEDING_N_URLS,
   N_LINKS, SWAP_LEFT, SWAP_RIGHT,
 } from '../types/const';
 import {
-  _,
+  _, isEqual,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam,
   getUserImageUrl, randomDecor, swapArrayElements,
@@ -181,6 +181,10 @@ const getPopupShownId = (state) => {
   return null;
 };
 
+const isPopupShown = (state) => {
+  return getPopupShownId(state) !== null;
+};
+
 export const updateMenuPopupAsBackPressed = (menuProvider, dispatch, getState) => {
 
   if (menuProvider.isMenuOpen()) {
@@ -270,12 +274,15 @@ export const fetch = (
 
   const listName = getState().display.listName;
 
-  if (doDeleteOldLinksInTrash === null) {
+  // Always call deleteOldlinksintrash and extractContents
+  //   and check at that time to actually do it or not.
+  // So it's real time with updated settings from fetch.
+  /*if (doDeleteOldLinksInTrash === null) {
     doDeleteOldLinksInTrash = getState().settings.doDeleteOldLinksInTrash;
   }
   if (doExtractContents === null) {
     doExtractContents = getState().settings.doExtractContents;
-  }
+  }*/
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
   dispatch({
@@ -296,32 +303,106 @@ export const fetch = (
   });
 };
 
+export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) => {
+
+  const { listName, links } = payload;
+
+  // If the links in state is undefined, null, or an empty object,
+  //   just update the state as no scrolling or popup shown.
+  let _links = getState().links[listName];
+  if (_links === undefined || _links === null || isEqual(_links, {})) {
+    dispatch(updateFetched(payload, meta));
+    return;
+  }
+  _links = _.select(_links, STATUS, ADDED);
+
+  const _ids = Object.keys(_links);
+
+  let doUpdate = false;
+  if (_ids.length !== links.length) doUpdate = true;
+  else {
+    for (const link of links) {
+      if (!_ids.includes(link.id)) {
+        doUpdate = true;
+        break;
+      }
+      if (!isEqual(link.extractedResult, _links[link.id].extractedResult)) {
+        doUpdate = true;
+        break;
+      }
+    }
+  }
+
+  if (!doUpdate) {
+    const { doDeleteOldLinksInTrash, doExtractContents } = meta;
+    dispatch(deleteOldLinksInTrash(doDeleteOldLinksInTrash, doExtractContents));
+    return;
+  }
+
+
+
+  // TODO: BUG
+  const pageYOffset = getState().window.pageYOffset;
+
+
+
+  if (pageYOffset === 0 && !isPopupShown(getState())) {
+    dispatch(updateFetched(payload, meta));
+    return;
+  }
+
+  dispatch({
+    type: CACHE_FETCHED,
+    payload,
+    meta,
+  });
+};
+
+export const updateFetched = (payload, meta, listName = null, doChangeListCount = false) => async (dispatch, getState) => {
+
+  if (!payload) {
+    if (!listName) listName = getState().display.listName;
+
+    const fetched = getState().fetched[listName];
+    if (fetched) ({ payload, meta } = fetched);
+  }
+  if (!payload) return;
+
+  dispatch({
+    type: UPDATE_FETCHED,
+    payload: { ...payload, doChangeListCount },
+    meta,
+  });
+};
+
 export const fetchMore = () => async (dispatch, getState) => {
 
   const listName = getState().display.listName;
   const ids = Object.keys(getState().links[listName]);
 
   const doDescendingOrder = getState().settings.doDescendingOrder;
-  const doExtractContents = getState().settings.doExtractContents;
+
+  // Always call extractContents
+  //   and check at that time to actually do it or not.
+  // So it's real time with updated settings from fetch.
+  //const doExtractContents = getState().settings.doExtractContents;
 
   dispatch({
     type: FETCH_MORE,
     meta: {
       offline: {
         effect: { method: FETCH_MORE, params: { listName, ids, doDescendingOrder } },
-        commit: { type: FETCH_MORE_COMMIT, meta: { doExtractContents } },
+        commit: { type: FETCH_MORE_COMMIT },
         rollback: { type: FETCH_MORE_ROLLBACK },
       }
     },
   });
 };
 
-export const addLink = (url, doExtractContents = false) => async (dispatch, getState) => {
+export const addLink = (url, listName, doExtractContents) => async (dispatch, getState) => {
 
-  let listName = getState().display.listName;
-  if (listName === TRASH || listName === ARCHIVE) {
-    listName = MY_LIST;
-  }
+  if (listName === null) listName = getState().display.listName;
+  if (listName === TRASH) listName = MY_LIST;
 
   // First 2 terms are main of an id, should always be unique.
   // The third term is changed when move around
@@ -338,7 +419,10 @@ export const addLink = (url, doExtractContents = false) => async (dispatch, getS
   const links = [link];
   const payload = { listName, links };
 
-  if (doExtractContents === null) doExtractContents = getState().settings.doExtractContents;
+  // Always call extractContents
+  //   and check at that time to actually do it or not.
+  // So it's real time with updated settings from fetch.
+  //if (doExtractContents === null) doExtractContents = getState().settings.doExtractContents;
 
   dispatch({
     type: ADD_LINKS,
@@ -385,16 +469,18 @@ export const moveLinks = (toListName, ids, fromListName = null) => async (dispat
     meta: {
       offline: {
         effect: { method: ADD_LINKS, params: payload },
-        commit: { type: MOVE_LINKS_ADD_STEP_COMMIT, meta: { fromListName, ids } },
+        commit: {
+          type: MOVE_LINKS_ADD_STEP_COMMIT, meta: { fromListName, fromIds: ids }
+        },
         rollback: { type: MOVE_LINKS_ADD_STEP_ROLLBACK, meta: payload },
       }
     },
   });
 };
 
-export const moveLinksDeleteStep = (listName, ids) => async (dispatch, getState) => {
+export const moveLinksDeleteStep = (listName, ids, toListName, toIds) => async (dispatch, getState) => {
 
-  const payload = { listName, ids };
+  const payload = { listName, ids, toListName, toIds };
 
   dispatch({
     type: MOVE_LINKS_DELETE_STEP,
@@ -495,6 +581,8 @@ export const cancelDiedLinks = (ids, listName = null) => async (dispatch, getSta
 
 export const changeListName = (listName, fetched) => async (dispatch, getState) => {
 
+  const _listName = getState().display.listName;
+
   dispatch({
     type: UPDATE_LIST_NAME,
     payload: listName,
@@ -503,6 +591,8 @@ export const changeListName = (listName, fetched) => async (dispatch, getState) 
   if (!fetched.includes(listName)) {
     dispatch(fetch(false, null));
   }
+
+  dispatch(updateFetched(null, null, _listName));
 };
 
 export const updateSearchString = (searchString) => {
@@ -512,9 +602,16 @@ export const updateSearchString = (searchString) => {
   };
 };
 
-export const deleteOldLinksInTrash = (doExtractContents = false) => async (dispatch, getState) => {
+export const deleteOldLinksInTrash = (doDeleteOldLinksInTrash, doExtractContents) => async (dispatch, getState) => {
 
-  if (doExtractContents === null) doExtractContents = getState().settings.doExtractContents;
+  // If not specified, get from settings. Get it here so that it's the most updated.
+  if (doDeleteOldLinksInTrash === null) {
+    doDeleteOldLinksInTrash = getState().settings.doDeleteOldLinksInTrash;
+  }
+  if (!doDeleteOldLinksInTrash) {
+    dispatch(extractContents(doExtractContents, null, null));
+    return;
+  }
 
   dispatch({
     type: DELETE_OLD_LINKS_IN_TRASH,
@@ -535,14 +632,13 @@ export const updateStatus = (status) => {
   };
 };
 
-export const updateCardItemMenuPopupPosition = (position) => {
-  return {
-    type: UPDATE_CARD_ITEM_MENU_POPUP_POSITION,
-    payload: position,
-  };
-};
+export const extractContents = (doExtractContents, listName, ids) => async (dispatch, getState) => {
 
-export const extractContents = (listName, ids) => async (dispatch, getState) => {
+  // If not specified, get from settings. Get it here so that it's the most updated.
+  if (doExtractContents === null) {
+    doExtractContents = getState().settings.doExtractContents;
+  }
+  if (!doExtractContents) return;
 
   // IMPORTANT: didBeautify is removed as it's not needed
   //   Legacy old link contains didBeautify
@@ -617,6 +713,21 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
         rollback: { type: EXTRACT_CONTENTS_ROLLBACK, meta: payload },
       }
     },
+  });
+};
+
+export const tryUpdateExtractedContents = (payload) => async (dispatch, getState) => {
+
+
+  // BUG
+  const pageYOffset = getState().window.pageYOffset;
+
+
+  const canRerender = pageYOffset === 0 && !isPopupShown(getState());
+
+  dispatch({
+    type: UPDATE_EXTRACTED_CONTENTS,
+    payload: { ...payload, canRerender },
   });
 };
 

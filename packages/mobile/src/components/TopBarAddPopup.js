@@ -81,7 +81,7 @@ class TopBarAddPopup extends React.PureComponent {
     const animConfig = cardItemAnimConfig(safeAreaWidth);
 
     LayoutAnimation.configureNext(animConfig);
-    this.props.addLink(this.state.url, null);
+    this.props.addLink(this.state.url, null, null);
     this.props.ctx.menuActions.closeMenu();
     this.props.updatePopup(ADD_POPUP, false);
   }
@@ -119,16 +119,16 @@ class TopBarAddPopup extends React.PureComponent {
     const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' })
 
     return (
-      <Menu name={ADD_POPUP_MENU_NAME} renderer={renderers.Popover} rendererProps={cache('TBAP_addCommandMenuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onOpen={this.onAddBtnClick} onClose={this.onAddCancelBtnClick}>
+      <Menu name={ADD_POPUP_MENU_NAME} renderer={renderers.Popover} rendererProps={cache('TBAP_menuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onOpen={this.onAddBtnClick} onClose={this.onAddCancelBtnClick}>
         <MenuTrigger>
-          <View style={cache('TBAP_addTriggerView', [tailwind('flex-row justify-center items-center bg-white border border-gray-700 rounded-full shadow-sm'), { height: 32, paddingLeft: 10, paddingRight: 12 }])}>
+          <View style={cache('TBAP_menuTriggerViewStyle', [tailwind('flex-row justify-center items-center bg-white border border-gray-700 rounded-full shadow-sm'), { height: 32, paddingLeft: 10, paddingRight: 12 }])}>
             <Svg style={tailwind('text-base text-gray-700 font-normal')} width={12} height={11} viewBox="0 0 16 14" stroke="currentColor" fill="none">
               <Path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </Svg>
             <Text style={tailwind('ml-1 text-base text-gray-700 font-normal')}>Add</Text>
           </View>
         </MenuTrigger>
-        <MenuOptions customStyles={cache('TBAP_addCommandMenuOptions', { optionsContainer: tailwind('bg-white rounded-lg shadow-xl') })}>
+        <MenuOptions customStyles={cache('TBAP_menuOptionsCustomStyles', { optionsContainer: tailwind('bg-white rounded-lg shadow-xl') })}>
           {this.renderAddPopup()}
         </MenuOptions>
       </Menu>
