@@ -643,7 +643,7 @@ This and CI/CD are very important!
   + Need to provide each history state a number for knowing back press or forward press or tag <a> click
   + ref: stackoverflow.com/questions/8980255/how-do-i-retrieve-if-the-popstate-event-comes-from-back-or-forward-actions-with/49329267#49329267, medium.com/@subwaymatch/disabling-back-button-in-react-with-react-router-v5-34bb316c99d7
 - yarn add reselect
-- yarn add react-stack-grid
+- no need anymore: yarn add react-stack-grid
 - yarn add react-graceful-image
 - yarn add jdenticon
 - yarn add source-map-explorer
@@ -651,6 +651,7 @@ This and CI/CD are very important!
 - yarn add axios
 - yarn add file-saver
 - yarn add @welldone-software/why-did-you-render
+- yarn add framer-motion
 ** attribution
 - tailwindcss, postcss, purgecss
 - uirefactoring
@@ -780,6 +781,7 @@ This and CI/CD are very important!
 - yarn add https://github.com/bracedotto/react-native-receive-sharing-intent#be4d3410fc96ba8e266a2a27535b3d531e56ef57
 - yarn add @welldone-software/why-did-you-render --dev
 - yarn add react-native-fs
+- yarn add react-native-reanimated
 - ios
   + Edit PodFile: ios target 11.0, pad 'Blockstack'
   + Add RNBlockstackSdk to Bracedotto project with Xcode, select create groups
