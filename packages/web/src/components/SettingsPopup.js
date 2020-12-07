@@ -211,8 +211,8 @@ class SettingsPopup extends React.PureComponent {
                 </svg>
               </button>
             </div>
-            <motion.div className="relative flex-1 flex flex-col max-w-48 w-full bg-white" variants={spSideBarFMV}>
-              <div className="pt-5 pb-4 flex-1 h-0 overflow-y-auto">
+            <motion.div className="-ml-8 relative flex-1 flex flex-col max-w-56 w-full bg-white" variants={spSideBarFMV}>
+              <div className="pt-5 pb-4 pl-8 flex-1 h-0 overflow-y-auto">
                 <div className="px-4 flex-shrink-0 flex items-center">
                   <h2 className="text-3xl text-gray-800 font-semibold leading-none">Settings</h2>
                 </div>

@@ -16200,6 +16200,10 @@ img {
   max-width: 12rem;
 }
 
+.max-w-56 {
+  max-width: 14rem;
+}
+
 .max-w-64 {
   max-width: 16rem;
 }
@@ -41692,6 +41696,10 @@ img {
     max-width: 12rem;
   }
 
+  .sm\:max-w-56 {
+    max-width: 14rem;
+  }
+
   .sm\:max-w-64 {
     max-width: 16rem;
   }
@@ -67152,6 +67160,10 @@ img {
 
   .md\:max-w-48 {
     max-width: 12rem;
+  }
+
+  .md\:max-w-56 {
+    max-width: 14rem;
   }
 
   .md\:max-w-64 {
@@ -92616,6 +92628,10 @@ img {
     max-width: 12rem;
   }
 
+  .lg\:max-w-56 {
+    max-width: 14rem;
+  }
+
   .lg\:max-w-64 {
     max-width: 16rem;
   }
@@ -118076,6 +118092,10 @@ img {
 
   .xl\:max-w-48 {
     max-width: 12rem;
+  }
+
+  .xl\:max-w-56 {
+    max-width: 14rem;
   }
 
   .xl\:max-w-64 {
