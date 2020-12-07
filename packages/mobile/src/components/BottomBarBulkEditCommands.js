@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, Text, TouchableOpacity, BackHandler } from 'react-native';
+import { View, Text, TouchableOpacity, BackHandler, Animated } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import {
@@ -15,15 +15,18 @@ import { getListNameMap } from '../selectors';
 import { getListNameDisplayName, toPx } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
+import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
+
 
 class BottomBarBulkEditCommands extends React.Component {
 
   constructor(props) {
     super(props);
 
-    this.state = { isEmptyErrorShown: false };
+    this.state = { isEmptyErrorShown: false, didEmptyErrorCloseAnimEnd: true };
 
     this.backHandler = null;
+    this.emptyErrorScale = new Animated.Value(0);
   }
 
   componentDidMount() {
@@ -35,6 +38,25 @@ class BottomBarBulkEditCommands extends React.Component {
           return true;
         }
       );
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+
+    const { isEmptyErrorShown } = this.state;
+
+    if (!prevState.isEmptyErrorShown && isEmptyErrorShown) {
+      Animated.spring(
+        this.emptyErrorScale, { toValue: 1, ...popupOpenAnimConfig }
+      ).start();
+    }
+
+    if (prevState.isEmptyErrorShown && !isEmptyErrorShown) {
+      Animated.spring(
+        this.emptyErrorScale, { toValue: 0, ...popupCloseAnimConfig }
+      ).start(() => {
+        this.setState({ didEmptyErrorCloseAnimEnd: true });
+      });
     }
   }
 
@@ -63,7 +85,8 @@ class BottomBarBulkEditCommands extends React.Component {
       this.props.listNameMap !== nextProps.listNameMap ||
       this.props.windowWidth !== nextProps.windowWidth ||
       this.props.windowHeight !== nextProps.windowHeight ||
-      this.state.isEmptyErrorShown !== nextState.isEmptyErrorShown
+      this.state.isEmptyErrorShown !== nextState.isEmptyErrorShown ||
+      this.state.didEmptyErrorCloseAnimEnd !== nextState.didEmptyErrorCloseAnimEnd
     ) {
       return true;
     }
@@ -73,7 +96,7 @@ class BottomBarBulkEditCommands extends React.Component {
 
   checkNoLinkIdSelected = () => {
     if (this.props.selectedLinkIds.length === 0) {
-      this.setState({ isEmptyErrorShown: true });
+      this.setState({ isEmptyErrorShown: true, didEmptyErrorCloseAnimEnd: false });
       return true;
     }
 
@@ -134,11 +157,15 @@ class BottomBarBulkEditCommands extends React.Component {
 
   renderEmptyError() {
 
-    if (!this.state.isEmptyErrorShown) return null;
+    if (!this.state.isEmptyErrorShown && this.state.didEmptyErrorCloseAnimEnd) {
+      return null;
+    }
+
+    const emptyErrorStyle = { transform: [{ scale: this.emptyErrorScale }] };
 
     return (
       <View style={cache('BBBEC_emptyError', [tailwind('absolute inset-x-0 justify-center items-center'), { bottom: toPx(BOTTOM_BAR_HEIGHT) }])}>
-        <View style={tailwind('mx-4 mb-3 p-4 max-w-sm bg-red-100 rounded-md')}>
+        <Animated.View style={[tailwind('mx-4 mb-3 p-4 max-w-sm bg-red-100 rounded-md'), emptyErrorStyle]}>
           <View style={tailwind('flex-row w-full')}>
             <View style={tailwind('flex-shrink-0 flex-grow-0')}>
               <Svg style={tailwind('text-base text-red-600 font-normal')} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
@@ -149,7 +176,7 @@ class BottomBarBulkEditCommands extends React.Component {
               <Text style={tailwind('text-sm text-red-800 font-medium leading-5 text-left')}>Please select item(s) first before continuing.</Text>
             </View>
           </View>
-        </View>
+        </Animated.View>
       </View>
     );
   }
@@ -176,7 +203,7 @@ class BottomBarBulkEditCommands extends React.Component {
                   <Path fillRule="evenodd" clipRule="evenodd" d="M3 8H17V15C17 16.1046 16.1046 17 15 17H5C3.89543 17 3 16.1046 3 15V8ZM8 11C8 10.4477 8.44772 10 9 10H11C11.5523 10 12 10.4477 12 11C12 11.5523 11.5523 12 11 12H9C8.44772 12 8 11.5523 8 11Z" />
                 </Svg>
               </View>
-              <Text style={cache('BBBEC_archiveText', [tailwind('w-full text-xs text-gray-700 font-normal leading-4'), { marginTop: 2 }])} numberOfLines={1} ellipsizeMode="tail">{getListNameDisplayName(ARCHIVE, listNameMap)}</Text>
+              <Text style={cache('BBBEC_archiveText', [tailwind('w-full text-xs text-gray-700 font-normal text-center leading-4'), { marginTop: 2 }])} numberOfLines={1} ellipsizeMode="tail">{getListNameDisplayName(ARCHIVE, listNameMap)}</Text>
             </TouchableOpacity>
           </View>}
           {isRemoveBtnShown && <View style={tailwind('p-1 flex-1')}>

@@ -1,23 +1,99 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, Text, TouchableOpacity, Linking } from 'react-native';
-import Modal from 'react-native-modal';
+import { Text, TouchableOpacity, Linking, Animated, BackHandler } from 'react-native';
 
 import { signOut, updatePopup } from '../actions';
-import {
-  DOMAIN_NAME, PROFILE_POPUP, SETTINGS_POPUP, MODAL_SUPPORTED_ORIENTATIONS,
-} from '../types/const';
+import { DOMAIN_NAME, PROFILE_POPUP, SETTINGS_POPUP } from '../types/const';
 import { tailwind } from '../stylesheets/tailwind';
+import { bbModalOpenAnimConfig, bbModalCloseAnimConfig } from '../types/animConfigs';
+
+// height is 231 from onLayout and bottom-8 is 32.
+const PROFILE_POPUP_HEIGHT = 231 - 32;
 
 class BottomBarProfilePopup extends React.PureComponent {
+
+  constructor(props) {
+    super(props);
+
+    this.state = { didCloseAnimEnd: !props.isProfilePopupShown };
+
+    this.profilePopupTranslateY = new Animated.Value(PROFILE_POPUP_HEIGHT);
+    this.profilePopupBackHandler = null;
+  }
+
+  componentDidMount() {
+    this.registerProfilePopupBackHandler(this.props.isProfilePopupShown);
+
+    if (this.props.isProfilePopupShown) {
+      Animated.spring(
+        this.profilePopupTranslateY, { toValue: 0, ...bbModalOpenAnimConfig }
+      ).start();
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+
+    const { isProfilePopupShown } = this.props;
+    if (prevProps.isProfilePopupShown !== isProfilePopupShown) {
+      this.registerProfilePopupBackHandler(isProfilePopupShown);
+    }
+
+    if (!prevProps.isProfilePopupShown && isProfilePopupShown) {
+      Animated.spring(
+        this.profilePopupTranslateY, { toValue: 0, ...bbModalOpenAnimConfig }
+      ).start();
+    }
+
+    if (prevProps.isProfilePopupShown && !isProfilePopupShown) {
+      Animated.spring(
+        this.profilePopupTranslateY,
+        { toValue: PROFILE_POPUP_HEIGHT, ...bbModalCloseAnimConfig }
+      ).start(() => {
+        this.setState({ didCloseAnimEnd: true });
+      });
+    }
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (!this.props.isProfilePopupShown && nextProps.isProfilePopupShown) {
+      if (this.state.didCloseAnimEnd) {
+        this.setState({ didCloseAnimEnd: false })
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    this.registerProfilePopupBackHandler(false);
+  }
+
+  registerProfilePopupBackHandler = (isProfilePopupShown) => {
+    if (isProfilePopupShown) {
+      if (!this.profilePopupBackHandler) {
+        this.profilePopupBackHandler = BackHandler.addEventListener(
+          "hardwareBackPress",
+          () => {
+            if (!this.props.isProfilePopupShown) return false;
+
+            this.onProfileCancelBtnClick();
+            return true;
+          }
+        );
+      }
+    } else {
+      if (this.profilePopupBackHandler) {
+        this.profilePopupBackHandler.remove();
+        this.profilePopupBackHandler = null;
+      }
+    }
+  }
 
   onProfileCancelBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
   }
 
   onSettingsBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, false);
     this.props.updatePopup(SETTINGS_POPUP, true);
+    this.props.updatePopup(PROFILE_POPUP, false);
   }
 
   onSupportBtnClick = () => {
@@ -33,11 +109,14 @@ class BottomBarProfilePopup extends React.PureComponent {
 
   render() {
 
-    const { isProfilePopupShown, windowWidth, windowHeight } = this.props;
+    if (!this.props.isProfilePopupShown && this.state.didCloseAnimEnd) return null;
+
+    const popupStyle = { transform: [{ translateY: this.profilePopupTranslateY }] }
 
     return (
-      <Modal isVisible={isProfilePopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onProfileCancelBtnClick} onBackButtonPress={this.onProfileCancelBtnClick} style={tailwind('justify-end m-0')} supportedOrientations={MODAL_SUPPORTED_ORIENTATIONS} backdropOpacity={0.25} animationIn="slideInUp" animationInTiming={200} animationOut="slideOutDown" animationOutTiming={200} useNativeDriver={true}>
-        <View style={tailwind('py-4 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
+      <React.Fragment>
+        <TouchableOpacity onPress={this.onProfileCancelBtnClick} style={tailwind('absolute inset-0 bg-black opacity-25 z-40')}></TouchableOpacity>
+        <Animated.View style={[tailwind('pt-4 pb-12 absolute inset-x-0 -bottom-8 bg-white border border-gray-200 rounded-t-lg shadow-xl z-41'), popupStyle]}>
           <TouchableOpacity onPress={this.onSettingsBtnClick} style={tailwind('py-4 pl-4 w-full')}>
             <Text style={tailwind('text-base text-gray-800 font-normal')}>Settings</Text>
           </TouchableOpacity>
@@ -47,17 +126,15 @@ class BottomBarProfilePopup extends React.PureComponent {
           <TouchableOpacity onPress={this.onSignOutBtnClick} style={tailwind('py-4 pl-4 w-full')}>
             <Text style={tailwind('text-base text-gray-800 font-normal')}>Sign out</Text>
           </TouchableOpacity>
-        </View>
-      </Modal>
-    )
+        </Animated.View>
+      </React.Fragment>
+    );
   }
 }
 
 const mapStateToProps = (state, props) => {
   return {
     isProfilePopupShown: state.display.isProfilePopupShown,
-    windowWidth: state.window.width,
-    windowHeight: state.window.height,
   };
 };
 

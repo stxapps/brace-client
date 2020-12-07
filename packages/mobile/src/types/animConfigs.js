@@ -19,3 +19,56 @@ export const cardItemAnimConfig = (safeAreaWidth) => {
     LayoutAnimation.Properties.scaleXY
   );
 };
+
+export const popupOpenAnimConfig = {
+  stiffness: 220,
+  damping: 17,
+  mass: 1,
+  useNativeDriver: true,
+};
+
+export const popupCloseAnimConfig = {
+  stiffness: 110,
+  damping: 10,
+  mass: 1,
+  overshootClamping: true,
+  useNativeDriver: true,
+};
+
+export const popoverOpenAnimConfig = {
+  stiffness: 220,
+  damping: 17,
+  mass: 1,
+  useNativeDriver: true,
+};
+
+export const popoverCloseAnimConfig = {
+  stiffness: 110,
+  damping: 10,
+  mass: 1,
+  overshootClamping: true,
+  useNativeDriver: true,
+};
+
+export const bbAnimConfig = {
+  stiffness: 220,
+  damping: 17,
+  mass: 1,
+  overshootClamping: true,
+  useNativeDriver: true,
+};
+
+export const bbModalOpenAnimConfig = {
+  stiffness: 300,
+  damping: 20,
+  mass: 1,
+  useNativeDriver: true,
+};
+
+export const bbModalCloseAnimConfig = {
+  stiffness: 200,
+  damping: 10,
+  mass: 1,
+  overshootClamping: true,
+  useNativeDriver: true,
+};

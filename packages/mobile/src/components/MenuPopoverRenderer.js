@@ -1,8 +1,8 @@
-import { I18nManager, Animated, Easing, StyleSheet, View } from 'react-native';
 import React from 'react';
 import PropTypes from 'prop-types';
+import { I18nManager, Animated, StyleSheet, View } from 'react-native';
 
-import { OPEN_ANIM_DURATION, CLOSE_ANIM_DURATION, USE_NATIVE_DRIVER } from 'react-native-popup-menu/src/constants';
+import { popoverOpenAnimConfig, popoverCloseAnimConfig } from '../types/animConfigs';
 
 const popoverPadding = 7;
 const anchorSize = 15;
@@ -203,75 +203,74 @@ export default class MenuPopoverRenderer extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      scaleAnim: new Animated.Value(0.1),
+      scaleAnim: new Animated.Value(0),
     };
   }
 
   componentDidMount() {
-    Animated.timing(this.state.scaleAnim, {
-      duration: OPEN_ANIM_DURATION,
-      toValue: 1,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: USE_NATIVE_DRIVER,
-    }).start();
+    Animated.spring(
+      this.state.scaleAnim, { toValue: 1, ...popoverOpenAnimConfig }
+    ).start();
   }
 
   close() {
     return new Promise(resolve => {
-      Animated.timing(this.state.scaleAnim, {
-        duration: CLOSE_ANIM_DURATION,
-        toValue: 0,
-        easing: Easing.in(Easing.cubic),
-        useNativeDriver: USE_NATIVE_DRIVER,
-      }).start(resolve);
+      Animated.spring(
+        this.state.scaleAnim, { toValue: 0, ...popoverCloseAnimConfig }
+      ).start(resolve);
     });
   }
 
   render() {
     const {
-      style,
-      children,
-      layouts,
-      anchorStyle,
-      preferredPlacement,
-      placement: userPlacement,
-      ...other
+      style, children, layouts, anchorStyle, preferredPlacement,
+      placement: userPlacement, ...other
     } = this.props;
+    const { scaleAnim } = this.state;
     const isRTL = I18nManager.isRTL;
+    const {
+      position, placement, offset
+    } = computeProperties(layouts, userPlacement, preferredPlacement, isRTL);
+
+    const { height: oHeight, width: oWidth } = layouts.optionsLayout;
+
+    let startTranslateX, startTranslateY;
+    if (placement === 'top') {
+      startTranslateX = 0, startTranslateY = oHeight / 2;
+    } else if (placement === 'bottom') {
+      startTranslateX = 0, startTranslateY = -1 * oHeight / 2;
+    } else if (placement === 'left') {
+      startTranslateX = oWidth / 2, startTranslateY = 0;
+    } else if (placement === 'right') {
+      startTranslateX = -1 * oWidth / 2, startTranslateY = 0;
+    } else throw new Error(`Invalid placement: ${placement}`);
+
+    const changingTranslateX = scaleAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: [startTranslateX, 0],
+    });
+    const changingTranslateY = scaleAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: [startTranslateY, 0],
+    });
+
     const animation = {
-      transform: [{ scale: this.state.scaleAnim }],
-      opacity: this.state.scaleAnim,
+      transform: [
+        { translateX: changingTranslateX },
+        { translateY: changingTranslateY },
+        { scale: scaleAnim },
+      ]
     };
-    const { position, placement, offset } = computeProperties(
-      layouts,
-      userPlacement,
-      preferredPlacement,
-      isRTL,
-    );
+
     return (
-      <Animated.View
-        style={[
-          styles.animated,
-          animation,
-          position,
-          getContainerStyle({ placement, isRTL }),
-        ]}
-        pointerEvents="box-none"
-      >
-        <View
-          style={[
-            styles.anchor,
-            dynamicAnchorStyle({ placement, offset, isRTL }),
-            anchorStyle,
-          ]}
-        />
+      <Animated.View style={[styles.animated, animation, position, getContainerStyle({ placement, isRTL })]} pointerEvents="box-none">
+        <View style={[styles.anchor, dynamicAnchorStyle({ placement, offset, isRTL }), anchorStyle]} />
         <View {...other} style={[styles.options, style]}>
           {children}
         </View>
       </Animated.View>
     );
   }
-
 }
 
 MenuPopoverRenderer.propTypes = {

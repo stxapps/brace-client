@@ -1,32 +1,34 @@
 import React from 'react';
-import { I18nManager, /*Animated, Easing,*/ View, StyleSheet } from 'react-native';
-/*import { OPEN_ANIM_DURATION, CLOSE_ANIM_DURATION, USE_NATIVE_DRIVER } from 'react-native-popup-menu/src/constants';*/
+import { I18nManager, Animated, StyleSheet } from 'react-native';
+
+import { ZERO, CENTER, EDGE, AT_TRIGGER, EDGE_TRIGGER } from '../types/const';
+import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
 
 const axisPosition = (oDim, wDim, tPos, tDim) => {
   // if options are bigger than window dimension, then render at 0
   if (oDim > wDim) {
-    return 0;
+    return [0, ZERO];
   }
   // render at trigger position if possible
   if (tPos + oDim <= wDim) {
-    return tPos;
+    return [tPos, AT_TRIGGER];
   }
   // aligned to the trigger from the bottom (right)
   if (tPos + tDim - oDim >= 0) {
-    return tPos + tDim - oDim;
+    return [tPos + tDim - oDim, EDGE_TRIGGER];
   }
   // compute center position
   let pos = Math.round(tPos + (tDim / 2) - (oDim / 2));
   // check top boundary
   if (pos < 0) {
-    return 0;
+    return [0, ZERO];
   }
   // check bottom boundary
   if (pos + oDim > wDim) {
-    return wDim - oDim;
+    return [wDim - oDim, EDGE];
   }
   // if everything ok, render in center position
-  return pos;
+  return [pos, CENTER];
 };
 
 function fit(pos, len, minPos, maxPos) {
@@ -58,9 +60,10 @@ export const fitPositionIntoSafeArea = (position, layouts) => {
 }
 
 export const computePosition = (layouts, isRTL, triggerOffsets) => {
-  const { windowLayout, triggerLayout, optionsLayout } = layouts;
-  const { x: wX, y: wY, width: wWidth, height: wHeight } = windowLayout;
 
+  const { windowLayout, triggerLayout, optionsLayout } = layouts;
+
+  const { x: wX, y: wY, width: wWidth, height: wHeight } = windowLayout;
   let { x: tX, y: tY, height: tHeight, width: tWidth } = triggerLayout;
   if (triggerOffsets) {
     const { x: xOffset, y: yOffset, width: wOffset, height: hOffset } = triggerOffsets;
@@ -69,59 +72,96 @@ export const computePosition = (layouts, isRTL, triggerOffsets) => {
     tWidth = tWidth + wOffset;
     tHeight = tHeight + hOffset;
   }
-
   const { height: oHeight, width: oWidth } = optionsLayout;
-  const top = axisPosition(oHeight, wHeight, tY - wY, tHeight);
-  const left = axisPosition(oWidth, wWidth, tX - wX, tWidth);
+
+  let [top, topOrigin] = axisPosition(oHeight, wHeight, tY - wY, tHeight);
+  let [left, leftOrigin] = axisPosition(oWidth, wWidth, tX - wX, tWidth);
+
+  const popupMargin = 8;
+  if (topOrigin === ZERO) top += popupMargin;
+  else if (topOrigin === EDGE) top -= popupMargin;
+
+  if (leftOrigin === ZERO) left += popupMargin;
+  else if (leftOrigin === EDGE) left -= popupMargin;
+
   const start = isRTL ? 'right' : 'left';
   const position = { top, [start]: left };
-  return fitPositionIntoSafeArea(position, layouts);
+
+  return { ...fitPositionIntoSafeArea(position, layouts), topOrigin, leftOrigin };
 };
 
 export default class MenuPopupRenderer extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    /*this.state = {
-      scaleAnim: new Animated.Value(0.1),
-    };*/
+    this.state = {
+      scaleAnim: new Animated.Value(0),
+    };
   }
 
   componentDidMount() {
-    /*Animated.timing(this.state.scaleAnim, {
-      duration: OPEN_ANIM_DURATION,
-      toValue: 1,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: USE_NATIVE_DRIVER,
-    }).start();*/
+    Animated.spring(
+      this.state.scaleAnim, { toValue: 1, ...popupOpenAnimConfig }
+    ).start();
   }
 
   close() {
     return new Promise(resolve => {
-      /*Animated.timing(this.state.scaleAnim, {
-        duration: CLOSE_ANIM_DURATION,
-        toValue: 0,
-        easing: Easing.in(Easing.cubic),
-        useNativeDriver: USE_NATIVE_DRIVER,
-      }).start(resolve);*/
-      resolve();
+      Animated.spring(
+        this.state.scaleAnim, { toValue: 0, ...popupCloseAnimConfig }
+      ).start(resolve);
     });
   }
 
   render() {
     const { style, children, layouts, triggerOffsets, popupStyle, ...other } = this.props;
-    /*const animation = {
-      transform: [{ scale: this.state.scaleAnim }],
-      opacity: this.state.scaleAnim,
-    };*/
-    const position = computePosition(layouts, I18nManager.isRTL, triggerOffsets);
+    const { scaleAnim } = this.state;
+    const {
+      topOrigin, leftOrigin, ...position
+    } = computePosition(layouts, I18nManager.isRTL, triggerOffsets);
+
+    const { height: oHeight, width: oWidth } = layouts.optionsLayout;
+
+    let startTranslateX, startTranslateY;
+    if (topOrigin === AT_TRIGGER && leftOrigin === AT_TRIGGER) {
+      startTranslateX = -1 * oWidth / 2;
+      startTranslateY = -1 * oHeight / 2;
+    } else if (topOrigin === AT_TRIGGER && leftOrigin === EDGE_TRIGGER) {
+      startTranslateX = oWidth / 2;
+      startTranslateY = -1 * oHeight / 2;
+    } else if (topOrigin === EDGE_TRIGGER && leftOrigin === AT_TRIGGER) {
+      startTranslateX = -1 * oWidth / 2;
+      startTranslateY = oHeight / 2;
+    } else if (topOrigin === EDGE_TRIGGER && leftOrigin === EDGE_TRIGGER) {
+      startTranslateX = oWidth / 2;
+      startTranslateY = oHeight / 2;
+    } else {
+      startTranslateX = 0, startTranslateY = 0;
+    }
+
+    const changingTranslateX = scaleAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: [startTranslateX, 0],
+    });
+    const changingTranslateY = scaleAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: [startTranslateY, 0],
+    });
+
+    const animation = {
+      transform: [
+        { translateX: changingTranslateX },
+        { translateY: changingTranslateY },
+        { scale: scaleAnim },
+      ]
+    };
+
     return (
-      <View {...other} style={[styles.options, style, popupStyle, /*animation,*/ position]}>
+      <Animated.View {...other} style={[styles.options, style, popupStyle, animation, position]}>
         {children}
-      </View>
+      </Animated.View>
     );
   }
-
 }
 
 // public exports

@@ -1,12 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, Animated } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { updateFetched } from '../actions';
 import { MD_WIDTH } from '../types/const';
 import { tailwind } from '../stylesheets/tailwind';
 import cache from '../utils/cache';
+import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
 
 import { withSafeAreaContext } from '.';
 
@@ -15,8 +16,58 @@ class FetchedPopup extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.initialState = { isShown: true };
-    this.state = { ...this.initialState };
+    this.state = { didCloseAnimEnd: !props.fetched, isShown: true };
+
+    this.popupTranslateY = new Animated.Value(this.getMinusTopPlus(props));
+  }
+
+  componentDidMount() {
+    if (this.props.fetched) {
+      Animated.spring(
+        this.popupTranslateY, { toValue: 0, ...popupOpenAnimConfig }
+      ).start();
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { fetched } = this.props;
+    const { isShown } = this.state;
+
+    if (!prevProps.fetched && fetched) {
+      Animated.spring(
+        this.popupTranslateY, { toValue: 0, ...popupOpenAnimConfig }
+      ).start();
+    }
+
+    if ((prevProps.fetched && !fetched) || (prevState.isShown && !isShown)) {
+      Animated.spring(
+        this.popupTranslateY,
+        { toValue: this.getMinusTopPlus(this.props), ...popupCloseAnimConfig }
+      ).start(() => {
+        this.setState({ didCloseAnimEnd: true });
+      });
+    }
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (this.state.isShown) {
+      if (!this.props.fetched && nextProps.fetched) {
+        if (this.state.didCloseAnimEnd) {
+          this.setState({ didCloseAnimEnd: false });
+        }
+      }
+    }
+  }
+
+  getTop(props) {
+    const { safeAreaWidth, insets } = this.props;
+
+    const initialTop = safeAreaWidth < MD_WIDTH ? 74 : 82;
+    return initialTop + insets.top;
+  }
+
+  getMinusTopPlus(props) {
+    return -1 * (this.getTop(props) + 80);
   }
 
   onUpdateBtnClick = () => {
@@ -30,13 +81,15 @@ class FetchedPopup extends React.PureComponent {
   render() {
 
     const { fetched, safeAreaWidth } = this.props;
-    const { isShown } = this.state;
-
-    if (!fetched || !isShown) return null;
+    const { isShown, didCloseAnimEnd } = this.state;
+    if ((!fetched && didCloseAnimEnd) || (!isShown && didCloseAnimEnd)) return null;
 
     // width is 163 from onLayout
-    const initialTop = safeAreaWidth < MD_WIDTH ? 74 : 82;
-    const style = { top: initialTop, left: (safeAreaWidth - 163) / 2 };
+    const style = {
+      top: this.getTop(this.props),
+      left: (safeAreaWidth - 163) / 2,
+      transform: [{ translateY: this.popupTranslateY }],
+    };
     const updateBtnStyle = {
       paddingTop: 4,
       paddingRight: 0,
@@ -46,7 +99,7 @@ class FetchedPopup extends React.PureComponent {
     const closeBtnStyle = { marginRight: 8 };
 
     return (
-      <View style={cache('FP_view', [tailwind('absolute flex-row items-center bg-blue-500 rounded-full shadow-lg z-30'), style], safeAreaWidth)}>
+      <Animated.View style={cache('FP_view', [tailwind('absolute flex-row items-center bg-blue-500 rounded-full shadow-lg z-30'), style], safeAreaWidth)}>
         <TouchableOpacity onPress={this.onUpdateBtnClick} style={cache('FP_updateBtn', updateBtnStyle)}>
           <Text style={tailwind('text-sm text-white font-normal')}>There is an update</Text>
         </TouchableOpacity>
@@ -55,7 +108,7 @@ class FetchedPopup extends React.PureComponent {
             <Path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
           </Svg>
         </TouchableOpacity>
-      </View>
+      </Animated.View>
     );
   }
 }

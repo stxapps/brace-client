@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, Text, TouchableOpacity, BackHandler } from 'react-native';
+import { View, Text, TouchableOpacity, BackHandler, Animated } from 'react-native';
 import Svg, { Path } from 'react-native-svg'
 
 import {
@@ -13,6 +13,7 @@ import { getListNameMap } from '../selectors';
 import { getListNameDisplayName, toPx } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
+import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
 
 import TopBarBulkEditMoveToPopup from './TopBarBulkEditMoveToPopup';
 
@@ -21,7 +22,9 @@ class TopBarBulkEditCommands extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { isEmptyErrorShown: false };
+    this.state = { isEmptyErrorShown: false, didEmptyErrorCloseAnimEnd: true };
+
+    this.emptyErrorScale = new Animated.Value(0);
     this.backHandler = null;
   }
 
@@ -34,6 +37,25 @@ class TopBarBulkEditCommands extends React.Component {
           return true;
         }
       );
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+
+    const { isEmptyErrorShown } = this.state;
+
+    if (!prevState.isEmptyErrorShown && isEmptyErrorShown) {
+      Animated.spring(
+        this.emptyErrorScale, { toValue: 1, ...popupOpenAnimConfig }
+      ).start();
+    }
+
+    if (prevState.isEmptyErrorShown && !isEmptyErrorShown) {
+      Animated.spring(
+        this.emptyErrorScale, { toValue: 0, ...popupCloseAnimConfig }
+      ).start(() => {
+        this.setState({ didEmptyErrorCloseAnimEnd: true });
+      });
     }
   }
 
@@ -60,7 +82,8 @@ class TopBarBulkEditCommands extends React.Component {
     if (
       this.props.listName !== nextProps.listName ||
       this.props.listNameMap !== nextProps.listNameMap ||
-      this.state.isEmptyErrorShown !== nextState.isEmptyErrorShown
+      this.state.isEmptyErrorShown !== nextState.isEmptyErrorShown ||
+      this.state.didEmptyErrorCloseAnimEnd !== nextState.didEmptyErrorCloseAnimEnd
     ) {
       return true;
     }
@@ -70,7 +93,7 @@ class TopBarBulkEditCommands extends React.Component {
 
   checkNoLinkIdSelected = () => {
     if (this.props.selectedLinkIds.length === 0) {
-      this.setState({ isEmptyErrorShown: true });
+      this.setState({ isEmptyErrorShown: true, didEmptyErrorCloseAnimEnd: false });
       return true;
     }
 
@@ -126,11 +149,15 @@ class TopBarBulkEditCommands extends React.Component {
 
   renderEmptyError() {
 
-    if (!this.state.isEmptyErrorShown) return null;
+    if (!this.state.isEmptyErrorShown && this.state.didEmptyErrorCloseAnimEnd) {
+      return null;
+    }
+
+    const emptyErrorStyle = { transform: [{ scale: this.emptyErrorScale }] };
 
     return (
       <View style={cache('TBBEC_emptyError', [tailwind('absolute inset-x-0 justify-center items-center'), { top: toPx(TOP_HEADER_HEIGHT) }])}>
-        <View style={tailwind('mx-4 mb-3 p-4 max-w-sm bg-red-100 rounded-md')}>
+        <Animated.View style={[tailwind('mx-4 mb-3 p-4 max-w-sm bg-red-100 rounded-md'), emptyErrorStyle]}>
           <View style={tailwind('flex-row w-full')}>
             <View style={tailwind('flex-shrink-0 flex-grow-0')}>
               <Svg style={tailwind('text-base text-red-600 font-normal')} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
@@ -141,7 +168,7 @@ class TopBarBulkEditCommands extends React.Component {
               <Text style={tailwind('text-sm text-red-800 font-medium leading-5 text-left')}>Please select item(s) below first before continuing.</Text>
             </View>
           </View>
-        </View>
+        </Animated.View>
       </View>
     );
   }

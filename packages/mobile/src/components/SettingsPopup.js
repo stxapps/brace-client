@@ -8,9 +8,12 @@ import Svg, { Path } from 'react-native-svg'
 
 import { updatePopup } from '../actions';
 import { MD_WIDTH, SETTINGS_POPUP } from '../types/const';
-import { isEqual } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
+import {
+  popupOpenAnimConfig, popupCloseAnimConfig,
+  bbModalOpenAnimConfig, bbModalCloseAnimConfig,
+} from '../types/animConfigs';
 
 import { withSafeAreaContext } from '.';
 
@@ -31,23 +34,23 @@ const VIEW_MISC = 6;
 // This value comes from max-w-48.
 // If screen width is too narrow, the value might be less than this.
 const SIDE_BAR_WIDTH = 192;
-const SIDE_BAR_DURATION = 225;
 
 class SettingsPopup extends React.PureComponent {
 
   constructor(props) {
     super(props);
 
-    this.initialState = {
+    this.state = {
+      didCloseAnimEnd: !props.isSettingsPopupShown,
       viewId: VIEW_ACCOUNT,
       isSidebarShown: props.safeAreaWidth < MD_WIDTH,
-      didSidebarTransitionEnd: true,
+      didSidebarAnimEnd: true,
       keyboardHeight: 0,
     };
-    this.state = { ...this.initialState };
 
     this.panelContent = React.createRef();
 
+    this.popupScale = new Animated.Value(0);
     this.sidebarTranslateX = new Animated.Value(
       this.state.isSidebarShown ? 0 : SIDE_BAR_WIDTH * -1
     );
@@ -60,6 +63,12 @@ class SettingsPopup extends React.PureComponent {
   componentDidMount() {
     this.registerSettingsPopupBackHandler(this.props.isSettingsPopupShown);
     this.registerKeyboardListeners(this.props.isSettingsPopupShown);
+
+    if (this.props.isSettingsPopupShown) {
+      Animated.spring(
+        this.popupScale, { toValue: 1, ...popupOpenAnimConfig }
+      ).start();
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -70,25 +79,36 @@ class SettingsPopup extends React.PureComponent {
       this.registerKeyboardListeners(isSettingsPopupShown);
     }
 
-    const { isSidebarShown } = this.state;
-    if (!prevState.isSidebarShown && isSidebarShown) {
+    if (!prevProps.isSettingsPopupShown && isSettingsPopupShown) {
+      Animated.spring(
+        this.popupScale, { toValue: 1, ...popupOpenAnimConfig }
+      ).start();
+    }
 
-      Animated.timing(this.sidebarTranslateX, {
-        toValue: 0,
-        duration: SIDE_BAR_DURATION,
-        useNativeDriver: true,
-      }).start(() => {
-        this.setState({ didSidebarTransitionEnd: true });
+    if (prevProps.isSettingsPopupShown && !isSettingsPopupShown) {
+      Animated.spring(
+        this.popupScale, { toValue: 0, ...popupCloseAnimConfig }
+      ).start(() => {
+        this.setState({ didCloseAnimEnd: true });
       });
     }
-    if (prevState.isSidebarShown && !isSidebarShown) {
 
-      Animated.timing(this.sidebarTranslateX, {
-        toValue: SIDE_BAR_WIDTH * -1,
-        duration: SIDE_BAR_DURATION,
-        useNativeDriver: true,
-      }).start(() => {
-        this.setState({ didSidebarTransitionEnd: true });
+    const { isSidebarShown } = this.state;
+
+    if (!prevState.isSidebarShown && isSidebarShown) {
+      Animated.spring(
+        this.sidebarTranslateX, { toValue: 0, ...bbModalOpenAnimConfig }
+      ).start(() => {
+        this.setState({ didSidebarAnimEnd: true });
+      });
+    }
+
+    if (prevState.isSidebarShown && !isSidebarShown) {
+      Animated.spring(
+        this.sidebarTranslateX,
+        { toValue: SIDE_BAR_WIDTH * -1, ...bbModalCloseAnimConfig }
+      ).start(() => {
+        this.setState({ didSidebarAnimEnd: true });
       });
     }
 
@@ -105,8 +125,14 @@ class SettingsPopup extends React.PureComponent {
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (!this.props.isSettingsPopupShown && nextProps.isSettingsPopupShown) {
-      if (!isEqual(this.state, this.initialState)) {
-        this.setState({ ...this.initialState })
+      if (this.state.didCloseAnimEnd) {
+        this.setState({
+          didCloseAnimEnd: false,
+          viewId: VIEW_ACCOUNT,
+          isSidebarShown: nextProps.safeAreaWidth < MD_WIDTH,
+          didSidebarAnimEnd: true,
+          keyboardHeight: 0,
+        })
       }
     }
   }
@@ -177,14 +203,14 @@ class SettingsPopup extends React.PureComponent {
   onSidebarOpenBtnClick = () => {
     this.setState({
       isSidebarShown: true,
-      didSidebarTransitionEnd: false,
+      didSidebarAnimEnd: false,
     });
   }
 
   onSidebarCloseBtnClick = () => {
     this.setState({
       isSidebarShown: false,
-      didSidebarTransitionEnd: false,
+      didSidebarAnimEnd: false,
     });
   }
 
@@ -192,7 +218,7 @@ class SettingsPopup extends React.PureComponent {
     this.setState({
       viewId: VIEW_ACCOUNT,
       isSidebarShown: false,
-      didSidebarTransitionEnd: false,
+      didSidebarAnimEnd: false,
     });
   }
 
@@ -200,7 +226,7 @@ class SettingsPopup extends React.PureComponent {
     this.setState({
       viewId: VIEW_DATA,
       isSidebarShown: false,
-      didSidebarTransitionEnd: false,
+      didSidebarAnimEnd: false,
     });
   }
 
@@ -208,7 +234,7 @@ class SettingsPopup extends React.PureComponent {
     this.setState({
       viewId: VIEW_LISTS,
       isSidebarShown: false,
-      didSidebarTransitionEnd: false,
+      didSidebarAnimEnd: false,
     });
   }
 
@@ -216,7 +242,7 @@ class SettingsPopup extends React.PureComponent {
     this.setState({
       viewId: VIEW_MISC,
       isSidebarShown: false,
-      didSidebarTransitionEnd: false,
+      didSidebarAnimEnd: false,
     });
   }
 
@@ -232,7 +258,7 @@ class SettingsPopup extends React.PureComponent {
     this.setState({
       viewId: VIEW_DATA,
       isSidebarShown: false,
-      didSidebarTransitionEnd: true,
+      didSidebarAnimEnd: true,
     });
   }
 
@@ -247,11 +273,13 @@ class SettingsPopup extends React.PureComponent {
     }
     const panelHeight = appHeight * 0.9;
 
-    const { isSidebarShown, didSidebarTransitionEnd } = this.state;
+    const { isSidebarShown, didSidebarAnimEnd } = this.state;
 
-    const sidebarCanvasStyleClasses = !isSidebarShown && didSidebarTransitionEnd ? 'hidden relative' : 'absolute inset-0 flex flex-row';
+    const sidebarCanvasStyleClasses = !isSidebarShown && didSidebarAnimEnd ? 'hidden relative' : 'absolute inset-0 flex flex-row';
 
-    const sidebarStyle = { transform: [{ translateX: this.sidebarTranslateX }] };
+    const sidebarStyle = {
+      transform: [{ translateX: this.sidebarTranslateX }]
+    };
 
     const changingSidebarCloseBtnOpacity = this.sidebarTranslateX.interpolate({
       inputRange: [SIDE_BAR_WIDTH * -1, 0],
@@ -341,7 +369,7 @@ class SettingsPopup extends React.PureComponent {
                 </Svg>
               </TouchableOpacity>
             </View>
-            <Animated.View style={[tailwind('pt-5 pb-4 flex-1 max-w-48 w-full bg-white'), sidebarStyle]}>
+            <Animated.View style={[tailwind('-ml-8 pt-5 pb-4 pl-8 flex-1 max-w-56 w-full bg-white'), sidebarStyle]}>
               <View style={tailwind('px-4 flex-shrink-0 flex-row items-center')}>
                 <Text style={tailwind('text-3xl text-gray-800 font-semibold')}>Settings</Text>
               </View>
@@ -385,17 +413,18 @@ class SettingsPopup extends React.PureComponent {
     );
 
     const modalStyle = { paddingLeft: 16 + insets.left, paddingRight: 16 + insets.right };
+    const popupStyle = { transform: [{ scale: this.popupScale }] };
 
     return (
       <View style={cache('SP_modal', [tailwind('absolute inset-0 items-center justify-center z-30'), modalStyle], [insets.left, insets.right])}>
         <TouchableWithoutFeedback onPress={this.onPopupCloseBtnClick}>
           <View style={tailwind('absolute inset-0 bg-black opacity-25')}></View>
         </TouchableWithoutFeedback>
-        <View style={tailwind('w-full max-w-4xl bg-white rounded-lg shadow-xl')}>
+        <Animated.View style={[tailwind('w-full max-w-4xl bg-white rounded-lg shadow-xl'), popupStyle]}>
           <View style={tailwind('w-full bg-white rounded-lg overflow-hidden')}>
             {panelWithSidebar}
           </View>
-        </View>
+        </Animated.View>
       </View>
     );
   }
@@ -450,7 +479,7 @@ class SettingsPopup extends React.PureComponent {
 
   render() {
 
-    if (!this.props.isSettingsPopupShown) return null;
+    if (!this.props.isSettingsPopupShown && this.state.didCloseAnimEnd) return null;
 
     const { viewId } = this.state;
 

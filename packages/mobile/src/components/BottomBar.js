@@ -2,10 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Animated } from 'react-native';
 
-import { BOTTOM_BAR_HEIGHT, BOTTOM_BAR_DURATION } from '../types/const';
+import { BOTTOM_BAR_HEIGHT } from '../types/const';
 import { getPopupLink } from '../selectors';
 import { toPx } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
+import { bbAnimConfig } from '../types/animConfigs';
 
 import { withSafeAreaContext } from '.';
 
@@ -27,18 +28,13 @@ class BottomBar extends React.PureComponent {
   componentDidUpdate(prevProps, prevState) {
 
     const { isShown, insets } = this.props;
-    const duration = isShown ? 0 : BOTTOM_BAR_DURATION;
 
     if (prevProps.isShown != isShown) {
 
       const totalHeight = toPx(BOTTOM_BAR_HEIGHT) + insets.bottom;
       const toValue = isShown ? 0 : totalHeight;
 
-      Animated.timing(this.bottomBarTranslateY, {
-        toValue: toValue,
-        duration: duration,
-        useNativeDriver: true,
-      }).start();
+      Animated.spring(this.bottomBarTranslateY, { toValue, ...bbAnimConfig }).start();
     }
   }
 

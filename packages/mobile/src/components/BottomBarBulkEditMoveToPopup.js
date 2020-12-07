@@ -1,19 +1,96 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
-import Modal from 'react-native-modal';
+import {
+  ScrollView, Text, TouchableOpacity, Animated, BackHandler,
+} from 'react-native';
 
 import {
   updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks,
 } from '../actions';
 import {
-  BULK_EDIT_MOVE_TO_POPUP, ARCHIVE, TRASH, MOVE_TO, MODAL_SUPPORTED_ORIENTATIONS,
+  BULK_EDIT_MOVE_TO_POPUP, ARCHIVE, TRASH, MOVE_TO,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
-import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
+import { bbModalOpenAnimConfig, bbModalCloseAnimConfig } from '../types/animConfigs';
 
-class BottomBarBulkEditMoveToPopup extends React.Component {
+class BottomBarBulkEditMoveToPopup extends React.PureComponent {
+
+  constructor(props) {
+    super(props);
+
+    this.state = { didCloseAnimEnd: !props.isBulkEditMoveToPopupShown, popupSize: null };
+    this.popuptranslateY = new Animated.Value(999);
+  }
+
+  componentDidMount() {
+    this.registerPopupBackHandler(this.props.isBulkEditMoveToPopupShown);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+
+    const { isBulkEditMoveToPopupShown } = this.props;
+    if (prevProps.isBulkEditMoveToPopupShown !== isBulkEditMoveToPopupShown) {
+      this.registerPopupBackHandler(isBulkEditMoveToPopupShown);
+    }
+
+    if (!prevState.popupSize && this.state.popupSize) {
+      Animated.spring(
+        this.popuptranslateY, { toValue: 0, ...bbModalOpenAnimConfig }
+      ).start();
+    }
+
+    if (prevProps.isBulkEditMoveToPopupShown && !isBulkEditMoveToPopupShown) {
+      Animated.spring(
+        this.popuptranslateY,
+        { toValue: this.state.popupSize.height, ...bbModalCloseAnimConfig }
+      ).start(() => {
+        this.setState({ didCloseAnimEnd: true });;
+      });
+    }
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (!this.props.isBulkEditMoveToPopupShown && nextProps.isBulkEditMoveToPopupShown) {
+      if (this.state.didCloseAnimEnd) {
+        this.setState({ didCloseAnimEnd: false, popupSize: null })
+        this.popupTranslateY = new Animated.Value(999);
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    this.registerPopupBackHandler(false);
+  }
+
+  registerPopupBackHandler = (isPopupShown) => {
+    if (isPopupShown) {
+      if (!this.popupBackHandler) {
+        this.popupBackHandler = BackHandler.addEventListener(
+          "hardwareBackPress",
+          () => {
+            if (!this.props.isPopupShown) return false;
+
+            this.onBulkEditMoveToCancelBtnClick();
+            return true;
+          }
+        );
+      }
+    } else {
+      if (this.popupBackHandler) {
+        this.popupBackHandler.remove();
+        this.popupBackHandler = null;
+      }
+    }
+  }
+
+  onPopupLayout = (e) => {
+    if (!this.state.popupSize) {
+      const layout = e.nativeEvent.layout;
+      this.popuptranslateY = new Animated.Value(layout.height);
+      this.setState({ popupSize: layout });
+    }
+  }
 
   onBulkEditMoveToPopupClick = (text) => {
     if (!text) return;
@@ -59,17 +136,20 @@ class BottomBarBulkEditMoveToPopup extends React.Component {
 
   render() {
 
-    const { isBulkEditMoveToPopupShown, windowWidth, windowHeight } = this.props;
+    if (!this.props.isBulkEditMoveToPopupShown && this.state.didCloseAnimEnd) return null;
+
+    const popupStyle = { transform: [{ translateY: this.popuptranslateY }] };
 
     return (
-      <Modal isVisible={isBulkEditMoveToPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onBulkEditMoveToCancelBtnClick} onBackButtonPress={this.onBulkEditMoveToCancelBtnClick} style={tailwind('justify-end m-0')} supportedOrientations={MODAL_SUPPORTED_ORIENTATIONS} backdropOpacity={0.25} animationIn="slideInUp" animationInTiming={200} animationOut="slideOutDown" animationOutTiming={200} useNativeDriver={true}>
-        <View style={tailwind('pt-4 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
-          <ScrollView style={cache('BBBEC_moveToScrollView', [tailwind('w-full'), { maxHeight: 288 }])} contentContainerStyle={tailwind('pb-4')}>
+      <React.Fragment>
+        <TouchableOpacity onPress={this.onBulkEditMoveToCancelBtnClick} style={tailwind('absolute inset-0 bg-black opacity-25 z-40')}></TouchableOpacity>
+        <Animated.View onLayout={this.onPopupLayout} style={[tailwind('pt-4 pb-12 absolute inset-x-0 -bottom-8 max-h-80 bg-white border border-gray-200 rounded-t-lg shadow-xl z-41'), popupStyle]}>
+          <ScrollView>
             <Text style={tailwind('py-4 pl-4 pr-4 w-full text-base text-gray-800 font-normal')}>Move to...</Text>
             {this.renderMenu()}
           </ScrollView>
-        </View>
-      </Modal>
+        </Animated.View>
+      </React.Fragment>
     );
   }
 }
@@ -80,8 +160,6 @@ const mapStateToProps = (state, props) => {
     listNameMap: getListNameMap(state),
     isBulkEditMoveToPopupShown: state.display.isBulkEditMoveToPopupShown,
     selectedLinkIds: state.display.selectedLinkIds,
-    windowWidth: state.window.width,
-    windowHeight: state.window.height,
   };
 };
 

@@ -7,11 +7,12 @@ import Svg, { Path } from 'react-native-svg';
 
 import { updatePopup, updateSearchString } from '../actions';
 import {
-  SEARCH_POPUP, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT, BOTTOM_BAR_DURATION,
+  SEARCH_POPUP, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
 } from '../types/const';
 import { getPopupLink } from '../selectors';
 import { toPx } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
+import { bbAnimConfig } from '../types/animConfigs';
 
 import { withSafeAreaContext } from '.';
 
@@ -57,8 +58,6 @@ class BottomBarSearchPopup extends React.PureComponent {
       this.registerKeyboardListeners(isSearchPopupShown);
     }
 
-    const duration = isBottomBarShown ? 0 : BOTTOM_BAR_DURATION;
-
     if (
       prevProps.isBottomBarShown !== isBottomBarShown ||
       prevProps.isSearchPopupShown !== isSearchPopupShown ||
@@ -82,11 +81,15 @@ class BottomBarSearchPopup extends React.PureComponent {
         }
       }
 
-      Animated.timing(this.searchPopupTranslateY, {
-        toValue: toValue,
-        duration: duration,
-        useNativeDriver: true,
-      }).start();
+      if (!prevProps.isBottomBarShown && isBottomBarShown) {
+        Animated.spring(this.searchPopupTranslateY, { toValue, ...bbAnimConfig }).start();
+      } else {
+        Animated.timing(this.searchPopupTranslateY, {
+          toValue: toValue,
+          duration: 0,
+          useNativeDriver: true,
+        }).start();
+      }
     }
   }
 

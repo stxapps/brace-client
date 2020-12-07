@@ -3032,6 +3032,9 @@
 	"max-w-48": {
 		"maxWidth": 192
 	},
+	"max-w-56": {
+		"maxWidth": 224
+	},
 	"max-w-64": {
 		"maxWidth": 256
 	},
