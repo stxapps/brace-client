@@ -5,7 +5,7 @@ import { Text, TouchableOpacity, Linking, Animated, BackHandler } from 'react-na
 import { signOut, updatePopup } from '../actions';
 import { DOMAIN_NAME, PROFILE_POPUP, SETTINGS_POPUP } from '../types/const';
 import { tailwind } from '../stylesheets/tailwind';
-import { bbModalOpenAnimConfig, bbModalCloseAnimConfig } from '../types/animConfigs';
+import { bModalOpenAnimConfig, bModalCloseAnimConfig } from '../types/animConfigs';
 
 // height is 231 from onLayout and bottom-8 is 32.
 const PROFILE_POPUP_HEIGHT = 231 - 32;
@@ -26,7 +26,7 @@ class BottomBarProfilePopup extends React.PureComponent {
 
     if (this.props.isProfilePopupShown) {
       Animated.spring(
-        this.profilePopupTranslateY, { toValue: 0, ...bbModalOpenAnimConfig }
+        this.profilePopupTranslateY, { toValue: 0, ...bModalOpenAnimConfig }
       ).start();
     }
   }
@@ -40,14 +40,14 @@ class BottomBarProfilePopup extends React.PureComponent {
 
     if (!prevProps.isProfilePopupShown && isProfilePopupShown) {
       Animated.spring(
-        this.profilePopupTranslateY, { toValue: 0, ...bbModalOpenAnimConfig }
+        this.profilePopupTranslateY, { toValue: 0, ...bModalOpenAnimConfig }
       ).start();
     }
 
     if (prevProps.isProfilePopupShown && !isProfilePopupShown) {
       Animated.spring(
         this.profilePopupTranslateY,
-        { toValue: PROFILE_POPUP_HEIGHT, ...bbModalCloseAnimConfig }
+        { toValue: PROFILE_POPUP_HEIGHT, ...bModalCloseAnimConfig }
       ).start(() => {
         this.setState({ didCloseAnimEnd: true });
       });

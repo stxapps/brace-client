@@ -32,6 +32,7 @@ import {
   UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
   UPDATE_UPDATE_SETTINGS_PROGRESS,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
+  UPDATE_PAGE_Y_OFFSET,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -1070,6 +1071,13 @@ export const updateUpdateSettingsProgress = (progress) => {
   return {
     type: UPDATE_UPDATE_SETTINGS_PROGRESS,
     payload: progress
+  };
+};
+
+export const updatePageYOffset = (pageYOffset) => {
+  return {
+    type: UPDATE_PAGE_Y_OFFSET,
+    payload: pageYOffset
   };
 };
 

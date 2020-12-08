@@ -58,19 +58,28 @@ export const bbAnimConfig = {
   useNativeDriver: true,
 };
 
-export const bbModalOpenAnimConfig = {
+export const bModalOpenAnimConfig = {
   stiffness: 300,
   damping: 20,
   mass: 1,
   useNativeDriver: true,
 };
 
-export const bbModalCloseAnimConfig = {
+export const bModalCloseAnimConfig = {
   stiffness: 200,
   damping: 10,
   mass: 1,
   overshootClamping: true,
   useNativeDriver: true,
+};
+
+export const spListsAnimConfig = () => {
+  return LayoutAnimation.create(
+    225,
+    LayoutAnimation.Types.easeInEaseOut,
+    /** @ts-ignore */
+    LayoutAnimation.Properties.scaleY
+  );
 };
 
 export const statusPopupAnimConfig = {
@@ -87,13 +96,4 @@ export const statusPopupAnimConfig = {
     overshootClamping: true,
     useNativeDriver: true,
   },
-};
-
-export const splAnimConfig = () => {
-  return LayoutAnimation.create(
-    225,
-    LayoutAnimation.Types.easeInEaseOut,
-    /** @ts-ignore */
-    LayoutAnimation.Properties.scaleY
-  );
 };

@@ -24,7 +24,7 @@ const createSelectorListNameMap = createSelectorCreator(
       Object.keys(val['links']).sort()
     )) return false;
 
-    return prevVal['settings']['listNameMap'] === val['settings']['listNameMap'];
+    return isEqual(prevVal['settings']['listNameMap'], val['settings']['listNameMap']);
   }
 );
 

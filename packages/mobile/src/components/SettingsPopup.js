@@ -12,7 +12,7 @@ import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 import {
   popupOpenAnimConfig, popupCloseAnimConfig,
-  bbModalOpenAnimConfig, bbModalCloseAnimConfig,
+  bModalOpenAnimConfig, bModalCloseAnimConfig,
 } from '../types/animConfigs';
 
 import { withSafeAreaContext } from '.';
@@ -97,7 +97,7 @@ class SettingsPopup extends React.PureComponent {
 
     if (!prevState.isSidebarShown && isSidebarShown) {
       Animated.spring(
-        this.sidebarTranslateX, { toValue: 0, ...bbModalOpenAnimConfig }
+        this.sidebarTranslateX, { toValue: 0, ...bModalOpenAnimConfig }
       ).start(() => {
         this.setState({ didSidebarAnimEnd: true });
       });
@@ -106,7 +106,7 @@ class SettingsPopup extends React.PureComponent {
     if (prevState.isSidebarShown && !isSidebarShown) {
       Animated.spring(
         this.sidebarTranslateX,
-        { toValue: SIDE_BAR_WIDTH * -1, ...bbModalCloseAnimConfig }
+        { toValue: SIDE_BAR_WIDTH * -1, ...bModalCloseAnimConfig }
       ).start(() => {
         this.setState({ didSidebarAnimEnd: true });
       });

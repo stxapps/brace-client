@@ -12,7 +12,7 @@ import {
 } from '../types/const';
 import { getListNameMap } from '../selectors';
 import { tailwind } from '../stylesheets/tailwind';
-import { bbModalOpenAnimConfig, bbModalCloseAnimConfig } from '../types/animConfigs';
+import { bModalOpenAnimConfig, bModalCloseAnimConfig } from '../types/animConfigs';
 
 class BottomBarBulkEditMoveToPopup extends React.PureComponent {
 
@@ -36,14 +36,14 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
 
     if (!prevState.popupSize && this.state.popupSize) {
       Animated.spring(
-        this.popuptranslateY, { toValue: 0, ...bbModalOpenAnimConfig }
+        this.popuptranslateY, { toValue: 0, ...bModalOpenAnimConfig }
       ).start();
     }
 
     if (prevProps.isBulkEditMoveToPopupShown && !isBulkEditMoveToPopupShown) {
       Animated.spring(
         this.popuptranslateY,
-        { toValue: this.state.popupSize.height, ...bbModalCloseAnimConfig }
+        { toValue: this.state.popupSize.height, ...bModalCloseAnimConfig }
       ).start(() => {
         this.setState({ didCloseAnimEnd: true });;
       });

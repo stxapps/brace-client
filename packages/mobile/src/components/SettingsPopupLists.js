@@ -22,7 +22,7 @@ import { getListNameMap } from '../selectors';
 import { canDeleteListNames } from '../apis/blockstack';
 import { validateListNameDisplayName } from '../utils';
 import cache from '../utils/cache';
-import { splAnimConfig } from '../types/animConfigs';
+import { spListsAnimConfig } from '../types/animConfigs';
 import { tailwind } from '../stylesheets/tailwind';
 
 import { withSafeAreaContext } from '.';
@@ -241,7 +241,7 @@ class _ListNameEditor extends React.PureComponent {
 
   onMoveUpBtnClick = () => {
     const { listNameObj, moveListName } = this.props;
-    const animConfig = splAnimConfig();
+    const animConfig = spListsAnimConfig();
 
     LayoutAnimation.configureNext(animConfig);
     moveListName(listNameObj.listName, SWAP_LEFT);
@@ -249,7 +249,7 @@ class _ListNameEditor extends React.PureComponent {
 
   onMoveDownBtnClick = () => {
     const { listNameObj, moveListName } = this.props;
-    const animConfig = splAnimConfig();
+    const animConfig = spListsAnimConfig();
 
     LayoutAnimation.configureNext(animConfig);
     moveListName(listNameObj.listName, SWAP_RIGHT);
