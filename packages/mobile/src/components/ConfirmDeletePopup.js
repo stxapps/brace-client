@@ -10,7 +10,7 @@ import {
 } from '../actions';
 import { CONFIRM_DELETE_POPUP, MODAL_SUPPORTED_ORIENTATIONS } from '../types/const';
 import { getPopupLink } from '../selectors';
-import { cardItemAnimConfig } from '../types/animConfigs';
+import { cardItemAnimConfig, splAnimConfig } from '../types/animConfigs';
 import { tailwind } from '../stylesheets/tailwind';
 
 import { withSafeAreaContext } from '.';
@@ -66,7 +66,9 @@ class ConfirmDeletePopup extends React.Component {
 
     if (deletingListName) {
       const { deleteListNames, updatePopup, updateDeletingListName } = this.props;
+      const animConfig = splAnimConfig();
 
+      LayoutAnimation.configureNext(animConfig);
       deleteListNames([deletingListName]);
       updatePopup(CONFIRM_DELETE_POPUP, false);
       updateDeletingListName(null);

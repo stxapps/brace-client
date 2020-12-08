@@ -11,6 +11,7 @@ import {
 import { SM_WIDTH } from '../types/const';
 import { updateStatus } from '../actions';
 import { tailwind } from '../stylesheets/tailwind';
+import { statusPopupAnimConfig } from '../types/animConfigs';
 
 import { withSafeAreaContext } from '.';
 
@@ -74,33 +75,24 @@ class StatusPopup extends React.PureComponent {
   onTextLayout = (e) => {
     const textWidth = e.nativeEvent.layout.width;
 
-    const mDuration = 300;
-    const cDuration = 100;
-
     if (this.doShow && !this.isShowing) {
-      Animated.timing(this.translateX, {
-        toValue: -1 * textWidth,
-        duration: mDuration,
-        useNativeDriver: true,
-      }).start(() => {
+      Animated.spring(
+        this.translateX, { toValue: -1 * textWidth, ...statusPopupAnimConfig.visible }
+      ).start(() => {
         this.isShowing = true;
       });
     }
     if (!this.doShow && this.isShowing) {
-      Animated.timing(this.translateX, {
-        toValue: 0,
-        duration: mDuration,
-        useNativeDriver: true,
-      }).start(() => {
+      Animated.spring(
+        this.translateX, { toValue: 0, ...statusPopupAnimConfig.hidden, }
+      ).start(() => {
         this.isShowing = false;
       });
     }
     if (this.doShow && this.isShowing && this.textWidth !== textWidth) {
-      Animated.timing(this.translateX, {
-        toValue: -1 * textWidth,
-        duration: cDuration,
-        useNativeDriver: true,
-      }).start();
+      Animated.spring(
+        this.translateX, { toValue: -1 * textWidth, ...statusPopupAnimConfig.visible }
+      ).start();
     }
 
     this.textWidth = textWidth;

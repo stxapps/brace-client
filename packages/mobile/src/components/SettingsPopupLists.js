@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  View, Text, TouchableOpacity, TextInput, Keyboard, Platform,
+  View, Text, TouchableOpacity, TextInput, Keyboard, Platform, LayoutAnimation,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { Circle } from 'react-native-animated-spinkit';
@@ -22,6 +22,7 @@ import { getListNameMap } from '../selectors';
 import { canDeleteListNames } from '../apis/blockstack';
 import { validateListNameDisplayName } from '../utils';
 import cache from '../utils/cache';
+import { splAnimConfig } from '../types/animConfigs';
 import { tailwind } from '../stylesheets/tailwind';
 
 import { withSafeAreaContext } from '.';
@@ -240,11 +241,17 @@ class _ListNameEditor extends React.PureComponent {
 
   onMoveUpBtnClick = () => {
     const { listNameObj, moveListName } = this.props;
+    const animConfig = splAnimConfig();
+
+    LayoutAnimation.configureNext(animConfig);
     moveListName(listNameObj.listName, SWAP_LEFT);
   }
 
   onMoveDownBtnClick = () => {
     const { listNameObj, moveListName } = this.props;
+    const animConfig = splAnimConfig();
+
+    LayoutAnimation.configureNext(animConfig);
     moveListName(listNameObj.listName, SWAP_RIGHT);
   }
 

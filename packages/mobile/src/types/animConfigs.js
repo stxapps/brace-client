@@ -72,3 +72,28 @@ export const bbModalCloseAnimConfig = {
   overshootClamping: true,
   useNativeDriver: true,
 };
+
+export const statusPopupAnimConfig = {
+  visible: {
+    stiffness: 300,
+    damping: 20,
+    mass: 1,
+    useNativeDriver: true,
+  },
+  hidden: {
+    stiffness: 200,
+    damping: 10,
+    mass: 1,
+    overshootClamping: true,
+    useNativeDriver: true,
+  },
+};
+
+export const splAnimConfig = () => {
+  return LayoutAnimation.create(
+    225,
+    LayoutAnimation.Types.easeInEaseOut,
+    /** @ts-ignore */
+    LayoutAnimation.Properties.scaleY
+  );
+};
