@@ -19,8 +19,10 @@ class CardItem extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (
+      this.props.style !== nextProps.style ||
       this.props.link.status !== nextProps.link.status ||
-      !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult)
+      !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
+      this.props.safeAreaWidth !== nextProps.safeAreaWidth
     ) {
       return true;
     }

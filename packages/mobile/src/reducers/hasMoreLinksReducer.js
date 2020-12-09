@@ -2,7 +2,7 @@ import { REHYDRATE } from 'redux-persist/constants'
 
 import {
   FETCH_COMMIT, UPDATE_FETCHED, FETCH_MORE_COMMIT,
-  DELETE_LIST_NAMES_COMMIT,
+  ADD_LIST_NAMES_COMMIT, DELETE_LIST_NAMES_COMMIT,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -73,6 +73,18 @@ export default (state = initialState, action) => {
   if (action.type === FETCH_MORE_COMMIT) {
     const { listName, hasMore } = action.payload;
     return { ...state, [listName]: hasMore };
+  }
+
+  if (action.type === ADD_LIST_NAMES_COMMIT) {
+
+    const { listNameObjs } = action.meta;
+
+    const newState = { ...state };
+    for (const k of listNameObjs.map(obj => obj.listName)) {
+      newState[k] = state[k] || null;
+    }
+
+    return newState;
   }
 
   if (action.type === DELETE_LIST_NAMES_COMMIT) {

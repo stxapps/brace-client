@@ -10,7 +10,7 @@ import {
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
   CANCEL_DIED_LINKS,
   DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT, UPDATE_EXTRACTED_CONTENTS,
-  DELETE_LIST_NAMES_COMMIT,
+  ADD_LIST_NAMES_COMMIT, DELETE_LIST_NAMES_COMMIT,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -127,7 +127,7 @@ export default (state = initialState, action) => {
     );
 
     const newState = { ...state };
-    if (listName in newState) {
+    if (listName in newState) { // Check here to not add already removed list name back
       newState[listName] = { ...processingLinks, ...fetchedLinks };
     }
 
@@ -383,6 +383,8 @@ export default (state = initialState, action) => {
     const newState = {};
 
     for (const listName in state) {
+      // BUG ALERT
+      // _.update return {} if links is null, maybe it's ok, maybe it's not.
       if (action.payload.id === ALL) {
         newState[listName] = _.update(
           state[listName], null, null, IS_POPUP_SHOWN, action.payload.isShown
@@ -396,6 +398,18 @@ export default (state = initialState, action) => {
           [action.payload.isShown, action.payload.anchorPosition]
         );
       }
+    }
+
+    return newState;
+  }
+
+  if (action.type === ADD_LIST_NAMES_COMMIT) {
+
+    const { listNameObjs } = action.meta;
+
+    const newState = { ...state };
+    for (const k of listNameObjs.map(obj => obj.listName)) {
+      newState[k] = state[k] || null;
     }
 
     return newState;
