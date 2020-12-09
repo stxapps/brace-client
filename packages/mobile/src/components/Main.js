@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Animated } from 'react-native';
+import { Animated, AppState } from 'react-native';
 
 import { fetch } from '../actions';
 import {
@@ -37,9 +37,30 @@ class Main extends React.PureComponent {
   }
 
   componentDidMount() {
+    AppState.addEventListener('change', this.handleAppStateChange);
+
     this.props.fetch(null, null, this.doFetchSettings);
     this.fetched.push(this.props.listName);
     this.doFetchSettings = false;
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this.handleAppStateChange);
+  }
+
+  handleAppStateChange = (nextAppState) => {
+    if (nextAppState === 'background') {
+      this.fetched = [];
+      this.doFetchSettings = true;
+    }
+
+    if (nextAppState === 'active') {
+      if (!this.fetched.includes(this.props.listName)) {
+        this.props.fetch(null, null, this.doFetchSettings);
+        this.fetched.push(this.props.listName);
+        this.doFetchSettings = false;
+      }
+    }
   }
 
   getColumnWidth = (safeAreaWidth) => {
