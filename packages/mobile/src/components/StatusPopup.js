@@ -50,49 +50,43 @@ class StatusPopup extends React.PureComponent {
     this.timeout = null;
     this.doClearTimeout = true;
 
-    this.doShow = false;
-    this.isShowing = false;
     this.textWidth = 0;
     this.translateX = new Animated.Value(0);
-  }
+    this.animation = null;
 
-  componentDidMount() {
-    if (this.props.status !== null) this.doShow = true;
+    this.prevProps = { ...props, status: null };
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-
     this.doClearTimeout = this.props.status !== nextProps.status;
-
-    if (this.props.status === null && nextProps.status !== null) {
-      this.doShow = true;
-    }
-    if (this.props.status !== null && nextProps.status === null) {
-      this.doShow = false;
-    }
+    this.prevProps = { ...this.props };
   }
 
   onTextLayout = (e) => {
     const textWidth = e.nativeEvent.layout.width;
 
-    if (this.doShow && !this.isShowing) {
-      Animated.spring(
+    if (!this.prevProps.status && this.props.status) {
+      if (this.animation) this.animation.stop();
+      this.animation = Animated.spring(
         this.translateX, { toValue: -1 * textWidth, ...statusPopupAnimConfig.visible }
-      ).start(() => {
-        this.isShowing = true;
-      });
+      );
+      this.animation.start();
     }
-    if (!this.doShow && this.isShowing) {
-      Animated.spring(
+
+    if (this.prevProps.status && !this.props.status) {
+      if (this.animation) this.animation.stop();
+      this.animation = Animated.spring(
         this.translateX, { toValue: 0, ...statusPopupAnimConfig.hidden, }
-      ).start(() => {
-        this.isShowing = false;
-      });
+      );
+      this.animation.start();
     }
-    if (this.doShow && this.isShowing && this.textWidth !== textWidth) {
-      Animated.spring(
+
+    if (this.prevProps.status && this.props.status && this.textWidth !== textWidth) {
+      if (this.animation) this.animation.stop();
+      this.animation = Animated.spring(
         this.translateX, { toValue: -1 * textWidth, ...statusPopupAnimConfig.visible }
-      ).start();
+      );
+      this.animation.start();
     }
 
     this.textWidth = textWidth;
