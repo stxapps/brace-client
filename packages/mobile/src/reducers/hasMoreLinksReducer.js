@@ -43,7 +43,8 @@ export default (state = initialState, action) => {
     if (doFetchSettings) {
       if (settings) {
         for (const k of settings.listNameMap.map(obj => obj.listName)) {
-          newState[k] = state[k] || null;
+          // Be careful as possible values are true, false, null, undefined
+          newState[k] = state[k] === undefined ? null : state[k];
         }
       } else {
         for (const k of [MY_LIST, TRASH, ARCHIVE]) newState[k] = state[k];
@@ -81,7 +82,8 @@ export default (state = initialState, action) => {
 
     const newState = { ...state };
     for (const k of listNameObjs.map(obj => obj.listName)) {
-      newState[k] = state[k] || null;
+      // Be careful as possible values are true, false, null, undefined
+      newState[k] = state[k] === undefined ? null : state[k];
     }
 
     return newState;

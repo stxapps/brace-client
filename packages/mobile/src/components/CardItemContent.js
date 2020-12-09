@@ -34,6 +34,8 @@ class CardItemContent extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (
+      // Status changed needs to re-render CardItemMenupopup
+      this.props.link.status !== nextProps.link.status ||
       !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
       this.props.safeAreaWidth !== nextProps.safeAreaWidth ||
       this.state.extractedFaviconError !== nextState.extractedFaviconError
