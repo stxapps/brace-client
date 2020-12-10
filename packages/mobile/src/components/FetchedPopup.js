@@ -19,13 +19,16 @@ class FetchedPopup extends React.PureComponent {
     this.state = { didCloseAnimEnd: !props.fetched, isShown: true };
 
     this.popupTranslateY = new Animated.Value(this.getMinusTopPlus(props));
+    this.animation = null;
   }
 
   componentDidMount() {
     if (this.props.fetched) {
-      Animated.spring(
+      if (this.animation) this.animation.stop();
+      this.animation = Animated.spring(
         this.popupTranslateY, { toValue: 0, ...popupOpenAnimConfig }
-      ).start();
+      );
+      this.animation.start();
     }
   }
 
@@ -34,16 +37,20 @@ class FetchedPopup extends React.PureComponent {
     const { isShown } = this.state;
 
     if (!prevProps.fetched && fetched) {
-      Animated.spring(
+      if (this.animation) this.animation.stop();
+      this.animation = Animated.spring(
         this.popupTranslateY, { toValue: 0, ...popupOpenAnimConfig }
-      ).start();
+      );
+      this.animation.start();
     }
 
     if ((prevProps.fetched && !fetched) || (prevState.isShown && !isShown)) {
-      Animated.spring(
+      if (this.animation) this.animation.stop();
+      this.animation = Animated.spring(
         this.popupTranslateY,
         { toValue: this.getMinusTopPlus(this.props), ...popupCloseAnimConfig }
-      ).start(() => {
+      );
+      this.animation.start(() => {
         this.setState({ didCloseAnimEnd: true });
       });
     }
@@ -99,7 +106,7 @@ class FetchedPopup extends React.PureComponent {
     const closeBtnStyle = { marginRight: 8 };
 
     return (
-      <Animated.View style={cache('FP_view', [tailwind('absolute flex-row items-center bg-blue-500 rounded-full shadow-lg z-30'), style], safeAreaWidth)}>
+      <Animated.View style={[tailwind('absolute flex-row items-center bg-blue-500 rounded-full shadow-lg z-30'), style]}>
         <TouchableOpacity onPress={this.onUpdateBtnClick} style={cache('FP_updateBtn', updateBtnStyle)}>
           <Text style={tailwind('text-sm text-white font-normal')}>There is an update</Text>
         </TouchableOpacity>
