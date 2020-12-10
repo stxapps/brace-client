@@ -59,6 +59,7 @@ export default (state = initialState, action) => {
       isListNamePopupShown: false,
       isConfirmDeletePopupShown: false,
       isSettingsPopupShown: false,
+      isFetchingMore: false,
       status: null,
       isHandlingSignIn: false,
       isBulkEditing: false,
