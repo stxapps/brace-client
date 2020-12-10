@@ -16,7 +16,7 @@ class FetchedPopup extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = { didCloseAnimEnd: !props.fetched, isShown: true };
+    this.state = { isShown: true };
 
     this.popupTranslateY = new Animated.Value(this.getMinusTopPlus(props));
     this.animation = null;
@@ -50,19 +50,7 @@ class FetchedPopup extends React.PureComponent {
         this.popupTranslateY,
         { toValue: this.getMinusTopPlus(this.props), ...popupCloseAnimConfig }
       );
-      this.animation.start(() => {
-        this.setState({ didCloseAnimEnd: true });
-      });
-    }
-  }
-
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.state.isShown) {
-      if (!this.props.fetched && nextProps.fetched) {
-        if (this.state.didCloseAnimEnd) {
-          this.setState({ didCloseAnimEnd: false });
-        }
-      }
+      this.animation.start();
     }
   }
 
@@ -87,9 +75,7 @@ class FetchedPopup extends React.PureComponent {
 
   render() {
 
-    const { fetched, safeAreaWidth } = this.props;
-    const { isShown, didCloseAnimEnd } = this.state;
-    if ((!fetched && didCloseAnimEnd) || (!isShown && didCloseAnimEnd)) return null;
+    const { safeAreaWidth } = this.props;
 
     // width is 163 from onLayout
     const style = {
