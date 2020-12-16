@@ -13,7 +13,7 @@ import {
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
   MD_WIDTH,
 } from '../types/const';
-import { getListNameMap, getLinks } from '../selectors';
+import { getListNameMap, getLinks, getIsFetchingMore } from '../selectors';
 import { toPx, multiplyPercent, getListNameDisplayName } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
@@ -346,7 +346,7 @@ const mapStateToProps = (state, props) => {
     listNameMap: getListNameMap(state),
     links: getLinks(state),
     hasMoreLinks: state.hasMoreLinks[listName],
-    isFetchingMore: state.display.isFetchingMore,
+    isFetchingMore: getIsFetchingMore(state),
     searchString: state.display.searchString,
     listChangedCount: state.display.listChangedCount,
     windowWidth: state.window.width,

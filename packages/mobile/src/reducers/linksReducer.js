@@ -3,7 +3,7 @@ import { loop, Cmd } from 'redux-loop';
 
 import {
   UPDATE_POPUP,
-  FETCH_COMMIT, UPDATE_FETCHED, FETCH_MORE_COMMIT,
+  FETCH_COMMIT, UPDATE_FETCHED, FETCH_MORE_COMMIT, UPDATE_FETCHED_MORE,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
   MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
   MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
@@ -23,7 +23,7 @@ import {
 } from '../types/const';
 import { _, isEqual } from '../utils';
 import {
-  tryUpdateFetched, moveLinksDeleteStep, deleteOldLinksInTrash,
+  tryUpdateFetched, tryUpdateFetchedMore, moveLinksDeleteStep, deleteOldLinksInTrash,
   extractContents, tryUpdateExtractedContents,
 } from '../actions';
 
@@ -131,7 +131,7 @@ export default (state = initialState, action) => {
       newState[listName] = { ...processingLinks, ...fetchedLinks };
     }
 
-    const { doDeleteOldLinksInTrash, doExtractContents } = action.meta;
+    const { doDeleteOldLinksInTrash, doExtractContents } = action.theMeta;
 
     return loop(
       newState,
@@ -142,6 +142,15 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === FETCH_MORE_COMMIT) {
+    return loop(
+      state,
+      Cmd.run(
+        tryUpdateFetchedMore(action.payload, action.meta),
+        { args: [Cmd.dispatch, Cmd.getState] })
+    );
+  }
+
+  if (action.type === UPDATE_FETCHED_MORE) {
     const { listName, links } = action.payload;
 
     const newState = { ...state };

@@ -786,3 +786,19 @@ export const getInsertIndex = (listNameObj, oldListNameMap, newListNameMap) => {
 
   return -1;
 };
+
+export const isOfflineAction = (action, actionType, listName = null) => {
+  try {
+    const { method, params } = action.meta.offline.effect;
+    if (method === actionType) {
+      if (listName === null) return true;
+      else {
+        if (params && params.listName === listName) return true;
+      }
+    }
+  } catch (error) {
+    console.log('Invalid offline action: ', action);
+  }
+
+  return false;
+};

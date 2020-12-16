@@ -10,6 +10,7 @@ import {
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
+  UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
   UPDATE_LINKS,
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
@@ -349,7 +350,7 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
   dispatch({
     type: CACHE_FETCHED,
     payload,
-    meta,
+    theMeta: meta,
   });
 };
 
@@ -366,15 +367,17 @@ export const updateFetched = (payload, meta, listName = null, doChangeListCount 
   dispatch({
     type: UPDATE_FETCHED,
     payload: { ...payload, doChangeListCount },
-    meta,
+    theMeta: meta,
   });
 };
 
 export const fetchMore = () => async (dispatch, getState) => {
 
+  const addedDT = Date.now();
+
+  const fetchMoreId = `${addedDT}-${randomString(4)}`;
   const listName = getState().display.listName;
   const ids = Object.keys(getState().links[listName]);
-
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
   // Always call extractContents
@@ -382,15 +385,45 @@ export const fetchMore = () => async (dispatch, getState) => {
   // So it's real time with updated settings from fetch.
   //const doExtractContents = getState().settings.doExtractContents;
 
+  const payload = { fetchMoreId, listName, ids, doDescendingOrder };
+
   dispatch({
     type: FETCH_MORE,
+    payload,
     meta: {
       offline: {
-        effect: { method: FETCH_MORE, params: { listName, ids, doDescendingOrder } },
-        commit: { type: FETCH_MORE_COMMIT },
-        rollback: { type: FETCH_MORE_ROLLBACK },
+        effect: { method: FETCH_MORE, params: payload },
+        commit: { type: FETCH_MORE_COMMIT, meta: payload },
+        rollback: { type: FETCH_MORE_ROLLBACK, meta: payload },
       }
     },
+  });
+};
+
+export const tryUpdateFetchedMore = (payload, meta) => async (dispatch, getState) => {
+
+  const { fetchMoreId, listName } = meta;
+
+  let isInterrupted = false;
+  for (const id in getState().isFetchMoreInterrupted[listName]) {
+    if (id === fetchMoreId) {
+      isInterrupted = getState().isFetchMoreInterrupted[listName][id];
+      break;
+    }
+  }
+
+  if (isInterrupted) {
+    dispatch({
+      type: CANCEL_FETCHED_MORE,
+      payload,
+      theMeta: meta,
+    });
+  }
+
+  dispatch({
+    type: UPDATE_FETCHED_MORE,
+    payload,
+    theMeta: meta,
   });
 };
 

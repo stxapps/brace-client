@@ -7,6 +7,7 @@ import displayReducer from './displayReducer';
 import userReducer from './userReducer';
 import settingsReducer from './settingsReducer';
 import fetchedReducer from './fetchedReducer';
+import isFetchMoreInterrupted from './isFetchMoreInterrupted';
 
 export default combineReducers({
   window: windowReducer,
@@ -16,4 +17,5 @@ export default combineReducers({
   user: userReducer,
   settings: settingsReducer,
   fetched: fetchedReducer,
+  isFetchMoreInterrupted: isFetchMoreInterrupted,
 });

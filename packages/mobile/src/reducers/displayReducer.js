@@ -3,7 +3,6 @@ import { REHYDRATE } from 'redux-persist/constants'
 import {
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK, UPDATE_FETCHED,
-  FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK, EXTRACT_CONTENTS_COMMIT,
@@ -32,7 +31,6 @@ const initialState = {
   isListNamePopupShown: false,
   isConfirmDeletePopupShown: false,
   isSettingsPopupShown: false,
-  isFetchingMore: false,
   status: null,
   isHandlingSignIn: false,
   isBulkEditing: false,
@@ -59,7 +57,6 @@ export default (state = initialState, action) => {
       isListNamePopupShown: false,
       isConfirmDeletePopupShown: false,
       isSettingsPopupShown: false,
-      isFetchingMore: false,
       status: null,
       isHandlingSignIn: false,
       isBulkEditing: false,
@@ -164,14 +161,6 @@ export default (state = initialState, action) => {
       return { ...state, listChangedCount: state.listChangedCount + 1 };
     }
     return state;
-  }
-
-  if (action.type === FETCH_MORE) {
-    return { ...state, isFetchingMore: true };
-  }
-
-  if (action.type === FETCH_MORE_COMMIT || action.type === FETCH_MORE_ROLLBACK) {
-    return { ...state, isFetchingMore: false };
   }
 
   if (action.type === DELETE_OLD_LINKS_IN_TRASH) {

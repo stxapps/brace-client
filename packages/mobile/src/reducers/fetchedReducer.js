@@ -13,7 +13,7 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === CACHE_FETCHED) {
-    const { payload, meta } = action;
+    const { payload, theMeta: meta } = action;
     return { ...state, [payload.listName]: { payload, meta } };
   }
 

@@ -1,7 +1,7 @@
 import { REHYDRATE } from 'redux-persist/constants'
 
 import {
-  FETCH_COMMIT, UPDATE_FETCHED, FETCH_MORE_COMMIT,
+  FETCH_COMMIT, UPDATE_FETCHED, UPDATE_FETCHED_MORE,
   ADD_LIST_NAMES_COMMIT, DELETE_LIST_NAMES_COMMIT,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -71,7 +71,7 @@ export default (state = initialState, action) => {
     return newState;
   }
 
-  if (action.type === FETCH_MORE_COMMIT) {
+  if (action.type === UPDATE_FETCHED_MORE) {
     const { listName, hasMore } = action.payload;
     return { ...state, [listName]: hasMore };
   }
