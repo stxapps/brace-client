@@ -418,6 +418,7 @@ export const tryUpdateFetchedMore = (payload, meta) => async (dispatch, getState
       payload,
       theMeta: meta,
     });
+    return;
   }
 
   dispatch({
@@ -620,6 +621,7 @@ export const changeListName = (listName, fetched) => async (dispatch, getState) 
     dispatch(fetch(false, null));
   }
 
+  dispatch(clearSelectedLinkIds());
   dispatch(updateFetched(null, null, _listName));
 };
 

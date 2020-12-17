@@ -1,7 +1,8 @@
 import { REHYDRATE } from 'redux-persist/constants'
 
 import {
-  FETCH_COMMIT, FETCH_MORE, FETCH_MORE_ROLLBACK, UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE,
+  FETCH_COMMIT, UPDATE_FETCHED,
+  FETCH_MORE, FETCH_MORE_ROLLBACK, UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 
@@ -24,7 +25,7 @@ export default (state = initialState, action) => {
     return { ...initialState, ...action.payload.isFetchMoreInterrupted };
   }
 
-  if (action.type === FETCH_COMMIT) {
+  if (action.type === FETCH_COMMIT || action.type === UPDATE_FETCHED) {
     const { listName } = action.payload;
 
     const newObj = {};
