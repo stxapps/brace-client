@@ -23,7 +23,7 @@
     "react": "16.13.1",
     "react-native": "0.63.2",
     "react-native-animated-spinkit": "^1.4.1",
-    "react-native-blockstack": "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?5662e3d96ac9d927443b623ddb271aa5e434c3ac",
+    "react-native-blockstack": "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?9ba8d2f43a1a17718d00fad0127b22945906c63b",
     "react-native-fast-image": "^8.3.2",
     "react-native-keyboard-manager": "^4.0.13-17",
     "react-native-modal": "^11.5.6",

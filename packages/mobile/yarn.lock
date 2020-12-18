@@ -6001,9 +6001,9 @@ react-native-animated-spinkit@^1.4.1:
   resolved "https://registry.yarnpkg.com/react-native-animated-spinkit/-/react-native-animated-spinkit-1.4.1.tgz#dfad4de395be4b92bbb5b2f636177aa9e3454a78"
   integrity sha512-Cb0r2jPQsOR278mrXCJz1sT3jIy06gNr1nPhwQCVHzw+f0XtypWgH1aa83fNtiSk6747jRQprf8/2J6PD7W4bg==
 
-"react-native-blockstack@https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?5662e3d96ac9d927443b623ddb271aa5e434c3ac":
+"react-native-blockstack@https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?9ba8d2f43a1a17718d00fad0127b22945906c63b":
   version "0.4.6"
-  resolved "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?5662e3d96ac9d927443b623ddb271aa5e434c3ac#13d61ddfe5ff76595120f38a2593029cf8a13aa2"
+  resolved "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?9ba8d2f43a1a17718d00fad0127b22945906c63b#2689825f13379232090b62e09e2a84b5966da66e"
 
 react-native-fast-image@^8.3.2:
   version "8.3.2"
