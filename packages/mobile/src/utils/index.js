@@ -792,9 +792,21 @@ export const isOfflineAction = (action, actionType, listName = null) => {
     const { method, params } = action.meta.offline.effect;
     if (method === actionType) {
       if (listName === null) return true;
-      else {
-        if (params && params.listName === listName) return true;
-      }
+      else return params && params.listName === listName;
+    }
+  } catch (error) {
+    console.log('Invalid offline action: ', action);
+  }
+
+  return false;
+};
+
+export const isOfflineActionWithPayload = (action, actionType, payload = null) => {
+  try {
+    const { method, params } = action.meta.offline.effect;
+    if (method === actionType) {
+      if (payload === null) return true;
+      else return isEqual(payload, params);
     }
   } catch (error) {
     console.log('Invalid offline action: ', action);

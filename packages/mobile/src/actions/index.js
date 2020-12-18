@@ -51,6 +51,7 @@ import {
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam,
   getUserImageUrl, randomDecor, swapArrayElements,
+  isOfflineAction, isOfflineActionWithPayload,
 } from '../utils';
 
 export const init = async (store) => {
@@ -287,17 +288,24 @@ export const fetch = (
   }*/
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
+  const payload = { listName, doDescendingOrder, doFetchSettings };
+
+  // If there is already FETCH with the same payload, no need to dispatch a new one.
+  const outbox = getState().offline.outbox;
+  if (Array.isArray(outbox)) {
+    for (const action of outbox) {
+      if (isOfflineActionWithPayload(action, FETCH, payload)) return;
+    }
+  }
+
   dispatch({
     type: FETCH,
     meta: {
       offline: {
-        effect: {
-          method: FETCH,
-          params: { listName, doDescendingOrder, doFetchSettings }
-        },
+        effect: { method: FETCH, params: payload },
         commit: {
           type: FETCH_COMMIT,
-          meta: { doDeleteOldLinksInTrash, doExtractContents }
+          meta: { doDeleteOldLinksInTrash, doExtractContents },
         },
         rollback: { type: FETCH_ROLLBACK },
       }
@@ -386,6 +394,18 @@ export const fetchMore = () => async (dispatch, getState) => {
   //const doExtractContents = getState().settings.doExtractContents;
 
   const payload = { fetchMoreId, listName, ids, doDescendingOrder };
+
+  // If there is already FETCH with the same list name,
+  //   this fetch more is invalid. Fetch more need to get ids after FETCH_COMMIT.
+  // If there is already FETCH_MORE with the same payload,
+  //   no need to dispatch a new one.
+  const outbox = getState().offline.outbox;
+  if (Array.isArray(outbox)) {
+    for (const action of outbox) {
+      if (isOfflineAction(action, FETCH, listName)) return;
+      if (isOfflineActionWithPayload(action, FETCH_MORE, payload)) return;
+    }
+  }
 
   dispatch({
     type: FETCH_MORE,

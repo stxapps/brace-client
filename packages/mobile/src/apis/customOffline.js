@@ -23,6 +23,8 @@ export const queue = {
 
     // Check if previous action is exactly the same, no need to add more
     //   i.e. user enters address bar again and again.
+    // This should be done in actions
+    //   so subsequence actions like COMMIT and ROLLBACK is dispatched appropriately.
 
     // The same action FETCH might have different list name.
     // One action FETCH might be followed by other actions and others might not.
@@ -31,35 +33,16 @@ export const queue = {
 
     if (getMethod(action) === FETCH && array.length) {
 
-      // If there is already FETCH with the same list name,
-      //   no need to add the new action.
-      const found = array.some(el => {
-        if (getMethod(el) === FETCH && getParams(el) === getParams(action)) return true;
-        return false;
-      });
-      if (found) return [...array];
-
       // Filter out FETCH_MORE with the same list name which is not at index 0
+      // This is dangerous as there will be no COMMIT or ROLLBACK dispatched!
       let newArray = array.slice(1).filter(el => {
         if (getMethod(el) === FETCH_MORE) {
-          if (getParams(el).listName === getParams(action)) return false;
+          if (getParams(el).listName === getParams(action).listName) return false;
         }
         return true
       });
       if (array[0]) newArray = [array[0], ...newArray];
       return [...newArray, action]
-    }
-
-    if (getMethod(action) === FETCH_MORE && array.length) {
-      // If there is already FETCH_MORE with the same params,
-      //   no need to add the new action.
-      const found = array.some(el => {
-        if (getMethod(el) === FETCH_MORE) {
-          if (isEqual(getParams(el), getParams(action))) return true;
-        }
-        return false;
-      });
-      if (found) return [...array];
     }
 
     return [...array, action];

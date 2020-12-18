@@ -44,6 +44,9 @@ export default (state = initialState, action) => {
     return newState;
   }
 
+  // This action and FETCH_MORE_COMMIT might not be called
+  //   if FETCH_MORE action is filtered out in offline's enqueue.
+  // So the data would leave here until sign out but should be fine.
   if (action.type === FETCH_MORE_ROLLBACK) {
     const { fetchMoreId, listName } = action.meta;
 
