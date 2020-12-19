@@ -416,7 +416,7 @@ class SettingsPopup extends React.PureComponent {
     const popupStyle = { transform: [{ scale: this.popupScale }] };
 
     return (
-      <View style={cache('SP_modal', [tailwind('absolute inset-0 items-center justify-center z-30'), modalStyle], [insets.left, insets.right])}>
+      <View style={cache('SP_modal', [tailwind('absolute inset-0 items-center justify-center shadow-xl z-30'), modalStyle], [insets.left, insets.right])}>
         <TouchableWithoutFeedback onPress={this.onPopupCloseBtnClick}>
           <View style={tailwind('absolute inset-0 bg-black opacity-25')}></View>
         </TouchableWithoutFeedback>

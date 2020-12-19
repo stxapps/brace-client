@@ -243,7 +243,7 @@ class _ListNameEditor extends React.PureComponent {
     const { listNameObj, moveListName } = this.props;
     const animConfig = spListsAnimConfig();
 
-    LayoutAnimation.configureNext(animConfig);
+    if (Platform.OS === 'ios') LayoutAnimation.configureNext(animConfig);
     moveListName(listNameObj.listName, SWAP_LEFT);
   }
 
@@ -251,7 +251,7 @@ class _ListNameEditor extends React.PureComponent {
     const { listNameObj, moveListName } = this.props;
     const animConfig = spListsAnimConfig();
 
-    LayoutAnimation.configureNext(animConfig);
+    if (Platform.OS === 'ios') LayoutAnimation.configureNext(animConfig);
     moveListName(listNameObj.listName, SWAP_RIGHT);
   }
 

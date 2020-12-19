@@ -88,8 +88,8 @@ class Main extends React.PureComponent {
         <TopBar rightPane={topBarRightPane} isListNameShown={true} fetched={this.fetched} scrollY={this.scrollY} />
         {columnWidth === PC_100 && <BottomBar />}
         <FetchedPopup />
-        <ConfirmDeletePopup />
         <SettingsPopup />
+        <ConfirmDeletePopup />
       </React.Fragment>
     );
   }
