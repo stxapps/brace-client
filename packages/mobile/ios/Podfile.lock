@@ -1,5 +1,5 @@
 PODS:
-  - Blockstack (1.0.1):
+  - Blockstack (1.0.2):
     - CryptoSwift (= 0.15.0)
     - PromisesSwift
     - STRegex
@@ -346,7 +346,7 @@ PODS:
     - Yoga (~> 1.14)
 
 DEPENDENCIES:
-  - Blockstack
+  - Blockstack (from `https://github.com/bracedotto/blockstack-ios.git`, commit `00251a2`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/Libraries/FBReactNativeSpec`)
@@ -406,7 +406,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - Blockstack
     - boost-for-react-native
     - CocoaAsyncSocket
     - CocoaLibEvent
@@ -429,6 +428,9 @@ SPEC REPOS:
     - YogaKit
 
 EXTERNAL SOURCES:
+  Blockstack:
+    :commit: 00251a2
+    :git: https://github.com/bracedotto/blockstack-ios.git
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   FBLazyVector:
@@ -498,8 +500,13 @@ EXTERNAL SOURCES:
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
+CHECKOUT OPTIONS:
+  Blockstack:
+    :commit: 00251a2
+    :git: https://github.com/bracedotto/blockstack-ios.git
+
 SPEC CHECKSUMS:
-  Blockstack: 8dadf3fb26408d2a102690a8e45fc1068b403ab5
+  Blockstack: ec72dd5a120065f2f9bdcb72c073c3b428a73713
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   CocoaAsyncSocket: 694058e7c0ed05a9e217d1b3c7ded962f4180845
   CocoaLibEvent: 2fab71b8bd46dd33ddb959f7928ec5909f838e3f
@@ -555,6 +562,6 @@ SPEC CHECKSUMS:
   Yoga: 7740b94929bbacbddda59bf115b5317e9a161598
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 7af9eb8a24acf050656a219d95ef38d2b32723a2
+PODFILE CHECKSUM: 219930efd254c24f5de6591b140a97783fc5a1ae
 
 COCOAPODS: 1.9.3
