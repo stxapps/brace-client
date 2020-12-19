@@ -94,7 +94,7 @@ class TopBarAddPopup extends React.PureComponent {
     const { url, msg, isAskingConfirm } = this.state;
 
     return (
-      <View style={tailwind('px-4 pt-6 pb-6 w-72 md:w-96', safeAreaWidth)}>
+      <View style={tailwind('px-4 pt-6 pb-5 w-72 md:w-96', safeAreaWidth)}>
         <View style={tailwind('flex-row justify-start items-center')}>
           <Text style={tailwind('flex-none text-sm font-medium text-gray-700')}>Url:</Text>
           {/* onKeyPress event for Enter key only if there is multiline TextInput */}

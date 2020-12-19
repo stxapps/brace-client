@@ -77,12 +77,13 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
     // As popover has an anchor laying out with flex (different to Popup),
     //   max height is used for height.
     // 39dp per row plus padding
+    const textHeight = Platform.select({ ios: 36, android: 39 })
     const popupStyle = {
-      height: Math.min((39 * moveTo.length) + 16, 256, safeAreaHeight - 16),
+      height: Math.min((textHeight * moveTo.length) + 16, 256, safeAreaHeight - 16),
     };
 
     return (
-      <MenuOptions customStyles={cache('TBBEMTP_menuOptionsCustomStyles', { optionsContainer: [tailwind('py-2 min-w-28 max-w-64 bg-white rounded-lg shadow-xl z-41'), popupStyle] }, safeAreaHeight)}>
+      <MenuOptions customStyles={cache('TBBEMTP_menuOptionsCustomStyles', { optionsContainer: [tailwind('py-2 min-w-28 max-w-64 bg-white rounded-lg shadow-xl'), popupStyle] }, [moveTo.length, safeAreaHeight])}>
         <ScrollView>
           {this.renderMenu(moveTo)}
         </ScrollView>
