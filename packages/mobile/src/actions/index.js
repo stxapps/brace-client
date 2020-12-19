@@ -402,7 +402,9 @@ export const fetchMore = () => async (dispatch, getState) => {
   const outbox = getState().offline.outbox;
   if (Array.isArray(outbox)) {
     for (const action of outbox) {
-      if (isOfflineAction(action, FETCH, listName)) return;
+      // It's possible that FETCH is cached
+      //   and user wants to fetch more continue from current state.
+      //if (isOfflineAction(action, FETCH, listName)) return;
       if (isOfflineActionWithPayload(action, FETCH_MORE, payload)) return;
     }
   }

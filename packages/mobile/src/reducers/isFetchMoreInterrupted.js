@@ -1,7 +1,7 @@
 import { REHYDRATE } from 'redux-persist/constants'
 
 import {
-  FETCH_COMMIT, UPDATE_FETCHED,
+  UPDATE_FETCHED,
   FETCH_MORE, FETCH_MORE_ROLLBACK, UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -25,7 +25,7 @@ export default (state = initialState, action) => {
     return { ...initialState, ...action.payload.isFetchMoreInterrupted };
   }
 
-  if (action.type === FETCH_COMMIT || action.type === UPDATE_FETCHED) {
+  if (action.type === UPDATE_FETCHED) {
     const { listName } = action.payload;
 
     const newObj = {};
@@ -59,6 +59,8 @@ export default (state = initialState, action) => {
     return { ...state, [listName]: newObj };
   }
 
+  // These actions might not be called if tryUpdateFetched doesn't do update.
+  // So the data would leave here until sign out but should be fine.
   if (action.type === UPDATE_FETCHED_MORE || action.type === CANCEL_FETCHED_MORE) {
     const { fetchMoreId, listName } = action.theMeta;
 

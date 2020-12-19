@@ -9,10 +9,6 @@ import {
 } from '../types/actionTypes';
 import userSession from '../userSession';
 import { effect as blockstackEffect } from './blockstack';
-import { isEqual } from '../utils';
-
-const getMethod = action => action.meta.offline.effect.method;
-const getParams = action => action.meta.offline.effect.params;
 
 export const queue = {
   ...defaultQueue,
@@ -31,7 +27,9 @@ export const queue = {
 
     // Also true for FETCH_MORE
 
-    if (getMethod(action) === FETCH && array.length) {
+    // It's possible that FETCH is cached
+    //   and user wants to fetch more continue from current state.
+    /*if (getMethod(action) === FETCH && array.length) {
 
       // Filter out FETCH_MORE with the same list name which is not at index 0
       // This is dangerous as there will be no COMMIT or ROLLBACK dispatched!
@@ -43,7 +41,7 @@ export const queue = {
       });
       if (array[0]) newArray = [array[0], ...newArray];
       return [...newArray, action]
-    }
+    }*/
 
     return [...array, action];
   },
