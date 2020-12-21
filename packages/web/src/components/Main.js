@@ -86,9 +86,9 @@ class Main extends React.PureComponent {
         <TopBar rightPane={topBarRightPane} isListNameShown={true} fetched={this.fetched} />
         {columnWidth === PC_100 && <BottomBar />}
         <FetchedPopup />
+        <SettingsPopup />
         <CardItemMenuPopup />
         <ConfirmDeletePopup />
-        <SettingsPopup />
       </React.Fragment>
     );
   }

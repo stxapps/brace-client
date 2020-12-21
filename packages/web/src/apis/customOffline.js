@@ -8,10 +8,6 @@ import {
   UPDATE_SETTINGS,
 } from '../types/actionTypes';
 import { effect as blockstackEffect } from './blockstack';
-import { isEqual } from '../utils';
-
-const getMethod = action => action.meta.offline.effect.method;
-const getParams = action => action.meta.offline.effect.params;
 
 export const queue = {
   ...defaultQueue,
@@ -22,44 +18,29 @@ export const queue = {
 
     // Check if previous action is exactly the same, no need to add more
     //   i.e. user enters address bar again and again.
+    // This should be done in actions
+    //   so subsequence actions like COMMIT and ROLLBACK is dispatched appropriately.
 
     // The same action FETCH might have different list name.
     // One action FETCH might be followed by other actions and others might not.
 
     // Also true for FETCH_MORE
 
-    if (getMethod(action) === FETCH && array.length) {
-
-      // If there is already FETCH with the same list name,
-      //   no need to add the new action.
-      const found = array.some(el => {
-        if (getMethod(el) === FETCH && getParams(el) === getParams(action)) return true;
-        return false;
-      });
-      if (found) return [...array];
+    // It's possible that FETCH is cached
+    //   and user wants to fetch more continue from current state.
+    /*if (getMethod(action) === FETCH && array.length) {
 
       // Filter out FETCH_MORE with the same list name which is not at index 0
+      // This is dangerous as there will be no COMMIT or ROLLBACK dispatched!
       let newArray = array.slice(1).filter(el => {
         if (getMethod(el) === FETCH_MORE) {
-          if (getParams(el).listName === getParams(action)) return false;
+          if (getParams(el).listName === getParams(action).listName) return false;
         }
         return true
       });
       if (array[0]) newArray = [array[0], ...newArray];
       return [...newArray, action]
-    }
-
-    if (getMethod(action) === FETCH_MORE && array.length) {
-      // If there is already FETCH_MORE with the same params,
-      //   no need to add the new action.
-      const found = array.some(el => {
-        if (getMethod(el) === FETCH_MORE) {
-          if (isEqual(getParams(el), getParams(action))) return true;
-        }
-        return false;
-      });
-      if (found) return [...array];
-    }
+    }*/
 
     return [...array, action];
   }

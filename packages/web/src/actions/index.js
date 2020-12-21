@@ -10,6 +10,7 @@ import {
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
+  UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
   UPDATE_LINKS,
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
@@ -51,6 +52,7 @@ import {
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam, extractUrl, getUrlPathQueryHash,
   getUserImageUrl, randomDecor, swapArrayElements,
+  isOfflineActionWithPayload,
 } from '../utils';
 
 export const init = async (store) => {
@@ -345,17 +347,24 @@ export const fetch = (
   }*/
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
+  const payload = { listName, doDescendingOrder, doFetchSettings };
+
+  // If there is already FETCH with the same payload, no need to dispatch a new one.
+  const outbox = getState().offline.outbox;
+  if (Array.isArray(outbox)) {
+    for (const action of outbox) {
+      if (isOfflineActionWithPayload(action, FETCH, payload)) return;
+    }
+  }
+
   dispatch({
     type: FETCH,
     meta: {
       offline: {
-        effect: {
-          method: FETCH,
-          params: { listName, doDescendingOrder, doFetchSettings }
-        },
+        effect: { method: FETCH, params: payload },
         commit: {
           type: FETCH_COMMIT,
-          meta: { doDeleteOldLinksInTrash, doExtractContents }
+          meta: { doDeleteOldLinksInTrash, doExtractContents },
         },
         rollback: { type: FETCH_ROLLBACK },
       }
@@ -366,6 +375,11 @@ export const fetch = (
 export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) => {
 
   const { listName, links } = payload;
+
+  if (listName !== getState().display.listName) {
+    dispatch(updateFetched(payload, meta));
+    return;
+  }
 
   // If the links in state is undefined, null, or an empty object,
   //   just update the state as no scrolling or popup shown.
@@ -408,7 +422,7 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
   dispatch({
     type: CACHE_FETCHED,
     payload,
-    meta,
+    theMeta: meta,
   });
 };
 
@@ -425,15 +439,17 @@ export const updateFetched = (payload, meta, listName = null, doChangeListCount 
   dispatch({
     type: UPDATE_FETCHED,
     payload: { ...payload, doChangeListCount },
-    meta,
+    theMeta: meta,
   });
 };
 
 export const fetchMore = () => async (dispatch, getState) => {
 
+  const addedDT = Date.now();
+
+  const fetchMoreId = `${addedDT}-${randomString(4)}`;
   const listName = getState().display.listName;
   const ids = Object.keys(getState().links[listName]);
-
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
   // Always call extractContents
@@ -441,15 +457,60 @@ export const fetchMore = () => async (dispatch, getState) => {
   // So it's real time with updated settings from fetch.
   //const doExtractContents = getState().settings.doExtractContents;
 
+  const payload = { fetchMoreId, listName, ids, doDescendingOrder };
+
+  // If there is already FETCH with the same list name,
+  //   this fetch more is invalid. Fetch more need to get ids after FETCH_COMMIT.
+  // If there is already FETCH_MORE with the same payload,
+  //   no need to dispatch a new one.
+  const outbox = getState().offline.outbox;
+  if (Array.isArray(outbox)) {
+    for (const action of outbox) {
+      // It's possible that FETCH is cached
+      //   and user wants to fetch more continue from current state.
+      //if (isOfflineAction(action, FETCH, listName)) return;
+      if (isOfflineActionWithPayload(action, FETCH_MORE, payload)) return;
+    }
+  }
+
   dispatch({
     type: FETCH_MORE,
+    payload,
     meta: {
       offline: {
-        effect: { method: FETCH_MORE, params: { listName, ids, doDescendingOrder } },
-        commit: { type: FETCH_MORE_COMMIT },
-        rollback: { type: FETCH_MORE_ROLLBACK },
+        effect: { method: FETCH_MORE, params: payload },
+        commit: { type: FETCH_MORE_COMMIT, meta: payload },
+        rollback: { type: FETCH_MORE_ROLLBACK, meta: payload },
       }
     },
+  });
+};
+
+export const tryUpdateFetchedMore = (payload, meta) => async (dispatch, getState) => {
+
+  const { fetchMoreId, listName } = meta;
+
+  let isInterrupted = false;
+  for (const id in getState().isFetchMoreInterrupted[listName]) {
+    if (id === fetchMoreId) {
+      isInterrupted = getState().isFetchMoreInterrupted[listName][id];
+      break;
+    }
+  }
+
+  if (isInterrupted) {
+    dispatch({
+      type: CANCEL_FETCHED_MORE,
+      payload,
+      theMeta: meta,
+    });
+    return;
+  }
+
+  dispatch({
+    type: UPDATE_FETCHED_MORE,
+    payload,
+    theMeta: meta,
   });
 };
 
@@ -646,6 +707,7 @@ export const changeListName = (listName, fetched) => async (dispatch, getState) 
     dispatch(fetch(false, null));
   }
 
+  dispatch(clearSelectedLinkIds());
   dispatch(updateFetched(null, null, _listName));
 };
 
@@ -734,10 +796,17 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
     throw new Error(`Invalid parameters: ${listName}, ${ids}`);
   }
 
-  const res = await axios.post(
-    BRACE_EXTRACT_URL,
-    { urls: links.map(link => link.url) },
-  );
+  let res;
+  try {
+    res = await axios.post(
+      BRACE_EXTRACT_URL,
+      { urls: links.map(link => link.url) },
+    );
+  } catch (error) {
+    console.log('Error when contact Brace server to extract contents with links: ', links, ' Error: ', error);
+    return;
+  }
+
   const extractedResults = res.data.extractedResults;
 
   const extractedLinks = [];
