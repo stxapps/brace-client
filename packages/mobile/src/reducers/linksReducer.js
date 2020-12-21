@@ -119,15 +119,17 @@ export default (state = initialState, action) => {
   if (action.type === UPDATE_FETCHED) {
     const { listName, links } = action.payload;
 
-    const processingLinks = _.exclude(state[listName], STATUS, ADDED);
-    const fetchedLinks = _.copyAttr(
-      toObjAndAddAttrs(links, ADDED, false, null),
-      state[listName],
-      [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]
-    );
-
-    const newState = { ...state };
+    let newState = state;
     if (listName in newState) { // Check here to not add already removed list name back
+
+      const processingLinks = _.exclude(state[listName], STATUS, ADDED);
+      const fetchedLinks = _.copyAttr(
+        toObjAndAddAttrs(links, ADDED, false, null),
+        state[listName],
+        [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]
+      );
+
+      newState = { ...state };
       newState[listName] = { ...processingLinks, ...fetchedLinks };
     }
 

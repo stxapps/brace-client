@@ -51,7 +51,7 @@ import {
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam,
   getUserImageUrl, randomDecor, swapArrayElements,
-  isOfflineAction, isOfflineActionWithPayload,
+  isOfflineActionWithPayload,
 } from '../utils';
 
 export const init = async (store) => {
@@ -316,6 +316,11 @@ export const fetch = (
 export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) => {
 
   const { listName, links } = payload;
+
+  if (listName !== getState().display.listName) {
+    dispatch(updateFetched(payload, meta));
+    return;
+  }
 
   // If the links in state is undefined, null, or an empty object,
   //   just update the state as no scrolling or popup shown.
