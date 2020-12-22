@@ -327,6 +327,7 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
   let _links = getState().links[listName];
   if (_links === undefined || _links === null || isEqual(_links, {})) {
     dispatch(updateFetched(payload, meta));
+    dispatch(clearSelectedLinkIds());
     return;
   }
   _links = _.select(_links, STATUS, ADDED);
@@ -357,6 +358,7 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
   const pageYOffset = getState().window.pageYOffset;
   if (pageYOffset === 0 && !isPopupShown(getState())) {
     dispatch(updateFetched(payload, meta));
+    dispatch(clearSelectedLinkIds());
     return;
   }
 
@@ -643,12 +645,11 @@ export const changeListName = (listName, fetched) => async (dispatch, getState) 
     type: UPDATE_LIST_NAME,
     payload: listName,
   })
-
   if (!fetched.includes(listName)) {
     dispatch(fetch(false, null));
   }
-
   dispatch(clearSelectedLinkIds());
+
   dispatch(updateFetched(null, null, _listName));
 };
 
