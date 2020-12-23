@@ -11,7 +11,7 @@ import {
 import { getListNameMap, getPopupLink } from '../selectors';
 import {
   copyTextToClipboard, ensureContainUrlProtocol, getListNameDisplayName,
-  isEqual, throttle,
+  isEqual, throttle, getLastHalfHeight,
 } from '../utils';
 import { popupBgFMV, getPopupFMV } from '../types/animConfigs';
 import { computePosition, createLayouts } from './MenuPopupRenderer';
@@ -178,22 +178,26 @@ class CardItemMenuPopup extends React.PureComponent {
     );
 
     const { scrollY, menuPopupSize } = this.state;
-    const menuPopupClassNames = 'py-2 fixed min-w-32 max-w-64 max-h-72 bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41';
+    const menuPopupClassNames = 'py-2 fixed min-w-32 max-w-64 bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41';
 
     let menuPopup;
     if (menuPopupSize) {
 
+      const maxHeight = getLastHalfHeight(
+        Math.min(288, window.innerHeight - 16), 40, 8 + 1, 2
+      );
+
       const anchorPosition = popupLink.popupAnchorPosition;
-      const layouts = createLayouts(anchorPosition, menuPopupSize);
+      const layouts = createLayouts(
+        anchorPosition,
+        { width: menuPopupSize.width, height: Math.min(menuPopupSize.height, maxHeight) }
+      );
       const triggerOffsets = { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 };
       const popupPosition = computePosition(layouts, triggerOffsets, 8);
 
       const { top, left, topOrigin, leftOrigin } = popupPosition;
       const offsetScrollY = this.initialScrollY - scrollY;
-      const popupStyle = { top: top + offsetScrollY, left: left };
-      if (menuPopupSize.height > window.innerHeight) {
-        popupStyle.maxHeight = window.innerHeight - 16;
-      }
+      const popupStyle = { top: top + offsetScrollY, left: left, maxHeight };
 
       const popupFMV = getPopupFMV(topOrigin, leftOrigin);
 

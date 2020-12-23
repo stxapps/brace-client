@@ -814,3 +814,8 @@ export const isOfflineActionWithPayload = (action, actionType, payload = null) =
 
   return false;
 };
+
+export const getLastHalfHeight = (height, textHeight, pt, pb) => {
+  const x = Math.floor(((height - pt - pb) / textHeight) - 0.5);
+  return Math.round((textHeight * x + textHeight / 2) + pt + pb);
+};

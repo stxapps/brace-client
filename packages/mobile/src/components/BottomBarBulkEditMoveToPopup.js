@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  ScrollView, Text, TouchableOpacity, Animated, BackHandler,
+  ScrollView, Text, TouchableOpacity, Animated, BackHandler, Platform,
 } from 'react-native';
 
 import {
@@ -11,6 +11,7 @@ import {
   BULK_EDIT_MOVE_TO_POPUP, ARCHIVE, TRASH, MOVE_TO,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
+import { getLastHalfHeight } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 import { bModalOpenAnimConfig, bModalCloseAnimConfig } from '../types/animConfigs';
 
@@ -41,9 +42,12 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
     }
 
     if (prevProps.isBulkEditMoveToPopupShown && !isBulkEditMoveToPopupShown) {
+      // There was an error about null has no some property
+      //   when the move to popup is shown and rotate so guees it's here.
+      const toValue = this.state.popupSize ? this.state.popupSize.height : 999;
       Animated.spring(
         this.popuptranslateY,
-        { toValue: this.state.popupSize.height, ...bModalCloseAnimConfig }
+        { toValue, ...bModalCloseAnimConfig }
       ).start(() => {
         this.setState({ didCloseAnimEnd: true });;
       });
@@ -69,7 +73,7 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
         this.popupBackHandler = BackHandler.addEventListener(
           "hardwareBackPress",
           () => {
-            if (!this.props.isPopupShown) return false;
+            if (!this.props.isBulkEditMoveToPopupShown) return false;
 
             this.onBulkEditMoveToCancelBtnClick();
             return true;
@@ -138,12 +142,16 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
 
     if (!this.props.isBulkEditMoveToPopupShown && this.state.didCloseAnimEnd) return null;
 
-    const popupStyle = { transform: [{ translateY: this.popuptranslateY }] };
+    const textHeight = Platform.select({ ios: 52, android: 55 });
+    const popupStyle = {
+      maxHeight: getLastHalfHeight(384, textHeight, 16, 48),
+      transform: [{ translateY: this.popuptranslateY }],
+    };
 
     return (
       <React.Fragment>
         <TouchableOpacity onPress={this.onBulkEditMoveToCancelBtnClick} style={tailwind('absolute inset-0 bg-black opacity-25 z-40')}></TouchableOpacity>
-        <Animated.View onLayout={this.onPopupLayout} style={[tailwind('pt-4 pb-12 absolute inset-x-0 -bottom-8 max-h-80 bg-white border border-gray-200 rounded-t-lg shadow-xl z-41'), popupStyle]}>
+        <Animated.View onLayout={this.onPopupLayout} style={[tailwind('pt-4 pb-12 absolute inset-x-0 -bottom-8 bg-white border border-gray-200 rounded-t-lg shadow-xl z-41'), popupStyle]}>
           <ScrollView>
             <Text style={tailwind('py-4 pl-4 pr-4 w-full text-base text-gray-800 font-normal')}>Move to...</Text>
             {this.renderMenu()}

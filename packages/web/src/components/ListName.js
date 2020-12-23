@@ -8,7 +8,7 @@ import {
   LIST_NAME_POPUP, SM_WIDTH, LG_WIDTH,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
-import { getListNameDisplayName, isEqual } from '../utils';
+import { getListNameDisplayName, isEqual, getLastHalfHeight } from '../utils';
 import { popupBgFMV, tlPopupFMV } from '../types/animConfigs';
 
 import { getTopBarSizes } from '.';
@@ -102,15 +102,16 @@ class ListName extends React.PureComponent {
     );
 
     const { menuPopupSize } = this.state;
-    const menuPopupClassNames = 'py-2 absolute top-0 left-0 min-w-28 max-w-64 max-h-64 bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41';
+    const menuPopupClassNames = 'py-2 absolute top-0 left-0 min-w-28 max-w-64 bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41';
 
     let menuPopup;
     if (menuPopupSize) {
 
-      const popupStyle = {};
-      if (menuPopupSize.height > window.innerHeight - menuPopupSize.top) {
-        popupStyle.maxHeight = window.innerHeight - menuPopupSize.top - 16;
-      }
+      const popupStyle = {
+        maxHeight: getLastHalfHeight(
+          Math.min(256, window.innerHeight - menuPopupSize.top - 16), 40, 8 + 1, 2
+        ),
+      };
 
       menuPopup = (
         <motion.div key="ListNamePopup_menuPopup" ref={this.menuPopup} style={popupStyle} className={menuPopupClassNames} variants={tlPopupFMV} initial="hidden" animate="visible" exit="hidden">

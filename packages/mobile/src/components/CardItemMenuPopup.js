@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  ScrollView, View, Text, Linking, LayoutAnimation,
+  ScrollView, View, Text, Linking, LayoutAnimation, Platform,
 } from 'react-native';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Svg, { Path } from 'react-native-svg'
@@ -16,7 +16,7 @@ import {
 } from '../types/const';
 import { getListNameMap } from '../selectors';
 import {
-  ensureContainUrlProtocol, getListNameDisplayName,
+  ensureContainUrlProtocol, getListNameDisplayName, getLastHalfHeight,
 } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
@@ -140,8 +140,11 @@ class CardItemMenuPopup extends React.PureComponent {
   render() {
 
     const { safeAreaHeight } = this.props;
-    const popupStyle = {};
-    if (288 > safeAreaHeight - 16) popupStyle.maxHeight = safeAreaHeight - 16;
+
+    const textHeight = Platform.select({ ios: 36, android: 39 });
+    const popupStyle = {
+      maxHeight: getLastHalfHeight(Math.min(288, safeAreaHeight - 16), textHeight, 8, 8),
+    };
 
     return (
       /* value of triggerOffsets needs to be aligned with paddings of the three dots */
@@ -157,7 +160,7 @@ class CardItemMenuPopup extends React.PureComponent {
             </View>
           </View>
         </MenuTrigger>
-        <MenuOptions customStyles={cache('CIMP_menuOptionsCustomStyles', { optionsContainer: [tailwind('py-2 min-w-32 max-w-64 max-h-72 bg-white border border-gray-200 rounded-lg shadow-xl z-41'), popupStyle] }, safeAreaHeight)}>
+        <MenuOptions customStyles={cache('CIMP_menuOptionsCustomStyles', { optionsContainer: [tailwind('py-2 min-w-32 max-w-64 bg-white border border-gray-200 rounded-lg shadow-xl z-41'), popupStyle] }, safeAreaHeight)}>
           <ScrollView>
             {this.renderMenu()}
           </ScrollView>

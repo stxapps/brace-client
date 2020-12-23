@@ -12,6 +12,7 @@ import {
 } from '../actions';
 import { BULK_EDIT_MOVE_TO_POPUP, ARCHIVE, TRASH, MOVE_TO } from '../types/const';
 import { getListNameMap } from '../selectors';
+import { getLastHalfHeight } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
@@ -77,9 +78,12 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
     // As popover has an anchor laying out with flex (different to Popup),
     //   max height is used for height.
     // 39dp per row plus padding
-    const textHeight = Platform.select({ ios: 36, android: 39 })
+    const textHeight = Platform.select({ ios: 36, android: 39 });
     const popupStyle = {
-      height: Math.min((textHeight * moveTo.length) + 16, 256, safeAreaHeight - 16),
+      height: Math.min(
+        (textHeight * moveTo.length) + 16,
+        getLastHalfHeight(Math.min(256, safeAreaHeight - 56 - 24 - 8), textHeight, 8, 8)
+      ),
     };
 
     return (

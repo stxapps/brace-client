@@ -7,7 +7,7 @@ import {
 } from '../actions';
 import { BULK_EDIT_MOVE_TO_POPUP, ARCHIVE, TRASH, MOVE_TO } from '../types/const';
 import { getListNameMap } from '../selectors';
-import { isEqual } from '../utils';
+import { isEqual, getLastHalfHeight } from '../utils';
 import { popupBgFMV, tlPopupFMV, tcPopupFMV } from '../types/animConfigs';
 
 class TopBarBulkEditMoveToPopup extends React.PureComponent {
@@ -103,15 +103,16 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
     );
 
     const { menuPopupSize } = this.state;
-    const menuPopupClassNames = 'mt-2 py-2 absolute min-w-28 max-w-64 max-h-64 bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41';
+    const menuPopupClassNames = 'mt-2 py-2 absolute min-w-28 max-w-64 bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41';
 
     let menuPopup;
     if (menuPopupSize) {
 
-      const popupStyle = {};
-      if (menuPopupSize.height > window.innerHeight - menuPopupSize.top) {
-        popupStyle.maxHeight = window.innerHeight - menuPopupSize.top - 8;
-      }
+      const popupStyle = {
+        maxHeight: getLastHalfHeight(
+          Math.min(256, window.innerHeight - menuPopupSize.top - 8), 40, 8 + 1, 2
+        ),
+      };
 
       let popupFMV;
       if (menuPopupSize.width <= 132) {

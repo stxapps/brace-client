@@ -7,6 +7,7 @@ import {
 } from '../actions';
 import { BULK_EDIT_MOVE_TO_POPUP, ARCHIVE, TRASH, MOVE_TO } from '../types/const';
 import { getListNameMap } from '../selectors';
+import { getLastHalfHeight } from '../utils';
 import { popupBgFMV, bModalFMV } from '../types/animConfigs';
 
 class BottomBarBulkEditMoveToPopup extends React.PureComponent {
@@ -61,11 +62,15 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
       <AnimatePresence key="AnimatePresence_BBBEC_moveToPopup"></AnimatePresence>
     );
 
+    const popupStyle = {
+      maxHeight: getLastHalfHeight(384, 56, 16 + 1, 32 + 2),
+    };
+
     return (
       <AnimatePresence key="AnimatePresence_BBBEC_moveToPopup">
         <motion.button key="BBBEC_cancelBtn" onClick={this.onBulkEditMoveToCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden"></motion.button>
         {/* For spring animation, need space in padding bottom so max height need to be adjusted too. */}
-        <motion.div key="BBBEC_moveToPopup" className="pt-4 pb-12 fixed inset-x-0 -bottom-8 max-h-80 bg-white border border-gray-200 rounded-t-lg shadow-xl overflow-auto z-41" variants={bModalFMV} initial="hidden" animate="visible" exit="hidden">
+        <motion.div key="BBBEC_moveToPopup" style={popupStyle} className="pt-4 pb-12 fixed inset-x-0 -bottom-8 bg-white border border-gray-200 rounded-t-lg shadow-xl overflow-auto z-41" variants={bModalFMV} initial="hidden" animate="visible" exit="hidden">
           <div className="py-4 pl-4 pr-4 block w-full text-gray-800 text-left">Move to...</div>
           {this.renderMenu()}
         </motion.div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { ScrollView, View, Text } from 'react-native';
+import { ScrollView, View, Text, Platform } from 'react-native';
 import Svg, { Path } from 'react-native-svg'
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 
@@ -10,7 +10,7 @@ import {
   LIST_NAME_POPUP, SM_WIDTH, MD_WIDTH, LG_WIDTH,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
-import { getListNameDisplayName } from '../utils';
+import { getListNameDisplayName, getLastHalfHeight } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
@@ -55,11 +55,13 @@ class ListName extends React.PureComponent {
 
     const { safeAreaHeight } = this.props;
 
-    const popupStyle = {};
-    if (256 > safeAreaHeight - 16) popupStyle.maxHeight = safeAreaHeight - 16;
+    const textHeight = Platform.select({ ios: 36, android: 39 });
+    const popupStyle = {
+      maxHeight: getLastHalfHeight(Math.min(256, safeAreaHeight - 16), textHeight, 8, 8),
+    };
 
     return (
-      <MenuOptions customStyles={cache('LN_menuOptionsCustomStyles', { optionsContainer: [tailwind('py-2 min-w-28 max-w-64 max-h-64 bg-white border border-gray-200 rounded-lg shadow-xl z-41'), popupStyle] }, safeAreaHeight)}>
+      <MenuOptions customStyles={cache('LN_menuOptionsCustomStyles', { optionsContainer: [tailwind('py-2 min-w-28 max-w-64 bg-white border border-gray-200 rounded-lg shadow-xl z-41'), popupStyle] }, safeAreaHeight)}>
         <ScrollView>
           {this.renderMenu()}
         </ScrollView>
