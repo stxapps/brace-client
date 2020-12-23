@@ -23,9 +23,9 @@
 		4EBAC3864DFC4B6B83497C33 /* Inter-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 57269A925FCA4B889CE79E45 /* Inter-LightItalic.otf */; };
 		4FA7CFF7F68E4F53A2F6A203 /* Inter-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = DA2469EEE3344223900A0D1C /* Inter-Medium.otf */; };
 		57D8A558131E1E7ED23C0A21 /* libPods-Bracedotto-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 79457F012932A4924B2544C1 /* libPods-Bracedotto-tvOSTests.a */; };
-		5B384E3524FF6B3800DAE311 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B384E3424FF6B3800DAE311 /* ShareViewController.swift */; };
-		5B384E3824FF6B3800DAE311 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5B384E3624FF6B3800DAE311 /* MainInterface.storyboard */; };
-		5B384E3C24FF6B3800DAE311 /* Save to Brace.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 5B384E3224FF6B3800DAE311 /* Save to Brace.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		5B4BDE4B25935F820028E284 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B4BDE4A25935F820028E284 /* ShareViewController.swift */; };
+		5B4BDE4E25935F820028E284 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5B4BDE4C25935F820028E284 /* MainInterface.storyboard */; };
+		5B4BDE5225935F820028E284 /* Save to Brace.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 5B4BDE4825935F810028E284 /* Save to Brace.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		5B939D6D24F8ABB3008CB26B /* RNBlockstackSdk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B939D6A24F8ABB2008CB26B /* RNBlockstackSdk.swift */; };
 		5B939D6E24F8ABB3008CB26B /* RNBlockstackSdkModuleBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B939D6B24F8ABB2008CB26B /* RNBlockstackSdkModuleBridge.m */; };
 		6164584D4686405BB77BD2BA /* Inter-ExtraBoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = B15B24A20A0043D8BC280E62 /* Inter-ExtraBoldItalic.otf */; };
@@ -61,11 +61,11 @@
 			remoteGlobalIDString = 2D02E47A1E0B4A5D006451C7;
 			remoteInfo = "Bracedotto-tvOS";
 		};
-		5B384E3A24FF6B3800DAE311 /* PBXContainerItemProxy */ = {
+		5B4BDE5025935F820028E284 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 5B384E3124FF6B3800DAE311;
+			remoteGlobalIDString = 5B4BDE4725935F810028E284;
 			remoteInfo = "Save to Brace";
 		};
 /* End PBXContainerItemProxy section */
@@ -77,7 +77,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				5B384E3C24FF6B3800DAE311 /* Save to Brace.appex in Embed App Extensions */,
+				5B4BDE5225935F820028E284 /* Save to Brace.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -111,10 +111,10 @@
 		52ECFF1D81D7498AAED3110D /* Inter-ExtraLightItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-ExtraLightItalic.otf"; path = "../src/fonts/Inter/Inter-ExtraLightItalic.otf"; sourceTree = "<group>"; };
 		57269A925FCA4B889CE79E45 /* Inter-LightItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-LightItalic.otf"; path = "../src/fonts/Inter/Inter-LightItalic.otf"; sourceTree = "<group>"; };
 		5B3404F424FCE3B000D76AB9 /* libPods-Bracedotto.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libPods-Bracedotto.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B384E3224FF6B3800DAE311 /* Save to Brace.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Save to Brace.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B384E3424FF6B3800DAE311 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
-		5B384E3724FF6B3800DAE311 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
-		5B384E3924FF6B3800DAE311 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5B4BDE4825935F810028E284 /* Save to Brace.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Save to Brace.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B4BDE4A25935F820028E284 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		5B4BDE4D25935F820028E284 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		5B4BDE4F25935F820028E284 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5B939D6A24F8ABB2008CB26B /* RNBlockstackSdk.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RNBlockstackSdk.swift; sourceTree = "<group>"; };
 		5B939D6B24F8ABB2008CB26B /* RNBlockstackSdkModuleBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNBlockstackSdkModuleBridge.m; sourceTree = "<group>"; };
 		5B939D6C24F8ABB2008CB26B /* RNBlockstackSdk-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RNBlockstackSdk-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -179,7 +179,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5B384E2F24FF6B3800DAE311 /* Frameworks */ = {
+		5B4BDE4525935F810028E284 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -260,12 +260,12 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		5B384E3324FF6B3800DAE311 /* Save to Brace */ = {
+		5B4BDE4925935F810028E284 /* Save to Brace */ = {
 			isa = PBXGroup;
 			children = (
-				5B384E3424FF6B3800DAE311 /* ShareViewController.swift */,
-				5B384E3624FF6B3800DAE311 /* MainInterface.storyboard */,
-				5B384E3924FF6B3800DAE311 /* Info.plist */,
+				5B4BDE4A25935F820028E284 /* ShareViewController.swift */,
+				5B4BDE4C25935F820028E284 /* MainInterface.storyboard */,
+				5B4BDE4F25935F820028E284 /* Info.plist */,
 			);
 			path = "Save to Brace";
 			sourceTree = "<group>";
@@ -314,7 +314,7 @@
 				13B07FAE1A68108700A75B9A /* Bracedotto */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* BracedottoTests */,
-				5B384E3324FF6B3800DAE311 /* Save to Brace */,
+				5B4BDE4925935F810028E284 /* Save to Brace */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				01694E33B17748598DDAE203 /* Resources */,
@@ -332,7 +332,7 @@
 				00E356EE1AD99517003FC87E /* BracedottoTests.xctest */,
 				2D02E47B1E0B4A5D006451C7 /* Bracedotto-tvOS.app */,
 				2D02E4901E0B4A5D006451C7 /* Bracedotto-tvOSTests.xctest */,
-				5B384E3224FF6B3800DAE311 /* Save to Brace.appex */,
+				5B4BDE4825935F810028E284 /* Save to Brace.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -376,7 +376,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				5B384E3B24FF6B3800DAE311 /* PBXTargetDependency */,
+				5B4BDE5125935F820028E284 /* PBXTargetDependency */,
 			);
 			name = Bracedotto;
 			productName = Bracedotto;
@@ -422,13 +422,13 @@
 			productReference = 2D02E4901E0B4A5D006451C7 /* Bracedotto-tvOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		5B384E3124FF6B3800DAE311 /* Save to Brace */ = {
+		5B4BDE4725935F810028E284 /* Save to Brace */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5B384E3D24FF6B3800DAE311 /* Build configuration list for PBXNativeTarget "Save to Brace" */;
+			buildConfigurationList = 5B4BDE5325935F820028E284 /* Build configuration list for PBXNativeTarget "Save to Brace" */;
 			buildPhases = (
-				5B384E2E24FF6B3800DAE311 /* Sources */,
-				5B384E2F24FF6B3800DAE311 /* Frameworks */,
-				5B384E3024FF6B3800DAE311 /* Resources */,
+				5B4BDE4425935F810028E284 /* Sources */,
+				5B4BDE4525935F810028E284 /* Frameworks */,
+				5B4BDE4625935F810028E284 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -436,7 +436,7 @@
 			);
 			name = "Save to Brace";
 			productName = "Save to Brace";
-			productReference = 5B384E3224FF6B3800DAE311 /* Save to Brace.appex */;
+			productReference = 5B4BDE4825935F810028E284 /* Save to Brace.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -445,11 +445,12 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1150;
+				LastSwiftUpdateCheck = 1230;
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
+						LastSwiftMigration = 1230;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
@@ -465,8 +466,8 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = 2D02E47A1E0B4A5D006451C7;
 					};
-					5B384E3124FF6B3800DAE311 = {
-						CreatedOnToolsVersion = 11.5;
+					5B4BDE4725935F810028E284 = {
+						CreatedOnToolsVersion = 12.3;
 						DevelopmentTeam = DZ8XN7425J;
 						ProvisioningStyle = Automatic;
 					};
@@ -489,7 +490,7 @@
 				00E356ED1AD99517003FC87E /* BracedottoTests */,
 				2D02E47A1E0B4A5D006451C7 /* Bracedotto-tvOS */,
 				2D02E48F1E0B4A5D006451C7 /* Bracedotto-tvOSTests */,
-				5B384E3124FF6B3800DAE311 /* Save to Brace */,
+				5B4BDE4725935F810028E284 /* Save to Brace */,
 			);
 		};
 /* End PBXProject section */
@@ -544,11 +545,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5B384E3024FF6B3800DAE311 /* Resources */ = {
+		5B4BDE4625935F810028E284 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B384E3824FF6B3800DAE311 /* MainInterface.storyboard in Resources */,
+				5B4BDE4E25935F820028E284 /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -792,11 +793,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5B384E2E24FF6B3800DAE311 /* Sources */ = {
+		5B4BDE4425935F810028E284 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B384E3524FF6B3800DAE311 /* ShareViewController.swift in Sources */,
+				5B4BDE4B25935F820028E284 /* ShareViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -813,18 +814,18 @@
 			target = 2D02E47A1E0B4A5D006451C7 /* Bracedotto-tvOS */;
 			targetProxy = 2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */;
 		};
-		5B384E3B24FF6B3800DAE311 /* PBXTargetDependency */ = {
+		5B4BDE5125935F820028E284 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5B384E3124FF6B3800DAE311 /* Save to Brace */;
-			targetProxy = 5B384E3A24FF6B3800DAE311 /* PBXContainerItemProxy */;
+			target = 5B4BDE4725935F810028E284 /* Save to Brace */;
+			targetProxy = 5B4BDE5025935F820028E284 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		5B384E3624FF6B3800DAE311 /* MainInterface.storyboard */ = {
+		5B4BDE4C25935F820028E284 /* MainInterface.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				5B384E3724FF6B3800DAE311 /* Base */,
+				5B4BDE4D25935F820028E284 /* Base */,
 			);
 			name = MainInterface.storyboard;
 			sourceTree = "<group>";
@@ -838,6 +839,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -852,6 +854,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bracedotto.app/Bracedotto";
 			};
 			name = Debug;
@@ -862,6 +867,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = BracedottoTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -873,6 +879,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bracedotto.app/Bracedotto";
 			};
 			name = Release;
@@ -887,6 +895,7 @@
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = DZ8XN7425J;
 				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = "";
 				INFOPLIST_FILE = Bracedotto/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -902,6 +911,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = NO;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -915,6 +925,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = DZ8XN7425J;
+				EXCLUDED_ARCHS = "";
 				INFOPLIST_FILE = Bracedotto/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -929,6 +940,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "../node_modules/react-native-blockstack/ios/RNBlockstackSdk/RNBlockstackSdk-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = NO;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -1043,15 +1055,15 @@
 			};
 			name = Release;
 		};
-		5B384E3E24FF6B3800DAE311 /* Debug */ = {
+		5B4BDE5425935F820028E284 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
@@ -1074,15 +1086,15 @@
 			};
 			name = Debug;
 		};
-		5B384E3F24FF6B3800DAE311 /* Release */ = {
+		5B4BDE5525935F820028E284 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
@@ -1256,11 +1268,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5B384E3D24FF6B3800DAE311 /* Build configuration list for PBXNativeTarget "Save to Brace" */ = {
+		5B4BDE5325935F820028E284 /* Build configuration list for PBXNativeTarget "Save to Brace" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5B384E3E24FF6B3800DAE311 /* Debug */,
-				5B384E3F24FF6B3800DAE311 /* Release */,
+				5B4BDE5425935F820028E284 /* Debug */,
+				5B4BDE5525935F820028E284 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
