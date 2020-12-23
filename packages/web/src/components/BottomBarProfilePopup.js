@@ -47,7 +47,7 @@ class BottomBarProfilePopup extends React.PureComponent {
     return (
       <AnimatePresence key="AnimatePresence_BB_ProfilePopup">
         <motion.button key="BB_ProfilePopup_cancelBtn" onClick={this.onProfileCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden"></motion.button>
-        <motion.div key="BB_ProfilePopup_menuPopup" className="pt-4 pb-12 fixed inset-x-0 -bottom-8 bg-white border border-gray-200 rounded-t-lg shadow-xl z-41" variants={bModalFMV} initial="hidden" animate="visible" exit="hidden">
+        <motion.div key="BB_ProfilePopup_menuPopup" className="pt-4 pb-16 fixed inset-x-0 -bottom-12 bg-white border border-gray-200 rounded-t-lg shadow-xl z-41" variants={bModalFMV} initial="hidden" animate="visible" exit="hidden">
           <button onClick={this.onSettingsBtnClick} className="py-4 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline">Settings</button>
           <button onClick={this.onSupportBtnClick} className="py-4 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline">Support</button>
           <button onClick={this.onSignOutBtnClick} className="py-4 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline">Sign out</button>

@@ -116,7 +116,7 @@
   "leading-6.5": {
     "lineHeight": 26
   },
-  "-bottom-8": {
-    "bottom": -32
+  "-bottom-12": {
+    "bottom": -48
   }
 }

@@ -144,14 +144,14 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
 
     const textHeight = Platform.select({ ios: 52, android: 55 });
     const popupStyle = {
-      maxHeight: getLastHalfHeight(384, textHeight, 16, 48),
+      maxHeight: getLastHalfHeight(384, textHeight, 16, 64),
       transform: [{ translateY: this.popuptranslateY }],
     };
 
     return (
       <React.Fragment>
         <TouchableOpacity onPress={this.onBulkEditMoveToCancelBtnClick} style={tailwind('absolute inset-0 bg-black opacity-25 z-40')}></TouchableOpacity>
-        <Animated.View onLayout={this.onPopupLayout} style={[tailwind('pt-4 pb-12 absolute inset-x-0 -bottom-8 bg-white border border-gray-200 rounded-t-lg shadow-xl z-41'), popupStyle]}>
+        <Animated.View onLayout={this.onPopupLayout} style={[tailwind('pt-4 pb-16 absolute inset-x-0 -bottom-12 bg-white border border-gray-200 rounded-t-lg shadow-xl z-41'), popupStyle]}>
           <ScrollView>
             <Text style={tailwind('py-4 pl-4 pr-4 w-full text-base text-gray-800 font-normal')}>Move to...</Text>
             {this.renderMenu()}
