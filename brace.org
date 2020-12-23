@@ -783,7 +783,7 @@ This and CI/CD are very important!
 - yarn add react-native-fs
 - yarn add react-native-reanimated
 - ios
-  + Edit PodFile: ios target 11.0, pad 'Blockstack'
+  + Edit PodFile: ios target 11.0, pod 'Blockstack'
   + Add RNBlockstackSdk to Bracedotto project with Xcode, select create groups
   + In Xcode, Bracedotto General -> Target iOS 11.0
   + Make swift file can import obj-c header
