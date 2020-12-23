@@ -9,7 +9,7 @@ target 'Bracedotto' do
   use_react_native!(:path => config["reactNativePath"])
 
   pod 'PromisesObjC', :modular_headers => true
-  pod 'Blockstack', :git => 'https://github.com/bracedotto/blockstack-ios.git', :commit => '00251a2'
+  pod 'Blockstack', :git => 'https://github.com/bracedotto/blockstack-ios.git', :commit => 'c7552a0'
 
   target 'BracedottoTests' do
     inherit! :complete
