@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion"
 
-import { updateFetched } from '../actions';
+import { updateFetched, clearSelectedLinkIds } from '../actions';
 import { MD_WIDTH } from '../types/const';
 import { fetchedPopupFMV } from '../types/animConfigs';
 
@@ -26,6 +26,7 @@ class FetchedPopup extends React.PureComponent {
 
   onUpdateBtnClick = () => {
     this.props.updateFetched(null, null, null, true);
+    this.props.clearSelectedLinkIds();
   }
 
   onCloseBtnClick = () => {
@@ -70,6 +71,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { updateFetched };
+const mapDispatchToProps = { updateFetched, clearSelectedLinkIds };
 
 export default connect(mapStateToProps, mapDispatchToProps)(FetchedPopup);
