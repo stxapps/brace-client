@@ -13,7 +13,6 @@ import { popupBgFMV, bModalFMV } from '../types/animConfigs';
 class BottomBarBulkEditMoveToPopup extends React.PureComponent {
 
   onBulkEditMoveToPopupClick = (text) => {
-
     // As animation takes time, increase chance to several clicks
     if (!this.props.isBulkEditMoveToPopupShown) return;
     if (!text) return;

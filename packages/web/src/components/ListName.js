@@ -63,7 +63,6 @@ class ListName extends React.PureComponent {
   };
 
   onListNamePopupClick = (newListName) => {
-
     // As animation takes time, increase chance to duplicate clicks
     if (!this.props.isListNamePopupShown) return;
     if (!newListName) return;

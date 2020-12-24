@@ -51,7 +51,6 @@ class BottomBarAddPopup extends React.PureComponent {
   }
 
   onAddOkBtnClick = () => {
-
     // As animation takes time, increase chance to duplicate clicks
     if (!this.props.isAddPopupShown) return;
 

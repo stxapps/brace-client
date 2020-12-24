@@ -105,7 +105,6 @@ class CardItemMenuPopup extends React.PureComponent {
   }
 
   onMenuPopupClick = (text) => {
-
     // As animation takes time, increase chance to several clicks
     if (!this.props.popupLink) return;
     if (!text) return;
