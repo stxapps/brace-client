@@ -88,20 +88,29 @@ class BottomBarProfilePopup extends React.PureComponent {
   }
 
   onProfileCancelBtnClick = () => {
+    // As animation takes time, increase chance to duplicate clicks
+    if (!this.props.isProfilePopupShown) return;
     this.props.updatePopup(PROFILE_POPUP, false);
   }
 
   onSettingsBtnClick = () => {
+    // As animation takes time, increase chance to duplicate clicks
+    if (!this.props.isProfilePopupShown) return;
     this.props.updatePopup(SETTINGS_POPUP, true);
     this.props.updatePopup(PROFILE_POPUP, false);
   }
 
   onSupportBtnClick = () => {
+    // As animation takes time, increase chance to duplicate clicks
+    if (!this.props.isProfilePopupShown) return;
     this.props.updatePopup(PROFILE_POPUP, false);
     Linking.openURL(DOMAIN_NAME + '/#support');
   }
 
   onSignOutBtnClick = () => {
+    // As animation takes time, increase chance to duplicate clicks
+    if (!this.props.isProfilePopupShown) return;
+
     // No need to update it, will get already unmount
     //this.props.updatePopup(PROFILE_POPUP, false);
     this.props.signOut()

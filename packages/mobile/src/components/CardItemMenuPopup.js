@@ -61,34 +61,35 @@ class CardItemMenuPopup extends React.PureComponent {
   }
 
   onMenuPopupClick = (text) => {
+    // As animation takes time, increase chance to several clicks
+    if (!this.props.link.isPopupShown) return true;
+    if (!text) return true;
 
-    if (text) {
-      const { id, url } = this.props.link;
-      const { safeAreaWidth } = this.props;
-      const animConfig = cardItemAnimConfig(safeAreaWidth);
+    const { id, url } = this.props.link;
+    const { safeAreaWidth } = this.props;
+    const animConfig = cardItemAnimConfig(safeAreaWidth);
 
-      if (text === OPEN) {
-        Linking.openURL(ensureContainUrlProtocol(url));
-      } else if (text === COPY_LINK) {
-        Clipboard.setString(url);
-      } else if (text === ARCHIVE) {
-        LayoutAnimation.configureNext(animConfig);
-        this.props.moveLinks(ARCHIVE, [id]);
-      } else if (text === REMOVE) {
-        LayoutAnimation.configureNext(animConfig);
-        this.props.moveLinks(TRASH, [id]);
-      } else if (text === RESTORE) {
-        LayoutAnimation.configureNext(animConfig);
-        this.props.moveLinks(MY_LIST, [id]);
-      } else if (text.startsWith(MOVE_TO)) {
-        LayoutAnimation.configureNext(animConfig);
-        this.props.moveLinks(text.substring(MOVE_TO.length + 1), [id]);
-      } else if (text === DELETE) {
-        this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
-        return false;
-      } else {
-        throw new Error(`Invalid text: ${text}`);
-      }
+    if (text === OPEN) {
+      Linking.openURL(ensureContainUrlProtocol(url));
+    } else if (text === COPY_LINK) {
+      Clipboard.setString(url);
+    } else if (text === ARCHIVE) {
+      LayoutAnimation.configureNext(animConfig);
+      this.props.moveLinks(ARCHIVE, [id]);
+    } else if (text === REMOVE) {
+      LayoutAnimation.configureNext(animConfig);
+      this.props.moveLinks(TRASH, [id]);
+    } else if (text === RESTORE) {
+      LayoutAnimation.configureNext(animConfig);
+      this.props.moveLinks(MY_LIST, [id]);
+    } else if (text.startsWith(MOVE_TO)) {
+      LayoutAnimation.configureNext(animConfig);
+      this.props.moveLinks(text.substring(MOVE_TO.length + 1), [id]);
+    } else if (text === DELETE) {
+      this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
+      return false;
+    } else {
+      throw new Error(`Invalid text: ${text}`);
     }
 
     this.props.updatePopup(this.props.link.id, false);
@@ -96,6 +97,8 @@ class CardItemMenuPopup extends React.PureComponent {
   }
 
   onMenuBackdropPress = () => {
+    // As animation takes time, increase chance to several clicks
+    if (!this.props.link.isPopupShown) return;
     this.props.updatePopup(this.props.link.id, false);
   }
 

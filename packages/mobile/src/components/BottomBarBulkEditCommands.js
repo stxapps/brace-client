@@ -105,6 +105,8 @@ class BottomBarBulkEditCommands extends React.Component {
   }
 
   onBulkEditArchiveBtnClick = () => {
+    // As animation takes time, increase chance to several clicks
+    if (!this.props.isBulkEditing) return;
     if (this.checkNoLinkIdSelected()) return;
 
     const {
@@ -117,6 +119,8 @@ class BottomBarBulkEditCommands extends React.Component {
   }
 
   onBulkEditRemoveBtnClick = () => {
+    // As animation takes time, increase chance to several clicks
+    if (!this.props.isBulkEditing) return;
     if (this.checkNoLinkIdSelected()) return;
 
     const {
@@ -129,6 +133,8 @@ class BottomBarBulkEditCommands extends React.Component {
   }
 
   onBulkEditRestoreBtnClick = () => {
+    // As animation takes time, increase chance to several clicks
+    if (!this.props.isBulkEditing) return;
     if (this.checkNoLinkIdSelected()) return;
 
     const {
@@ -151,6 +157,8 @@ class BottomBarBulkEditCommands extends React.Component {
   }
 
   onBulkEditCancelBtnClick = () => {
+    // As animation takes time, increase chance to several clicks
+    if (!this.props.isBulkEditing) return;
     this.props.clearSelectedLinkIds();
     this.props.updateBulkEdit(false);
   }
@@ -268,6 +276,7 @@ const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
     listNameMap: getListNameMap(state),
+    isBulkEditing: state.display.isBulkEditing,
     selectedLinkIds: state.display.selectedLinkIds,
     windowWidth: state.window.width,
     windowHeight: state.window.height,

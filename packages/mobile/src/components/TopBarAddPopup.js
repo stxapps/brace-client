@@ -64,6 +64,9 @@ class TopBarAddPopup extends React.PureComponent {
   }
 
   onAddOkBtnClick = () => {
+    // As animation takes time, increase chance to duplicate clicks
+    if (!this.props.isAddPopupShown) return;
+
     if (!this.state.isAskingConfirm) {
       const urlValidatedResult = validateUrl(this.state.url);
       if (urlValidatedResult === NO_URL) {
@@ -86,6 +89,8 @@ class TopBarAddPopup extends React.PureComponent {
   }
 
   onAddCancelBtnClick = () => {
+    // As animation takes time, increase chance to duplicate clicks
+    if (!this.props.isAddPopupShown) return;
     this.props.updatePopup(ADD_POPUP, false);
   }
 

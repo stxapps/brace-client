@@ -30,6 +30,8 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
   }
 
   onBulkEditMoveToPopupClick = (text) => {
+    // As animation takes time, increase chance to several clicks
+    if (!this.props.isBulkEditMoveToPopupShown) return;
     if (!text) return;
 
     const {
@@ -48,6 +50,8 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
   }
 
   onBulkEditMoveToCancelBtnClick = () => {
+    // As animation takes time, increase chance to several clicks
+    if (!this.props.isBulkEditMoveToPopupShown) return;
     this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, false);
   }
 
@@ -132,6 +136,7 @@ const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
     listNameMap: getListNameMap(state),
+    isBulkEditMoveToPopupShown: state.display.isBulkEditMoveToPopupShown,
     selectedLinkIds: state.display.selectedLinkIds,
     windowHeight: state.window.height,
   };
