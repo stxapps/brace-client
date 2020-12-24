@@ -18,11 +18,13 @@ class CardItemContent extends React.Component {
       extractedFaviconError: false,
     };
 
-    this.pressTimer = null;
+    this.clickPressTimer = null;
+    this.touchPressTimer = null;
   }
 
   componentWillUnmount() {
-    clearTimeout(this.pressTimer);
+    clearTimeout(this.clickPressTimer);
+    clearTimeout(this.touchPressTimer);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -36,15 +38,26 @@ class CardItemContent extends React.Component {
     return false;
   }
 
-  onPress = () => {
-    this.pressTimer = setTimeout(() => {
+  onClickPress = (event) => {
+    this.clickPressTimer = setTimeout(() => {
       this.props.updateBulkEdit(true);
       this.props.addSelectedLinkIds([this.props.link.id]);
     }, 500);
   }
 
-  onPressRelease = () => {
-    clearTimeout(this.pressTimer);
+  onClickPressRelease = (event) => {
+    clearTimeout(this.clickPressTimer);
+  }
+
+  onTouchPress = (event) => {
+    this.touchPressTimer = setTimeout(() => {
+      this.props.updateBulkEdit(true);
+      this.props.addSelectedLinkIds([this.props.link.id]);
+    }, 500);
+  }
+
+  onTouchPressRelease = (event) => {
+    clearTimeout(this.touchPressTimer);
   }
 
   onMenuBtnClick = (e) => {
@@ -168,7 +181,7 @@ class CardItemContent extends React.Component {
 
     return (
       <React.Fragment>
-        <div onTouchStart={this.onPress} onTouchMove={this.onPressRelease} onTouchEnd={this.onPressRelease} onTouchCancel={this.onPressRelease} onMouseDown={this.onPress} onMouseMove={this.onPressRelease} onMouseUp={this.onPressRelease} onMouseLeave={this.onPressRelease} className="relative pb-7/12">
+        <div onTouchStart={this.onTouchPress} onTouchMove={this.onTouchPressRelease} onTouchEnd={this.onTouchPressRelease} onTouchCancel={this.onTouchPressRelease} onMouseDown={this.onClickPress} onMouseMove={this.onClickPressRelease} onMouseUp={this.onClickPressRelease} onMouseLeave={this.onClickPressRelease} className="relative pb-7/12">
           {this.renderImage()}
         </div>
         <div className="flex justify-between items-center">
