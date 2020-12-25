@@ -27,6 +27,12 @@ import MenuPopupRenderer from './MenuPopupRenderer';
 
 class CardItemMenuPopup extends React.PureComponent {
 
+  constructor(props) {
+    super(props);
+
+    this.didClick = false;
+  }
+
   populateMenu() {
 
     const { link, listName, listNameMap } = this.props;
@@ -58,12 +64,11 @@ class CardItemMenuPopup extends React.PureComponent {
 
   onMenuBtnClick = () => {
     this.props.updatePopup(this.props.link.id, true, null);
+    this.didClick = false;
   }
 
   onMenuPopupClick = (text) => {
-    // As animation takes time, increase chance to several clicks
-    if (!this.props.link.isPopupShown) return true;
-    if (!text) return true;
+    if (!text || this.didClick) return true;
 
     const { id, url } = this.props.link;
     const { safeAreaWidth } = this.props;
@@ -93,12 +98,11 @@ class CardItemMenuPopup extends React.PureComponent {
     }
 
     this.props.updatePopup(this.props.link.id, false);
+    this.didClick = true;
     return true;
   }
 
   onMenuBackdropPress = () => {
-    // As animation takes time, increase chance to several clicks
-    if (!this.props.link.isPopupShown) return;
     this.props.updatePopup(this.props.link.id, false);
   }
 

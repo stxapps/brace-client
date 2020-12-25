@@ -24,9 +24,6 @@ class ListName extends React.PureComponent {
   };
 
   onListNamePopupClick = (newListName) => {
-    // As animation takes time, increase chance to duplicate clicks
-    if (!this.props.isListNamePopupShown) return;
-
     this.props.changeListName(newListName, this.props.fetched);
     this.props.fetched.push(newListName);
 
@@ -34,8 +31,6 @@ class ListName extends React.PureComponent {
   };
 
   onListNameCancelBtnClick = () => {
-    // As animation takes time, increase chance to duplicate clicks
-    if (!this.props.isListNamePopupShown) return;
     this.props.updatePopup(LIST_NAME_POPUP, false);
   };
 
@@ -131,7 +126,6 @@ const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
     listNameMap: getListNameMap(state),
-    isListNamePopupShown: state.display.isListNamePopupShown,
     updates: state.fetched,
     windowWidth: state.window.width,
     windowHeight: state.window.height,

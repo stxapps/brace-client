@@ -10,7 +10,6 @@ import KeyboardManager from 'react-native-keyboard-manager';
 import {
   MY_LIST, TRASH, ARCHIVE,
   ADDING, UPDATING, MOVING,
-  DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_DELETING,
   VALID_LIST_NAME, IN_USE_LIST_NAME, LIST_NAME_MSGS,
   CONFIRM_DELETE_POPUP, SWAP_LEFT, SWAP_RIGHT,
 } from '../types/const';
@@ -20,7 +19,7 @@ import {
 } from '../actions';
 import { getListNameMap } from '../selectors';
 import { canDeleteListNames } from '../apis/blockstack';
-import { validateListNameDisplayName } from '../utils';
+import { validateListNameDisplayName, isDiedStatus } from '../utils';
 import cache from '../utils/cache';
 import { spListsAnimConfig } from '../types/animConfigs';
 import { tailwind } from '../stylesheets/tailwind';
@@ -95,6 +94,8 @@ class _ListNameEditor extends React.PureComponent {
 
     this.didOkBtnJustPress = false;
     this.didCancelBtnJustPress = false;
+
+    this.didClick = false;
   }
 
   componentDidMount() {
@@ -103,7 +104,24 @@ class _ListNameEditor extends React.PureComponent {
     }
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.listNameObj && this.props.listNameObj) {
+      if (
+        (!isDiedStatus(prevProps.listNameObj.status) &&
+          isDiedStatus(this.props.listNameObj.status)) ||
+        (prevProps.listNameObj.status === MOVING &&
+          this.props.listNameObj.status !== MOVING)
+      ) {
+        this.didClick = false;
+      }
+    }
+
+    if (prevState.mode === MODE_VIEW && this.state.mode === MODE_EDIT) {
+      this.didClick = false;
+    }
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps, nextState) {
     if (this.props.listNameObj && nextProps.listNameObj) {
       if (
         this.props.listNameObj.displayName === this.state.value &&
@@ -170,6 +188,7 @@ class _ListNameEditor extends React.PureComponent {
   }
 
   onAddOkBtnClick = () => {
+    if (this.didClick) return;
 
     const { validateDisplayName, addListNames } = this.props;
     const { value } = this.state;
@@ -184,9 +203,11 @@ class _ListNameEditor extends React.PureComponent {
     addListNames([value]);
     this.setState({ ...this.initialState });
     this.input.current.blur();
+    this.didClick = true;
   }
 
   onEditOkBtnClick = () => {
+    if (this.didClick) return;
 
     const { listNameObj, validateDisplayName, updateListNames } = this.props;
     const { value } = this.state;
@@ -203,6 +224,7 @@ class _ListNameEditor extends React.PureComponent {
     updateListNames([listNameObj.listName], [value]);
     this.setState({ ...this.initialState, value: value });
     this.input.current.blur();
+    this.didClick = true;
   }
 
   onCancelBtnPress = () => {
@@ -216,6 +238,7 @@ class _ListNameEditor extends React.PureComponent {
   }
 
   onDeleteBtnClick = () => {
+    if (this.didClick) return;
 
     this.setState({ isCheckingCanDelete: true }, async () => {
 
@@ -230,33 +253,48 @@ class _ListNameEditor extends React.PureComponent {
           msg: LIST_NAME_MSGS[IN_USE_LIST_NAME],
           isCheckingCanDelete: false,
         });
+        this.didClick = false;
         return;
       }
 
       updateDeletingListName(listNameObj.listName);
       updatePopup(CONFIRM_DELETE_POPUP, true);
       this.setState({ msg: '', isCheckingCanDelete: false });
-    })
+      this.didClick = false;
+    });
+
+    this.didClick = true;
   }
 
   onMoveUpBtnClick = () => {
-    const { listNameObj, moveListName } = this.props;
-    const animConfig = spListsAnimConfig();
+    if (this.didClick) return;
 
-    if (Platform.OS === 'ios') LayoutAnimation.configureNext(animConfig);
+    const { listNameObj, moveListName } = this.props;
+    if (Platform.OS === 'ios') {
+      const animConfig = spListsAnimConfig();
+      LayoutAnimation.configureNext(animConfig);
+    }
     moveListName(listNameObj.listName, SWAP_LEFT);
+
+    this.didClick = true;
   }
 
   onMoveDownBtnClick = () => {
-    const { listNameObj, moveListName } = this.props;
-    const animConfig = spListsAnimConfig();
+    if (this.didClick) return;
 
-    if (Platform.OS === 'ios') LayoutAnimation.configureNext(animConfig);
+    const { listNameObj, moveListName } = this.props;
+    if (Platform.OS === 'ios') {
+      const animConfig = spListsAnimConfig();
+      LayoutAnimation.configureNext(animConfig);
+    }
     moveListName(listNameObj.listName, SWAP_RIGHT);
+    this.didClick = true;
   }
 
   onRetryRetryBtnClick = () => {
+    if (this.didClick) return;
     this.props.retryDiedListNames([this.props.listNameObj.listName]);
+    this.didClick = true;
   }
 
   onRetryCancelBtnClick = () => {
@@ -269,7 +307,7 @@ class _ListNameEditor extends React.PureComponent {
     const { mode, value, msg, isCheckingCanDelete } = this.state;
 
     const isBusy = (listNameObj && [ADDING, UPDATING, MOVING].includes(listNameObj.status)) || isCheckingCanDelete;
-    const doRetry = listNameObj && [DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_DELETING].includes(listNameObj.status);
+    const doRetry = listNameObj && isDiedStatus(listNameObj.status);
 
     let deleteBtn;
     if (isBusy) {
@@ -304,7 +342,7 @@ class _ListNameEditor extends React.PureComponent {
     }
 
     let errMsg;
-    if (listNameObj && [DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_DELETING].includes(listNameObj.status)) {
+    if (listNameObj && isDiedStatus(listNameObj.status)) {
       errMsg = 'Oops..., something went wrong!';
     } else {
       errMsg = msg;
@@ -324,7 +362,7 @@ class _ListNameEditor extends React.PureComponent {
           </Svg>
         </TouchableOpacity>}
         <View style={tailwind('flex-grow flex-shrink')}>
-          <TextInput ref={this.input} onFocus={this.onInputFocus} onBlur={this.onInputBlur} onChange={this.onInputChange} onSubmitEditing={this.onInputKeyPress} style={tailwind('py-2 w-full bg-white text-base text-gray-900 font-normal border-0')} placeholder="Create new list" value={value} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} disabled={isBusy || doRetry} />
+          <TextInput ref={this.input} onFocus={this.onInputFocus} onBlur={this.onInputBlur} onChange={this.onInputChange} onSubmitEditing={this.onInputKeyPress} style={tailwind('py-2 w-full bg-white text-base text-gray-900 font-normal border-0')} placeholder="Create new list" value={value} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} editable={!(isBusy || doRetry)} />
           <Text style={cache('SPL_errMsg', [tailwind('pl-1 absolute left-0 right-0 text-sm text-red-600 font-medium leading-5'), { bottom: -8 }])} numberOfLines={1} ellipsizeMode="tail">{errMsg}</Text>
         </View>
         {mode === MODE_EDIT && <TouchableOpacity onPressIn={this.onOkBtnPress} onPress={this.onOkBtnClick} style={tailwind('flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10')}>
@@ -354,7 +392,7 @@ class _ListNameEditor extends React.PureComponent {
           </View>
         </TouchableOpacity>}
         {(mode === MODE_VIEW && listNameObj !== null && doRetry) && <TouchableOpacity onPress={this.onRetryCancelBtnClick} style={tailwind('flex-grow-0 flex-shrink-0 justify-center items-center w-16 h-10')} disabled={isBusy}>
-          <Text style={tailwind('text-base text-gray-700 font-normal rounded-sm')}>Retry</Text>
+          <Text style={tailwind('text-base text-gray-700 font-normal rounded-sm')}>Cancel</Text>
         </TouchableOpacity>}
       </View>
     );

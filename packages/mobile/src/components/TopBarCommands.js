@@ -42,34 +42,24 @@ class TopBarCommands extends React.PureComponent {
   }
 
   onProfileBtnClick = () => {
-    if (this.props.isProfilePopupShown) return;
     this.props.updatePopup(PROFILE_POPUP, true);
   }
 
   onProfileCancelBtnClick = () => {
-    // As animation takes time, increase chance to duplicate clicks
-    if (!this.props.isProfilePopupShown) return;
     this.props.updatePopup(PROFILE_POPUP, false);
   }
 
   onSettingsBtnClick = () => {
-    // As animation takes time, increase chance to duplicate clicks
-    if (!this.props.isProfilePopupShown) return;
     this.props.updatePopup(PROFILE_POPUP, false);
     this.props.updatePopup(SETTINGS_POPUP, true);
   }
 
   onSupportBtnClick = () => {
-    // As animation takes time, increase chance to duplicate clicks
-    if (!this.props.isProfilePopupShown) return;
     this.props.updatePopup(PROFILE_POPUP, false);
     Linking.openURL(DOMAIN_NAME + '/#support');
   }
 
   onSignOutBtnClick = () => {
-    // As animation takes time, increase chance to duplicate clicks
-    if (!this.props.isProfilePopupShown) return;
-
     // No need to update it, will get already unmount
     //this.props.updatePopup(PROFILE_POPUP, false);
     this.props.signOut();
@@ -129,7 +119,6 @@ const mapStateToProps = (state, props) => {
   return {
     username: state.user.username,
     userImage: state.user.image,
-    isProfilePopupShown: state.display.isProfilePopupShown,
   };
 };
 

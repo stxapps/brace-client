@@ -58,6 +58,12 @@ export const SettingsPopupData = connect(mapStateToProps)(withSafeAreaContext(_S
 
 class _SettingsPopupDataExport extends React.PureComponent {
 
+  constructor(props) {
+    super(props);
+
+    this.didClick = false;
+  }
+
   componentWillUnmount() {
     if (this.props.exportAllDataProgress) {
       const { total, done } = this.props.exportAllDataProgress;
@@ -66,7 +72,9 @@ class _SettingsPopupDataExport extends React.PureComponent {
   }
 
   onExportAllDataBtnClick = () => {
+    if (this.didClick) return;
     this.props.exportAllData();
+    this.didClick = true;
   }
 
   render() {
@@ -171,6 +179,8 @@ class _SettingsPopupDataDelete extends React.PureComponent {
       didCheckConfirm: false,
       isRequireConfirmShown: false,
     };
+
+    this.didClick = false;
   }
 
   componentWillUnmount() {
@@ -188,11 +198,14 @@ class _SettingsPopupDataDelete extends React.PureComponent {
   }
 
   onDeleteAllDataBtnClick = () => {
+    if (this.didClick) return;
+
     if (this.state.didCheckConfirm) {
       if (this.state.isRequireConfirmShown) {
         this.setState({ isRequireConfirmShown: false });
       }
       this.props.deleteAllData();
+      this.didClick = true;
       return;
     }
 

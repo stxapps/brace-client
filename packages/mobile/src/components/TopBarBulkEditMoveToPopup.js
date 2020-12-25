@@ -21,18 +21,23 @@ import MenuPopoverRenderers from './MenuPopoverRenderer';
 
 class TopBarBulkEditMoveToPopup extends React.PureComponent {
 
+  constructor(props) {
+    super(props);
+
+    this.didClick = false;
+  }
+
   onBulkEditMoveToBtnClick = () => {
     if (this.props.checkNoLinkIdSelected()) {
       this.props.ctx.menuActions.closeMenu();
       return;
     }
     this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, true);
+    this.didClick = false;
   }
 
   onBulkEditMoveToPopupClick = (text) => {
-    // As animation takes time, increase chance to several clicks
-    if (!this.props.isBulkEditMoveToPopupShown) return;
-    if (!text) return;
+    if (!text || this.didClick) return;
 
     const {
       selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
@@ -47,11 +52,10 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
     }
 
     this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, false);
+    this.didClick = true;
   }
 
   onBulkEditMoveToCancelBtnClick = () => {
-    // As animation takes time, increase chance to several clicks
-    if (!this.props.isBulkEditMoveToPopupShown) return;
     this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, false);
   }
 
@@ -136,7 +140,6 @@ const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
     listNameMap: getListNameMap(state),
-    isBulkEditMoveToPopupShown: state.display.isBulkEditMoveToPopupShown,
     selectedLinkIds: state.display.selectedLinkIds,
     windowHeight: state.window.height,
   };

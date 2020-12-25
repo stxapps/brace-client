@@ -17,6 +17,18 @@ import CardItemSelector from './CardItemSelector';
 
 class CardItem extends React.Component {
 
+  constructor(props) {
+    super(props);
+
+    this.didClick = false;
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!isDiedStatus(prevProps.link.status) && isDiedStatus(this.props.link.status)) {
+      this.didClick = false;
+    }
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     if (
       this.props.style !== nextProps.style ||
@@ -31,7 +43,9 @@ class CardItem extends React.Component {
   }
 
   onRetryRetryBtnClick = () => {
+    if (this.didClick) return;
     this.props.retryDiedLinks([this.props.link.id]);
+    this.didClick = true;
   }
 
   onRetryCancelBtnClick = () => {

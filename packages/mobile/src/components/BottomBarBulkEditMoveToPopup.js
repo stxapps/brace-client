@@ -22,6 +22,8 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
 
     this.state = { didCloseAnimEnd: !props.isBulkEditMoveToPopupShown, popupSize: null };
     this.popuptranslateY = new Animated.Value(999);
+
+    this.didClick = false;
   }
 
   componentDidMount() {
@@ -59,6 +61,7 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
       if (this.state.didCloseAnimEnd) {
         this.setState({ didCloseAnimEnd: false, popupSize: null })
         this.popupTranslateY = new Animated.Value(999);
+        this.didClick = false;
       }
     }
   }
@@ -97,9 +100,7 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
   }
 
   onBulkEditMoveToPopupClick = (text) => {
-    // As animation takes time, increase chance to several clicks
-    if (!this.props.isBulkEditMoveToPopupShown) return;
-    if (!text) return;
+    if (!text || this.didClick) return;
 
     const {
       selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
@@ -114,11 +115,10 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
     }
 
     this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, false);
+    this.didClick = true;
   }
 
   onBulkEditMoveToCancelBtnClick = () => {
-    // As animation takes time, increase chance to several clicks
-    if (!this.props.isBulkEditMoveToPopupShown) return;
     this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, false);
   }
 

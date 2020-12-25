@@ -17,7 +17,6 @@ import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
 
-
 class BottomBarBulkEditCommands extends React.Component {
 
   constructor(props) {
@@ -27,6 +26,8 @@ class BottomBarBulkEditCommands extends React.Component {
 
     this.backHandler = null;
     this.emptyErrorScale = new Animated.Value(0);
+
+    this.didClick = false;
   }
 
   componentDidMount() {
@@ -105,9 +106,7 @@ class BottomBarBulkEditCommands extends React.Component {
   }
 
   onBulkEditArchiveBtnClick = () => {
-    // As animation takes time, increase chance to several clicks
-    if (!this.props.isBulkEditing) return;
-    if (this.checkNoLinkIdSelected()) return;
+    if (this.checkNoLinkIdSelected() || this.didClick) return;
 
     const {
       selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
@@ -116,12 +115,12 @@ class BottomBarBulkEditCommands extends React.Component {
     moveLinks(ARCHIVE, selectedLinkIds);
     clearSelectedLinkIds();
     updateBulkEdit(false);
+
+    this.didClick = true;
   }
 
   onBulkEditRemoveBtnClick = () => {
-    // As animation takes time, increase chance to several clicks
-    if (!this.props.isBulkEditing) return;
-    if (this.checkNoLinkIdSelected()) return;
+    if (this.checkNoLinkIdSelected() || this.didClick) return;
 
     const {
       selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
@@ -130,12 +129,12 @@ class BottomBarBulkEditCommands extends React.Component {
     moveLinks(TRASH, selectedLinkIds);
     clearSelectedLinkIds();
     updateBulkEdit(false);
+
+    this.didClick = true;
   }
 
   onBulkEditRestoreBtnClick = () => {
-    // As animation takes time, increase chance to several clicks
-    if (!this.props.isBulkEditing) return;
-    if (this.checkNoLinkIdSelected()) return;
+    if (this.checkNoLinkIdSelected() || this.didClick) return;
 
     const {
       selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
@@ -144,6 +143,8 @@ class BottomBarBulkEditCommands extends React.Component {
     moveLinks(MY_LIST, selectedLinkIds);
     clearSelectedLinkIds();
     updateBulkEdit(false);
+
+    this.didClick = true;
   }
 
   onBulkEditDeleteBtnClick = () => {
@@ -157,8 +158,6 @@ class BottomBarBulkEditCommands extends React.Component {
   }
 
   onBulkEditCancelBtnClick = () => {
-    // As animation takes time, increase chance to several clicks
-    if (!this.props.isBulkEditing) return;
     this.props.clearSelectedLinkIds();
     this.props.updateBulkEdit(false);
   }
@@ -276,7 +275,6 @@ const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
     listNameMap: getListNameMap(state),
-    isBulkEditing: state.display.isBulkEditing,
     selectedLinkIds: state.display.selectedLinkIds,
     windowWidth: state.window.width,
     windowHeight: state.window.height,
