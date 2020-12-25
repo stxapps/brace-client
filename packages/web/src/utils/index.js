@@ -2,7 +2,7 @@ import Url from 'url-parse';
 
 import {
   HTTP, HTTPS, WWW,
-  DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
+  DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   COLOR, PATTERN, IMAGE,
   BG_COLOR_STYLES, PATTERNS,
   VALID_URL, NO_URL, ASK_CONFIRM_URL,
@@ -542,7 +542,9 @@ export const excludeWithMainIds = (links, ids) => {
 };
 
 export const isDiedStatus = (status) => {
-  return [DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING].includes(status);
+  return [
+    DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
+  ].includes(status);
 };
 
 export const randInt = (max) => {

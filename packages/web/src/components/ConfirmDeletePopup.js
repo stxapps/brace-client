@@ -10,6 +10,18 @@ import { getPopupLink } from '../selectors';
 
 class ConfirmDeletePopup extends React.Component {
 
+  constructor(props) {
+    super(props);
+
+    this.didClick = false;
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!prevProps.isConfirmDeletePopupShown && this.props.isConfirmDeletePopupShown) {
+      this.didClick = false;
+    }
+  }
+
   shouldComponentUpdate(nextProps) {
     if (this.props.isConfirmDeletePopupShown !== nextProps.isConfirmDeletePopupShown) {
       return true;
@@ -19,17 +31,14 @@ class ConfirmDeletePopup extends React.Component {
   }
 
   onConfirmDeleteOkBtnClick = () => {
+    if (this.didClick) return;
+    this.didClick = true;
 
     const { popupLink, selectedLinkIds, deletingListName } = this.props;
 
     const v1 = popupLink ? 1 : 0;
     const v2 = selectedLinkIds.length > 0 ? 1 : 0;
     const v3 = deletingListName ? 1 : 0;
-    if (v1 + v2 + v3 === 0) {
-      // As animation takes time, increase chance to several clicks
-      console.log(`Invalid popupLink: ${popupLink}, selectedLinkIds: ${selectedLinkIds}, and deletingListName: ${deletingListName}`);
-      return;
-    }
     if (v1 + v2 + v3 !== 1) {
       throw new Error(`Invalid popupLink: ${popupLink}, selectedLinkIds: ${selectedLinkIds}, and deletingListName: ${deletingListName}`);
     }

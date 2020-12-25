@@ -21,6 +21,8 @@ class TopBarAddPopup extends React.PureComponent {
       isAskingConfirm: false,
     };
     this.state = { ...this.initialState };
+
+    this.didClick = false;
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -32,8 +34,8 @@ class TopBarAddPopup extends React.PureComponent {
   }
 
   onAddBtnClick = () => {
-    if (this.props.isAddPopupShown) return;
     this.props.updatePopup(ADD_POPUP, true);
+    this.didClick = false;
   }
 
   onAddInputChange = (e) => {
@@ -50,8 +52,7 @@ class TopBarAddPopup extends React.PureComponent {
   }
 
   onAddOkBtnClick = () => {
-    // As animation takes time, increase chance to duplicate clicks
-    if (!this.props.isAddPopupShown) return;
+    if (this.didClick) return;
 
     if (!this.state.isAskingConfirm) {
       const urlValidatedResult = validateUrl(this.state.url);
@@ -67,11 +68,11 @@ class TopBarAddPopup extends React.PureComponent {
 
     this.props.addLink(this.state.url, null, null);
     this.props.updatePopup(ADD_POPUP, false);
+
+    this.didClick = true;
   }
 
   onAddCancelBtnClick = () => {
-    // As animation takes time, increase chance to duplicate clicks
-    if (!this.props.isAddPopupShown) return;
     this.props.updatePopup(ADD_POPUP, false);
   }
 

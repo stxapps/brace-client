@@ -29,6 +29,8 @@ class CardItemMenuPopup extends React.PureComponent {
 
     this.menuPopup = React.createRef();
     this.updateScrollY = throttle(this.updateScrollY, 16);
+
+    this.didClick = false;
   }
 
   componentDidMount() {
@@ -38,6 +40,7 @@ class CardItemMenuPopup extends React.PureComponent {
   componentDidUpdate(prevProps) {
     if (!prevProps.popupLink && this.props.popupLink) {
       this.updateState(true);
+      this.didClick = false;
     }
 
     if (prevProps.popupLink && !this.props.popupLink) {
@@ -105,9 +108,7 @@ class CardItemMenuPopup extends React.PureComponent {
   }
 
   onMenuPopupClick = (text) => {
-    // As animation takes time, increase chance to several clicks
-    if (!this.props.popupLink) return;
-    if (!text) return;
+    if (!text || this.didClick) return;
 
     const { id, url } = this.props.popupLink;
 
@@ -131,12 +132,13 @@ class CardItemMenuPopup extends React.PureComponent {
     }
 
     this.props.updatePopup(id, false);
+    this.didClick = true;
   };
 
   onCancelBtnClick = () => {
-    // As animation takes time, increase chance to several clicks
-    if (!this.props.popupLink) return;
-    this.props.updatePopup(this.props.popupLink.id, false);
+    // In Chrome desktop, touch mode,
+    //   double clicks on menu popup, the second click is on cancelBtn.
+    if (this.props.popupLink) this.props.updatePopup(this.props.popupLink.id, false);
   };
 
   renderMenu() {

@@ -12,10 +12,20 @@ import { popupBgFMV, bModalFMV } from '../types/animConfigs';
 
 class BottomBarBulkEditMoveToPopup extends React.PureComponent {
 
+  constructor(props) {
+    super(props);
+
+    this.didClick = false;
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!prevProps.isBulkEditMoveToPopupShown && this.props.isBulkEditMoveToPopupShown) {
+      this.didClick = false;
+    }
+  }
+
   onBulkEditMoveToPopupClick = (text) => {
-    // As animation takes time, increase chance to several clicks
-    if (!this.props.isBulkEditMoveToPopupShown) return;
-    if (!text) return;
+    if (!text || this.didClick) return;
 
     const {
       selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
@@ -30,11 +40,10 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
     }
 
     this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, false);
+    this.didClick = true;
   }
 
   onBulkEditMoveToCancelBtnClick = () => {
-    // As animation takes time, increase chance to several clicks
-    if (!this.props.isBulkEditMoveToPopupShown) return;
     this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, false);
   }
 

@@ -5,7 +5,6 @@ import { motion, AnimateSharedLayout, AnimatePresence } from 'framer-motion';
 import {
   MY_LIST, TRASH, ARCHIVE,
   ADDING, UPDATING, MOVING,
-  DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_DELETING,
   VALID_LIST_NAME, IN_USE_LIST_NAME, LIST_NAME_MSGS,
   CONFIRM_DELETE_POPUP, SWAP_LEFT, SWAP_RIGHT,
 } from '../types/const';
@@ -15,7 +14,7 @@ import {
 } from '../actions';
 import { getListNameMap } from '../selectors';
 import { canDeleteListNames } from '../apis/blockstack';
-import { validateListNameDisplayName } from '../utils';
+import { validateListNameDisplayName, isDiedStatus } from '../utils';
 import { spListsFMV } from '../types/animConfigs';
 
 class SettingsPopupLists extends React.PureComponent {
@@ -84,11 +83,32 @@ class _ListNameEditor extends React.PureComponent {
 
     this.didOkBtnJustPress = false;
     this.didCancelBtnJustPress = false;
+
+    this.didClick = false;
   }
 
   componentDidMount() {
     if (this.props.listNameObj) {
       this.setState({ value: this.props.listNameObj.displayName });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.listNameObj && this.props.listNameObj) {
+      if (
+        (!isDiedStatus(prevProps.listNameObj.status) &&
+          isDiedStatus(this.props.listNameObj.status)) ||
+        (prevProps.listNameObj.status === UPDATING &&
+          this.props.listNameObj.status !== UPDATING) ||
+        (prevProps.listNameObj.status === MOVING &&
+          this.props.listNameObj.status !== MOVING)
+      ) {
+        this.didClick = false;
+      }
+    }
+
+    if (prevState.mode === MODE_VIEW && this.state.mode === MODE_EDIT) {
+      this.didClick = false;
     }
   }
 
@@ -159,6 +179,7 @@ class _ListNameEditor extends React.PureComponent {
   }
 
   onAddOkBtnClick = () => {
+    if (this.didClick) return;
 
     const { validateDisplayName, addListNames } = this.props;
     const { value } = this.state;
@@ -172,9 +193,11 @@ class _ListNameEditor extends React.PureComponent {
 
     addListNames([value]);
     this.setState({ ...this.initialState });
+    this.didClick = true;
   }
 
   onEditOkBtnClick = () => {
+    if (this.didClick) return;
 
     const { listNameObj, validateDisplayName, updateListNames } = this.props;
     const { value } = this.state;
@@ -190,6 +213,7 @@ class _ListNameEditor extends React.PureComponent {
 
     updateListNames([listNameObj.listName], [value]);
     this.setState({ ...this.initialState, value: value });
+    this.didClick = true;
   }
 
   onCancelBtnPress = () => {
@@ -203,6 +227,7 @@ class _ListNameEditor extends React.PureComponent {
   }
 
   onDeleteBtnClick = () => {
+    if (this.didClick) return;
 
     this.setState({ isCheckingCanDelete: true }, async () => {
 
@@ -217,27 +242,41 @@ class _ListNameEditor extends React.PureComponent {
           msg: LIST_NAME_MSGS[IN_USE_LIST_NAME],
           isCheckingCanDelete: false,
         });
+        this.didClick = false;
         return;
       }
 
       updateDeletingListName(listNameObj.listName);
       updatePopup(CONFIRM_DELETE_POPUP, true);
       this.setState({ msg: '', isCheckingCanDelete: false });
-    })
+      this.didClick = false;
+    });
+
+    this.didClick = true;
   }
 
   onMoveUpBtnClick = () => {
+    if (this.didClick) return;
+
     const { listNameObj, moveListName } = this.props;
     moveListName(listNameObj.listName, SWAP_LEFT);
+
+    this.didClick = true;
   }
 
   onMoveDownBtnClick = () => {
+    if (this.didClick) return;
+
     const { listNameObj, moveListName } = this.props;
     moveListName(listNameObj.listName, SWAP_RIGHT);
+
+    this.didClick = true;
   }
 
   onRetryRetryBtnClick = () => {
+    if (this.didClick) return;
     this.props.retryDiedListNames([this.props.listNameObj.listName]);
+    this.didClick = true;
   }
 
   onRetryCancelBtnClick = () => {
@@ -250,7 +289,7 @@ class _ListNameEditor extends React.PureComponent {
     const { mode, value, msg, isCheckingCanDelete } = this.state;
 
     const isBusy = (listNameObj && [ADDING, UPDATING, MOVING].includes(listNameObj.status)) || isCheckingCanDelete;
-    const doRetry = listNameObj && [DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_DELETING].includes(listNameObj.status);
+    const doRetry = listNameObj && isDiedStatus(listNameObj.status);
 
     let deleteBtn;
     if (isBusy) {
@@ -287,7 +326,7 @@ class _ListNameEditor extends React.PureComponent {
     }
 
     let errMsg;
-    if (listNameObj && [DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_DELETING].includes(listNameObj.status)) {
+    if (listNameObj && isDiedStatus(listNameObj.status)) {
       errMsg = 'Oops..., something went wrong!';
     } else {
       errMsg = msg;

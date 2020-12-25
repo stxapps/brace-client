@@ -21,11 +21,13 @@ class BottomBarAddPopup extends React.PureComponent {
     this.state = { ...this.initialState };
 
     this.addInput = React.createRef();
+    this.didClick = false;
   }
 
   componentDidUpdate(prevProps) {
     if (!prevProps.isAddPopupShown && this.props.isAddPopupShown) {
       this.addInput.current.focus();
+      this.didClick = false;
     }
   }
 
@@ -51,8 +53,7 @@ class BottomBarAddPopup extends React.PureComponent {
   }
 
   onAddOkBtnClick = () => {
-    // As animation takes time, increase chance to duplicate clicks
-    if (!this.props.isAddPopupShown) return;
+    if (this.didClick) return;
 
     if (!this.state.isAskingConfirm) {
       const urlValidatedResult = validateUrl(this.state.url);
@@ -68,11 +69,10 @@ class BottomBarAddPopup extends React.PureComponent {
 
     this.props.addLink(this.state.url, null, null);
     this.props.updatePopup(ADD_POPUP, false);
+    this.didClick = true;
   }
 
   onAddCancelBtnClick = () => {
-    // As animation takes time, increase chance to duplicate clicks
-    if (!this.props.isAddPopupShown) return;
     this.props.updatePopup(ADD_POPUP, false);
   }
 

@@ -17,6 +17,7 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
 
     this.state = { menuPopupSize: null };
     this.menuPopup = React.createRef();
+    this.didClick = true;
   }
 
   componentDidMount() {
@@ -26,6 +27,7 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
   componentDidUpdate(prevProps) {
     if (!prevProps.isBulkEditMoveToPopupShown && this.props.isBulkEditMoveToPopupShown) {
       this.updateState(true);
+      this.didClick = false;
     }
 
     if (prevProps.isBulkEditMoveToPopupShown && !this.props.isBulkEditMoveToPopupShown) {
@@ -53,9 +55,7 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
   }
 
   onBulkEditMoveToPopupClick = (text) => {
-    // As animation takes time, increase chance to several clicks
-    if (!this.props.isBulkEditMoveToPopupShown) return;
-    if (!text) return;
+    if (!text || this.didClick) return;
 
     const {
       selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
@@ -70,11 +70,10 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
     }
 
     this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, false);
+    this.didClick = true;
   }
 
   onBulkEditMoveToCancelBtnClick = () => {
-    // As animation takes time, increase chance to several clicks
-    if (!this.props.isBulkEditMoveToPopupShown) return;
     this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, false);
   }
 

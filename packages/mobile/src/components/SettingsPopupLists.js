@@ -109,6 +109,8 @@ class _ListNameEditor extends React.PureComponent {
       if (
         (!isDiedStatus(prevProps.listNameObj.status) &&
           isDiedStatus(this.props.listNameObj.status)) ||
+        (prevProps.listNameObj.status === UPDATING &&
+          this.props.listNameObj.status !== UPDATING) ||
         (prevProps.listNameObj.status === MOVING &&
           this.props.listNameObj.status !== MOVING)
       ) {

@@ -54,6 +54,10 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
         this.setState({ didCloseAnimEnd: true });;
       });
     }
+
+    if (!prevProps.isBulkEditMoveToPopupShown && isBulkEditMoveToPopupShown) {
+      this.didClick = false;
+    }
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -61,7 +65,6 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
       if (this.state.didCloseAnimEnd) {
         this.setState({ didCloseAnimEnd: false, popupSize: null })
         this.popupTranslateY = new Animated.Value(999);
-        this.didClick = false;
       }
     }
   }
