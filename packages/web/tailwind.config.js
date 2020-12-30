@@ -10,6 +10,7 @@ module.exports = {
         'purple-blockstack': '#211F6D'
       },
       spacing: {
+        '1.5': '0.375rem',
         '7': '1.75rem',
         '11': '2.75rem',
         '14': '3.5rem',
