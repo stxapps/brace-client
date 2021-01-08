@@ -12,7 +12,7 @@
     "@testing-library/user-event": "^7.1.2",
     "@welldone-software/why-did-you-render": "^5.0.0-rc.1",
     "autoprefixer": "9.8.6",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "blockstack": "^21.1.1",
     "file-saver": "^2.0.2",
     "framer-motion": "^2.9.4",
