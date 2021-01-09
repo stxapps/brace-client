@@ -146,8 +146,8 @@ class Landing extends React.PureComponent {
             </Svg>
             <Text style={tailwind('mt-4 text-2xl text-gray-800 font-semibold')}>Identity</Text>
             <Text style={tailwind('mt-3 text-lg text-gray-700 font-normal leading-7')}>Your identity lives in blockchain and only you with your secret key can access it and control it.</Text>
-            <Text style={tailwind('mt-8 text-xl text-gray-800 font-medium leading-6')}>No ban on your owned identity</Text>
-            <Text style={tailwind('mt-3 text-lg text-gray-700 font-normal leading-7')}>Your identity cannot be locked, banned, or deleted by anyone as your secret key is required to make a change to your identity in the blockchain.</Text>
+            <Text style={tailwind('mt-6 text-xl text-gray-800 font-medium leading-6')}>No ban on your owned identity</Text>
+            <Text style={tailwind('mt-3 text-lg text-gray-700 font-normal leading-7')}>Your identity cannot be locked, banned, or deleted by anyone as your secret key is required.</Text>
           </View>
         </View>
         <View style={tailwind('px-4 justify-center items-center w-full h-full md:px-6 lg:px-8', safeAreaWidth)}>
@@ -158,8 +158,8 @@ class Landing extends React.PureComponent {
             </Svg>
             <Text style={tailwind('mt-4 text-2xl text-gray-800 font-semibold')}>Data Storage</Text>
             <Text style={tailwind('mt-3 text-lg text-gray-700 font-normal leading-7')}>Your data lives in a storage of your choice and only you with your secret key can change it.</Text>
-            <Text style={tailwind('mt-8 text-xl text-gray-800 font-medium leading-6')}>No lock out from your own data</Text>
-            <Text style={tailwind('mt-3 text-lg text-gray-700 font-normal leading-7')}>You can always access your data directly whenever you want as you have fully control of your data storage. Plus, you can manage who can access your data too.</Text>
+            <Text style={tailwind('mt-6 text-xl text-gray-800 font-medium leading-6')}>No lock out from your data</Text>
+            <Text style={tailwind('mt-3 text-lg text-gray-700 font-normal leading-7')}>You can access your data directly whenever you want as you have fully control of your data storage.</Text>
           </View>
         </View>
         <View style={tailwind('px-4 justify-center items-center w-full h-full md:px-6 lg:px-8', safeAreaWidth)}>
@@ -170,8 +170,8 @@ class Landing extends React.PureComponent {
             </Svg>
             <Text style={tailwind('mt-4 text-2xl text-gray-800 font-semibold')}>Encryption</Text>
             <Text style={tailwind('mt-3 text-lg text-gray-700 font-normal leading-7')}>Everything is encrypted  and only you with your secret key can see the content inside.</Text>
-            <Text style={tailwind('mt-8 text-xl text-gray-800 font-medium leading-6')}>No targeted ads and No data breach risk</Text>
-            <Text style={tailwind('mt-3 text-lg text-gray-700 font-normal leading-7')}>As no one can see the content inside your data, your data cannot be used to make targeted ads on you. Also, there is no risk, if your data is stolen.</Text>
+            <Text style={tailwind('mt-6 text-xl text-gray-800 font-medium leading-6')}>No targeted ads and No data breach risk</Text>
+            <Text style={tailwind('mt-3 text-lg text-gray-700 font-normal leading-7')}>Your data cannot be used to make targeted ads on you and there is no risk, if your data is stolen.</Text>
           </View>
         </View>
         <View style={tailwind('px-4 justify-center items-center w-full h-full bg-purple-blockstack md:px-6 lg:px-8', safeAreaWidth)}>
