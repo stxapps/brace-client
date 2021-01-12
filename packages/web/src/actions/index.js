@@ -791,7 +791,10 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
     _links = Object.values(_links);
 
     // Allow just one link at a time for now
-    if (!_links[0]) throw new Error(`Links not found: ${listName}, ${ids}`);
+    if (!_links[0]) {
+      console.log(`Links not found: ${listName}, ${ids}`);
+      return;
+    }
     links = [_links[0]];
   } else {
     throw new Error(`Invalid parameters: ${listName}, ${ids}`);

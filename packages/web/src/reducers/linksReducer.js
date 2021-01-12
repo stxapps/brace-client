@@ -367,10 +367,17 @@ export default (state = initialState, action) => {
   if (action.type === UPDATE_EXTRACTED_CONTENTS) {
     const { listName, links, canRerender } = action.payload;
 
+    // Possible that the links and their listName are already deleted.
+    // If that the case, ignore them.
+    if (!(listName in state)) return state;
+
     if (canRerender) {
       const newState = { ...state };
       newState[listName] = { ...newState[listName] };
       for (const link of links) {
+        // Some links might be moved while extracting.
+        // If that the case, ignore them.
+        if (!(link.id in newState[listName])) continue;
         newState[listName][link.id] = { ...newState[listName][link.id] };
         for (const key of ['extractedResult']) {
           newState[listName][link.id][key] = link[key];
@@ -382,6 +389,9 @@ export default (state = initialState, action) => {
 
     // If should not update views (re-render), just update the state.
     for (const link of links) {
+      // Some links might be moved while extracting.
+      // If that the case, ignore them.
+      if (!(link.id in state[listName])) continue;
       state[listName][link.id].extractedResult = link.extractedResult;
     }
     return state;
