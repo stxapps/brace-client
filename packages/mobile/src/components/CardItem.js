@@ -110,7 +110,7 @@ class CardItem extends React.Component {
 
     // Need to do this as React Native doesn't support maxWidth: "none"
     //   even though it's in tailwind-rn.
-    const viewStyle = safeAreaWidth < SM_WIDTH ? 'max-w-sm' : '';
+    const viewStyle = safeAreaWidth < SM_WIDTH ? 'max-w-md' : '';
 
     return (
       <View style={style}>

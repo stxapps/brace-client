@@ -83,7 +83,7 @@ class CardItem extends React.Component {
     const { status } = link;
 
     return (
-      <div className="mx-auto relative max-w-sm bg-white border-1 border-gray-200 rounded-lg overflow-hidden shadow sm:max-w-none">
+      <div className="mx-auto relative max-w-md bg-white border-1 border-gray-200 rounded-lg overflow-hidden shadow sm:max-w-none">
         <CardItemContent link={link} />
         {isDiedStatus(status) && this.renderRetry()}
         {[ADDING, MOVING].includes(status) && this.renderBusy()}
