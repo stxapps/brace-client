@@ -7,6 +7,7 @@ import { createStore, compose } from 'redux';
 import { install as installReduxLoop } from 'redux-loop';
 import { offline } from '@redux-offline/redux-offline';
 import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
+import { Text, TextInput } from 'react-native';
 import {
   SafeAreaProvider, initialWindowMetrics, SafeAreaView,
 } from 'react-native-safe-area-context';
@@ -20,6 +21,12 @@ import cache from './utils/cache';
 
 import App from './components/App';
 import Share from './components/Share';
+
+Text.defaultProps = Text.defaultProps || {};
+Text.defaultProps.allowFontScaling = false;
+
+TextInput.defaultProps = TextInput.defaultProps || {};
+TextInput.defaultProps.allowFontScaling = false;
 
 offlineConfig.queue = queue;
 offlineConfig.discard = discard;
