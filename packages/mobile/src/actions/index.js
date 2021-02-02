@@ -114,7 +114,8 @@ export const init = async (store) => {
 
 const handlePendingSignIn = (url) => async (dispatch, getState) => {
 
-  if (!url.startsWith(APP_DOMAIN_NAME + BLOCKSTACK_AUTH)) return;
+  if (!url.startsWith(DOMAIN_NAME + BLOCKSTACK_AUTH) &&
+    !url.startsWith(APP_DOMAIN_NAME + BLOCKSTACK_AUTH)) return;
 
   // As handle pending sign in takes time, show loading first.
   dispatch({
@@ -203,12 +204,52 @@ export const updateMenuPopupAsBackPressed = (menuProvider, dispatch, getState) =
 };
 
 export const signUp = () => async (dispatch, getState) => {
-  signIn()(dispatch, getState);
+  // On Android, signUp and signIn will always lead to handlePendingSignIn.
+  // On iOS, signUp and signIn will always return a promise.
+  if (Platform.OS === 'android') {
+    await userSession.signUp();
+  } else if (Platform.OS === 'ios') {
+
+    // As handle pending sign in takes time, show loading first.
+    dispatch({
+      type: UPDATE_HANDLING_SIGN_IN,
+      payload: true
+    });
+
+    try {
+      await userSession.signUp();
+    } catch (e) {
+      // All errors thrown by signIn have the same next steps
+      //   - Invalid token
+      //   - Already signed in with the same account
+      //   - Already signed in with different account
+    }
+
+    const isUserSignedIn = await userSession.isUserSignedIn();
+    if (isUserSignedIn) {
+      const userData = await userSession.loadUserData();
+      dispatch({
+        type: UPDATE_USER,
+        payload: {
+          isUserSignedIn: true,
+          username: userData.username,
+          image: getUserImageUrl(userData),
+        }
+      });
+    }
+
+    // Stop show loading
+    dispatch({
+      type: UPDATE_HANDLING_SIGN_IN,
+      payload: false
+    });
+  } else {
+    throw new Error(`Invalid Platform.OS: ${Platform.OS}`);
+  }
 };
 
 export const signIn = () => async (dispatch, getState) => {
-  // On Android, signIn will always lead to handlePendingSignIn.
-  // On iOS, signIn will always return a promise.
+
   if (Platform.OS === 'android') {
     await userSession.signIn();
   } else if (Platform.OS === 'ios') {

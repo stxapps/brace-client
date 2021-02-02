@@ -24,6 +24,10 @@ const isUserSignedIn = async () => {
   return signedIn;
 };
 
+const signUp = async () => {
+  return await RNBlockstackSdk.signUp();
+};
+
 const signIn = async () => {
   return await RNBlockstackSdk.signIn();
 };
@@ -42,10 +46,9 @@ const loadUserData = async () => {
   return await RNBlockstackSdk.loadUserData();
 };
 
-const listFiles = async (callback) => {
-  const { files, fileCount } = await RNBlockstackSdk.listFiles();
-  files.forEach(file => callback(file));
-  return fileCount;
+const putFile = async (path, content, options = { encrypt: true }) => {
+  const { fileUrl } = await RNBlockstackSdk.putFile(path, content, options);
+  return fileUrl;
 };
 
 const getFile = async (path, options = { decrypt: true }) => {
@@ -53,20 +56,19 @@ const getFile = async (path, options = { decrypt: true }) => {
   return result.fileContents || result.fileContentsEncoded;
 };
 
-const putFile = async (path, content, options = { encrypt: true }) => {
-  const { fileUrl } = await RNBlockstackSdk.putFile(path, content, options);
-  return fileUrl;
-};
-
 const deleteFile = async (path, options = { wasSigned: false }) => {
   const { deleted } = await RNBlockstackSdk.deleteFile(path, options);
   return deleted;
 };
 
+const listFiles = async (callback) => {
+  const { files, fileCount } = await RNBlockstackSdk.listFiles();
+  files.forEach(file => callback(file));
+  return fileCount;
+};
+
 export default {
-  didSessionCreate,
-  hasSession, createSession,
-  isUserSignedIn, signIn, handlePendingSignIn, signUserOut,
-  loadUserData,
-  listFiles, getFile, putFile, deleteFile
+  didSessionCreate, hasSession, createSession,
+  isUserSignedIn, signUp, signIn, handlePendingSignIn, signUserOut, loadUserData,
+  putFile, getFile, deleteFile, listFiles,
 };
