@@ -41,7 +41,7 @@ import visitAnywhere2x from '../images/visit-anywhere-ss@2x.png';
 import visitAnywhere3x from '../images/visit-anywhere-ss@3x.png';
 import visitAnywhere4x from '../images/visit-anywhere-ss@4x.png';
 
-import blockstackShort from '../images/blockstack-short.svg';
+import stacksShort from '../images/stacks-short.svg';
 import logoFullWhite from '../images/logo-full-white.svg';
 
 class Landing extends React.PureComponent {
@@ -58,7 +58,7 @@ class Landing extends React.PureComponent {
           <div className="w-full md:w-55/100 lg:pt-10">
             <img className="mx-auto w-11/12 max-w-sm object-contain md:hidden" src={saveLinksToVisitLater} alt="Save links to visit later" />
             <h1 className="mt-16 first-h1-text text-gray-900 font-bold leading-none md:mt-0">Save links <br className="inline sm:hidden md:inline lg:hidden" />to visit later</h1>
-            <p className="mt-4 text-lg text-gray-700 font-normal leading-normal md:pr-4">Your bookmark manager with privacy at heart. Brace.to helps you save links to everything and visit them later easily anytime on your any devices. Powered by Blockstack technology, all your saved links are encrypted and only you can decrypt them and see the content inside.</p>
+            <p className="mt-4 text-lg text-gray-700 font-normal leading-normal md:pr-4">Your bookmark manager with privacy at heart. Brace.to helps you save links to everything and visit them later easily anytime on your any devices. Powered by Stacks technology, all your saved links are encrypted and only you can decrypt them and see the content inside.</p>
             <button onClick={() => this.props.signUp()} style={{ padding: '0.625rem 1.25rem' }} className="mt-6 flex justify-center items-center bg-gray-900 rounded-full shadow-lg hover:bg-gray-800 active:bg-black focus:outline-none focus:shadow-outline">
               <span className="text-xl text-white font-semibold">Get Started</span>
               <svg className="ml-2 w-2 text-white" viewBox="0 0 6 10" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -265,24 +265,24 @@ class Landing extends React.PureComponent {
         </section>
         <section className="mx-auto px-4 pt-24 pb-4 max-w-6xl md:px-6 lg:px-8">
           <div className="block md:flex md:flex-row md:justify-center md:items-center">
-            <img className="h-16 md:mt-1 md:h-28 xl:mt-2" src={blockstackShort} alt="Blockstack Logo" />
+            <img className="h-16 md:mt-1 md:h-28 xl:mt-2" src={stacksShort} alt="Stacks Logo" />
             <div className="mt-4 md:mt-0 md:ml-3">
-              <h2 className="text-3xl text-gray-900 font-semibold text-left leading-tight md:text-4xl md:text-center">Your privacy at heart <br className="hidden md:inline" />powered by <a className="text-purple-blockstack hover:text-gray-900 focus:outline-none focus:shadow-outline" href="https://blockstack.org/">Blockstack</a></h2>
+              <h2 className="text-3xl text-gray-900 font-semibold text-left leading-tight md:text-4xl md:text-center">Your privacy at heart <br className="hidden md:inline" />powered by <a className="text-purple-blockstack hover:text-gray-900 focus:outline-none focus:shadow-outline" href="https://www.stacks.co/">Stacks</a></h2>
               <p className="mt-4 text-xl text-gray-700 leading-tight text-left md:mt-2 md:text-center">Your identity is <span className="inline md:hidden">truly</span> yours. <br className="inline sm:hidden" />Your data is <span className="inline md:hidden">truly</span> yours.</p>
             </div>
           </div>
-          <div className="mt-12 block md:flex md:flex-row md:justify-between xl:mt-20">
-            <div className="w-full md:w-1/3">
-              <div style={{ borderRadius: '0.75rem' }} className="p-4 bg-gray-100 md:mr-2 md:h-full lg:mr-3 lg:max-w-md xl:mr-4">
+          <div className="mt-12 block lg:flex lg:flex-row lg:justify-between xl:mt-20">
+            <div className="w-full lg:w-1/3">
+              <div style={{ borderRadius: '0.75rem' }} className="p-4 bg-gray-100 lg:mr-3 lg:h-full lg:max-w-md xl:mr-4">
                 <svg className="h-14" viewBox="0 0 78 78" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="39" cy="39" r="39" fill="#211F6D" />
-                  <path d="M25.6452 31.7745L39 24.2261M25.6452 31.7745L39 39.3228M25.6452 31.7745V46.8712M39 24.2261L52.3548 31.7745M39 24.2261V39.3228M39 39.3228L52.3548 31.7745M39 39.3228L52.3548 46.8712M39 39.3228V54.4196M39 39.3228L25.6452 46.8712M52.3548 31.7745V46.8712M25.6452 46.8712L39 54.4196M39 54.4196L52.3548 46.8712" stroke="white" stroke-width="1.69052" />
-                  <path d="M47.7097 34.3875L52.3548 36.9279L57 34.315V29.1617M47.7097 34.3875V29.1617M47.7097 34.3875L52.3548 31.7746M57 29.1617L52.3548 31.7746M57 29.1617L52.3548 26.5488L47.7097 29.1617M47.7097 29.1617L52.3548 31.7746" stroke="white" stroke-width="1.69052" />
-                  <path d="M34.3548 26.8387L39 29.379L43.6452 26.8387V21.6129M34.3548 26.8387V21.6129M34.3548 26.8387L39 24.2258M43.6452 21.6129L39 24.2258M43.6452 21.6129L39 19L34.3548 21.6129M34.3548 21.6129L39 24.2258" stroke="white" stroke-width="1.69052" />
-                  <path d="M30.2903 29.1617V34.3875L25.6452 36.9279L21 34.3875V29.1617M30.2903 29.1617L25.6452 31.7746L21 29.1617M30.2903 29.1617L25.6452 26.5488L21 29.1617" stroke="white" stroke-width="1.69052" />
-                  <path d="M30.2903 44.2584V49.4842L25.6452 52.0245M30.2903 44.2584L25.6452 46.8713M30.2903 44.2584L25.6452 41.6455L21 44.2584M25.6452 52.0245L21 49.4842V44.2584M25.6452 52.0245V46.8713M21 44.2584L25.6452 46.8713" stroke="white" stroke-width="1.69052" />
-                  <path d="M43.6452 51.8063V57.0321L39 59.5724M43.6452 51.8063L39 54.4192M43.6452 51.8063L39 49.1934L34.3548 51.8063M39 59.5724L34.3548 57.0321V51.8063M39 59.5724V54.4192M34.3548 51.8063L39 54.4192" stroke="white" stroke-width="1.69052" />
-                  <path d="M57 44.2584V49.4842L52.3548 52.0245M57 44.2584L52.3548 46.8713M57 44.2584L52.3548 41.6455L47.7097 44.2584M52.3548 52.0245L47.7097 49.4842V44.2584M52.3548 52.0245V46.8713M47.7097 44.2584L52.3548 46.8713" stroke="white" stroke-width="1.69052" />
+                  <path d="M25.6452 31.7745L39 24.2261M25.6452 31.7745L39 39.3228M25.6452 31.7745V46.8712M39 24.2261L52.3548 31.7745M39 24.2261V39.3228M39 39.3228L52.3548 31.7745M39 39.3228L52.3548 46.8712M39 39.3228V54.4196M39 39.3228L25.6452 46.8712M52.3548 31.7745V46.8712M25.6452 46.8712L39 54.4196M39 54.4196L52.3548 46.8712" stroke="white" strokeWidth="1.69052" />
+                  <path d="M47.7097 34.3875L52.3548 36.9279L57 34.315V29.1617M47.7097 34.3875V29.1617M47.7097 34.3875L52.3548 31.7746M57 29.1617L52.3548 31.7746M57 29.1617L52.3548 26.5488L47.7097 29.1617M47.7097 29.1617L52.3548 31.7746" stroke="white" strokeWidth="1.69052" />
+                  <path d="M34.3548 26.8387L39 29.379L43.6452 26.8387V21.6129M34.3548 26.8387V21.6129M34.3548 26.8387L39 24.2258M43.6452 21.6129L39 24.2258M43.6452 21.6129L39 19L34.3548 21.6129M34.3548 21.6129L39 24.2258" stroke="white" strokeWidth="1.69052" />
+                  <path d="M30.2903 29.1617V34.3875L25.6452 36.9279L21 34.3875V29.1617M30.2903 29.1617L25.6452 31.7746L21 29.1617M30.2903 29.1617L25.6452 26.5488L21 29.1617" stroke="white" strokeWidth="1.69052" />
+                  <path d="M30.2903 44.2584V49.4842L25.6452 52.0245M30.2903 44.2584L25.6452 46.8713M30.2903 44.2584L25.6452 41.6455L21 44.2584M25.6452 52.0245L21 49.4842V44.2584M25.6452 52.0245V46.8713M21 44.2584L25.6452 46.8713" stroke="white" strokeWidth="1.69052" />
+                  <path d="M43.6452 51.8063V57.0321L39 59.5724M43.6452 51.8063L39 54.4192M43.6452 51.8063L39 49.1934L34.3548 51.8063M39 59.5724L34.3548 57.0321V51.8063M39 59.5724V54.4192M34.3548 51.8063L39 54.4192" stroke="white" strokeWidth="1.69052" />
+                  <path d="M57 44.2584V49.4842L52.3548 52.0245M57 44.2584L52.3548 46.8713M57 44.2584L52.3548 41.6455L47.7097 44.2584M52.3548 52.0245L47.7097 49.4842V44.2584M52.3548 52.0245V46.8713M47.7097 44.2584L52.3548 46.8713" stroke="white" strokeWidth="1.69052" />
                 </svg>
                 <h3 className="mt-4 text-2xl text-gray-800 font-semibold leading-none">Identity</h3>
                 <p className="mt-3 text-lg text-gray-700 font-normal leading-normal">Your identity lives in blockchain and only you with your secret key can access it and control it.</p>
@@ -290,11 +290,11 @@ class Landing extends React.PureComponent {
                 <p className="mt-3 text-lg text-gray-700 font-normal leading-normal">Your identity cannot be locked, banned, or deleted by anyone as your secret key is required to make a change to your identity in the blockchain.</p>
               </div>
             </div>
-            <div className="w-full md:w-1/3">
-              <div style={{ borderRadius: '0.75rem' }} className="mt-8 p-4 bg-gray-100 md:mt-0 md:mx-1 md:h-full lg:mx-1.5 lg:max-w-md xl:mx-2">
+            <div className="w-full lg:w-1/3">
+              <div style={{ borderRadius: '0.75rem' }} className="mt-8 p-4 bg-gray-100 lg:mt-0 lg:mx-1.5 lg:h-full lg:max-w-md xl:mx-2">
                 <svg className="h-14" viewBox="0 0 78 78" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="39" cy="39" r="39" fill="#211F6D" />
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M25 27C25 25.8954 25.8954 25 27 25H51C52.1046 25 53 25.8954 53 27C53 28.1046 52.1046 29 51 29H27C25.8954 29 25 28.1046 25 27ZM25 35C25 33.8954 25.8954 33 27 33H51C52.1046 33 53 33.8954 53 35C53 36.1046 52.1046 37 51 37H27C25.8954 37 25 36.1046 25 35ZM25 43C25 41.8954 25.8954 41 27 41H51C52.1046 41 53 41.8954 53 43C53 44.1046 52.1046 45 51 45H27C25.8954 45 25 44.1046 25 43ZM25 51C25 49.8954 25.8954 49 27 49H51C52.1046 49 53 49.8954 53 51C53 52.1046 52.1046 53 51 53H27C25.8954 53 25 52.1046 25 51Z" fill="white" />
+                  <path fillRule="evenodd" clipRule="evenodd" d="M25 27C25 25.8954 25.8954 25 27 25H51C52.1046 25 53 25.8954 53 27C53 28.1046 52.1046 29 51 29H27C25.8954 29 25 28.1046 25 27ZM25 35C25 33.8954 25.8954 33 27 33H51C52.1046 33 53 33.8954 53 35C53 36.1046 52.1046 37 51 37H27C25.8954 37 25 36.1046 25 35ZM25 43C25 41.8954 25.8954 41 27 41H51C52.1046 41 53 41.8954 53 43C53 44.1046 52.1046 45 51 45H27C25.8954 45 25 44.1046 25 43ZM25 51C25 49.8954 25.8954 49 27 49H51C52.1046 49 53 49.8954 53 51C53 52.1046 52.1046 53 51 53H27C25.8954 53 25 52.1046 25 51Z" fill="white" />
                 </svg>
                 <h3 className="mt-4 text-2xl text-gray-800 font-semibold leading-none">Data Storage</h3>
                 <p className="mt-3 text-lg text-gray-700 font-normal leading-normal">Your data lives in a storage of your choice and only you with your secret key can change it.</p>
@@ -302,8 +302,8 @@ class Landing extends React.PureComponent {
                 <p className="mt-3 text-lg text-gray-700 font-normal leading-normal">You can always access your data directly whenever you want as you have fully control of your data storage. Plus, you can manage who can access your data too.</p>
               </div>
             </div>
-            <div className="w-full md:w-1/3">
-              <div style={{ borderRadius: '0.75rem' }} className="mt-8 p-4 bg-gray-100 md:mt-0 md:ml-2 md:h-full lg:ml-3 lg:max-w-md xl:ml-4">
+            <div className="w-full lg:w-1/3">
+              <div style={{ borderRadius: '0.75rem' }} className="mt-8 p-4 bg-gray-100 lg:mt-0 lg:ml-3 lg:h-full lg:max-w-md xl:ml-4">
                 <svg className="h-14" viewBox="0 0 78 78" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="39" cy="39" r="39" fill="#211F6D" />
                   <path d="M39 31.2727C34.7392 31.2727 31.2727 34.7392 31.2727 39C31.2727 43.2608 34.7392 46.7273 39 46.7273C43.2608 46.7273 46.7273 43.2608 46.7273 39C46.7273 34.7392 43.2608 31.2727 39 31.2727ZM43.1047 34.3621C43.2917 34.529 43.471 34.7067 43.6364 34.8937L42.7369 35.7947L42.4804 35.5196L42.2037 35.2631L43.1047 34.3621V34.3621ZM41.0555 33.1566C41.2935 33.2401 41.5268 33.3375 41.7494 33.4487L41.2517 34.6233L40.8499 34.4378L40.5609 34.3312L41.0555 33.1566V33.1566ZM38.6245 32.8182H39.3755V34.0916L39 34.0777L38.6245 34.0916V32.8182ZM36.9816 33.1412L37.4685 34.3188L37.1485 34.4363L36.7745 34.6063L36.2893 33.4286C36.5118 33.3205 36.7452 33.2246 36.9816 33.1412ZM33.4487 36.2506L34.6233 36.7452L34.4394 37.147L34.3312 37.4375L33.1566 36.943C33.2401 36.7035 33.3375 36.4732 33.4487 36.2506ZM32.8182 38.6214H34.0916L34.0777 38.9969L34.0916 39.3725H32.8182V38.6214V38.6214ZM33.4302 41.7076C33.322 41.4835 33.2246 41.2517 33.1412 41.0122L34.3204 40.5254L34.4378 40.8468L34.6063 41.2177L33.4302 41.7076V41.7076ZM34.7886 43.7384L34.257 43.2083L35.2615 42.2006L35.5181 42.4757L35.7947 42.7323L34.7886 43.7384V43.7384ZM35.5196 35.5196L35.2631 35.7947L34.3636 34.8937C34.529 34.7067 34.7083 34.529 34.8953 34.3621L35.7963 35.2631L35.5196 35.5196V35.5196ZM36.9445 44.8434C36.7065 44.7599 36.4732 44.6625 36.2506 44.5513L36.7483 43.3767L37.1501 43.5622L37.4406 43.6704L36.9445 44.8434ZM39.3755 45.1818H38.6245V43.9068L39 43.9207L39.3755 43.9068V45.1818ZM41.0168 44.8573L40.5315 43.6781L40.8515 43.5606L41.2255 43.3906L41.7107 44.5683C41.4882 44.678 41.2548 44.7754 41.0168 44.8573V44.8573ZM39 42.0909C37.2923 42.0909 35.9091 40.7077 35.9091 39C35.9091 38.371 36.0961 37.7884 36.4175 37.3L37.5365 38.4189L38.3432 37.6122L37.2135 36.4794C37.7173 36.1208 38.3324 35.9091 39 35.9091C40.7077 35.9091 42.0909 37.2938 42.0909 39C42.0909 40.7062 40.7077 42.0909 39 42.0909V42.0909ZM43.1047 43.6317L42.2037 42.7307L42.4804 42.4742L42.7369 42.1991L43.6364 43.1001C43.471 43.2886 43.2917 43.4664 43.1047 43.6317V43.6317ZM44.5513 41.7447L43.3767 41.2486L43.5606 40.8484L43.6688 40.5563L44.8434 41.0524C44.7599 41.2888 44.6625 41.5222 44.5513 41.7447ZM45.1818 39.3725H43.9084L43.9223 38.9969L43.9084 38.6214H45.1818V39.3725ZM44.8573 36.9801L43.6781 37.4669L43.5606 37.1455L43.3922 36.7715L44.5698 36.2862C44.678 36.5103 44.7738 36.7436 44.8573 36.9801ZM45.1818 56H52.9091V59.0909H45.1818V56ZM25.0909 56H32.8182V59.0909H25.0909V56ZM22 22V54.4545H56V22H22ZM39 48.2727C33.8753 48.2727 29.7273 44.1247 29.7273 39C29.7273 33.8737 33.8753 29.7273 39 29.7273C44.1247 29.7273 48.2727 33.8753 48.2727 39C48.2727 44.1247 44.1247 48.2727 39 48.2727Z" fill="white" />
@@ -315,7 +315,7 @@ class Landing extends React.PureComponent {
               </div>
             </div>
           </div>
-        </section >
+        </section>
         <section className="mt-20 px-4 pt-24 pb-16 flex flex-col items-center justify-center bg-purple-blockstack md:px-6 md:pt-32 md:pb-24 lg:px-8">
           <div className="relative">
             <h2 className="text-4xl text-white font-bold leading-none text-center md:text-5xl"><span className="line-through">Don't</span> Can't Be Evil</h2>
@@ -345,7 +345,7 @@ class Landing extends React.PureComponent {
               <svg className="absolute top-0 left-0 transform -translate-x-8 -translate-y-24 h-36 w-36 text-indigo-200 opacity-50" stroke="currentColor" fill="none" viewBox="0 0 144 144">
                 <path strokeWidth="2" d="M41.485 15C17.753 31.753 1 59.208 1 89.455c0 24.664 14.891 39.09 32.109 39.09 16.287 0 28.386-13.03 28.386-28.387 0-15.356-10.703-26.524-24.663-26.524-2.792 0-6.515.465-7.446.93 2.327-15.821 17.218-34.435 32.11-43.742L41.485 15zm80.04 0c-23.268 16.753-40.02 44.208-40.02 74.455 0 24.664 14.891 39.09 32.109 39.09 15.822 0 28.386-13.03 28.386-28.387 0-15.356-11.168-26.524-25.129-26.524-2.792 0-6.049.465-6.98.93 2.327-15.821 16.753-34.435 31.644-43.742L121.525 15z" />
               </svg>
-              <p className="text-2xl text-gray-900 font-normal">Bring back control of your identity and your data one link at a time with Brace.to, powered by web 3.0 technology from Blockstack to make sure that your privacy cannot be compromised.</p>
+              <p className="text-2xl text-gray-900 font-normal">Bring back control of your identity and your data one link at a time with Brace.to, powered by web 3.0 technology from Stacks to make sure that your privacy cannot be compromised.</p>
             </div>
           </div>
         </section>

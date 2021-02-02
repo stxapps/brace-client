@@ -1,4 +1,4 @@
-import { showBlockstackConnect } from '@blockstack/connect';
+import { showConnect, authenticate } from '@stacks/connect';
 import { RESET_STATE as OFFLINE_RESET_STATE } from '@redux-offline/redux-offline/lib/constants';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
@@ -280,7 +280,7 @@ export const signUp = () => async (dispatch, getState) => {
     userSession: userSession,
   };
 
-  showBlockstackConnect(authOptions);
+  showConnect(authOptions);
 };
 
 export const signIn = () => async (dispatch, getState) => {
@@ -307,7 +307,7 @@ export const signIn = () => async (dispatch, getState) => {
     userSession: userSession,
   };
 
-  showBlockstackConnect(authOptions);
+  authenticate(authOptions);
 };
 
 export const signOut = () => async (dispatch, getState) => {

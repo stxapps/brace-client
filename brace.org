@@ -183,6 +183,7 @@
 - systemuicons.com
 *** Free illustrations
 - undraw.co
+- humaaans.com
 *** Free images
 - unsplash.com
 - www.istockphoto.com
@@ -632,7 +633,8 @@ This and CI/CD are very important!
 - follow steps in medium.com/@xijo/create-react-app-with-tailwind-via-postcss-plus-purgecss-5c36b4c33ba7 to config Tailwindcss
 - yarn add redux redux-loop react-redux
 - yarn add https://github.com/bracedotto/redux-offline#88a89e7ebe76415e83bd1943360e817274d8063d
-- yarn add blockstack @blockstack/connect
+- yarn add blockstack
+- yarn add @stacks/connect (doesn't work! yarn add 'https://gitpkg.now.sh/bracedotto/ux/packages/connect?b31c5914cde6e7fc3b0cdcaa66711f793224c140')
 - Make sure history works:
   + Address bar i.e. change path, change hash!
   + redirect back i.e. from blockstack or other websites
@@ -760,7 +762,7 @@ This and CI/CD are very important!
 - Ubuntu laptop: Firefox, Chrome
 * react-native
 ** steps
-- npx react-native init Brace
+- npx react-native init Bracedotto
 - yarn add redux react-redux redux-loop
 - yarn add https://github.com/bracedotto/redux-offline#a5a5da91de14b9e22c73a15e3617a0d627d3c0ec
 - yarn add reselect url-parse axios jdenticon
@@ -781,8 +783,8 @@ This and CI/CD are very important!
 - yarn add react-native-swiper
 - yarn add https://github.com/bracedotto/react-native-receive-sharing-intent#be4d3410fc96ba8e266a2a27535b3d531e56ef57
 - yarn add @welldone-software/why-did-you-render --dev
-- yarn add react-native-fs
-- yarn add react-native-reanimated
+- yarn add react-native-fs <-- NOT USING
+- yarn add react-native-safe-area-context
 - ios
   + Edit PodFile: ios target 11.0, pod 'Blockstack'
   + Add RNBlockstackSdk to Bracedotto project with Xcode, select create groups

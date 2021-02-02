@@ -18,7 +18,7 @@ import TopBar from './TopBar';
 
 import saveLinksToVisitLater from '../images/save-links-to-visit-later.svg';
 import undrawLink from '../images/undraw-link.svg';
-import blockstackShort from '../images/blockstack-short.svg';
+import stacksShort from '../images/stacks-short.svg';
 import logoFullWhite from '../images/logo-full-white.svg';
 
 class Landing extends React.PureComponent {
@@ -128,8 +128,8 @@ class Landing extends React.PureComponent {
           </View>
         </View>
         <View style={tailwind('px-4 justify-center items-center w-full h-full md:px-6 lg:px-8', safeAreaWidth)}>
-          <SvgXml width={64} height={64} xml={blockstackShort} />
-          <Text style={tailwind('mt-4 text-3xl text-gray-900 font-semibold text-center')}>Your privacy at heart powered by <Text style={tailwind('text-3xl text-purple-blockstack font-semibold')}>Blockstack</Text></Text>
+          <SvgXml width={64} height={64} xml={stacksShort} />
+          <Text style={tailwind('mt-4 text-3xl text-gray-900 font-semibold text-center')}>Your privacy at heart powered by <Text style={tailwind('text-3xl text-purple-blockstack font-semibold')}>Stacks</Text></Text>
           <Text style={cache('L_trulyText', [tailwind('mt-3 text-xl text-gray-700 font-normal text-center'), { lineHeight: 29 }])}>Your identity is truly yours. {safeAreaWidth >= SM_WIDTH ? '' : '\n'}Your data is truly yours.</Text>
         </View>
         <View style={tailwind('px-4 justify-center items-center w-full h-full md:px-6 lg:px-8', safeAreaWidth)}>

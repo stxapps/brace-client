@@ -1,0 +1,11 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.bracedotto",
+      "sha256_cert_fingerprints":
+        ["41:F3:F8:B7:35:12:77:B3:2C:ED:1B:F3:A3:5F:08:0F:17:BF:34:13:36:97:E8:EF:1A:48:78:83:AE:87:EF:9A", "AC:22:2A:8A:CB:0A:CB:AE:58:9B:9D:20:D0:35:68:FB:B9:52:2B:AF:0A:E6:30:46:B6:7A:D1:52:69:58:C1:B4"]
+    }
+  }
+]

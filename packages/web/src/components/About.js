@@ -6,8 +6,8 @@ import TopBar from './TopBar';
 import Footer from './Footer';
 
 import shortLogo from '../images/logo-short.svg';
-import blockstackShort from '../images/blockstack-short.svg';
-import reactReduxGrid from '../images/react-redux-grid.png';
+import stacksShort from '../images/stacks-short.svg';
+import reactReduxNative from '../images/react-redux-native.png';
 import undrawShareLink from '../images/undraw-share-link.svg';
 
 class About extends React.PureComponent {
@@ -30,15 +30,15 @@ class About extends React.PureComponent {
               </p>
             </div>
             <div className="ml-auto pt-12 max-w-md md:flex md:justify-end md:items-start md:max-w-none">
-              <img className="mx-4 h-20 md:mx-0 md:mt-1" src={blockstackShort} alt="Blockstack logo" />
+              <img className="mx-4 h-20 md:mx-0 md:mt-1" src={stacksShort} alt="Stacks logo" />
               <p className="mx-4 mt-4 leading-relaxed text-justify hyphens-auto md:mt-0 md:max-w-md">
-                Privacy is at our heart. That's why we choose <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://blockstack.org/">Blockstack</a>. Blockstack provides tools and libraries for building a website that respects our users' privacy. User identities live in blockchain securely and cannot be locked, banned, or deleted by Brace.to or anyone. All links at Brace.to is encrypted, no one can see their content. Brace.to cannot see what links users save. Also, users can setup their own server to save links if they want.
+                Privacy is at our heart. That's why we choose <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://www.stacks.co/">Stacks</a>. Stacks provides tools and libraries for building a website that respects our users' privacy. User identities live in blockchain securely and cannot be locked, banned, or deleted by Brace.to or anyone. All links at Brace.to are encrypted, no one can see their content. Even Brace.to cannot see what links users save. Also, users can setup their own server to save links if they want.
               </p>
             </div>
             <div className="pt-12 max-w-xl">
-              <img className="mx-auto w-full max-w-md" src={reactReduxGrid} alt="React, Redux, and Stack Grid logos" />
+              <img className="mx-auto w-full max-w-md" src={reactReduxNative} alt="React, Redux, and React Native logos" />
               <p className="leading-relaxed text-justify hyphens-auto">
-                Brace.to is open sourced and published at <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://github.com/bracedotto">Github.com</a>. It's built with many tools and libraries. The list is not exhausive and continue to grow: <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://reactjs.org/">React</a>, <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://create-react-app.dev/">Create React App</a>, <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://react-redux.js.org/">React Redux</a>, <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://redux.js.org">Redux</a>, <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://github.com/reduxjs/redux-thunk">Redux Thunk</a>, <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://redux-loop.js.org/">Redux Loop</a>, <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://github.com/rt2zz/redux-persist">Redux Persist</a>, <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://github.com/redux-offline/redux-offline">Redux Offline</a>, and <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://tsuyoshiwada.github.io/react-stack-grid">React Stack Grid</a>. Brace.to cannot go this far without these tools and libraries. Really appreciate.
+                Brace.to is open sourced and published at <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://github.com/bracedotto">Github.com</a>. It's built with many tools and libraries. The list is not exhausive and continue to grow: <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://reactjs.org/">React</a>, <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://create-react-app.dev/">Create React App</a>, <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://react-redux.js.org/">React Redux</a>, <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://redux.js.org">Redux</a>, <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://github.com/reduxjs/redux-thunk">Redux Thunk</a>, <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://redux-loop.js.org/">Redux Loop</a>, <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://github.com/rt2zz/redux-persist">Redux Persist</a>, <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://github.com/redux-offline/redux-offline">Redux Offline</a>, and <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://reactnative.dev/">React Native</a>. Brace.to cannot go this far without these tools and libraries. Really appreciate.
                 </p>
             </div>
             <div className="pt-12 md:flex md:justify-end md:items-center">
@@ -48,7 +48,7 @@ class About extends React.PureComponent {
                   </p>
             </div>
             <p className="pt-12 max-w-lg leading-relaxed text-justify hyphens-auto" >
-              Currently, Brace.to is free. In the future, we plan to have a subscription plan like $0.99 US Dollar per year. We believe if our service is useful, our users will support us.We wouldn't force it in any way. If users aren't ready, they will always be able to close the popup and continue using.
+              Currently, Brace.to is free. In the future, we plan to have a subscription plan like $0.99 US Dollar per year. We believe if our service is useful, our users will support us. We wouldn't force it in any way. If users aren't ready, they will always be able to close the popup and continue using.
             </p>
             <p className="pt-12 leading-relaxed">
               Brace Team

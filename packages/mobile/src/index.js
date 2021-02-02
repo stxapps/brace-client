@@ -34,8 +34,7 @@ offlineConfig.dispatch = (...args) => {
 /** @ts-ignore */
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
-  /** @ts-ignore */
-  reducers,
+  /** @type {any} */(reducers),
   composeEnhancers(
     installReduxLoop({ ENABLE_THUNK_MIGRATION: true }),
     offline(offlineConfig),

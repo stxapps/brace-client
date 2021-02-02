@@ -5,8 +5,8 @@ import {
 import { subtractRem, negRem } from '../utils';
 
 export const cardItemFMV = {
-  hidden: { scale: 0 },
-  visible: { scale: 1 },
+  hidden: { scale: 0, transition: { type: 'spring', bounce: 0.3, duration: 0.3 } },
+  visible: { scale: 1, transition: { type: 'spring', bounce: 0.3, duration: 0.3 } },
 };
 
 export const popupBgFMV = {

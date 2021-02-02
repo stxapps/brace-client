@@ -42,7 +42,7 @@ class SettingsPopupAccount extends React.PureComponent {
           </TouchableOpacity>
           <Text style={tailwind('pb-2 text-2xl text-gray-800 font-medium leading-6')}>Account</Text>
         </View>
-        <Text style={tailwind('mt-4 text-base text-gray-700 font-normal leading-6.5 md:mt-0', safeAreaWidth)}>You sign in to Brace.to using your Blockstack Identity. This is similar to some websites that allow you to use your Google, Facebook, or Twitter account to sign in to their websites. Not similarly, your Blockstack Identity lives in blockchain and only you with your secret key can control it. If you want to change your Blockstack Identity’s information i.e. your profile picture, please visit <Text onPress={() => Linking.openURL('https://browser.blockstack.org/profiles')} style={tailwind('text-base text-gray-700 font-normal underline')}>Blockstack Browser</Text>.</Text>
+        <Text style={tailwind('mt-4 text-base text-gray-700 font-normal leading-6.5 md:mt-0', safeAreaWidth)}>You sign in to Brace.to using your Stacks Identity. This is similar to some websites that allow you to use your Google, Facebook, or Twitter account to sign in to their websites. Not similarly, your Stacks Identity lives in blockchain and only you with your secret key can control it. If you want to change your Stacks Identity’s information i.e. your profile picture, please visit <Text onPress={() => Linking.openURL('https://browser.blockstack.org/profiles')} style={tailwind('text-base text-gray-700 font-normal underline')}>Blockstack Browser</Text>.</Text>
         <View style={tailwind('mt-8 md:flex-row-reverse md:items-start', safeAreaWidth)}>
           <View style={tailwind('justify-center items-center w-full md:justify-start md:items-end md:w-3/12', safeAreaWidth)}>
             {userImage}
@@ -75,13 +75,13 @@ class SettingsPopupAccount extends React.PureComponent {
               </Svg>
             </View>
             <View style={tailwind('ml-3 flex-1')}>
-              <Text style={tailwind('text-base text-yellow-800 font-normal leading-6.5')}>Signing out from Brace.to doesn’t sign out from Blockstack. If you want to sign out from Blockstack, especially when you use not-your-own devices, you need to go to <Text onPress={() => Linking.openURL('https://app.blockstack.org/')} style={tailwind('text-base text-yellow-800 font-normal underline')}>Blockstack App</Text> and/or <Text onPress={() => Linking.openURL('https://browser.blockstack.org/account/delete')} style={tailwind('text-base text-yellow-800 font-normal underline')}>Blockstack Browser</Text> and sign out there.</Text>
+              <Text style={tailwind('text-base text-yellow-800 font-normal leading-6.5')}>Signing out from Brace.to doesn’t sign out from Stacks. If you want to sign out from Stacks, especially when you use not-your-own devices, you need to go to <Text onPress={() => Linking.openURL('https://app.blockstack.org/')} style={tailwind('text-base text-yellow-800 font-normal underline')}>Stacks App</Text> and/or <Text onPress={() => Linking.openURL('https://browser.blockstack.org/account/delete')} style={tailwind('text-base text-yellow-800 font-normal underline')}>Blockstack Browser</Text> and sign out there.</Text>
             </View>
           </View>
         </View>
         <View style={tailwind('mt-8 mb-4')}>
           <Text style={tailwind('text-xl text-red-700 font-medium leading-5')}>Delete Account</Text>
-          <Text style={tailwind('mt-2 text-base text-gray-700 font-normal leading-6.5')}>Brace.to uses Blockstack Identity to sign you in. If you want to delete your Blockstack Identity, please send an email to support@blockstack.com. For more information, please visit <Text onPress={() => Linking.openURL('https://forum.blockstack.org/t/is-blockstack-gdrp-compliant/10931/4')} style={tailwind('text-base text-gray-700 font-normal underline')}>here</Text>.</Text>
+          <Text style={tailwind('mt-2 text-base text-gray-700 font-normal leading-6.5')}>Brace.to uses Stacks Identity to sign you in. If you want to delete your Stacks Identity, please send an email to support@blockstack.com. For more information, please visit <Text onPress={() => Linking.openURL('https://forum.stacks.org/t/is-blockstack-gdrp-compliant/10931/4')} style={tailwind('text-base text-gray-700 font-normal underline')}>here</Text>.</Text>
         </View>
       </View>
     );

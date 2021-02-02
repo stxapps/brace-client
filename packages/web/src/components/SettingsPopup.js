@@ -136,7 +136,7 @@ class SettingsPopup extends React.PureComponent {
     const menuSvgStyleClasses = 'text-gray-500 group-hover:text-gray-600 group-focus:text-gray-600';
 
     const panelWithSidebar = (
-      <div key="panel-with-sidebar" className="relative flex flex-col overflow-hidden bg-white" style={{ height: panelHeight }}>
+      <div key="panel-with-sidebar" className="relative flex flex-col overflow-hidden bg-white rounded-lg" style={{ height: panelHeight }}>
         <div className="hidden absolute top-0 right-0 p-1 md:block">
           <button onClick={this.onPopupCloseBtnClick} className="flex items-center justify-center h-7 w-7 rounded-full group focus:outline-none focus:shadow-outline" aria-label="Close settings popup">
             <svg className="h-5 w-5 text-gray-500 group-hover:text-gray-700" stroke="currentColor" fill="none" viewBox="0 0 24 24">

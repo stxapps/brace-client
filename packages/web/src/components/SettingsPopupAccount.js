@@ -28,7 +28,7 @@ class SettingsPopupAccount extends React.PureComponent {
           </button>
           <h3 className="pb-2 text-2xl text-gray-800 font-medium leading-none">Account</h3>
         </div>
-        <p className="mt-4 text-base text-gray-700 leading-relaxed md:mt-0">You sign in to Brace.to using your Blockstack Identity. This is similar to some websites that allow you to use your Google, Facebook, or Twitter account to sign in to their websites. Not similarly, your Blockstack Identity lives in blockchain and only you with your secret key can control it. If you want to change your Blockstack Identity’s information i.e. your profile picture, please visit <a className="underline hover:text-gray-900 focus:outline-none focus:shadow-outline" href="https://browser.blockstack.org/profiles">Blockstack Browser</a>.</p>
+        <p className="mt-4 text-base text-gray-700 leading-relaxed md:mt-0">You sign in to Brace.to using your Stacks Identity. This is similar to some websites that allow you to use your Google, Facebook, or Twitter account to sign in to their websites. Not similarly, your Stacks Identity lives in blockchain and only you with your secret key can control it. If you want to change your Stacks Identity’s information i.e. your profile picture, please visit <a className="underline hover:text-gray-900 focus:outline-none focus:shadow-outline" href="https://browser.blockstack.org/profiles">Blockstack Browser</a>.</p>
         <div className="mt-8 md:clearfix">
           <div className="md:float-right md:w-3/12">
             {userImage}
@@ -63,13 +63,13 @@ class SettingsPopupAccount extends React.PureComponent {
               </svg>
             </div>
             <div className="ml-3">
-              <p className="text-base text-yellow-800 leading-relaxed">Signing out from Brace.to doesn’t sign out from Blockstack. If you want to sign out from Blockstack, especially when you use not-your-own devices, you need to go to <a className="underline hover:text-yellow-900 focus:outline-none focus:shadow-outline" href="https://app.blockstack.org/">Blockstack App</a> and/or <a className="underline hover:text-yellow-900 focus:outline-none focus:shadow-outline" href="https://browser.blockstack.org/account/delete">Blockstack Browser</a> and sign out there.</p>
+              <p className="text-base text-yellow-800 leading-relaxed">Signing out from Brace.to doesn’t sign out from Stacks. If you want to sign out from Stacks, especially when you use not-your-own devices, you need to go to <a className="underline hover:text-yellow-900 focus:outline-none focus:shadow-outline" href="https://app.blockstack.org/">Stacks App</a> and/or <a className="underline hover:text-yellow-900 focus:outline-none focus:shadow-outline" href="https://browser.blockstack.org/account/delete">Blockstack Browser</a> and sign out there.</p>
             </div>
           </div>
         </div>
         <div className="mt-8 mb-4">
           <h4 className="text-xl text-red-700 font-medium leading-none">Delete Account</h4>
-          <p className="mt-2 text-base text-gray-700 leading-relaxed">Brace.to uses Blockstack Identity to sign you in. If you want to delete your Blockstack Identity, please send an email to support@blockstack.com. For more information, please visit <a className="underline hover:text-gray-900 focus:outline-none focus:shadow-outline" href="https://forum.blockstack.org/t/is-blockstack-gdrp-compliant/10931/4">here</a>.</p>
+          <p className="mt-2 text-base text-gray-700 leading-relaxed">Brace.to uses Stacks Identity to sign you in. If you want to delete your Stacks Identity, please send an email to support@blockstack.com. For more information, please visit <a className="underline hover:text-gray-900 focus:outline-none focus:shadow-outline" href="https://forum.stacks.org/t/is-blockstack-gdrp-compliant/10931/4">here</a>.</p>
         </div>
       </div>
     );
