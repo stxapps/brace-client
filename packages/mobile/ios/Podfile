@@ -4,12 +4,13 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 platform :ios, '11.0'
 
 target 'Bracedotto' do
+
+  pod 'PromisesObjC', :modular_headers => true
+  pod 'Blockstack', :git => 'https://github.com/bracedotto/blockstack-ios.git', :commit => 'aa22663'
+
   config = use_native_modules!
 
   use_react_native!(:path => config["reactNativePath"])
-
-  pod 'PromisesObjC', :modular_headers => true
-  pod 'Blockstack', :git => 'https://github.com/bracedotto/blockstack-ios.git', :commit => 'e3b0414'
 
   target 'BracedottoTests' do
     inherit! :complete

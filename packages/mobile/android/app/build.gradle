@@ -186,6 +186,18 @@ android {
 
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/kotlinx-io.kotlin_module'
+        exclude 'META-INF/kbignumbers.kotlin_module'
+        exclude 'META-INF/ripemd160.kotlin_module'
+        exclude 'META-INF/atomicfu.kotlin_module'
+        exclude 'META-INF/extensions.kotlin_module'
+        exclude 'META-INF/core.kotlin_module'
+        exclude 'META-INF/keccak.kotlin_module'
+        exclude 'META-INF/sha256.kotlin_module'
+        exclude 'META-INF/khash-extensions.kotlin_module'
+    }
 }
 
 dependencies {
