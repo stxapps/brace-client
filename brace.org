@@ -767,7 +767,7 @@ This and CI/CD are very important!
 - yarn add https://github.com/bracedotto/redux-offline#a5a5da91de14b9e22c73a15e3617a0d627d3c0ec
 - yarn add reselect url-parse axios jdenticon@2.2.0
 - yarn add @react-native-community/async-storage @react-native-community/netinfo
-- yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?c0a34af8029276824dbe6c644f4c28fc2650545f'
+- yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?e333bd3216453a78428c76b09d5d5e7450681a64'
 - change minSdkVersion from 16 to 21 in ./android/build.gradle
 - Allow CORS access on https://brace.to/manifest.json
 - Set up Android deep linking: reactnative.dev/docs/linking and developer.android.com/training/app-links/deep-linking
@@ -787,11 +787,9 @@ This and CI/CD are very important!
 - yarn add react-native-safe-area-context
 - ios
   + Edit PodFile: ios target 11.0, pod 'Blockstack'
-  + Add RNBlockstackSdk to Bracedotto project with Xcode, select create groups
   + In Xcode, Bracedotto General -> Target iOS 11.0
-  + Make swift file can import obj-c header
-    ~ In Build Settings -> Swift Compiler - General -> Objective-C Bridging Header: ../node_modules/react-native-blockstack/ios/RNBlockstackSdk/RNBlockstackSdk-Bridging-Header.h
   + In AppDelegate.m, moduleName:@"Brace"
+  + In Build Settings/Search Paths/Library Search Paths, for both Debug and Release, add "${SDKROOT}/usr/lib/swift" non-recursive (developer.apple.com/forums/thread/655438)
 - ios share extension
   + Target Bracedotto -> Info -> URL Types -> URL Schemes: bracedotto
   + Add RCTLinkingManager in AppDelegate.m

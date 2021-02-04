@@ -109,13 +109,7 @@ export const getLinks = createSelectorLinks(
 
     const filteredLinks = excludeWithMainIds(selectedLinks, moving_ids);
     const sortedLinks = Object.values(filteredLinks).sort((a, b) => {
-      if (a.addedDT > b.addedDT) {
-        return -1;
-      }
-      if (a.addedDT < b.addedDT) {
-        return 1;
-      }
-      return 0;
+      return b.addedDT - a.addedDT;
     });
     if (!doDescendingOrder) sortedLinks.reverse();
 

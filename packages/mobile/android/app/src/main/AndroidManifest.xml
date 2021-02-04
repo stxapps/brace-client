@@ -38,6 +38,7 @@
         android:label="@string/share_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
         android:launchMode="singleTask"
+        android:taskAffinity=""
         android:windowSoftInputMode="adjustResize"
         android:theme="@style/ShareTheme"
         android:excludeFromRecents="true"

@@ -149,7 +149,9 @@ const fetch = async (params) => {
     settings = JSON.parse(/** @type {string} */(await userSession.getFile(settingsFPath)));
   }
 
-  return { listName, links, hasMore, listNames, doFetchSettings, settings };
+  return {
+    listName, doDescendingOrder, links, hasMore, listNames, doFetchSettings, settings,
+  };
 };
 
 const fetchMore = async (params) => {
@@ -174,7 +176,7 @@ const fetchMore = async (params) => {
   const links = responses.map(response => JSON.parse(response.content));
   const hasMore = filteredLinkFPaths.length > N_LINKS;
 
-  return { listName, links, hasMore };
+  return { listName, doDescendingOrder, links, hasMore };
 };
 
 const batchPutFileWithRetry = async (fpaths, contents, callCount) => {
