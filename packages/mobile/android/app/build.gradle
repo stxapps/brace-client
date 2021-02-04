@@ -198,6 +198,10 @@ android {
         exclude 'META-INF/sha256.kotlin_module'
         exclude 'META-INF/khash-extensions.kotlin_module'
     }
+
+    dexOptions {
+       javaMaxHeapSize "3g"
+    }
 }
 
 dependencies {
