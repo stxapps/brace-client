@@ -131,7 +131,7 @@ const handlePendingSignIn = (url) => async (dispatch, getState) => {
     //   - Invalid token
     //   - Already signed in with the same account
     //   - Already signed in with different account
-    console.log('handlePendingSignIn throws an error!', e);
+    console.log('Catched an error thrown by handlePendingSignIn!', e);
   }
 
   const isUserSignedIn = await userSession.isUserSignedIn();

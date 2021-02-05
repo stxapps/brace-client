@@ -9,7 +9,7 @@ import { fetchMore, updatePopup, updatePageYOffset } from '../actions';
 import {
   ADD_POPUP,
   PC_100, PC_50, PC_33,
-  MY_LIST, TRASH,
+  MY_LIST, TRASH, ARCHIVE,
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
   MD_WIDTH,
 } from '../types/const';
@@ -152,16 +152,18 @@ class CardPanel extends React.PureComponent {
             </Svg>
           </View>
           <Text style={tailwind('mt-6 text-lg text-gray-900 font-normal text-center')}>No links in {displayName}</Text>
-          <Text style={tailwind('mt-4 max-w-md text-base text-gray-900 font-normal text-center leading-6')}>Click <Text style={tailwind('text-base text-gray-900 font-semibold')}>"Remove"</Text> from the menu to move links you don't need anymore here.</Text>
+          <Text style={tailwind('mt-4 max-w-md text-base text-gray-900 font-normal text-center leading-6')}>Tap <Text style={tailwind('text-base text-gray-900 font-semibold')}>"Remove"</Text> from the menu to move links you don't need anymore here.</Text>
         </View>
       );
     }
+
+    const textName = listName === ARCHIVE ? `"${displayName}"` : `"Move to... -> ${displayName}"`;
 
     return (
       <View style={tailwind('px-4 pb-6 items-center w-full md:px-6 lg:px-8', safeAreaWidth)}>
         <SvgXml style={tailwind('mt-10')} width={160} height={146.66} xml={emptyBox} />
         <Text style={tailwind('mt-6 text-lg text-gray-900 font-normal text-center')}>No links in {displayName}</Text>
-        <Text style={tailwind('mt-4 max-w-md text-base text-gray-900 font-normal text-center leading-6')}>Click <Text style={tailwind('text-base text-gray-900 font-semibold')}>"Move to... {'->'} {displayName}"</Text> from the menu to move links here.</Text>
+        <Text style={tailwind('mt-4 max-w-md text-base text-gray-900 font-normal text-center leading-6')}>Tap <Text style={tailwind('text-base text-gray-900 font-semibold')}>{textName}</Text> from the menu to move links here.</Text>
       </View>
     );
   }

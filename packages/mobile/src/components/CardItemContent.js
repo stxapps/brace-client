@@ -157,7 +157,7 @@ class CardItemContent extends React.Component {
 
     return (
       <React.Fragment>
-        <TouchableOpacity onLongPress={this.onLongPress}>
+        <TouchableOpacity activeOpacity={1.0} onLongPress={this.onLongPress}>
           {this.renderImage()}
         </TouchableOpacity>
         <View style={tailwind('flex-row justify-between items-center w-full')}>
