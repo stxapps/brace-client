@@ -7,7 +7,7 @@ import { fetchMore, updatePopup } from '../actions';
 import {
   ADD_POPUP,
   PC_100, PC_50, PC_33,
-  MY_LIST, TRASH,
+  MY_LIST, TRASH, ARCHIVE,
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
   MD_WIDTH,
 } from '../types/const';
@@ -76,6 +76,7 @@ class CardPanel extends React.PureComponent {
   renderEmpty() {
 
     const { listName, listNameMap, searchString } = this.props;
+    const displayName = getListNameDisplayName(listName, listNameMap);
 
     if (searchString !== '') {
       return (
@@ -116,19 +117,19 @@ class CardPanel extends React.PureComponent {
               <path fillRule="evenodd" clipRule="evenodd" d="M9 2C8.62123 2 8.27497 2.214 8.10557 2.55279L7.38197 4H4C3.44772 4 3 4.44772 3 5C3 5.55228 3.44772 6 4 6V16C4 17.1046 4.89543 18 6 18H14C15.1046 18 16 17.1046 16 16V6C16.5523 6 17 5.55228 17 5C17 4.44772 16.5523 4 16 4H12.618L11.8944 2.55279C11.725 2.214 11.3788 2 11 2H9ZM7 8C7 7.44772 7.44772 7 8 7C8.55228 7 9 7.44772 9 8V14C9 14.5523 8.55228 15 8 15C7.44772 15 7 14.5523 7 14V8ZM12 7C11.4477 7 11 7.44772 11 8V14C11 14.5523 11.4477 15 12 15C12.5523 15 13 14.5523 13 14V8C13 7.44772 12.5523 7 12 7Z" />
             </svg>
           </div>
-          <h3 className="mt-6 text-lg text-gray-900 text-center">No links in Trash</h3>
-          <p className="mx-auto mt-4 max-w-md text-base text-gray-900 text-center">Click <span className="font-semibold">"Remove"</span> from the Link menu to move links you don't need anymore to the Trash.</p>
+          <h3 className="mt-6 text-lg text-gray-900 text-center">No links in {displayName}</h3>
+          <p className="mx-auto mt-4 max-w-md text-base text-gray-900 text-center">Click <span className="font-semibold">"Remove"</span> from the menu to move links you don't need anymore here.</p>
         </React.Fragment>
       );
     }
 
-    const displayName = getListNameDisplayName(listName, listNameMap);
+    const textName = listName === ARCHIVE ? `"${displayName}"` : `"Move to... -> ${displayName}"`;
 
     return (
       <React.Fragment>
         <img className="mx-auto mt-10 w-40" src={emptyBox} alt="An empty box lying down" />
         <h3 className="mt-6 text-lg text-gray-900 text-center">No links in {displayName}</h3>
-        <p className="mx-auto mt-4 max-w-md text-base text-gray-900 text-center">Click <span className="font-semibold">"{displayName}"</span> from the Link menu to move links here.</p>
+        <p className="mx-auto mt-4 max-w-md text-base text-gray-900 text-center">Click <span className="font-semibold">{textName}</span> from the menu to move links here.</p>
       </React.Fragment>
     );
   }

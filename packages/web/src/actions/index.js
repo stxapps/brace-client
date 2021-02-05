@@ -52,7 +52,7 @@ import {
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam, extractUrl, getUrlPathQueryHash,
   getUserImageUrl, randomDecor, swapArrayElements,
-  isOfflineActionWithPayload,
+  isOfflineActionWithPayload, shouldDispatchFetch,
 } from '../utils';
 
 export const init = async (store) => {
@@ -98,11 +98,11 @@ const handlePendingSignIn = () => async (dispatch, getState) => {
   try {
     await userSession.handlePendingSignIn();
   } catch (e) {
-    console.log(`Catched an error thrown by handlePendingSignIn: ${e.message}`);
     // All errors thrown by handlePendingSignIn have the same next steps
     //   - Invalid token
     //   - Already signed in with the same account
     //   - Already signed in with different account
+    console.log('Catched an error thrown by handlePendingSignIn!', e);
   }
 
   if (userSession.isUserSignedIn()) {
@@ -349,13 +349,8 @@ export const fetch = (
 
   const payload = { listName, doDescendingOrder, doFetchSettings };
 
-  // If there is already FETCH with the same payload, no need to dispatch a new one.
-  const outbox = getState().offline.outbox;
-  if (Array.isArray(outbox)) {
-    for (const action of outbox) {
-      if (isOfflineActionWithPayload(action, FETCH, payload)) return;
-    }
-  }
+  // If there is already FETCH with the same list name, no need to dispatch a new one.
+  if (!shouldDispatchFetch(getState().offline.outbox, payload)) return;
 
   dispatch({
     type: FETCH,
@@ -374,7 +369,7 @@ export const fetch = (
 
 export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) => {
 
-  const { listName, links } = payload;
+  const { listName, doDescendingOrder, links } = payload;
 
   if (listName !== getState().display.listName) {
     dispatch(updateFetched(payload, meta));
@@ -389,33 +384,58 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
     dispatch(clearSelectedLinkIds());
     return;
   }
-  _links = _.select(_links, STATUS, ADDED);
+  _links = Object.values(_.select(_links, STATUS, ADDED));
 
-  const _ids = Object.keys(_links);
+  // If no links from fetching, they are all deleted,
+  //   still process of updating is the same.
+  /*if (links.length === 0) {
+    const { doDeleteOldLinksInTrash, doExtractContents } = meta;
+    dispatch(deleteOldLinksInTrash(doDeleteOldLinksInTrash, doExtractContents));
+    return;
+  }*/
 
-  let doUpdate = false;
-  if (_ids.length !== links.length) doUpdate = true;
+  /*
+    updateAction
+    0. noNew: exactly the same, nothing new, no need to update
+    1. limitedSame: partially the same, first N links are the same, the rest do not know so maybe can update it right away if it doesn't trigger rerender
+       - In state has more links than fetch
+       - User deletes some links or all links
+    2. haveNew: not the same for sure, something new, update if not scroll or popup else show fetchedPopup
+  */
+  let updateAction;
+  if (links.length > _links.length) updateAction = 2;
   else {
-    for (const link of links) {
-      if (!_ids.includes(link.id)) {
-        doUpdate = true;
-        break;
-      }
-      if (!isEqual(link.extractedResult, _links[link.id].extractedResult)) {
-        doUpdate = true;
+    const sortedLinks = links.sort((a, b) => b.addedDT - a.addedDT);
+    if (!doDescendingOrder) sortedLinks.reverse();
+
+    const _sortedLinks = _links.sort((a, b) => b.addedDT - a.addedDT);
+    if (!doDescendingOrder) _sortedLinks.reverse();
+
+    let found = false;
+    for (let i = 0; i < sortedLinks.length; i++) {
+      const [link, _link] = [sortedLinks[i], _sortedLinks[i]];
+      if (
+        link.id !== _link.id || !isEqual(link.extractedResult, _link.extractedResult)
+      ) {
+        found = true;
         break;
       }
     }
+
+    updateAction = found ? 2 : links.length < _links.length ? 1 : 0;
   }
 
-  if (!doUpdate) {
+  if (updateAction === 0) {
     const { doDeleteOldLinksInTrash, doExtractContents } = meta;
     dispatch(deleteOldLinksInTrash(doDeleteOldLinksInTrash, doExtractContents));
     return;
   }
 
   const pageYOffset = window.pageYOffset;
-  if (pageYOffset === 0 && !isPopupShown(getState())) {
+  if (
+    (updateAction === 1 && pageYOffset < 64 / 10 * _links.length) ||
+    (updateAction === 2 && pageYOffset === 0 && !isPopupShown(getState()))
+  ) {
     dispatch(updateFetched(payload, meta));
     dispatch(clearSelectedLinkIds());
     return;

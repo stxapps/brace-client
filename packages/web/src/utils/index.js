@@ -8,6 +8,7 @@ import {
   VALID_URL, NO_URL, ASK_CONFIRM_URL,
   VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME,
 } from '../types/const';
+import { FETCH } from '../types/actionTypes';
 import { IMAGES } from '../types/imagePaths';
 
 export const randomString = (length) => {
@@ -681,7 +682,17 @@ export const indexesOf = (text, searchValue) => {
 };
 
 export const getUserImageUrl = (userData) => {
-  const userImage = (userData && userData.profile && userData.profile.image) || null;
+
+  let userImage = null;
+  if (userData && userData.profile) {
+    if (userData.profile.image) userImage = userData.profile.image;
+    else if (
+      userData.profile.decodedToken &&
+      userData.profile.decodedToken.payload &&
+      userData.profile.decodedToken.payload.claim &&
+      userData.profile.decodedToken.payload.claim.image
+    ) userImage = userData.profile.decodedToken.payload.claim.image;
+  }
 
   let userImageUrl = null;
   if (userImage) {
@@ -815,6 +826,32 @@ export const isOfflineActionWithPayload = (action, actionType, payload = null) =
   }
 
   return false;
+};
+
+export const shouldDispatchFetch = (outbox, payload) => {
+  if (Array.isArray(outbox)) {
+    for (const action of outbox) {
+      try {
+        const { method, params } = action.meta.offline.effect;
+        if (method === FETCH) {
+          if (
+            params.listName === payload.listName &&
+            params.doDescendingOrder === payload.doDescendingOrder
+          ) {
+            if (
+              (params.doFetchSettings && payload.doFetchSettings) ||
+              (params.doFetchSettings && !payload.doFetchSettings) ||
+              (!params.doFetchSettings && !payload.doFetchSettings)
+            ) return false;
+          }
+        }
+      } catch (error) {
+        console.log('Invalid action or payload: ', action, payload);
+      }
+    }
+  }
+
+  return true;
 };
 
 export const getLastHalfHeight = (height, textHeight, pt, pb) => {
