@@ -1,6 +1,6 @@
 {
   "name": "brace-client-web",
-  "version": "0.10.3",
+  "version": "0.10.4",
   "private": true,
   "scripts": {
     "start-css": "postcss tailwind.css -o src/stylesheets/tailwind.css --watch",
