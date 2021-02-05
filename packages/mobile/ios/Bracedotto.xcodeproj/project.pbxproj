@@ -911,7 +911,7 @@
 					"\"${PODS_ROOT}/OpenSSL-Universal/ios/lib\"",
 					"\"$(SDKROOT)/usr/lib/swift\"",
 				);
-				MARKETING_VERSION = 0.5.1;
+				MARKETING_VERSION = 0.5.2;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -985,7 +985,7 @@
 					"\"${PODS_ROOT}/OpenSSL-Universal/ios/lib\"",
 					"\"$(SDKROOT)/usr/lib/swift\"",
 				);
-				MARKETING_VERSION = 0.5.1;
+				MARKETING_VERSION = 0.5.2;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1127,7 +1127,7 @@
 				INFOPLIST_FILE = "Save to Brace/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 0.5.1;
+				MARKETING_VERSION = 0.5.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bracedotto.brace.Save-to-Brace";
@@ -1159,7 +1159,7 @@
 				INFOPLIST_FILE = "Save to Brace/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				MARKETING_VERSION = 0.5.1;
+				MARKETING_VERSION = 0.5.2;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bracedotto.brace.Save-to-Brace";
 				PRODUCT_NAME = "$(TARGET_NAME)";
