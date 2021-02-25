@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FlatList, View, Text, TouchableOpacity, Animated, Platform } from 'react-native';
-import Svg, { SvgXml, Path } from 'react-native-svg'
-import { Flow } from 'react-native-animated-spinkit'
+import Svg, { SvgXml, Path } from 'react-native-svg';
+import { Flow } from 'react-native-animated-spinkit';
 
 import { fetchMore, updatePopup, updatePageYOffset } from '../actions';
 import {
