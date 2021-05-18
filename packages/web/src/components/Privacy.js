@@ -17,9 +17,9 @@ class Privacy extends React.PureComponent {
         <TopBar rightPane={SHOW_BLANK} />
         <section className="pt-12 pb-4">
           <div style={{ borderRadius: '1.5rem' }} className="mx-auto px-4 pt-8 pb-8 w-full max-w-3xl bg-white text-gray-800">
-            <h1 className="text-2xl text-gray-900 font-semibold">Privacy policy</h1>
-            <p className="pt-6 leading-relaxed">This Privacy Policy applies to <a className="hover:text-black focus:outline-none focus:shadow-outline" href="https://brace.to">https://brace.to</a> (hereinafter, "us", "we", or "https://brace.to"). We respect your privacy and are committed to protecting personally identifiable information you may provide us through the Website. We have adopted this privacy policy ("Privacy Policy") to explain what information may be collected on our Website, how we use this information, and under what circumstances we may disclose the information. This Privacy Policy applies only to information we collect through the Website and does not apply to our collection of information from other sources.</p>
-            <p className="pt-6 leading-relaxed">This Privacy Policy, together with the Terms of use posted on our Website, set forth the general rules and policies governing your use of our Website. Depending on your activities when visiting our Website, you may be required to agree to additional terms of use.</p>
+            <h1 className="text-2xl text-gray-900 font-semibold">Privacy Policy</h1>
+            <p className="pt-6 leading-relaxed">This Privacy Policy applies to <a className="hover:text-black focus:outline-none focus:shadow-outline" href="https://brace.to">https://brace.to</a> (hereinafter, "us", "we", or "Brace.to"). We respect your privacy and are committed to protecting personally identifiable information you may provide us through the website. We have adopted this Privacy Policy to explain what information may be collected on our website, how we use this information, and under what circumstances we may disclose the information. This Privacy Policy applies only to information we collect through the website and does not apply to our collection of information from other sources.</p>
+            <p className="pt-6 leading-relaxed">This Privacy Policy, together with the Terms of Use posted on our website, set forth the general rules and policies governing your use of our website. Depending on your activities when visiting our website, you may be required to agree to additional Terms of Use.</p>
 
             <h2 className="pt-10 text-gray-900 font-semibold">Website Visitors</h2>
             <p className="pt-3 leading-relaxed">Brace.to may collect non-personally-identifying information of the sort that web browsers and servers typically make available, such as the browser type, language preference, referring site, and the date and time of each visitor request. If we do collect, the purpose in collecting non-personally identifying information is only to better understand how Brace.to's visitors use its website. Brace.to may release non-personally-identifying information in the aggregate, e.g., by publishing a report on trends in the usage of its website.</p>
@@ -33,7 +33,7 @@ class Privacy extends React.PureComponent {
 
 
             <h2 className="pt-10 text-gray-900 font-semibold">Links To External Sites</h2>
-            <p className="pt-3 leading-relaxed">Our Service may contain links to external sites that are not operated by us. If you click on a third party link, you will be directed to that third party's site. We strongly advise you to review the Privacy Policy and terms of use of every site you visit.</p>
+            <p className="pt-3 leading-relaxed">Our Service may contain links to external sites that are not operated by us. If you click on a third party link, you will be directed to that third party's site. We strongly advise you to review the Privacy Policy and Terms of Use of every site you visit.</p>
             <p className="pt-3 leading-relaxed">We have no control over, and assume no responsibility for the content, privacy policies or practices of any third party sites, products or services.</p>
 
             <h2 className="pt-10 text-gray-900 font-semibold">Protection of Certain Personally-Identifying Information</h2>
@@ -50,15 +50,8 @@ class Privacy extends React.PureComponent {
 
             <h2 className="pt-10 text-gray-900 font-semibold">Privacy Policy Changes</h2>
             <p className="pt-3 leading-relaxed">Although most changes are likely to be minor, Brace.to may change its Privacy Policy from time to time, and in Brace.to's sole discretion. Brace.to encourages visitors to frequently check this page for any changes to its Privacy Policy. Your continued use of this site after any change in this Privacy Policy will constitute your acceptance of such change.</p>
-            <p className="pt-10 leading-relaxed">
-              Your continued use of our website will be regarded as acceptance of our privacy policy. If you have any questions about this Privacy Policy, please contact us at&nbsp;
-              <a className="hover:text-black focus:outline-none focus:shadow-outline" href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;%73%75%70%70%6F%72%74%40%62%72%61%63%65%2E%74%6F">
-                <span className="e-mail" data-user="troppus" data-website="ot.ecarb"></span>
-              </a>
-            </p>
-            <p className="pt-10 leading-relaxed">
-              This policy is effective as of 25 May 2020.
-                                                                                     </p>
+            <p className="pt-10 leading-relaxed">Your continued use of our website will be regarded as acceptance of our privacy policy. If you have any questions about this Privacy Policy, please contact us at <a className="hover:text-black focus:outline-none focus:shadow-outline" href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;%73%75%70%70%6F%72%74%40%62%72%61%63%65%2E%74%6F"><span className="e-mail" data-user="troppus" data-website="ot.ecarb"></span></a>.</p>
+            <p className="pt-10 leading-relaxed">This policy is effective as of 25 May 2020.</p>
             <div className="pt-12 text-right">
               <button className="group hover:text-black focus:outline-none focus:shadow-outline" onClick={() => window.scrollTo(0, 0)}>
                 <span>Back to top</span>

@@ -61,7 +61,7 @@ class SettingsPopupAccount extends React.PureComponent {
                 <Text style={tailwind('text-sm text-gray-700 font-normal text-right leading-6.5')}>Password:</Text>
               </View>
               <View style={tailwind('pl-2 flex-1')}>
-                <Text style={tailwind('w-full text-base text-gray-700 font-normal leading-6.5')}>Unlike traditional systems, your password cannnot be reset. Your password is a 12-word secret key. It's only known to you. If you lose it, there is no way to retrieve it back. Keep it safe before you sign out. You can view it only when you sign in.</Text>
+                <Text style={tailwind('w-full text-base text-gray-700 font-normal leading-6.5')}>Unlike traditional systems, your password cannot be reset. Your password is a 12-word secret key. It's only known to you. If you lose it, there is no way to retrieve it back. Keep it safe before you sign out. You can view it only when you sign in.</Text>
                 <Text onPress={() => Linking.openURL('https://app.blockstack.org/#/settings/secret-key')} style={tailwind('pt-2 w-full text-base text-blue-600 font-normal leading-6.5 underline')}>View your 12-word secret key</Text>
               </View>
             </View>

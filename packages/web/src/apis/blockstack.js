@@ -307,4 +307,4 @@ export const canDeleteListNames = async (listNames) => {
   }
 
   return canDeletes;
-}
+};

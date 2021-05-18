@@ -32,7 +32,7 @@ class About extends React.PureComponent {
             <div className="ml-auto pt-12 max-w-md md:flex md:justify-end md:items-start md:max-w-none">
               <img className="mx-4 h-20 md:mx-0 md:mt-1" src={stacksShort} alt="Stacks logo" />
               <p className="mx-4 mt-4 leading-relaxed text-justify hyphens-auto md:mt-0 md:max-w-md">
-                Privacy is at our heart. That's why we choose <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://www.stacks.co/">Stacks</a>. Stacks provides tools and libraries for building a website that respects our users' privacy. User identities live in blockchain securely and cannot be locked, banned, or deleted by Brace.to or anyone. All links at Brace.to are encrypted, no one can see their content. Even Brace.to cannot see what links users save. Also, users can setup their own server to save links if they want.
+                Privacy is at our heart. That's why we choose <a className="underline hover:text-black focus:outline-none focus:shadow-outline" href="https://www.stacks.co/">Stacks</a>. Stacks provides tools and libraries for building a website that respects our users' privacy. User identities live in blockchain securely and cannot be locked, banned, or deleted by Brace.to or anyone. All links at Brace.to are encrypted, no one can see their content. Even Brace.to cannot see what links users save. Also, users can setup their own server to save their links if they want.
               </p>
             </div>
             <div className="pt-12 max-w-xl">

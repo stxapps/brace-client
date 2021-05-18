@@ -107,7 +107,7 @@ class SettingsPopupMisc extends React.PureComponent {
           <TouchableOpacity onPress={this.props.onSidebarOpenBtnClick} style={tailwind('pb-1')}>
             <Text style={tailwind('text-sm text-gray-700 font-normal')}>{'<'} <Text style={tailwind('text-sm text-gray-700 font-normal')}>Settings</Text></Text>
           </TouchableOpacity>
-          <Text style={tailwind('pb-2 text-2xl text-gray-800 font-medium leading-6')}>Account</Text>
+          <Text style={tailwind('pb-2 text-2xl text-gray-800 font-medium leading-6')}>Misc.</Text>
         </View>
         <View style={tailwind('mt-6 flex-row items-center justify-between md:mt-0', safeAreaWidth)}>
           <View style={tailwind('flex-grow flex-shrink')}>

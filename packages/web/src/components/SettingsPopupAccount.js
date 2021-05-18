@@ -48,7 +48,7 @@ class SettingsPopupAccount extends React.PureComponent {
                   <p className="text-sm text-gray-700 text-right">Password:</p>
                 </td>
                 <td className="pl-2 align-baseline">
-                  <p className="text-base text-gray-700 leading-relaxed">Unlike traditional systems, your password cannnot be reset. Your password is a 12-word secret key. It's only known to you. If you lose it, there is no way to retrieve it back. Keep it safe before you sign out. You can view it only when you sign in.</p>
+                  <p className="text-base text-gray-700 leading-relaxed">Unlike traditional systems, your password cannot be reset. Your password is a 12-word secret key. It's only known to you. If you lose it, there is no way to retrieve it back. Keep it safe before you sign out. You can view it only when you sign in.</p>
                   <p className="pt-2 text-base text-blue-600 leading-relaxed underline hover:text-blue-800"><a className="focus:outline-none focus:shadow-outline" href="https://app.blockstack.org/#/settings/secret-key">View your 12-word secret key</a></p>
                 </td>
               </tr>
