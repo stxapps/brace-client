@@ -37,7 +37,7 @@
     "redux-loop": "^6.0.1",
     "reselect": "^4.0.0",
     "tailwind-rn": "https://github.com/bracedotto/tailwind-rn#dcc0a394074be452a75f99326ffa36dc5ee32763",
-    "url-parse": "^1.4.7"
+    "url-parse": "^1.5.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
