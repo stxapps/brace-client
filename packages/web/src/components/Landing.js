@@ -299,7 +299,7 @@ class Landing extends React.PureComponent {
                 <h3 className="mt-4 text-2xl text-gray-800 font-semibold leading-none">Data Storage</h3>
                 <p className="mt-3 text-lg text-gray-700 font-normal leading-normal">Your data lives in a storage of your choice and only you with your secret key can change it.</p>
                 <h4 className="mt-8 text-xl text-gray-800 font-medium leading-snug">No lock out from your own data</h4>
-                <p className="mt-3 text-lg text-gray-700 font-normal leading-normal">You can always access your data directly whenever you want as you have fully control of your data storage. Plus, you can manage who can access your data too.</p>
+                <p className="mt-3 text-lg text-gray-700 font-normal leading-normal">You can always access your data directly whenever you want as you have full control of your data storage. Plus, you can manage who can access your data too.</p>
               </div>
             </div>
             <div className="w-full lg:w-1/3">

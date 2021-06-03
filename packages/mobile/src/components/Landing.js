@@ -159,7 +159,7 @@ class Landing extends React.PureComponent {
             <Text style={tailwind('mt-4 text-2xl text-gray-800 font-semibold')}>Data Storage</Text>
             <Text style={tailwind('mt-3 text-lg text-gray-700 font-normal leading-7')}>Your data lives in a storage of your choice and only you with your secret key can change it.</Text>
             <Text style={tailwind('mt-6 text-xl text-gray-800 font-medium leading-6')}>No lock out from your data</Text>
-            <Text style={tailwind('mt-3 text-lg text-gray-700 font-normal leading-7')}>You can access your data directly whenever you want as you have fully control of your data storage.</Text>
+            <Text style={tailwind('mt-3 text-lg text-gray-700 font-normal leading-7')}>You can access your data directly whenever you want as you have full control of your data storage.</Text>
           </View>
         </View>
         <View style={tailwind('px-4 justify-center items-center w-full h-full md:px-6 lg:px-8', safeAreaWidth)}>
