@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Animated, AppState } from 'react-native';
 
-import { fetch } from '../actions';
+import { fetch, clearFetchedListNames } from '../actions';
 import {
   PC_100, PC_50, PC_33,
   SHOW_BLANK, SHOW_COMMANDS,
@@ -25,11 +25,6 @@ class Main extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    // BUG alert
-    // When delete all data, fetched is not cleared!
-    this.fetched = [];
-    this.doFetchSettings = true;
-
     this.scrollY = new Animated.Value(0);
     this.scrollYEvent = Animated.event([{
       nativeEvent: { contentOffset: { y: this.scrollY } }
@@ -39,9 +34,11 @@ class Main extends React.PureComponent {
   componentDidMount() {
     AppState.addEventListener('change', this.handleAppStateChange);
 
-    this.props.fetch(null, null, this.doFetchSettings);
-    this.fetched.push(this.props.listName);
-    this.doFetchSettings = false;
+    this.fetch();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.listName !== this.props.listName) this.fetch();
   }
 
   componentWillUnmount() {
@@ -49,18 +46,8 @@ class Main extends React.PureComponent {
   }
 
   handleAppStateChange = (nextAppState) => {
-    if (nextAppState === 'background') {
-      this.fetched = [];
-      this.doFetchSettings = true;
-    }
-
-    if (nextAppState === 'active') {
-      if (!this.fetched.includes(this.props.listName)) {
-        this.props.fetch(null, null, this.doFetchSettings);
-        this.fetched.push(this.props.listName);
-        this.doFetchSettings = false;
-      }
-    }
+    if (nextAppState === 'background') this.props.clearFetchedListNames();
+    if (nextAppState === 'active') this.fetch();
   }
 
   getColumnWidth = (safeAreaWidth) => {
@@ -69,6 +56,13 @@ class Main extends React.PureComponent {
     if (safeAreaWidth >= LG_WIDTH) columnWidth = PC_33;
 
     return columnWidth;
+  }
+
+  fetch = () => {
+    if (!this.props.fetchedListNames.includes(this.props.listName)) {
+      const didFetch = this.props.fetchedListNames.length > 0;
+      this.props.fetch(didFetch ? false : null, null, !didFetch);
+    }
   }
 
   render() {
@@ -85,7 +79,7 @@ class Main extends React.PureComponent {
     return (
       <React.Fragment>
         <CardPanel columnWidth={columnWidth} scrollYEvent={this.scrollYEvent} />
-        <TopBar rightPane={topBarRightPane} isListNameShown={true} fetched={this.fetched} scrollY={this.scrollY} />
+        <TopBar rightPane={topBarRightPane} isListNameShown={true} scrollY={this.scrollY} />
         {columnWidth === PC_100 && <BottomBar />}
         <FetchedPopup />
         <SettingsPopup />
@@ -99,10 +93,11 @@ const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
     links: getLinks(state),
+    fetchedListNames: state.display.fetchedListNames,
     windowWidth: state.window.width,
   };
 };
 
-const mapDispatchToProps = { fetch };
+const mapDispatchToProps = { fetch, clearFetchedListNames };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(Main));

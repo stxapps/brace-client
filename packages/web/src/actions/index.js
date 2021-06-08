@@ -10,7 +10,7 @@ import {
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
-  UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE,
+  UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE, CLEAR_FETCHED_LIST_NAMES,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
   UPDATE_LINKS,
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
@@ -92,7 +92,7 @@ const handlePendingSignIn = () => async (dispatch, getState) => {
   // As handle pending sign in takes time, show loading first.
   dispatch({
     type: UPDATE_HANDLING_SIGN_IN,
-    payload: true
+    payload: true,
   });
 
   try {
@@ -532,6 +532,10 @@ export const tryUpdateFetchedMore = (payload, meta) => async (dispatch, getState
     payload,
     theMeta: meta,
   });
+};
+
+export const clearFetchedListNames = () => {
+  return { type: CLEAR_FETCHED_LIST_NAMES };
 };
 
 export const addLink = (url, listName, doExtractContents) => async (dispatch, getState) => {

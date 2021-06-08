@@ -2,7 +2,7 @@ import { REHYDRATE } from 'redux-persist/constants'
 
 import {
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
-  FETCH, FETCH_COMMIT, FETCH_ROLLBACK, UPDATE_FETCHED,
+  FETCH, FETCH_COMMIT, FETCH_ROLLBACK, UPDATE_FETCHED, CLEAR_FETCHED_LIST_NAMES,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK, EXTRACT_CONTENTS_COMMIT,
@@ -177,6 +177,10 @@ export default (state = initialState, action) => {
     const newState = { ...state, selectedLinkIds: [] };
     if (doChangeListCount) newState.listChangedCount += 1;
     return newState;
+  }
+
+  if (action.type === CLEAR_FETCHED_LIST_NAMES) {
+    return { ...state, fetchedListNames: [] };
   }
 
   if (action.type === DELETE_OLD_LINKS_IN_TRASH) {

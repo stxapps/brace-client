@@ -71,7 +71,7 @@ class TopBar extends React.PureComponent {
 
     return (
       <Animated.View style={listNameStyle}>
-        <ListName fetched={this.props.fetched} />
+        <ListName />
       </Animated.View>
     );
   };
@@ -238,13 +238,11 @@ class TopBar extends React.PureComponent {
 TopBar.propTypes = {
   rightPane: PropTypes.string.isRequired,
   isListNameShown: PropTypes.bool,
-  fetched: PropTypes.arrayOf(PropTypes.string),
   scrollY: PropTypes.object,
 };
 
 TopBar.defaultProps = {
   isListNameShown: false,
-  fetched: null,
   scrollY: null,
 }
 

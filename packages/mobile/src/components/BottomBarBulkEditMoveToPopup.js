@@ -4,9 +4,7 @@ import {
   ScrollView, Text, TouchableOpacity, Animated, BackHandler, Platform,
 } from 'react-native';
 
-import {
-  updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks,
-} from '../actions';
+import { updatePopup, updateBulkEdit, moveLinks } from '../actions';
 import {
   BULK_EDIT_MOVE_TO_POPUP, ARCHIVE, TRASH, MOVE_TO,
 } from '../types/const';
@@ -105,13 +103,10 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
   onBulkEditMoveToPopupClick = (text) => {
     if (!text || this.didClick) return;
 
-    const {
-      selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
-    } = this.props;
+    const { selectedLinkIds, moveLinks, updateBulkEdit } = this.props;
 
     if (text.startsWith(MOVE_TO)) {
       moveLinks(text.substring(MOVE_TO.length + 1), selectedLinkIds);
-      clearSelectedLinkIds();
       updateBulkEdit(false);
     } else {
       throw new Error(`Invalid text: ${text}`);
@@ -178,8 +173,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = {
-  updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks,
-};
+const mapDispatchToProps = { updatePopup, updateBulkEdit, moveLinks };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BottomBarBulkEditMoveToPopup);

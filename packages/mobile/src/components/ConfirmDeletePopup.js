@@ -5,8 +5,7 @@ import { withMenuContext } from 'react-native-popup-menu';
 import Modal from 'react-native-modal';
 
 import {
-  updatePopup, deleteLinks, clearSelectedLinkIds, updateBulkEdit,
-  deleteListNames, updateDeletingListName,
+  updatePopup, deleteLinks, updateBulkEdit, deleteListNames, updateDeletingListName,
 } from '../actions';
 import { CONFIRM_DELETE_POPUP, MODAL_SUPPORTED_ORIENTATIONS } from '../types/const';
 import { getPopupLink } from '../selectors';
@@ -67,13 +66,10 @@ class ConfirmDeletePopup extends React.Component {
     }
 
     if (selectedLinkIds.length > 0) {
-      const {
-        deleteLinks, updatePopup, clearSelectedLinkIds, updateBulkEdit,
-      } = this.props;
+      const { deleteLinks, updatePopup, updateBulkEdit } = this.props;
 
       deleteLinks(selectedLinkIds);
       updatePopup(CONFIRM_DELETE_POPUP, false);
-      clearSelectedLinkIds();
       updateBulkEdit(false);
       return;
     }
@@ -135,8 +131,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
-  updatePopup, deleteLinks, clearSelectedLinkIds, updateBulkEdit,
-  deleteListNames, updateDeletingListName,
+  updatePopup, deleteLinks, updateBulkEdit, deleteListNames, updateDeletingListName,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(withMenuContext(ConfirmDeletePopup)));

@@ -2,12 +2,12 @@ import { REHYDRATE } from 'redux-persist/constants'
 
 import {
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
-  FETCH, FETCH_COMMIT, FETCH_ROLLBACK, UPDATE_FETCHED,
+  FETCH, FETCH_COMMIT, FETCH_ROLLBACK, UPDATE_FETCHED, CLEAR_FETCHED_LIST_NAMES,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK, EXTRACT_CONTENTS_COMMIT,
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
-  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, CLEAR_SELECTED_LINK_IDS,
+  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS,
   DELETE_LIST_NAMES, UPDATE_DELETING_LIST_NAME,
   UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
   UPDATE_UPDATE_SETTINGS_PROGRESS,
@@ -21,6 +21,7 @@ import {
   MY_LIST, TRASH, ARCHIVE,
   UPDATING, DIED_UPDATING,
 } from '../types/const';
+import { doContainListName } from '../utils';
 
 const initialState = {
   listName: MY_LIST,
@@ -37,7 +38,7 @@ const initialState = {
   selectedLinkIds: [],
   isBulkEditMoveToPopupShown: false,
   deletingListName: null,
-  // Need listChangedCount to scroll to top, even on the same list name.
+  fetchedListNames: [],
   listChangedCount: 0,
   exportAllDataProgress: null,
   deleteAllDataProgress: null,
@@ -63,6 +64,7 @@ export default (state = initialState, action) => {
       selectedLinkIds: [],
       isBulkEditMoveToPopupShown: false,
       deletingListName: null,
+      fetchedListNames: [],
       listChangedCount: 0,
       exportAllDataProgress: null,
       deleteAllDataProgress: null,
@@ -76,6 +78,7 @@ export default (state = initialState, action) => {
       ...state,
       listName: action.payload,
       listChangedCount: state.listChangedCount + 1,
+      selectedLinkIds: [],
     };
   }
 
@@ -84,46 +87,53 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_POPUP) {
-    if (action.payload.id === ALL) {
+
+    const { id, isShown } = action.payload;
+
+    if (id === ALL) {
       return {
         ...state,
-        isAddPopupShown: action.payload.isShown,
-        isSearchPopupShown: action.payload.isShown,
-        isProfilePopupShown: action.payload.isShown,
-        isListNamePopupShown: action.payload.isShown,
-        isConfirmDeletePopupShown: action.payload.isShown,
-        isSettingsPopupShown: action.payload.isShown,
-        isBulkEditMoveToPopupShown: action.payload.isShown,
+        isAddPopupShown: isShown,
+        isSearchPopupShown: isShown,
+        isProfilePopupShown: isShown,
+        isListNamePopupShown: isShown,
+        isConfirmDeletePopupShown: isShown,
+        isSettingsPopupShown: isShown,
+        isBulkEditMoveToPopupShown: isShown,
       }
     }
 
-    if (action.payload.id === ADD_POPUP) {
-      return { ...state, isAddPopupShown: action.payload.isShown }
+    if (id === ADD_POPUP) {
+      return { ...state, isAddPopupShown: isShown }
     }
 
-    if (action.payload.id === SEARCH_POPUP) {
-      return { ...state, isSearchPopupShown: action.payload.isShown }
+    if (id === SEARCH_POPUP) {
+      return { ...state, isSearchPopupShown: isShown, searchString: '' }
     }
 
-    if (action.payload.id === PROFILE_POPUP) {
-      return { ...state, isProfilePopupShown: action.payload.isShown }
+    if (id === PROFILE_POPUP) {
+      return { ...state, isProfilePopupShown: isShown }
     }
 
-    if (action.payload.id === LIST_NAME_POPUP) {
-      return { ...state, isListNamePopupShown: action.payload.isShown }
+    if (id === LIST_NAME_POPUP) {
+      return { ...state, isListNamePopupShown: isShown }
     }
 
-    if (action.payload.id === CONFIRM_DELETE_POPUP) {
-      return { ...state, isConfirmDeletePopupShown: action.payload.isShown }
+    if (id === CONFIRM_DELETE_POPUP) {
+      const newState = { ...state, isConfirmDeletePopupShown: isShown };
+      if (!isShown) newState.deletingListName = null;
+      return newState;
     }
 
-    if (action.payload.id === SETTINGS_POPUP) {
-      return { ...state, isSettingsPopupShown: action.payload.isShown }
+    if (id === SETTINGS_POPUP) {
+      return { ...state, isSettingsPopupShown: isShown }
     }
 
-    if (action.payload.id === BULK_EDIT_MOVE_TO_POPUP) {
-      return { ...state, isBulkEditMoveToPopupShown: action.payload.isShown }
+    if (id === BULK_EDIT_MOVE_TO_POPUP) {
+      return { ...state, isBulkEditMoveToPopupShown: isShown }
     }
+
+    throw new Error(`Invalid type: ${action.type} and payload: ${action.payload}`);
   }
 
   if (action.type === FETCH) {
@@ -131,15 +141,21 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === FETCH_COMMIT) {
-
-    const newState = { ...state, status: FETCH_COMMIT };
+    const { listName } = action.payload;
+    const newState = {
+      ...state,
+      status: FETCH_COMMIT,
+      selectedLinkIds: [],
+      fetchedListNames: [...state.fetchedListNames, listName],
+    };
 
     // Make sure listName is in listNameMap, if not, set to My List.
-    const { doFetchSettings, settings } = action.payload;
+    const { listNames, doFetchSettings, settings } = action.payload;
+    if (listNames.includes(newState.listName)) return newState;
     if (!doFetchSettings) return newState;
 
     if (settings) {
-      if (!settings.listNameMap.map(obj => obj.listName).includes(newState.listName)) {
+      if (!doContainListName(newState.listName, settings.listNameMap)) {
         newState.listName = MY_LIST;
       }
     } else {
@@ -157,10 +173,14 @@ export default (state = initialState, action) => {
 
   if (action.type === UPDATE_FETCHED) {
     const { doChangeListCount } = action.payload;
-    if (doChangeListCount) {
-      return { ...state, listChangedCount: state.listChangedCount + 1 };
-    }
-    return state;
+
+    const newState = { ...state, selectedLinkIds: [] };
+    if (doChangeListCount) newState.listChangedCount += 1;
+    return newState;
+  }
+
+  if (action.type === CLEAR_FETCHED_LIST_NAMES) {
+    return { ...state, fetchedListNames: [] };
   }
 
   if (action.type === DELETE_OLD_LINKS_IN_TRASH) {
@@ -196,7 +216,9 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_BULK_EDITING) {
-    return { ...state, isBulkEditing: action.payload };
+    const newState = { ...state, isBulkEditing: action.payload };
+    if (!action.payload) newState.selectedLinkIds = [];
+    return newState;
   }
 
   if (action.type === ADD_SELECTED_LINK_IDS) {
@@ -213,10 +235,6 @@ export default (state = initialState, action) => {
       if (!action.payload.includes(linkId)) selectedLinkIds.push(linkId);
     }
     return { ...state, selectedLinkIds };
-  }
-
-  if (action.type === CLEAR_SELECTED_LINK_IDS) {
-    return { ...state, selectedLinkIds: [] };
   }
 
   if (action.type === DELETE_LIST_NAMES) {
@@ -254,7 +272,11 @@ export default (state = initialState, action) => {
     return { ...state, updateSettingsProgress: action.payload };
   }
 
-  if (action.type === DELETE_ALL_DATA || action.type === RESET_STATE) {
+  if (action.type === DELETE_ALL_DATA) {
+    return { ...initialState, fetchedListNames: [MY_LIST] };
+  }
+
+  if (action.type === RESET_STATE) {
     return { ...initialState };
   }
 

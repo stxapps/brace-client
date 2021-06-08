@@ -8,9 +8,7 @@ import {
 } from '../types/const';
 import { FETCH_MORE } from '../types/actionTypes';
 import {
-  _, isStringIn, excludeWithMainIds,
-  isObject, isArrayEqual, isEqual,
-  doContainListName, isOfflineAction,
+  _, isStringIn, excludeWithMainIds, isObject, isArrayEqual, isEqual, isOfflineAction,
 } from '../utils';
 
 const createSelectorListNameMap = createSelectorCreator(
@@ -32,21 +30,9 @@ const createSelectorListNameMap = createSelectorCreator(
 export const getListNameMap = createSelectorListNameMap(
   state => state,
   (state) => {
-
-    const listNames = Object.keys(state.links);
     const listNameMap = [...state.settings.listNameMap.filter(listNameObj => {
       return [ADDED, ADDING, UPDATING, MOVING, DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_DELETING].includes(listNameObj.status);
     })];
-
-    let i = 1;
-    for (const listName of listNames) {
-      // Not in listNameMap and also deleting list name in state.settings.listNameMap.
-      if (!doContainListName(listName, state.settings.listNameMap)) {
-        listNameMap.push({ listName: listName, displayName: `<missing-name-${i}>` });
-        i += 1;
-      }
-    }
-
     return listNameMap;
   }
 );

@@ -3,9 +3,7 @@ import { connect } from 'react-redux';
 import { View, Text, TouchableOpacity, BackHandler, Animated } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
-import {
-  updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks,
-} from '../actions';
+import { updatePopup, updateBulkEdit, moveLinks } from '../actions';
 import {
   CONFIRM_DELETE_POPUP, BULK_EDIT_MOVE_TO_POPUP,
   MY_LIST, ARCHIVE, TRASH,
@@ -108,12 +106,9 @@ class BottomBarBulkEditCommands extends React.Component {
   onBulkEditArchiveBtnClick = () => {
     if (this.checkNoLinkIdSelected() || this.didClick) return;
 
-    const {
-      selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
-    } = this.props;
+    const { selectedLinkIds, moveLinks, updateBulkEdit } = this.props;
 
     moveLinks(ARCHIVE, selectedLinkIds);
-    clearSelectedLinkIds();
     updateBulkEdit(false);
 
     this.didClick = true;
@@ -122,12 +117,9 @@ class BottomBarBulkEditCommands extends React.Component {
   onBulkEditRemoveBtnClick = () => {
     if (this.checkNoLinkIdSelected() || this.didClick) return;
 
-    const {
-      selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
-    } = this.props;
+    const { selectedLinkIds, moveLinks, updateBulkEdit } = this.props;
 
     moveLinks(TRASH, selectedLinkIds);
-    clearSelectedLinkIds();
     updateBulkEdit(false);
 
     this.didClick = true;
@@ -136,12 +128,9 @@ class BottomBarBulkEditCommands extends React.Component {
   onBulkEditRestoreBtnClick = () => {
     if (this.checkNoLinkIdSelected() || this.didClick) return;
 
-    const {
-      selectedLinkIds, moveLinks, clearSelectedLinkIds, updateBulkEdit,
-    } = this.props;
+    const { selectedLinkIds, moveLinks, updateBulkEdit } = this.props;
 
     moveLinks(MY_LIST, selectedLinkIds);
-    clearSelectedLinkIds();
     updateBulkEdit(false);
 
     this.didClick = true;
@@ -158,7 +147,6 @@ class BottomBarBulkEditCommands extends React.Component {
   }
 
   onBulkEditCancelBtnClick = () => {
-    this.props.clearSelectedLinkIds();
     this.props.updateBulkEdit(false);
   }
 
@@ -281,8 +269,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = {
-  updatePopup, updateBulkEdit, clearSelectedLinkIds, moveLinks,
-};
+const mapDispatchToProps = { updatePopup, updateBulkEdit, moveLinks };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BottomBarBulkEditCommands);

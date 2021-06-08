@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Text, TouchableOpacity, Animated } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
-import { updateFetched, clearSelectedLinkIds } from '../actions';
+import { updateFetched } from '../actions';
 import { MD_WIDTH } from '../types/const';
 import { tailwind } from '../stylesheets/tailwind';
 import cache from '../utils/cache';
@@ -79,7 +79,6 @@ class FetchedPopup extends React.PureComponent {
 
   onUpdateBtnClick = () => {
     this.props.updateFetched(null, null, null, true);
-    this.props.clearSelectedLinkIds();
   }
 
   onCloseBtnClick = () => {
@@ -131,6 +130,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { updateFetched, clearSelectedLinkIds };
+const mapDispatchToProps = { updateFetched };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(FetchedPopup));
