@@ -49,7 +49,7 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
         this.popuptranslateY,
         { toValue, ...bModalCloseAnimConfig }
       ).start(() => {
-        this.setState({ didCloseAnimEnd: true });;
+        this.setState({ didCloseAnimEnd: true });
       });
     }
 
@@ -61,7 +61,7 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (!this.props.isBulkEditMoveToPopupShown && nextProps.isBulkEditMoveToPopupShown) {
       if (this.state.didCloseAnimEnd) {
-        this.setState({ didCloseAnimEnd: false, popupSize: null })
+        this.setState({ didCloseAnimEnd: false, popupSize: null });
         this.popupTranslateY = new Animated.Value(999);
       }
     }
@@ -75,7 +75,7 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
     if (isPopupShown) {
       if (!this.popupBackHandler) {
         this.popupBackHandler = BackHandler.addEventListener(
-          "hardwareBackPress",
+          'hardwareBackPress',
           () => {
             if (!this.props.isBulkEditMoveToPopupShown) return false;
 
@@ -103,11 +103,11 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
   onBulkEditMoveToPopupClick = (text) => {
     if (!text || this.didClick) return;
 
-    const { selectedLinkIds, moveLinks, updateBulkEdit } = this.props;
+    const { selectedLinkIds } = this.props;
 
     if (text.startsWith(MOVE_TO)) {
-      moveLinks(text.substring(MOVE_TO.length + 1), selectedLinkIds);
-      updateBulkEdit(false);
+      this.props.moveLinks(text.substring(MOVE_TO.length + 1), selectedLinkIds);
+      this.props.updateBulkEdit(false);
     } else {
       throw new Error(`Invalid text: ${text}`);
     }
@@ -152,7 +152,7 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <TouchableOpacity onPress={this.onBulkEditMoveToCancelBtnClick} style={tailwind('absolute inset-0 bg-black opacity-25 z-40')}></TouchableOpacity>
+        <TouchableOpacity onPress={this.onBulkEditMoveToCancelBtnClick} style={tailwind('absolute inset-0 bg-black opacity-25 z-40')} />
         <Animated.View onLayout={this.onPopupLayout} style={[tailwind('pt-4 pb-16 absolute inset-x-0 -bottom-12 bg-white border border-gray-200 rounded-t-lg shadow-xl z-41'), popupStyle]}>
           <ScrollView>
             <Text style={tailwind('py-4 pl-4 pr-4 w-full text-base text-gray-800 font-normal')}>Move to...</Text>

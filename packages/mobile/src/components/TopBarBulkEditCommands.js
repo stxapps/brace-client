@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { View, Text, TouchableOpacity, BackHandler, Animated } from 'react-native';
-import Svg, { Path } from 'react-native-svg'
+import Svg, { Path } from 'react-native-svg';
 
 import { updatePopup, updateBulkEdit, moveLinks } from '../actions';
 import {
@@ -31,7 +31,7 @@ class TopBarBulkEditCommands extends React.Component {
   componentDidMount() {
     if (!this.backHandler) {
       this.backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
+        'hardwareBackPress',
         () => {
           this.onBulkEditCancelBtnClick();
           return true;
@@ -104,10 +104,10 @@ class TopBarBulkEditCommands extends React.Component {
   onBulkEditArchiveBtnClick = () => {
     if (this.checkNoLinkIdSelected() || this.didClick) return;
 
-    const { selectedLinkIds, moveLinks, updateBulkEdit } = this.props;
+    const { selectedLinkIds } = this.props;
 
-    moveLinks(ARCHIVE, selectedLinkIds);
-    updateBulkEdit(false);
+    this.props.moveLinks(ARCHIVE, selectedLinkIds);
+    this.props.updateBulkEdit(false);
 
     this.didClick = true;
   }
@@ -115,10 +115,10 @@ class TopBarBulkEditCommands extends React.Component {
   onBulkEditRemoveBtnClick = () => {
     if (this.checkNoLinkIdSelected() || this.didClick) return;
 
-    const { selectedLinkIds, moveLinks, updateBulkEdit } = this.props;
+    const { selectedLinkIds } = this.props;
 
-    moveLinks(TRASH, selectedLinkIds);
-    updateBulkEdit(false);
+    this.props.moveLinks(TRASH, selectedLinkIds);
+    this.props.updateBulkEdit(false);
 
     this.didClick = true;
   }
@@ -126,10 +126,10 @@ class TopBarBulkEditCommands extends React.Component {
   onBulkEditRestoreBtnClick = () => {
     if (this.checkNoLinkIdSelected() || this.didClick) return;
 
-    const { selectedLinkIds, moveLinks, updateBulkEdit } = this.props;
+    const { selectedLinkIds } = this.props;
 
-    moveLinks(MY_LIST, selectedLinkIds);
-    updateBulkEdit(false);
+    this.props.moveLinks(MY_LIST, selectedLinkIds);
+    this.props.updateBulkEdit(false);
 
     this.didClick = true;
   }

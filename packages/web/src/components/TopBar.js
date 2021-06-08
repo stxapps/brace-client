@@ -3,10 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { signIn } from '../actions';
-import {
-  SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS,
-  MD_WIDTH,
-} from '../types/const';
+import { SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS, MD_WIDTH } from '../types/const';
 import { toPx, throttle } from '../utils';
 
 import { getTopBarSizes } from '.';

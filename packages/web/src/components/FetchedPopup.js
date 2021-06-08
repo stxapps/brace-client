@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion";
 
 import { updateFetched } from '../actions';
 import { MD_WIDTH } from '../types/const';
@@ -37,7 +37,7 @@ class FetchedPopup extends React.PureComponent {
     const { fetched } = this.props;
     const { isShown } = this.state;
     if (!fetched || !isShown) return (
-      <AnimatePresence key="AnimatePresence_FetchedPopup"></AnimatePresence>
+      <AnimatePresence key="AnimatePresence_FetchedPopup" />
     );
 
     const initialTop = window.innerWidth < MD_WIDTH ? '4.625rem' : '5.125rem';

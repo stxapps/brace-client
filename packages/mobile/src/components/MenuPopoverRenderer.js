@@ -62,30 +62,30 @@ function getCenteringPrice(options) {
 
 /* Evaluate top placement */
 function getTopPrice(hOptions, vOptions) {
-  const centerOffset = getCenteringPrice(vOptions)
-  const sideOffset = Math.max(0, hOptions.oDim - hOptions.tPos)
-  return centerOffset + sideOffset
+  const centerOffset = getCenteringPrice(vOptions);
+  const sideOffset = Math.max(0, hOptions.oDim - hOptions.tPos);
+  return centerOffset + sideOffset;
 }
 
 /* Evaluate bottom placement */
 function getBottomPrice(hOptions, vOptions) {
-  const centerOffset = getCenteringPrice(vOptions)
-  const sideOffset = Math.max(0, hOptions.tPos + hOptions.tDim + hOptions.oDim - hOptions.wDim)
-  return centerOffset + sideOffset
+  const centerOffset = getCenteringPrice(vOptions);
+  const sideOffset = Math.max(0, hOptions.tPos + hOptions.tDim + hOptions.oDim - hOptions.wDim);
+  return centerOffset + sideOffset;
 }
 
 /* Evaluate left placement */
 function getLeftPrice(hOptions, vOptions) {
-  const centerOffset = getCenteringPrice(hOptions)
-  const sideOffset = Math.max(0, vOptions.oDim - vOptions.tPos)
-  return centerOffset + sideOffset
+  const centerOffset = getCenteringPrice(hOptions);
+  const sideOffset = Math.max(0, vOptions.oDim - vOptions.tPos);
+  return centerOffset + sideOffset;
 }
 
 /* Evaluate right placement */
 function getRightPrice(hOptions, vOptions) {
-  const centerOffset = getCenteringPrice(hOptions)
-  const sideOffset = Math.max(0, vOptions.tPos + vOptions.tDim + vOptions.oDim - vOptions.wDim)
-  return centerOffset + sideOffset
+  const centerOffset = getCenteringPrice(hOptions);
+  const sideOffset = Math.max(0, vOptions.tPos + vOptions.tDim + vOptions.oDim - vOptions.wDim);
+  return centerOffset + sideOffset;
 }
 
 function getStartPosKey(isRTL) {
@@ -181,7 +181,7 @@ export function computeProperties(
     tDim: tWidth,
   };
   if (placement !== 'auto' && propertiesByPlacement[placement]) {
-    return propertiesByPlacement[placement](hOptions, vOptions, isRTL)
+    return propertiesByPlacement[placement](hOptions, vOptions, isRTL);
   }
 
   const prices = {
@@ -190,12 +190,12 @@ export function computeProperties(
     right: getRightPrice(hOptions, vOptions),
     left: getLeftPrice(hOptions, vOptions),
   };
-  const bestPrice = Object.values(prices).sort((a, b) => a - b)[0]
+  const bestPrice = Object.values(prices).sort((a, b) => a - b)[0];
   const bestPlacement = prices[preferredPlacement] === bestPrice
     ? preferredPlacement
-    : Object.keys(prices).find(pl => prices[pl] === bestPrice)
+    : Object.keys(prices).find(pl => prices[pl] === bestPrice);
 
-  return propertiesByPlacement[bestPlacement](hOptions, vOptions, isRTL)
+  return propertiesByPlacement[bestPlacement](hOptions, vOptions, isRTL);
 }
 
 export default class MenuPopoverRenderer extends React.PureComponent {
@@ -229,20 +229,24 @@ export default class MenuPopoverRenderer extends React.PureComponent {
     const { scaleAnim } = this.state;
     const isRTL = I18nManager.isRTL;
     const {
-      position, placement, offset
+      position, placement, offset,
     } = computeProperties(layouts, userPlacement, preferredPlacement, isRTL);
 
     const { height: oHeight, width: oWidth } = layouts.optionsLayout;
 
     let startTranslateX, startTranslateY;
     if (placement === 'top') {
-      startTranslateX = 0, startTranslateY = oHeight / 2;
+      startTranslateX = 0;
+      startTranslateY = oHeight / 2;
     } else if (placement === 'bottom') {
-      startTranslateX = 0, startTranslateY = -1 * oHeight / 2;
+      startTranslateX = 0;
+      startTranslateY = -1 * oHeight / 2;
     } else if (placement === 'left') {
-      startTranslateX = oWidth / 2, startTranslateY = 0;
+      startTranslateX = oWidth / 2;
+      startTranslateY = 0;
     } else if (placement === 'right') {
-      startTranslateX = -1 * oWidth / 2, startTranslateY = 0;
+      startTranslateX = -1 * oWidth / 2;
+      startTranslateY = 0;
     } else throw new Error(`Invalid placement: ${placement}`);
 
     const changingTranslateX = scaleAnim.interpolate({
@@ -259,7 +263,7 @@ export default class MenuPopoverRenderer extends React.PureComponent {
         { translateX: changingTranslateX },
         { translateY: changingTranslateY },
         { scale: scaleAnim },
-      ]
+      ],
     };
 
     return (
@@ -301,7 +305,7 @@ const getContainerStyle = ({ placement, isRTL }) => ({
   bottom: {
     flexDirection: 'column',
   },
-})[placement]
+})[placement];
 
 const dynamicAnchorStyle = ({ offset, placement, isRTL }) => {
   const start = getStartPosKey(isRTL);
@@ -339,7 +343,7 @@ const dynamicAnchorStyle = ({ offset, placement, isRTL }) => {
         ],
       };
   }
-}
+};
 
 export const styles = StyleSheet.create({
   animated: {

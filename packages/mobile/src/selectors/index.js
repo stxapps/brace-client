@@ -64,7 +64,7 @@ const createSelectorLinks = createSelectorCreator(
       const res = isEqual(
         _.ignore(prevVal['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]),
         _.ignore(val['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION])
-      )
+      );
       if (!res) return false;
     }
 
@@ -134,7 +134,7 @@ const createSelectorPopupLink = createSelectorCreator(
       const res = isEqual(
         _.choose(prevVal['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]),
         _.choose(val['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION])
-      )
+      );
       if (!res) return false;
     }
 
@@ -185,7 +185,7 @@ export const getPopupLink = createSelectorPopupLink(
 export const makeIsLinkIdSelected = () => {
   return createSelector(
     state => state.display.selectedLinkIds,
-    (_, props) => props.linkId,
+    (__, props) => props.linkId,
     (selectedLinkIds, linkId) => {
       return selectedLinkIds.includes(linkId);
     }
@@ -213,12 +213,16 @@ const createSelectorIsFetchingMore = createSelectorCreator(
     let prevOutbox = prevVal['offline'].outbox;
     let outbox = val['offline'].outbox;
 
-    if (Array.isArray(prevOutbox)) prevOutbox = prevOutbox.filter(action => {
-      return isOfflineAction(action, FETCH_MORE, listName);
-    });
-    if (Array.isArray(outbox)) outbox = outbox.filter(action => {
-      return isOfflineAction(action, FETCH_MORE, listName);
-    });
+    if (Array.isArray(prevOutbox)) {
+      prevOutbox = prevOutbox.filter(action => {
+        return isOfflineAction(action, FETCH_MORE, listName);
+      });
+    }
+    if (Array.isArray(outbox)) {
+      outbox = outbox.filter(action => {
+        return isOfflineAction(action, FETCH_MORE, listName);
+      });
+    }
 
     const x1 = Array.isArray(prevOutbox) && prevOutbox.length > 0 ? 1 : 0;
     const x2 = Array.isArray(outbox) && outbox.length > 0 ? 1 : 0;

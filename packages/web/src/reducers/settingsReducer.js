@@ -1,4 +1,4 @@
-import { REHYDRATE } from 'redux-persist/constants'
+import { REHYDRATE } from 'redux-persist/constants';
 
 import {
   FETCH_COMMIT,
@@ -30,7 +30,7 @@ const initialState = {
   listNameMap: [
     { listName: MY_LIST, displayName: MY_LIST, status: ADDED },
     { listName: TRASH, displayName: TRASH, status: ADDED },
-    { listName: ARCHIVE, displayName: ARCHIVE, status: ADDED }
+    { listName: ARCHIVE, displayName: ARCHIVE, status: ADDED },
   ],
 };
 

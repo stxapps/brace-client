@@ -250,7 +250,7 @@ class CardPanel extends React.PureComponent {
       let pt = safeAreaWidth < MD_WIDTH ? toPx(TOP_BAR_HEIGHT) : toPx(TOP_BAR_HEIGHT_MD);
       pt += safeAreaWidth < MD_WIDTH ? toPx('1.5rem') : toPx('2.5rem');
       return (
-        <View style={cache('CP_panelHead', { paddingTop: pt }, safeAreaWidth)}></View>
+        <View style={cache('CP_panelHead', { paddingTop: pt }, safeAreaWidth)} />
       );
     }
 
@@ -313,7 +313,7 @@ class CardPanel extends React.PureComponent {
     if (item.id === PANEL_PADDING_BOTTOM) {
       const pb = toPx(BOTTOM_BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT);
       return (
-        <View style={cache('CP_panelPB', { paddingBottom: pb })}></View>
+        <View style={cache('CP_panelPB', { paddingBottom: pb })} />
       );
     }
 

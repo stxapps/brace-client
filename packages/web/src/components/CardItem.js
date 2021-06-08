@@ -49,7 +49,7 @@ class CardItem extends React.Component {
 
     return (
       <React.Fragment>
-        <div className="absolute inset-0 bg-black opacity-75"></div>
+        <div className="absolute inset-0 bg-black opacity-75" />
         <div className="px-4 absolute inset-0 flex flex-col justify-center items-center bg-transparent">
           <h3 className="text-2xl text-white font-medium text-center">Oops..., something went wrong!</h3>
           <div className="pt-4 flex justify-center items-center">

@@ -5,7 +5,7 @@ import { ScrollView, View, Text, Platform } from 'react-native';
 import {
   Menu, MenuOptions, MenuOption, MenuTrigger, withMenuContext,
 } from 'react-native-popup-menu';
-import Svg, { Path } from 'react-native-svg'
+import Svg, { Path } from 'react-native-svg';
 
 import { updatePopup, updateBulkEdit, moveLinks } from '../actions';
 import { BULK_EDIT_MOVE_TO_POPUP, ARCHIVE, TRASH, MOVE_TO } from '../types/const';
@@ -37,11 +37,11 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
   onBulkEditMoveToPopupClick = (text) => {
     if (!text || this.didClick) return;
 
-    const { selectedLinkIds, moveLinks, updateBulkEdit } = this.props;
+    const { selectedLinkIds } = this.props;
 
     if (text.startsWith(MOVE_TO)) {
-      moveLinks(text.substring(MOVE_TO.length + 1), selectedLinkIds);
-      updateBulkEdit(false);
+      this.props.moveLinks(text.substring(MOVE_TO.length + 1), selectedLinkIds);
+      this.props.updateBulkEdit(false);
     } else {
       throw new Error(`Invalid text: ${text}`);
     }
@@ -106,7 +106,7 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
       paddingRight: 12,
     };
     btnStyle = cache('TBBEMTP_btn', [tailwind('flex-row justify-center items-center bg-white border border-gray-700 rounded-full shadow-sm'), btnStyle]);
-    const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' })
+    const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' });
 
     return (
       <Menu renderer={MenuPopoverRenderers} rendererProps={cache('TBBEMTP_menuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onOpen={this.onBulkEditMoveToBtnClick} onClose={this.onBulkEditMoveToCancelBtnClick}>

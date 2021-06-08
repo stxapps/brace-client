@@ -2,12 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { View, Text, TouchableOpacity, Animated } from 'react-native';
-import Svg, { Path } from 'react-native-svg'
+import Svg, { Path } from 'react-native-svg';
 
 import { MAX_SELECTED_LINK_IDS } from '../types/const';
-import {
-  addSelectedLinkIds, deleteSelectedLinkIds,
-} from '../actions';
+import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
 import { makeIsLinkIdSelected, getSelectedLinkIdsLength } from '../selectors';
 import { tailwind } from '../stylesheets/tailwind';
 import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
@@ -149,7 +147,7 @@ class CardItemSelector extends React.Component {
 
     return (
       <React.Fragment>
-        <View style={tailwind('absolute inset-0 bg-gray-900 opacity-25 rounded-lg elevation-xs')}></View>
+        <View style={tailwind('absolute inset-0 bg-gray-900 opacity-25 rounded-lg elevation-xs')} />
         <TouchableOpacity onPress={this.onSelectBtnClick} style={tailwind('absolute inset-0 justify-center items-center bg-transparent')}>
           <Animated.View style={[tailwind(`justify-center items-center w-32 h-32 rounded-full ${circleStyleClasses}`), circleStyle]}>
             <Svg style={tailwind(`text-base ${svgStyleClasses} font-normal`)} width={80} height={80} viewBox="0 0 20 20" fill="currentColor">
@@ -176,10 +174,10 @@ const makeMapStateToProps = () => {
       isBulkEditing: state.display.isBulkEditing,
       isSelected: isLinkIdSelected(state, props),
       selectedLinkIdsLength: getSelectedLinkIdsLength(state),
-    }
-  }
+    };
+  };
 
-  return mapStateToProps
+  return mapStateToProps;
 };
 
 const mapDispatchToProps = { addSelectedLinkIds, deleteSelectedLinkIds };

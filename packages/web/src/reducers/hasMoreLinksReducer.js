@@ -1,4 +1,4 @@
-import { REHYDRATE } from 'redux-persist/constants'
+import { REHYDRATE } from 'redux-persist/constants';
 
 import {
   FETCH_COMMIT, UPDATE_FETCHED, UPDATE_FETCHED_MORE,

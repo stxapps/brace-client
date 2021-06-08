@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { motion, AnimateSharedLayout } from "framer-motion"
+import { motion, AnimateSharedLayout } from "framer-motion";
 
 import { fetchMore, updatePopup } from '../actions';
 import {
@@ -146,10 +146,10 @@ class CardPanel extends React.PureComponent {
     return (
       <div className="flex justify-center items-center">
         <div className="lds-ellipsis">
-          <div className="bg-gray-600"></div>
-          <div className="bg-gray-600"></div>
-          <div className="bg-gray-600"></div>
-          <div className="bg-gray-600"></div>
+          <div className="bg-gray-600" />
+          <div className="bg-gray-600" />
+          <div className="bg-gray-600" />
+          <div className="bg-gray-600" />
         </div>
       </div>
     );

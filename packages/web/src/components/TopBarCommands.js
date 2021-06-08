@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import GracefulImage from 'react-graceful-image';
 import jdenticon from 'jdenticon';
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion";
 
 import { signOut, updatePopup, updateBulkEdit } from '../actions';
 import { PROFILE_POPUP, SETTINGS_POPUP } from '../types/const';
@@ -57,12 +57,12 @@ class TopBarCommands extends React.PureComponent {
 
     const { isProfilePopupShown } = this.props;
     if (!isProfilePopupShown) return (
-      <AnimatePresence key="AnimatePresence_ProfilePopup"></AnimatePresence>
+      <AnimatePresence key="AnimatePresence_ProfilePopup" />
     );
 
     return (
       <AnimatePresence key="AnimatePresence_ProfilePopup">
-        <motion.button key="ProfilePopup_cancelBtn" onClick={this.onProfileCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden"></motion.button>
+        <motion.button key="ProfilePopup_cancelBtn" onClick={this.onProfileCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
         <motion.div key="ProfilePopup_menuPopup" className="mt-2 py-2 absolute right-0 w-32 bg-white border border-gray-200 rounded-lg shadow-xl z-41" variants={trPopupFMV} initial="hidden" animate="visible" exit="hidden">
           <button onClick={this.onSettingsBtnClick} className="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline">Settings</button>
           <button onClick={this.onSupportBtnClick} className="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline">Support</button>

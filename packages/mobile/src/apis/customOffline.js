@@ -48,8 +48,8 @@ export const queue = {
   peek(array, item, context) {
     if (!userSession.didSessionCreate()) return undefined;
     return array[0];
-  }
-}
+  },
+};
 
 export const discard = (error, action, _retries) => {
 

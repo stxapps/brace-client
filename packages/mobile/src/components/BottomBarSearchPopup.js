@@ -74,7 +74,7 @@ class BottomBarSearchPopup extends React.PureComponent {
         else {
           // Avoid keyboard only on iOS
           //   as on Android, the window is resized already.
-          const bottom = toPx(BOTTOM_BAR_HEIGHT) + insets.bottom
+          const bottom = toPx(BOTTOM_BAR_HEIGHT) + insets.bottom;
           if (Platform.OS === 'ios' && this.state.keyboardHeight > bottom) {
             toValue = -1 * (this.state.keyboardHeight - bottom);
           } else toValue = 0;
@@ -102,7 +102,7 @@ class BottomBarSearchPopup extends React.PureComponent {
     if (isSearchPopupShown) {
       if (!this.searchPopupBackHandler) {
         this.searchPopupBackHandler = BackHandler.addEventListener(
-          "hardwareBackPress",
+          'hardwareBackPress',
           () => {
             if (!this.props.isSearchPopupShown) return false;
             if (this.props.popupLink) return false;

@@ -4,7 +4,7 @@ import {
   ScrollView, View, Text, TouchableOpacity, TouchableWithoutFeedback, BackHandler,
   Animated, Keyboard, Platform,
 } from 'react-native';
-import Svg, { Path } from 'react-native-svg'
+import Svg, { Path } from 'react-native-svg';
 
 import { updatePopup } from '../actions';
 import { MD_WIDTH, SETTINGS_POPUP } from '../types/const';
@@ -132,7 +132,7 @@ class SettingsPopup extends React.PureComponent {
           isSidebarShown: nextProps.safeAreaWidth < MD_WIDTH,
           didSidebarAnimEnd: true,
           keyboardHeight: 0,
-        })
+        });
       }
     }
   }
@@ -146,7 +146,7 @@ class SettingsPopup extends React.PureComponent {
     if (isSettingsPopupShown) {
       if (!this.settingsPopupBackHandler) {
         this.settingsPopupBackHandler = BackHandler.addEventListener(
-          "hardwareBackPress",
+          'hardwareBackPress',
           () => {
             if (!this.props.isSettingsPopupShown) return false;
 
@@ -278,13 +278,13 @@ class SettingsPopup extends React.PureComponent {
     const sidebarCanvasStyleClasses = !isSidebarShown && didSidebarAnimEnd ? 'hidden relative' : 'absolute inset-0 flex flex-row';
 
     const sidebarStyle = {
-      transform: [{ translateX: this.sidebarTranslateX }]
+      transform: [{ translateX: this.sidebarTranslateX }],
     };
 
     const changingSidebarCloseBtnOpacity = this.sidebarTranslateX.interpolate({
       inputRange: [SIDE_BAR_WIDTH * -1, 0],
       outputRange: [0, 1],
-      extrapolate: 'clamp'
+      extrapolate: 'clamp',
     });
     const sidebarCloseBtnStyle = { opacity: changingSidebarCloseBtnOpacity };
 
@@ -360,7 +360,7 @@ class SettingsPopup extends React.PureComponent {
           {/* Off-canvas sidebar for mobile */}
           <View key="sidebar-for-mobile" style={tailwind(`${sidebarCanvasStyleClasses} z-10 md:hidden md:relative`, safeAreaWidth)}>
             <TouchableWithoutFeedback onPress={this.onSidebarCloseBtnClick}>
-              <Animated.View style={[tailwind('absolute inset-0 bg-gray-300'), sidebarCloseBtnStyle]}></Animated.View>
+              <Animated.View style={[tailwind('absolute inset-0 bg-gray-300'), sidebarCloseBtnStyle]} />
             </TouchableWithoutFeedback>
             <View style={tailwind('absolute top-0 right-0 p-1')}>
               <TouchableOpacity onPress={this.onPopupCloseBtnClick} style={tailwind('items-center justify-center h-7 w-7 rounded-full')}>
@@ -418,7 +418,7 @@ class SettingsPopup extends React.PureComponent {
     return (
       <View style={cache('SP_modal', [tailwind('absolute inset-0 items-center justify-center shadow-xl z-30'), modalStyle], [insets.left, insets.right])}>
         <TouchableWithoutFeedback onPress={this.onPopupCloseBtnClick}>
-          <View style={tailwind('absolute inset-0 bg-black opacity-25')}></View>
+          <View style={tailwind('absolute inset-0 bg-black opacity-25')} />
         </TouchableWithoutFeedback>
         <Animated.View style={[tailwind('w-full max-w-4xl bg-white rounded-lg shadow-xl'), popupStyle]}>
           <View style={tailwind('w-full bg-white rounded-lg overflow-hidden')}>
@@ -498,7 +498,7 @@ const mapStateToProps = (state, props) => {
     isSettingsPopupShown: state.display.isSettingsPopupShown,
     windowWidth: state.window.width,
     windowHeight: state.window.height,
-  }
+  };
 };
 
 const mapDispatchToProps = { updatePopup };

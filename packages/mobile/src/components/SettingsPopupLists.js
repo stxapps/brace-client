@@ -192,7 +192,7 @@ class _ListNameEditor extends React.PureComponent {
   onAddOkBtnClick = () => {
     if (this.didClick) return;
 
-    const { validateDisplayName, addListNames } = this.props;
+    const { validateDisplayName } = this.props;
     const { value } = this.state;
 
     const listNameValidatedResult = validateDisplayName(value);
@@ -202,7 +202,7 @@ class _ListNameEditor extends React.PureComponent {
       return;
     }
 
-    addListNames([value]);
+    this.props.addListNames([value]);
     this.setState({ ...this.initialState });
     this.input.current.blur();
     this.didClick = true;
@@ -211,7 +211,7 @@ class _ListNameEditor extends React.PureComponent {
   onEditOkBtnClick = () => {
     if (this.didClick) return;
 
-    const { listNameObj, validateDisplayName, updateListNames } = this.props;
+    const { listNameObj, validateDisplayName } = this.props;
     const { value } = this.state;
 
     if (value === listNameObj.displayName) return this.onCancelBtnClick();
@@ -223,7 +223,7 @@ class _ListNameEditor extends React.PureComponent {
       return;
     }
 
-    updateListNames([listNameObj.listName], [value]);
+    this.props.updateListNames([listNameObj.listName], [value]);
     this.setState({ ...this.initialState, value: value });
     this.input.current.blur();
     this.didClick = true;
@@ -244,9 +244,7 @@ class _ListNameEditor extends React.PureComponent {
 
     this.setState({ isCheckingCanDelete: true }, async () => {
 
-      const {
-        listNameObj, updateDeletingListName, updatePopup,
-      } = this.props;
+      const { listNameObj } = this.props;
 
       const canDeletes = await canDeleteListNames([listNameObj.listName]);
       const canDelete = canDeletes[0];
@@ -259,8 +257,8 @@ class _ListNameEditor extends React.PureComponent {
         return;
       }
 
-      updateDeletingListName(listNameObj.listName);
-      updatePopup(CONFIRM_DELETE_POPUP, true);
+      this.props.updateDeletingListName(listNameObj.listName);
+      this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
       this.setState({ msg: '', isCheckingCanDelete: false });
       this.didClick = false;
     });
@@ -271,12 +269,12 @@ class _ListNameEditor extends React.PureComponent {
   onMoveUpBtnClick = () => {
     if (this.didClick) return;
 
-    const { listNameObj, moveListName } = this.props;
+    const { listNameObj } = this.props;
     if (Platform.OS === 'ios') {
       const animConfig = spListsAnimConfig();
       LayoutAnimation.configureNext(animConfig);
     }
-    moveListName(listNameObj.listName, SWAP_LEFT);
+    this.props.moveListName(listNameObj.listName, SWAP_LEFT);
 
     this.didClick = true;
   }
@@ -284,12 +282,12 @@ class _ListNameEditor extends React.PureComponent {
   onMoveDownBtnClick = () => {
     if (this.didClick) return;
 
-    const { listNameObj, moveListName } = this.props;
+    const { listNameObj } = this.props;
     if (Platform.OS === 'ios') {
       const animConfig = spListsAnimConfig();
       LayoutAnimation.configureNext(animConfig);
     }
-    moveListName(listNameObj.listName, SWAP_RIGHT);
+    this.props.moveListName(listNameObj.listName, SWAP_RIGHT);
     this.didClick = true;
   }
 
@@ -330,7 +328,7 @@ class _ListNameEditor extends React.PureComponent {
       // No delete on 3 main lists, hide the button
       if (listNameObj && [MY_LIST, TRASH, ARCHIVE].includes(listNameObj.listName)) {
         deleteBtn = (
-          <View style={tailwind('flex-grow-0 flex-shrink-0 w-8 h-10')}></View>
+          <View style={tailwind('flex-grow-0 flex-shrink-0 w-8 h-10')} />
         );
       } else {
         deleteBtn = (

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { View, Text, TouchableOpacity, Switch, Linking, Platform } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
-import { Circle } from 'react-native-animated-spinkit'
+import { Circle } from 'react-native-animated-spinkit';
 
 import {
   exportAllData, updateExportAllDataProgress,

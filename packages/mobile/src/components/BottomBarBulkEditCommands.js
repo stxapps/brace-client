@@ -31,7 +31,7 @@ class BottomBarBulkEditCommands extends React.Component {
   componentDidMount() {
     if (!this.backHandler) {
       this.backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
+        'hardwareBackPress',
         () => {
           this.onBulkEditCancelBtnClick();
           return true;
@@ -106,10 +106,10 @@ class BottomBarBulkEditCommands extends React.Component {
   onBulkEditArchiveBtnClick = () => {
     if (this.checkNoLinkIdSelected() || this.didClick) return;
 
-    const { selectedLinkIds, moveLinks, updateBulkEdit } = this.props;
+    const { selectedLinkIds } = this.props;
 
-    moveLinks(ARCHIVE, selectedLinkIds);
-    updateBulkEdit(false);
+    this.props.moveLinks(ARCHIVE, selectedLinkIds);
+    this.props.updateBulkEdit(false);
 
     this.didClick = true;
   }
@@ -117,10 +117,10 @@ class BottomBarBulkEditCommands extends React.Component {
   onBulkEditRemoveBtnClick = () => {
     if (this.checkNoLinkIdSelected() || this.didClick) return;
 
-    const { selectedLinkIds, moveLinks, updateBulkEdit } = this.props;
+    const { selectedLinkIds } = this.props;
 
-    moveLinks(TRASH, selectedLinkIds);
-    updateBulkEdit(false);
+    this.props.moveLinks(TRASH, selectedLinkIds);
+    this.props.updateBulkEdit(false);
 
     this.didClick = true;
   }
@@ -128,10 +128,10 @@ class BottomBarBulkEditCommands extends React.Component {
   onBulkEditRestoreBtnClick = () => {
     if (this.checkNoLinkIdSelected() || this.didClick) return;
 
-    const { selectedLinkIds, moveLinks, updateBulkEdit } = this.props;
+    const { selectedLinkIds } = this.props;
 
-    moveLinks(MY_LIST, selectedLinkIds);
-    updateBulkEdit(false);
+    this.props.moveLinks(MY_LIST, selectedLinkIds);
+    this.props.updateBulkEdit(false);
 
     this.didClick = true;
   }

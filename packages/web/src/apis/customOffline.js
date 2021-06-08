@@ -43,8 +43,8 @@ export const queue = {
     }*/
 
     return [...array, action];
-  }
-}
+  },
+};
 
 export const discard = (error, action, _retries) => {
 

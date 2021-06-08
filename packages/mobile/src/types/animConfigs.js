@@ -1,6 +1,6 @@
 import { LayoutAnimation } from 'react-native';
 
-import { SM_WIDTH } from "./const";
+import { SM_WIDTH } from './const';
 
 export const cardItemAnimConfig = (safeAreaWidth) => {
 

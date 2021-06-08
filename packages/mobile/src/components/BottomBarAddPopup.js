@@ -98,7 +98,7 @@ class BottomBarAddPopup extends React.PureComponent {
             {/* onKeyPress event for Enter key only if there is multiline TextInput */}
             <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('ml-3 px-4 py-2 flex-1 bg-white text-base text-gray-900 font-normal border border-gray-500 rounded-full')} placeholder="https://" value={url} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} />
           </View>
-          {msg === '' ? <View style={tailwind('w-full h-3')}></View> : <Text style={tailwind('pt-3 text-base text-red-500 font-normal')}>{msg}</Text>}
+          {msg === '' ? <View style={tailwind('w-full h-3')} /> : <Text style={tailwind('pt-3 text-base text-red-500 font-normal')}>{msg}</Text>}
           <View style={tailwind('pt-3 flex-row justify-start items-center')}>
             <TouchableOpacity onPress={this.onAddOkBtnClick} style={tailwind('px-5 py-2 justify-center items-center bg-gray-800 rounded-full shadow-sm')}>
               <Text style={tailwind('text-base text-white font-medium')}>{isAskingConfirm ? 'Sure' : 'Save'}</Text>

@@ -7,7 +7,7 @@ module.exports = {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
       },
       colors: {
-        'purple-blockstack': '#211F6D'
+        'purple-blockstack': '#211F6D',
       },
       spacing: {
         '1.5': '0.375rem',
@@ -78,7 +78,7 @@ module.exports = {
         '41': '41',
         '51': '51',
       },
-    }
+    },
   },
   variants: {
     backgroundColor: ['responsive', 'hover', 'focus', 'active']
@@ -89,4 +89,4 @@ module.exports = {
     removeDeprecatedGapUtilities: true,
     purgeLayersByDefault: true,
   },
-}
+};

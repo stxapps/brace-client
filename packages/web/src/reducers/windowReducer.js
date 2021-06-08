@@ -3,7 +3,7 @@ import {
   UPDATE_WINDOW, UPDATE_HREF, UPDATE_HISTORY_POSITION, UPDATE_WINDOW_SIZE,
   UPDATE_PAGE_Y_OFFSET,
 } from '../types/actionTypes';
-import { REHYDRATE } from 'redux-persist/constants'
+import { REHYDRATE } from 'redux-persist/constants';
 
 const initialState = {
   href: null,

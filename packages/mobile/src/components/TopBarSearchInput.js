@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {
   View, TouchableOpacity, TextInput, Platform,
 } from 'react-native';
-import Svg, { Path } from 'react-native-svg'
+import Svg, { Path } from 'react-native-svg';
 
 import { updateSearchString } from '../actions';
 import cache from '../utils/cache';

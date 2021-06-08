@@ -1,12 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion";
 
 import { updatePopup, addLink } from '../actions';
-import {
-  ADD_POPUP,
-  NO_URL, ASK_CONFIRM_URL, URL_MSGS,
-} from '../types/const';
+import { ADD_POPUP, NO_URL, ASK_CONFIRM_URL, URL_MSGS } from '../types/const';
 import { validateUrl, isEqual } from '../utils';
 import { popupBgFMV, tlPopupFMV, trPopupFMV } from '../types/animConfigs';
 
@@ -80,7 +77,7 @@ class TopBarAddPopup extends React.PureComponent {
 
     const { isAddPopupShown } = this.props;
     if (!isAddPopupShown) return (
-      <AnimatePresence key="AnimatePresence_TopBarAddPopup"></AnimatePresence>
+      <AnimatePresence key="AnimatePresence_TopBarAddPopup" />
     );
 
     const { url, msg, isAskingConfirm } = this.state;
@@ -92,7 +89,7 @@ class TopBarAddPopup extends React.PureComponent {
 
     return (
       <AnimatePresence key="AnimatePresence_TopBarAddPopup">
-        <motion.button key="TopBarAddPopup_cancelBtn" onClick={this.onAddCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden"></motion.button>
+        <motion.button key="TopBarAddPopup_cancelBtn" onClick={this.onAddCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
         <motion.div key="TopBarAddPopup_addPopup" style={style} className="mt-2 px-4 pt-6 pb-5 absolute w-96 bg-white border border-gray-200 rounded-lg shadow-xl z-41" variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
           <div className="flex">
             <span className="inline-flex items-center bg-white text-sm font-medium text-gray-700">Url:</span>

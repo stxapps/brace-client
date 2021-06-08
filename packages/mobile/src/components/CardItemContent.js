@@ -111,7 +111,7 @@ class CardItemContent extends React.Component {
 
     const placeholder = () => {
       if (decor.favicon.bg.type === COLOR) {
-        return <View style={tailwind(`flex-shrink-0 flex-grow-0 w-4 h-4 ${decor.favicon.bg.value} rounded-full`)}></View>;
+        return <View style={tailwind(`flex-shrink-0 flex-grow-0 w-4 h-4 ${decor.favicon.bg.value} rounded-full`)} />;
       }
 
       if (decor.favicon.bg.type === PATTERN) {

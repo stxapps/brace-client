@@ -43,6 +43,7 @@ function fit(pos, len, minPos, maxPos) {
   }
   return pos;
 }
+
 // fits options (position) into safeArea
 export const fitPositionIntoSafeArea = (position, layouts) => {
   const { windowLayout, safeAreaLayout, optionsLayout } = layouts;
@@ -54,10 +55,10 @@ export const fitPositionIntoSafeArea = (position, layouts) => {
   const { width: wWidth } = windowLayout;
   let { top, left, right } = position;
   top = fit(top, oHeight, saY, saY + saHeight);
-  left = fit(left, oWidth, saX, saX + saWidth)
-  right = fit(right, oWidth, wWidth - saX - saWidth, saX)
+  left = fit(left, oWidth, saX, saX + saWidth);
+  right = fit(right, oWidth, wWidth - saX - saWidth, saX);
   return { top, left, right };
-}
+};
 
 export const computePosition = (layouts, isRTL, triggerOffsets) => {
 
@@ -136,7 +137,8 @@ export default class MenuPopupRenderer extends React.PureComponent {
       startTranslateX = oWidth / 2;
       startTranslateY = oHeight / 2;
     } else {
-      startTranslateX = 0, startTranslateY = 0;
+      startTranslateX = 0;
+      startTranslateY = 0;
     }
 
     const changingTranslateX = scaleAnim.interpolate({
@@ -153,7 +155,7 @@ export default class MenuPopupRenderer extends React.PureComponent {
         { translateX: changingTranslateX },
         { translateY: changingTranslateY },
         { scale: scaleAnim },
-      ]
+      ],
     };
 
     return (

@@ -7,13 +7,13 @@ import { updateSettings, updateUpdateSettingsProgress } from '../actions';
 class SettingsPopupMisc extends React.PureComponent {
 
   onDoExtractBtnClick = () => {
-    const { doExtractContents, updateSettings } = this.props;
-    updateSettings({ doExtractContents: !doExtractContents });
+    const { doExtractContents } = this.props;
+    this.props.updateSettings({ doExtractContents: !doExtractContents });
   }
 
   onDoDeleteBtnClick = () => {
-    const { doDeleteOldLinksInTrash, updateSettings } = this.props;
-    updateSettings({ doDeleteOldLinksInTrash: !doDeleteOldLinksInTrash });
+    const { doDeleteOldLinksInTrash } = this.props;
+    this.props.updateSettings({ doDeleteOldLinksInTrash: !doDeleteOldLinksInTrash });
   }
 
   onDoDescendingInputChange = (e) => {
@@ -25,8 +25,7 @@ class SettingsPopupMisc extends React.PureComponent {
     else if (value === 'descending') doDescendingOrder = true;
     else throw new Error(`Invalid value: ${value}`);
 
-    const { updateSettings } = this.props;
-    updateSettings({ doDescendingOrder });
+    this.props.updateSettings({ doDescendingOrder });
   }
 
   onDiedUpdatingCloseBtnClick = () => {
@@ -110,7 +109,7 @@ class SettingsPopupMisc extends React.PureComponent {
             <p id="link-previews-option-description" className="mt-2 text-base text-gray-700 leading-relaxed">Allow your saved links to be sent to our server for extracting their representative title and image. No your personal information involved at all so there is no way to know who saves what links. These titles and images are used in our website and app for you to easily find and recognize your saved links. For more information, please visit <a className="underline hover:text-gray-900 focus:outline-none focus:shadow-outline" href="/#privacy">our privacy policy page</a>.</p>
           </div>
           <span onClick={this.onDoExtractBtnClick} role="checkbox" tabIndex={0} aria-checked="true" aria-labelledby="link-previews-option-label" aria-describedby="link-previews-option-description" className={`${doExtractBtnClassNames} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline`}>
-            <span aria-hidden="true" className={`${doExtractBtnInnerClassNames} inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`}></span>
+            <span aria-hidden="true" className={`${doExtractBtnInnerClassNames} inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`} />
           </span>
         </div>
         <div className="mt-8 flex items-center justify-between space-x-4">
@@ -119,7 +118,7 @@ class SettingsPopupMisc extends React.PureComponent {
             <p id="auto-delete-option-description" className="mt-2 text-base text-gray-700 leading-relaxed">Allow old removed links in Trash to be automatically deleted after 45 days</p>
           </div>
           <span onClick={this.onDoDeleteBtnClick} role="checkbox" tabIndex={0} aria-checked="true" aria-labelledby="auto-cleanup-option-label" aria-describedby="auto-cleanup-option-description" className={`${doDeleteBtnClassNames} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:shadow-outline`}>
-            <span aria-hidden="true" className={`${doDeleteBtnInnerClassNames} inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`}></span>
+            <span aria-hidden="true" className={`${doDeleteBtnInnerClassNames} inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`} />
           </span>
         </div>
         <div className="mt-8 mb-4 flex flex-col">

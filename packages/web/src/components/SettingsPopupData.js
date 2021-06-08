@@ -126,7 +126,7 @@ class _SettingsPopupDataExport extends React.PureComponent {
         <div className="mt-6 mb-4">
           <div className="flex items-center">
             <div className="ball-clip-rotate">
-              <div></div>
+              <div />
             </div>
             <p className="ml-1 text-base text-gray-800">Exporting...</p>
           </div>
@@ -267,7 +267,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
         <div className="mt-6 mb-4">
           <div className="flex items-center">
             <div className="ball-clip-rotate">
-              <div></div>
+              <div />
             </div>
             <p className="ml-1 text-base text-gray-800">Deleting...</p>
           </div>

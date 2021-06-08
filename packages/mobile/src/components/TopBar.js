@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { View, Text, TouchableOpacity, Animated } from 'react-native';
-import { SvgXml } from 'react-native-svg'
+import { SvgXml } from 'react-native-svg';
 
 import { signIn } from '../actions';
 import {
@@ -54,19 +54,19 @@ class TopBar extends React.PureComponent {
     const changingTranslateX = scrollY.interpolate({
       inputRange: [0, listNameDistanceY],
       outputRange: [0, listNameDistanceX],
-      extrapolate: 'clamp'
+      extrapolate: 'clamp',
     });
     const changingTranslateY = scrollY.interpolate({
       inputRange: [0, listNameDistanceY],
       outputRange: [
         space1 * -1 - space2 + headerListNameSpace + (laidTopBarHeight - topBarHeight),
-        space1 * -1 - space2 - space3 + space4 + (laidTopBarHeight - headerHeight)
+        space1 * -1 - space2 - space3 + space4 + (laidTopBarHeight - headerHeight),
       ],
-      extrapolate: 'clamp'
+      extrapolate: 'clamp',
     });
 
     const listNameStyle = {
-      transform: [{ translateX: changingTranslateX }, { translateY: changingTranslateY }]
+      transform: [{ translateX: changingTranslateX }, { translateY: changingTranslateY }],
     };
 
     return (
@@ -74,7 +74,7 @@ class TopBar extends React.PureComponent {
         <ListName />
       </Animated.View>
     );
-  };
+  }
 
   renderStatusPopup() {
 
@@ -92,14 +92,14 @@ class TopBar extends React.PureComponent {
       inputRange: [0, statusPopupDistanceY],
       outputRange: [
         space1 * -1 + headerListNameSpace + space2 + (laidTopBarHeight - topBarHeight),
-        space1 * -1 + headerListNameSpace + space2 + (laidTopBarHeight - headerHeight) - statusPopupDistanceY
+        space1 * -1 + headerListNameSpace + space2 + (laidTopBarHeight - headerHeight) - statusPopupDistanceY,
       ],
-      extrapolate: 'clamp'
+      extrapolate: 'clamp',
     });
     const changingOpacity = scrollY.interpolate({
       inputRange: [0, statusPopupDistanceY],
       outputRange: [1.0, 0.0],
-      extrapolate: 'clamp'
+      extrapolate: 'clamp',
     });
 
     const statusPopupStyle = {
@@ -131,9 +131,9 @@ class TopBar extends React.PureComponent {
       inputRange: [0, listNameDistanceY],
       outputRange: [
         space1 * -1 - space2 - space3 + space4 + (laidTopBarHeight - topBarHeight),
-        space1 * -1 - space2 - space3 + space4 + (laidTopBarHeight - headerHeight)
+        space1 * -1 - space2 - space3 + space4 + (laidTopBarHeight - headerHeight),
       ],
-      extrapolate: 'clamp'
+      extrapolate: 'clamp',
     });
 
     const commandsStyle = { transform: [{ translateY: changingTranslateY }] };
@@ -141,7 +141,7 @@ class TopBar extends React.PureComponent {
       <Animated.View style={commandsStyle}>
         {isBulkEditing ? <TopBarBulkEditCommands /> : <TopBarCommands />}
       </Animated.View>
-    )
+    );
   }
 
   render() {
@@ -169,22 +169,22 @@ class TopBar extends React.PureComponent {
         inputRange: [0, listNameDistanceY],
         outputRange: [
           topBarHeight - laidTopBarHeight,
-          headerHeight - laidTopBarHeight
+          headerHeight - laidTopBarHeight,
         ],
-        extrapolate: 'clamp'
+        extrapolate: 'clamp',
       });
       const changingHeaderTranslateY = scrollY.interpolate({
         inputRange: [0, listNameDistanceY],
         outputRange: [
           laidTopBarHeight - topBarHeight,
-          laidTopBarHeight - headerHeight
+          laidTopBarHeight - headerHeight,
         ],
-        extrapolate: 'clamp'
+        extrapolate: 'clamp',
       });
       const changingHeaderBorderOpacity = scrollY.interpolate({
         inputRange: [0, listNameDistanceY - 1, listNameDistanceY],
         outputRange: [0, 0, 1],
-        extrapolate: 'clamp'
+        extrapolate: 'clamp',
       });
 
       topBarStyleClasses = 'absolute inset-x-0 top-0 bg-white border-gray-300 z-30';
@@ -226,7 +226,7 @@ class TopBar extends React.PureComponent {
               </View>
               {rightPane}
             </View>
-            <Animated.View style={[tailwind('w-full h-px bg-gray-300'), headerBorderStyle]}></Animated.View>
+            <Animated.View style={[tailwind('w-full h-px bg-gray-300'), headerBorderStyle]} />
           </Animated.View>
           {listNamePane}
         </View>
@@ -244,7 +244,7 @@ TopBar.propTypes = {
 TopBar.defaultProps = {
   isListNameShown: false,
   scrollY: null,
-}
+};
 
 const mapStateToProps = (state, props) => {
   return {

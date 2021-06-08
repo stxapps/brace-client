@@ -27,7 +27,7 @@ class Main extends React.PureComponent {
 
     this.scrollY = new Animated.Value(0);
     this.scrollYEvent = Animated.event([{
-      nativeEvent: { contentOffset: { y: this.scrollY } }
+      nativeEvent: { contentOffset: { y: this.scrollY } },
     }], { useNativeDriver: true });
   }
 

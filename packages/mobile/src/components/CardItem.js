@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { View, Text, TouchableOpacity, Linking } from 'react-native';
-import Svg, { Path } from 'react-native-svg'
+import Svg, { Path } from 'react-native-svg';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
 import { ADDING, MOVING, SM_WIDTH } from '../types/const';
@@ -57,7 +57,7 @@ class CardItem extends React.Component {
 
     return (
       <React.Fragment>
-        <View style={tailwind('absolute inset-0 bg-black opacity-75 rounded-lg elevation-xs')}></View>
+        <View style={tailwind('absolute inset-0 bg-black opacity-75 rounded-lg elevation-xs')} />
         <View style={tailwind('px-4 absolute inset-0 justify-center items-center bg-transparent rounded-lg elevation-xs')}>
           <Text style={tailwind('text-2xl text-white font-medium text-center')}>Oops..., something went wrong!</Text>
           <View style={tailwind('pt-4 flex-row justify-center items-center')}>

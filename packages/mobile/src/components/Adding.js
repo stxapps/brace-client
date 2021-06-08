@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { ScrollView, View, Text, TouchableOpacity, Linking } from 'react-native';
-import { Flow } from 'react-native-animated-spinkit'
-import Svg, { Path } from 'react-native-svg'
+import { Flow } from 'react-native-animated-spinkit';
+import Svg, { Path } from 'react-native-svg';
 
 import {
   DOMAIN_NAME, MY_LIST,
@@ -192,7 +192,7 @@ class Adding extends React.PureComponent {
         if (askedConfirmResult === null) {
           return {
             type: RENDER_ASKING_CONFIRM,
-            payload: addingUrl
+            payload: addingUrl,
           };
         } else if (askedConfirmResult === CONFIRM_NOT_ADD) {
           continue;

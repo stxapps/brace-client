@@ -1,4 +1,4 @@
-import { REHYDRATE } from 'redux-persist/constants'
+import { REHYDRATE } from 'redux-persist/constants';
 
 import {
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
@@ -100,23 +100,23 @@ export default (state = initialState, action) => {
         isConfirmDeletePopupShown: isShown,
         isSettingsPopupShown: isShown,
         isBulkEditMoveToPopupShown: isShown,
-      }
+      };
     }
 
     if (id === ADD_POPUP) {
-      return { ...state, isAddPopupShown: isShown }
+      return { ...state, isAddPopupShown: isShown };
     }
 
     if (id === SEARCH_POPUP) {
-      return { ...state, isSearchPopupShown: isShown, searchString: '' }
+      return { ...state, isSearchPopupShown: isShown, searchString: '' };
     }
 
     if (id === PROFILE_POPUP) {
-      return { ...state, isProfilePopupShown: isShown }
+      return { ...state, isProfilePopupShown: isShown };
     }
 
     if (id === LIST_NAME_POPUP) {
-      return { ...state, isListNamePopupShown: isShown }
+      return { ...state, isListNamePopupShown: isShown };
     }
 
     if (id === CONFIRM_DELETE_POPUP) {
@@ -126,11 +126,11 @@ export default (state = initialState, action) => {
     }
 
     if (id === SETTINGS_POPUP) {
-      return { ...state, isSettingsPopupShown: isShown }
+      return { ...state, isSettingsPopupShown: isShown };
     }
 
     if (id === BULK_EDIT_MOVE_TO_POPUP) {
-      return { ...state, isBulkEditMoveToPopupShown: isShown }
+      return { ...state, isBulkEditMoveToPopupShown: isShown };
     }
 
     throw new Error(`Invalid type: ${action.type} and payload: ${action.payload}`);

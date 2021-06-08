@@ -76,7 +76,7 @@ class StatusPopup extends React.PureComponent {
     if (this.prevProps.status && !this.props.status) {
       if (this.animation) this.animation.stop();
       this.animation = Animated.spring(
-        this.translateX, { toValue: 0, ...statusPopupAnimConfig.hidden, }
+        this.translateX, { toValue: 0, ...statusPopupAnimConfig.hidden }
       );
       this.animation.start();
     }
@@ -126,7 +126,7 @@ class StatusPopup extends React.PureComponent {
 
     return (
       <View style={tailwind('w-48 flex-row justify-start items-center overflow-hidden sm:w-64', safeAreaWidth)}>
-        <View style={tailwind('w-full h-full')}></View>
+        <View style={tailwind('w-full h-full')} />
         <AnimatedText onLayout={this.onTextLayout} style={[tailwind('pl-3 bg-white text-base text-gray-900 font-normal leading-6 rounded-l-full'), textStyle]}>{this.msg}</AnimatedText>
       </View>
     );
@@ -137,7 +137,7 @@ const mapStateToProps = (state, props) => {
   return {
     status: state.display.status,
     windowWidth: state.window.width,
-  }
+  };
 };
 
 const mapDispatchToProps = { updateStatus };

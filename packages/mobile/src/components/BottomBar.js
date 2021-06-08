@@ -29,7 +29,7 @@ class BottomBar extends React.PureComponent {
 
     const { isShown, insets } = this.props;
 
-    if (prevProps.isShown != isShown) {
+    if (prevProps.isShown !== isShown) {
 
       const totalHeight = toPx(BOTTOM_BAR_HEIGHT) + insets.bottom;
       const toValue = isShown ? 0 : totalHeight;

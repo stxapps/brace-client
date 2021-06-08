@@ -1,12 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion";
 
 import { MAX_SELECTED_LINK_IDS } from '../types/const';
-import {
-  addSelectedLinkIds, deleteSelectedLinkIds,
-} from '../actions';
+import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
 import { makeIsLinkIdSelected, getSelectedLinkIdsLength } from '../selectors';
 import { popupBgFMV, ccPopupFMV } from '../types/animConfigs';
 
@@ -56,7 +54,7 @@ class CardItemSelector extends React.Component {
   renderMaxError() {
 
     if (!this.state.isMaxErrorShown) return (
-      <AnimatePresence key="AnimatePresence_CIS_maxError"></AnimatePresence>
+      <AnimatePresence key="AnimatePresence_CIS_maxError" />
     );
 
     return (
@@ -83,7 +81,7 @@ class CardItemSelector extends React.Component {
 
     const { linkId, isBulkEditing, isSelected } = this.props;
     if (!isBulkEditing) return (
-      <AnimatePresence key={`AnimatePresence_CardItemSelector_${linkId}`}></AnimatePresence>
+      <AnimatePresence key={`AnimatePresence_CardItemSelector_${linkId}`} />
     );
 
     const circleStyleClasses = isSelected ? 'bg-gray-900' : 'bg-gray-100 opacity-75';
@@ -91,7 +89,7 @@ class CardItemSelector extends React.Component {
 
     return (
       <AnimatePresence key={`AnimatePresence_CardItemSelector_${linkId}`}>
-        <motion.div key={`CardItemSelector_shade_${linkId}`} className="absolute inset-0 bg-gray-900 opacity-25" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden"></motion.div>
+        <motion.div key={`CardItemSelector_shade_${linkId}`} className="absolute inset-0 bg-gray-900 opacity-25" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
         <motion.button key={`CardItemSelector_selectBtn_${linkId}`} onClick={this.onSelectBtnClick} className="absolute inset-0 flex justify-center items-center w-full h-full bg-transparent group focus:outline-none-outer" variants={ccPopupFMV} initial="hidden" animate="visible" exit="hidden">
           <div className="rounded-full group-hover:shadow-outline-opaque focus:shadow-outline-inner-opaque">
             <div className={`flex justify-center items-center w-32 h-32 rounded-full ${circleStyleClasses}`}>
@@ -120,10 +118,10 @@ const makeMapStateToProps = () => {
       isBulkEditing: state.display.isBulkEditing,
       isSelected: isLinkIdSelected(state, props),
       selectedLinkIdsLength: getSelectedLinkIdsLength(state),
-    }
-  }
+    };
+  };
 
-  return mapStateToProps
+  return mapStateToProps;
 };
 
 const mapDispatchToProps = { addSelectedLinkIds, deleteSelectedLinkIds };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion";
 
 import { updatePopup, updateBulkEdit, moveLinks } from '../actions';
 import { BULK_EDIT_MOVE_TO_POPUP, ARCHIVE, TRASH, MOVE_TO } from '../types/const';
@@ -55,11 +55,11 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
   onBulkEditMoveToPopupClick = (text) => {
     if (!text || this.didClick) return;
 
-    const { selectedLinkIds, moveLinks, updateBulkEdit } = this.props;
+    const { selectedLinkIds } = this.props;
 
     if (text.startsWith(MOVE_TO)) {
-      moveLinks(text.substring(MOVE_TO.length + 1), selectedLinkIds);
-      updateBulkEdit(false);
+      this.props.moveLinks(text.substring(MOVE_TO.length + 1), selectedLinkIds);
+      this.props.updateBulkEdit(false);
     } else {
       throw new Error(`Invalid text: ${text}`);
     }
@@ -92,7 +92,7 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
 
     const { isBulkEditMoveToPopupShown } = this.props;
     if (!isBulkEditMoveToPopupShown) return (
-      <AnimatePresence key="AnimatePresence_TBBEC_moveToPopup"></AnimatePresence>
+      <AnimatePresence key="AnimatePresence_TBBEC_moveToPopup" />
     );
 
     const { menuPopupSize } = this.state;
@@ -134,7 +134,7 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
 
     return (
       <AnimatePresence key="AnimatePresence_TBBEC_moveToPopup">
-        <motion.button key="TBBEC_cancelBtn" onClick={this.onBulkEditMoveToCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden"></motion.button>
+        <motion.button key="TBBEC_cancelBtn" onClick={this.onBulkEditMoveToCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
         {menuPopup}
       </AnimatePresence>
     );

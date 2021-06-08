@@ -43,29 +43,23 @@ class ConfirmDeletePopup extends React.Component {
     }
 
     if (popupLink) {
-      const { deleteLinks, updatePopup } = this.props;
-
-      deleteLinks([popupLink.id]);
-      updatePopup(CONFIRM_DELETE_POPUP, false);
-      updatePopup(popupLink.id, false);
+      this.props.deleteLinks([popupLink.id]);
+      this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+      this.props.updatePopup(popupLink.id, false);
       return;
     }
 
     if (selectedLinkIds.length > 0) {
-      const { deleteLinks, updatePopup, updateBulkEdit } = this.props;
-
-      deleteLinks(selectedLinkIds);
-      updatePopup(CONFIRM_DELETE_POPUP, false);
-      updateBulkEdit(false);
+      this.props.deleteLinks(selectedLinkIds);
+      this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+      this.props.updateBulkEdit(false);
       return;
     }
 
     if (deletingListName) {
-      const { deleteListNames, updatePopup, updateDeletingListName } = this.props;
-
-      deleteListNames([deletingListName]);
-      updatePopup(CONFIRM_DELETE_POPUP, false);
-      updateDeletingListName(null);
+      this.props.deleteListNames([deletingListName]);
+      this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+      this.props.updateDeletingListName(null);
       return;
     }
 
@@ -84,7 +78,7 @@ class ConfirmDeletePopup extends React.Component {
 
     return (
       <React.Fragment>
-        <button onClick={this.onConfirmDeleteCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-50 focus:outline-none"></button>
+        <button onClick={this.onConfirmDeleteCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-50 focus:outline-none" />
         <div className="p-4 fixed top-1/2 left-1/2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl transform -translate-x-1/2 -translate-y-1/2 z-51">
           <p className="py-2 text-lg text-gray-900 text-center">Confirm delete?</p>
           <div className="py-2 text-center">
@@ -107,7 +101,7 @@ const mapStateToProps = (state, props) => {
     popupLink: getPopupLink(state),
     selectedLinkIds: state.display.selectedLinkIds,
     deletingListName: state.display.deletingListName,
-  }
+  };
 };
 
 const mapDispatchToProps = {

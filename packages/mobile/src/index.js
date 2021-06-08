@@ -15,8 +15,8 @@ import { MenuProvider } from 'react-native-popup-menu';
 import KeyboardManager from 'react-native-keyboard-manager';
 
 import reducers from './reducers';
-import { init, updateMenuPopupAsBackPressed } from './actions'
-import { queue, discard, effect } from './apis/customOffline'
+import { init, updateMenuPopupAsBackPressed } from './actions';
+import { queue, discard, effect } from './apis/customOffline';
 import cache from './utils/cache';
 
 import App from './components/App';

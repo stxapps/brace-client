@@ -2,7 +2,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'purple-blockstack': '#211F6D'
+        'purple-blockstack': '#211F6D',
       },
       spacing: {
         '7': '1.75rem',
@@ -34,7 +34,7 @@ module.exports = {
         '41': '41',
         '51': '51',
       },
-    }
+    },
   },
   variants: {
 
@@ -45,4 +45,4 @@ module.exports = {
     removeDeprecatedGapUtilities: true,
     purgeLayersByDefault: true,
   },
-}
+};

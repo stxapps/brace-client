@@ -5,8 +5,8 @@ import {
   Linking, BackHandler,
 } from 'react-native';
 import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
-import { Flow } from 'react-native-animated-spinkit'
-import Svg, { Path } from 'react-native-svg'
+import { Flow } from 'react-native-animated-spinkit';
+import Svg, { Path } from 'react-native-svg';
 
 import {
   MY_LIST,
@@ -70,7 +70,7 @@ class TranslucentAdding extends React.PureComponent {
       //   meaning timeout just stops when app in background
       //   and will continue running when app is back on foreground.
       this.timeoutId = setTimeout(() => {
-        BackHandler.exitApp()
+        BackHandler.exitApp();
       }, 2000);
       return;
     }
@@ -233,7 +233,7 @@ class TranslucentAdding extends React.PureComponent {
         if (askedConfirmResult === null) {
           return {
             type: RENDER_ASKING_CONFIRM,
-            payload: addingUrl
+            payload: addingUrl,
           };
         } else if (askedConfirmResult === CONFIRM_NOT_ADD) {
           continue;
@@ -334,7 +334,7 @@ class TranslucentAdding extends React.PureComponent {
     return (
       <View style={tailwind('flex-1 justify-end items-center')}>
         <TouchableWithoutFeedback onPress={this.onBackgroundBtnClick}>
-          <View style={tailwind('absolute inset-0 bg-black opacity-50')}></View>
+          <View style={tailwind('absolute inset-0 bg-black opacity-50')} />
         </TouchableWithoutFeedback>
         {content}
       </View>

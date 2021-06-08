@@ -89,7 +89,7 @@ class CardItemContent extends React.Component {
       const { text } = decor.image.fg;
       fg = (
         <React.Fragment>
-          <div className="absolute top-1/2 left-1/2 w-20 h-20 bg-white rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute top-1/2 left-1/2 w-20 h-20 bg-white rounded-full transform -translate-x-1/2 -translate-y-1/2" />
           <div className="absolute top-1/2 left-1/2 text-5xl text-gray-700 font-semibold leading-none uppercase transform -translate-x-1/2 -translate-y-1/2">{text}</div>
         </React.Fragment>
       );
@@ -99,7 +99,7 @@ class CardItemContent extends React.Component {
     if (decor.image.bg.type === COLOR) {
       return (
         <React.Fragment>
-          <div className={`absolute h-full w-full ${decor.image.bg.value}`}></div>
+          <div className={`absolute h-full w-full ${decor.image.bg.value}`} />
           {fg}
         </React.Fragment>
       );
@@ -110,7 +110,7 @@ class CardItemContent extends React.Component {
       // Require both 'pattern' and [pattern_name] class names
       return (
         <React.Fragment>
-          <div className={`absolute w-full h-full pattern ${decor.image.bg.value}`}></div>
+          <div className={`absolute w-full h-full pattern ${decor.image.bg.value}`} />
           {fg}
         </React.Fragment>
       );
@@ -128,7 +128,7 @@ class CardItemContent extends React.Component {
 
     const placeholder = (ref) => {
       if (decor.favicon.bg.type === COLOR) {
-        return <div ref={ref} className={`flex-shrink-0 flex-grow-0 w-4 h-4 ${decor.favicon.bg.value} rounded-full`}></div>;
+        return <div ref={ref} className={`flex-shrink-0 flex-grow-0 w-4 h-4 ${decor.favicon.bg.value} rounded-full`} />;
       }
 
       if (decor.favicon.bg.type === PATTERN) {
@@ -137,7 +137,7 @@ class CardItemContent extends React.Component {
         return (
           <div ref={ref} className="flex-shrink-0 flex-grow-0">
             <div className="relative">
-              <div className={`w-4 h-4 rounded-full pattern ${decor.favicon.bg.value}`}></div>
+              <div className={`w-4 h-4 rounded-full pattern ${decor.favicon.bg.value}`} />
             </div>
           </div>
         );

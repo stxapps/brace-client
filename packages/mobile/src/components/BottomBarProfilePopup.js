@@ -57,7 +57,7 @@ class BottomBarProfilePopup extends React.PureComponent {
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (!this.props.isProfilePopupShown && nextProps.isProfilePopupShown) {
       if (this.state.didCloseAnimEnd) {
-        this.setState({ didCloseAnimEnd: false })
+        this.setState({ didCloseAnimEnd: false });
       }
     }
   }
@@ -70,7 +70,7 @@ class BottomBarProfilePopup extends React.PureComponent {
     if (isProfilePopupShown) {
       if (!this.profilePopupBackHandler) {
         this.profilePopupBackHandler = BackHandler.addEventListener(
-          "hardwareBackPress",
+          'hardwareBackPress',
           () => {
             if (!this.props.isProfilePopupShown) return false;
 
@@ -104,18 +104,18 @@ class BottomBarProfilePopup extends React.PureComponent {
   onSignOutBtnClick = () => {
     // No need to update it, will get already unmount
     //this.props.updatePopup(PROFILE_POPUP, false);
-    this.props.signOut()
+    this.props.signOut();
   }
 
   render() {
 
     if (!this.props.isProfilePopupShown && this.state.didCloseAnimEnd) return null;
 
-    const popupStyle = { transform: [{ translateY: this.profilePopupTranslateY }] }
+    const popupStyle = { transform: [{ translateY: this.profilePopupTranslateY }] };
 
     return (
       <React.Fragment>
-        <TouchableOpacity onPress={this.onProfileCancelBtnClick} style={tailwind('absolute inset-0 bg-black opacity-25 z-40')}></TouchableOpacity>
+        <TouchableOpacity onPress={this.onProfileCancelBtnClick} style={tailwind('absolute inset-0 bg-black opacity-25 z-40')} />
         <Animated.View style={[tailwind('pt-4 pb-16 absolute inset-x-0 -bottom-12 bg-white border border-gray-200 rounded-t-lg shadow-xl z-41'), popupStyle]}>
           <TouchableOpacity onPress={this.onSettingsBtnClick} style={tailwind('py-4 pl-4 w-full')}>
             <Text style={tailwind('text-base text-gray-800 font-normal')}>Settings</Text>

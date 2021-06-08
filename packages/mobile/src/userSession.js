@@ -8,9 +8,9 @@ const didSessionCreate = () => {
 };
 
 const hasSession = async () => {
-  const { hasSession } = await RNBlockstackSdk.hasSession();
-  _didSessionCreate = hasSession;
-  return hasSession;
+  const { hasSession: hs } = await RNBlockstackSdk.hasSession();
+  _didSessionCreate = hs;
+  return hs;
 };
 
 const createSession = async (config) => {

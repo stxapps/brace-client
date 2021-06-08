@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import FastImage from 'react-native-fast-image'
+import FastImage from 'react-native-fast-image';
 
 class GracefulImage extends React.PureComponent {
 
@@ -17,14 +17,16 @@ class GracefulImage extends React.PureComponent {
     const { loaded } = this.state;
 
     const viewStyle = [style];
-    if (!loaded) viewStyle.push({
-      position: 'absolute',
-      top: -1,
-      left: -1,
-      width: 1,
-      height: 1,
-      overflow: 'hidden',
-    });
+    if (!loaded) {
+      viewStyle.push({
+        position: 'absolute',
+        top: -1,
+        left: -1,
+        width: 1,
+        height: 1,
+        overflow: 'hidden',
+      });
+    }
 
     const imageStyle = [contentStyle];
     if (loaded) imageStyle.push({ width: '100%', height: '100%' });
@@ -35,7 +37,7 @@ class GracefulImage extends React.PureComponent {
       if (customPlaceholder) placeHolder = customPlaceholder();
       else {
         placeHolder = (
-          <View style={[style, { backgroundColor: placeholderColor }]}></View>
+          <View style={[style, { backgroundColor: placeholderColor }]} />
         );
       }
     }
@@ -57,6 +59,6 @@ GracefulImage.defaultProps = {
   placeholderColor: '#eee',
   customPlaceholder: null,
   onError: () => { },
-}
+};
 
 export default GracefulImage;

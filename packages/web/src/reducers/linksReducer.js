@@ -1,4 +1,4 @@
-import { REHYDRATE } from 'redux-persist/constants'
+import { REHYDRATE } from 'redux-persist/constants';
 import { loop, Cmd } from 'redux-loop';
 
 import {
@@ -158,7 +158,7 @@ export default (state = initialState, action) => {
     const newState = { ...state };
     newState[listName] = {
       ...state[listName],
-      ...toObjAndAddAttrs(links, ADDED, false, null)
+      ...toObjAndAddAttrs(links, ADDED, false, null),
     };
 
     return loop(
@@ -175,7 +175,7 @@ export default (state = initialState, action) => {
     const newState = { ...state };
     newState[listName] = {
       ...state[listName],
-      ...toObjAndAddAttrs(links, ADDING, false, null)
+      ...toObjAndAddAttrs(links, ADDING, false, null),
     };
 
     return newState;
@@ -215,7 +215,7 @@ export default (state = initialState, action) => {
     const newState = { ...state };
     newState[listName] = {
       ...state[listName],
-      ...toObjAndAddAttrs(links, MOVING, false, null)
+      ...toObjAndAddAttrs(links, MOVING, false, null),
     };
 
     return newState;

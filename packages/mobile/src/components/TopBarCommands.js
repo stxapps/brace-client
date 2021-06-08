@@ -4,7 +4,7 @@ import {
   View, Text, TouchableOpacity, Linking, Platform,
 } from 'react-native';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
-import Svg, { SvgXml, Path } from 'react-native-svg'
+import Svg, { SvgXml, Path } from 'react-native-svg';
 import jdenticon from 'jdenticon';
 
 import { signOut, updatePopup, updateBulkEdit } from '../actions';
@@ -83,7 +83,7 @@ class TopBarCommands extends React.PureComponent {
 
   render() {
 
-    const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' })
+    const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' });
 
     return (
       <View style={tailwind('flex-row justify-end items-center')}>

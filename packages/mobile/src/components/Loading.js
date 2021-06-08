@@ -24,22 +24,22 @@ class Loading extends React.PureComponent {
         Animated.timing(this.rotateY, {
           toValue: 100,
           duration: duration,
-          useNativeDriver: true
+          useNativeDriver: true,
         }),
         Animated.timing(this.rotateX, {
           toValue: 100,
           duration: duration,
-          useNativeDriver: true
+          useNativeDriver: true,
         }),
         Animated.timing(this.rotateY, {
           toValue: 0,
           duration: duration,
-          useNativeDriver: true
+          useNativeDriver: true,
         }),
         Animated.timing(this.rotateX, {
           toValue: 0,
           duration: duration,
-          useNativeDriver: true
+          useNativeDriver: true,
         }),
       ])
     ).start();
@@ -58,8 +58,8 @@ class Loading extends React.PureComponent {
       extrapolate: 'clamp',
     });
     const style = {
-      transform: [{ perspective: 800 }, { rotateX: rotateX }, { rotateY: rotateY }]
-    }
+      transform: [{ perspective: 800 }, { rotateX: rotateX }, { rotateY: rotateY }],
+    };
 
     return (
       <View style={tailwind('items-center w-full h-full')}>

@@ -84,7 +84,7 @@ const update = (obj, conKey, conValue, updKey, updValue) => {
     if (Array.isArray(conValue)) {
       if (conValue.includes(obj[id][conKey])) {
         newObj[id] = _update(obj[id], updKey, updValue);
-        continue
+        continue;
       }
 
       newObj[id] = { ...obj[id] };
@@ -231,13 +231,13 @@ const choose = (obj, key) => {
 export const _ = { mapKeys, select, update, extract, exclude, ignore, copyAttr, choose };
 
 const fallbackCopyTextToClipboard = (text) => {
-  var textArea = document.createElement("textarea");
+  var textArea = document.createElement('textarea');
   textArea.value = text;
 
   // Avoid scrolling to bottom
-  textArea.style.top = "0";
-  textArea.style.left = "0";
-  textArea.style.position = "fixed";
+  textArea.style.top = '0';
+  textArea.style.left = '0';
+  textArea.style.position = 'fixed';
 
   document.body.appendChild(textArea);
   textArea.focus();
@@ -409,8 +409,8 @@ export const getUrlPathQueryHash = (url) => {
 };
 
 export const subtractPixel = (a, b) => {
-  a = parseInt(a.slice(0, -2));
-  b = parseInt(b.slice(0, -2));
+  a = parseInt(a.slice(0, -2), 10);
+  b = parseInt(b.slice(0, -2), 10);
 
   return (a - b).toString() + 'px';
 };
@@ -636,7 +636,7 @@ export const truncateString = (s, n) => {
 };
 
 export const getWindowHeight = () => {
-  return "innerHeight" in window ? window.innerHeight : window.document.documentElement.offsetHeight;
+  return 'innerHeight' in window ? window.innerHeight : window.document.documentElement.offsetHeight;
 };
 
 export const getWindowScrollHeight = () => {

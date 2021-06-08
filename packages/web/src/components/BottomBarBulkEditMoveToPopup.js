@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion";
 
 import { updatePopup, updateBulkEdit, moveLinks } from '../actions';
 import { BULK_EDIT_MOVE_TO_POPUP, ARCHIVE, TRASH, MOVE_TO } from '../types/const';
@@ -25,11 +25,11 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
   onBulkEditMoveToPopupClick = (text) => {
     if (!text || this.didClick) return;
 
-    const { selectedLinkIds, moveLinks, updateBulkEdit } = this.props;
+    const { selectedLinkIds } = this.props;
 
     if (text.startsWith(MOVE_TO)) {
-      moveLinks(text.substring(MOVE_TO.length + 1), selectedLinkIds);
-      updateBulkEdit(false);
+      this.props.moveLinks(text.substring(MOVE_TO.length + 1), selectedLinkIds);
+      this.props.updateBulkEdit(false);
     } else {
       throw new Error(`Invalid text: ${text}`);
     }
@@ -62,7 +62,7 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
 
     const { isBulkEditMoveToPopupShown } = this.props;
     if (!isBulkEditMoveToPopupShown) return (
-      <AnimatePresence key="AnimatePresence_BBBEC_moveToPopup"></AnimatePresence>
+      <AnimatePresence key="AnimatePresence_BBBEC_moveToPopup" />
     );
 
     const popupStyle = {
@@ -71,7 +71,7 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
 
     return (
       <AnimatePresence key="AnimatePresence_BBBEC_moveToPopup">
-        <motion.button key="BBBEC_cancelBtn" onClick={this.onBulkEditMoveToCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden"></motion.button>
+        <motion.button key="BBBEC_cancelBtn" onClick={this.onBulkEditMoveToCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
         {/* For spring animation, need space in padding bottom so max height need to be adjusted too. */}
         <motion.div key="BBBEC_moveToPopup" style={popupStyle} className="pt-4 pb-16 fixed inset-x-0 -bottom-12 bg-white border border-gray-200 rounded-t-lg shadow-xl overflow-auto z-41" variants={bModalFMV} initial="hidden" animate="visible" exit="hidden">
           <div className="py-4 pl-4 pr-4 block w-full text-gray-800 text-left">Move to...</div>

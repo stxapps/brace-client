@@ -37,9 +37,8 @@ import {
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
-  APP_NAME, APP_ICON_NAME,
-  BACK_DECIDER, BACK_POPUP,
-  ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
+  APP_NAME, APP_ICON_NAME, BACK_DECIDER, BACK_POPUP, ALL,
+  ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
   CONFIRM_DELETE_POPUP, SETTINGS_POPUP, BULK_EDIT_MOVE_TO_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH,
@@ -75,7 +74,7 @@ export const init = async (store) => {
       href: window.location.href,
       windowWidth: null,
       windowHeight: null,
-    }
+    },
   });
 
   popHistoryState(store);
@@ -113,7 +112,7 @@ const handlePendingSignIn = () => async (dispatch, getState) => {
         isUserSignedIn: true,
         username: userData.username,
         image: getUserImageUrl(userData),
-      }
+      },
     });
   }
 
@@ -123,7 +122,7 @@ const handlePendingSignIn = () => async (dispatch, getState) => {
   // Stop show loading
   dispatch({
     type: UPDATE_HANDLING_SIGN_IN,
-    payload: false
+    payload: false,
   });
 };
 
@@ -362,7 +361,7 @@ export const fetch = (
           meta: { doDeleteOldLinksInTrash, doExtractContents },
         },
         rollback: { type: FETCH_ROLLBACK },
-      }
+      },
     },
   });
 };
@@ -501,7 +500,7 @@ export const fetchMore = () => async (dispatch, getState) => {
         effect: { method: FETCH_MORE, params: payload },
         commit: { type: FETCH_MORE_COMMIT, meta: payload },
         rollback: { type: FETCH_MORE_ROLLBACK, meta: payload },
-      }
+      },
     },
   });
 };
@@ -554,7 +553,7 @@ export const addLink = (url, listName, doExtractContents) => async (dispatch, ge
   const addedDT = Date.now();
   const id = `${addedDT}-${randomString(4)}-${randomString(4)}`;
   const decor = randomDecor(getUrlFirstChar(url));
-  const link = { id, url, addedDT, decor, };
+  const link = { id, url, addedDT, decor };
   const links = [link];
   const payload = { listName, links };
 
@@ -571,7 +570,7 @@ export const addLink = (url, listName, doExtractContents) => async (dispatch, ge
         effect: { method: ADD_LINKS, params: payload },
         commit: { type: ADD_LINKS_COMMIT, meta: { doExtractContents } },
         rollback: { type: ADD_LINKS_ROLLBACK, meta: payload },
-      }
+      },
     },
   });
 };
@@ -609,10 +608,10 @@ export const moveLinks = (toListName, ids, fromListName = null) => async (dispat
       offline: {
         effect: { method: ADD_LINKS, params: payload },
         commit: {
-          type: MOVE_LINKS_ADD_STEP_COMMIT, meta: { fromListName, fromIds: ids }
+          type: MOVE_LINKS_ADD_STEP_COMMIT, meta: { fromListName, fromIds: ids },
         },
         rollback: { type: MOVE_LINKS_ADD_STEP_ROLLBACK, meta: payload },
-      }
+      },
     },
   });
 };
@@ -629,7 +628,7 @@ export const moveLinksDeleteStep = (listName, ids, toListName, toIds) => async (
         effect: { method: DELETE_LINKS, params: payload },
         commit: { type: MOVE_LINKS_DELETE_STEP_COMMIT },
         rollback: { type: MOVE_LINKS_DELETE_STEP_ROLLBACK, meta: payload },
-      }
+      },
     },
   });
 };
@@ -647,7 +646,7 @@ export const deleteLinks = (ids) => async (dispatch, getState) => {
         effect: { method: DELETE_LINKS, params: payload },
         commit: { type: DELETE_LINKS_COMMIT },
         rollback: { type: DELETE_LINKS_ROLLBACK, meta: payload },
-      }
+      },
     },
   });
 };
@@ -674,7 +673,7 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
             effect: { method: ADD_LINKS, params: payload },
             commit: { type: ADD_LINKS_COMMIT },
             rollback: { type: ADD_LINKS_ROLLBACK, meta: payload },
-          }
+          },
         },
       });
     } else if (status === DIED_MOVING) {
@@ -725,7 +724,7 @@ export const changeListName = (listName) => async (dispatch, getState) => {
   dispatch({
     type: UPDATE_LIST_NAME,
     payload: listName,
-  })
+  });
 
   dispatch(updateFetched(null, null, _listName));
 };
@@ -755,7 +754,7 @@ export const deleteOldLinksInTrash = (doDeleteOldLinksInTrash, doExtractContents
         effect: { method: DELETE_OLD_LINKS_IN_TRASH },
         commit: { type: DELETE_OLD_LINKS_IN_TRASH_COMMIT, meta: { doExtractContents } },
         rollback: { type: DELETE_OLD_LINKS_IN_TRASH_ROLLBACK },
-      }
+      },
     },
   });
 };
@@ -855,7 +854,7 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
         effect: { method: UPDATE_LINKS, params: payload },
         commit: { type: EXTRACT_CONTENTS_COMMIT },
         rollback: { type: EXTRACT_CONTENTS_ROLLBACK, meta: payload },
-      }
+      },
     },
   });
 };
@@ -920,7 +919,7 @@ export const addListNames = (newNames) => async (dispatch, getState) => {
     ...settings.listNameMap.map(listNameObj => {
       return { listName: listNameObj.listName, displayName: listNameObj.displayName };
     }),
-    ...listNameObjs
+    ...listNameObjs,
   ];
 
   const payload = { listNameObjs };
@@ -931,9 +930,9 @@ export const addListNames = (newNames) => async (dispatch, getState) => {
       offline: {
         effect: { method: UPDATE_SETTINGS, params: settings },
         commit: { type: ADD_LIST_NAMES_COMMIT, meta: payload },
-        rollback: { type: ADD_LIST_NAMES_ROLLBACK, meta: payload }
-      }
-    }
+        rollback: { type: ADD_LIST_NAMES_ROLLBACK, meta: payload },
+      },
+    },
   });
 };
 
@@ -958,9 +957,9 @@ export const updateListNames = (listNames, newNames) => async (dispatch, getStat
       offline: {
         effect: { method: UPDATE_SETTINGS, params: settings },
         commit: { type: UPDATE_LIST_NAMES_COMMIT, meta: payload },
-        rollback: { type: UPDATE_LIST_NAMES_ROLLBACK, meta: payload }
-      }
-    }
+        rollback: { type: UPDATE_LIST_NAMES_ROLLBACK, meta: payload },
+      },
+    },
   });
 };
 
@@ -992,9 +991,9 @@ export const moveListName = (listName, direction) => async (dispatch, getState) 
       offline: {
         effect: { method: UPDATE_SETTINGS, params: settings },
         commit: { type: MOVE_LIST_NAME_COMMIT, meta: payload },
-        rollback: { type: MOVE_LIST_NAME_ROLLBACK, meta: payload }
-      }
-    }
+        rollback: { type: MOVE_LIST_NAME_ROLLBACK, meta: payload },
+      },
+    },
   });
 };
 
@@ -1016,9 +1015,9 @@ export const deleteListNames = (listNames) => async (dispatch, getState) => {
       offline: {
         effect: { method: UPDATE_SETTINGS, params: settings },
         commit: { type: DELETE_LIST_NAMES_COMMIT, meta: payload },
-        rollback: { type: DELETE_LIST_NAMES_ROLLBACK, meta: payload }
-      }
-    }
+        rollback: { type: DELETE_LIST_NAMES_ROLLBACK, meta: payload },
+      },
+    },
   });
 };
 
@@ -1026,7 +1025,7 @@ export const updateDeletingListName = (listName) => {
   return {
     type: UPDATE_DELETING_LIST_NAME,
     payload: listName,
-  }
+  };
 };
 
 export const retryDiedListNames = (listNames) => async (dispatch, getState) => {
@@ -1034,13 +1033,13 @@ export const retryDiedListNames = (listNames) => async (dispatch, getState) => {
   const settings = { ...getState().settings };
 
   const listNameObjs = settings.listNameMap.filter(obj => {
-    return listNames.includes(obj.listName)
+    return listNames.includes(obj.listName);
   });
 
   settings.listNameMap = [
     ...settings.listNameMap.map(listNameObj => {
       return { listName: listNameObj.listName, displayName: listNameObj.displayName };
-    })
+    }),
   ];
 
   const diedAddingListNameObjs = listNameObjs.filter(obj => {
@@ -1056,9 +1055,9 @@ export const retryDiedListNames = (listNames) => async (dispatch, getState) => {
         offline: {
           effect: { method: UPDATE_SETTINGS, params: settings },
           commit: { type: ADD_LIST_NAMES_COMMIT, meta: payload },
-          rollback: { type: ADD_LIST_NAMES_ROLLBACK, meta: payload }
-        }
-      }
+          rollback: { type: ADD_LIST_NAMES_ROLLBACK, meta: payload },
+        },
+      },
     });
   }
 
@@ -1076,9 +1075,9 @@ export const retryDiedListNames = (listNames) => async (dispatch, getState) => {
         offline: {
           effect: { method: UPDATE_SETTINGS, params: settings },
           commit: { type: UPDATE_LIST_NAMES_COMMIT, meta: payload },
-          rollback: { type: UPDATE_LIST_NAMES_ROLLBACK, meta: payload }
-        }
-      }
+          rollback: { type: UPDATE_LIST_NAMES_ROLLBACK, meta: payload },
+        },
+      },
     });
   }
 
@@ -1095,9 +1094,9 @@ export const retryDiedListNames = (listNames) => async (dispatch, getState) => {
         offline: {
           effect: { method: UPDATE_SETTINGS, params: settings },
           commit: { type: MOVE_LIST_NAME_COMMIT, meta: payload },
-          rollback: { type: MOVE_LIST_NAME_ROLLBACK, meta: payload }
-        }
-      }
+          rollback: { type: MOVE_LIST_NAME_ROLLBACK, meta: payload },
+        },
+      },
     });
   }
 
@@ -1115,9 +1114,9 @@ export const retryDiedListNames = (listNames) => async (dispatch, getState) => {
         offline: {
           effect: { method: UPDATE_SETTINGS, params: settings },
           commit: { type: DELETE_LIST_NAMES_COMMIT, meta: payload },
-          rollback: { type: DELETE_LIST_NAMES_ROLLBACK, meta: payload }
-        }
-      }
+          rollback: { type: DELETE_LIST_NAMES_ROLLBACK, meta: payload },
+        },
+      },
     });
   }
 };
@@ -1125,7 +1124,7 @@ export const retryDiedListNames = (listNames) => async (dispatch, getState) => {
 export const cancelDiedListNames = (listNames) => {
   return {
     type: CANCEL_DIED_LIST_NAMES,
-    payload: { listNames }
+    payload: { listNames },
   };
 };
 
@@ -1146,23 +1145,23 @@ export const updateSettings = (updatedValues) => async (dispatch, getState) => {
       offline: {
         effect: { method: UPDATE_SETTINGS, params: settings },
         commit: { type: UPDATE_SETTINGS_COMMIT, meta: payload },
-        rollback: { type: UPDATE_SETTINGS_ROLLBACK, meta: payload }
-      }
-    }
+        rollback: { type: UPDATE_SETTINGS_ROLLBACK, meta: payload },
+      },
+    },
   });
 };
 
 export const updateUpdateSettingsProgress = (progress) => {
   return {
     type: UPDATE_UPDATE_SETTINGS_PROGRESS,
-    payload: progress
+    payload: progress,
   };
 };
 
 export const updatePageYOffset = (pageYOffset) => {
   return {
     type: UPDATE_PAGE_Y_OFFSET,
-    payload: pageYOffset
+    payload: pageYOffset,
   };
 };
 
@@ -1242,7 +1241,7 @@ export const exportAllData = () => async (dispatch, getState) => {
 export const updateExportAllDataProgress = (progress) => {
   return {
     type: UPDATE_EXPORT_ALL_DATA_PROGRESS,
-    payload: progress
+    payload: progress,
   };
 };
 
@@ -1323,6 +1322,6 @@ export const deleteAllData = () => async (dispatch, getState) => {
 export const updateDeleteAllDataProgress = (progress) => {
   return {
     type: UPDATE_DELETE_ALL_DATA_PROGRESS,
-    payload: progress
+    payload: progress,
   };
 };

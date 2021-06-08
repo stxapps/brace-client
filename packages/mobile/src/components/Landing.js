@@ -53,10 +53,6 @@ class Landing extends React.PureComponent {
     // From onLayout, Don't be evil text width is ~317 so when safe area width is wide enought (padding 48 + 48 + 317 + 45), move the logo to the right.
     if (safeAreaWidth > 470) logoTranslate.transform[0].translateX = 45;
 
-    const quoteTranslate = {
-      transform: [{ translateX: -32 }, { translateY: -96 }],
-    };
-
     return (
       <Swiper height={swiperHeight} showsPagination={true} showsButtons={false} activeDotStyle={tailwind('bg-gray-900')} paginationStyle={cache('L_pagination', { bottom: 10 })} loop={false}>
         <View style={tailwind('px-12 justify-center items-center w-full h-full')}>

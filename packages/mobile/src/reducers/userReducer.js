@@ -1,4 +1,4 @@
-import { REHYDRATE } from 'redux-persist/constants'
+import { REHYDRATE } from 'redux-persist/constants';
 
 import { INIT, UPDATE_USER, RESET_STATE } from '../types/actionTypes';
 

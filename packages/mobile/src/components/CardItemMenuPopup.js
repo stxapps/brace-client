@@ -5,8 +5,8 @@ import {
   ScrollView, View, Text, Linking, LayoutAnimation, Platform,
 } from 'react-native';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
-import Svg, { Path } from 'react-native-svg'
-import Clipboard from '@react-native-community/clipboard'
+import Svg, { Path } from 'react-native-svg';
+import Clipboard from '@react-native-community/clipboard';
 
 import { updatePopup, moveLinks } from '../actions';
 import {

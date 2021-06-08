@@ -131,7 +131,7 @@ class Adding extends React.PureComponent {
 
     let rightLink = <a className="block text-xl text-gray-900 font-medium text-right leading-none hover:underline focus:outline-none focus:shadow-outline" href="/">{isUserSignedIn ? 'Go to My List >' : 'Go to Brace.to >'}</a>
     let centerText = null;
-    let leftLink = urlValidatedResult === VALID_URL ? <a className="mt-6 block text-base text-gray-800 text-left leading-none hover:underline focus:outline-none focus:shadow-outline md:mt-0" href={addingPUrl}>Back to the link</a> : <div></div>;
+    let leftLink = urlValidatedResult === VALID_URL ? <a className="mt-6 block text-base text-gray-800 text-left leading-none hover:underline focus:outline-none focus:shadow-outline md:mt-0" href={addingPUrl}>Back to the link</a> : <div />;
 
     if (param && param[URL_QUERY_CLOSE_KEY]) {
       if (param[URL_QUERY_CLOSE_KEY] === URL_QUERY_CLOSE_WINDOW) {
@@ -158,10 +158,10 @@ class Adding extends React.PureComponent {
       <React.Fragment>
         <div className="flex justify-center items-center h-24">
           <div className="lds-ellipsis">
-            <div className="bg-gray-600"></div>
-            <div className="bg-gray-600"></div>
-            <div className="bg-gray-600"></div>
-            <div className="bg-gray-600"></div>
+            <div className="bg-gray-600" />
+            <div className="bg-gray-600" />
+            <div className="bg-gray-600" />
+            <div className="bg-gray-600" />
           </div>
         </div>
         <p className="mx-auto mt-5 w-full max-w-xs text-center">

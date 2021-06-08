@@ -1,13 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion";
 
 import { updatePopup } from '../actions';
 import { MD_WIDTH, SETTINGS_POPUP } from '../types/const';
 import { isEqual } from '../utils';
 import {
-  popupBgFMV, ccPopupFMV,
-  spSideBarCanvasFMV, spSideBarOverlayFMV, spSideBarFMV,
+  popupBgFMV, ccPopupFMV, spSideBarCanvasFMV, spSideBarOverlayFMV, spSideBarFMV,
 } from '../types/animConfigs';
 
 import SettingsPopupAccount from './SettingsPopupAccount';
@@ -202,7 +201,7 @@ class SettingsPopup extends React.PureComponent {
           {/* Off-canvas sidebar for mobile */}
           <motion.div key="sidebar-for-mobile" className="absolute inset-0 flex z-10 md:hidden" variants={spSideBarCanvasFMV} initial={false} animate={animate}>
             <motion.button onClick={this.onSidebarCloseBtnClick} className="absolute inset-0 w-full h-full" variants={spSideBarOverlayFMV}>
-              <div className="absolute inset-0 bg-gray-300"></div>
+              <div className="absolute inset-0 bg-gray-300" />
             </motion.button>
             <div className="absolute top-0 right-0 p-1">
               <button onClick={this.onPopupCloseBtnClick} className="flex items-center justify-center h-7 w-7 rounded-full group focus:outline-none focus:shadow-outline" aria-label="Close settings popup">
@@ -261,7 +260,7 @@ class SettingsPopup extends React.PureComponent {
         <div className="fixed inset-0 overflow-hidden z-30">
           <div className="p-4 flex items-center justify-center" style={{ minHeight: window.innerHeight }}>
             <div className={'fixed inset-0'}>
-              <motion.button onClick={this.onPopupCloseBtnClick} tabIndex={-1} className="absolute inset-0 w-full h-full bg-black opacity-25 cursor-default focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden"></motion.button>
+              <motion.button onClick={this.onPopupCloseBtnClick} tabIndex={-1} className="absolute inset-0 w-full h-full bg-black opacity-25 cursor-default focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
             </div>
             <motion.div className={'w-full max-w-4xl bg-white rounded-lg overflow-hidden shadow-xl'} role="dialog" aria-modal="true" aria-labelledby="modal-headline" variants={ccPopupFMV} initial="hidden" animate="visible" exit="hidden">
               {panelWithSidebar}
@@ -318,7 +317,7 @@ class SettingsPopup extends React.PureComponent {
 
     const { isSettingsPopupShown } = this.props;
     if (!isSettingsPopupShown) return (
-      <AnimatePresence key="AnimatePresence_SP"></AnimatePresence>
+      <AnimatePresence key="AnimatePresence_SP" />
     );
 
     const { viewId } = this.state;

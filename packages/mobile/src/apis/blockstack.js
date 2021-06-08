@@ -116,7 +116,7 @@ export const batchGetFileWithRetry = async (fpaths, callCount) => {
 
     return [
       ...responses.filter(({ success }) => success),
-      ...(await batchGetFileWithRetry(failedFPaths, callCount + 1))
+      ...(await batchGetFileWithRetry(failedFPaths, callCount + 1)),
     ];
   }
 
@@ -198,7 +198,7 @@ const batchPutFileWithRetry = async (fpaths, contents, callCount) => {
 
     return [
       ...responses.filter(({ success }) => success),
-      ...(await batchPutFileWithRetry(failedFPaths, failedContents, callCount + 1))
+      ...(await batchPutFileWithRetry(failedFPaths, failedContents, callCount + 1)),
     ];
   }
 
@@ -244,7 +244,7 @@ export const batchDeleteFileWithRetry = async (fpaths, callCount) => {
 
     return [
       ...responses.filter(({ success }) => success),
-      ...(await batchDeleteFileWithRetry(failedFPaths, callCount + 1))
+      ...(await batchDeleteFileWithRetry(failedFPaths, callCount + 1)),
     ];
   }
 

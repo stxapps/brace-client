@@ -4,7 +4,7 @@ import {
   View, Text, TouchableOpacity, TextInput, LayoutAnimation, Platform,
 } from 'react-native';
 import { Menu, MenuOptions, MenuTrigger, withMenuContext } from 'react-native-popup-menu';
-import Svg, { Path } from 'react-native-svg'
+import Svg, { Path } from 'react-native-svg';
 
 import { updatePopup, addLink } from '../actions';
 import {
@@ -106,7 +106,7 @@ class TopBarAddPopup extends React.PureComponent {
           {/* onKeyPress event for Enter key only if there is multiline TextInput */}
           <TextInput onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('ml-3 px-4 py-2 flex-1 bg-white text-base text-gray-900 font-normal border border-gray-500 rounded-full')} placeholder="https://" value={url} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} autoFocus />
         </View>
-        {msg === '' ? <View style={tailwind('w-full h-3')}></View> : <Text style={tailwind('pt-3 text-base text-red-500 font-normal')}>{msg}</Text>}
+        {msg === '' ? <View style={tailwind('w-full h-3')} /> : <Text style={tailwind('pt-3 text-base text-red-500 font-normal')}>{msg}</Text>}
         <View style={tailwind('pt-3 flex-row justify-start items-center')}>
           <TouchableOpacity onPress={this.onAddOkBtnClick} style={tailwind('px-5 py-2 justify-center items-center bg-gray-800 rounded-full shadow-sm')}>
             <Text style={tailwind('text-base text-white font-medium')}>{isAskingConfirm ? 'Sure' : 'Save'}</Text>
@@ -121,7 +121,7 @@ class TopBarAddPopup extends React.PureComponent {
 
   render() {
 
-    const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' })
+    const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' });
 
     return (
       <Menu name={ADD_POPUP_MENU_NAME} renderer={MenuPopoverRenderers} rendererProps={cache('TBAP_menuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onOpen={this.onAddBtnClick} onClose={this.onAddCancelBtnClick}>

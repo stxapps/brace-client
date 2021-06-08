@@ -83,7 +83,7 @@ class StatusPopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     status: state.display.status,
-  }
+  };
 };
 
 const mapDispatchToProps = { updateStatus };

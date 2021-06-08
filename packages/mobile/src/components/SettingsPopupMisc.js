@@ -12,13 +12,13 @@ import { withSafeAreaContext } from '.';
 class SettingsPopupMisc extends React.PureComponent {
 
   onDoExtractBtnClick = () => {
-    const { doExtractContents, updateSettings } = this.props;
-    updateSettings({ doExtractContents: !doExtractContents });
+    const { doExtractContents } = this.props;
+    this.props.updateSettings({ doExtractContents: !doExtractContents });
   }
 
   onDoDeleteBtnClick = () => {
-    const { doDeleteOldLinksInTrash, updateSettings } = this.props;
-    updateSettings({ doDeleteOldLinksInTrash: !doDeleteOldLinksInTrash });
+    const { doDeleteOldLinksInTrash } = this.props;
+    this.props.updateSettings({ doDeleteOldLinksInTrash: !doDeleteOldLinksInTrash });
   }
 
   onDoDescendingInputChange = (value) => {
@@ -29,8 +29,7 @@ class SettingsPopupMisc extends React.PureComponent {
     else if (value === 'descending') doDescendingOrder = true;
     else throw new Error(`Invalid value: ${value}`);
 
-    const { updateSettings } = this.props;
-    updateSettings({ doDescendingOrder });
+    this.props.updateSettings({ doDescendingOrder });
   }
 
   onDiedUpdatingCloseBtnClick = () => {
@@ -83,7 +82,7 @@ class SettingsPopupMisc extends React.PureComponent {
   render() {
 
     const {
-      doExtractContents, doDeleteOldLinksInTrash, doDescendingOrder, safeAreaWidth
+      doExtractContents, doDeleteOldLinksInTrash, doDescendingOrder, safeAreaWidth,
     } = this.props;
 
     const ascendingBtnClassNames = !doDescendingOrder ? 'bg-blue-100 border-blue-200 z-10' : 'border-gray-200';
@@ -139,7 +138,7 @@ class SettingsPopupMisc extends React.PureComponent {
                   <View style={tailwind(`${ascendingBtnClassNames} p-4 flex-row border rounded-tl-md rounded-tr-md`)}>
                     <View style={tailwind('flex-row items-center h-5')}>
                       <View style={tailwind(`${ascendingRBtnClassNames} justify-center items-center h-4 w-4 bg-transparent border rounded-full`)}>
-                        <View style={tailwind(`${ascendingRBtnInnerClassNames} h-3 w-3 rounded-full`)}></View>
+                        <View style={tailwind(`${ascendingRBtnInnerClassNames} h-3 w-3 rounded-full`)} />
                       </View>
                     </View>
                     <Text style={tailwind(`${ascendingBtnInnerClassNames} ml-3 text-sm leading-5 font-medium`)}>Ascending order</Text>
@@ -149,7 +148,7 @@ class SettingsPopupMisc extends React.PureComponent {
                   <View style={tailwind(`${descendingBtnClassNames} p-4 flex-row border rounded-bl-md rounded-br-md`)}>
                     <View style={tailwind('flex-row items-center h-5')}>
                       <View style={tailwind(`${descendingRBtnClassNames} justify-center items-center h-4 w-4 bg-transparent border rounded-full`)}>
-                        <View style={tailwind(`${descendingRBtnInnerClassNames} h-3 w-3 rounded-full`)}></View>
+                        <View style={tailwind(`${descendingRBtnInnerClassNames} h-3 w-3 rounded-full`)} />
                       </View>
                     </View>
                     <Text style={tailwind(`${descendingBtnInnerClassNames} ml-3 text-sm leading-5 font-medium`)}>Descending order</Text>

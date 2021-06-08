@@ -54,34 +54,30 @@ class ConfirmDeletePopup extends React.Component {
     }
 
     if (popupLink) {
-      const { deleteLinks, updatePopup } = this.props;
       const animConfig = cardItemAnimConfig(safeAreaWidth);
 
       LayoutAnimation.configureNext(animConfig);
-      deleteLinks([popupLink.id]);
+      this.props.deleteLinks([popupLink.id]);
       this.props.ctx.menuActions.closeMenu();
-      updatePopup(CONFIRM_DELETE_POPUP, false);
-      updatePopup(popupLink.id, false);
+      this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+      this.props.updatePopup(popupLink.id, false);
       return;
     }
 
     if (selectedLinkIds.length > 0) {
-      const { deleteLinks, updatePopup, updateBulkEdit } = this.props;
-
-      deleteLinks(selectedLinkIds);
-      updatePopup(CONFIRM_DELETE_POPUP, false);
-      updateBulkEdit(false);
+      this.props.deleteLinks(selectedLinkIds);
+      this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+      this.props.updateBulkEdit(false);
       return;
     }
 
     if (deletingListName) {
-      const { deleteListNames, updatePopup, updateDeletingListName } = this.props;
       const animConfig = spListsAnimConfig();
 
       LayoutAnimation.configureNext(animConfig);
-      deleteListNames([deletingListName]);
-      updatePopup(CONFIRM_DELETE_POPUP, false);
-      updateDeletingListName(null);
+      this.props.deleteListNames([deletingListName]);
+      this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+      this.props.updateDeletingListName(null);
       return;
     }
 
@@ -127,7 +123,7 @@ const mapStateToProps = (state, props) => {
     deletingListName: state.display.deletingListName,
     windowWidth: state.window.width,
     windowHeight: state.window.height,
-  }
+  };
 };
 
 const mapDispatchToProps = {

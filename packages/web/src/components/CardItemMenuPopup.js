@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion";
 
 import { updatePopup, moveLinks } from '../actions';
 import {
@@ -175,7 +175,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
     const { popupLink } = this.props;
     if (!popupLink) return (
-      <AnimatePresence key="AnimatePresence_CIMP_menuPopup"></AnimatePresence>
+      <AnimatePresence key="AnimatePresence_CIMP_menuPopup" />
     );
 
     const { scrollY, menuPopupSize } = this.state;
@@ -217,7 +217,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
     return (
       <AnimatePresence key="AnimatePresence_CIMP_menuPopup">
-        <motion.button key="CIMP_cancelBtn" onClick={this.onCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden"></motion.button>
+        <motion.button key="CIMP_cancelBtn" onClick={this.onCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
         {menuPopup}
       </AnimatePresence>
     );

@@ -1,11 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion";
 
 import { changeListName, updatePopup } from '../actions';
-import {
-  LIST_NAME_POPUP, SM_WIDTH, LG_WIDTH,
-} from '../types/const';
+import { LIST_NAME_POPUP, SM_WIDTH, LG_WIDTH } from '../types/const';
 import { getListNameMap } from '../selectors';
 import { getListNameDisplayName, isEqual, getLastHalfHeight } from '../utils';
 import { popupBgFMV, tlPopupFMV } from '../types/animConfigs';
@@ -80,7 +78,7 @@ class ListName extends React.PureComponent {
       return (
         <button key={listNameObj.listName} onClick={() => this.onListNamePopupClick(listNameObj.listName)} className="py-2 pl-4 pr-4 flex items-center w-full hover:bg-gray-400 focus:outline-none focus:shadow-outline">
           <div className="text-base text-gray-800 truncate">{listNameObj.displayName}</div>
-          {listNameObj.listName in updates && <div className="ml-1 flex-grow-0 flex-shrink-0 self-start w-2 h-2 bg-blue-500 rounded-full"></div>}
+          {listNameObj.listName in updates && <div className="ml-1 flex-grow-0 flex-shrink-0 self-start w-2 h-2 bg-blue-500 rounded-full" />}
         </button>
       );
     });
@@ -90,7 +88,7 @@ class ListName extends React.PureComponent {
 
     const { isListNamePopupShown } = this.props;
     if (!isListNamePopupShown) return (
-      <AnimatePresence key="AnimatePresence_ListNamePopup"></AnimatePresence>
+      <AnimatePresence key="AnimatePresence_ListNamePopup" />
     );
 
     const { menuPopupSize } = this.state;
@@ -120,7 +118,7 @@ class ListName extends React.PureComponent {
 
     return (
       <AnimatePresence key="AnimatePresence_ListNamePopup">
-        <motion.button key="ListNamePopup_cancelBtn" onClick={this.onListNameCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden"></motion.button>
+        <motion.button key="ListNamePopup_cancelBtn" onClick={this.onListNameCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
         {menuPopup}
       </AnimatePresence>
     );
@@ -151,7 +149,7 @@ class ListName extends React.PureComponent {
       <div className="inline-block relative">
         <button onClick={this.onListNameBtnClick} className="flex items-center rounded hover:shadow-outline focus:outline-none focus:shadow-outline">
           <h2 style={textStyle} className="mr-1 text-lg text-gray-900 font-semibold leading-7 truncate">{displayName}</h2>
-          {listName in updates && <div className="self-start w-2 h-2 bg-blue-500 rounded-full"></div>}
+          {listName in updates && <div className="self-start w-2 h-2 bg-blue-500 rounded-full" />}
           <svg className="w-5 text-black" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -168,7 +166,7 @@ const mapStateToProps = (state, props) => {
     listNameMap: getListNameMap(state),
     isListNamePopupShown: state.display.isListNamePopupShown,
     updates: state.fetched,
-  }
+  };
 };
 
 const mapDispatchToProps = { changeListName, updatePopup };

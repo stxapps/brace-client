@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { View, Text, TouchableOpacity, Linking } from 'react-native';
-import Svg, { Path, Circle } from 'react-native-svg'
+import Svg, { Path, Circle } from 'react-native-svg';
 
 import { MD_WIDTH, LG_WIDTH } from '../types/const';
 import cache from '../utils/cache';
@@ -20,7 +20,7 @@ class SettingsPopupAccount extends React.PureComponent {
     if (this.props.userImage) {
       userImage = (
         <GracefulImage style={tailwind('w-24 h-24 border-2 border-gray-200 rounded-full overflow-hidden')} source={cache('SPA_userImage', { uri: this.props.userImage }, this.props.userImage)} />
-      )
+      );
     } else {
       userImage = (
         <Svg width={96} height={96} viewBox="0 0 96 96" fill="none">
@@ -28,7 +28,7 @@ class SettingsPopupAccount extends React.PureComponent {
           <Path d="M82.5302 81.3416C73.8015 90.3795 61.5571 96 47.9999 96C34.9627 96 23.1394 90.8024 14.4893 82.3663C18.2913 78.3397 22.7793 74.9996 27.7572 72.5098C34.3562 69.2093 41.6342 67.4938 49.0126 67.5C62.0922 67.5 73.9409 72.7881 82.5302 81.3416Z" fill="#A0AEC0" />
           <Path d="M57.9629 57.4535C60.3384 55.0781 61.6729 51.8562 61.6729 48.4968C61.6729 45.1374 60.3384 41.9156 57.9629 39.5401C55.5875 37.1647 52.3656 35.8302 49.0062 35.8302C45.6468 35.8302 42.425 37.1647 40.0495 39.5401C37.6741 41.9156 36.3396 45.1374 36.3396 48.4968C36.3396 51.8562 37.6741 55.0781 40.0495 57.4535C42.425 59.829 45.6468 61.1635 49.0062 61.1635C52.3656 61.1635 55.5875 59.829 57.9629 57.4535Z" fill="#A0AEC0" />
         </Svg>
-      )
+      );
     }
 
     const profileFirstColWidth = safeAreaWidth < LG_WIDTH ? 72 : 160;
