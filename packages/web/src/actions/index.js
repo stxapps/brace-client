@@ -22,7 +22,7 @@ import {
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
   UPDATE_EXTRACTED_CONTENTS,
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
-  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, CLEAR_SELECTED_LINK_IDS,
+  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS,
   ADD_LIST_NAMES, ADD_LIST_NAMES_COMMIT, ADD_LIST_NAMES_ROLLBACK,
   UPDATE_LIST_NAMES, UPDATE_LIST_NAMES_COMMIT, UPDATE_LIST_NAMES_ROLLBACK,
   MOVE_LIST_NAME, MOVE_LIST_NAME_COMMIT, MOVE_LIST_NAME_ROLLBACK,
@@ -98,11 +98,11 @@ const handlePendingSignIn = () => async (dispatch, getState) => {
   try {
     await userSession.handlePendingSignIn();
   } catch (e) {
+    console.log(`Catched an error thrown by handlePendingSignIn: ${e.message}`);
     // All errors thrown by handlePendingSignIn have the same next steps
     //   - Invalid token
     //   - Already signed in with the same account
     //   - Already signed in with different account
-    console.log('Catched an error thrown by handlePendingSignIn!', e);
   }
 
   if (userSession.isUserSignedIn()) {
@@ -381,7 +381,6 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
   let _links = getState().links[listName];
   if (_links === undefined || _links === null || isEqual(_links, {})) {
     dispatch(updateFetched(payload, meta));
-    dispatch(clearSelectedLinkIds());
     return;
   }
   _links = Object.values(_.select(_links, STATUS, ADDED));
@@ -437,7 +436,6 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
     (updateAction === 2 && pageYOffset === 0 && !isPopupShown(getState()))
   ) {
     dispatch(updateFetched(payload, meta));
-    dispatch(clearSelectedLinkIds());
     return;
   }
 
@@ -716,7 +714,7 @@ export const cancelDiedLinks = (ids, listName = null) => async (dispatch, getSta
   });
 };
 
-export const changeListName = (listName, fetched) => async (dispatch, getState) => {
+export const changeListName = (listName) => async (dispatch, getState) => {
 
   const _listName = getState().display.listName;
 
@@ -724,10 +722,6 @@ export const changeListName = (listName, fetched) => async (dispatch, getState) 
     type: UPDATE_LIST_NAME,
     payload: listName,
   })
-  if (!fetched.includes(listName)) {
-    dispatch(fetch(false, null));
-  }
-  dispatch(clearSelectedLinkIds());
 
   dispatch(updateFetched(null, null, _listName));
 };
@@ -898,12 +892,6 @@ export const deleteSelectedLinkIds = (ids) => {
   return {
     type: DELETE_SELECTED_LINK_IDS,
     payload: ids,
-  };
-};
-
-export const clearSelectedLinkIds = () => {
-  return {
-    type: CLEAR_SELECTED_LINK_IDS
   };
 };
 

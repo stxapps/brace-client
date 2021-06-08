@@ -29,11 +29,6 @@ class Main extends React.PureComponent {
       columnWidth: this.getColumnWidth(),
     };
 
-    // BUG alert
-    // When delete all data, fetched is not cleared!
-    this.fetched = [];
-    this.doFetchSettings = true;
-
     this.updateColumnWidth = throttle(this.updateColumnWidth, 16);
   }
 
@@ -48,9 +43,11 @@ class Main extends React.PureComponent {
 
     window.addEventListener('resize', this.updateColumnWidth);
 
-    this.props.fetch(null, null, this.doFetchSettings);
-    this.fetched.push(this.props.listName);
-    this.doFetchSettings = false;
+    this.fetch();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.listName !== this.props.listName) this.fetch();
   }
 
   componentWillUnmount() {
@@ -69,6 +66,13 @@ class Main extends React.PureComponent {
     this.setState({ columnWidth: this.getColumnWidth() });
   }
 
+  fetch = () => {
+    if (!this.props.fetchedListNames.includes(this.props.listName)) {
+      const didFetch = this.props.fetchedListNames.length > 0;
+      this.props.fetch(didFetch ? false : null, null, !didFetch);
+    }
+  }
+
   render() {
 
     const { links } = this.props;
@@ -83,7 +87,7 @@ class Main extends React.PureComponent {
     return (
       <React.Fragment>
         <CardPanel columnWidth={columnWidth} />
-        <TopBar rightPane={topBarRightPane} isListNameShown={true} fetched={this.fetched} />
+        <TopBar rightPane={topBarRightPane} isListNameShown={true} />
         {columnWidth === PC_100 && <BottomBar />}
         <FetchedPopup />
         <SettingsPopup />
@@ -98,6 +102,7 @@ const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
     links: getLinks(state),
+    fetchedListNames: state.display.fetchedListNames,
   };
 };
 

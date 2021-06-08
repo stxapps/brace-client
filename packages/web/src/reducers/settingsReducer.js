@@ -42,13 +42,11 @@ export default (state = initialState, action) => {
 
   if (action.type === FETCH_COMMIT) {
 
-    const { doFetchSettings, settings } = action.payload;
+    const { listNames, doFetchSettings, settings } = action.payload;
     if (!doFetchSettings) return state;
 
-    if (!settings) return { ...initialState };
-
-    const newState = settings;
-    newState.listNameMap = settings.listNameMap.map(listNameObj => {
+    const newState = settings ? { ...initialState, ...settings } : { ...initialState };
+    newState.listNameMap = newState.listNameMap.map(listNameObj => {
       return { ...listNameObj, status: ADDED };
     });
 
@@ -61,9 +59,21 @@ export default (state = initialState, action) => {
     });
 
     for (const processingListNameObj of processingListNameObjs) {
-      const i = getInsertIndex(processingListNameObj, state.listNameMap, newState.listNameMap)
+      const i = getInsertIndex(
+        processingListNameObj, state.listNameMap, newState.listNameMap
+      );
       if (i >= 0) newState.listNameMap.splice(i, 0, processingListNameObj);
       else newState.listNameMap.push(processingListNameObj);
+    }
+
+    let i = 1;
+    for (const listName of listNames) {
+      if (!doContainListName(listName, newState.listNameMap)) {
+        newState.listNameMap.push(
+          { listName: listName, displayName: `<missing-name-${i}>`, status: ADDED }
+        );
+        i += 1;
+      }
     }
 
     return newState;

@@ -73,7 +73,7 @@ class TopBar extends React.PureComponent {
     const listNameStyle = { top, left };
     return (
       <div style={listNameStyle} className="absolute">
-        <ListName fetched={this.props.fetched} />
+        <ListName />
       </div >
     );
   }
@@ -157,12 +157,10 @@ class TopBar extends React.PureComponent {
 TopBar.propTypes = {
   rightPane: PropTypes.string.isRequired,
   isListNameShown: PropTypes.bool,
-  fetched: PropTypes.arrayOf(PropTypes.string),
 };
 
 TopBar.defaultProps = {
   isListNameShown: false,
-  fetched: null,
 };
 
 const mapStateToProps = (state, props) => {

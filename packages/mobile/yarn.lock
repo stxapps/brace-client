@@ -6034,9 +6034,9 @@ react-native-animated-spinkit@^1.5.1:
   resolved "https://registry.yarnpkg.com/react-native-animated-spinkit/-/react-native-animated-spinkit-1.5.1.tgz#a251d3c30f6c1876896252d8d2febf03759bf457"
   integrity sha512-n4zXVY2Ro3iprmznLEGmcmG/H8oXdG3AmHrXMa1lfH+gM+zL8gGTL91BGlrJC7Th9gEbB7Q2Glxt+GFW62GLQw==
 
-"react-native-blockstack@https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?e333bd3216453a78428c76b09d5d5e7450681a64":
+"react-native-blockstack@https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?b3b94eee0300e7087bb9a6db86fe97287b200ccb":
   version "0.4.6"
-  resolved "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?e333bd3216453a78428c76b09d5d5e7450681a64#f81205e066fdf16a746fc6db238339030c0d9fe0"
+  resolved "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?b3b94eee0300e7087bb9a6db86fe97287b200ccb#1b05078f7252b446d24c6d1317510f3a8be96f3a"
 
 react-native-fast-image@^8.3.4:
   version "8.3.4"
@@ -7333,6 +7333,11 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
+
+typescript@^4.3.2:
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.3.2.tgz#399ab18aac45802d6f2498de5054fcbbe716a805"
+  integrity sha512-zZ4hShnmnoVnAHpVHWpTcxdv7dWP60S2FsydQLV8V5PbS3FifjWFFRiHSWpDJahly88PRyV5teTSLoq4eG7mKw==
 
 ua-parser-js@^0.7.18:
   version "0.7.28"

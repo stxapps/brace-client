@@ -23,7 +23,7 @@
     "react": "16.13.1",
     "react-native": "0.63.4",
     "react-native-animated-spinkit": "^1.5.1",
-    "react-native-blockstack": "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?e333bd3216453a78428c76b09d5d5e7450681a64",
+    "react-native-blockstack": "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?b3b94eee0300e7087bb9a6db86fe97287b200ccb",
     "react-native-fast-image": "^8.3.4",
     "react-native-keyboard-manager": "^4.0.13-17",
     "react-native-modal": "^11.6.1",
@@ -49,7 +49,8 @@
     "eslint": "^6.5.1",
     "jest": "^25.1.0",
     "metro-react-native-babel-preset": "^0.59.0",
-    "react-test-renderer": "16.13.1"
+    "react-test-renderer": "16.13.1",
+    "typescript": "^4.3.2"
   },
   "jest": {
     "preset": "react-native"

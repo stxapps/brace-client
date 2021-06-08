@@ -28,7 +28,7 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === RESET_STATE) {
-    return { ...initialState };
+    return { ...initialState, isUserSignedIn: false };
   }
 
   return state;

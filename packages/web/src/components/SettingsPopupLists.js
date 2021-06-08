@@ -145,7 +145,10 @@ class _ListNameEditor extends React.PureComponent {
   }
 
   onInputKeyPress = (e) => {
-    if (e.key === 'Enter') this.onOkBtnClick();
+    if (e.key === 'Enter') {
+      this.onOkBtnClick();
+      if (!this.props.listNameObj) setTimeout(() => this.onInputFocus(), 1);
+    }
   }
 
   onInputBlur = () => {

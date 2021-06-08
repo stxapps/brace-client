@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -65,9 +64,7 @@ class ListName extends React.PureComponent {
   onListNamePopupClick = (newListName) => {
     if (!newListName) return;
 
-    this.props.changeListName(newListName, this.props.fetched);
-    this.props.fetched.push(newListName);
-
+    this.props.changeListName(newListName);
     this.props.updatePopup(LIST_NAME_POPUP, false);
   };
 
@@ -164,10 +161,6 @@ class ListName extends React.PureComponent {
     );
   }
 }
-
-ListName.propTypes = {
-  fetched: PropTypes.arrayOf(PropTypes.string),
-};
 
 const mapStateToProps = (state, props) => {
   return {
