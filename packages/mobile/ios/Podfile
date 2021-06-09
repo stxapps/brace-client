@@ -24,6 +24,11 @@ target 'Bracedotto' do
   use_flipper!
   post_install do |installer|
     flipper_post_install(installer)
+
+    ## Fix for Flipper-Folly on iOS 14.5
+    find_and_replace("Pods/Flipper-Folly/folly/synchronization/DistributedMutex-inl.h", "atomic_notify_one(state)", "folly::atomic_notify_one(state)")
+
+    find_and_replace("Pods/Flipper-Folly/folly/synchronization/DistributedMutex-inl.h", "atomic_wait_until(&state, previous | data, deadline)", "folly::atomic_wait_until(&state, previous | data, deadline)")
   end
 end
 
@@ -34,4 +39,17 @@ target 'Bracedotto-tvOS' do
     inherit! :search_paths
     # Pods for testing
   end
+end
+
+def find_and_replace(dir, findstr, replacestr)
+  Dir[dir].each do |name|
+      text = File.read(name)
+      replace = text.gsub(findstr,replacestr)
+      if text != replace
+          puts "Fix: " + name
+          File.open(name, "w") { |file| file.puts replace }
+          STDOUT.flush
+      end
+  end
+  Dir[dir + '*/'].each(&method(:find_and_replace))
 end
