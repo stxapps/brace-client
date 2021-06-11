@@ -6038,6 +6038,11 @@ react-native-animated-spinkit@^1.5.1:
   version "0.4.6"
   resolved "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?b3b94eee0300e7087bb9a6db86fe97287b200ccb#1b05078f7252b446d24c6d1317510f3a8be96f3a"
 
+react-native-default-preference@^1.4.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/react-native-default-preference/-/react-native-default-preference-1.4.3.tgz#3c6411d32ea4ebc5286fbf5915546fc57a6014f6"
+  integrity sha512-sQDYwGEdxwKwXKP/8Intc81FyH33Rv8ZvOxdmPX4NM75RAIVeBc13pdabEqycAimNZoY5IDvGp4o1cTTa5gNrA==
+
 react-native-fast-image@^8.3.4:
   version "8.3.4"
   resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-8.3.4.tgz#79edca177e30311b19d59ff335625bcbe22650d7"

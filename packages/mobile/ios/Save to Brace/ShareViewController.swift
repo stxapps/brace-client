@@ -3,116 +3,91 @@ import MobileCoreServices
 
 class ShareViewController: UIViewController {
 
-    let APP_SCHEME_NAME = "bracedotto"
-    let APP_HOST_NAME = "app"
-    let SAVE_TO_BRACE = "/save-to-brace"
+  let urlContentType = kUTTypeURL as String
+  var sharedUrls: [String] = []
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    
+    print("viewDidLoad: show loading view here")
+    // Show loading view
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    print("viewDidAppear: start process shared data")
+    self.processRequest()
+  }
 
-    let urlContentType = kUTTypeURL as String
-    var sharedUrls: [String] = []
+  private func processRequest() {
+    guard let inputItems = self.extensionContext?.inputItems, inputItems.count > 0,
+          let inputItem = inputItems[0] as? NSExtensionItem,
+          let attachments = inputItem.attachments, attachments.count > 0 else {
+      self.cancelRequest()
+      return
+    }
+    
+    for (_, attachment) in attachments.enumerated() {
+      if !attachment.hasItemConformingToTypeIdentifier(urlContentType) {
+        self.cancelRequest()
+        return
+      }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        let inputItems = self.extensionContext!.inputItems
-        guard inputItems.count > 0 else {
-            self.cancelRequest()
-            return
+      attachment.loadItem(forTypeIdentifier: urlContentType, options: nil) { [unowned self] data, error in
+        guard let url = data as? URL, error == nil else {
+          self.cancelRequest()
+          return
         }
 
-        guard let inputItem = inputItems[0] as? NSExtensionItem else {
-            self.cancelRequest()
-            return
+        self.sharedUrls.append(url.absoluteString)
+        if self.sharedUrls.count == attachments.count {
+          self.completeRequest()
         }
-
-        guard let attachments = inputItem.attachments, attachments.count > 0 else {
-            self.cancelRequest()
-            return
-        }
-
-        for (i, attachment) in attachments.enumerated() {
-            if !attachment.hasItemConformingToTypeIdentifier(urlContentType) {
-                self.cancelRequest()
-                return
-            }
-
-            handleUrl(attachment: attachment,
-                      isLast: i == attachments.count - 1)
-        }
+      }
+    }
+  }
+  
+  private func completeRequest() {
+    print("in completeRequest")
+    guard self.sharedUrls.count > 0 else {
+      self.cancelRequest()
+      return
     }
 
-    private func handleUrl (attachment: NSItemProvider, isLast: Bool) {
-        attachment.loadItem(forTypeIdentifier: urlContentType,
-                            options: nil) { [unowned self] data, error in
-
-            guard error == nil else {
-                self.cancelRequest()
-                return
-            }
-
-            guard let url = data as? URL else {
-                self.cancelRequest()
-                return
-            }
-
-            self.sharedUrls.append(url.absoluteString)
-            if isLast {
-                self.completeRequest()
-            }
-        }
+    if (!Blockstack.shared.isUserSignedIn()) {
+      print("userData is nil, show not sign in here")
+      // Not sign in
+      return
     }
-
-    private func completeRequest() {
-
-        guard self.sharedUrls.count > 0 else {
-            self.cancelRequest()
-            return
-        }
-
-        let sharedUrls = self.sharedUrls.joined(separator: " ")
-
-        var urlComponents = URLComponents()
-        urlComponents.scheme = APP_SCHEME_NAME
-        urlComponents.host = APP_HOST_NAME
-        urlComponents.path = SAVE_TO_BRACE
-        urlComponents.queryItems = [
-          URLQueryItem(name: "text", value: sharedUrls)
-        ]
-
-        guard let url = urlComponents.url else {
-            self.cancelRequest()
-            return
-        }
-
-        var responder = self as UIResponder?
-        let selectorOpenURL = sel_registerName("openURL:")
-
-        while (responder != nil) {
-            if responder!.responds(to: selectorOpenURL) {
-                responder!.perform(selectorOpenURL, with: url)
-                break
-            }
-
-            responder = responder!.next
-        }
-
-        self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
+    
+    print("Found userData, call addLink")
+    // Support only 1 url for now!
+    Blockstack.shared.addLink(url: self.sharedUrls[0]) { publicUrl, error in
+      guard let _ = publicUrl, error != nil else {
+        print("Error addLink, display error here.")
+        return
+      }
+      
+      print("Succeed addLink, display green check here and timer to hide")
+      self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
     }
-
-    private func cancelRequest() {
-
-        let alert = UIAlertController(title: "Invalid link!",
-                                      message: "Only URL links can be saved.",
-                                      preferredStyle: .alert)
-
-        let action = UIAlertAction(title: "Close", style: .cancel) { _ in
-            self.dismiss(animated: true, completion: nil)
-        }
-
-        alert.addAction(action)
-        present(alert, animated: true, completion: nil)
-
-        self.extensionContext!.cancelRequest(withError: NSError(domain:"BRACEDOTTO_ERROR",
-                                                                code: 0,
-                                                                userInfo: nil))
+  }
+  
+  private func cancelRequest() {
+    
+    let alert = UIAlertController(title: "Invalid link!",
+                                  message: "Only URL links can be saved.",
+                                  preferredStyle: .alert)
+    
+    let action = UIAlertAction(title: "Close", style: .cancel) { _ in
+      self.dismiss(animated: true, completion: nil)
     }
+    
+    alert.addAction(action)
+    present(alert, animated: true, completion: nil)
+    
+    self.extensionContext!.cancelRequest(withError: NSError(domain:"BRACEDOTTO_ERROR",
+                                                            code: 0,
+                                                            userInfo: nil))
+  }
 }

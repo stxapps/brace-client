@@ -794,4 +794,11 @@ This and CI/CD are very important!
   + In Info.plist under Save To Brace
     ~ NSExtension -> NSExtensionAttributes -> NSExtensionActivationRule -> NSExtensionActivationSupportsWebURLWithMaxCount -> Number 1
   + Update ShareViewController.swift
+- yarn add react-native-default-preference
+- Add App groups from targets: Bracedotto and Save to Brace -> Signing & Capabilities
+  + group.bracedotto.share
+- CryptoSwift dependency
+  + Clone github.com/krzyzanowskim/CryptoSwift to Workspace (same level as brace-client)
+  + From Finder, drag CryptoSwift.xcodeproj to Xcode's sidebar
+  + From Targets: Save to Brace -> General -> Framworks and Libraries, add CryptoSwift.framework
 - 

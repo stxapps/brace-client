@@ -26,9 +26,9 @@ target 'Bracedotto' do
     flipper_post_install(installer)
 
     ## Fix for Flipper-Folly on iOS 14.5
-    find_and_replace("Pods/Flipper-Folly/folly/synchronization/DistributedMutex-inl.h", "atomic_notify_one(state)", "folly::atomic_notify_one(state)")
+    #find_and_replace("Pods/Flipper-Folly/folly/synchronization/DistributedMutex-inl.h", "atomic_notify_one(state)", "folly::atomic_notify_one(state)")
 
-    find_and_replace("Pods/Flipper-Folly/folly/synchronization/DistributedMutex-inl.h", "atomic_wait_until(&state, previous | data, deadline)", "folly::atomic_wait_until(&state, previous | data, deadline)")
+    #find_and_replace("Pods/Flipper-Folly/folly/synchronization/DistributedMutex-inl.h", "atomic_wait_until(&state, previous | data, deadline)", "folly::atomic_wait_until(&state, previous | data, deadline)")
   end
 end
 

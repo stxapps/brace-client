@@ -331,6 +331,8 @@ PODS:
     - React-Core
   - RNCClipboard (1.5.1):
     - React-Core
+  - RNDefaultPreference (1.4.3):
+    - React
   - RNFastImage (8.3.4):
     - React-Core
     - SDWebImage (~> 5.8)
@@ -404,6 +406,7 @@ DEPENDENCIES:
   - ReactNativeKeyboardManager (from `../node_modules/react-native-keyboard-manager`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-community/clipboard`)"
+  - RNDefaultPreference (from `../node_modules/react-native-default-preference`)
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -499,6 +502,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/async-storage"
   RNCClipboard:
     :path: "../node_modules/@react-native-community/clipboard"
+  RNDefaultPreference:
+    :path: "../node_modules/react-native-default-preference"
   RNFastImage:
     :path: "../node_modules/react-native-fast-image"
   RNSVG:
@@ -561,6 +566,7 @@ SPEC CHECKSUMS:
   ReactNativeKeyboardManager: d0e285b82ef60a861d71834d8e996fbc09607a67
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
+  RNDefaultPreference: 2f8d6d54230edbd78708ada8d63bb275e5a8415b
   RNFastImage: d4870d58f5936111c56218dbd7fcfc18e65b58ff
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   SDWebImage: 9169792e9eec3e45bba2a0c02f74bf8bd922d1ee

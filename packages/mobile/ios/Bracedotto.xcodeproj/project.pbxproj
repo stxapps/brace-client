@@ -10,6 +10,24 @@
 		00E356F31AD99517003FC87E /* BracedottoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* BracedottoTests.m */; };
 		028CC342EB1D4AF985810EC7 /* Inter-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 75C6F2927ED34B66BB32B263 /* Inter-Thin.otf */; };
 		042329FDEE62202C9000CFD0 /* libPods-Bracedotto-BracedottoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F0DF2D845172FAE1C82642AD /* libPods-Bracedotto-BracedottoTests.a */; };
+		044CEDCC2670BA7400C46793 /* BitcoinJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044CEDCB2670BA7400C46793 /* BitcoinJS.swift */; };
+		044CEDCE2670BC4C00C46793 /* bitcoinjs.js in Resources */ = {isa = PBXBuildFile; fileRef = 044CEDCD2670BC4C00C46793 /* bitcoinjs.js */; };
+		044CEDD02670BEF300C46793 /* bigi.js in Resources */ = {isa = PBXBuildFile; fileRef = 044CEDCF2670BEF300C46793 /* bigi.js */; };
+		044CEDD22670D35300C46793 /* Blockstack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044CEDD12670D35300C46793 /* Blockstack.swift */; };
+		044CEDD42670D6C900C46793 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044CEDD32670D6C900C46793 /* Keys.swift */; };
+		044CEDD62670D7F000C46793 /* KeysJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044CEDD52670D7F000C46793 /* KeysJS.swift */; };
+		044CEDD82670D80A00C46793 /* EllipticJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044CEDD72670D80A00C46793 /* EllipticJS.swift */; };
+		044CEDDA2670D83000C46793 /* keys.js in Resources */ = {isa = PBXBuildFile; fileRef = 044CEDD92670D83000C46793 /* keys.js */; };
+		044CEDDC2670D84700C46793 /* elliptic.js in Resources */ = {isa = PBXBuildFile; fileRef = 044CEDDB2670D84700C46793 /* elliptic.js */; };
+		04D1529E2671B3C400B2E36D /* BigInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D1529D2671B3C400B2E36D /* BigInt.swift */; };
+		04D152A02671B52400B2E36D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D1529F2671B52400B2E36D /* Extensions.swift */; };
+		04D152A22671B5BC00B2E36D /* DataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D152A12671B5BC00B2E36D /* DataTypes.swift */; };
+		04D152B62671BD5300B2E36D /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04D152B52671BD5300B2E36D /* CryptoSwift.framework */; };
+		04D152B72671BD5300B2E36D /* CryptoSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 04D152B52671BD5300B2E36D /* CryptoSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		04D152BA2671ED0F00B2E36D /* Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D152B92671ED0F00B2E36D /* Encryption.swift */; };
+		04D152BC2671ED5800B2E36D /* EncryptionJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D152BB2671ED5800B2E36D /* EncryptionJS.swift */; };
+		04D152BE2671ED8E00B2E36D /* encryption.js in Resources */ = {isa = PBXBuildFile; fileRef = 04D152BD2671ED8E00B2E36D /* encryption.js */; };
+		04D152C026721B9B00B2E36D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D152BF26721B9B00B2E36D /* Constants.swift */; };
 		04DD662026707A3D00D4AF01 /* Dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DD661F26707A3D00D4AF01 /* Dummy.swift */; };
 		084F3A65576545C68804534D /* Inter-ExtraBoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = B88E022121DB4E1EBE000689 /* Inter-ExtraBoldItalic.otf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
@@ -69,6 +87,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		04D152B82671BD5300B2E36D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				04D152B72671BD5300B2E36D /* CryptoSwift.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5B705B3A25C99A6E008F9797 /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -87,8 +116,26 @@
 		00E356EE1AD99517003FC87E /* BracedottoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BracedottoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* BracedottoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BracedottoTests.m; sourceTree = "<group>"; };
+		044CEDCB2670BA7400C46793 /* BitcoinJS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitcoinJS.swift; sourceTree = "<group>"; };
+		044CEDCD2670BC4C00C46793 /* bitcoinjs.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = bitcoinjs.js; sourceTree = "<group>"; };
+		044CEDCF2670BEF300C46793 /* bigi.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = bigi.js; sourceTree = "<group>"; };
+		044CEDD12670D35300C46793 /* Blockstack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Blockstack.swift; sourceTree = "<group>"; };
+		044CEDD32670D6C900C46793 /* Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
+		044CEDD52670D7F000C46793 /* KeysJS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeysJS.swift; sourceTree = "<group>"; };
+		044CEDD72670D80A00C46793 /* EllipticJS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EllipticJS.swift; sourceTree = "<group>"; };
+		044CEDD92670D83000C46793 /* keys.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = keys.js; sourceTree = "<group>"; };
+		044CEDDB2670D84700C46793 /* elliptic.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = elliptic.js; sourceTree = "<group>"; };
+		04D1529D2671B3C400B2E36D /* BigInt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigInt.swift; sourceTree = "<group>"; };
+		04D1529F2671B52400B2E36D /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		04D152A12671B5BC00B2E36D /* DataTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTypes.swift; sourceTree = "<group>"; };
+		04D152B52671BD5300B2E36D /* CryptoSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CryptoSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		04D152B92671ED0F00B2E36D /* Encryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encryption.swift; sourceTree = "<group>"; };
+		04D152BB2671ED5800B2E36D /* EncryptionJS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionJS.swift; sourceTree = "<group>"; };
+		04D152BD2671ED8E00B2E36D /* encryption.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = encryption.js; sourceTree = "<group>"; };
+		04D152BF26721B9B00B2E36D /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		04DD661E26707A3C00D4AF01 /* Bracedotto-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bracedotto-Bridging-Header.h"; sourceTree = "<group>"; };
 		04DD661F26707A3D00D4AF01 /* Dummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dummy.swift; sourceTree = "<group>"; };
+		04DD66212670A1CC00D4AF01 /* Save to Brace.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Save to Brace.entitlements"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Brace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Brace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Bracedotto/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Bracedotto/AppDelegate.m; sourceTree = "<group>"; };
@@ -106,7 +153,7 @@
 		5682DD4528A3404B5AE82377 /* Pods-Bracedotto-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bracedotto-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Bracedotto-tvOS/Pods-Bracedotto-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		5B705B1725C98F3B008F9797 /* Bracedotto.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Bracedotto.entitlements; path = Bracedotto/Bracedotto.entitlements; sourceTree = "<group>"; };
 		5B705B2C25C99A6D008F9797 /* Save to Brace.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Save to Brace.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B705B2E25C99A6D008F9797 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		5B705B2E25C99A6D008F9797 /* ShareViewController.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; tabWidth = 2; };
 		5B705B3125C99A6E008F9797 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		5B705B3325C99A6E008F9797 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5EA402844A12A7E30E58439B /* Pods-Bracedotto-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bracedotto-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-Bracedotto-tvOS/Pods-Bracedotto-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
@@ -174,6 +221,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04D152B62671BD5300B2E36D /* CryptoSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,6 +263,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				04D152B52671BD5300B2E36D /* CryptoSwift.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				4FFD878C4AB05F6F65EDC590 /* libPods-Bracedotto.a */,
@@ -268,9 +317,26 @@
 		5B705B2D25C99A6D008F9797 /* Save to Brace */ = {
 			isa = PBXGroup;
 			children = (
+				04DD66212670A1CC00D4AF01 /* Save to Brace.entitlements */,
 				5B705B2E25C99A6D008F9797 /* ShareViewController.swift */,
 				5B705B3025C99A6E008F9797 /* MainInterface.storyboard */,
 				5B705B3325C99A6E008F9797 /* Info.plist */,
+				044CEDD12670D35300C46793 /* Blockstack.swift */,
+				04D152B92671ED0F00B2E36D /* Encryption.swift */,
+				044CEDD32670D6C900C46793 /* Keys.swift */,
+				04D1529D2671B3C400B2E36D /* BigInt.swift */,
+				04D1529F2671B52400B2E36D /* Extensions.swift */,
+				04D152A12671B5BC00B2E36D /* DataTypes.swift */,
+				04D152BF26721B9B00B2E36D /* Constants.swift */,
+				044CEDCB2670BA7400C46793 /* BitcoinJS.swift */,
+				044CEDD52670D7F000C46793 /* KeysJS.swift */,
+				044CEDD72670D80A00C46793 /* EllipticJS.swift */,
+				04D152BB2671ED5800B2E36D /* EncryptionJS.swift */,
+				044CEDCD2670BC4C00C46793 /* bitcoinjs.js */,
+				044CEDCF2670BEF300C46793 /* bigi.js */,
+				044CEDD92670D83000C46793 /* keys.js */,
+				044CEDDB2670D84700C46793 /* elliptic.js */,
+				04D152BD2671ED8E00B2E36D /* encryption.js */,
 			);
 			path = "Save to Brace";
 			sourceTree = "<group>";
@@ -405,6 +471,7 @@
 				5B705B2825C99A6D008F9797 /* Sources */,
 				5B705B2925C99A6D008F9797 /* Frameworks */,
 				5B705B2A25C99A6D008F9797 /* Resources */,
+				04D152B82671BD5300B2E36D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -524,7 +591,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				044CEDDC2670D84700C46793 /* elliptic.js in Resources */,
+				044CEDD02670BEF300C46793 /* bigi.js in Resources */,
+				044CEDCE2670BC4C00C46793 /* bitcoinjs.js in Resources */,
+				044CEDDA2670D83000C46793 /* keys.js in Resources */,
 				5B705B3225C99A6E008F9797 /* MainInterface.storyboard in Resources */,
+				04D152BE2671ED8E00B2E36D /* encryption.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -771,7 +843,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				044CEDD82670D80A00C46793 /* EllipticJS.swift in Sources */,
 				5B705B2F25C99A6E008F9797 /* ShareViewController.swift in Sources */,
+				04D1529E2671B3C400B2E36D /* BigInt.swift in Sources */,
+				04D152A22671B5BC00B2E36D /* DataTypes.swift in Sources */,
+				04D152A02671B52400B2E36D /* Extensions.swift in Sources */,
+				044CEDD62670D7F000C46793 /* KeysJS.swift in Sources */,
+				044CEDD42670D6C900C46793 /* Keys.swift in Sources */,
+				044CEDCC2670BA7400C46793 /* BitcoinJS.swift in Sources */,
+				04D152BA2671ED0F00B2E36D /* Encryption.swift in Sources */,
+				044CEDD22670D35300C46793 /* Blockstack.swift in Sources */,
+				04D152BC2671ED5800B2E36D /* EncryptionJS.swift in Sources */,
+				04D152C026721B9B00B2E36D /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1128,6 +1211,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Save to Brace/Save to Brace.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -1159,6 +1243,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Save to Brace/Save to Brace.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;

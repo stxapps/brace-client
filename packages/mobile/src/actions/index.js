@@ -38,6 +38,7 @@ import {
 } from '../types/actionTypes';
 import {
   DOMAIN_NAME, APP_DOMAIN_NAME, BLOCKSTACK_AUTH, SAVE_TO_BRACE,
+  APP_GROUP_SHARE, APP_GROUP_SHARE_UKEY,
   ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
   CONFIRM_DELETE_POPUP, SETTINGS_POPUP, BULK_EDIT_MOVE_TO_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
@@ -53,6 +54,9 @@ import {
   getUserImageUrl, randomDecor, swapArrayElements,
   isOfflineActionWithPayload, shouldDispatchFetch,
 } from '../utils';
+
+import DefaultPreference from 'react-native-default-preference';
+if (Platform.OS === 'ios') DefaultPreference.setName(APP_GROUP_SHARE);
 
 export const init = async (store) => {
 
@@ -137,6 +141,10 @@ const handlePendingSignIn = (url) => async (dispatch, getState) => {
   const isUserSignedIn = await userSession.isUserSignedIn();
   if (isUserSignedIn) {
     const userData = await userSession.loadUserData();
+    console.log('userData', userData);
+    if (Platform.OS === 'ios') {
+      await DefaultPreference.set(APP_GROUP_SHARE_UKEY, JSON.stringify(userData));
+    }
     dispatch({
       type: UPDATE_USER,
       payload: {
@@ -229,6 +237,9 @@ export const signUp = () => async (dispatch, getState) => {
     const isUserSignedIn = await userSession.isUserSignedIn();
     if (isUserSignedIn) {
       const userData = await userSession.loadUserData();
+      if (Platform.OS === 'ios') {
+        await DefaultPreference.set(APP_GROUP_SHARE_UKEY, JSON.stringify(userData));
+      }
       dispatch({
         type: UPDATE_USER,
         payload: {
@@ -273,6 +284,9 @@ export const signIn = () => async (dispatch, getState) => {
     const isUserSignedIn = await userSession.isUserSignedIn();
     if (isUserSignedIn) {
       const userData = await userSession.loadUserData();
+      if (Platform.OS === 'ios') {
+        await DefaultPreference.set(APP_GROUP_SHARE_UKEY, JSON.stringify(userData));
+      }
       dispatch({
         type: UPDATE_USER,
         payload: {
@@ -296,6 +310,7 @@ export const signIn = () => async (dispatch, getState) => {
 export const signOut = () => async (dispatch, getState) => {
 
   await userSession.signUserOut();
+  if (Platform.OS === 'ios') await DefaultPreference.clearAll();
 
   // redux-offline: Empty outbox
   dispatch({ type: OFFLINE_RESET_STATE });
