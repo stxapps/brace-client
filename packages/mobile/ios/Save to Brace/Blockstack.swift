@@ -24,7 +24,7 @@ class Blockstack {
     let decor = randomDecor(getUrlFirstChar(url))
     
     let fpath = "links/\(listName)/\(id).json"
-    let content = "{id: \"\(id)\", url: \"\(url)\", addedDT: \(addedDT), decor: \(decor)}"
+    let content = "{\"id\": \"\(id)\", \"url\": \"\(url)\", \"addedDT\": \(addedDT), \"decor\": \(decor)}"
 
     self.putFile(path: fpath, content: content, contentType: "application/json", callback: callback)
   }
@@ -97,7 +97,7 @@ class Blockstack {
       let tokenObject: [String: Any?] = ["publickey": publicKey, "signature": signature]
       let token = tokenObject.toJsonString()?.encodingToBase64()
       let address = Keys.getAddressFromPublicKey(publicKey!)
-      let config = GaiaConfig(URLPrefix: hubInfo.readURLPrefix, address: address, token: token, server: hubUrl)
+      let config = GaiaConfig(UrlPrefix: hubInfo.readUrlPrefix, address: address, token: token, server: hubUrl)
       callback(config, nil)
     }
   }
@@ -188,8 +188,14 @@ class Blockstack {
         return
       }
 
-      let putURL = URL(string:"\(config.server!)/store/\(config.address!)/\(path)")
-      var request = URLRequest(url: putURL!)
+      guard let path = path.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlPathAllowed),
+            let putUrl = URL(string: "\(config.server!)/store/\(config.address!)/\(path)") else {
+        print("Error create putUrl in putFile")
+        callback(nil, NSError.create(description: "Error create putUrl in putFile"))
+        return
+      }
+
+      var request = URLRequest(url: putUrl)
       request.httpMethod = "POST"
       request.setValue(contentType, forHTTPHeaderField: "Content-Type")
       request.setValue("bearer \(config.token!)", forHTTPHeaderField: "Authorization")
@@ -207,11 +213,16 @@ class Blockstack {
           callback(nil, NSError.create(description: "Error uploading to Gaia hub returns status code other than 2xx"))
           return
         }
-
+        
         do {
-          let response = try JSONDecoder().decode(PutFileResponse.self, from: data)
-          callback(response.publicUrl!, nil)
+          print("Added with data:")
+          print(data)
+          let result = try JSONDecoder().decode(PutFileResponse.self, from: data)
+          print("Parse result:")
+          print(result)
+          callback(result.publicUrl!, nil)
         } catch {
+          print("Parse putfile response error")
           callback(nil, error)
         }
       }
@@ -228,8 +239,13 @@ class Blockstack {
     guard let url = URL(string: url), let host = url.host else {
       return randomString(1)
     }
+
+    let arr = host.split(separator: ".")
+    guard let c = arr[(arr.count - 2)...].first?.first else {
+      return randomString(1)
+    }
     
-    return String(host.split(separator: ".")[-2][0])
+    return String(c)
   }
 
   private func randInt(_ max: Int) -> Int {
@@ -256,13 +272,13 @@ class Blockstack {
       imageBgType = IMAGE
       imageBgValue = sample(IMAGES)
     }
-    let imageBg = "{type: \"\(imageBgType)\", value: \"\(imageBgValue)\"}"
+    let imageBg = "{\"type\": \"\(imageBgType)\", \"value\": \"\(imageBgValue)\"}"
 
     // image foreground
     var imageFg = "null"
     n = randInt(100)
     if ((imageBgType == COLOR && n < 75) || (imageBgType == PATTERN && n < 25)) {
-      imageFg = "{text: \"\(text)\"}"
+      imageFg = "{\"text\": \"\(text)\"}"
     }
 
     // favicon background
@@ -275,8 +291,8 @@ class Blockstack {
       faviconBgType = PATTERN
       faviconBgValue = sample(PATTERNS)
     }
-    let faviconBg = "{type: \"\(faviconBgType)\", value: \"\(faviconBgValue)\"}"
+    let faviconBg = "{\"type\": \"\(faviconBgType)\", \"value\": \"\(faviconBgValue)\"}"
 
-    return "{image: {bg: \(imageBg), fg: \(imageFg)}, favicon: {bg: \(faviconBg)}}"
+    return "{\"image\": {\"bg\": \(imageBg), \"fg\": \(imageFg)}, \"favicon\": {\"bg\": \(faviconBg)}}"
   }
 }

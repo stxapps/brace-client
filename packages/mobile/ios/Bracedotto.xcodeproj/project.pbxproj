@@ -10,6 +10,29 @@
 		00E356F31AD99517003FC87E /* BracedottoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* BracedottoTests.m */; };
 		028CC342EB1D4AF985810EC7 /* Inter-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 75C6F2927ED34B66BB32B263 /* Inter-Thin.otf */; };
 		042329FDEE62202C9000CFD0 /* libPods-Bracedotto-BracedottoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F0DF2D845172FAE1C82642AD /* libPods-Bracedotto-BracedottoTests.a */; };
+		044404FB26776D71000F06E2 /* Inter-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 673C217A6DA94106911808EE /* Inter-Black.otf */; };
+		044404FC26776D7D000F06E2 /* Inter-BoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF7EF96B13A0453DA6FA4432 /* Inter-BoldItalic.otf */; };
+		044404FD26776D7D000F06E2 /* Inter-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = BA8A4E5C4F314C52861E0C92 /* Inter-Bold.otf */; };
+		044404FE26776D7D000F06E2 /* Inter-ExtraBoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = B88E022121DB4E1EBE000689 /* Inter-ExtraBoldItalic.otf */; };
+		044404FF26776D7D000F06E2 /* Inter-ExtraLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 46EF16B560AC44A4934CD2E7 /* Inter-ExtraLight.otf */; };
+		0444050026776D7D000F06E2 /* Inter-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 72A52199C09444D5800B122A /* Inter-LightItalic.otf */; };
+		0444050126776D7D000F06E2 /* Inter-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6F8B49E8396C45B2B36EDF1D /* Inter-Regular.otf */; };
+		0444050226776D7D000F06E2 /* Inter-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 75C6F2927ED34B66BB32B263 /* Inter-Thin.otf */; };
+		0444050326776D7D000F06E2 /* Inter-ExtraLightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = FE3C0814E90F49C2B2BB8805 /* Inter-ExtraLightItalic.otf */; };
+		0444050426776D7D000F06E2 /* Inter-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9A90A1887F824256BE406D53 /* Inter-Light.otf */; };
+		0444050526776D7D000F06E2 /* Inter-SemiBoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = B17C8B31856F48D689BCB7E8 /* Inter-SemiBoldItalic.otf */; };
+		0444050626776D7D000F06E2 /* Inter-BlackItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = D94F32794EEB4D3B8346A0E3 /* Inter-BlackItalic.otf */; };
+		0444050726776D7D000F06E2 /* Inter-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = A91D5BF45F6C4291AB4F95D2 /* Inter-Italic.otf */; };
+		0444050826776D7D000F06E2 /* Inter-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = E8150BD450474ABCB47E63FF /* Inter-Medium.otf */; };
+		0444050926776D7D000F06E2 /* Inter-MediumItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1804C5B4DD2A484DB254DF99 /* Inter-MediumItalic.otf */; };
+		0444050A26776D7D000F06E2 /* Inter-ThinItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = BEACCA5E41D54C26B03EE870 /* Inter-ThinItalic.otf */; };
+		0444050B26776D7D000F06E2 /* Inter-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2142870368AE4100B4276757 /* Inter-ExtraBold.otf */; };
+		0444050C26776D7D000F06E2 /* Inter-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CFB4FC2383174789B83F76D3 /* Inter-SemiBold.otf */; };
+		04440524267860EE000F06E2 /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04440523267860EE000F06E2 /* CryptoSwift.framework */; };
+		04440525267860EE000F06E2 /* CryptoSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 04440523267860EE000F06E2 /* CryptoSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		04440528267860F6000F06E2 /* NVActivityIndicatorView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04440527267860F6000F06E2 /* NVActivityIndicatorView.framework */; };
+		04440529267860F6000F06E2 /* NVActivityIndicatorView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 04440527267860F6000F06E2 /* NVActivityIndicatorView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		0444052B26787408000F06E2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0444052A26787408000F06E2 /* Images.xcassets */; };
 		044CEDCC2670BA7400C46793 /* BitcoinJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044CEDCB2670BA7400C46793 /* BitcoinJS.swift */; };
 		044CEDCE2670BC4C00C46793 /* bitcoinjs.js in Resources */ = {isa = PBXBuildFile; fileRef = 044CEDCD2670BC4C00C46793 /* bitcoinjs.js */; };
 		044CEDD02670BEF300C46793 /* bigi.js in Resources */ = {isa = PBXBuildFile; fileRef = 044CEDCF2670BEF300C46793 /* bigi.js */; };
@@ -22,8 +45,6 @@
 		04D1529E2671B3C400B2E36D /* BigInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D1529D2671B3C400B2E36D /* BigInt.swift */; };
 		04D152A02671B52400B2E36D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D1529F2671B52400B2E36D /* Extensions.swift */; };
 		04D152A22671B5BC00B2E36D /* DataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D152A12671B5BC00B2E36D /* DataTypes.swift */; };
-		04D152B62671BD5300B2E36D /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04D152B52671BD5300B2E36D /* CryptoSwift.framework */; };
-		04D152B72671BD5300B2E36D /* CryptoSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 04D152B52671BD5300B2E36D /* CryptoSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		04D152BA2671ED0F00B2E36D /* Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D152B92671ED0F00B2E36D /* Encryption.swift */; };
 		04D152BC2671ED5800B2E36D /* EncryptionJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D152BB2671ED5800B2E36D /* EncryptionJS.swift */; };
 		04D152BE2671ED8E00B2E36D /* encryption.js in Resources */ = {isa = PBXBuildFile; fileRef = 04D152BD2671ED8E00B2E36D /* encryption.js */; };
@@ -87,13 +108,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		04D152B82671BD5300B2E36D /* Embed Frameworks */ = {
+		04440526267860EE000F06E2 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				04D152B72671BD5300B2E36D /* CryptoSwift.framework in Embed Frameworks */,
+				04440529267860F6000F06E2 /* NVActivityIndicatorView.framework in Embed Frameworks */,
+				04440525267860EE000F06E2 /* CryptoSwift.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -116,6 +138,11 @@
 		00E356EE1AD99517003FC87E /* BracedottoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BracedottoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* BracedottoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BracedottoTests.m; sourceTree = "<group>"; };
+		0444051F26785EDC000F06E2 /* libCryptoSwift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCryptoSwift.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		0444052126785FAC000F06E2 /* libPods-Bracedotto.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libPods-Bracedotto.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		04440523267860EE000F06E2 /* CryptoSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CryptoSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		04440527267860F6000F06E2 /* NVActivityIndicatorView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = NVActivityIndicatorView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0444052A26787408000F06E2 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		044CEDCB2670BA7400C46793 /* BitcoinJS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitcoinJS.swift; sourceTree = "<group>"; };
 		044CEDCD2670BC4C00C46793 /* bitcoinjs.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = bitcoinjs.js; sourceTree = "<group>"; };
 		044CEDCF2670BEF300C46793 /* bigi.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = bigi.js; sourceTree = "<group>"; };
@@ -221,7 +248,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04D152B62671BD5300B2E36D /* CryptoSwift.framework in Frameworks */,
+				04440528267860F6000F06E2 /* NVActivityIndicatorView.framework in Frameworks */,
+				04440524267860EE000F06E2 /* CryptoSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,6 +291,10 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				04440527267860F6000F06E2 /* NVActivityIndicatorView.framework */,
+				04440523267860EE000F06E2 /* CryptoSwift.framework */,
+				0444052126785FAC000F06E2 /* libPods-Bracedotto.a */,
+				0444051F26785EDC000F06E2 /* libCryptoSwift.a */,
 				04D152B52671BD5300B2E36D /* CryptoSwift.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
@@ -320,6 +352,7 @@
 				04DD66212670A1CC00D4AF01 /* Save to Brace.entitlements */,
 				5B705B2E25C99A6D008F9797 /* ShareViewController.swift */,
 				5B705B3025C99A6E008F9797 /* MainInterface.storyboard */,
+				0444052A26787408000F06E2 /* Images.xcassets */,
 				5B705B3325C99A6E008F9797 /* Info.plist */,
 				044CEDD12670D35300C46793 /* Blockstack.swift */,
 				04D152B92671ED0F00B2E36D /* Encryption.swift */,
@@ -471,7 +504,7 @@
 				5B705B2825C99A6D008F9797 /* Sources */,
 				5B705B2925C99A6D008F9797 /* Frameworks */,
 				5B705B2A25C99A6D008F9797 /* Resources */,
-				04D152B82671BD5300B2E36D /* Embed Frameworks */,
+				04440526267860EE000F06E2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -591,12 +624,31 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B705B3225C99A6E008F9797 /* MainInterface.storyboard in Resources */,
+				0444052B26787408000F06E2 /* Images.xcassets in Resources */,
 				044CEDDC2670D84700C46793 /* elliptic.js in Resources */,
 				044CEDD02670BEF300C46793 /* bigi.js in Resources */,
 				044CEDCE2670BC4C00C46793 /* bitcoinjs.js in Resources */,
 				044CEDDA2670D83000C46793 /* keys.js in Resources */,
-				5B705B3225C99A6E008F9797 /* MainInterface.storyboard in Resources */,
 				04D152BE2671ED8E00B2E36D /* encryption.js in Resources */,
+				0444050726776D7D000F06E2 /* Inter-Italic.otf in Resources */,
+				044404FC26776D7D000F06E2 /* Inter-BoldItalic.otf in Resources */,
+				0444050B26776D7D000F06E2 /* Inter-ExtraBold.otf in Resources */,
+				0444050A26776D7D000F06E2 /* Inter-ThinItalic.otf in Resources */,
+				0444050826776D7D000F06E2 /* Inter-Medium.otf in Resources */,
+				0444050926776D7D000F06E2 /* Inter-MediumItalic.otf in Resources */,
+				0444050626776D7D000F06E2 /* Inter-BlackItalic.otf in Resources */,
+				044404FF26776D7D000F06E2 /* Inter-ExtraLight.otf in Resources */,
+				0444050326776D7D000F06E2 /* Inter-ExtraLightItalic.otf in Resources */,
+				044404FB26776D71000F06E2 /* Inter-Black.otf in Resources */,
+				0444050126776D7D000F06E2 /* Inter-Regular.otf in Resources */,
+				0444050026776D7D000F06E2 /* Inter-LightItalic.otf in Resources */,
+				0444050226776D7D000F06E2 /* Inter-Thin.otf in Resources */,
+				0444050426776D7D000F06E2 /* Inter-Light.otf in Resources */,
+				044404FE26776D7D000F06E2 /* Inter-ExtraBoldItalic.otf in Resources */,
+				044404FD26776D7D000F06E2 /* Inter-Bold.otf in Resources */,
+				0444050526776D7D000F06E2 /* Inter-SemiBoldItalic.otf in Resources */,
+				0444050C26776D7D000F06E2 /* Inter-SemiBold.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
