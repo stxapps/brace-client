@@ -799,13 +799,9 @@ This and CI/CD are very important!
 - Add App groups from targets: Bracedotto and Save to Brace -> Signing & Capabilities
   + group.bracedotto.share
 - CryptoSwift dependency
-  + Clone github.com/krzyzanowskim/CryptoSwift to Workspace (same level as brace-client)
-  + From Finder, drag CryptoSwift.xcodeproj to Xcode's sidebar
-  + From Targets: Save to Brace -> General -> Framworks and Libraries, add CryptoSwift.framework
+  + Add the dependency in Podfile with target 'Save to Brace'
 - NVActivityIndicatorView dependency
-  + Clone github.com/ninjaprox/NVActivityIndicatorView to Workspace (same level as brace-client)
-  + From Finder, drag NVActivityIndicatorView.xcodeproj to Xcode's sidebar
-  + From Targets: Save to Brace -> General -> Framworks and Libraries, add NVActivityIndicatorView.framework
+  + Add the dependency in Podfile with target 'Save to Brace'
 - Add fonts to Save to Brace
   + Xcode's sidebar -> Resources, select all fonts
   + Xcode's rightbar -> Target Membership, select Save to Brace
