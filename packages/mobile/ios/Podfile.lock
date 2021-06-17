@@ -351,7 +351,7 @@ PODS:
     - Yoga (~> 1.14)
 
 DEPENDENCIES:
-  - Blockstack (from `https://github.com/bracedotto/blockstack-ios.git`, commit `aa22663`)
+  - Blockstack (from `https://github.com/bracedotto/blockstack-ios.git`, commit `a1ec115`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/Libraries/FBReactNativeSpec`)
@@ -436,7 +436,7 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   Blockstack:
-    :commit: aa22663
+    :commit: a1ec115
     :git: https://github.com/bracedotto/blockstack-ios.git
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
@@ -513,7 +513,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   Blockstack:
-    :commit: aa22663
+    :commit: a1ec115
     :git: https://github.com/bracedotto/blockstack-ios.git
 
 SPEC CHECKSUMS:
@@ -575,6 +575,6 @@ SPEC CHECKSUMS:
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: dd79e67794eb8ec88bd02a8c5f4c2ebd056d3d91
+PODFILE CHECKSUM: a9002edccf957e1d6a89361048002ae0fafcc224
 
 COCOAPODS: 1.10.1

@@ -81,6 +81,7 @@
 		BCD03CA4191A4A758E76A559 /* Inter-BoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = BF7EF96B13A0453DA6FA4432 /* Inter-BoldItalic.otf */; };
 		BEDF7AFDD0D2476FA6B9B6D7 /* Inter-SemiBoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = B17C8B31856F48D689BCB7E8 /* Inter-SemiBoldItalic.otf */; };
 		DA16801CB28C4174A58BCAD0 /* Inter-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = A91D5BF45F6C4291AB4F95D2 /* Inter-Italic.otf */; };
+		F898C786FB5F7152061E6E5A /* libPods-Bracedotto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0444052126785FAC000F06E2 /* libPods-Bracedotto.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -225,6 +226,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				223E7BEB7B2FA1C9FF8027BF /* libPods-Bracedotto.a in Frameworks */,
+				F898C786FB5F7152061E6E5A /* libPods-Bracedotto.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

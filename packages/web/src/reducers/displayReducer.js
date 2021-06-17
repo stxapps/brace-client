@@ -133,7 +133,7 @@ export default (state = initialState, action) => {
       return { ...state, isBulkEditMoveToPopupShown: isShown };
     }
 
-    throw new Error(`Invalid type: ${action.type} and payload: ${action.payload}`);
+    return state;
   }
 
   if (action.type === FETCH) {

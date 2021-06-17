@@ -25,14 +25,9 @@ class ShareViewController: UIViewController {
   
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    print("viewDidAppear: start process shared data")
-    /*DispatchQueue.global(qos: .userInitiated).async {
+    DispatchQueue.global(qos: .userInitiated).async {
       self.processRequest()
-    }*/
-    self.renderAdded()
-    //self.renderDiedAdding()
-    //self.renderNotSignedIn()
-    //self.renderInvalid()
+    }
   }
   
   override func viewWillDisappear(_ animated: Bool) {
@@ -72,27 +67,20 @@ class ShareViewController: UIViewController {
   }
 
   private func addLink() {
-    print("in addLink")
     guard self.sharedUrls.count > 0 else {
       self.renderInvalid()
       return
     }
 
     if !Blockstack.shared.isUserSignedIn() {
-      print("userData is nil, show not sign in here")
-      // Not sign in
       self.renderNotSignedIn()
       return
     }
     
-    print("Found userData, call addLink")
     // Support only 1 url for now!
     Blockstack.shared.addLink(url: self.sharedUrls[0]) { publicUrl, error in
-      print("publicUrl")
-      print(publicUrl)
-      print("error")
-      print(error)
       guard let _ = publicUrl, error == nil else {
+        print("Died adding with error: ", error.debugDescription)
         self.renderDiedAdding()
         return
       }
@@ -102,20 +90,16 @@ class ShareViewController: UIViewController {
   }
 
   @objc private func completeRequest() {
-    print("completeRequest called")
     self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
   }
 
   @objc private func cancelRequest() {
-    print("cancelRequest called")
     self.extensionContext!.cancelRequest(withError: NSError(domain:"BRACEDOTTO_ERROR",
                                                             code: 0,
                                                             userInfo: nil))
   }
 
   @objc private func onBackgroundBtnClick() {
-    print("onBackgroundBtnClick called")
-    print(self.didRenderAdded)
     if self.didRenderAdded {
       self.completeRequest()
     }
@@ -200,7 +184,6 @@ class ShareViewController: UIViewController {
   
   private func renderAdded() {
     DispatchQueue.main.async {
-      print("Succeed addLink, display green check here and timer to hide")
       let contentView = UIView()
 
       let contentViewWidth = 192, contentViewHeight = 192
@@ -238,9 +221,7 @@ class ShareViewController: UIViewController {
       self._render(contentView)
       self.didRenderAdded = true
       if self.timer == nil {
-        print("Set timer")
         self.timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { _ in
-          print("Timer fired")
           self.completeRequest()
         }
       }
@@ -249,7 +230,6 @@ class ShareViewController: UIViewController {
   
   private func renderDiedAdding() {
     DispatchQueue.main.async {
-      print("Error addLink, display error here.")
       let contentView = UIView()
 
       let contentViewWidth = 288, contentViewHeight = 352
@@ -317,7 +297,6 @@ class ShareViewController: UIViewController {
 
   private func renderInvalid() {
     DispatchQueue.main.async {
-      print("Render invalid")
       let contentView = UIView()
 
       let contentViewWidth = 256, contentViewHeight = 256
@@ -370,7 +349,6 @@ class ShareViewController: UIViewController {
 
   private func renderNotSignedIn() {
     DispatchQueue.main.async {
-      print("Not signed in yet, display please sign in")
       let contentView = UIView()
 
       let contentViewWidth = 256, contentViewHeight = 256

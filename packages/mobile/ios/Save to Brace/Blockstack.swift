@@ -31,20 +31,11 @@ class Blockstack {
 
   private let defaultGaiaHubUrl = "https://hub.blockstack.org"
   private let userDefaults = UserDefaults(suiteName: APP_GROUP_SHARE)  
-  private var userData: UserData?
   private var gaiaConfig: GaiaConfig?
 
   private func getUserData() -> UserData? {
-    if let uData = self.userData {
-      return uData
-    }
-
-    let uData = self.retrieveUserData()
-    self.userData = uData
-    return uData
-  }
-
-  private func retrieveUserData() -> UserData? {
+    // Can't store userData in a variable
+    //   as it's possible signing out from app but this instance still alive in Safari process
     guard let s = userDefaults?.string(forKey: APP_GROUP_SHARE_UKEY),
           let d = s.data(using: .utf8),
           let uData = try? JSONDecoder().decode(UserData.self, from: d) else {
@@ -68,7 +59,6 @@ class Blockstack {
     let userData = self.getUserData()
     let hubUrl = userData?.hubUrl ?? defaultGaiaHubUrl
     guard let appPrivateKey = userData?.privateKey else {
-      print("Error not found appPrivateKey in getGaiaConfig")
       callback(nil, NSError.create(description: "Error not found appPrivateKey in getGaiaConfig"))
       return
     }
@@ -104,20 +94,17 @@ class Blockstack {
   
   private func getGaiaHubInfo(for hubUrl: String, callback: @escaping (GaiaHubInfo?, Error?) -> Void) {
     guard let url = URL(string: "\(hubUrl)/hub_info") else {
-      print("Error when declare url from hubInfoUrl")
       callback(nil, NSError.create(description: "Error when declare url from hubInfoUrl"))
       return
     }
     
     let task = URLSession.shared.dataTask(with: url) { data, response, error in
       guard let data = data, error == nil else {
-        print("Error connecting to Gaia hub")
         callback(nil, error)
         return
       }
       
       guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
-        print("Error Gaia hub returns status code other than 2xx")
         callback(nil, NSError.create(description: "Error Gaia hub returns status code other than 2xx"))
         return
       }
@@ -155,7 +142,6 @@ class Blockstack {
       return nil
     }
 
-    // Encrypt and serialize to JSON
     var cipherObjectJSON: String?
     switch content {
       case let .bytes(bytes):
@@ -177,7 +163,6 @@ class Blockstack {
     callback: @escaping (_ publicUrl: String?, _ error: Error?) -> Void) {
 
     guard let data = self.encrypt(content: .text(content)) else {
-      print("Encryption error in putFile")
       callback(nil, NSError.create(description: "Encryption error in putFile"))
       return
     }
@@ -190,7 +175,6 @@ class Blockstack {
 
       guard let path = path.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlPathAllowed),
             let putUrl = URL(string: "\(config.server!)/store/\(config.address!)/\(path)") else {
-        print("Error create putUrl in putFile")
         callback(nil, NSError.create(description: "Error create putUrl in putFile"))
         return
       }
@@ -200,29 +184,22 @@ class Blockstack {
       request.setValue(contentType, forHTTPHeaderField: "Content-Type")
       request.setValue("bearer \(config.token!)", forHTTPHeaderField: "Authorization")
       request.httpBody = data
-
+      
       let task = URLSession.shared.dataTask(with: request) { data, response, error in
         guard let data = data, error == nil else {
-          print("Error uploading to Gaia hub")
           callback(nil, error)
           return
         }
 
         guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
-          print("Error uploading to Gaia hub returns status code other than 2xx")
           callback(nil, NSError.create(description: "Error uploading to Gaia hub returns status code other than 2xx"))
           return
         }
         
         do {
-          print("Added with data:")
-          print(data)
           let result = try JSONDecoder().decode(PutFileResponse.self, from: data)
-          print("Parse result:")
-          print(result)
           callback(result.publicUrl!, nil)
         } catch {
-          print("Parse putfile response error")
           callback(nil, error)
         }
       }

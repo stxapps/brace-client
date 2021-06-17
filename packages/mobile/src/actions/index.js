@@ -37,7 +37,7 @@ import {
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
-  DOMAIN_NAME, APP_DOMAIN_NAME, BLOCKSTACK_AUTH, SAVE_TO_BRACE,
+  DOMAIN_NAME, APP_URL_SCHEME, APP_DOMAIN_NAME, BLOCKSTACK_AUTH,
   APP_GROUP_SHARE, APP_GROUP_SHARE_UKEY,
   ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
   CONFIRM_DELETE_POPUP, SETTINGS_POPUP, BULK_EDIT_MOVE_TO_POPUP,
@@ -66,6 +66,7 @@ export const init = async (store) => {
       appDomain: DOMAIN_NAME,
       scopes: ['store_write'],
       redirectUrl: BLOCKSTACK_AUTH,
+      callbackUrlScheme: APP_URL_SCHEME,
     };
     await userSession.createSession(config);
   }
@@ -75,14 +76,8 @@ export const init = async (store) => {
     await handlePendingSignIn(initialUrl)(store.dispatch, store.getState);
   }
 
-  let saveToBraceUrl;
-  if (initialUrl && initialUrl.startsWith(APP_DOMAIN_NAME + SAVE_TO_BRACE)) {
-    saveToBraceUrl = initialUrl;
-  }
-
   Linking.addEventListener('url', async (e) => {
     await handlePendingSignIn(e.url)(store.dispatch, store.getState);
-    await handleSaveToBrace(e.url)(store.dispatch, store.getState);
   });
 
   Dimensions.addEventListener('change', ({ window }) => {
@@ -102,7 +97,7 @@ export const init = async (store) => {
     username = userData.username;
     userImage = getUserImageUrl(userData);
   }
-  const href = saveToBraceUrl || DOMAIN_NAME + '/';
+  const href = DOMAIN_NAME + '/';
   store.dispatch({
     type: INIT,
     payload: {
@@ -159,16 +154,6 @@ const handlePendingSignIn = (url) => async (dispatch, getState) => {
   dispatch({
     type: UPDATE_HANDLING_SIGN_IN,
     payload: false,
-  });
-};
-
-const handleSaveToBrace = (url) => async (dispatch, getState) => {
-
-  if (!url.startsWith(APP_DOMAIN_NAME + SAVE_TO_BRACE)) return;
-
-  dispatch({
-    type: UPDATE_HREF,
-    payload: url,
   });
 };
 
