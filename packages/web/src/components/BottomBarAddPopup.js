@@ -87,7 +87,7 @@ class BottomBarAddPopup extends React.PureComponent {
         <div className={`px-4 pt-6 pb-6 fixed inset-x-0 bottom-0 bg-white border border-gray-200 rounded-t-lg shadow-xl transform ${!isAddPopupShown ? 'translate-y-full' : ''} z-41`}>
           <div className="flex">
             <span className="inline-flex items-center bg-white text-sm font-medium text-gray-700">Url:</span>
-            <input ref={this.addInput} onChange={this.onAddInputChange} onKeyPress={this.onAddInputKeyPress} className="ml-3 px-4 py-2 form-input flex-1 block w-full bg-white text-base text-gray-900 rounded-full border border-gray-500 appearance-none focus:outline-none focus:shadow-outline" type="url" placeholder="https://" value={url} />
+            <input ref={this.addInput} onChange={this.onAddInputChange} onKeyPress={this.onAddInputKeyPress} className="ml-3 px-4 py-2 form-input flex-1 block w-full bg-white text-base text-gray-900 rounded-full border border-gray-500 appearance-none focus:outline-none focus:shadow-outline" type="url" placeholder="https://" value={url} autoCapitalize="none" />
           </div>
           <p className="pt-3 text-red-500">{msg}</p>
           <div className="pt-3">

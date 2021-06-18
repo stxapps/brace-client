@@ -94,7 +94,7 @@ class TopBarAddPopup extends React.PureComponent {
           <div className="flex">
             <span className="inline-flex items-center bg-white text-sm font-medium text-gray-700">Url:</span>
             <div className="ml-3 flex-1">
-              <input onChange={this.onAddInputChange} onKeyPress={this.onAddInputKeyPress} className="px-4 py-2 form-input w-full bg-white text-base text-gray-900 rounded-full border border-gray-500 appearance-none focus:outline-none focus:shadow-outline" type="url" placeholder="https://" value={url} autoFocus />
+              <input onChange={this.onAddInputChange} onKeyPress={this.onAddInputKeyPress} className="px-4 py-2 form-input w-full bg-white text-base text-gray-900 rounded-full border border-gray-500 appearance-none focus:outline-none focus:shadow-outline" type="url" placeholder="https://" value={url} autoCapitalize="none" autoFocus />
             </div>
           </div>
           <p className="pt-3 text-red-500">{msg}</p>

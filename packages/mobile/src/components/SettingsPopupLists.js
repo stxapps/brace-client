@@ -362,7 +362,7 @@ class _ListNameEditor extends React.PureComponent {
           </Svg>
         </TouchableOpacity>}
         <View style={tailwind('flex-grow flex-shrink')}>
-          <TextInput ref={this.input} onFocus={this.onInputFocus} onBlur={this.onInputBlur} onChange={this.onInputChange} onSubmitEditing={this.onInputKeyPress} style={tailwind('py-2 w-full bg-white text-base text-gray-900 font-normal border-0')} placeholder="Create new list" value={value} autoCapitalize="none" autoCompleteType="off" autoCorrect={false} editable={!(isBusy || doRetry)} />
+          <TextInput ref={this.input} onFocus={this.onInputFocus} onBlur={this.onInputBlur} onChange={this.onInputChange} onSubmitEditing={this.onInputKeyPress} style={tailwind('py-2 w-full bg-white text-base text-gray-900 font-normal border-0')} placeholder="Create new list" value={value} editable={!(isBusy || doRetry)} />
           <Text style={cache('SPL_errMsg', [tailwind('pl-1 absolute left-0 right-0 text-sm text-red-600 font-medium leading-5'), { bottom: -8 }])} numberOfLines={1} ellipsizeMode="tail">{errMsg}</Text>
         </View>
         {mode === MODE_EDIT && <TouchableOpacity onPressIn={this.onOkBtnPress} onPress={this.onOkBtnClick} style={tailwind('flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10')}>
