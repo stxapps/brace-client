@@ -87,8 +87,9 @@ class Main extends React.PureComponent {
     return (
       <React.Fragment>
         <CardPanel columnWidth={columnWidth} />
-        <TopBar rightPane={topBarRightPane} isListNameShown={true} />
+        {/* BottomBar before TopBar so listNamePopup's bg in TopBar is above BottomBar */}
         {columnWidth === PC_100 && <BottomBar />}
+        <TopBar rightPane={topBarRightPane} isListNameShown={true} />
         <FetchedPopup />
         <SettingsPopup />
         <CardItemMenuPopup />
