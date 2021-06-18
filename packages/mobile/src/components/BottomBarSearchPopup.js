@@ -64,8 +64,6 @@ class BottomBarSearchPopup extends React.PureComponent {
       prevState.keyboardHeight !== this.state.keyboardHeight
     ) {
 
-      if (!isBottomBarShown && isSearchPopupShown) throw new Error(`Illegal isBottomBarShown: ${isBottomBarShown} and isSearchPopupShown: ${isSearchPopupShown}`);
-
       let toValue;
       if (!isBottomBarShown) {
         toValue = toPx(BOTTOM_BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT) + insets.bottom;

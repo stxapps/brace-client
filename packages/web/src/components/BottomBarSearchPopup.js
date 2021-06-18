@@ -38,9 +38,10 @@ class BottomBarSearchPopup extends React.PureComponent {
     const { isBottomBarShown, isSearchPopupShown } = props;
 
     if (!isBottomBarShown) return 'bbHidden';
-    if (!isPrevBottomBarShown && isBottomBarShown) return 'bbVisible';
-
-    if (isSearchPopupShown) return 'visible';
+    if (isSearchPopupShown) {
+      return !isPrevBottomBarShown ? 'bbVisibleVisible' : 'visible';
+    }
+    if (!isPrevBottomBarShown) return 'bbVisible';
     return 'hidden';
   }
 

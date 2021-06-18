@@ -108,7 +108,7 @@ export default (state = initialState, action) => {
     }
 
     if (id === SEARCH_POPUP) {
-      return { ...state, isSearchPopupShown: isShown, searchString: '' };
+      return { ...state, isSearchPopupShown: isShown };
     }
 
     if (id === PROFILE_POPUP) {

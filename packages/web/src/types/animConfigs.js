@@ -117,6 +117,10 @@ export const bbSearchPopupFMV = {
     translateY: negRem(subtractRem(BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT)),
     transition: { duration: BOTTOM_BAR_DURATION / 1000 },
   },
+  bbVisibleVisible: {
+    translateY: negRem(BOTTOM_BAR_HEIGHT),
+    transition: { duration: BOTTOM_BAR_DURATION / 1000 },
+  },
 };
 
 export const bModalFMV = {

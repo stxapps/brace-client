@@ -6034,9 +6034,9 @@ react-native-animated-spinkit@^1.5.1:
   resolved "https://registry.yarnpkg.com/react-native-animated-spinkit/-/react-native-animated-spinkit-1.5.1.tgz#a251d3c30f6c1876896252d8d2febf03759bf457"
   integrity sha512-n4zXVY2Ro3iprmznLEGmcmG/H8oXdG3AmHrXMa1lfH+gM+zL8gGTL91BGlrJC7Th9gEbB7Q2Glxt+GFW62GLQw==
 
-"react-native-blockstack@https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?b85d416a6273caf1beda26ec9dac47becc2c7a02":
+"react-native-blockstack@https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?e3b45ca539d81c557d6a5d549eb3d0a3e9a1af5c":
   version "0.4.6"
-  resolved "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?b85d416a6273caf1beda26ec9dac47becc2c7a02#abd187c5125361a9a6eb30d5dba51a9742cfe5d3"
+  resolved "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?e3b45ca539d81c557d6a5d549eb3d0a3e9a1af5c#1ac667c98486d67f9ea054059b9cdff8e9997907"
 
 react-native-default-preference@^1.4.3:
   version "1.4.3"

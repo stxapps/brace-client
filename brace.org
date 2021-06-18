@@ -762,7 +762,7 @@ This and CI/CD are very important!
 - yarn add https://github.com/bracedotto/redux-offline#a5a5da91de14b9e22c73a15e3617a0d627d3c0ec
 - yarn add reselect url-parse axios jdenticon@2.2.0
 - yarn add @react-native-community/async-storage @react-native-community/netinfo
-- yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?b85d416a6273caf1beda26ec9dac47becc2c7a02'
+- yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?e3b45ca539d81c557d6a5d549eb3d0a3e9a1af5c'
 - change minSdkVersion from 16 to 21 in ./android/build.gradle
 - Allow CORS access on https://brace.to/manifest.json
 - Set up Android deep linking: reactnative.dev/docs/linking and developer.android.com/training/app-links/deep-linking

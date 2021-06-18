@@ -162,3 +162,6 @@ export const CENTER = 'CENTER'; // center of the window
 export const EDGE = 'EDGE'; // bottom or right of the window
 export const AT_TRIGGER = 'AT_TRIGGER'; // top or left of the trigger
 export const EDGE_TRIGGER = 'EDGE_TRIGGER'; // bottom or right of the trigger
+
+export const APP_GROUP_SHARE = 'group.bracedotto.share';
+export const APP_GROUP_SHARE_UKEY = 'uKey';
