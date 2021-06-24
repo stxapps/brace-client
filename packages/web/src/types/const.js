@@ -125,7 +125,9 @@ export const URL_MSGS = {
 
 export const BRACE_URL = 'https://brace-001.uc.r.appspot.com';
 export const BRACE_EXTRACT_URL = BRACE_URL + '/extract';
+export const BRACE_PRE_EXTRACT_URL = BRACE_URL + '/pre-extract';
 
+export const EXTRACT_INIT = 'EXTRACT_INIT';
 export const EXTRACT_OK = 'EXTRACT_OK';
 export const EXTRACT_ERROR = 'EXTRACT_ERROR';
 export const EXTRACT_INVALID_URL = 'EXTRACT_INVALID_URL';
