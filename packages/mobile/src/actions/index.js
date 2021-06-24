@@ -44,7 +44,7 @@ import {
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH,
   ADDED, DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
-  BRACE_EXTRACT_URL, EXTRACT_EXCEEDING_N_URLS,
+  BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
   N_LINKS, SWAP_LEFT, SWAP_RIGHT,
 } from '../types/const';
 import {
@@ -136,7 +136,6 @@ const handlePendingSignIn = (url) => async (dispatch, getState) => {
   const isUserSignedIn = await userSession.isUserSignedIn();
   if (isUserSignedIn) {
     const userData = await userSession.loadUserData();
-    console.log('userData', userData);
     if (Platform.OS === 'ios') {
       await DefaultPreference.set(APP_GROUP_SHARE_UKEY, JSON.stringify(userData));
     }
@@ -546,6 +545,16 @@ export const addLink = (url, listName, doExtractContents) => async (dispatch, ge
   // So it's real time with updated settings from fetch.
   //if (doExtractContents === null) doExtractContents = getState().settings.doExtractContents;
 
+  // If doExtractContents is false but from settings is true, send pre-extract to server
+  if (doExtractContents === false && getState().settings.doExtractContents === true) {
+    axios.post(BRACE_PRE_EXTRACT_URL, { urls: [url] },
+               { headers: { Referer: 'https://brace.to' }})
+      .then(() => { })
+      .catch((error) => {
+        console.log('Error when contact Brace server to pre-extract contents with links: ', links, ' Error: ', error);
+      });
+  }
+
   dispatch({
     type: ADD_LINKS,
     payload,
@@ -776,13 +785,9 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
     _links = Object.values(_links)
       .filter(link => !link.extractedResult)
       .sort((a, b) => b.addedDT - a.addedDT);
+    if (_links.length > 0) links = _links.slice(0, N_LINKS);
 
-    // Allow just one link at a time for now
-    if (_links[0]) {
-      links = [_links[0]];
-    }
-
-    // No not extracted link found, return
+    // No unextracted link found, return
     if (!links) return;
   } else if (listName !== null && ids !== null) {
     let _links = _.ignore(
@@ -790,13 +795,12 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
       [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]
     );
     _links = Object.values(_links);
+    if (_links.length > 0) links = _links.slice(0, N_LINKS);
 
-    // Allow just one link at a time for now
-    if (!_links[0]) {
+    if (!links) {
       console.log(`Links not found: ${listName}, ${ids}`);
       return;
     }
-    links = [_links[0]];
   } else {
     throw new Error(`Invalid parameters: ${listName}, ${ids}`);
   }
@@ -818,7 +822,10 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
   const extractedLinks = [];
   for (let i = 0; i < extractedResults.length; i++) {
     const extractedResult = extractedResults[i];
-    if (extractedResult.status === EXTRACT_EXCEEDING_N_URLS) continue;
+    if (
+      extractedResult.status === EXTRACT_INIT ||
+      extractedResult.status === EXTRACT_EXCEEDING_N_URLS
+    ) continue;
 
     // Some links might be moved while extracting.
     // If that the case, ignore them.

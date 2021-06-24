@@ -9,10 +9,6 @@ import Foundation
 
 public typealias Bytes = Array<UInt8>
 
-public let APP_GROUP_SHARE = "group.bracedotto.share"
-public let APP_GROUP_SHARE_UKEY = "uKey"
-public let APP_GROUP_SHARE_GKEY = "gKey"
-
 public struct UserData: Codable {
   public let jti: String?
   public let iat, exp: Int?

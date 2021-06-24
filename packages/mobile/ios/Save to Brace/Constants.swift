@@ -7,6 +7,12 @@
 
 import Foundation
 
+public let APP_GROUP_SHARE = "group.bracedotto.share"
+public let APP_GROUP_SHARE_UKEY = "uKey"
+public let APP_GROUP_SHARE_GKEY = "gKey"
+
+public let BRACE_PRE_EXTRACT_URL = "https://brace-001.uc.r.appspot.com/pre-extract"
+
 public let MY_LIST = "My List"
 
 public let IMAGE = "image"

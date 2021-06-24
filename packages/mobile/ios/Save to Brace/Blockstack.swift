@@ -26,6 +26,8 @@ class Blockstack {
     let fpath = "links/\(listName)/\(id).json"
     let content = "{\"id\": \"\(id)\", \"url\": \"\(url)\", \"addedDT\": \(addedDT), \"decor\": \(decor)}"
 
+    self.sendPreExtract(url)
+
     self.putFile(path: fpath, content: content, contentType: "application/json", callback: callback)
   }
 
@@ -271,5 +273,23 @@ class Blockstack {
     let faviconBg = "{\"type\": \"\(faviconBgType)\", \"value\": \"\(faviconBgValue)\"}"
 
     return "{\"image\": {\"bg\": \(imageBg), \"fg\": \(imageFg)}, \"favicon\": {\"bg\": \(faviconBg)}}"
+  }
+
+  private func sendPreExtract(_ url: String) {
+    var request = URLRequest(url: BRACE_PRE_EXTRACT_URL)
+    request.httpMethod = "POST"
+    request.httpBody = ["urls": [url]]
+    let task = URLSession.shared.dataTask(with: request) { data, response, error in
+      guard error == nil else {
+        print("Sending pre-extract with error: ", error.debugDescription)
+        return
+      }
+
+      guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+        print("Error pre-extract response status code other than 2xx: ", httpResponse)
+        return
+      }
+    }
+    task.resume()
   }
 }
