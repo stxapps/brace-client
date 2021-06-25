@@ -1,56 +1,25 @@
-const defaultTheme = require('tailwindcss/defaultTheme')
+const defaultTheme = require('tailwindcss/defaultTheme');
+const colors = require('tailwindcss/colors');
 
 module.exports = {
+  purge: [
+    './src/**/*.html',
+    './src/**/*.js',
+  ],
+  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
       },
       colors: {
+        green: colors.green,
+        'gray-logo': '#1A202C',
         'purple-blockstack': '#211F6D',
       },
       spacing: {
-        '1.5': '0.375rem',
-        '7': '1.75rem',
-        '11': '2.75rem',
-        '14': '3.5rem',
-        '28': '7rem',
-        '36': '9rem',
-        '72': '18rem',
-        '96': '24rem',
-        '1/2': '50%',
-        '1/3': '33.333333%',
-        '2/3': '66.666667%',
-        '1/4': '25%',
-        '2/4': '50%',
-        '3/4': '75%',
-        '1/5': '20%',
-        '2/5': '40%',
-        '3/5': '60%',
-        '4/5': '80%',
-        '1/6': '16.666667%',
-        '2/6': '33.333333%',
-        '3/6': '50%',
-        '4/6': '66.666667%',
-        '5/6': '83.333333%',
-        '1/12': '8.333333%',
-        '2/12': '16.666667%',
-        '3/12': '25%',
-        '4/12': '33.333333%',
-        '5/12': '41.666667%',
-        '6/12': '50%',
-        '7/12': '58.333333%',
-        '8/12': '66.666667%',
-        '9/12': '75%',
-        '10/12': '83.333333%',
-        '11/12': '91.666667%',
-        '21/100': '21%',
-        '77/200': '38.5%',
         '45/100': '45%',
         '55/100': '55%',
-      },
-      inset: {
-        '1/2': '50%',
       },
       minWidth: {
         '28': '7rem',
@@ -66,11 +35,6 @@ module.exports = {
         '56': '14rem',
         '64': '16rem',
       },
-      maxHeight: {
-        '64': '16rem',
-        '72': '18rem',
-        '80': '20rem',
-      },
       fontSize: {
         '2xl-extra': '1.625rem',
       },
@@ -81,12 +45,20 @@ module.exports = {
     },
   },
   variants: {
-    backgroundColor: ['responsive', 'hover', 'focus', 'active']
+    extend: {
+      backgroundColor: ['active'],
+      textColor: ['group-focus', 'focus-visible'],
+      ringColor: ['group-focus', 'focus-visible'],
+      ringOffsetColor: ['group-focus', 'focus-visible'],
+      ringOffsetWidth: ['group-focus', 'focus-visible'],
+      ringOpacity: ['group-focus', 'focus-visible'],
+      ringWidth: ['group-focus', 'focus-visible'],
+    },
   },
-  plugins: [],
-  purge: false,
-  future: {
-    removeDeprecatedGapUtilities: true,
-    purgeLayersByDefault: true,
-  },
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/aspect-ratio'),
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/line-clamp'),
+  ],
 };

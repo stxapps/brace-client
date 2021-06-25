@@ -620,9 +620,8 @@ This and CI/CD are very important!
 *** Google app engine
 *** Puppeteer
 ** steps
-- yarn add tailwindcss postcss-cli 
-- yarn add @fullhuman/postcss-purgecss
-- yarn add autoprefixer
+- yarn add tailwindcss postcss postcss-cli autoprefixer
+- yarn add @tailwindcss/forms @tailwindcss/typography @tailwindcss/aspect-ratio @tailwindcss/line-clamp
 - no need for dev dependencies as this's not a node app
 - follow steps in tailwindcss.com/course/optimizing-for-production
 - follow steps in medium.com/@xijo/create-react-app-with-tailwind-via-postcss-plus-purgecss-5c36b4c33ba7 to config Tailwindcss
