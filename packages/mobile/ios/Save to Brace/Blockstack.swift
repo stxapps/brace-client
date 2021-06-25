@@ -276,9 +276,16 @@ class Blockstack {
   }
 
   private func sendPreExtract(_ url: String) {
-    var request = URLRequest(url: BRACE_PRE_EXTRACT_URL)
+    guard let bracePreExtractUrl = URL(string: BRACE_PRE_EXTRACT_URL) else {
+      print("Error when declare bracePreExtractUrl from BRACE_PRE_EXTRACT_URL")
+      return
+    }
+
+    var request = URLRequest(url: bracePreExtractUrl)
     request.httpMethod = "POST"
-    request.httpBody = ["urls": [url]]
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.setValue(DOMAIN_NAME, forHTTPHeaderField: "Referer")
+    request.httpBody = "{\"urls\": [\"\(url)\"]}".data(using: .utf8)
     let task = URLSession.shared.dataTask(with: request) { data, response, error in
       guard error == nil else {
         print("Sending pre-extract with error: ", error.debugDescription)
@@ -286,7 +293,7 @@ class Blockstack {
       }
 
       guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
-        print("Error pre-extract response status code other than 2xx: ", httpResponse)
+        print("Error pre-extract returns status code other than 2xx")
         return
       }
     }
