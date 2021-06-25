@@ -564,7 +564,10 @@ export const addLink = (url, listName, doExtractContents) => async (dispatch, ge
 
   // If doExtractContents is false but from settings is true, send pre-extract to server
   if (doExtractContents === false && getState().settings.doExtractContents === true) {
-    axios.post(BRACE_PRE_EXTRACT_URL, { urls: [url] })
+    axios.post(
+      BRACE_PRE_EXTRACT_URL,
+      { urls: [url] },
+    )
       .then(() => { })
       .catch((error) => {
         console.log('Error when contact Brace server to pre-extract contents with links: ', links, ' Error: ', error);
@@ -799,7 +802,9 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
 
     let _links = _.ignore(obj, [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]);
     _links = Object.values(_links)
-      .filter(link => !link.extractedResult)
+      .filter(link => {
+        return !link.extractedResult || link.extractedResult.status === EXTRACT_INIT;
+      })
       .sort((a, b) => b.addedDT - a.addedDT);
     if (_links.length > 0) links = _links.slice(0, N_LINKS);
 

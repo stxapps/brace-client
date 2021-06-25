@@ -547,8 +547,11 @@ export const addLink = (url, listName, doExtractContents) => async (dispatch, ge
 
   // If doExtractContents is false but from settings is true, send pre-extract to server
   if (doExtractContents === false && getState().settings.doExtractContents === true) {
-    axios.post(BRACE_PRE_EXTRACT_URL, { urls: [url] },
-      { headers: { Referer: 'https://brace.to' } })
+    axios.post(
+      BRACE_PRE_EXTRACT_URL,
+      { urls: [url] },
+      { headers: { Referer: DOMAIN_NAME } }
+    )
       .then(() => { })
       .catch((error) => {
         console.log('Error when contact Brace server to pre-extract contents with links: ', links, ' Error: ', error);
@@ -812,7 +815,7 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
     res = await axios.post(
       BRACE_EXTRACT_URL,
       { urls: links.map(link => link.url) },
-      { headers: { Referer: 'https://brace.to' } }
+      { headers: { Referer: DOMAIN_NAME } }
     );
   } catch (error) {
     console.log('Error when contact Brace server to extract contents with links: ', links, ' Error: ', error);
