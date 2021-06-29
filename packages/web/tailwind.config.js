@@ -36,7 +36,7 @@ module.exports = {
         '64': '16rem',
       },
       fontSize: {
-        '2xl-extra': '1.625rem',
+        '2xl-extra': ['1.625rem', { lineHeight: '2.17rem' }],
       },
       zIndex: {
         '41': '41',
@@ -46,13 +46,12 @@ module.exports = {
   },
   variants: {
     extend: {
-      backgroundColor: ['active'],
       textColor: ['group-focus', 'focus-visible'],
       ringColor: ['group-focus', 'focus-visible'],
       ringOffsetColor: ['group-focus', 'focus-visible'],
       ringOffsetWidth: ['group-focus', 'focus-visible'],
       ringOpacity: ['group-focus', 'focus-visible'],
-      ringWidth: ['group-focus', 'focus-visible'],
+      ringWidth: ['group-hover', 'group-focus', 'hover', 'focus-visible'],
     },
   },
   plugins: [

@@ -81,7 +81,7 @@ class CardItemContent extends React.Component {
 
     if (image) {
       // This GracefulImage needs to be different from the one below so that it's not just rerender but recreate a new component with a new src and new retry. React knows by using different keys.
-      return <GracefulImage key="image-graceful-image-extracted-result" className="absolute h-full w-full object-cover object-center shadow-xs" src={image} alt={`illustration of ${url}`} />;
+      return <GracefulImage key="image-graceful-image-extracted-result" className="absolute h-full w-full object-cover object-center shadow-sm" src={image} alt={`illustration of ${url}`} />;
     }
 
     let fg = null;

@@ -14,7 +14,6 @@ import ListName from './ListName';
 import StatusPopup from './StatusPopup';
 
 import shortLogo from '../images/logo-short.svg';
-import fullLogo from '../images/logo-full.svg';
 
 class TopBar extends React.PureComponent {
 
@@ -48,8 +47,8 @@ class TopBar extends React.PureComponent {
 
   renderSignInBtn() {
     return (
-      <button onClick={() => this.props.signIn()} className="block h-14 focus:outline-none-outer">
-        <span style={{ padding: '0.3125rem 0.6875rem' }} className="bg-white text-base text-gray-700 border border-gray-700 rounded-full shadow-sm hover:bg-gray-800 hover:text-white active:bg-gray-900 focus:shadow-outline-inner">Sign in</span>
+      <button onClick={() => this.props.signIn()} className="block h-14 focus:outline-none group">
+        <span style={{ padding: '0.3125rem 0.6875rem' }} className="bg-white text-base text-gray-600 border border-gray-600 rounded-full shadow-sm hover:bg-gray-700 hover:text-white group-focus:ring">Sign in</span>
       </button>
     );
   }
@@ -125,7 +124,7 @@ class TopBar extends React.PureComponent {
       topBarStyle = { height };
       topBarStyleClasses = 'fixed inset-x-0 top-0 bg-white z-30';
       if (height === headerHeight) {
-        topBarStyleClasses += ' border-b border-gray-300';
+        topBarStyleClasses += ' border-b border-gray-200';
       }
     } else {
       const { headerHeight } = getTopBarSizes(window.innerWidth);
@@ -138,8 +137,7 @@ class TopBar extends React.PureComponent {
         <div className="relative">
           <header className="flex justify-between items-center h-14">
             <div className="relative">
-              <img className="h-8 md:hidden" src={shortLogo} alt="Brace logo" />
-              <img className="hidden h-6 md:block" src={fullLogo} alt="Brace logo" />
+              <img className="h-8" src={shortLogo} alt="Brace logo" />
             </div>
             {rightPane}
           </header>

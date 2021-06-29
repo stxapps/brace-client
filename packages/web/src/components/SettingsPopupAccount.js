@@ -29,11 +29,11 @@ class SettingsPopupAccount extends React.PureComponent {
           <h3 className="pb-2 text-2xl text-gray-800 font-medium leading-none">Account</h3>
         </div>
         <p className="mt-4 text-base text-gray-700 leading-relaxed md:mt-0">You sign in to Brace.to using your Stacks Identity. This is similar to some websites that allow you to use your Google, Facebook, or Twitter account to sign in to their websites. Not similarly, your Stacks Identity lives in blockchain and only you with your secret key can control it. If you want to change your Stacks Identity’s information i.e. your profile picture, please visit <a className="underline hover:text-gray-900 focus:outline-none focus:shadow-outline" href="https://browser.blockstack.org/profiles">Blockstack Browser</a>.</p>
-        <div className="mt-8 md:clearfix">
+        <div className="mt-8 md:flow-root">
           <div className="md:float-right md:w-3/12">
             {userImage}
           </div>
-          <table className="mt-4 table-auto lg:table-fixed">
+          <table className="mt-4 table-auto lg:mt-0 lg:table-fixed">
             <tbody>
               <tr className="py-4">
                 <td className="align-middle lg:w-4/12">
