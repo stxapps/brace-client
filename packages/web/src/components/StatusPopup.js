@@ -74,7 +74,7 @@ class StatusPopup extends React.PureComponent {
 
     return (
       <div className="w-48 text-right overflow-hidden sm:w-64">
-        <motion.span className="pl-3 inline-block bg-white text-gray-700 rounded-l-full" variants={statusPopupFMV} initial={false} animate={animate}>{this.msg}</motion.span>
+        <motion.span className="pl-3 inline-block bg-white text-sm text-gray-500 tracking-wide rounded-l-full" variants={statusPopupFMV} initial={false} animate={animate}>{this.msg}</motion.span>
       </div>
     );
   }

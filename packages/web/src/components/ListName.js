@@ -76,9 +76,9 @@ class ListName extends React.PureComponent {
 
     return listNameMap.map(listNameObj => {
       return (
-        <button key={listNameObj.listName} onClick={() => this.onListNamePopupClick(listNameObj.listName)} className="py-2 pl-4 pr-4 flex items-center w-full hover:bg-gray-400 focus:outline-none focus:shadow-outline">
-          <div className="text-base text-gray-800 truncate">{listNameObj.displayName}</div>
-          {listNameObj.listName in updates && <div className="ml-1 flex-grow-0 flex-shrink-0 self-start w-2 h-2 bg-blue-500 rounded-full" />}
+        <button key={listNameObj.listName} onClick={() => this.onListNamePopupClick(listNameObj.listName)} className="py-2 pl-4 pr-4 flex items-center w-full rounded-md group hover:bg-gray-100 focus:outline-none focus:ring focus:ring-inset">
+          <div className="text-sm text-gray-700 truncate group-hover:text-gray-900">{listNameObj.displayName}</div>
+          {listNameObj.listName in updates && <div className="ml-1 flex-grow-0 flex-shrink-0 self-start w-1.5 h-1.5 bg-blue-400 rounded-full" />}
         </button>
       );
     });
@@ -92,7 +92,7 @@ class ListName extends React.PureComponent {
     );
 
     const { menuPopupSize } = this.state;
-    const menuPopupClassNames = 'py-2 absolute top-0 left-0 min-w-28 max-w-64 bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41';
+    const menuPopupClassNames = 'py-2 absolute top-0 left-0 min-w-28 max-w-64 bg-white border border-gray-100 rounded-lg shadow-xl overflow-auto z-41';
 
     let menuPopup;
     if (menuPopupSize) {
@@ -147,10 +147,10 @@ class ListName extends React.PureComponent {
 
     return (
       <div className="inline-block relative">
-        <button onClick={this.onListNameBtnClick} className="flex items-center rounded hover:shadow-outline focus:outline-none focus:shadow-outline">
-          <h2 style={textStyle} className="mr-1 text-lg text-gray-900 font-semibold leading-7 truncate">{displayName}</h2>
-          {listName in updates && <div className="self-start w-2 h-2 bg-blue-500 rounded-full" />}
-          <svg className="w-5 text-black" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <button onClick={this.onListNameBtnClick} className="flex items-center rounded-sm focus:outline-none focus:ring">
+          <h2 style={textStyle} className="mr-1 text-lg text-gray-900 font-medium leading-7 truncate">{displayName}</h2>
+          {listName in updates && <div className="self-start w-1.5 h-1.5 bg-blue-400 rounded-full" />}
+          <svg className="w-5 text-gray-900" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>

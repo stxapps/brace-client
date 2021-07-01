@@ -84,7 +84,7 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
 
     return moveTo.map(listNameObj => {
       const key = MOVE_TO + ' ' + listNameObj.listName;
-      return <button key={key} onClick={() => this.onBulkEditMoveToPopupClick(key)} className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left truncate hover:bg-gray-400 focus:outline-none focus:shadow-outline">{listNameObj.displayName}</button>;
+      return <button key={key} onClick={() => this.onBulkEditMoveToPopupClick(key)} className="py-2 pl-4 pr-4 block w-full text-sm text-gray-700 text-left truncate rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">{listNameObj.displayName}</button>;
     });
   }
 
@@ -96,7 +96,7 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
     );
 
     const { menuPopupSize } = this.state;
-    const menuPopupClassNames = 'mt-2 py-2 absolute min-w-28 max-w-64 bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41';
+    const menuPopupClassNames = 'mt-2 py-2 absolute min-w-28 max-w-64 bg-white border border-gray-100 rounded-lg shadow-xl overflow-auto z-41';
 
     let menuPopup;
     if (menuPopupSize) {

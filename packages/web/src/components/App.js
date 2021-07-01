@@ -15,7 +15,6 @@ import Back from './Back';
 class App extends React.PureComponent {
 
   render() {
-
     if (this.props.href === null || this.props.isHandlingSignIn) {
       return <Loading />;
     }

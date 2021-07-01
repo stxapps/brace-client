@@ -63,10 +63,10 @@ class TopBarCommands extends React.PureComponent {
     return (
       <AnimatePresence key="AnimatePresence_ProfilePopup">
         <motion.button key="ProfilePopup_cancelBtn" onClick={this.onProfileCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
-        <motion.div key="ProfilePopup_menuPopup" className="mt-2 py-2 absolute right-0 w-32 bg-white border border-gray-200 rounded-lg shadow-xl z-41" variants={trPopupFMV} initial="hidden" animate="visible" exit="hidden">
-          <button onClick={this.onSettingsBtnClick} className="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline">Settings</button>
-          <button onClick={this.onSupportBtnClick} className="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline">Support</button>
-          <button onClick={this.onSignOutBtnClick} className="py-2 pl-4 block w-full text-gray-800 text-left hover:bg-gray-400 focus:outline-none focus:shadow-outline">Sign out</button>
+        <motion.div key="ProfilePopup_menuPopup" className="mt-2 py-2 absolute right-0 w-28 bg-white border border-gray-100 rounded-lg shadow-xl z-41" variants={trPopupFMV} initial="hidden" animate="visible" exit="hidden">
+          <button onClick={this.onSettingsBtnClick} className="py-2 pl-4 block w-full text-sm text-gray-700 text-left rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">Settings</button>
+          <button onClick={this.onSupportBtnClick} className="py-2 pl-4 block w-full text-sm text-gray-700 text-left rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">Support</button>
+          <button onClick={this.onSignOutBtnClick} className="py-2 pl-4 block w-full text-sm text-gray-700 text-left rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">Sign out</button>
         </motion.div>
       </AnimatePresence>
     );
@@ -81,17 +81,16 @@ class TopBarCommands extends React.PureComponent {
         <TopBarAddPopup />
         <TopBarSearchInput />
         <div className="relative ml-4">
-          <button onClick={this.onBulkEditBtnClick} style={{ height: '2rem', paddingLeft: '0.625rem', paddingRight: '0.75rem' }} className={`px-3 flex justify-center items-center bg-white border border-gray-600 rounded-full shadow-sm group hover:border-gray-900 hover:shadow-outline active:bg-gray-200 focus:outline-none focus:shadow-outline`}>
-
-            <svg className="mx-auto w-4 text-gray-600 group-hover:text-gray-800" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <button onClick={this.onBulkEditBtnClick} style={{ height: '2rem', paddingLeft: '0.625rem', paddingRight: '0.75rem' }} className={`px-3 flex justify-center items-center bg-white border border-gray-400 rounded-full shadow-sm group hover:border-gray-500 focus:outline-none focus:ring`}>
+            <svg className="mx-auto w-3.5 text-gray-500 group-hover:text-gray-600" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path d="M17.4142 2.58579C16.6332 1.80474 15.3668 1.80474 14.5858 2.58579L7 10.1716V13H9.82842L17.4142 5.41421C18.1953 4.63316 18.1953 3.36683 17.4142 2.58579Z" />
               <path fillRule="evenodd" clipRule="evenodd" d="M2 6C2 4.89543 2.89543 4 4 4H8C8.55228 4 9 4.44772 9 5C9 5.55228 8.55228 6 8 6H4V16H14V12C14 11.4477 14.4477 11 15 11C15.5523 11 16 11.4477 16 12V16C16 17.1046 15.1046 18 14 18H4C2.89543 18 2 17.1046 2 16V6Z" />
             </svg>
-            <span className="ml-1 text-base text-gray-700 group-hover:text-gray-900">Select</span>
+            <span className="ml-1 text-sm text-gray-500 group-hover:text-gray-600">Select</span>
           </button>
         </div>
         <div className="relative ml-4">
-          <button onClick={this.onProfileBtnClick} className={`relative block h-8 w-8 overflow-hidden border-2 border-gray-200 ${isProfilePopupShown ? 'z-41' : ''} hover:shadow-outline focus:outline-none focus:shadow-outline ${this.profileBtnStyleClasses}`}>
+          <button onClick={this.onProfileBtnClick} className={`relative block h-8 w-8 overflow-hidden border-2 border-gray-300 ${isProfilePopupShown ? 'z-41' : ''} hover:border-gray-400 focus:outline-none focus:ring ${this.profileBtnStyleClasses}`}>
             <GracefulImage className="h-full w-full bg-white object-cover" src={this.userImage} alt="Profile" />
           </button>
           {this.renderProfilePopup()}

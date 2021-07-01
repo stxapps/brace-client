@@ -81,7 +81,7 @@ class CardItemContent extends React.Component {
 
     if (image) {
       // This GracefulImage needs to be different from the one below so that it's not just rerender but recreate a new component with a new src and new retry. React knows by using different keys.
-      return <GracefulImage key="image-graceful-image-extracted-result" className="absolute h-full w-full object-cover object-center shadow-sm" src={image} alt={`illustration of ${url}`} />;
+      return <GracefulImage key="image-graceful-image-extracted-result" className="absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5" src={image} alt={`illustration of ${url}`} />;
     }
 
     let fg = null;
@@ -90,7 +90,7 @@ class CardItemContent extends React.Component {
       fg = (
         <React.Fragment>
           <div className="absolute top-1/2 left-1/2 w-20 h-20 bg-white rounded-full transform -translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute top-1/2 left-1/2 text-5xl text-gray-700 font-semibold leading-none uppercase transform -translate-x-1/2 -translate-y-1/2">{text}</div>
+          <div className="absolute top-1/2 left-1/2 text-5xl text-gray-700 font-medium leading-none uppercase transform -translate-x-1/2 -translate-y-1/2">{text}</div>
         </React.Fragment>
       );
     }
@@ -189,8 +189,8 @@ class CardItemContent extends React.Component {
             <div className="pl-4 flex justify-start items-center lg:pl-5">
               {this.renderFavicon()}
               <div className="flex-shrink flex-grow min-w-0">
-                <p className="pl-2 text-base text-gray-700 truncate">
-                  <a className="focus:outline-none focus:shadow-outline" href={origin}>
+                <p className="pl-2 text-base text-gray-500 truncate hover:text-gray-600">
+                  <a className="rounded-sm focus:outline-none focus:ring" href={origin}>
                     {host}
                   </a>
                 </p>
@@ -198,15 +198,15 @@ class CardItemContent extends React.Component {
             </div>
           </div>
           <div className="flex-shrink-0 flex-grow-0">
-            <button onClick={this.onMenuBtnClick} className="pt-2 pb-0 pl-4 pr-2 focus:outline-none-outer">
-              <svg className="py-2 w-6 text-gray-700 rounded-full hover:shadow-outline focus:shadow-outline-inner" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <button onClick={this.onMenuBtnClick} className="pt-2 pb-0 pl-4 pr-2 group focus:outline-none">
+              <svg className="py-2 w-6 text-gray-400 rounded-full group-hover:text-gray-500 group-focus:ring" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
           </div>
         </div>
-        <a className="focus:outline-none-outer" href={ensureContainUrlProtocol(url)}>
-          <h4 className={`mt-0 mb-3 ml-4 mr-3 text-base text-gray-800 font-semibold leading-relaxed ${classNames} focus:shadow-outline-inner lg:mb-4 lg:ml-5 lg:mr-4`}>
+        <a className="group focus:outline-none" href={ensureContainUrlProtocol(url)}>
+          <h4 className={`mt-0 mb-3 ml-4 mr-3 text-lg text-gray-700 font-medium leading-6 rounded-sm ${classNames} group-hover:text-gray-900 group-focus:ring lg:mb-4 lg:ml-5 lg:mr-4`}>
             {title}
           </h4>
         </a>

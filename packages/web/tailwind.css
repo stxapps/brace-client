@@ -3,6 +3,22 @@
 @tailwind utilities;
 
 @layer base {
+  /* clears the 'X' from Internet Explorer */
+  input.hide-clear[type=search]::-ms-clear,
+  input.hide-clear[type=search]::-ms-reveal {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  /* clears the 'X' from Webkit */
+  input[type="search"]::-webkit-search-decoration,
+  input[type="search"]::-webkit-search-cancel-button,
+  input[type="search"]::-webkit-search-results-button,
+  input[type="search"]::-webkit-search-results-decoration {
+    -webkit-appearance:none;
+  }
+
   /* no image context menu when long press */
   img {
     pointer-events: none;
@@ -284,5 +300,80 @@
 
   .pt-full {
     padding-top: 100%;
+  }
+
+  .pb-7\/12 {
+    padding-bottom: 58.333333%;
+  }
+
+  /* These are used ONLY in CardItemContent background */
+  .bg-orange-300 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(253, 186, 116, var(--tw-bg-opacity));
+  }
+
+  .bg-orange-400 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(251, 146, 60, var(--tw-bg-opacity));
+  }
+
+  .bg-orange-500 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(249, 115, 22, var(--tw-bg-opacity));
+  }
+
+  .bg-orange-600 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(234, 88, 12, var(--tw-bg-opacity));
+  }
+
+  .bg-orange-700 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(194, 65, 12, var(--tw-bg-opacity));
+  }
+
+  .bg-orange-800 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(154, 52, 18, var(--tw-bg-opacity));
+  }
+
+  .bg-orange-900 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(124, 45, 18, var(--tw-bg-opacity));
+  }
+
+  .bg-teal-300 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(94, 234, 212, var(--tw-bg-opacity));
+  }
+
+  .bg-teal-400 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(45, 212, 191, var(--tw-bg-opacity));
+  }
+
+  .bg-teal-500 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(20, 184, 166, var(--tw-bg-opacity));
+  }
+
+  .bg-teal-600 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(13, 148, 136, var(--tw-bg-opacity));
+  }
+
+  .bg-teal-700 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(15, 118, 110, var(--tw-bg-opacity));
+  }
+
+  .bg-teal-800 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(17, 94, 89, var(--tw-bg-opacity));
+  }
+
+  .bg-teal-900 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(19, 78, 74, var(--tw-bg-opacity));
   }
 }

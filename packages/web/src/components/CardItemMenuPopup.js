@@ -150,10 +150,10 @@ class CardItemMenuPopup extends React.PureComponent {
     if (moveTo && moveTo.length) {
       _moveTo = (
         <React.Fragment>
-          <div className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left">Move to...</div>
+          <div className="py-2 pl-4 pr-4 block w-full text-sm text-gray-700 text-left">Move to...</div>
           {moveTo.map(listNameObj => {
             const key = MOVE_TO + ' ' + listNameObj.listName;
-            return <button key={key} onClick={() => this.onMenuPopupClick(key)} className="py-2 pl-8 pr-4 block w-full text-gray-800 text-left truncate hover:bg-gray-400 focus:outline-none focus:shadow-outline">{listNameObj.displayName}</button>;
+            return <button key={key} onClick={() => this.onMenuPopupClick(key)} className="py-2 pl-8 pr-4 block w-full text-sm text-gray-700 text-left truncate rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">{listNameObj.displayName}</button>;
           })}
         </React.Fragment>
       );
@@ -164,7 +164,7 @@ class CardItemMenuPopup extends React.PureComponent {
         {menu.map(text => {
           let displayText = text;
           if (text === ARCHIVE) displayText = getListNameDisplayName(text, listNameMap);
-          return <button key={text} onClick={() => this.onMenuPopupClick(text)} className="py-2 pl-4 pr-4 block w-full text-gray-800 text-left truncate hover:bg-gray-400 focus:outline-none focus:shadow-outline">{displayText}</button>;
+          return <button key={text} onClick={() => this.onMenuPopupClick(text)} className="py-2 pl-4 pr-4 block w-full text-sm text-gray-700 text-left truncate rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">{displayText}</button>;
         })}
         {_moveTo}
       </React.Fragment>
