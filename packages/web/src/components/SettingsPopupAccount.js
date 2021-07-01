@@ -22,13 +22,13 @@ class SettingsPopupAccount extends React.PureComponent {
 
     return (
       <div className="p-4 md:p-6 md:pt-4">
-        <div className="border-b border-gray-400 md:hidden">
-          <button onClick={this.props.onSidebarOpenBtnClick} className="pb-1 group focus:outline-none focus:shadow-outline" >
-            <span className="text-sm text-gray-700">{'<'} <span className="group-hover:underline">Settings</span></span>
+        <div className="border-b border-gray-200 md:hidden">
+          <button onClick={this.props.onSidebarOpenBtnClick} className="pb-1 group focus:outline-none" >
+            <span className="text-sm text-gray-500 rounded group-focus:ring">{'<'} <span className="group-hover:underline">Settings</span></span>
           </button>
-          <h3 className="pb-2 text-2xl text-gray-800 font-medium leading-none">Account</h3>
+          <h3 className="pb-2 text-xl text-gray-800 font-medium leading-none">Account</h3>
         </div>
-        <p className="mt-4 text-base text-gray-700 leading-relaxed md:mt-0">You sign in to Brace.to using your Stacks Identity. This is similar to some websites that allow you to use your Google, Facebook, or Twitter account to sign in to their websites. Not similarly, your Stacks Identity lives in blockchain and only you with your secret key can control it. If you want to change your Stacks Identity’s information i.e. your profile picture, please visit <a className="underline hover:text-gray-900 focus:outline-none focus:shadow-outline" href="https://browser.blockstack.org/profiles">Blockstack Browser</a>.</p>
+        <p className="mt-4 text-base text-gray-500 leading-relaxed md:mt-0">You sign in to Brace.to using your Stacks Identity. This is similar to some websites that allow you to use your Google, Facebook, or Twitter account to sign in to their websites. Not similarly, your Stacks Identity lives in blockchain and only you with your secret key can control it. If you want to change your Stacks Identity’s information i.e. your profile picture, please visit <a className="underline rounded hover:text-gray-700 focus:outline-none focus:ring" href="https://browser.blockstack.org/profiles">Blockstack Browser</a>.</p>
         <div className="mt-8 md:flow-root">
           <div className="md:float-right md:w-3/12">
             {userImage}
@@ -37,39 +37,39 @@ class SettingsPopupAccount extends React.PureComponent {
             <tbody>
               <tr className="py-4">
                 <td className="align-middle lg:w-4/12">
-                  <p className="text-sm text-gray-700 text-right">ID:</p>
+                  <p className="text-sm text-gray-500 text-right">ID:</p>
                 </td>
                 <td className="pl-2 align-baseline lg:w-8/12">
-                  <p className="text-base text-gray-700 leading-relaxed break-all">{this.props.username || 'N/A'}</p>
+                  <p className="text-base text-gray-500 leading-relaxed break-all">{this.props.username || 'N/A'}</p>
                 </td>
               </tr>
               <tr className="py-4">
                 <td className="align-baseline">
-                  <p className="text-sm text-gray-700 text-right">Password:</p>
+                  <p className="text-sm text-gray-500 text-right">Password:</p>
                 </td>
                 <td className="pl-2 align-baseline">
-                  <p className="text-base text-gray-700 leading-relaxed">Unlike traditional systems, your password cannot be reset. Your password is a 12-word secret key. It's only known to you. If you lose it, there is no way to retrieve it back. Keep it safe before you sign out. You can view it only when you sign in.</p>
-                  <p className="pt-2 text-base text-blue-600 leading-relaxed underline hover:text-blue-800"><a className="focus:outline-none focus:shadow-outline" href="https://app.blockstack.org/#/settings/secret-key">View your 12-word secret key</a></p>
+                  <p className="text-base text-gray-500 leading-relaxed">Unlike traditional systems, your password cannot be reset. Your password is a 12-word secret key. It's only known to you. If you lose it, there is no way to retrieve it back. Keep it safe before you sign out. You can view it only when you sign in.</p>
+                  <p className="pt-2 text-base text-blue-500 leading-relaxed underline hover:text-blue-700"><a className="rounded focus:outline-none focus:ring" href="https://app.blockstack.org/#/settings/secret-key">View your 12-word secret key</a></p>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div className="mt-4 p-4 rounded-md bg-yellow-200">
+        <div className="mt-4 p-4 rounded-md bg-yellow-50">
           <div className="flex">
             <div className="flex-shrink-0">
-              <svg className="h-8 w-8 text-yellow-500 md:h-10 md:w-10" viewBox="0 0 20 20" fill="currentColor">
+              <svg className="h-7 w-7 text-yellow-400 md:h-10 md:w-10" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
             </div>
             <div className="ml-3">
-              <p className="text-base text-yellow-800 leading-relaxed">Signing out from Brace.to doesn’t sign out from Stacks. If you want to sign out from Stacks, especially when you use not-your-own devices, you need to go to <a className="underline hover:text-yellow-900 focus:outline-none focus:shadow-outline" href="https://app.blockstack.org/">Stacks App</a> and/or <a className="underline hover:text-yellow-900 focus:outline-none focus:shadow-outline" href="https://browser.blockstack.org/account/delete">Blockstack Browser</a> and sign out there.</p>
+              <p className="text-base font-normal text-yellow-700 leading-relaxed">Signing out from Brace.to doesn’t sign out from Stacks. If you want to sign out from Stacks, especially when you use not-your-own devices, you need to go to <a className="underline rounded hover:text-yellow-800 focus:outline-none focus:ring" href="https://app.blockstack.org/">Stacks App</a> and/or <a className="underline rounded hover:text-yellow-800 focus:outline-none focus:ring" href="https://browser.blockstack.org/account/delete">Blockstack Browser</a> and sign out there.</p>
             </div>
           </div>
         </div>
         <div className="mt-8 mb-4">
-          <h4 className="text-xl text-red-700 font-medium leading-none">Delete Account</h4>
-          <p className="mt-2 text-base text-gray-700 leading-relaxed">Brace.to uses Stacks Identity to sign you in. If you want to delete your Stacks Identity, please send an email to support@blockstack.com. For more information, please visit <a className="underline hover:text-gray-900 focus:outline-none focus:shadow-outline" href="https://forum.stacks.org/t/is-blockstack-gdrp-compliant/10931/4">here</a>.</p>
+          <h4 className="text-base text-red-600 font-medium leading-none">Delete Account</h4>
+          <p className="mt-2.5 text-base text-gray-500 leading-relaxed">Brace.to uses Stacks Identity to sign you in. If you want to delete your Stacks Identity, please send an email to support@blockstack.com. For more information, please visit <a className="underline rounded hover:text-gray-700 focus:outline-none focus:ring" href="https://forum.stacks.org/t/is-blockstack-gdrp-compliant/10931/4">here</a>.</p>
         </div>
       </div>
     );
