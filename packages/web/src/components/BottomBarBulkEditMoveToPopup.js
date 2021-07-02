@@ -54,7 +54,7 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
 
     return moveTo.map(listNameObj => {
       const key = MOVE_TO + ' ' + listNameObj.listName;
-      return <button key={key} onClick={() => this.onBulkEditMoveToPopupClick(key)} className="py-4 pl-8 pr-4 block w-full text-gray-800 text-left truncate hover:bg-gray-400 focus:outline-none focus:shadow-outline">{listNameObj.displayName}</button>;
+      return <button key={key} onClick={() => this.onBulkEditMoveToPopupClick(key)} className="py-4 pl-8 pr-4 block w-full text-sm text-gray-700 text-left truncate rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">{listNameObj.displayName}</button>;
     });
   }
 
@@ -73,8 +73,8 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
       <AnimatePresence key="AnimatePresence_BBBEC_moveToPopup">
         <motion.button key="BBBEC_cancelBtn" onClick={this.onBulkEditMoveToCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
         {/* For spring animation, need space in padding bottom so max height need to be adjusted too. */}
-        <motion.div key="BBBEC_moveToPopup" style={popupStyle} className="pt-4 pb-16 fixed inset-x-0 -bottom-12 bg-white border border-gray-200 rounded-t-lg shadow-xl overflow-auto z-41" variants={bModalFMV} initial="hidden" animate="visible" exit="hidden">
-          <div className="py-4 pl-4 pr-4 block w-full text-gray-800 text-left">Move to...</div>
+        <motion.div key="BBBEC_moveToPopup" style={popupStyle} className="pt-4 pb-16 fixed inset-x-0 -bottom-12 bg-white border border-gray-100 rounded-t-lg shadow-xl overflow-auto z-41" variants={bModalFMV} initial="hidden" animate="visible" exit="hidden">
+          <div className="py-4 pl-4 pr-4 block w-full text-sm text-gray-700 text-left">Move to...</div>
           {this.renderMenu()}
         </motion.div>
       </AnimatePresence>

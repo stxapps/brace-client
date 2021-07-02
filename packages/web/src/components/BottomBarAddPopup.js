@@ -84,15 +84,17 @@ class BottomBarAddPopup extends React.PureComponent {
     return (
       <React.Fragment>
         <button onClick={this.onAddCancelBtnClick} tabIndex={-1} className={`${!isAddPopupShown ? 'hidden' : ''} fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none`} />
-        <div className={`px-4 pt-6 pb-6 fixed inset-x-0 bottom-0 bg-white border border-gray-200 rounded-t-lg shadow-xl transform ${!isAddPopupShown ? 'translate-y-full' : ''} z-41`}>
+        <div className={`px-4 pt-6 pb-6 fixed inset-x-0 bottom-0 bg-white border border-gray-100 rounded-t-lg shadow-xl transform ${!isAddPopupShown ? 'translate-y-full' : ''} z-41`}>
           <div className="flex">
-            <span className="inline-flex items-center bg-white text-sm font-medium text-gray-700">Url:</span>
-            <input ref={this.addInput} onChange={this.onAddInputChange} onKeyPress={this.onAddInputKeyPress} className="ml-3 px-4 py-2 form-input flex-1 block w-full bg-white text-base text-gray-900 rounded-full border border-gray-500 appearance-none focus:outline-none focus:shadow-outline" type="url" placeholder="https://" value={url} autoCapitalize="none" />
+            <span className="inline-flex items-center bg-white text-sm text-gray-600">Url:</span>
+            <div className="ml-3 flex-1">
+              <input ref={this.addInput} onChange={this.onAddInputChange} onKeyPress={this.onAddInputKeyPress} className="px-3.5 py-1 w-full bg-white text-base text-gray-700 rounded-full border border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 focus:border-gray-400" type="url" placeholder="https://" value={url} autoCapitalize="none" />
+            </div>
           </div>
-          <p className="pt-3 text-red-500">{msg}</p>
-          <div className="pt-3">
-            <button onClick={this.onAddOkBtnClick} className="px-5 py-2 bg-gray-800 text-base text-white font-medium rounded-full shadow-sm hover:shadow-outline active:bg-gray-600 focus:outline-none focus:shadow-outline">{isAskingConfirm ? 'Sure' : 'Save'}</button>
-            <button onClick={this.onAddCancelBtnClick} className="ml-4 text-gray-700 rounded-sm hover:text-gray-900 hover:underline focus:outline-none focus:shadow-outline">Cancel</button>
+          {msg !== '' && <p className="pt-3 text-sm text-red-500">{msg}</p>}
+          <div className={`${msg !== '' ? 'pt-3' : 'pt-5'}`}>
+            <button onClick={this.onAddOkBtnClick} style={{ paddingTop: '0.4375rem', paddingBottom: '0.4375rem' }} className="px-4 bg-gray-800 text-sm text-gray-50 font-medium rounded-full shadow-sm hover:bg-gray-900 focus:outline-none focus:ring">{isAskingConfirm ? 'Sure' : 'Save'}</button>
+            <button onClick={this.onAddCancelBtnClick} className="ml-2 px-2.5 py-1.5 text-sm text-gray-500 rounded-md hover:bg-gray-100 focus:outline-none focus:ring focus:ring-inset">Cancel</button>
           </div>
         </div>
       </React.Fragment>
