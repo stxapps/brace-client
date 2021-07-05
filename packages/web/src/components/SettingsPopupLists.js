@@ -371,7 +371,7 @@ class _ListNameEditor extends React.PureComponent {
           </svg>
         </button>}
         {(mode === MODE_VIEW && listNameObj !== null && doRetry) && <button onClick={this.onRetryRetryBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-center items-center w-20 h-10 group focus:outline-none">
-          <div style={{ height: '1.75rem', paddingLeft: '0.625rem', paddingRight: '0.625rem' }} className="flex justify-center items-center bg-white border border-gray-400 rounded-full shadow-sm group-hover:border-gray-500 group-focus:ring">
+          <div style={{ height: '1.75rem', paddingLeft: '0.625rem', paddingRight: '0.625rem' }} className="flex justify-center items-center bg-white border border-gray-400 rounded-full group-hover:border-gray-500 group-focus:ring">
             <span className="text-sm text-gray-500 group-hover:text-gray-600">Retry</span>
           </div>
         </button>}

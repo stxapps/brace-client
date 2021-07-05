@@ -71,7 +71,7 @@ class _SettingsPopupDataExport extends React.PureComponent {
     let actionPanel;
     if (!exportAllDataProgress) {
       actionPanel = (
-        <button onClick={this.onExportAllDataBtnClick} className="mt-7 mb-4 px-3.5 py-1.5 block bg-white text-sm text-gray-500 border border-gray-400 rounded-full shadow-sm hover:text-gray-600 hover:border-gray-500 focus:outline-none focus:ring">
+        <button onClick={this.onExportAllDataBtnClick} className="mt-7 mb-4 px-3.5 py-1.5 block bg-white text-sm text-gray-500 border border-gray-400 rounded-full hover:text-gray-600 hover:border-gray-500 focus:outline-none focus:ring">
           Export All My Data
         </button>
       );
@@ -206,7 +206,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
     if (!deleteAllDataProgress) {
       actionPanel = (
         <div className="mt-7 mb-4">
-          <button onClick={this.onDeleteAllDataBtnClick} className="px-3.5 py-1.5 block bg-white text-sm text-gray-500 border border-gray-400 rounded-full shadow-sm hover:text-gray-600 hover:border-gray-500 focus:outline-none focus:ring">
+          <button onClick={this.onDeleteAllDataBtnClick} className="px-3.5 py-1.5 block bg-white text-sm text-gray-500 border border-gray-400 rounded-full hover:text-gray-600 hover:border-gray-500 focus:outline-none focus:ring">
             Delete All My Data
           </button>
           {this.state.isRequireConfirmShown && <p className="mt-2 text-base text-red-600">Please confirm by checking the box above first.</p>}

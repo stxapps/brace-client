@@ -186,7 +186,7 @@ class CardItemContent extends React.Component {
         </div>
         <div className="flex justify-between items-center">
           <div className="flex-shrink flex-grow min-w-0">
-            <div className="pl-4 flex justify-start items-center lg:pl-5">
+            <div className="pl-4 flex justify-start items-center">
               {this.renderFavicon()}
               <div className="flex-shrink flex-grow min-w-0">
                 <p className="pl-2 text-base text-gray-500 truncate hover:text-gray-600">
@@ -206,7 +206,7 @@ class CardItemContent extends React.Component {
           </div>
         </div>
         <a className="group focus:outline-none" href={ensureContainUrlProtocol(url)}>
-          <h4 className={`mt-0 mb-3 ml-4 mr-3 text-lg text-gray-700 font-medium leading-6 rounded-sm ${classNames} group-hover:text-gray-900 group-focus:ring lg:mb-4 lg:ml-5 lg:mr-4`}>
+          <h4 className={`mt-0 mb-3 ml-4 mr-3 text-base text-gray-800 font-medium leading-6 rounded-sm ${classNames} group-hover:text-gray-900 group-focus:ring lg:mb-4`}>
             {title}
           </h4>
         </a>

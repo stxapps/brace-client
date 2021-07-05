@@ -93,7 +93,7 @@ class BottomBarAddPopup extends React.PureComponent {
           </div>
           {msg !== '' && <p className="pt-3 text-sm text-red-500">{msg}</p>}
           <div className={`${msg !== '' ? 'pt-3' : 'pt-5'}`}>
-            <button onClick={this.onAddOkBtnClick} style={{ paddingTop: '0.4375rem', paddingBottom: '0.4375rem' }} className="px-4 bg-gray-800 text-sm text-gray-50 font-medium rounded-full shadow-sm hover:bg-gray-900 focus:outline-none focus:ring">{isAskingConfirm ? 'Sure' : 'Save'}</button>
+            <button onClick={this.onAddOkBtnClick} style={{ paddingTop: '0.4375rem', paddingBottom: '0.4375rem' }} className="px-4 bg-gray-800 text-sm text-gray-50 font-medium rounded-full hover:bg-gray-900 focus:outline-none focus:ring">{isAskingConfirm ? 'Sure' : 'Save'}</button>
             <button onClick={this.onAddCancelBtnClick} className="ml-2 px-2.5 py-1.5 text-sm text-gray-500 rounded-md hover:bg-gray-100 focus:outline-none focus:ring focus:ring-inset">Cancel</button>
           </div>
         </div>

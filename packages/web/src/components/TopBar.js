@@ -48,7 +48,7 @@ class TopBar extends React.PureComponent {
   renderSignInBtn() {
     return (
       <button onClick={() => this.props.signIn()} className="block h-14 focus:outline-none group">
-        <span style={{ padding: '0.3125rem 0.6875rem' }} className="bg-white text-base text-gray-500 border border-gray-500 rounded-full shadow-sm hover:bg-gray-700 hover:text-white group-focus:ring">Sign in</span>
+        <span className="px-2.5 py-1.5 bg-white text-sm text-gray-500 border border-gray-400 rounded-full group-hover:text-gray-600 group-hover:border-gray-500 group-focus:ring">Sign in</span>
       </button>
     );
   }
@@ -61,9 +61,7 @@ class TopBar extends React.PureComponent {
       listNameStartY, listNameEndY, listNameDistanceY,
     } = getTopBarSizes(window.innerWidth);
 
-    // Start from MD width, align baseline with Brace logo instead of align center
-    let top = listNameStartY + (offsetY * (listNameEndY - listNameStartY) / listNameDistanceY);
-    if (window.innerWidth >= MD_WIDTH) top += 6;
+    let top = listNameStartY + (offsetY * (listNameEndY - listNameStartY) / listNameDistanceY) + 3;
     const left = offsetY * listNameDistanceX / listNameDistanceY;
 
     const listNameStyle = { top, left };

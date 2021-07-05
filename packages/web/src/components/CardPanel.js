@@ -97,7 +97,7 @@ class CardPanel extends React.PureComponent {
         <div style={{ borderRadius: '1.5rem' }} className="mx-auto px-4 pt-16 pb-8 w-full max-w-md bg-gray-50">
           <img className="mx-auto h-16" src={undrawLink} alt="unDraw link icon" />
           <h3 className="mt-6 text-base text-gray-600 text-center">Get started saving links</h3>
-          <button onClick={this.onAddBtnClick} style={{ padding: '0.275rem 0.8rem 0.275rem 0.65rem' }} className="mx-auto mt-4 flex items-baseline bg-gray-800 rounded-full shadow-lg hover:bg-gray-900 focus:outline-none focus:ring">
+          <button onClick={this.onAddBtnClick} style={{ padding: '0.4375rem 0.8rem 0.4375rem 0.65rem' }} className="mx-auto mt-4 flex items-baseline bg-gray-800 rounded-full hover:bg-gray-900 focus:outline-none focus:ring">
             <svg className="w-3 text-white" viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -137,7 +137,7 @@ class CardPanel extends React.PureComponent {
   renderFetchMoreBtn() {
     return (
       <button onClick={this.onFetchMoreBtnClick} className="my-4 py-2 block w-full group focus:outline-none">
-        <span className="px-3 py-1 inline-block bg-white text-base text-gray-500 border border-gray-500 rounded-full shadow-sm hover:bg-gray-700 hover:text-white group-focus:ring">More</span>
+        <span className="px-3 py-1 inline-block bg-white text-sm text-gray-500 border border-gray-400 rounded-full group-hover:text-gray-600 group-hover:border-gray-500 group-focus:ring">More</span>
       </button>
     );
   }

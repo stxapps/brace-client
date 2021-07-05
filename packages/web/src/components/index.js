@@ -11,9 +11,7 @@ export const getTopBarSizes = (width) => {
   const topBarHeight = toPx(width < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD);
   const headerHeight = toPx(TOP_HEADER_HEIGHT);
 
-  const LIST_NAME_DISTANCE_X = toPx('3rem');
-  const LIST_NAME_DISTANCE_X_MD = toPx('9rem');
-  const listNameDistanceX = width < MD_WIDTH ? LIST_NAME_DISTANCE_X : LIST_NAME_DISTANCE_X_MD;
+  const listNameDistanceX = toPx('3rem');
 
   const LIST_NAME_START_Y = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE);
   const LIST_NAME_START_Y_MD = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE_MD);

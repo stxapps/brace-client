@@ -99,7 +99,7 @@ class TopBarAddPopup extends React.PureComponent {
           </div>
           {msg !== '' && <p className="pt-3 text-sm text-red-500">{msg}</p>}
           <div className={`${msg !== '' ? 'pt-3' : 'pt-5'}`}>
-            <button onClick={this.onAddOkBtnClick} style={{ paddingTop: '0.4375rem', paddingBottom: '0.4375rem' }} className="px-4 bg-gray-800 text-sm text-gray-50 font-medium rounded-full shadow-sm hover:bg-gray-900 focus:outline-none focus:ring">{isAskingConfirm ? 'Sure' : 'Save'}</button>
+            <button onClick={this.onAddOkBtnClick} style={{ paddingTop: '0.4375rem', paddingBottom: '0.4375rem' }} className="px-4 bg-gray-800 text-sm text-gray-50 font-medium rounded-full hover:bg-gray-900 focus:outline-none focus:ring">{isAskingConfirm ? 'Sure' : 'Save'}</button>
             <button onClick={this.onAddCancelBtnClick} className="ml-2 px-2.5 py-1.5 text-sm text-gray-500 rounded-md hover:bg-gray-100 focus:outline-none focus:ring focus:ring-inset">Cancel</button>
           </div>
         </motion.div>
@@ -111,7 +111,7 @@ class TopBarAddPopup extends React.PureComponent {
     return (
       <div className="relative">
         {/* If want to show the button along with the popup, add relative and z-41 */}
-        <button onClick={this.onAddBtnClick} style={{ height: '2rem', paddingLeft: '0.625rem', paddingRight: '0.75rem' }} className="flex justify-center items-center bg-white border border-gray-400 rounded-full shadow-sm group hover:border-gray-500 focus:outline-none focus:ring">
+        <button onClick={this.onAddBtnClick} style={{ height: '2rem', paddingLeft: '0.625rem', paddingRight: '0.75rem' }} className="flex justify-center items-center bg-white border border-gray-400 rounded-full group hover:border-gray-500 focus:outline-none focus:ring">
           <svg className="w-3 text-gray-500 group-hover:text-gray-600" viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
