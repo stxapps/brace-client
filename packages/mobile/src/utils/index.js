@@ -855,6 +855,6 @@ export const shouldDispatchFetch = (outbox, payload) => {
 };
 
 export const getLastHalfHeight = (height, textHeight, pt, pb) => {
-  const x = Math.floor(((height - pt - pb) / textHeight) - 0.5);
-  return Math.round((textHeight * x + textHeight / 2) + pt + pb);
+  const x = Math.floor((height - pt - pb) / textHeight) - 1;
+  return Math.round((textHeight * x + textHeight * 0.6) + pt + pb);
 };

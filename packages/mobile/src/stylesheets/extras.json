@@ -1,8 +1,8 @@
 {
-  "font-hairline": {
+  "font-thin": {
     "fontFamily": "Inter-Thin",
   },
-  "font-thin": {
+  "font-extralight": {
     "fontFamily": "Inter-ExtraLight",
   },
   "font-light": {
@@ -26,61 +26,58 @@
   "font-black": {
     "fontFamily": "Inter-Black"
   },
-  "elevation-xs": {
-    "elevation": 1
-  },
-  "shadow-xs": {
-    "shadowColor": "rgba(0, 0, 0, 0.05)",
+  "shadow-sm": {
+    "shadowColor": "#000",
     "shadowOffset": {
       "width": 0,
       "height": 1,
     },
-    "shadowOpacity": 0.5,
+    "shadowOpacity": 0.05,
     "shadowRadius": 0,
 
-    "elevation": 1
-  },
-  "shadow-sm": {
-    "shadowColor": "rgba(0, 0, 0, 0.05)",
-    "shadowOffset": {
-      "width": 0,
-      "height": 1,
-    },
-    "shadowOpacity": 1,
-    "shadowRadius": 1,
-
-    "elevation": 1.2
+    "elevation": 0.3
   },
   "shadow": {
-    "shadowColor": "rgba(0, 0, 0, 0.1)",
+    "shadowColor": "#000",
     "shadowOffset": {
       "width": 0,
       "height": 1,
     },
-    "shadowOpacity": 2,
-    "shadowRadius": 2,
+    "shadowOpacity": 0.15,
+    "shadowRadius": 1,
 
-    "elevation": 2.5
+    "elevation": 0.6
   },
-  "shadow-lg": {
-    "shadowColor": "rgba(0, 0, 0, 0.2)",
+  "shadow-md": {
+    "shadowColor": "#000",
     "shadowOffset": {
       "width": 0,
       "height": 2,
     },
-    "shadowOpacity": 3,
-    "shadowRadius": 8,
+    "shadowOpacity": 0.2,
+    "shadowRadius": 1.41,
+
+    "elevation": 2.5
+  },
+  "shadow-lg": {
+    "shadowColor": "#000",
+    "shadowOffset": {
+      "width": 0,
+      "height": 3,
+    },
+    "shadowOpacity": 0.29,
+    "shadowRadius": 4.65,
 
     "elevation": 7
   },
   "shadow-xl": {
-    "shadowColor": "rgba(0, 0, 0, 0.2)",
+    "shadowColor": "#000",
     "shadowOffset": {
       "width": 0,
-      "height": 4,
+      "height": 6,
     },
-    "shadowOpacity": 3,
-    "shadowRadius": 10,
+    "shadowOpacity": 0.37,
+    "shadowRadius": 7.49,
 
     "elevation": 12
   },
@@ -95,25 +92,16 @@
 
     "elevation": 6
   },
-  "aspect-7/12": {
-    "aspectRatio": 1.7142857
+  "elevation-xs": {
+    "elevation": 1
   },
-  "w-11": {
-    "width": 44
-  },
-  "mt-1.5": {
-    "marginTop": 6
-  },
-  "h-px": {
-    "height": 1
-  },
-  "opacity-90": {
-    "opacity": 0.9
+  "leading-5.5": {
+    "lineHeight": 22
   },
   "leading-6.5": {
     "lineHeight": 26
   },
-  "-bottom-12": {
-    "bottom": -48
+  "aspect-7/12": {
+    "aspectRatio": 1.7142857
   }
 }

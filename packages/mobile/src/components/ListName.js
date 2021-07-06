@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { ScrollView, View, Text, Platform } from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 
@@ -39,8 +39,8 @@ class ListName extends React.PureComponent {
       return (
         <MenuOption key={listNameObj.listName} onSelect={() => this.onListNamePopupClick(listNameObj.listName)} customStyles={cache('LN_menuOption', { optionWrapper: { padding: 0 } })}>
           <View style={tailwind('py-2 pl-4 pr-4 flex-row items-center w-full')}>
-            <Text style={tailwind('text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
-            {listNameObj.listName in updates && <View style={tailwind('ml-1 flex-grow-0 flex-shrink-0 self-start w-2 h-2 bg-blue-500 rounded-full')} />}
+            <Text style={tailwind('text-sm text-gray-700 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
+            {listNameObj.listName in updates && <View style={tailwind('ml-1 flex-grow-0 flex-shrink-0 self-start w-1.5 h-1.5 bg-blue-400 rounded-full')} />}
           </View>
         </MenuOption>
       );
@@ -50,14 +50,12 @@ class ListName extends React.PureComponent {
   renderListNamePopup() {
 
     const { safeAreaHeight } = this.props;
-
-    const textHeight = Platform.select({ ios: 36, android: 39 });
     const popupStyle = {
-      maxHeight: getLastHalfHeight(Math.min(256, safeAreaHeight - 16), textHeight, 8, 8),
+      maxHeight: getLastHalfHeight(Math.min(256, safeAreaHeight - 16), 36, 8, 8),
     };
 
     return (
-      <MenuOptions customStyles={cache('LN_menuOptionsCustomStyles', { optionsContainer: [tailwind('py-2 min-w-28 max-w-64 bg-white border border-gray-200 rounded-lg shadow-xl z-41'), popupStyle] }, safeAreaHeight)}>
+      <MenuOptions customStyles={cache('LN_menuOptionsCustomStyles', { optionsContainer: [tailwind('py-2 min-w-28 max-w-64 bg-white border border-gray-100 rounded-lg shadow-xl z-41'), popupStyle] }, safeAreaHeight)}>
         <ScrollView>
           {this.renderMenu()}
         </ScrollView>
@@ -102,9 +100,9 @@ class ListName extends React.PureComponent {
         <MenuTrigger>
           {/* Change the paddings here, need to change triggerOffsets too */}
           <View style={tailwind('flex-row items-center')}>
-            <Text style={cache('LN_text', [tailwind('mr-1 text-lg text-gray-900 font-semibold leading-7', safeAreaWidth), textStyle], [safeAreaWidth, updates])} numberOfLines={1} ellipsizeMode="tail">{displayName}</Text>
-            {listName in updates && <View style={tailwind('self-start w-2 h-2 bg-blue-500 rounded-full')} />}
-            <Svg style={tailwind('text-base text-black font-normal')} width={20} height={20} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+            <Text style={cache('LN_text', [tailwind('mr-1 text-lg text-gray-900 font-medium leading-7', safeAreaWidth), textStyle], [safeAreaWidth, updates])} numberOfLines={1} ellipsizeMode="tail">{displayName}</Text>
+            {listName in updates && <View style={tailwind('self-start w-1.5 h-1.5 bg-blue-400 rounded-full')} />}
+            <Svg style={tailwind('text-gray-900 font-normal')} width={20} height={20} viewBox="0 0 24 24" stroke="currentColor" fill="none">
               <Path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </Svg>
           </View>

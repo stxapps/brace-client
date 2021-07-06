@@ -1,15 +1,13 @@
+const colors = require('tailwindcss/colors');
+
 module.exports = {
+  purge: false,
   theme: {
     extend: {
       colors: {
+        green: colors.green,
+        'gray-logo': '#1A202C',
         'purple-blockstack': '#211F6D',
-      },
-      spacing: {
-        '7': '1.75rem',
-        '9': '2.25rem',
-        '14': '3.5rem',
-        '72': '18rem',
-        '96': '24rem',
       },
       minWidth: {
         '28': '7rem',
@@ -25,10 +23,8 @@ module.exports = {
         '56': '14rem',
         '64': '16rem',
       },
-      maxHeight: {
-        '64': '16rem',
-        '72': '18rem',
-        '80': '20rem',
+      fontSize: {
+        '2xl-extra': ['1.625rem', { lineHeight: '2.17rem' }],
       },
       zIndex: {
         '41': '41',
@@ -40,9 +36,4 @@ module.exports = {
 
   },
   plugins: [],
-  purge: false,
-  future: {
-    removeDeprecatedGapUtilities: true,
-    purgeLayersByDefault: true,
-  },
 };

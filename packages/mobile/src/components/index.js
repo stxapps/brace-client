@@ -59,9 +59,7 @@ export const getTopBarSizes = (safeAreaWidth) => {
   //   commands need to be translated from bottom to that height!
   const laidTopBarHeight = headerHeight + 1 + laidStatusPopupHeight + laidListNameCommandsHeight;
 
-  const LIST_NAME_DISTANCE_X = toPx('3rem');
-  const LIST_NAME_DISTANCE_X_MD = toPx('9rem');
-  const listNameDistanceX = safeAreaWidth < MD_WIDTH ? LIST_NAME_DISTANCE_X : LIST_NAME_DISTANCE_X_MD;
+  const listNameDistanceX = toPx('3rem');
 
   const LIST_NAME_START_Y = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE);
   const LIST_NAME_START_Y_MD = toPx(TOP_HEADER_HEIGHT) + toPx(TOP_HEADER_LIST_NAME_SPACE_MD);

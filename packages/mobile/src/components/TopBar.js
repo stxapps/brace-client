@@ -5,10 +5,7 @@ import { View, Text, TouchableOpacity, Animated } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
 import { signIn } from '../actions';
-import {
-  SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS,
-  MD_WIDTH,
-} from '../types/const';
+import { SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS } from '../types/const';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
@@ -20,15 +17,14 @@ import ListName from './ListName';
 import StatusPopup from './StatusPopup';
 
 import shortLogo from '../images/logo-short.svg';
-import fullLogo from '../images/logo-full.svg';
 
 class TopBar extends React.PureComponent {
 
   renderSignInBtn() {
     return (
       <TouchableOpacity onPress={() => this.props.signIn()} style={tailwind('justify-center items-center h-14')}>
-        <View style={cache('TB_signInBtnView', [tailwind('bg-white border border-gray-700 rounded-full shadow-sm'), { paddingTop: 5, paddingBottom: 5, paddingLeft: 11, paddingRight: 11 }])}>
-          <Text style={tailwind('text-base text-gray-700 font-normal')}>Sign in</Text>
+        <View style={cache('TB_signInBtnView', tailwind('px-2.5 py-1.5 bg-white border border-gray-400 rounded-full shadow-sm'))}>
+          <Text style={tailwind('text-sm text-gray-500 font-normal')}>Sign in</Text>
         </View>
       </TouchableOpacity>
     );
@@ -47,9 +43,7 @@ class TopBar extends React.PureComponent {
     const space2 = laidStatusPopupHeight;
     const space3 = headerHeight;
 
-    // Start from MD width, align baseline with Brace logo instead of align center
-    let space4 = (headerHeight - listNameHeight) / 2;
-    if (safeAreaWidth >= MD_WIDTH) space4 += 4;
+    let space4 = ((headerHeight - listNameHeight) / 2) + 3;
 
     const changingTranslateX = scrollY.interpolate({
       inputRange: [0, listNameDistanceY],
@@ -187,7 +181,7 @@ class TopBar extends React.PureComponent {
         extrapolate: 'clamp',
       });
 
-      topBarStyleClasses = 'absolute inset-x-0 top-0 bg-white border-gray-300 z-30';
+      topBarStyleClasses = 'absolute inset-x-0 top-0 bg-white z-30';
       topBarStyle = { transform: [{ translateY: changingTopBarTranslateY }] };
       headerStyle = { transform: [{ translateY: changingHeaderTranslateY }] };
       headerBorderStyle = { opacity: changingHeaderBorderOpacity };
@@ -221,12 +215,11 @@ class TopBar extends React.PureComponent {
           <Animated.View style={headerStyle}>
             <View style={tailwind('px-4 flex-row justify-between items-center h-14 md:px-6 lg:px-8', safeAreaWidth)}>
               <View>
-                <SvgXml style={tailwind('md:hidden', safeAreaWidth)} width={28.36} height={32} xml={shortLogo} />
-                <SvgXml style={tailwind('hidden md:flex', safeAreaWidth)} width={109.63} height={24} xml={fullLogo} />
+                <SvgXml width={28.36} height={32} xml={shortLogo} />
               </View>
               {rightPane}
             </View>
-            <Animated.View style={[tailwind('w-full h-px bg-gray-300'), headerBorderStyle]} />
+            <Animated.View style={[tailwind('w-full h-px bg-gray-200'), headerBorderStyle]} />
           </Animated.View>
           {listNamePane}
         </View>
