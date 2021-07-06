@@ -102,17 +102,17 @@ class TopBarAddPopup extends React.PureComponent {
     return (
       <View style={tailwind('px-4 pt-6 pb-5 w-72 md:w-96', safeAreaWidth)}>
         <View style={tailwind('flex-row justify-start items-center')}>
-          <Text style={tailwind('flex-none text-sm font-medium text-gray-700')}>Url:</Text>
+          <Text style={tailwind('flex-none text-sm text-gray-600 font-normal')}>Url:</Text>
           {/* onKeyPress event for Enter key only if there is multiline TextInput */}
-          <TextInput onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('ml-3 px-4 py-2 flex-1 bg-white text-base text-gray-900 font-normal border border-gray-500 rounded-full')} keyboardType="url" placeholder="https://" value={url} autoCapitalize="none" autoFocus />
+          <TextInput onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('ml-3 px-3.5 py-1 flex-1 bg-white text-base text-gray-700 font-normal rounded-full border border-gray-400')} keyboardType="url" placeholder="https://" value={url} autoCapitalize="none" autoFocus />
         </View>
-        {msg === '' ? <View style={tailwind('w-full h-3')} /> : <Text style={tailwind('pt-3 text-base text-red-500 font-normal')}>{msg}</Text>}
-        <View style={tailwind('pt-3 flex-row justify-start items-center')}>
-          <TouchableOpacity onPress={this.onAddOkBtnClick} style={tailwind('px-5 py-2 justify-center items-center bg-gray-800 rounded-full shadow-sm')}>
-            <Text style={tailwind('text-base text-white font-medium')}>{isAskingConfirm ? 'Sure' : 'Save'}</Text>
+        {msg !== '' && <Text style={tailwind('pt-3 text-sm text-red-500 font-normal')}>{msg}</Text>}
+        <View style={tailwind(`${msg !== '' ? 'pt-3' : 'pt-5'} flex-row justify-start items-center`)}>
+          <TouchableOpacity onPress={this.onAddOkBtnClick} style={[tailwind('px-4 justify-center items-center bg-gray-800 rounded-full'), { paddingTop: 7, paddingBottom: 7 }]}>
+            <Text style={tailwind('text-sm text-gray-50 font-medium')}>{isAskingConfirm ? 'Sure' : 'Save'}</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.props.ctx.menuActions.closeMenu()} style={tailwind('ml-4 rounded-sm')}>
-            <Text style={tailwind('text-base text-gray-700 font-normal')}>Cancel</Text>
+          <TouchableOpacity onPress={() => this.props.ctx.menuActions.closeMenu()} style={tailwind('ml-2 px-2.5 py-1.5 rounded-md')}>
+            <Text style={tailwind('text-sm text-gray-500 font-normal')}>Cancel</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -126,11 +126,11 @@ class TopBarAddPopup extends React.PureComponent {
     return (
       <Menu name={ADD_POPUP_MENU_NAME} renderer={MenuPopoverRenderers} rendererProps={cache('TBAP_menuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onOpen={this.onAddBtnClick} onClose={this.onAddCancelBtnClick}>
         <MenuTrigger>
-          <View style={cache('TBAP_menuTriggerViewStyle', [tailwind('flex-row justify-center items-center bg-white border border-gray-700 rounded-full shadow-sm'), { height: 32, paddingLeft: 10, paddingRight: 12 }])}>
-            <Svg style={tailwind('text-base text-gray-700 font-normal')} width={12} height={11} viewBox="0 0 16 14" stroke="currentColor" fill="none">
+          <View style={cache('TBAP_menuTriggerViewStyle', [tailwind('flex-row justify-center items-center bg-white border border-gray-400 rounded-full'), { height: 32, paddingLeft: 10, paddingRight: 12 }])}>
+            <Svg style={tailwind('text-gray-500 font-normal')} width={12} height={11} viewBox="0 0 16 14" stroke="currentColor" fill="none">
               <Path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </Svg>
-            <Text style={tailwind('ml-1 text-base text-gray-700 font-normal')}>Add</Text>
+            <Text style={tailwind('ml-1 text-sm text-gray-500 font-normal')}>Add</Text>
           </View>
         </MenuTrigger>
         <MenuOptions customStyles={cache('TBAP_menuOptionsCustomStyles', { optionsContainer: tailwind('bg-white rounded-lg shadow-xl') })}>

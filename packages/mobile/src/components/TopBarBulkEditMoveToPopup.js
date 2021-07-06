@@ -60,7 +60,7 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
       const key = MOVE_TO + ' ' + listNameObj.listName;
       return (
         <MenuOption key={key} onSelect={() => this.onBulkEditMoveToPopupClick(key)} customStyles={cache('TBBEMTP_menuOptionCustomStyles', { optionWrapper: { padding: 0 } })}>
-          <Text style={tailwind('py-2 pl-4 pr-4 w-full text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
+          <Text style={tailwind('py-2 pl-4 pr-4 w-full text-sm text-gray-700 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
         </MenuOption>
       );
     });
@@ -80,8 +80,7 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
 
     // As popover has an anchor laying out with flex (different to Popup),
     //   max height is used for height.
-    // 39dp per row plus padding
-    const textHeight = Platform.select({ ios: 36, android: 39 });
+    const textHeight = 36;
     const popupStyle = {
       height: Math.min(
         (textHeight * moveTo.length) + 16,
@@ -90,7 +89,7 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
     };
 
     return (
-      <MenuOptions customStyles={cache('TBBEMTP_menuOptionsCustomStyles', { optionsContainer: [tailwind('pt-2 pb-2 min-w-28 max-w-64 bg-white rounded-lg shadow-xl'), popupStyle] }, [moveTo.length, safeAreaHeight])}>
+      <MenuOptions customStyles={cache('TBBEMTP_menuOptionsCustomStyles', { optionsContainer: [tailwind('py-2 min-w-28 max-w-64 bg-white rounded-lg shadow-xl'), popupStyle] }, [moveTo.length, safeAreaHeight])}>
         <ScrollView>
           {this.renderMenu(moveTo)}
         </ScrollView>
@@ -105,7 +104,7 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
       paddingLeft: 10,
       paddingRight: 12,
     };
-    btnStyle = cache('TBBEMTP_btn', [tailwind('flex-row justify-center items-center bg-white border border-gray-700 rounded-full shadow-sm'), btnStyle]);
+    btnStyle = cache('TBBEMTP_btn', [tailwind('flex-row justify-center items-center bg-white border border-gray-400 rounded-full'), btnStyle]);
     const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' });
 
     return (
@@ -113,11 +112,11 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
         <MenuTrigger>
           <View style={tailwind('ml-4')}>
             <View style={btnStyle}>
-              <Svg style={tailwind('text-base text-gray-600 font-normal')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+              <Svg style={tailwind('text-gray-500 font-normal')} width={18} height={18} viewBox="0 0 20 20" fill="currentColor">
                 <Path d="M4 3C2.89543 3 2 3.89543 2 5C2 6.10457 2.89543 7 4 7H16C17.1046 7 18 6.10457 18 5C18 3.89543 17.1046 3 16 3H4Z" />
                 <Path fillRule="evenodd" clipRule="evenodd" d="M3 8H17V15C17 16.1046 16.1046 17 15 17H5C3.89543 17 3 16.1046 3 15V8ZM8 11C8 10.4477 8.44772 10 9 10H11C11.5523 10 12 10.4477 12 11C12 11.5523 11.5523 12 11 12H9C8.44772 12 8 11.5523 8 11Z" />
               </Svg>
-              <Text style={tailwind('ml-1 text-base text-gray-700 font-normal')}>Move to...</Text>
+              <Text style={tailwind('ml-1 text-sm text-gray-500 font-normal')}>Move to...</Text>
             </View>
           </View>
         </MenuTrigger>

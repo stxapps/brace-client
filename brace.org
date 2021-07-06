@@ -765,7 +765,7 @@ This and CI/CD are very important!
 - change minSdkVersion from 16 to 21 in ./android/build.gradle
 - Allow CORS access on https://brace.to/manifest.json
 - Set up Android deep linking: reactnative.dev/docs/linking and developer.android.com/training/app-links/deep-linking
-- yarn add https://github.com/bracedotto/tailwind-rn#dcc0a394074be452a75f99326ffa36dc5ee32763
+- yarn add https://github.com/bracedotto/tailwind-rn#6047a3e3de6607a6cb5b738ab3392d80aa81fd13
 - npx react-native link to link assets i.e. fonts
   + medium.com/@mehrankhandev/ultimate-guide-to-use-custom-fonts-in-react-native-77fcdf859cf4
 - yarn add react-native-popup-menu
