@@ -82,7 +82,7 @@ class CardPanel extends React.PureComponent {
       return (
         <React.Fragment>
           <h3 className="text-base text-gray-600">Your search - <span className="text-lg text-gray-800 font-medium">{searchString}</span> - did not match any links.</h3>
-          <p className="pt-4 md:pt-6 text-base text-gray-500">Suggestion:</p>
+          <p className="pt-4 text-base text-gray-500 md:pt-6">Suggestion:</p>
           <ul className="pt-2 pl-2 list-disc list-inside text-base text-gray-500">
             <li>Make sure all words are spelled correctly.</li>
             <li>Try different keywords.</li>

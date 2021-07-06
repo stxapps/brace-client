@@ -104,7 +104,7 @@ class TopBarCommands extends React.PureComponent {
               </View>
             </View>
           </MenuTrigger>
-          <MenuOptions customStyles={cache('TBC_profileCommandMenuOptions', { optionsContainer: tailwind('py-2 w-32 bg-white rounded-lg shadow-xl') })}>
+          <MenuOptions customStyles={cache('TBC_profileCommandMenuOptions', { optionsContainer: tailwind('py-2 w-28 bg-white rounded-lg shadow-xl') })}>
             {this.renderProfilePopup()}
           </MenuOptions>
         </Menu>

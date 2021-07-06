@@ -72,7 +72,7 @@ class CardItemContent extends React.Component {
       fg = (
         <React.Fragment>
           <View style={tailwind('items-center justify-center w-20 h-20 bg-white rounded-full')}>
-            <Text style={tailwind('text-5xl text-gray-700 font-semibold uppercase')}>{text}</Text>
+            <Text style={tailwind('text-5xl text-gray-700 font-medium uppercase')}>{text}</Text>
           </View>
         </React.Fragment>
       );
@@ -161,18 +161,18 @@ class CardItemContent extends React.Component {
           {this.renderImage()}
         </TouchableOpacity>
         <View style={tailwind('flex-row justify-between items-center w-full')}>
-          <View style={tailwind('pl-4 flex-shrink flex-grow flex-row items-center lg:pl-5', safeAreaWidth)}>
+          <View style={tailwind('pl-4 flex-shrink flex-grow flex-row items-center')}>
             {this.renderFavicon()}
             <View style={tailwind('flex-shrink flex-grow')}>
               <TouchableOpacity onPress={() => Linking.openURL(origin)}>
-                <Text style={tailwind('pl-2 text-base text-gray-700 font-normal')} numberOfLines={1} ellipsizeMode="tail">{host}</Text>
+                <Text style={tailwind('pl-2 text-base text-gray-500 font-normal')} numberOfLines={1} ellipsizeMode="tail">{host}</Text>
               </TouchableOpacity>
             </View>
           </View>
           <CardItemMenuPopup link={link} />
         </View>
         <TouchableOpacity onPress={() => Linking.openURL(ensureContainUrlProtocol(url))}>
-          <Text style={tailwind(`mt-0 mb-3 ml-4 mr-3 text-base text-gray-800 font-semibold leading-6.5 ${classNames} lg:mb-4 lg:ml-5 lg:mr-4`, safeAreaWidth)}>{title}</Text>
+          <Text style={tailwind(`mt-0 mb-3 ml-4 mr-3 text-base text-gray-800 font-medium leading-6 ${classNames} lg:mb-4`, safeAreaWidth)}>{title}</Text>
         </TouchableOpacity>
       </React.Fragment>
     );

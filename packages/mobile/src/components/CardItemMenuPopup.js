@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {
-  ScrollView, View, Text, Linking, LayoutAnimation, Platform,
-} from 'react-native';
+import { ScrollView, View, Text, Linking, LayoutAnimation } from 'react-native';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Svg, { Path } from 'react-native-svg';
 import Clipboard from '@react-native-community/clipboard';
@@ -115,12 +113,12 @@ class CardItemMenuPopup extends React.PureComponent {
     if (moveTo && moveTo.length) {
       _moveTo = (
         <React.Fragment>
-          <Text style={tailwind('py-2 pl-4 pr-4 w-full text-base text-gray-800 font-normal')}>Move to...</Text>
+          <Text style={tailwind('py-2 pl-4 pr-4 w-full text-sm text-gray-700 font-normal')}>Move to...</Text>
           {moveTo.map(listNameObj => {
             const key = MOVE_TO + ' ' + listNameObj.listName;
             return (
               <MenuOption key={key} onSelect={() => this.onMenuPopupClick(key)} customStyles={cache('CIMP_menuOption', { optionWrapper: { padding: 0 } })}>
-                <Text style={tailwind('py-2 pl-8 pr-4 w-full text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
+                <Text style={tailwind('py-2 pl-8 pr-4 w-full text-sm text-gray-700 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
               </MenuOption>
             );
           })}
@@ -135,7 +133,7 @@ class CardItemMenuPopup extends React.PureComponent {
           if (text === ARCHIVE) displayText = getListNameDisplayName(text, listNameMap);
           return (
             <MenuOption key={text} onSelect={() => this.onMenuPopupClick(text)} customStyles={cache('CIMP_menuOption', { optionWrapper: { padding: 0 } })}>
-              <Text style={tailwind('py-2 pl-4 pr-4 w-full text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{displayText}</Text>
+              <Text style={tailwind('py-2 pl-4 pr-4 w-full text-sm text-gray-700 font-normal')} numberOfLines={1} ellipsizeMode="tail">{displayText}</Text>
             </MenuOption>
           );
         })}
@@ -147,10 +145,8 @@ class CardItemMenuPopup extends React.PureComponent {
   render() {
 
     const { safeAreaHeight } = this.props;
-
-    const textHeight = Platform.select({ ios: 36, android: 39 });
     const popupStyle = {
-      maxHeight: getLastHalfHeight(Math.min(288, safeAreaHeight - 16), textHeight, 8, 8),
+      maxHeight: getLastHalfHeight(Math.min(288, safeAreaHeight - 16), 36, 8, 8),
     };
 
     return (
@@ -161,7 +157,7 @@ class CardItemMenuPopup extends React.PureComponent {
           <View style={cache('CIMP_menuTriggerViewStyle', { paddingBottom: 6 })}>
             {/* Change the paddings here, need to change triggerOffsets too */}
             <View style={tailwind('pt-2 pb-0 pl-4 pr-2 flex-shrink-0 flex-grow-0')}>
-              <Svg style={tailwind('py-2 w-6 h-10 text-base text-gray-700 font-normal rounded-full')} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <Svg style={tailwind('text-gray-400 font-normal rounded-full')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">
                 <Path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </Svg>
             </View>
