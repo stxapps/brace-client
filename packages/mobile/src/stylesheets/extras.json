@@ -112,7 +112,10 @@
   "leading-6.5": {
     "lineHeight": 26
   },
+  "w-auto": {
+    "width": "auto"
+  },
   "aspect-7/12": {
     "aspectRatio": 1.7142857
-  }
+  },
 }

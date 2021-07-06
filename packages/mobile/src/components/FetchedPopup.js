@@ -106,12 +106,12 @@ class FetchedPopup extends React.PureComponent {
     const closeBtnStyle = { marginRight: 8 };
 
     return (
-      <Animated.View style={[tailwind('absolute flex-row items-center bg-blue-500 rounded-full shadow-lg z-30'), style]}>
+      <Animated.View style={[tailwind('absolute flex-row items-center bg-blue-400 rounded-full shadow-lg z-30'), style]}>
         <TouchableOpacity onPress={this.onUpdateBtnClick} style={cache('FP_updateBtn', updateBtnStyle)}>
           <Text style={tailwind('text-sm text-white font-normal')}>There is an update</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={this.onCloseBtnClick} style={cache('FP_cancelBtn', [tailwind('ml-1 flex-shrink-0 flex-row items-center justify-center h-4 w-4 rounded-full'), closeBtnStyle])}>
-          <Svg style={tailwind('text-base text-blue-100 font-normal')} width={8} height={8} viewBox="0 0 8 8" stroke="currentColor" fill="none">
+          <Svg style={tailwind('text-blue-50 font-normal')} width={8} height={8} viewBox="0 0 8 8" stroke="currentColor" fill="none">
             <Path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
           </Svg>
         </TouchableOpacity>
