@@ -1,8 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  ScrollView, Text, TouchableOpacity, Animated, BackHandler, Platform,
-} from 'react-native';
+import { ScrollView, Text, TouchableOpacity, Animated, BackHandler } from 'react-native';
 
 import { updatePopup, updateBulkEdit, moveLinks } from '../actions';
 import {
@@ -134,7 +132,7 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
       const key = MOVE_TO + ' ' + listNameObj.listName;
       return (
         <TouchableOpacity key={key} onPress={() => this.onBulkEditMoveToPopupClick(key)} style={tailwind('w-full')}>
-          <Text style={tailwind('py-4 pl-8 pr-4 w-full text-base text-gray-800 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
+          <Text style={tailwind('py-4 pl-8 pr-4 w-full text-sm text-gray-700 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
         </TouchableOpacity>
       );
     });
@@ -144,18 +142,17 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
 
     if (!this.props.isBulkEditMoveToPopupShown && this.state.didCloseAnimEnd) return null;
 
-    const textHeight = Platform.select({ ios: 52, android: 55 });
     const popupStyle = {
-      maxHeight: getLastHalfHeight(384, textHeight, 16, 64),
+      maxHeight: getLastHalfHeight(384, 52, 16, 16, 0.5),
       transform: [{ translateY: this.popuptranslateY }],
     };
 
     return (
       <React.Fragment>
         <TouchableOpacity onPress={this.onBulkEditMoveToCancelBtnClick} style={tailwind('absolute inset-0 bg-black opacity-25 z-40')} />
-        <Animated.View onLayout={this.onPopupLayout} style={[tailwind('pt-4 pb-16 absolute inset-x-0 -bottom-12 bg-white border border-gray-200 rounded-t-lg shadow-xl z-41'), popupStyle]}>
+        <Animated.View onLayout={this.onPopupLayout} style={[tailwind('pt-4 pb-16 absolute inset-x-0 -bottom-12 bg-white border border-gray-100 rounded-t-lg shadow-xl z-41'), popupStyle]}>
           <ScrollView>
-            <Text style={tailwind('py-4 pl-4 pr-4 w-full text-base text-gray-800 font-normal')}>Move to...</Text>
+            <Text style={tailwind('py-4 pl-4 pr-4 w-full text-sm text-gray-700 font-normal')}>Move to...</Text>
             {this.renderMenu()}
           </ScrollView>
         </Animated.View>

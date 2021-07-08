@@ -99,7 +99,7 @@ class ListName extends React.PureComponent {
 
       const popupStyle = {
         maxHeight: getLastHalfHeight(
-          Math.min(256, window.innerHeight - menuPopupSize.top - 16), 40, 8 + 1, 2
+          Math.min(256, window.innerHeight - menuPopupSize.top - 8), 36, 8, 8
         ),
       };
 

@@ -27,13 +27,13 @@ class _SettingsPopupData extends React.PureComponent {
         </div>
         <div className="mt-8">
           <button onClick={this.props.onToExportAllDataViewBtnClick} className="w-full text-left rounded focus:outline-none focus:ring focus:ring-offset-1">
-            <h4 className="text-base text-gray-800 font-medium underline hover:text-gray-900">Export All Data</h4>
+            <h4 className="text-base text-gray-800 font-medium leading-none underline hover:text-gray-900">Export All Data</h4>
           </button>
           <p className="mt-2.5 text-base text-gray-500 leading-relaxed">Export all your data from server to your device in a text file.</p>
         </div>
         <div className="mt-8 mb-4">
           <button onClick={this.props.onToDeleteAllDataViewBtnClick} className="w-full text-left rounded focus:outline-none focus:ring focus:ring-offset-1">
-            <h4 className="text-base text-gray-800 font-medium underline hover:text-gray-900">Delete All Data</h4>
+            <h4 className="text-base text-gray-800 font-medium leading-none underline hover:text-gray-900">Delete All Data</h4>
           </button>
           <p className="mt-2.5 text-base text-gray-500 leading-relaxed">Delete all your data including but not limited to all your saved links in all lists, all your created lists, and all your settings.</p>
         </div>

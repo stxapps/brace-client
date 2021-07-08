@@ -104,7 +104,7 @@ class TopBarAddPopup extends React.PureComponent {
         <View style={tailwind('flex-row justify-start items-center')}>
           <Text style={tailwind('flex-none text-sm text-gray-600 font-normal')}>Url:</Text>
           {/* onKeyPress event for Enter key only if there is multiline TextInput */}
-          <TextInput onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('ml-3 px-3.5 py-1 flex-1 bg-white text-base text-gray-700 font-normal rounded-full border border-gray-400')} keyboardType="url" placeholder="https://" value={url} autoCapitalize="none" autoFocus />
+          <TextInput onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('ml-3 px-3.5 py-1.5 flex-1 bg-white text-base text-gray-700 font-normal leading-5 rounded-full border border-gray-400')} keyboardType="url" placeholder="https://" value={url} autoCapitalize="none" autoFocus />
         </View>
         {msg !== '' && <Text style={tailwind('pt-3 text-sm text-red-500 font-normal')}>{msg}</Text>}
         <View style={tailwind(`${msg !== '' ? 'pt-3' : 'pt-5'} flex-row justify-start items-center`)}>

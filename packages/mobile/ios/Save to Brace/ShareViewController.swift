@@ -9,12 +9,14 @@ class ShareViewController: UIViewController {
   var didRenderAdded = false
   var timer: Timer? = nil
 
+  let normalTextSm = UIFont.init(name: "Inter-Regular", size: 14)!
   let normalTextBase = UIFont.init(name: "Inter-Regular", size: 16)!
-  let normalTextXl = UIFont.init(name: "Inter-Regular", size: 20)!
-  let boldTextXl = UIFont.init(name: "Inter-Bold", size: 20)!
-  
-  let gray900 = UIColor.init(red: 26/255, green: 32/255, blue: 44/255, alpha: 1)
-  let gray600 = UIColor.init(red: 113/255, green: 128/255, blue: 150/255, alpha: 1)
+  let semiBoldTextLg = UIFont.init(name: "Inter-SemiBold", size: 18)!
+
+  let gray400 = UIColor.init(red: 156/255, green: 163/255, blue: 175/255, alpha: 1)
+  let gray500 = UIColor.init(red: 107/255, green: 114/255, blue: 128/255, alpha: 1)
+  let gray600 = UIColor.init(red: 75/255, green: 85/255, blue: 99/255, alpha: 1)
+  let gray800 = UIColor.init(red: 31/255, green: 41/255, blue: 55/255, alpha: 1)
 
   let SM_WIDTH = CGFloat(640)
   
@@ -150,7 +152,7 @@ class ShareViewController: UIViewController {
       let chConstraint = NSLayoutConstraint(item: contentView, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: CGFloat(contentViewHeight))
       contentView.addConstraints([cwConstraint, chConstraint])
 
-      let loader = NVActivityIndicatorView(frame: CGRect.init(x: 0, y: 0, width: 72, height: 72), type: .ballPulse, color: self.gray600, padding: 8)
+      let loader = NVActivityIndicatorView(frame: CGRect.init(x: 0, y: 0, width: 72, height: 72), type: .ballPulse, color: self.gray400, padding: 8)
       loader.translatesAutoresizingMaskIntoConstraints = false
       contentView.addSubview(loader)
 
@@ -161,14 +163,14 @@ class ShareViewController: UIViewController {
       contentView.addConstraints([lxConstraint, ltConstraint])
 
       let text = UILabel()
-      text.font = self.normalTextXl
-      text.textColor = self.gray900
+      text.font = self.normalTextBase
+      text.textColor = self.gray600
       text.textAlignment = NSTextAlignment.center
       text.translatesAutoresizingMaskIntoConstraints = false
       contentView.addSubview(text)
 
       let s = NSMutableAttributedString(string: "Saving to ")
-      s.append(NSMutableAttributedString(string: "Brace", attributes: [NSAttributedString.Key.font: self.boldTextXl]))
+      s.append(NSMutableAttributedString(string: "Brace", attributes: [NSAttributedString.Key.font: self.semiBoldTextLg, NSAttributedString.Key.foregroundColor: self.gray800]))
       text.attributedText = s
       
       let tlConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.left, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.left, multiplier: 1, constant: 16)
@@ -202,14 +204,14 @@ class ShareViewController: UIViewController {
       contentView.addConstraints([ixConstraint, itConstraint])
 
       let text = UILabel()
-      text.font = self.normalTextXl
-      text.textColor = self.gray900
+      text.font = self.normalTextBase
+      text.textColor = self.gray600
       text.textAlignment = NSTextAlignment.center
       text.translatesAutoresizingMaskIntoConstraints = false
       contentView.addSubview(text)
 
       let s = NSMutableAttributedString(string: "Saved to ")
-      s.append(NSMutableAttributedString(string: "Brace", attributes: [NSAttributedString.Key.font: self.boldTextXl]))
+      s.append(NSMutableAttributedString(string: "Brace", attributes: [NSAttributedString.Key.font: self.semiBoldTextLg, NSAttributedString.Key.foregroundColor: self.gray800]))
       text.attributedText = s
       
       let tlConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.left, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.left, multiplier: 1, constant: 16)
@@ -248,8 +250,8 @@ class ShareViewController: UIViewController {
       contentView.addConstraints([ixConstraint, itConstraint])
 
       let head = UILabel()
-      head.font = self.normalTextXl
-      head.textColor = self.gray900
+      head.font = self.semiBoldTextLg
+      head.textColor = self.gray800
       head.textAlignment = NSTextAlignment.center
       head.text = "Oops..., something went wrong!"
       head.numberOfLines = 2
@@ -264,7 +266,7 @@ class ShareViewController: UIViewController {
 
       let text = UILabel()
       text.font = self.normalTextBase
-      text.textColor = self.gray900
+      text.textColor = self.gray500
       text.textAlignment = NSTextAlignment.center
       text.text = "Please wait for a moment and try again. If the problem persists, please contact us."
       text.numberOfLines = 3
@@ -279,8 +281,8 @@ class ShareViewController: UIViewController {
       
       let btn = UIButton()
       btn.backgroundColor = .clear
-      btn.setTitleColor(self.gray900, for: .normal)
-      btn.setAttributedTitle(NSMutableAttributedString(string: "Close", attributes: [NSAttributedString.Key.font: self.normalTextBase]), for: .normal)
+      btn.setTitleColor(self.gray500, for: .normal)
+      btn.setAttributedTitle(NSMutableAttributedString(string: "Close", attributes: [NSAttributedString.Key.font: self.normalTextSm]), for: .normal)
       btn.addTarget(self, action: #selector(self.completeRequest), for: .touchUpInside)
       btn.translatesAutoresizingMaskIntoConstraints = false
       contentView.addSubview(btn)
@@ -315,8 +317,8 @@ class ShareViewController: UIViewController {
       contentView.addConstraints([ixConstraint, itConstraint])
 
       let text = UILabel()
-      text.font = self.normalTextXl
-      text.textColor = self.gray900
+      text.font = self.normalTextBase
+      text.textColor = self.gray600
       text.textAlignment = NSTextAlignment.center
       text.text = "No link found to save to Brace"
       text.numberOfLines = 2
@@ -331,8 +333,8 @@ class ShareViewController: UIViewController {
 
       let btn = UIButton()
       btn.backgroundColor = .clear
-      btn.setTitleColor(self.gray900, for: .normal)
-      btn.setAttributedTitle(NSMutableAttributedString(string: "Close", attributes: [NSAttributedString.Key.font: self.normalTextBase]), for: .normal)
+      btn.setTitleColor(self.gray500, for: .normal)
+      btn.setAttributedTitle(NSMutableAttributedString(string: "Close", attributes: [NSAttributedString.Key.font: self.normalTextSm]), for: .normal)
       btn.addTarget(self, action: #selector(self.completeRequest), for: .touchUpInside)
       btn.translatesAutoresizingMaskIntoConstraints = false
       contentView.addSubview(btn)
@@ -367,8 +369,8 @@ class ShareViewController: UIViewController {
       contentView.addConstraints([ixConstraint, itConstraint])
 
       let text = UILabel()
-      text.font = self.normalTextXl
-      text.textColor = self.gray900
+      text.font = self.normalTextBase
+      text.textColor = self.gray600
       text.textAlignment = NSTextAlignment.center
       text.text = "Please sign in first"
       text.translatesAutoresizingMaskIntoConstraints = false
@@ -382,8 +384,8 @@ class ShareViewController: UIViewController {
 
       let btn = UIButton()
       btn.backgroundColor = .clear
-      btn.setTitleColor(self.gray900, for: .normal)
-      btn.setAttributedTitle(NSMutableAttributedString(string: "Close", attributes: [NSAttributedString.Key.font: self.normalTextBase]), for: .normal)
+      btn.setTitleColor(self.gray500, for: .normal)
+      btn.setAttributedTitle(NSMutableAttributedString(string: "Close", attributes: [NSAttributedString.Key.font: self.normalTextSm]), for: .normal)
       btn.addTarget(self, action: #selector(self.completeRequest), for: .touchUpInside)
       btn.translatesAutoresizingMaskIntoConstraints = false
       contentView.addSubview(btn)

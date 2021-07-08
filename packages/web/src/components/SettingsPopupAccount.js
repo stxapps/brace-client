@@ -33,7 +33,7 @@ class SettingsPopupAccount extends React.PureComponent {
           <div className="md:float-right md:w-3/12">
             {userImage}
           </div>
-          <table className="mt-4 table-auto lg:mt-0 lg:table-fixed">
+          <table className="mt-4 table-auto md:mt-0 lg:table-fixed">
             <tbody>
               <tr className="py-4">
                 <td className="align-middle lg:w-4/12">

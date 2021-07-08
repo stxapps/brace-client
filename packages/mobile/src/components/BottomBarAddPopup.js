@@ -92,19 +92,19 @@ class BottomBarAddPopup extends React.PureComponent {
 
     return (
       <Modal isVisible={isAddPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={this.onAddPopupShow} onModalWillHide={this.onAddPopupHide} style={tailwind('justify-end m-0')} supportedOrientations={MODAL_SUPPORTED_ORIENTATIONS} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true} avoidKeyboard={Platform.OS === 'ios' ? true : false}>
-        <View style={tailwind('px-4 pt-6 pb-6 w-full bg-white border border-gray-200 rounded-t-lg shadow-xl')}>
+        <View style={tailwind('px-4 pt-6 pb-6 w-full bg-white border border-gray-100 rounded-t-lg shadow-xl')}>
           <View style={tailwind('flex-row justify-start items-center')}>
-            <Text style={tailwind('flex-none text-sm text-gray-700 font-medium')}>Url:</Text>
+            <Text style={tailwind('flex-none text-sm text-gray-600 font-normal')}>Url:</Text>
             {/* onKeyPress event for Enter key only if there is multiline TextInput */}
-            <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('ml-3 px-4 py-2 flex-1 bg-white text-base text-gray-900 font-normal border border-gray-500 rounded-full')} keyboardType="url" placeholder="https://" value={url} autoCapitalize="none" />
+            <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('ml-3 px-3.5 py-1.5 flex-1 bg-white text-base text-gray-700 font-normal leading-5 rounded-full border border-gray-400')} keyboardType="url" placeholder="https://" value={url} autoCapitalize="none" />
           </View>
-          {msg === '' ? <View style={tailwind('w-full h-3')} /> : <Text style={tailwind('pt-3 text-base text-red-500 font-normal')}>{msg}</Text>}
-          <View style={tailwind('pt-3 flex-row justify-start items-center')}>
-            <TouchableOpacity onPress={this.onAddOkBtnClick} style={tailwind('px-5 py-2 justify-center items-center bg-gray-800 rounded-full shadow-sm')}>
-              <Text style={tailwind('text-base text-white font-medium')}>{isAskingConfirm ? 'Sure' : 'Save'}</Text>
+          {msg !== '' && <Text style={tailwind('pt-3 text-sm text-red-500 font-normal')}>{msg}</Text>}
+          <View style={tailwind(`${msg !== '' ? 'pt-3' : 'pt-5'} flex-row justify-start items-center`)}>
+            <TouchableOpacity onPress={this.onAddOkBtnClick} style={[tailwind('px-4 justify-center items-center bg-gray-800 rounded-full'), { paddingTop: 7, paddingBottom: 7 }]}>
+              <Text style={tailwind('text-sm text-gray-50 font-medium')}>{isAskingConfirm ? 'Sure' : 'Save'}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={this.onAddCancelBtnClick} style={tailwind('ml-4 rounded-sm')}>
-              <Text style={tailwind('text-base text-gray-700 font-normal')}>Cancel</Text>
+            <TouchableOpacity onPress={this.onAddCancelBtnClick} style={tailwind('ml-2 px-2.5 py-1.5 rounded-md')}>
+              <Text style={tailwind('text-sm text-gray-500 font-normal')}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>

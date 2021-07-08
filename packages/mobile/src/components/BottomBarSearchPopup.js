@@ -175,16 +175,16 @@ class BottomBarSearchPopup extends React.PureComponent {
     return (
       <Animated.View style={[tailwind('px-2 py-2 absolute inset-x-0 flex-row justify-between items-center bg-white border border-gray-200 z-10'), style]}>
         <View style={tailwind('flex-grow flex-shrink')}>
-          <TextInput ref={this.searchInput} onChange={this.onSearchInputChange} style={tailwind('pl-4 pr-6 py-1 w-full bg-white text-base text-gray-900 font-normal border border-gray-500 rounded-full')} placeholder="Search" value={searchString} autoCapitalize="none" />
+          <TextInput ref={this.searchInput} onChange={this.onSearchInputChange} style={tailwind('pl-4 pr-6 py-2 w-full bg-white text-sm text-gray-700 font-normal leading-4 border border-gray-400 rounded-full')} placeholder="Search" placeholderTextColor="rgb(107, 114, 128)" value={searchString} autoCapitalize="none" />
           {/* A bug display: none doesn't work with absolute, need to change to relative. https://github.com/facebook/react-native/issues/18415 */}
           <TouchableOpacity onPress={this.onSearchClearBtnClick} style={tailwind(`pr-2 ${searchClearBtnClasses} inset-y-0 right-0 justify-center items-center`)}>
-            <Svg style={tailwind('text-base text-gray-600 font-normal rounded-full')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('text-gray-400 font-normal rounded-full')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM8.70711 7.29289C8.31658 6.90237 7.68342 6.90237 7.29289 7.29289C6.90237 7.68342 6.90237 8.31658 7.29289 8.70711L8.58579 10L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L10 11.4142L11.2929 12.7071C11.6834 13.0976 12.3166 13.0976 12.7071 12.7071C13.0976 12.3166 13.0976 11.6834 12.7071 11.2929L11.4142 10L12.7071 8.70711C13.0976 8.31658 13.0976 7.68342 12.7071 7.29289C12.3166 6.90237 11.6834 6.90237 11.2929 7.29289L10 8.58579L8.70711 7.29289Z" />
             </Svg>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={this.onSearchCancelBtnClick} style={tailwind('ml-2 flex-grow-0 flex-shrink-0 justify-center items-center h-10 rounded-lg')}>
-          <Text style={tailwind('text-base text-gray-700 font-normal')}>Cancel</Text>
+        <TouchableOpacity onPress={this.onSearchCancelBtnClick} style={tailwind('ml-2 px-1.5 py-1 flex-grow-0 flex-shrink-0 justify-center items-center h-10 rounded-md')}>
+          <Text style={tailwind('text-sm text-gray-500 font-normal')}>Cancel</Text>
         </TouchableOpacity>
       </Animated.View>
     );

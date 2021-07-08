@@ -347,7 +347,7 @@ class _ListNameEditor extends React.PureComponent {
         </button>}
         <div className="relative flex-grow flex-shrink">
           <input ref={this.input} onFocus={this.onInputFocus} onBlur={this.onInputBlur} onChange={this.onInputChange} onKeyPress={this.onInputKeyPress} className="px-0 py-2 w-full bg-white text-base text-gray-600 border-0 focus:outline-none focus:ring-0" type="text" placeholder="Create new list" value={value} disabled={isBusy || doRetry} />
-          <p style={{ bottom: '-0.75rem' }} className="absolute left-0 right-0 text-sm text-red-600 font-medium leading-5 truncate">{errMsg}</p>
+          <p style={{ bottom: '-0.5rem' }} className="absolute left-0 right-0 text-sm text-red-600 font-medium leading-5 truncate">{errMsg}</p>
         </div>
         {mode === MODE_EDIT && <button onTouchStart={this.onOkBtnPress} onMouseDown={this.onOkBtnPress} onClick={this.onOkBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-center items-center w-10 h-10 group focus:outline-none">
           <svg className="w-4 text-gray-500 rounded-sm group-hover:text-gray-600 group-focus:ring group-focus:ring-offset-4" viewBox="0 0 14 10" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

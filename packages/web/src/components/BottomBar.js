@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 
 import { BOTTOM_BAR_HEIGHT } from '../types/const';
 import { getPopupLink } from '../selectors';

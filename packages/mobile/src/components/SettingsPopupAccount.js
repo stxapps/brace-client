@@ -32,17 +32,17 @@ class SettingsPopupAccount extends React.PureComponent {
     }
 
     const profileFirstColWidth = safeAreaWidth < LG_WIDTH ? 72 : 160;
-    const warningSvgSize = safeAreaWidth < MD_WIDTH ? 32 : 40;
+    const warningSvgSize = safeAreaWidth < MD_WIDTH ? 28 : 40;
 
     return (
       <View style={tailwind('p-4 md:p-6 md:pt-4', safeAreaWidth)}>
-        <View style={tailwind('border-b border-gray-400 md:hidden', safeAreaWidth)}>
+        <View style={tailwind('border-b border-gray-200 md:hidden', safeAreaWidth)}>
           <TouchableOpacity onPress={this.props.onSidebarOpenBtnClick} style={tailwind('pb-1')}>
-            <Text style={tailwind('text-sm text-gray-700 font-normal')}>{'<'} <Text style={tailwind('text-sm text-gray-700 font-normal')}>Settings</Text></Text>
+            <Text style={tailwind('text-sm text-gray-500 font-normal')}>{'<'} <Text style={tailwind('text-sm text-gray-500 font-normal')}>Settings</Text></Text>
           </TouchableOpacity>
-          <Text style={tailwind('pb-2 text-2xl text-gray-800 font-medium leading-6')}>Account</Text>
+          <Text style={tailwind('pb-2 text-xl text-gray-800 font-medium leading-5')}>Account</Text>
         </View>
-        <Text style={tailwind('mt-4 text-base text-gray-700 font-normal leading-6.5 md:mt-0', safeAreaWidth)}>You sign in to Brace.to using your Stacks Identity. This is similar to some websites that allow you to use your Google, Facebook, or Twitter account to sign in to their websites. Not similarly, your Stacks Identity lives in blockchain and only you with your secret key can control it. If you want to change your Stacks Identity’s information i.e. your profile picture, please visit <Text onPress={() => Linking.openURL('https://browser.blockstack.org/profiles')} style={tailwind('text-base text-gray-700 font-normal underline')}>Blockstack Browser</Text>.</Text>
+        <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5 md:mt-0', safeAreaWidth)}>You sign in to Brace.to using your Stacks Identity. This is similar to some websites that allow you to use your Google, Facebook, or Twitter account to sign in to their websites. Not similarly, your Stacks Identity lives in blockchain and only you with your secret key can control it. If you want to change your Stacks Identity’s information i.e. your profile picture, please visit <Text onPress={() => Linking.openURL('https://browser.blockstack.org/profiles')} style={tailwind('text-base text-gray-500 font-normal underline')}>Blockstack Browser</Text>.</Text>
         <View style={tailwind('mt-8 md:flex-row-reverse md:items-start', safeAreaWidth)}>
           <View style={tailwind('justify-center items-center w-full md:justify-start md:items-end md:w-3/12', safeAreaWidth)}>
             {userImage}
@@ -50,38 +50,38 @@ class SettingsPopupAccount extends React.PureComponent {
           <View style={tailwind('mt-4 self-stretch md:flex-1 md:mt-0', safeAreaWidth)}>
             <View style={tailwind('flex-row items-start')}>
               <View style={cache('SPA_profileFirstCol', { width: profileFirstColWidth }, safeAreaWidth)}>
-                <Text style={tailwind('text-sm text-gray-700 font-normal text-right leading-6.5')}>ID:</Text>
+                <Text style={tailwind('text-sm text-gray-500 font-normal text-right leading-6.5')}>ID:</Text>
               </View>
               <View style={tailwind('pl-2 flex-1')}>
-                <Text style={tailwind('w-full text-base text-gray-700 font-normal leading-6.5')}>{this.props.username || 'N/A'}</Text>
+                <Text style={tailwind('w-full text-base text-gray-500 font-normal leading-6.5')}>{this.props.username || 'N/A'}</Text>
               </View>
             </View>
             <View style={tailwind('flex-row items-start')}>
               <View style={cache('SPA_profileFirstCol', { width: profileFirstColWidth }, safeAreaWidth)}>
-                <Text style={tailwind('text-sm text-gray-700 font-normal text-right leading-6.5')}>Password:</Text>
+                <Text style={tailwind('text-sm text-gray-500 font-normal text-right leading-6.5')}>Password:</Text>
               </View>
               <View style={tailwind('pl-2 flex-1')}>
-                <Text style={tailwind('w-full text-base text-gray-700 font-normal leading-6.5')}>Unlike traditional systems, your password cannot be reset. Your password is a 12-word secret key. It's only known to you. If you lose it, there is no way to retrieve it back. Keep it safe before you sign out. You can view it only when you sign in.</Text>
-                <Text onPress={() => Linking.openURL('https://app.blockstack.org/#/settings/secret-key')} style={tailwind('pt-2 w-full text-base text-blue-600 font-normal leading-6.5 underline')}>View your 12-word secret key</Text>
+                <Text style={tailwind('w-full text-base text-gray-500 font-normal leading-6.5')}>Unlike traditional systems, your password cannot be reset. Your password is a 12-word secret key. It's only known to you. If you lose it, there is no way to retrieve it back. Keep it safe before you sign out. You can view it only when you sign in.</Text>
+                <Text onPress={() => Linking.openURL('https://app.blockstack.org/#/settings/secret-key')} style={tailwind('pt-2 w-full text-base text-blue-500 font-normal leading-6.5 underline')}>View your 12-word secret key</Text>
               </View>
             </View>
           </View>
         </View>
-        <View style={tailwind('mt-4 p-4 rounded-md bg-yellow-200')}>
+        <View style={tailwind('mt-4 p-4 rounded-md bg-yellow-50')}>
           <View style={tailwind('flex-row')}>
             <View style={tailwind('flex-shrink-0')}>
-              <Svg style={tailwind('text-base text-yellow-500 font-normal')} width={warningSvgSize} height={warningSvgSize} viewBox="0 0 20 20" fill="currentColor">
+              <Svg style={tailwind('text-yellow-400 font-normal')} width={warningSvgSize} height={warningSvgSize} viewBox="0 0 20 20" fill="currentColor">
                 <Path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </Svg>
             </View>
             <View style={tailwind('ml-3 flex-1')}>
-              <Text style={tailwind('text-base text-yellow-800 font-normal leading-6.5')}>Signing out from Brace.to doesn’t sign out from Stacks. If you want to sign out from Stacks, especially when you use not-your-own devices, you need to go to <Text onPress={() => Linking.openURL('https://app.blockstack.org/')} style={tailwind('text-base text-yellow-800 font-normal underline')}>Stacks App</Text> and/or <Text onPress={() => Linking.openURL('https://browser.blockstack.org/account/delete')} style={tailwind('text-base text-yellow-800 font-normal underline')}>Blockstack Browser</Text> and sign out there.</Text>
+              <Text style={tailwind('text-base text-yellow-700 font-normal leading-6.5')}>Signing out from Brace.to doesn’t sign out from Stacks. If you want to sign out from Stacks, especially when you use not-your-own devices, you need to go to <Text onPress={() => Linking.openURL('https://app.blockstack.org/')} style={tailwind('text-base text-yellow-800 font-normal underline')}>Stacks App</Text> and/or <Text onPress={() => Linking.openURL('https://browser.blockstack.org/account/delete')} style={tailwind('text-base text-yellow-800 font-normal underline')}>Blockstack Browser</Text> and sign out there.</Text>
             </View>
           </View>
         </View>
         <View style={tailwind('mt-8 mb-4')}>
-          <Text style={tailwind('text-xl text-red-700 font-medium leading-5')}>Delete Account</Text>
-          <Text style={tailwind('mt-2 text-base text-gray-700 font-normal leading-6.5')}>Brace.to uses Stacks Identity to sign you in. If you want to delete your Stacks Identity, please send an email to support@blockstack.com. For more information, please visit <Text onPress={() => Linking.openURL('https://forum.stacks.org/t/is-blockstack-gdrp-compliant/10931/4')} style={tailwind('text-base text-gray-700 font-normal underline')}>here</Text>.</Text>
+          <Text style={tailwind('text-base text-red-600 font-medium leading-4')}>Delete Account</Text>
+          <Text style={tailwind('mt-2.5 text-base text-gray-500 font-normal leading-6.5')}>Brace.to uses Stacks Identity to sign you in. If you want to delete your Stacks Identity, please send an email to support@blockstack.com. For more information, please visit <Text onPress={() => Linking.openURL('https://forum.stacks.org/t/is-blockstack-gdrp-compliant/10931/4')} style={tailwind('text-base text-gray-500 font-normal underline')}>here</Text>.</Text>
         </View>
       </View>
     );
