@@ -44,8 +44,8 @@ export const getTopBarSizes = (safeAreaWidth) => {
   const topBarHeight = toPx(safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD);
   const headerHeight = toPx(TOP_HEADER_HEIGHT);
   const listNameHeight = toPx(TOP_LIST_NAME_HEIGHT); // From ListName -> Text -> leading-7
-  const statusPopupHeight = 24; // From StatusPopup -> AnimatedText -> leading-6
-  const commandsHeight = 38; // From onLayout
+  const statusPopupHeight = 20; // From StatusPopup -> AnimatedText -> text-sm
+  const commandsHeight = 34; // From onLayout
 
   const headerListNameSpace = toPx(safeAreaWidth < MD_WIDTH ? TOP_HEADER_LIST_NAME_SPACE : TOP_HEADER_LIST_NAME_SPACE_MD);
 
@@ -77,7 +77,7 @@ export const getTopBarSizes = (safeAreaWidth) => {
 
   const listNameArrowWidth = 20; // From inspect
   const listNameArrowSpace = 4; // From inspect
-  const commandsWidth = 434; // From inspect
+  const commandsWidth = 432; // From inspect
 
   return {
     topBarHeight,

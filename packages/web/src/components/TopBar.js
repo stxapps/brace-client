@@ -79,7 +79,7 @@ class TopBar extends React.PureComponent {
       statusPopupDistanceY,
     } = getTopBarSizes(window.innerWidth);
 
-    const initialTop = window.innerWidth < MD_WIDTH ? '4.625rem' : '5.125rem';
+    const initialTop = window.innerWidth < MD_WIDTH ? '4.75rem' : '5.25rem';
     const top = Math.max(0, toPx(initialTop) - offsetY);
     const right = 0;
     const opacity = Math.max(0, 1.0 - (offsetY / statusPopupDistanceY));
