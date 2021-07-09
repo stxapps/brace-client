@@ -174,7 +174,7 @@ class BottomBarSearchPopup extends React.PureComponent {
     const inputClassNames = Platform.OS === 'ios' ? 'py-2 leading-4' : 'py-0.5';
 
     return (
-      <Animated.View style={[tailwind('px-2 py-2 absolute inset-x-0 flex-row justify-between items-center bg-white border border-gray-200 z-10'), style]}>
+      <Animated.View style={[tailwind('px-2 py-2 absolute inset-x-0 flex-row justify-between items-center bg-white border-t border-gray-200 z-10'), style]}>
         <View style={tailwind('flex-grow flex-shrink')}>
           <TextInput ref={this.searchInput} onChange={this.onSearchInputChange} style={tailwind(`pl-4 pr-6 w-full bg-white text-sm text-gray-700 font-normal border border-gray-400 rounded-full ${inputClassNames}`)} placeholder="Search" placeholderTextColor="rgb(107, 114, 128)" value={searchString} autoCapitalize="none" />
           {/* A bug display: none doesn't work with absolute, need to change to relative. https://github.com/facebook/react-native/issues/18415 */}

@@ -66,7 +66,7 @@ class BottomBarBulkEditMoveToPopup extends React.PureComponent {
     );
 
     const popupStyle = {
-      maxHeight: getLastHalfHeight(384, 52, 16, 16, 0.5),
+      maxHeight: getLastHalfHeight(384, 52, 16, 0, 0.5),
     };
 
     return (

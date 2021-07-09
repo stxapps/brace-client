@@ -56,11 +56,11 @@ class BottomBarCommands extends React.PureComponent {
           <View style={tailwind('p-1 flex-1')}>
             <TouchableOpacity onPress={this.onAddBtnClick} style={tailwind('justify-center items-center w-full h-full')}>
               <View style={tailwind('justify-center items-center w-6 h-6')}>
-                <Svg style={cache('BBC_addSvg', [tailwind('text-gray-500 font-normal'), { marginBottom: 2 }])} width={18} height={17} viewBox="0 0 13 12" stroke="currentColor">
+                <Svg style={tailwind('mb-0.5 text-gray-500 font-normal')} width={18} height={17} viewBox="0 0 13 12" stroke="currentColor">
                   <Path d="M6.5 1V10.4286M1 5.67609H12" strokeWidth="1.57143" strokeLinecap="round" strokeLinejoin="round" />
                 </Svg>
               </View>
-              <Text style={cache('BBC_addText', [tailwind('text-xs text-gray-500 font-normal leading-4'), { marginTop: 2 }])}>Add</Text>
+              <Text style={tailwind('mt-0.5 text-xs text-gray-500 font-normal leading-4')}>Add</Text>
             </TouchableOpacity>
           </View>
           <View style={tailwind('p-1 flex-1')}>
@@ -70,7 +70,7 @@ class BottomBarCommands extends React.PureComponent {
                   <Path d="M16.32 14.9l1.1 1.1c.4-.02.83.13 1.14.44l3 3a1.5 1.5 0 0 1-2.12 2.12l-3-3a1.5 1.5 0 0 1-.44-1.14l-1.1-1.1a8 8 0 1 1 1.41-1.41l.01-.01zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
                 </Svg>
               </View>
-              <Text style={cache('BBC_searchText', [tailwind('text-xs text-gray-500 font-normal leading-4'), { marginTop: 2 }])}>Search</Text>
+              <Text style={tailwind('mt-0.5 text-xs text-gray-500 font-normal leading-4')}>Search</Text>
             </TouchableOpacity>
           </View>
           <View style={tailwind('p-1 flex-1')}>
@@ -81,7 +81,7 @@ class BottomBarCommands extends React.PureComponent {
                   <Path fillRule="evenodd" clipRule="evenodd" d="M2 6C2 4.89543 2.89543 4 4 4H8C8.55228 4 9 4.44772 9 5C9 5.55228 8.55228 6 8 6H4V16H14V12C14 11.4477 14.4477 11 15 11C15.5523 11 16 11.4477 16 12V16C16 17.1046 15.1046 18 14 18H4C2.89543 18 2 17.1046 2 16V6Z" />
                 </Svg>
               </View>
-              <Text style={cache('BBC_selectText', [tailwind('text-xs text-gray-500 font-normal leading-4'), { marginTop: 2 }])}>Select</Text>
+              <Text style={tailwind('mt-0.5 text-xs text-gray-500 font-normal leading-4')}>Select</Text>
             </TouchableOpacity>
           </View>
           <TouchableOpacity onPress={this.onProfileBtnClick} style={tailwind('flex-1 justify-center items-center')}>
