@@ -84,7 +84,9 @@ class TopBarBulkEditMoveToPopup extends React.PureComponent {
     const popupStyle = {
       height: Math.min(
         (textHeight * moveTo.length) + 16,
-        getLastHalfHeight(Math.min(256, safeAreaHeight - 56 - 24 - 8), textHeight, 8, 8)
+        getLastHalfHeight(
+          Math.min(256, safeAreaHeight - 56 - 24 - 8), textHeight, 8, 8, 0.5
+        ),
       ),
     };
 

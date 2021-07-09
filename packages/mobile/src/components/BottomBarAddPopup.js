@@ -90,13 +90,15 @@ class BottomBarAddPopup extends React.PureComponent {
     const { isAddPopupShown, windowWidth, windowHeight } = this.props;
     const { url, msg, isAskingConfirm } = this.state;
 
+    const inputClassNames = Platform.OS === 'ios' ? 'py-1.5 leading-5' : 'py-0.5';
+
     return (
       <Modal isVisible={isAddPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={this.onAddPopupShow} onModalWillHide={this.onAddPopupHide} style={tailwind('justify-end m-0')} supportedOrientations={MODAL_SUPPORTED_ORIENTATIONS} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true} avoidKeyboard={Platform.OS === 'ios' ? true : false}>
         <View style={tailwind('px-4 pt-6 pb-6 w-full bg-white border border-gray-100 rounded-t-lg shadow-xl')}>
           <View style={tailwind('flex-row justify-start items-center')}>
             <Text style={tailwind('flex-none text-sm text-gray-600 font-normal')}>Url:</Text>
             {/* onKeyPress event for Enter key only if there is multiline TextInput */}
-            <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind('ml-3 px-3.5 py-1.5 flex-1 bg-white text-base text-gray-700 font-normal leading-5 rounded-full border border-gray-400')} keyboardType="url" placeholder="https://" value={url} autoCapitalize="none" />
+            <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind(`ml-3 px-3.5 flex-1 bg-white text-base text-gray-700 font-normal rounded-full border border-gray-400 ${inputClassNames}`)} keyboardType="url" placeholder="https://" value={url} autoCapitalize="none" />
           </View>
           {msg !== '' && <Text style={tailwind('pt-3 text-sm text-red-500 font-normal')}>{msg}</Text>}
           <View style={tailwind(`${msg !== '' ? 'pt-3' : 'pt-5'} flex-row justify-start items-center`)}>

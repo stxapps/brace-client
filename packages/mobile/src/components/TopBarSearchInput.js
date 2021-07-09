@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, TouchableOpacity, TextInput } from 'react-native';
+import { View, TouchableOpacity, TextInput, Platform } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { updateSearchString } from '../actions';
@@ -22,11 +22,12 @@ class TopBarSearchInput extends React.PureComponent {
 
     const { searchString } = this.props;
 
+    const inputClassNames = Platform.OS === 'ios' ? 'py-2 leading-4' : 'py-0.5';
     const searchClearBtnClasses = searchString.length === 0 ? 'hidden relative' : 'flex absolute';
 
     return (
       <View style={tailwind('ml-4 w-48')}>
-        <TextInput onChange={this.onSearchInputChange} style={tailwind('ml-0.5 pl-9 pr-6 py-2 w-full bg-gray-100 text-sm text-gray-700 font-normal leading-4 border border-transparent rounded-full')} placeholder="Search" placeholderTextColor="rgb(107, 114, 128)" value={searchString} autoCapitalize="none" />
+        <TextInput onChange={this.onSearchInputChange} style={tailwind(`ml-0.5 pl-9 pr-6 w-full bg-gray-100 text-sm text-gray-700 font-normal border border-transparent rounded-full ${inputClassNames}`)} placeholder="Search" placeholderTextColor="rgb(107, 114, 128)" value={searchString} autoCapitalize="none" />
         {/* A bug display: none doesn't work with absolute, need to change to relative. https://github.com/facebook/react-native/issues/18415 */}
         <TouchableOpacity onPress={this.onSearchClearBtnClick} style={tailwind(`pr-2 ${searchClearBtnClasses} inset-y-0 right-0 justify-center items-center`)}>
           <Svg style={tailwind('text-gray-400 font-normal rounded-full')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">

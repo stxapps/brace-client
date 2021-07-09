@@ -171,11 +171,12 @@ class BottomBarSearchPopup extends React.PureComponent {
     style.bottom = toPx(BOTTOM_BAR_HEIGHT) + insets.bottom;
 
     const searchClearBtnClasses = searchString.length === 0 ? 'hidden relative' : 'flex absolute';
+    const inputClassNames = Platform.OS === 'ios' ? 'py-2 leading-4' : 'py-0.5';
 
     return (
       <Animated.View style={[tailwind('px-2 py-2 absolute inset-x-0 flex-row justify-between items-center bg-white border border-gray-200 z-10'), style]}>
         <View style={tailwind('flex-grow flex-shrink')}>
-          <TextInput ref={this.searchInput} onChange={this.onSearchInputChange} style={tailwind('pl-4 pr-6 py-2 w-full bg-white text-sm text-gray-700 font-normal leading-4 border border-gray-400 rounded-full')} placeholder="Search" placeholderTextColor="rgb(107, 114, 128)" value={searchString} autoCapitalize="none" />
+          <TextInput ref={this.searchInput} onChange={this.onSearchInputChange} style={tailwind(`pl-4 pr-6 w-full bg-white text-sm text-gray-700 font-normal border border-gray-400 rounded-full ${inputClassNames}`)} placeholder="Search" placeholderTextColor="rgb(107, 114, 128)" value={searchString} autoCapitalize="none" />
           {/* A bug display: none doesn't work with absolute, need to change to relative. https://github.com/facebook/react-native/issues/18415 */}
           <TouchableOpacity onPress={this.onSearchClearBtnClick} style={tailwind(`pr-2 ${searchClearBtnClasses} inset-y-0 right-0 justify-center items-center`)}>
             <Svg style={tailwind('text-gray-400 font-normal rounded-full')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">

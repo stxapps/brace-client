@@ -348,6 +348,8 @@ class _ListNameEditor extends React.PureComponent {
       errMsg = msg;
     }
 
+    const inputClassNames = Platform.OS === 'ios' ? 'py-2.5 leading-5' : 'py-1.5';
+
     return (
       <View style={tailwind('mt-1 flex-row justify-start items-center')}>
         {(mode === MODE_VIEW && listNameObj === null) && <TouchableOpacity onPress={this.onAddBtnClick} style={tailwind('flex-grow-0 flex-shrink-0 flex-row justify-start items-center w-8 h-10')}>
@@ -362,7 +364,7 @@ class _ListNameEditor extends React.PureComponent {
           </Svg>
         </TouchableOpacity>}
         <View style={tailwind('flex-grow flex-shrink')}>
-          <TextInput ref={this.input} onFocus={this.onInputFocus} onBlur={this.onInputBlur} onChange={this.onInputChange} onSubmitEditing={this.onInputKeyPress} style={tailwind('px-0 py-2.5 w-full bg-white text-base text-gray-600 font-normal leading-5 border-0')} placeholder="Create new list" value={value} editable={!(isBusy || doRetry)} />
+          <TextInput ref={this.input} onFocus={this.onInputFocus} onBlur={this.onInputBlur} onChange={this.onInputChange} onSubmitEditing={this.onInputKeyPress} style={tailwind(`px-0 w-full bg-white text-base text-gray-600 font-normal border-0 ${inputClassNames}`)} placeholder="Create new list" value={value} editable={!(isBusy || doRetry)} />
           <Text style={cache('SPL_errMsg', [tailwind('absolute left-0 right-0 text-sm text-red-600 font-medium leading-5'), { bottom: -8 }])} numberOfLines={1} ellipsizeMode="tail">{errMsg}</Text>
         </View>
         {mode === MODE_EDIT && <TouchableOpacity onPressIn={this.onOkBtnPress} onPress={this.onOkBtnClick} style={tailwind('flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10')}>
