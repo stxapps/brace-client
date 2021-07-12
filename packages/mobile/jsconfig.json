@@ -6,6 +6,7 @@
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "react",
+    "typeRoots": ["./src/@types", "./node_modules/@types"]
   }
 }
