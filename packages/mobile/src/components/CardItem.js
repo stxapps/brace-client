@@ -113,7 +113,7 @@ class CardItem extends React.Component {
 
     return (
       <View style={style}>
-        <View style={tailwind(`self-center bg-white border border-gray-100 rounded-lg shadow-sm ${viewStyle}`)}>
+        <View style={tailwind(`self-center bg-white rounded-lg shadow-sm ${viewStyle}`)}>
           <CardItemContent link={link} />
           {isDiedStatus(status) && this.renderRetry()}
           {[ADDING, MOVING].includes(status) && this.renderBusy()}

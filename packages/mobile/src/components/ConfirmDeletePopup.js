@@ -120,7 +120,7 @@ class ConfirmDeletePopup extends React.Component {
             </View>
           </View>
           <View style={tailwind('mt-5 sm:mt-4 sm:ml-10 sm:pl-4 sm:flex-row', safeAreaWidth)}>
-            <TouchableOpacity onPress={this.onConfirmDeleteOkBtnClick} style={tailwind('w-full rounded-md border border-transparent py-2 bg-red-600 sm:px-3.5 sm:py-1.5 sm:w-auto', safeAreaWidth)}>
+            <TouchableOpacity onPress={this.onConfirmDeleteOkBtnClick} style={tailwind('w-full rounded-md border border-red-600 py-2 bg-red-600 sm:px-3.5 sm:py-1.5 sm:w-auto sm:rounded-full', safeAreaWidth)}>
               <Text style={tailwind('text-base font-medium text-white text-center sm:text-sm sm:rounded-full', safeAreaWidth)}>Delete</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={this.onConfirmDeleteCancelBtnClick} style={tailwind('mt-3 w-full rounded-md border border-gray-400 py-2 bg-white sm:mt-0 sm:ml-3 sm:px-3 sm:py-1.5 sm:w-auto sm:rounded-full', safeAreaWidth)}>
