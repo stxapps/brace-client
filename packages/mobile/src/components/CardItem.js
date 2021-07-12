@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { View, Text, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, Linking, Platform } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
@@ -109,7 +109,8 @@ class CardItem extends React.Component {
 
     // Need to do this as React Native doesn't support maxWidth: "none"
     //   even though it's in tailwind-rn.
-    const viewStyle = safeAreaWidth < SM_WIDTH ? 'max-w-md' : '';
+    let viewStyle = safeAreaWidth < SM_WIDTH ? 'max-w-md' : '';
+    if (Platform.OS === 'ios') viewStyle += ' border border-gray-100';
 
     return (
       <View style={style}>
