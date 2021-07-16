@@ -134,7 +134,7 @@ class _SettingsPopupDataExport extends React.PureComponent {
     return (
       <div className="p-4 md:p-6 md:pt-4">
         <div className="border-b border-gray-200 md:border-b-0">
-          <button onClick={this.props.onBackToDataViewBtnClick} className="mb-1 group focus:outline-none md:mb-0">
+          <button onClick={this.props.onBackToDataViewBtnClick} className="pb-1 group focus:outline-none md:pb-0">
             <span className="text-sm text-gray-500 rounded group-focus:ring">{'<'} <span className="group-hover:underline">{window.innerWidth < SM_WIDTH ? 'Settings / ' : ''}Data</span></span>
           </button>
           <h3 className="pb-2 text-xl text-gray-800 font-medium leading-none md:pb-0">Export All Data</h3>
@@ -271,7 +271,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
     return (
       <div className="p-4 md:p-6 md:pt-4">
         <div className="border-b border-gray-200 md:border-b-0">
-          <button onClick={this.props.onBackToDataViewBtnClick} className="mb-1 group focus:outline-none md:mb-0">
+          <button onClick={this.props.onBackToDataViewBtnClick} className="pb-1 group focus:outline-none md:pb-0">
             <span className="text-sm text-gray-500 rounded group-focus:ring">{'<'} <span className="group-hover:underline">{window.innerWidth < SM_WIDTH ? 'Settings / ' : ''}Data</span></span>
           </button>
           <h3 className="pb-2 text-xl text-gray-800 font-medium leading-none md:pb-0">Delete All Data</h3>

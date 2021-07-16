@@ -35,7 +35,7 @@
     "shadowOpacity": 0.05,
     "shadowRadius": 0,
 
-    "elevation": 0.5
+    "elevation": 0.3
   },
   "shadow-sm": {
     "shadowColor": "#000",
@@ -46,7 +46,7 @@
     "shadowOpacity": 0.05,
     "shadowRadius": 1.2,
 
-    "elevation": 1.2
+    "elevation": 0.5
   },
   "shadow": {
     "shadowColor": "#000",
@@ -57,7 +57,7 @@
     "shadowOpacity": 0.14,
     "shadowRadius": 1.4,
 
-    "elevation": 2
+    "elevation": 1.5
   },
   "shadow-md": {
     "shadowColor": "#000",
@@ -68,7 +68,7 @@
     "shadowOpacity": 0.16,
     "shadowRadius": 2.6,
 
-    "elevation": 4
+    "elevation": 3
   },
   "shadow-lg": {
     "shadowColor": "#000",
@@ -79,7 +79,7 @@
     "shadowOpacity": 0.18,
     "shadowRadius": 8,
 
-    "elevation": 6
+    "elevation": 4
   },
   "shadow-xl": {
     "shadowColor": "#000",
@@ -90,7 +90,7 @@
     "shadowOpacity": 0.18,
     "shadowRadius": 12,
 
-    "elevation": 12
+    "elevation": 6
   },
   "shadow-inner": {
     "shadowColor": "rgba(0, 0, 0, 0.06)",
@@ -102,6 +102,9 @@
     "shadowRadius": 0,
 
     "elevation": 6
+  },
+  "shadow-card-android": {
+    "elevation": 1.0
   },
   "elevation-xs": {
     "elevation": 1

@@ -110,11 +110,13 @@ class CardItem extends React.Component {
     // Need to do this as React Native doesn't support maxWidth: "none"
     //   even though it's in tailwind-rn.
     let viewStyle = safeAreaWidth < SM_WIDTH ? 'max-w-md' : '';
-    if (Platform.OS === 'ios') viewStyle += ' border border-gray-100';
+
+    if (Platform.OS === 'ios') viewStyle += ' border border-gray-100 shadow-sm';
+    else viewStyle += ' shadow-card-android';
 
     return (
       <View style={style}>
-        <View style={tailwind(`self-center bg-white rounded-lg shadow-sm ${viewStyle}`)}>
+        <View style={tailwind(`self-center bg-white rounded-lg ${viewStyle}`)}>
           <CardItemContent link={link} />
           {isDiedStatus(status) && this.renderRetry()}
           {[ADDING, MOVING].includes(status) && this.renderBusy()}

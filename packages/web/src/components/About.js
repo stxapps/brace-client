@@ -49,7 +49,7 @@ class About extends React.PureComponent {
             </p>
           <p className="pt-6 leading-7">
             Brace Team
-              <br />
+            <br />
             <a className="text-gray-900 font-medium underline rounded-sm focus:outline-none focus:ring" href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#98;&#114;&#97;&#99;&#101;&#46;&#116;&#111;">
               <span className="e-mail" data-user="troppus" data-website="ot.ecarb"></span>
             </a>
