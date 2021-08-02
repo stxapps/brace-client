@@ -856,7 +856,8 @@ This and CI/CD are very important!
 - Under VM instances, select tab Instance Schedule
   + Name: brace-server-worker-scheduler
   + Region: us-central1
-  + Start CRON expression: 0/20 * * * *
+  + Start CRON expression: 17 * * * *
+  + Stop CRON expression: 0 * * * * (at least 15 mins apart)
   + Time zone: Indochina Time (ICT)
   + Add the instance to the schedule
 - ref: cloud.google.com/compute/docs/instances/schedule-instance-start-stop

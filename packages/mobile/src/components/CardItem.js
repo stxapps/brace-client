@@ -111,7 +111,7 @@ class CardItem extends React.Component {
     //   even though it's in tailwind-rn.
     let viewStyle = safeAreaWidth < SM_WIDTH ? 'max-w-md' : '';
 
-    if (Platform.OS === 'ios') viewStyle += ' border border-gray-100 shadow-sm';
+    if (Platform.OS === 'ios') viewStyle += ' border border-gray-200 shadow-sm';
     else viewStyle += ' shadow-card-android';
 
     return (
