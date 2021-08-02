@@ -1,6 +1,6 @@
 {
   "name": "brace-client-web",
-  "version": "0.12.3",
+  "version": "0.12.4",
   "private": true,
   "scripts": {
     "start": "HTTPS=true BROWSER=none react-scripts start",
