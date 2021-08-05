@@ -837,17 +837,18 @@ This and CI/CD are very important!
 - apt update, apt upgrade
   + no need sudo as now it's root user
 - install nvm, nodejs, yarn
+- sudo apt install chromium-browser
 - git clone https://github.com/bracedotto/brace-server-worker.git
 - cd brace-server-worker
 - git pull
 - yarn
 - if puppeteer errors, try stackoverflow.com/questions/66214552/tmp-chromium-error-while-loading-shared-libraries-libnss3-so-cannot-open-sha
 ** Add a startup script
-- As startup script is executed by root user, need to specify running commands by wit user
+- As startup script is executed by root user, need to specify running commands by linux user
 - use 'sudo -i' to switch to root user and test the script below
 - startup script in Custom metadata, key: startup-script, value:
   #! /bin/bash
-  sudo -u wit bash -c 'cd /home/wit/brace-server-worker; mkdir -p ./logs; NOW=$(date +'%Y%m%d%H%M%S'); /home/wit/.nvm/versions/node/v12.22.1/bin/node index.js > "./logs/log_${NOW}.txt" 2>&1; sudo shutdown -h now'
+  sudo -u linux bash -c 'cd /home/linux/brace-server-worker; mkdir -p ./logs; NOW=$(date +'%Y%m%d%H%M%S'); /home/linux/.nvm/versions/node/v14.17.4/bin/node index.js > "./logs/log_${NOW}.txt" 2>&1; sudo shutdown -h now'
 ** Schedule the instance
 - IAM
   + Check include Google-provided role grants

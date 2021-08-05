@@ -348,9 +348,8 @@ export const getUrlFirstChar = (url) => {
 
 export const validateUrl = (url) => {
 
-  if (!url) {
-    return NO_URL;
-  }
+  if (!url) return NO_URL;
+  if (/\s/g.test(url)) return ASK_CONFIRM_URL;
 
   url = ensureContainUrlProtocol(url);
 
