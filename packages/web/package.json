@@ -45,7 +45,7 @@
     "reselect": "^4.0.0",
     "source-map-explorer": "^2.5.0",
     "tailwindcss": "^2.2.4",
-    "url-parse": "^1.4.7"
+    "url-parse": "^1.5.3"
   },
   "eslintConfig": {
     "extends": "react-app"
