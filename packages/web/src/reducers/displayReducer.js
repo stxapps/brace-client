@@ -45,7 +45,7 @@ const initialState = {
   updateSettingsProgress: null,
 };
 
-export default (state = initialState, action) => {
+const displayReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
     return {
@@ -282,3 +282,5 @@ export default (state = initialState, action) => {
 
   return state;
 };
+
+export default displayReducer;

@@ -34,7 +34,7 @@ const initialState = {
   ],
 };
 
-export default (state = initialState, action) => {
+const settingsReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
     return { ...initialState, ...action.payload.settings };
@@ -406,3 +406,5 @@ export default (state = initialState, action) => {
 
   return state;
 };
+
+export default settingsReducer;

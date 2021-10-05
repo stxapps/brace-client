@@ -620,6 +620,7 @@ This and CI/CD are very important!
 *** Google app engine
 *** Puppeteer
 ** steps
+- npx create-react-app bracedotto --template cra-template-pwa
 - yarn add tailwindcss postcss postcss-cli autoprefixer
 - yarn add @tailwindcss/forms @tailwindcss/typography @tailwindcss/aspect-ratio @tailwindcss/line-clamp
 - no need for dev dependencies as this's not a node app
@@ -628,7 +629,7 @@ This and CI/CD are very important!
 - yarn add redux redux-loop react-redux
 - yarn add https://github.com/bracedotto/redux-offline#88a89e7ebe76415e83bd1943360e817274d8063d
 - yarn add blockstack
-- yarn add @stacks/connect (doesn't work! yarn add 'https://gitpkg.now.sh/bracedotto/ux/packages/connect?b31c5914cde6e7fc3b0cdcaa66711f793224c140')
+- yarn add @stacks/connect@4.3.15 (doesn't work! yarn add 'https://gitpkg.now.sh/bracedotto/ux/packages/connect?b31c5914cde6e7fc3b0cdcaa66711f793224c140')
 - Make sure history works:
   + Address bar i.e. change path, change hash!
   + redirect back i.e. from blockstack or other websites
@@ -643,8 +644,6 @@ This and CI/CD are very important!
 - no need anymore: yarn add react-stack-grid
 - yarn add react-graceful-image
 - yarn add jdenticon
-- yarn add source-map-explorer
-- yarn add npm-run-all
 - yarn add axios
 - yarn add file-saver
 - yarn add @welldone-software/why-did-you-render

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import GracefulImage from 'react-graceful-image';
-import jdenticon from 'jdenticon';
+import { toSvg } from 'jdenticon';
 import { motion, AnimatePresence } from "framer-motion";
 
 import { signOut, updatePopup, updateBulkEdit } from '../actions';
@@ -19,7 +19,7 @@ class TopBarCommands extends React.PureComponent {
     this.userImage = props.userImage;
     this.profileBtnStyleClasses = 'rounded-full';
     if (this.userImage === null) {
-      const svgString = jdenticon.toSvg(props.username, 32);
+      const svgString = toSvg(props.username, 32);
       this.userImage = `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
       this.profileBtnStyleClasses = 'rounded-lg';
     }

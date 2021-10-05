@@ -9,7 +9,7 @@ import {
 
 const initialState = {};
 
-export default (state = initialState, action) => {
+const fetchedReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
     return { ...initialState };
@@ -86,3 +86,5 @@ export default (state = initialState, action) => {
 
   return state;
 };
+
+export default fetchedReducer;
