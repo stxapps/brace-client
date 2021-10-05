@@ -11,18 +11,6 @@ import {
 import { FETCH } from '../types/actionTypes';
 import { IMAGES } from '../types/imagePaths';
 
-export const randomString = (length) => {
-
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const charactersLength = characters.length;
-
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-};
-
 /**
  * Convert an array of objects to an object of objects.
  **/
@@ -254,65 +242,6 @@ const fallbackCopyTextToClipboard = (text) => {
   document.body.removeChild(textArea);
 };
 
-export const copyTextToClipboard = (text) => {
-  if (!navigator.clipboard) {
-    fallbackCopyTextToClipboard(text);
-    return;
-  }
-  navigator.clipboard.writeText(text).then(function () {
-    console.log('Async: Copying to clipboard was successful!');
-  }, function (err) {
-    console.error('Async: Could not copy text: ', err);
-  });
-};
-
-export const isStringIn = (link, searchString) => {
-  let url = link.url;
-  if (!containUppercase(searchString)) {
-    url = url.toLowerCase();
-  }
-  if (url.startsWith(HTTP)) {
-    url = url.substring(HTTP.length);
-  }
-  if (url.startsWith(HTTPS)) {
-    url = url.substring(HTTPS.length);
-  }
-  if (url.startsWith(WWW)) {
-    url = url.substring(WWW.length);
-  }
-
-  const searchWords = searchString.split(' ');
-
-  let inUrl = searchWords.every(word => url.includes(word));
-
-  let inTitle = null;
-  if (link.title) {
-    inTitle = searchWords.every(word => link.title.includes(word));
-  }
-
-  if (inTitle === null) {
-    if (inUrl) {
-      return true;
-    }
-  } else {
-    if (inUrl || inTitle) {
-      return true;
-    }
-  }
-
-  return false;
-};
-
-export const containUppercase = (letters) => {
-  for (let i = 0; i < letters.length; i++) {
-    if (letters[i] === letters[i].toUpperCase()
-      && letters[i] !== letters[i].toLowerCase()) {
-      return true;
-    }
-  }
-  return false;
-};
-
 export const containUrlProtocol = (url) => {
   const urlObj = new Url(url, {});
   return urlObj.protocol && urlObj.protocol !== '';
@@ -407,41 +336,48 @@ export const getUrlPathQueryHash = (url) => {
   return url.split('/').slice(i).join('/');
 };
 
-export const subtractPixel = (a, b) => {
-  a = parseInt(a.slice(0, -2), 10);
-  b = parseInt(b.slice(0, -2), 10);
+export const getUserImageUrl = (userData) => {
 
-  return (a - b).toString() + 'px';
+  let userImage = null;
+  if (userData && userData.profile) {
+    if (userData.profile.image) userImage = userData.profile.image;
+    else if (
+      userData.profile.decodedToken &&
+      userData.profile.decodedToken.payload &&
+      userData.profile.decodedToken.payload.claim &&
+      userData.profile.decodedToken.payload.claim.image
+    ) userImage = userData.profile.decodedToken.payload.claim.image;
+  }
+
+  let userImageUrl = null;
+  if (userImage) {
+    if (Array.isArray(userImage) && userImage.length > 0) {
+      userImageUrl = userImage[0].contentUrl || null;
+    }
+  }
+
+  return userImageUrl;
 };
 
-export const addRem = (a, b) => {
-  a = parseFloat(a.slice(0, -3));
-  b = parseFloat(b.slice(0, -3));
-
-  return (a + b).toString() + 'rem';
-};
-
-export const subtractRem = (a, b) => {
-  a = parseFloat(a.slice(0, -3));
-  b = parseFloat(b.slice(0, -3));
-
-  return (a - b).toString() + 'rem';
-};
-
-export const negRem = (a) => {
-  a = parseFloat(a.slice(0, -3));
-
-  return (-1 * a).toString() + 'rem';
-};
-
-export const toPx = (rem, fontSize = 16) => {
-  if (rem.endsWith('rem')) rem = rem.slice(0, -3);
-  return parseFloat(rem) * fontSize;
-};
-
-export const multiplyPercent = (value, percent) => {
-  if (percent.endsWith('%')) percent = percent.slice(0, -1);
-  return value * parseFloat(percent) / 100;
+export const throttle = (func, limit) => {
+  let lastFunc;
+  let lastRan;
+  return function () {
+    const context = this;
+    const args = arguments;
+    if (!lastRan) {
+      func.apply(context, args);
+      lastRan = Date.now();
+    } else {
+      clearTimeout(lastFunc);
+      lastFunc = setTimeout(function () {
+        if ((Date.now() - lastRan) >= limit) {
+          func.apply(context, args);
+          lastRan = Date.now();
+        }
+      }, limit - (Date.now() - lastRan));
+    }
+  };
 };
 
 export const isObject = val => {
@@ -508,37 +444,61 @@ export const isArrayEqual = (arr1, arr2) => {
   return true;
 };
 
-export const rerandomRandomTerm = (id) => {
-  const arr = id.split('-');
-  if (arr.length !== 3 && arr.length !== 4) throw new Error(`Invalid id: ${id}`);
-
-  arr[2] = randomString(4);
-  return arr.join('-');
-};
-
-export const deleteRemovedDT = (id) => {
-  const arr = id.split('-');
-  if (arr.length !== 3 && arr.length !== 4) throw new Error(`Invalid id: ${id}`);
-
-  return arr.slice(0, 3).join('-');
-};
-
-export const getMainId = (id) => {
-  return id.split('-').slice(0, 2).join('-');
-};
-
-export const excludeWithMainIds = (links, ids) => {
-
-  ids = ids.map(id => getMainId(id));
-
-  const newLinks = {};
-  for (const id in links) {
-    if (ids.includes(getMainId(id))) {
-      continue;
-    }
-    newLinks[id] = links[id];
+export const getListNameDisplayName = (listName, listNameMap) => {
+  for (const listNameObj of listNameMap) {
+    if (listNameObj.listName === listName) return listNameObj.displayName;
   }
-  return newLinks;
+
+  // Not throw an error because it can happen:
+  //   - Delete a link
+  //   - Delete a list name
+  //   - Commit delete the link -> cause rerender without the list name!
+  console.log(`getListNameDisplayName: invalid listName: ${listName} and listNameMap: ${listNameMap}`);
+  return listName;
+};
+
+export const getLongestListNameDisplayName = (listNameMap) => {
+  let displayName = '';
+  for (const listNameObj of listNameMap) {
+    if (listNameObj.displayName.length > displayName.length) {
+      displayName = listNameObj.displayName;
+    }
+  }
+  return displayName;
+};
+
+export const doContainListName = (listName, listNameObjs) => {
+
+  for (const listNameObj of listNameObjs) {
+    if (listNameObj.listName === listName) return true;
+  }
+
+  return false;
+};
+
+export const doContainListNameDisplayName = (displayName, listNameObjs) => {
+
+  for (const listNameObj of listNameObjs) {
+    if (listNameObj.displayName === displayName) return true;
+  }
+
+  return false;
+};
+
+export const validateListNameDisplayName = (displayName, listNameMap) => {
+
+  // Validate:
+  //   1. Empty 2. Contain space at the begining or the end 3. Contain invalid characters
+  //   4. Too long 5. Duplicate
+  //
+  // 2 and 3 are not the problem because this is display name!
+
+  if (!displayName || !isString(displayName) || displayName === '') return NO_LIST_NAME;
+  if (displayName.length > 256) return TOO_LONG_LIST_NAME;
+
+  if (doContainListNameDisplayName(displayName, listNameMap)) return DUPLICATE_LIST_NAME;
+
+  return VALID_LIST_NAME;
 };
 
 export const isDiedStatus = (status) => {
@@ -547,12 +507,66 @@ export const isDiedStatus = (status) => {
   ].includes(status);
 };
 
+export const getLastHalfHeight = (height, textHeight, pt, pb, halfRatio = 0.6) => {
+  const x = Math.floor((height - pt - pb) / textHeight) - 1;
+  return Math.round((textHeight * x + textHeight * halfRatio) + pt + pb);
+};
+
 export const randInt = (max) => {
   return Math.floor(Math.random() * Math.floor(max));
 };
 
 export const sample = (arr) => {
   return arr[Math.floor(Math.random() * arr.length)];
+};
+
+export const randomString = (length) => {
+
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};
+
+export const isStringIn = (link, searchString) => {
+  let url = link.url;
+  if (!containUppercase(searchString)) {
+    url = url.toLowerCase();
+  }
+  if (url.startsWith(HTTP)) {
+    url = url.substring(HTTP.length);
+  }
+  if (url.startsWith(HTTPS)) {
+    url = url.substring(HTTPS.length);
+  }
+  if (url.startsWith(WWW)) {
+    url = url.substring(WWW.length);
+  }
+
+  const searchWords = searchString.split(' ');
+
+  let inUrl = searchWords.every(word => url.includes(word));
+
+  let inTitle = null;
+  if (link.title) {
+    inTitle = searchWords.every(word => link.title.includes(word));
+  }
+
+  if (inTitle === null) {
+    if (inUrl) {
+      return true;
+    }
+  } else {
+    if (inUrl || inTitle) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 export const randomDecor = (text) => {
@@ -624,6 +638,16 @@ export const randomDecor = (text) => {
   return decor;
 };
 
+export const containUppercase = (letters) => {
+  for (let i = 0; i < letters.length; i++) {
+    if (letters[i] === letters[i].toUpperCase()
+      && letters[i] !== letters[i].toLowerCase()) {
+      return true;
+    }
+  }
+  return false;
+};
+
 export const truncateString = (s, n) => {
   if (!(typeof s === 'string' || s instanceof String)) return s;
 
@@ -632,6 +656,88 @@ export const truncateString = (s, n) => {
   }
 
   return s.slice(0, n) + '...';
+};
+
+export const copyTextToClipboard = (text) => {
+  if (!navigator.clipboard) {
+    fallbackCopyTextToClipboard(text);
+    return;
+  }
+  navigator.clipboard.writeText(text).then(function () {
+    console.log('Async: Copying to clipboard was successful!');
+  }, function (err) {
+    console.error('Async: Could not copy text: ', err);
+  });
+};
+
+export const subtractPixel = (a, b) => {
+  a = parseInt(a.slice(0, -2), 10);
+  b = parseInt(b.slice(0, -2), 10);
+
+  return (a - b).toString() + 'px';
+};
+
+export const addRem = (a, b) => {
+  a = parseFloat(a.slice(0, -3));
+  b = parseFloat(b.slice(0, -3));
+
+  return (a + b).toString() + 'rem';
+};
+
+export const subtractRem = (a, b) => {
+  a = parseFloat(a.slice(0, -3));
+  b = parseFloat(b.slice(0, -3));
+
+  return (a - b).toString() + 'rem';
+};
+
+export const negRem = (a) => {
+  a = parseFloat(a.slice(0, -3));
+
+  return (-1 * a).toString() + 'rem';
+};
+
+export const toPx = (rem, fontSize = 16) => {
+  if (rem.endsWith('rem')) rem = rem.slice(0, -3);
+  return parseFloat(rem) * fontSize;
+};
+
+export const multiplyPercent = (value, percent) => {
+  if (percent.endsWith('%')) percent = percent.slice(0, -1);
+  return value * parseFloat(percent) / 100;
+};
+
+export const rerandomRandomTerm = (id) => {
+  const arr = id.split('-');
+  if (arr.length !== 3 && arr.length !== 4) throw new Error(`Invalid id: ${id}`);
+
+  arr[2] = randomString(4);
+  return arr.join('-');
+};
+
+export const deleteRemovedDT = (id) => {
+  const arr = id.split('-');
+  if (arr.length !== 3 && arr.length !== 4) throw new Error(`Invalid id: ${id}`);
+
+  return arr.slice(0, 3).join('-');
+};
+
+export const getMainId = (id) => {
+  return id.split('-').slice(0, 2).join('-');
+};
+
+export const excludeWithMainIds = (links, ids) => {
+
+  ids = ids.map(id => getMainId(id));
+
+  const newLinks = {};
+  for (const id in links) {
+    if (ids.includes(getMainId(id))) {
+      continue;
+    }
+    newLinks[id] = links[id];
+  }
+  return newLinks;
 };
 
 export const getWindowHeight = () => {
@@ -650,27 +756,6 @@ export const getWindowScrollHeight = () => {
   );
 };
 
-export const throttle = (func, limit) => {
-  let lastFunc;
-  let lastRan;
-  return function () {
-    const context = this;
-    const args = arguments;
-    if (!lastRan) {
-      func.apply(context, args);
-      lastRan = Date.now();
-    } else {
-      clearTimeout(lastFunc);
-      lastFunc = setTimeout(function () {
-        if ((Date.now() - lastRan) >= limit) {
-          func.apply(context, args);
-          lastRan = Date.now();
-        }
-      }, limit - (Date.now() - lastRan));
-    }
-  };
-};
-
 export const indexesOf = (text, searchValue) => {
   const indexes = [];
 
@@ -678,86 +763,6 @@ export const indexesOf = (text, searchValue) => {
   while ((i = text.indexOf(searchValue, i + 1)) >= 0) indexes.push(i);
 
   return indexes;
-};
-
-export const getUserImageUrl = (userData) => {
-
-  let userImage = null;
-  if (userData && userData.profile) {
-    if (userData.profile.image) userImage = userData.profile.image;
-    else if (
-      userData.profile.decodedToken &&
-      userData.profile.decodedToken.payload &&
-      userData.profile.decodedToken.payload.claim &&
-      userData.profile.decodedToken.payload.claim.image
-    ) userImage = userData.profile.decodedToken.payload.claim.image;
-  }
-
-  let userImageUrl = null;
-  if (userImage) {
-    if (Array.isArray(userImage) && userImage.length > 0) {
-      userImageUrl = userImage[0].contentUrl || null;
-    }
-  }
-
-  return userImageUrl;
-};
-
-export const getListNameDisplayName = (listName, listNameMap) => {
-  for (const listNameObj of listNameMap) {
-    if (listNameObj.listName === listName) return listNameObj.displayName;
-  }
-
-  // Not throw an error because it can happen:
-  //   - Delete a link
-  //   - Delete a list name
-  //   - Commit delete the link -> cause rerender without the list name!
-  console.log(`getListNameDisplayName: invalid listName: ${listName} and listNameMap: ${listNameMap}`);
-  return listName;
-};
-
-export const getLongestListNameDisplayName = (listNameMap) => {
-  let displayName = '';
-  for (const listNameObj of listNameMap) {
-    if (listNameObj.displayName.length > displayName.length) {
-      displayName = listNameObj.displayName;
-    }
-  }
-  return displayName;
-};
-
-export const doContainListName = (listName, listNameObjs) => {
-
-  for (const listNameObj of listNameObjs) {
-    if (listNameObj.listName === listName) return true;
-  }
-
-  return false;
-};
-
-export const doContainListNameDisplayName = (displayName, listNameObjs) => {
-
-  for (const listNameObj of listNameObjs) {
-    if (listNameObj.displayName === displayName) return true;
-  }
-
-  return false;
-};
-
-export const validateListNameDisplayName = (displayName, listNameMap) => {
-
-  // Validate:
-  //   1. Empty 2. Contain space at the begining or the end 3. Contain invalid characters
-  //   4. Too long 5. Duplicate
-  //
-  // 2 and 3 are not the problem because this is display name!
-
-  if (!displayName || !isString(displayName) || displayName === '') return NO_LIST_NAME;
-  if (displayName.length > 256) return TOO_LONG_LIST_NAME;
-
-  if (doContainListNameDisplayName(displayName, listNameMap)) return DUPLICATE_LIST_NAME;
-
-  return VALID_LIST_NAME;
 };
 
 export const swapArrayElements = (a, x, y) => (a[x] && a[y] && [
@@ -851,9 +856,4 @@ export const shouldDispatchFetch = (outbox, payload) => {
   }
 
   return true;
-};
-
-export const getLastHalfHeight = (height, textHeight, pt, pb, halfRatio = 0.6) => {
-  const x = Math.floor((height - pt - pb) / textHeight) - 1;
-  return Math.round((textHeight * x + textHeight * halfRatio) + pt + pb);
 };

@@ -649,6 +649,7 @@ This and CI/CD are very important!
 - yarn add file-saver
 - yarn add @welldone-software/why-did-you-render
 - yarn add framer-motion
+- yarn add @types/file-saver @types/jest @types/node @types/react @types/react-dom @types/react-redux @types/url-parse
 ** attribution
 - tailwindcss, postcss, purgecss
 - uirefactoring
@@ -862,3 +863,9 @@ This and CI/CD are very important!
   + Time zone: Indochina Time (ICT)
   + Add the instance to the schedule
 - ref: cloud.google.com/compute/docs/instances/schedule-instance-start-stop
+* Clean up GCloud DataStore
+- Use GCloud console
+- Delete error extracted results
+  + select * from ExtractedResult where status = 'EXTRACT_ERROR'
+- Delete old extracted results
+  + select * from ExtractedResult ORDER BY extractedDT

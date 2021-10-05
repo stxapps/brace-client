@@ -40,7 +40,7 @@ class SettingsPopup extends React.PureComponent {
   componentDidUpdate(_, prevState) {
     if (prevState.viewId !== this.state.viewId) {
       if (this.panelContent.current) {
-        this.panelContent.current.scroll(0, 0);
+        this.panelContent.current.scrollTo(0, 0);
       }
     }
   }
