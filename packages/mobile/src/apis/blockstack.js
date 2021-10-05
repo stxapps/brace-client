@@ -89,7 +89,7 @@ const listFPaths = async () => {
     } else if (fpath === SETTINGS_FNAME) {
       settingsFPath = fpath;
     } else {
-      throw new Error(`Invalid file path: ${fpath}`);
+      console.log(`Invalid file path: ${fpath}`);
     }
 
     return true;
@@ -98,13 +98,15 @@ const listFPaths = async () => {
   return { linkFPaths, settingsFPath };
 };
 
-export const batchGetFileWithRetry = async (fpaths, callCount) => {
+export const batchGetFileWithRetry = async (
+  fpaths, callCount, dangerouslyIgnoreError = false
+) => {
 
   const responses = await Promise.all(
     fpaths.map(fpath =>
       userSession.getFile(fpath)
         .then(content => ({ content, fpath, success: true }))
-        .catch(error => ({ error, fpath, success: false }))
+        .catch(error => ({ content: null, fpath, success: false, error }))
     )
   );
 
@@ -112,11 +114,16 @@ export const batchGetFileWithRetry = async (fpaths, callCount) => {
   const failedFPaths = failedResponses.map(({ fpath }) => fpath);
 
   if (failedResponses.length) {
-    if (callCount + 1 >= MAX_TRY) throw failedResponses[0].error;
+    if (callCount + 1 >= MAX_TRY) {
+      if (dangerouslyIgnoreError) return responses;
+      throw failedResponses[0].error;
+    }
 
     return [
       ...responses.filter(({ success }) => success),
-      ...(await batchGetFileWithRetry(failedFPaths, callCount + 1)),
+      ...(await batchGetFileWithRetry(
+        failedFPaths, callCount + 1, dangerouslyIgnoreError
+      )),
     ];
   }
 
@@ -183,7 +190,7 @@ const batchPutFileWithRetry = async (fpaths, contents, callCount) => {
 
   const responses = await Promise.all(
     fpaths.map((fpath, i) =>
-      userSession.putFile(fpath, JSON.stringify(contents[i]))
+      userSession.putFile(fpath, contents[i])
         .then(publicUrl => ({ publicUrl, fpath, success: true }))
         .catch(error => ({ error, fpath, content: contents[i], success: false }))
     )
@@ -206,13 +213,16 @@ const batchPutFileWithRetry = async (fpaths, contents, callCount) => {
 };
 
 const putLinks = async (params) => {
-
   const { listName, links } = params;
-  const linkFPaths = links.map(link => createLinkFPath(listName, link.id));
-  const responses = await batchPutFileWithRetry(linkFPaths, links, 0);
-  const publicUrls = responses.map(response => response.publicUrl);
 
-  return { listName, links, publicUrls };
+  const fpaths = [], contents = [];
+  for (const link of links) {
+    fpaths.push(createLinkFPath(listName, link.id));
+    contents.push(JSON.stringify(link));
+  }
+
+  await batchPutFileWithRetry(fpaths, contents, 0);
+  return { listName, links };
 };
 
 export const batchDeleteFileWithRetry = async (fpaths, callCount) => {
@@ -224,8 +234,8 @@ export const batchDeleteFileWithRetry = async (fpaths, callCount) => {
         .catch(error => {
           // BUG ALERT
           // Treat not found error as not an error as local data might be out-dated.
-          //   i.e. user tries to delete a not-existing link, it's ok.
-          // Anyway, if the link should be there, this will hide the real error!
+          //   i.e. user tries to delete a not-existing file, it's ok.
+          // Anyway, if the file should be there, this will hide the real error!
           if (error.message &&
             (error.message.includes('does_not_exist') ||
               error.message.includes('file_not_found'))) {
@@ -286,14 +296,10 @@ const deleteOldLinksInTrash = async () => {
 };
 
 const updateSettings = async (settings) => {
-
   const fPaths = [SETTINGS_FNAME];
-  const contents = [settings];
+  const contents = [JSON.stringify(settings)];
 
-  const responses = await batchPutFileWithRetry(fPaths, contents, 0);
-  const publicUrls = responses.map(response => response.publicUrl);
-
-  return { publicUrls };
+  await batchPutFileWithRetry(fPaths, contents, 0);
 };
 
 export const canDeleteListNames = async (listNames) => {

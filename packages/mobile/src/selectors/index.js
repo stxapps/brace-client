@@ -37,6 +37,26 @@ export const getListNameMap = createSelectorListNameMap(
   }
 );
 
+/** @return {function(any, any): any} */
+export const makeIsLinkIdSelected = () => {
+  return createSelector(
+    state => state.display.selectedLinkIds,
+    (__, props) => props.linkId,
+    (selectedLinkIds, linkId) => {
+      return selectedLinkIds.includes(linkId);
+    }
+  );
+};
+
+// This doesn't depend on props
+//   so no need to create an instance of this selector per componenet instance.
+export const getSelectedLinkIdsLength = createSelector(
+  state => state.display.selectedLinkIds,
+  selectedLinkIds => {
+    return selectedLinkIds.length;
+  }
+);
+
 const createSelectorLinks = createSelectorCreator(
   defaultMemoize,
   (prevVal, val) => {
@@ -178,26 +198,6 @@ export const getPopupLink = createSelectorPopupLink(
     }
 
     return popupLink;
-  }
-);
-
-/** @return {function(any, any): any} */
-export const makeIsLinkIdSelected = () => {
-  return createSelector(
-    state => state.display.selectedLinkIds,
-    (__, props) => props.linkId,
-    (selectedLinkIds, linkId) => {
-      return selectedLinkIds.includes(linkId);
-    }
-  );
-};
-
-// This doesn't depend on props
-//   so no need to create an instance of this selector per componenet instance.
-export const getSelectedLinkIdsLength = createSelector(
-  state => state.display.selectedLinkIds,
-  selectedLinkIds => {
-    return selectedLinkIds.length;
   }
 );
 

@@ -312,6 +312,60 @@ export const updatePopup = (id, isShown, anchorPosition = null) => {
   };
 };
 
+export const changeListName = (listName) => async (dispatch, getState) => {
+
+  const _listName = getState().display.listName;
+
+  dispatch({
+    type: UPDATE_LIST_NAME,
+    payload: listName,
+  });
+
+  dispatch(updateFetched(null, null, _listName));
+};
+
+export const updateSearchString = (searchString) => {
+  return {
+    type: UPDATE_SEARCH_STRING,
+    payload: searchString,
+  };
+};
+
+export const updateStatus = (status) => {
+  return {
+    type: UPDATE_STATUS,
+    payload: status,
+  };
+};
+
+export const updateHref = (href) => {
+  return {
+    type: UPDATE_HREF,
+    payload: href,
+  };
+};
+
+export const updateBulkEdit = (isBulkEditing) => {
+  return {
+    type: UPDATE_BULK_EDITING,
+    payload: isBulkEditing,
+  };
+};
+
+export const addSelectedLinkIds = (ids) => {
+  return {
+    type: ADD_SELECTED_LINK_IDS,
+    payload: ids,
+  };
+};
+
+export const deleteSelectedLinkIds = (ids) => {
+  return {
+    type: DELETE_SELECTED_LINK_IDS,
+    payload: ids,
+  };
+};
+
 export const fetch = (
   doDeleteOldLinksInTrash, doExtractContents, doFetchSettings = false
 ) => async (dispatch, getState) => {
@@ -713,25 +767,6 @@ export const cancelDiedLinks = (ids, listName = null) => async (dispatch, getSta
   });
 };
 
-export const changeListName = (listName) => async (dispatch, getState) => {
-
-  const _listName = getState().display.listName;
-
-  dispatch({
-    type: UPDATE_LIST_NAME,
-    payload: listName,
-  });
-
-  dispatch(updateFetched(null, null, _listName));
-};
-
-export const updateSearchString = (searchString) => {
-  return {
-    type: UPDATE_SEARCH_STRING,
-    payload: searchString,
-  };
-};
-
 export const deleteOldLinksInTrash = (doDeleteOldLinksInTrash, doExtractContents) => async (dispatch, getState) => {
 
   // If not specified, get from settings. Get it here so that it's the most updated.
@@ -753,13 +788,6 @@ export const deleteOldLinksInTrash = (doDeleteOldLinksInTrash, doExtractContents
       },
     },
   });
-};
-
-export const updateStatus = (status) => {
-  return {
-    type: UPDATE_STATUS,
-    payload: status,
-  };
 };
 
 export const extractContents = (doExtractContents, listName, ids) => async (dispatch, getState) => {
@@ -865,34 +893,6 @@ export const tryUpdateExtractedContents = (payload) => async (dispatch, getState
     type: UPDATE_EXTRACTED_CONTENTS,
     payload: { ...payload, canRerender },
   });
-};
-
-export const updateHref = (href) => {
-  return {
-    type: UPDATE_HREF,
-    payload: href,
-  };
-};
-
-export const updateBulkEdit = (isBulkEditing) => {
-  return {
-    type: UPDATE_BULK_EDITING,
-    payload: isBulkEditing,
-  };
-};
-
-export const addSelectedLinkIds = (ids) => {
-  return {
-    type: ADD_SELECTED_LINK_IDS,
-    payload: ids,
-  };
-};
-
-export const deleteSelectedLinkIds = (ids) => {
-  return {
-    type: DELETE_SELECTED_LINK_IDS,
-    payload: ids,
-  };
 };
 
 export const addListNames = (newNames) => async (dispatch, getState) => {
@@ -1169,8 +1169,8 @@ const exportAllDataLoop = async (dispatch, fPaths, doneCount) => {
   const selectedCount = Math.min(fPaths.length - doneCount, N_LINKS);
   const selectedFPaths = fPaths.slice(doneCount, doneCount + selectedCount);
   const responses = await batchGetFileWithRetry(selectedFPaths, 0);
-  const data = responses.map((response, i) => {
-    return { path: selectedFPaths[i], data: JSON.parse(response.content) };
+  const data = responses.map((response) => {
+    return { path: response.fpath, data: JSON.parse(response.content) };
   });
 
   doneCount = doneCount + selectedCount;

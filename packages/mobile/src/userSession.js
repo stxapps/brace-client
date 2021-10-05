@@ -32,7 +32,7 @@ const signIn = async () => {
   return await RNBlockstackSdk.signIn();
 };
 
-const handlePendingSignIn = async (/** @type {string} */ authResponse) => {
+const handlePendingSignIn = async (authResponse) => {
   const { loaded } = await RNBlockstackSdk.handlePendingSignIn(authResponse);
   return loaded;
 };
@@ -53,7 +53,8 @@ const putFile = async (path, content, options = { encrypt: true }) => {
 
 const getFile = async (path, options = { decrypt: true }) => {
   const result = await RNBlockstackSdk.getFile(path, options);
-  return result.fileContents || result.fileContentsEncoded;
+  if ('fileContentsEncoded' in result) return result.fileContentsEncoded;
+  return result.fileContents;
 };
 
 const deleteFile = async (path, options = { wasSigned: false }) => {

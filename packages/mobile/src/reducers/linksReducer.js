@@ -343,8 +343,11 @@ export default (state = initialState, action) => {
   if (action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT) {
     const { listName, ids } = action.payload;
 
-    const newState = { ...state };
-    newState[listName] = _.exclude(state[listName], ID, ids);
+    let newState = state;
+    if (state[listName]) {
+      newState = { ...state };
+      newState[listName] = _.exclude(state[listName], ID, ids);
+    }
 
     const { doExtractContents } = action.meta;
     return loop(
@@ -425,7 +428,6 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === ADD_LIST_NAMES_COMMIT) {
-
     const { listNameObjs } = action.meta;
 
     const newState = { ...state };
@@ -437,7 +439,6 @@ export default (state = initialState, action) => {
   }
 
   if (action.type === DELETE_LIST_NAMES_COMMIT) {
-
     const { listNames } = action.meta;
 
     const newState = {};
