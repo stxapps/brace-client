@@ -18,7 +18,7 @@
     "@react-native-community/clipboard": "^1.5.1",
     "@react-native-community/netinfo": "^5.9.10",
     "@redux-offline/redux-offline": "https://github.com/bracedotto/redux-offline#a5a5da91de14b9e22c73a15e3617a0d627d3c0ec",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "jdenticon": "2.2.0",
     "react": "16.13.1",
     "react-native": "0.63.4",
