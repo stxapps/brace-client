@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { signIn } from '../actions';
-import { SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS, MD_WIDTH } from '../types/const';
+import { updatePopup } from '../actions';
+import {
+  SIGN_IN_POPUP, SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS, MD_WIDTH,
+} from '../types/const';
 import { toPx, throttle } from '../utils';
 
 import { getTopBarSizes } from '.';
@@ -45,9 +47,13 @@ class TopBar extends React.PureComponent {
     this.setState({ offsetY: Math.min(window.pageYOffset, listNameDistanceY) });
   }
 
+  onSignInBtnClick = () => {
+    this.props.updatePopup(SIGN_IN_POPUP, true);
+  }
+
   renderSignInBtn() {
     return (
-      <button onClick={() => this.props.signIn()} className="block h-14 focus:outline-none group">
+      <button onClick={this.onSignInBtnClick} className="block h-14 focus:outline-none group">
         <span className="px-2.5 py-1.5 bg-white text-sm text-gray-500 border border-gray-400 rounded-full group-hover:text-gray-600 group-hover:border-gray-500 group-focus:ring">Sign in</span>
       </button>
     );
@@ -162,6 +168,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { signIn };
+const mapDispatchToProps = { updatePopup };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TopBar);

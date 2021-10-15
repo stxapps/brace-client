@@ -1,4 +1,3 @@
-import { showConnect, authenticate } from '@stacks/connect';
 import { RESET_STATE as OFFLINE_RESET_STATE } from '@redux-offline/redux-offline/lib/constants';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
@@ -6,8 +5,8 @@ import { saveAs } from 'file-saver';
 import userSession from '../userSession';
 import { batchGetFileWithRetry, batchDeleteFileWithRetry } from '../apis/blockstack';
 import {
-  INIT, UPDATE_WINDOW, UPDATE_HISTORY_POSITION, UPDATE_USER, UPDATE_HREF,
-  UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
+  INIT, UPDATE_WINDOW, UPDATE_WINDOW_SIZE, UPDATE_HISTORY_POSITION, UPDATE_USER,
+  UPDATE_HREF, UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
   UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE, CLEAR_FETCHED_LIST_NAMES,
@@ -15,8 +14,8 @@ import {
   UPDATE_LINKS,
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
   MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
-  MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
-  CANCEL_DIED_LINKS,
+  MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT,
+  MOVE_LINKS_DELETE_STEP_ROLLBACK, CANCEL_DIED_LINKS,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
@@ -37,8 +36,8 @@ import {
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
-  APP_NAME, APP_ICON_NAME, BACK_DECIDER, BACK_POPUP, ALL,
-  ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
+  BACK_DECIDER, BACK_POPUP, ALL,
+  SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
   CONFIRM_DELETE_POPUP, SETTINGS_POPUP, BULK_EDIT_MOVE_TO_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH,
@@ -47,9 +46,9 @@ import {
   N_LINKS, SWAP_LEFT, SWAP_RIGHT,
 } from '../types/const';
 import {
-  _, isEqual,
+  _, isEqual, throttle, isIPadIPhoneIPod,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
-  getUrlFirstChar, separateUrlAndParam, extractUrl, getUrlPathQueryHash,
+  getUrlFirstChar, separateUrlAndParam, extractUrl,
   getUserImageUrl, randomDecor, swapArrayElements,
   isOfflineActionWithPayload, shouldDispatchFetch,
 } from '../utils';
@@ -72,8 +71,8 @@ export const init = async (store) => {
       username,
       userImage,
       href: window.location.href,
-      windowWidth: null,
-      windowHeight: null,
+      windowWidth: window.innerWidth,
+      windowHeight: window.innerHeight,
     },
   });
 
@@ -81,6 +80,28 @@ export const init = async (store) => {
   window.addEventListener('popstate', function () {
     popHistoryState(store);
   });
+
+  if (isIPadIPhoneIPod()) {
+    window.visualViewport.addEventListener('resize', throttle(() => {
+      store.dispatch({
+        type: UPDATE_WINDOW_SIZE,
+        payload: {
+          windowWidth: window.innerWidth,
+          windowHeight: window.visualViewport.height,
+        },
+      });
+    }, 16));
+  } else {
+    window.addEventListener('resize', throttle(() => {
+      store.dispatch({
+        type: UPDATE_WINDOW_SIZE,
+        payload: {
+          windowWidth: window.innerWidth,
+          windowHeight: window.innerHeight,
+        },
+      });
+    }, 16));
+  }
 };
 
 const handlePendingSignIn = () => async (dispatch, getState) => {
@@ -128,6 +149,8 @@ const handlePendingSignIn = () => async (dispatch, getState) => {
 
 const getPopupShownId = (state) => {
 
+  if (state.display.isSignUpPopupShown) return SIGN_UP_POPUP;
+  if (state.display.isSignInPopupShown) return SIGN_IN_POPUP;
   if (state.display.isAddPopupShown) return ADD_POPUP;
   if (state.display.isProfilePopupShown) return PROFILE_POPUP;
   if (state.display.isListNamePopupShown) return LIST_NAME_POPUP;
@@ -257,7 +280,7 @@ export const updateHistoryPosition = historyPosition => {
 
 export const signUp = () => async (dispatch, getState) => {
 
-  const authOptions = {
+  /*const authOptions = {
     redirectTo: '/' + getUrlPathQueryHash(window.location.href),
     appDetails: {
       name: APP_NAME,
@@ -279,12 +302,12 @@ export const signUp = () => async (dispatch, getState) => {
     userSession: userSession,
   };
 
-  showConnect(authOptions);
+  showConnect(authOptions);*/
 };
 
 export const signIn = () => async (dispatch, getState) => {
 
-  const authOptions = {
+  /*const authOptions = {
     redirectTo: '/' + getUrlPathQueryHash(window.location.href),
     appDetails: {
       name: APP_NAME,
@@ -306,7 +329,7 @@ export const signIn = () => async (dispatch, getState) => {
     userSession: userSession,
   };
 
-  authenticate(authOptions);
+  authenticate(authOptions);*/
 };
 
 export const signOut = () => async (dispatch, getState) => {
@@ -320,6 +343,22 @@ export const signOut = () => async (dispatch, getState) => {
   dispatch({
     type: RESET_STATE,
   });
+};
+
+export const updateUserData = (userData) => async (dispatch, getState) => {
+  userSession.updateUserData(userData);
+
+  if (userSession.isUserSignedIn()) {
+    const userData = userSession.loadUserData();
+    dispatch({
+      type: UPDATE_USER,
+      payload: {
+        isUserSignedIn: true,
+        username: userData.username,
+        image: getUserImageUrl(userData),
+      },
+    });
+  }
 };
 
 export const updatePopup = (id, isShown, anchorPosition = null) => {

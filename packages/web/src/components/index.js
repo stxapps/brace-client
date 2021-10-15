@@ -1,3 +1,5 @@
+import { useSelector } from 'react-redux';
+
 import {
   TOP_HEADER_HEIGHT, TOP_LIST_NAME_HEIGHT,
   TOP_HEADER_LIST_NAME_SPACE, TOP_HEADER_LIST_NAME_SPACE_MD,
@@ -46,4 +48,12 @@ export const getTopBarSizes = (width) => {
     listNameArrowSpace,
     commandsWidth,
   };
+};
+
+export const useSafeAreaFrame = () => {
+
+  const width = useSelector(state => state.window.width);
+  const height = useSelector(state => state.window.height);
+
+  return { x: 0, y: 0, width, height };
 };

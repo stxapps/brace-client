@@ -1,11 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { signUp } from '../actions';
-import { SHOW_SIGN_IN } from '../types/const';
+import { updatePopup } from '../actions';
+import { SIGN_UP_POPUP, SHOW_SIGN_IN } from '../types/const';
 
 import TopBar from './TopBar';
 import Footer from './Footer';
+import SignUpPopup from './SignUpPopup';
+import SignInPopup from './SignInPopup';
 
 import playStore from '../images/play-store-icon.svg';
 import appStore from '../images/app-store-icon.svg';
@@ -50,6 +52,10 @@ class Landing extends React.PureComponent {
     window.scrollTo(0, 0);
   }
 
+  onSignUpBtnClick = () => {
+    this.props.updatePopup(SIGN_UP_POPUP, true);
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -59,7 +65,7 @@ class Landing extends React.PureComponent {
             <img className="mx-auto w-11/12 max-w-sm object-contain md:hidden" src={saveLinksToVisitLater} alt="Save links to visit later" />
             <h1 className="mt-16 first-h1-text text-gray-900 font-bold leading-none md:mt-0">Save links <br className="inline sm:hidden md:inline lg:hidden" />to visit later</h1>
             <p className="mt-4 text-lg text-gray-500 font-normal md:pr-4">Your bookmark manager with privacy at heart. Brace.to helps you save links to everything and visit them later easily anytime on your any devices. Powered by Stacks technology, all your saved links are encrypted and only you can decrypt them and see the content inside.</p>
-            <button onClick={() => this.props.signUp()} style={{ padding: '0.625rem 1.25rem' }} className="mt-6 flex justify-center items-center bg-gray-800 rounded-full hover:bg-gray-900 focus:outline-none focus:ring">
+            <button onClick={this.onSignUpBtnClick} style={{ padding: '0.625rem 1.25rem' }} className="mt-6 flex justify-center items-center bg-gray-800 rounded-full hover:bg-gray-900 focus:outline-none focus:ring">
               <span className="text-lg text-gray-50 font-medium">Get Started</span>
               <svg className="ml-2 w-2 text-gray-50" viewBox="0 0 6 10" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path fillRule="evenodd" clipRule="evenodd" d="M0.29289 9.7071C-0.09763 9.3166 -0.09763 8.6834 0.29289 8.2929L3.5858 5L0.29289 1.70711C-0.09763 1.31658 -0.09763 0.68342 0.29289 0.29289C0.68342 -0.09763 1.31658 -0.09763 1.70711 0.29289L5.7071 4.29289C6.0976 4.68342 6.0976 5.3166 5.7071 5.7071L1.70711 9.7071C1.31658 10.0976 0.68342 10.0976 0.29289 9.7071Z" />
@@ -362,9 +368,11 @@ class Landing extends React.PureComponent {
           </div>
         </section>
         <Footer />
+        <SignUpPopup />
+        <SignInPopup />
       </React.Fragment >
     );
   }
 }
 
-export default connect(null, { signUp })(Landing);
+export default connect(null, { updatePopup })(Landing);
