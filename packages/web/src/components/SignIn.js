@@ -23,18 +23,6 @@ const SignIn = (props) => {
     setErrMsg('');
   };
 
-  const onAutofillBtnClick = () => {
-    if (window.PasswordCredential) {
-      const opts = { password: true, mediation: 'required' };
-      navigator.credentials.get(opts).then((cred) => {
-        console.log("Got cred: ", cred);
-        if (cred && cred.password) setSecretKeyInput(cred.password);
-      }, (err) => {
-        console.error("Error while getting the credential: ", err);
-      });
-    }
-  };
-
   const onContinueBtnClick = () => {
     if (didClick.current) return;
 
@@ -128,10 +116,9 @@ const SignIn = (props) => {
           <label htmlFor="secret-key-input" className="sr-only">Secret Key</label>
           <textarea onChange={onSecretKeyInputChange} className="py-3 px-4 block w-full h-40 shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md text-sm text-gray-700 leading-6 resize-none sm:h-32" value={secretKeyInput} id="secret-key-input" name="secret-key-input"></textarea>
         </div>
-        <div>
-          {window.PasswordCredential && <button onClick={onAutofillBtnClick} className="mt-3 w-full py-2 px-4 border border-gray-200 text-sm font-medium rounded-md text-blue-700 bg-white hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">Get from Passwords</button>}
+        <div className={errMsg ? '' : 'pt-5'}>
           {errMsg && <p className="text-sm text-red-600 py-2">{errMsg}</p>}
-          <button onClick={onContinueBtnClick} className={`w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 ${errMsg ? '' : 'mt-3'}`} type="button">Continue</button>
+          <button onClick={onContinueBtnClick} className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">Continue</button>
           <p className="mt-5 text-center text-sm text-gray-500">
             Or
             <button onClick={onSignInWithStacksWalletBtnClick} className="ml-1 font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign in with Stacks wallet</button>

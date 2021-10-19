@@ -93,19 +93,6 @@ const SignUp = (props) => {
     copyTextToClipboard(walletData.current.secretKey);
   };
 
-  const onAutofillBtnClick = () => {
-    if (window.PasswordCredential) {
-      const data = { id: 'Secret Key', password: walletData.current.secretKey };
-      const creds = new window.PasswordCredential(data);
-      navigator.credentials.store(creds).then(() => {
-        console.log("Credential stored in the user agent's credential manager.");
-        console.log('  creds: ', creds);
-      }, (err) => {
-        console.error("Error while storing the credential: ", err);
-      });
-    }
-  };
-
   const onSavedBtnClick = () => {
     setViewId(VIEW_SAVE);
   };
@@ -229,7 +216,6 @@ const SignUp = (props) => {
         </div>
         <div className="pt-5">
           <button onClick={onClipboardBtnClick} className="w-full py-2 px-4 border border-gray-200 text-sm font-medium rounded-md text-blue-700 bg-white hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">Copy to clipboard</button>
-          {window.PasswordCredential && <button onClick={onAutofillBtnClick} className="mt-3 w-full py-2 px-4 border border-gray-200 text-sm font-medium rounded-md text-blue-700 bg-white hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">Save to Passwords</button>}
           <button onClick={onSavedBtnClick} className="mt-3 w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">I've saved it</button>
         </div>
         <ul className="mt-7 mb-5 border-t border-b border-gray-200 divide-y divide-gray-200">
