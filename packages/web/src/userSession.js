@@ -53,7 +53,7 @@ const listFiles = (callback) => {
 };
 
 const userSession = {
-  isUserSignedIn, isSignInPending, handlePendingSignIn, signUserOut,
+  _userSession, isUserSignedIn, isSignInPending, handlePendingSignIn, signUserOut,
   updateUserData, loadUserData, putFile, getFile, deleteFile, listFiles,
 };
 

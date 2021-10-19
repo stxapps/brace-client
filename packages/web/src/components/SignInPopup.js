@@ -1,13 +1,15 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-//import { authenticate } from '@stacks/connect';
+import { authenticate } from '@stacks/connect';
 import { motion, AnimatePresence } from "framer-motion";
 
+import userSession from '../userSession';
 import { updatePopup, updateUserData } from '../actions';
+import { UPDATE_USER } from '../types/actionTypes';
 import {
   DOMAIN_NAME, APP_NAME, APP_ICON_NAME, APP_SCOPES, SIGN_UP_POPUP, SIGN_IN_POPUP,
 } from '../types/const';
-import { extractUrl } from '../utils';
+import { extractUrl, getUrlPathQueryHash, getUserImageUrl } from '../utils';
 import { popupBgFMV, ccPopupFMV } from '../types/animConfigs';
 
 import { useSafeAreaFrame } from '.';
@@ -18,6 +20,9 @@ const SignInPopup = () => {
   const { height: safeAreaHeight } = useSafeAreaFrame();
   const isShown = useSelector(state => state.display.isSignInPopupShown);
   const cancelBtn = useRef(null);
+  const appIconUrl = useMemo(() => {
+    return extractUrl(window.location.href).origin + '/' + APP_ICON_NAME;
+  }, []);
   const dispatch = useDispatch();
 
   const onPopupCloseBtnClick = () => {
@@ -25,7 +30,25 @@ const SignInPopup = () => {
   };
 
   const onSignInWithStacksWalletBtnClick = () => {
+    onPopupCloseBtnClick();
 
+    const authOptions = {
+      appDetails: { name: APP_NAME, icon: appIconUrl },
+      redirectTo: '/' + getUrlPathQueryHash(window.location.href),
+      onFinish: () => {
+        const userData = userSession.loadUserData();
+        dispatch({
+          type: UPDATE_USER,
+          payload: {
+            isUserSignedIn: true,
+            username: userData.username,
+            image: getUserImageUrl(userData),
+          },
+        });
+      },
+      userSession: userSession._userSession,
+    };
+    authenticate(authOptions);
   };
 
   const onSignUpBtnClick = () => {
@@ -45,7 +68,6 @@ const SignInPopup = () => {
   if (!isShown) return <AnimatePresence key="AnimatePresence_SIP" />;
 
   const panelHeight = Math.min(480, safeAreaHeight * 0.9);
-  const appIconUrl = extractUrl(window.location.href).origin + '/' + APP_ICON_NAME;
 
   return (
     <AnimatePresence key="AnimatePresence_SIP">

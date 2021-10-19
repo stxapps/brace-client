@@ -93,6 +93,19 @@ const SignUp = (props) => {
     copyTextToClipboard(walletData.current.secretKey);
   };
 
+  const onAutofillBtnClick = () => {
+    if (window.PasswordCredential) {
+      const data = { id: 'Secret Key', password: walletData.current.secretKey };
+      const creds = new window.PasswordCredential(data);
+      navigator.credentials.store(creds).then(() => {
+        console.log("Credential stored in the user agent's credential manager.");
+        console.log('  creds: ', creds);
+      }, (err) => {
+        console.error("Error while storing the credential: ", err);
+      });
+    }
+  };
+
   const onSavedBtnClick = () => {
     setViewId(VIEW_SAVE);
   };
@@ -128,14 +141,16 @@ const SignUp = (props) => {
 
   const _render = (content) => {
     return (
-      <div className="relative flex-1 overflow-x-hidden overflow-y-auto px-4 sm:px-6">
-        {content}
-        <div className="absolute top-0 right-0 p-1">
-          <button onClick={props.onPopupCloseBtnClick} className="flex items-center justify-center h-7 w-7 group focus:outline-none" aria-label="Close sign up popup">
-            <svg className="h-5 w-5 text-gray-300 rounded group-hover:text-gray-400 group-focus:ring-2 group-focus:ring-gray-300" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+      <React.Fragment>
+        <div className="relative flex-1 overflow-x-hidden overflow-y-auto px-4 sm:px-6">
+          {content}
+          <div className="absolute top-0 right-0 p-1">
+            <button onClick={props.onPopupCloseBtnClick} className="flex items-center justify-center h-7 w-7 group focus:outline-none" aria-label="Close sign up popup">
+              <svg className="h-5 w-5 text-gray-300 rounded group-hover:text-gray-400 group-focus:ring-2 group-focus:ring-gray-300" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
         {isLoadingShown && <div className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-25">
           <div className="ball-clip-rotate">
@@ -143,7 +158,7 @@ const SignUp = (props) => {
           </div>
         </div>}
         {isErrorShown && <ErrorAlert onCloseBtnClick={() => setErrorShown(false)} />}
-      </div>
+      </React.Fragment>
     );
   };
 
@@ -190,12 +205,12 @@ const SignUp = (props) => {
           <button onClick={onGetSecretKeyBtnClick} className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">Get your Secret Key</button>
           <p className="mt-5 text-center text-sm text-gray-500">
             Or
-            <button onClick={onSignUpWithStacksWalletBtnClick} className="ml-1 font-medium text-blue-700 hover:text-blue-800" type="button">Sign up with Stacks wallet</button>
+            <button onClick={onSignUpWithStacksWalletBtnClick} className="ml-1 font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign up with Stacks wallet</button>
           </p>
         </div>
         <div className="flex mt-7">
-          <button onClick={onSignInBtnClick} className="text-sm font-medium text-blue-700 hover:text-blue-800" type="button">Sign in</button>
-          <a className="ml-3 text-sm font-medium text-blue-700 hover:text-blue-800" href="https://docs.stacks.co/build-apps/guides/authentication#how-it-works" target="_blank" rel="noreferrer">How it works</a>
+          <button onClick={onSignInBtnClick} className="text-sm font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign in</button>
+          <a className="ml-3 text-sm font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" href="https://docs.stacks.co/build-apps/guides/authentication#how-it-works" target="_blank" rel="noreferrer">How it works</a>
         </div>
       </React.Fragment>
     );
@@ -214,6 +229,7 @@ const SignUp = (props) => {
         </div>
         <div className="pt-5">
           <button onClick={onClipboardBtnClick} className="w-full py-2 px-4 border border-gray-200 text-sm font-medium rounded-md text-blue-700 bg-white hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">Copy to clipboard</button>
+          {window.PasswordCredential && <button onClick={onAutofillBtnClick} className="mt-3 w-full py-2 px-4 border border-gray-200 text-sm font-medium rounded-md text-blue-700 bg-white hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">Save to Passwords</button>}
           <button onClick={onSavedBtnClick} className="mt-3 w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">I've saved it</button>
         </div>
         <ul className="mt-7 mb-5 border-t border-b border-gray-200 divide-y divide-gray-200">
@@ -282,8 +298,8 @@ const ExpListItem = (props) => {
   }
 
   return (
-    <li className="">
-      <button onClick={onOpenBtnClick} className="w-full flex justify-between items-center" type="button">
+    <li>
+      <button onClick={onOpenBtnClick} className="w-full flex justify-between items-center rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">
         <p className="text-sm text-gray-500 py-3">{title}</p>
         <div className="ml-3">
           {arrowSvg}

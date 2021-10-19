@@ -156,13 +156,38 @@ const restoreAccount = async (secretKey) => {
   return walletData;
 };
 
+const doUseBefore = (walletConfig, appDomain, accountIndex = null) => {
+  if (!walletConfig) return false;
+
+  try {
+    if (accountIndex) {
+      const acc = walletConfig.accounts[accountIndex];
+      for (const k in acc.apps) {
+        if (k === appDomain) return true;
+      }
+    } else {
+      for (const acc of walletConfig.accounts) {
+        for (const k in acc.apps) {
+          if (k === appDomain) return true;
+        }
+      }
+    }
+  } catch (e) { console.log('doUseBefore error: ', e); }
+
+  return false;
+};
+
 const chooseAccount = async (walletData, appData, accountIndex) => {
   const { wallet } = walletData;
   const { domainName, appName, appIconUrl, appScopes } = appData;
 
   const account = wallet.accounts[accountIndex];
 
-  if (!walletData.walletConfig || walletData.doUpdate) {
+  if (
+    !walletData.walletConfig ||
+    !doUseBefore(walletData.walletConfig, domainName, accountIndex) ||
+    walletData.doUpdate
+  ) {
     let walletConfig = walletData.walletConfig;
     if (!walletConfig) walletConfig = makeWalletConfig(wallet);
 

@@ -23,6 +23,18 @@ const SignIn = (props) => {
     setErrMsg('');
   };
 
+  const onAutofillBtnClick = () => {
+    if (window.PasswordCredential) {
+      const opts = { password: true, mediation: 'required' };
+      navigator.credentials.get(opts).then((cred) => {
+        console.log("Got cred: ", cred);
+        if (cred && cred.password) setSecretKeyInput(cred.password);
+      }, (err) => {
+        console.error("Error while getting the credential: ", err);
+      });
+    }
+  };
+
   const onContinueBtnClick = () => {
     if (didClick.current) return;
 
@@ -86,14 +98,16 @@ const SignIn = (props) => {
 
   const _render = (content) => {
     return (
-      <div className="relative flex-1 overflow-x-hidden overflow-y-auto px-4 sm:px-6">
-        {content}
-        <div className="absolute top-0 right-0 p-1">
-          <button onClick={props.onPopupCloseBtnClick} className="flex items-center justify-center h-7 w-7 group focus:outline-none" aria-label="Close sign in popup">
-            <svg className="h-5 w-5 text-gray-300 rounded group-hover:text-gray-400 group-focus:ring-2 group-focus:ring-gray-300" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+      <React.Fragment>
+        <div className="relative flex-1 overflow-x-hidden overflow-y-auto px-4 sm:px-6">
+          {content}
+          <div className="absolute top-0 right-0 p-1">
+            <button onClick={props.onPopupCloseBtnClick} className="flex items-center justify-center h-7 w-7 group focus:outline-none" aria-label="Close sign in popup">
+              <svg className="h-5 w-5 text-gray-300 rounded group-hover:text-gray-400 group-focus:ring-2 group-focus:ring-gray-300" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
         {isLoadingShown && <div className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-25">
           <div className="ball-clip-rotate">
@@ -101,7 +115,7 @@ const SignIn = (props) => {
           </div>
         </div>}
         {isErrorShown && <ErrorAlert onCloseBtnClick={() => setErrorShown(false)} />}
-      </div>
+      </React.Fragment>
     );
   };
 
@@ -114,16 +128,17 @@ const SignIn = (props) => {
           <label htmlFor="secret-key-input" className="sr-only">Secret Key</label>
           <textarea onChange={onSecretKeyInputChange} className="py-3 px-4 block w-full h-40 shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md text-sm text-gray-700 leading-6 resize-none sm:h-32" value={secretKeyInput} id="secret-key-input" name="secret-key-input"></textarea>
         </div>
-        <div className={errMsg ? '' : 'pt-5'}>
+        <div>
+          {window.PasswordCredential && <button onClick={onAutofillBtnClick} className="mt-3 w-full py-2 px-4 border border-gray-200 text-sm font-medium rounded-md text-blue-700 bg-white hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">Get from Passwords</button>}
           {errMsg && <p className="text-sm text-red-600 py-2">{errMsg}</p>}
-          <button onClick={onContinueBtnClick} className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">Continue</button>
+          <button onClick={onContinueBtnClick} className={`w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 ${errMsg ? '' : 'mt-3'}`} type="button">Continue</button>
           <p className="mt-5 text-center text-sm text-gray-500">
             Or
-            <button onClick={onSignInWithStacksWalletBtnClick} className="ml-1 font-medium text-blue-700 hover:text-blue-800" type="button">Sign in with Stacks wallet</button>
+            <button onClick={onSignInWithStacksWalletBtnClick} className="ml-1 font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign in with Stacks wallet</button>
           </p>
         </div>
         <div className="absolute bottom-0 inset-x-0 flex px-4 py-3 sm:px-6">
-          <button onClick={onSignUpBtnClick} className="text-sm font-medium text-blue-700 hover:text-blue-800" type="button">Sign up</button>
+          <button onClick={onSignUpBtnClick} className="text-sm font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign up</button>
         </div>
       </React.Fragment>
     );
@@ -154,7 +169,7 @@ const SignIn = (props) => {
 
             return (
               <li key={`account-${i}`}>
-                <button onClick={() => onChooseAccount(i)} className="group py-4 w-full flex justify-start items-center" aria-label={`Choose ${i}`}>
+                <button onClick={() => onChooseAccount(i)} className="group py-4 w-full flex justify-start items-center rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" aria-label={`Choose ${i}`}>
                   <div className="w-10 h-10 bg-blue-300 rounded-full flex justify-center items-center group-hover:bg-blue-400">
                     {accountImage}
                   </div>
