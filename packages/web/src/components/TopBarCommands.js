@@ -1,7 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import GracefulImage from 'react-graceful-image';
-import { toSvg } from 'jdenticon';
 import { motion, AnimatePresence } from "framer-motion";
 
 import { signOut, updatePopup, updateBulkEdit } from '../actions';
@@ -12,18 +10,6 @@ import TopBarAddPopup from './TopBarAddPopup';
 import TopBarSearchInput from './TopBarSearchInput';
 
 class TopBarCommands extends React.PureComponent {
-
-  constructor(props) {
-    super(props);
-
-    this.userImage = props.userImage;
-    this.profileBtnStyleClasses = 'rounded-full';
-    if (this.userImage === null) {
-      const svgString = toSvg(props.username, 32);
-      this.userImage = `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
-      this.profileBtnStyleClasses = 'rounded-lg';
-    }
-  }
 
   onBulkEditBtnClick = () => {
     this.props.updateBulkEdit(true);
@@ -90,8 +76,10 @@ class TopBarCommands extends React.PureComponent {
           </button>
         </div>
         <div className="relative ml-4">
-          <button onClick={this.onProfileBtnClick} className={`relative block h-8 w-8 overflow-hidden border-2 border-gray-300 ${isProfilePopupShown ? 'z-41' : ''} hover:border-gray-400 focus:outline-none focus:ring ${this.profileBtnStyleClasses}`}>
-            <GracefulImage className="h-full w-full bg-white object-cover" src={this.userImage} alt="Profile" />
+          <button onClick={this.onProfileBtnClick} className={`relative block h-8 w-8 rounded-full overflow-hidden group ${isProfilePopupShown ? 'z-41' : ''} focus:outline-none focus:ring`}>
+            <svg className="mx-auto w-7 text-gray-500 group-hover:text-gray-600" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12H5.01M12 12H12.01M19 12H19.01M6 12C6 12.2652 5.89464 12.5196 5.70711 12.7071C5.51957 12.8946 5.26522 13 5 13C4.73478 13 4.48043 12.8946 4.29289 12.7071C4.10536 12.5196 4 12.2652 4 12C4 11.7348 4.10536 11.4804 4.29289 11.2929C4.48043 11.1054 4.73478 11 5 11C5.26522 11 5.51957 11.1054 5.70711 11.2929C5.89464 11.4804 6 11.7348 6 12ZM13 12C13 12.2652 12.8946 12.5196 12.7071 12.7071C12.5196 12.8946 12.2652 13 12 13C11.7348 13 11.4804 12.8946 11.2929 12.7071C11.1054 12.5196 11 12.2652 11 12C11 11.7348 11.1054 11.4804 11.2929 11.2929C11.4804 11.1054 11.7348 11 12 11C12.2652 11 12.5196 11.1054 12.7071 11.2929C12.8946 11.4804 13 11.7348 13 12ZM20 12C20 12.2652 19.8946 12.5196 19.7071 12.7071C19.5196 12.8946 19.2652 13 19 13C18.7348 13 18.4804 12.8946 18.2929 12.7071C18.1054 12.5196 18 12.2652 18 12C18 11.7348 18.1054 11.4804 18.2929 11.2929C18.4804 11.1054 18.7348 11 19 11C19.2652 11 19.5196 11.1054 19.7071 11.2929C19.8946 11.4804 20 11.7348 20 12Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </button>
           {this.renderProfilePopup()}
         </div>
@@ -102,8 +90,6 @@ class TopBarCommands extends React.PureComponent {
 
 const mapStateToProps = (state, props) => {
   return {
-    username: state.user.username,
-    userImage: state.user.image,
     isProfilePopupShown: state.display.isProfilePopupShown,
   };
 };

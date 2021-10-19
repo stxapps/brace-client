@@ -11,7 +11,7 @@ const faqs1 = [
   {
     key: 'faqs1-1',
     title: "What's a Secret Key?",
-    body: "A Secret Key is a type of passwords. It's used to create your account and encrypt/decrypt your data. It's generated when you sign up. Nobody but you will have your Secret Key, to make sure that only you can decrypt your data and see the content inside.",
+    body: "A Secret Key is a password. It's used to create your account and encrypt/decrypt your data. It's generated when you sign up. Nobody but you will have your Secret Key, to make sure that only you can decrypt your data and see the content inside.",
   },
   {
     key: 'faqs1-2',
@@ -21,7 +21,7 @@ const faqs1 = [
         <p className="text-sm text-gray-500 leading-6">Save your Secret Key in a place where only you can find it. For example:</p>
         <ul className="pt-2 pl-2.5 list-disc list-inside text-sm text-gray-500 leading-6">
           <li>A password manager such as 1Password</li>
-          <li>Your Notes app, protected with a password</li>
+          <li>Your notes app, protected with a password</li>
           <li>Written down and kept somewhere safe</li>
         </ul>
         <p className="pt-2 pb-3 text-sm text-gray-500 leading-6">Don't save it anywhere where others can find it, or on a website you do not trust. Anybody with your Secret Key will have access to your data.</p>
@@ -44,12 +44,12 @@ const faqs2 = [
   {
     key: 'faqs2-2',
     title: "When will I need my Secret Key?",
-    body: "You'll need your Secret Key to prove it's you when you sign in on a new device, such as a new phone or laptop.",
+    body: "You'll need your Secret Key to prove it's you when you sign in on a new device such as a new phone or laptop.",
   },
   {
     key: 'faqs2-3',
     title: "Can I change or reset my Secret Key?",
-    body: "Your Secret Key is used to encrypt your data. Your data consists of many files and each file is individually encrypted with your Secret Key. If you change your Secret Key, every file needs to be decrypted with your old Secret Key and encrypted again with your new Secret Key.",
+    body: "Your Secret Key cannot be changed or reset. As your Secret Key is used to encrypt your data, each file individually, if you change your Secret Key, every file needs to be decrypted with your old Secret Key and encrypted again with your new Secret Key.",
   },
 ];
 
