@@ -278,60 +278,6 @@ export const updateHistoryPosition = historyPosition => {
   };
 };
 
-export const signUp = () => async (dispatch, getState) => {
-
-  /*const authOptions = {
-    redirectTo: '/' + getUrlPathQueryHash(window.location.href),
-    appDetails: {
-      name: APP_NAME,
-      icon: extractUrl(window.location.href).origin + '/' + APP_ICON_NAME,
-    },
-    finished: ({ userSession }) => {
-
-      const userData = userSession.loadUserData();
-      dispatch({
-        type: UPDATE_USER,
-        payload: {
-          isUserSignedIn: true,
-          username: userData.username,
-          image: getUserImageUrl(userData),
-        },
-      });
-    },
-    sendToSignIn: false,
-    userSession: userSession,
-  };
-
-  showConnect(authOptions);*/
-};
-
-export const signIn = () => async (dispatch, getState) => {
-
-  /*const authOptions = {
-    redirectTo: '/' + getUrlPathQueryHash(window.location.href),
-    appDetails: {
-      name: APP_NAME,
-      icon: extractUrl(window.location.href).origin + '/' + APP_ICON_NAME,
-    },
-    finished: ({ userSession }) => {
-
-      const userData = userSession.loadUserData();
-      dispatch({
-        type: UPDATE_USER,
-        payload: {
-          isUserSignedIn: true,
-          username: userData.username,
-          image: getUserImageUrl(userData),
-        },
-      });
-    },
-    sendToSignIn: true,
-    userSession: userSession,
-  };
-
-  authenticate(authOptions);*/
-};
-
 export const signOut = () => async (dispatch, getState) => {
 
   userSession.signUserOut();

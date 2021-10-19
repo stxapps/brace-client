@@ -2,13 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import {
-  MY_LIST,
+  SIGN_UP_POPUP, SIGN_IN_POPUP, MY_LIST,
   ADDING, ADDED, DIED_ADDING,
   URL_QUERY_CLOSE_KEY, URL_QUERY_CLOSE_WINDOW,
   SHOW_BLANK,
   VALID_URL, NO_URL, ASK_CONFIRM_URL, URL_MSGS,
 } from '../types/const';
-import { signUp, signIn, addLink, cancelDiedLinks } from '../actions';
+import { updatePopup, addLink, cancelDiedLinks } from '../actions';
 import {
   getUrlPathQueryHash,
   validateUrl, separateUrlAndParam, ensureContainUrlProtocol,
@@ -18,6 +18,8 @@ import {
 
 import Loading from './Loading';
 import TopBar from './TopBar';
+import SignUpPopup from './SignUpPopup';
+import SignInPopup from './SignInPopup';
 
 const MAX_LINK_LENGTH = 157;
 
@@ -102,6 +104,14 @@ class Adding extends React.PureComponent {
     this.setState({ hasAskedConfirm: true });
   }
 
+  onSignUpBtnClick = () => {
+    this.props.updatePopup(SIGN_UP_POPUP, true);
+  }
+
+  onSignInBtnClick = () => {
+    this.props.updatePopup(SIGN_IN_POPUP, true);
+  }
+
   _processAddingUrl(addingUrl) {
     return {
       addingPUrl: ensureContainUrlProtocol(addingUrl),
@@ -116,6 +126,8 @@ class Adding extends React.PureComponent {
         <div className="mx-auto px-4 pt-28 w-full max-w-md bg-white md:px-6 md:pt-36 lg:px-8">
           {content}
         </div>
+        <SignUpPopup />
+        <SignInPopup />
       </React.Fragment>
     );
   }
@@ -269,12 +281,12 @@ class Adding extends React.PureComponent {
           <path fillRule="evenodd" clipRule="evenodd" d="M8.25706 3.09882C9.02167 1.73952 10.9788 1.73952 11.7434 3.09882L17.3237 13.0194C18.0736 14.3526 17.1102 15.9999 15.5805 15.9999H4.4199C2.89025 15.9999 1.92682 14.3526 2.67675 13.0194L8.25706 3.09882ZM11.0001 13C11.0001 13.5523 10.5524 14 10.0001 14C9.44784 14 9.00012 13.5523 9.00012 13C9.00012 12.4477 9.44784 12 10.0001 12C10.5524 12 11.0001 12.4477 11.0001 13ZM10.0001 5C9.44784 5 9.00012 5.44772 9.00012 6V9C9.00012 9.55228 9.44784 10 10.0001 10C10.5524 10 11.0001 9.55228 11.0001 9V6C11.0001 5.44772 10.5524 5 10.0001 5Z" />
         </svg>
         <p className="mx-auto mt-5 w-full max-w-xs text-base text-gray-500 text-center">Please sign in first</p>
-        <button onClick={() => this.props.signIn()} className="mx-auto mt-2 block h-14 group focus:outline-none">
+        <button onClick={this.onSignInBtnClick} className="mx-auto mt-2 block h-14 group focus:outline-none">
           <span className="px-3 py-1.5 bg-white text-sm text-gray-500 border border-gray-400 rounded-full group-hover:text-gray-600 group-hover:border-gray-500 group-focus:ring">Sign in</span>
         </button>
         <div className="mt-10 flex justify-center items-center">
           <p className="text-base text-gray-500">No account yet?</p>
-          <button onClick={() => this.props.signUp()} className="ml-2 text-base text-gray-600 font-medium rounded-sm hover:text-gray-700 focus:outline-none focus:ring">Sign up</button>
+          <button onClick={this.onSignUpBtnClick} className="ml-2 text-base text-gray-600 font-medium rounded-sm hover:text-gray-700 focus:outline-none focus:ring">Sign up</button>
         </div>
         {this.renderNav()}
       </React.Fragment>
@@ -348,4 +360,6 @@ const mapStateToProps = (state) => {
   }
 };
 
-export default connect(mapStateToProps, { signUp, signIn, addLink, cancelDiedLinks })(Adding);
+const mapDispatchToProps = { updatePopup, addLink, cancelDiedLinks };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Adding);
