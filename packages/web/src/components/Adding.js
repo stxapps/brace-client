@@ -175,7 +175,7 @@ class Adding extends React.PureComponent {
           </div>
         </div>
         <p className="mx-auto mt-5 w-full max-w-xs text-base text-gray-500 text-center">
-          <a className="break-all rounded-sm hover:text-gray-600 focus:outline-none focus:ring" href={addingPUrl}>{addingTUrl}</a>
+          <a className="break-all rounded-sm hover:text-gray-600 focus:outline-none focus:ring" href={addingPUrl} target="_blank" rel="noreferrer">{addingTUrl}</a>
           <br />
           <span className="text-lg text-gray-900 font-semibold break-normal">is being saved.</span>
         </p>
@@ -196,7 +196,7 @@ class Adding extends React.PureComponent {
           <path fillRule="evenodd" clipRule="evenodd" d="M70.2426 40.2427C72.5856 37.8995 72.5856 34.1005 70.2426 31.7573C67.8996 29.4142 64.1004 29.4142 61.7574 31.7573L42 51.5148L34.2427 43.7573C31.8995 41.4142 28.1005 41.4142 25.7573 43.7573C23.4142 46.1005 23.4142 49.8996 25.7573 52.2426L37.7573 64.2426C40.1005 66.5856 43.8995 66.5856 46.2427 64.2426L70.2426 40.2427Z" fill="rgb(21, 128, 61)" />
         </svg>
         <p className="mx-auto mt-5 w-full max-w-xs text-base text-gray-500 text-center">
-          <a className="break-all rounded-sm hover:text-gray-600 focus:outline-none focus:ring" href={addingPUrl}>{addingTUrl}</a>
+          <a className="break-all rounded-sm hover:text-gray-600 focus:outline-none focus:ring" href={addingPUrl} target="_blank" rel="noreferrer">{addingTUrl}</a>
           <br />
           <span className="text-lg text-gray-900 font-semibold break-normal">has been saved.</span>
         </p>
@@ -241,7 +241,7 @@ class Adding extends React.PureComponent {
           <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM10 7C9.63113 7 9.3076 7.19922 9.13318 7.50073C8.85664 7.97879 8.24491 8.14215 7.76685 7.86561C7.28879 7.58906 7.12543 6.97733 7.40197 6.49927C7.91918 5.60518 8.88833 5 10 5C11.6569 5 13 6.34315 13 8C13 9.30622 12.1652 10.4175 11 10.8293V11C11 11.5523 10.5523 12 10 12C9.44773 12 9.00001 11.5523 9.00001 11V10C9.00001 9.44772 9.44773 9 10 9C10.5523 9 11 8.55228 11 8C11 7.44772 10.5523 7 10 7ZM10 15C10.5523 15 11 14.5523 11 14C11 13.4477 10.5523 13 10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15Z" />
         </svg>
         <p className="mx-auto mt-5 w-full max-w-xs text-base text-gray-500 text-center">
-          <a className="break-all rounded-sm hover:text-gray-600 focus:outline-none focus:ring" href={addingPUrl}>{addingTUrl}</a>
+          <a className="break-all rounded-sm hover:text-gray-600 focus:outline-none focus:ring" href={addingPUrl} target="_blank" rel="noreferrer">{addingTUrl}</a>
           <br />
           <span className="text-lg text-gray-900 font-semibold break-normal">looks like an invalid link. Are you sure?</span>
         </p>
@@ -306,7 +306,7 @@ class Adding extends React.PureComponent {
           <path fillRule="evenodd" clipRule="evenodd" d="M70.2426 40.2427C72.5856 37.8995 72.5856 34.1005 70.2426 31.7573C67.8996 29.4142 64.1004 29.4142 61.7574 31.7573L42 51.5148L34.2427 43.7573C31.8995 41.4142 28.1005 41.4142 25.7573 43.7573C23.4142 46.1005 23.4142 49.8996 25.7573 52.2426L37.7573 64.2426C40.1005 66.5856 43.8995 66.5856 46.2427 64.2426L70.2426 40.2427Z" fill="rgb(21, 128, 61)" />
         </svg>
         <p className="mx-auto mt-5 w-full max-w-xs text-base text-gray-500 text-center">
-          <a className="break-all rounded-sm hover:text-gray-600 focus:outline-none focus:ring" href={addingPUrl}>{addingTUrl}</a>
+          <a className="break-all rounded-sm hover:text-gray-600 focus:outline-none focus:ring" href={addingPUrl} target="_blank" rel="noreferrer">{addingTUrl}</a>
           <br />
           <span className="text-lg text-gray-900 font-semibold break-normal">already exists</span>
         </p>

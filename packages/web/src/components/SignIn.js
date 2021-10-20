@@ -16,6 +16,7 @@ const SignIn = (props) => {
   const [secretKeyInput, setSecretKeyInput] = useState('');
   const [errMsg, setErrMsg] = useState('');
   const walletData = useRef(null);
+  const scrollView = useRef(null);
   const didClick = useRef(false);
 
   const onSecretKeyInputChange = (e) => {
@@ -51,8 +52,8 @@ const SignIn = (props) => {
     });
   };
 
-  const onSignInWithStacksWalletBtnClick = () => {
-    props.onSignInWithStacksWalletBtnClick();
+  const onSignInWithHiroWalletBtnClick = () => {
+    props.onSignInWithHiroWalletBtnClick();
   };
 
   const onSignUpBtnClick = () => {
@@ -79,15 +80,28 @@ const SignIn = (props) => {
   };
 
   useEffect(() => {
+    if (viewId === VIEW_YOUR) {
+      if (window.PasswordCredential) {
+        const opts = { password: true, mediation: 'required' };
+        navigator.credentials.get(opts).then((cred) => {
+          if (cred && cred.password) setSecretKeyInput(cred.password);
+        });
+      }
+    }
+  }, [viewId]);
+
+  useEffect(() => {
     if (window.document.activeElement instanceof HTMLButtonElement) {
       window.document.activeElement.blur();
     }
+
+    if (scrollView.current) scrollView.current.scrollTo(0, 0);
   }, [viewId]);
 
   const _render = (content) => {
     return (
       <React.Fragment>
-        <div className="relative flex-1 overflow-x-hidden overflow-y-auto px-4 sm:px-6">
+        <div ref={scrollView} className="relative flex-1 overflow-x-hidden overflow-y-auto px-4 sm:px-6">
           {content}
           <div className="absolute top-0 right-0 p-1">
             <button onClick={props.onPopupCloseBtnClick} className="flex items-center justify-center h-7 w-7 group focus:outline-none" aria-label="Close sign in popup">
@@ -110,21 +124,21 @@ const SignIn = (props) => {
   const renderYourView = () => {
     const content = (
       <React.Fragment>
-        <h2 className="mt-8 text-left text-xl font-semibold text-gray-900">Continue with your Secret Key</h2>
-        <p className="mt-5 text-sm text-gray-500 leading-6">Enter your 12 or 24 word Secret Key to continue.</p>
+        <h2 className="mt-8 text-left text-xl font-semibold text-gray-900">Your Secret Key</h2>
+        <p className="mt-2 text-sm text-gray-500 leading-6">Enter your Secret Key below to sign in.</p>
         <div className="pt-3.5">
           <label htmlFor="secret-key-input" className="sr-only">Secret Key</label>
-          <textarea onChange={onSecretKeyInputChange} className="py-3 px-4 block w-full h-40 shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md text-sm text-gray-700 leading-6 resize-none sm:h-32" value={secretKeyInput} id="secret-key-input" name="secret-key-input"></textarea>
+          <textarea onChange={onSecretKeyInputChange} className="py-2.5 px-4 block w-full h-36 shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md text-sm text-gray-700 leading-6 resize-none sm:py-3 sm:h-32" value={secretKeyInput} id="secret-key-input" name="secret-key-input" autoCapitalize="none"></textarea>
         </div>
         <div className={errMsg ? '' : 'pt-5'}>
           {errMsg && <p className="text-sm text-red-600 py-2">{errMsg}</p>}
           <button onClick={onContinueBtnClick} className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">Continue</button>
           <p className="mt-5 text-center text-sm text-gray-500">
             Or
-            <button onClick={onSignInWithStacksWalletBtnClick} className="ml-1 font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign in with Stacks wallet</button>
+            <button onClick={onSignInWithHiroWalletBtnClick} className="ml-1 font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign in with Hiro Wallet</button>
           </p>
         </div>
-        <div className="absolute bottom-0 inset-x-0 flex px-4 py-3 sm:px-6">
+        <div className="flex mt-24 pt-2 mb-1.5 sm:mt-28 sm:pt-1">
           <button onClick={onSignUpBtnClick} className="text-sm font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign up</button>
         </div>
       </React.Fragment>
@@ -137,8 +151,8 @@ const SignIn = (props) => {
     const content = (
       <React.Fragment>
         <h2 className="mt-8 text-left text-xl font-semibold text-gray-900">Choose an account</h2>
-        <p className="mt-1 text-sm text-gray-500 leading-6">to use with {appName}</p>
-        <ul className="mt-12 border-t border-b border-gray-200 divide-y divide-gray-200">
+        <p className="mt-2 text-sm text-gray-500 leading-6">to use with {appName}</p>
+        <ul className="mt-8 border-t border-b border-gray-200 divide-y divide-gray-200">
           {walletData.current.wallet.accounts.map((account, i) => {
             let accountImage = (
               <svg className="w-7 h-7 text-blue-100 group-hover:text-blue-200" viewBox="0 0 28 28" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -157,7 +171,7 @@ const SignIn = (props) => {
             return (
               <li key={`account-${i}`}>
                 <button onClick={() => onChooseAccount(i)} className="group py-4 w-full flex justify-start items-center rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" aria-label={`Choose ${i}`}>
-                  <div className="w-10 h-10 bg-blue-300 rounded-full flex justify-center items-center group-hover:bg-blue-400">
+                  <div className="w-10 h-10 bg-blue-300 rounded-full overflow-hidden flex justify-center items-center group-hover:bg-blue-400">
                     {accountImage}
                   </div>
                   <div className="ml-3.5">

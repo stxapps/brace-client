@@ -31,7 +31,7 @@ const SignUpPopup = () => {
     dispatch(updatePopup(SIGN_UP_POPUP, false));
   };
 
-  const onSignUpWithStacksWalletBtnClick = () => {
+  const onSignUpWithHiroWalletBtnClick = () => {
     onPopupCloseBtnClick();
 
     const authOptions = {
@@ -49,6 +49,7 @@ const SignUpPopup = () => {
         });
       },
       userSession: userSession._userSession,
+      sendToSignIn: false,
     };
     showConnect(authOptions);
   };
@@ -69,7 +70,7 @@ const SignUpPopup = () => {
 
   if (!isShown) return <AnimatePresence key="AnimatePresence_SUP" />;
 
-  const panelHeight = Math.min(592, safeAreaHeight * 0.9);
+  const panelHeight = Math.min(576, safeAreaHeight * 0.9);
 
   return (
     <AnimatePresence key="AnimatePresence_SUP">
@@ -80,7 +81,7 @@ const SignUpPopup = () => {
           </div>
           <motion.div className={'w-full max-w-sm bg-white rounded-lg overflow-hidden shadow-xl'} variants={ccPopupFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
             <div className="relative flex flex-col overflow-hidden bg-white rounded-lg" style={{ height: panelHeight }}>
-              <SignUp domainName={DOMAIN_NAME} appName={APP_NAME} appIcon={shortLogo} appIconUrl={appIconUrl} appScopes={APP_SCOPES} onPopupCloseBtnClick={onPopupCloseBtnClick} onSignUpWithStacksWalletBtnClick={onSignUpWithStacksWalletBtnClick} onSignInBtnClick={onSignInBtnClick} onBackedUpBtnClick={onBackedUpBtnClick} />
+              <SignUp domainName={DOMAIN_NAME} appName={APP_NAME} appIcon={shortLogo} appIconUrl={appIconUrl} appScopes={APP_SCOPES} onPopupCloseBtnClick={onPopupCloseBtnClick} onSignUpWithHiroWalletBtnClick={onSignUpWithHiroWalletBtnClick} onSignInBtnClick={onSignInBtnClick} onBackedUpBtnClick={onBackedUpBtnClick} />
             </div>
           </motion.div>
         </div>

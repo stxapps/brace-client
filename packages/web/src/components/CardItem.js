@@ -56,7 +56,7 @@ class CardItem extends React.Component {
             <button onClick={this.onRetryRetryBtnClick} className="px-4 py-1 bg-white text-sm text-gray-500 font-medium rounded-full border border-white hover:bg-gray-700 hover:text-gray-50 focus:outline-none focus:ring focus:ring-blue-300">Retry</button>
             <button onClick={this.onRetryCancelBtnClick} className="ml-4 px-3 py-1 text-sm text-gray-100 font-medium rounded-full border border-gray-100 hover:bg-gray-700 hover:text-gray-50 focus:outline-none focus:ring focus:ring-blue-300">Cancel</button>
           </div>
-          <a className="block mt-4 w-full text-sm text-white font-medium text-center tracking-wide hover:underline focus:outline-none focus:ring focus:ring-blue-300" href={ensureContainUrlProtocol(url)}>Go to the link</a>
+          <a className="block mt-4 w-full text-sm text-white font-medium text-center tracking-wide hover:underline focus:outline-none focus:ring focus:ring-blue-300" href={ensureContainUrlProtocol(url)} target="_blank" rel="noreferrer">Go to the link</a>
         </div>
       </React.Fragment>
     );

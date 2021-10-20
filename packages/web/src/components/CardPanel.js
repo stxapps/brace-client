@@ -34,6 +34,7 @@ class CardPanel extends React.PureComponent {
   }
 
   componentDidMount() {
+    window.scrollTo(0, 0);
     window.addEventListener('scroll', this.updateScrollY);
   }
 

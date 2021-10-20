@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { authenticate } from '@stacks/connect';
+import { showConnect } from '@stacks/connect';
 import { motion, AnimatePresence } from "framer-motion";
 
 import userSession from '../userSession';
@@ -29,7 +29,7 @@ const SignInPopup = () => {
     dispatch(updatePopup(SIGN_IN_POPUP, false));
   };
 
-  const onSignInWithStacksWalletBtnClick = () => {
+  const onSignInWithHiroWalletBtnClick = () => {
     onPopupCloseBtnClick();
 
     const authOptions = {
@@ -47,8 +47,9 @@ const SignInPopup = () => {
         });
       },
       userSession: userSession._userSession,
+      sendToSignIn: true,
     };
-    authenticate(authOptions);
+    showConnect(authOptions);
   };
 
   const onSignUpBtnClick = () => {
@@ -78,7 +79,7 @@ const SignInPopup = () => {
           </div>
           <motion.div className={'w-full max-w-sm bg-white rounded-lg overflow-hidden shadow-xl'} variants={ccPopupFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
             <div className="relative flex flex-col overflow-hidden bg-white rounded-lg" style={{ height: panelHeight }}>
-              <SignIn domainName={DOMAIN_NAME} appName={APP_NAME} appIconUrl={appIconUrl} appScopes={APP_SCOPES} onPopupCloseBtnClick={onPopupCloseBtnClick} onSignInWithStacksWalletBtnClick={onSignInWithStacksWalletBtnClick} onSignUpBtnClick={onSignUpBtnClick} onChooseAccountBtnClick={onChooseAccountBtnClick} />
+              <SignIn domainName={DOMAIN_NAME} appName={APP_NAME} appIconUrl={appIconUrl} appScopes={APP_SCOPES} onPopupCloseBtnClick={onPopupCloseBtnClick} onSignInWithHiroWalletBtnClick={onSignInWithHiroWalletBtnClick} onSignUpBtnClick={onSignUpBtnClick} onChooseAccountBtnClick={onChooseAccountBtnClick} />
             </div>
           </motion.div>
         </div>

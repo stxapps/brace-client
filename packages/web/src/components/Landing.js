@@ -72,16 +72,16 @@ class Landing extends React.PureComponent {
               </svg>
             </button>
             <div className="mt-3 flex items-end md:mt-4">
-              <a className="focus:outline-none group" href="https://play.google.com/store/apps/details?id=com.bracedotto">
+              <a className="focus:outline-none group" href="https://play.google.com/store/apps/details?id=com.bracedotto" target="_blank" rel="noreferrer">
                 <img className="w-6 rounded-sm group-focus:ring md:w-8" src={playStore} alt="Play store" />
               </a>
-              <a className="focus:outline-none group" href="https://apps.apple.com/us/app/id1531456778">
+              <a className="focus:outline-none group" href="https://apps.apple.com/us/app/id1531456778" target="_blank" rel="noreferrer">
                 <img className="ml-4 w-6 rounded-sm group-focus:ring md:w-8" src={appStore} alt="App store" />
               </a>
-              <a className="focus:outline-none group" href="https://chrome.google.com/webstore/detail/brace/hennjddhjodlmdnopaggbjjkpokpbdnn">
+              <a className="focus:outline-none group" href="https://chrome.google.com/webstore/detail/brace/hennjddhjodlmdnopaggbjjkpokpbdnn" target="_blank" rel="noreferrer">
                 <img className="ml-4 w-6 rounded-sm group-focus:ring md:w-8" src={chromeWebStore} alt="Chrome web store" />
               </a>
-              <a className="focus:outline-none group" href="https://addons.mozilla.org/en-US/firefox/addon/brace/">
+              <a className="focus:outline-none group" href="https://addons.mozilla.org/en-US/firefox/addon/brace/" target="_blank" rel="noreferrer">
                 <img className="ml-4 -mb-2px w-7 rounded-sm group-focus:ring md:w-10" src={firefoxAddons} alt="Firefox addons" />
               </a>
             </div>
@@ -218,10 +218,10 @@ class Landing extends React.PureComponent {
                   <div className="md:mt-0.5 md:ml-4 md:w-1/2">
                     <h3 className="mt-5 text-xl text-white font-semibold leading-none md:mt-0 lg:text-2xl-extra lg:leading-none">Save with our Extension</h3>
                     <p className="mt-2.5 text-base text-gray-300 font-normal md:pr-8 lg:text-lg lg:leading-6">Install our Chrome or Firefox web browser extension and just click on our extension icon next to the address bar.</p>
-                    <a className="focus:outline-none group" href="https://chrome.google.com/webstore/detail/brace/hennjddhjodlmdnopaggbjjkpokpbdnn">
+                    <a className="focus:outline-none group" href="https://chrome.google.com/webstore/detail/brace/hennjddhjodlmdnopaggbjjkpokpbdnn" target="_blank" rel="noreferrer">
                       <img className="mt-4 h-16 rounded group-hover:ring group-focus:ring" src={availableInChromeWebStore} alt="Available in Chrome Web Store" />
                     </a>
-                    <a className="focus:outline-none group" href="https://addons.mozilla.org/en-US/firefox/addon/brace/">
+                    <a className="focus:outline-none group" href="https://addons.mozilla.org/en-US/firefox/addon/brace/" target="_blank" rel="noreferrer">
                       <img className="mt-4 h-16 rounded group-hover:ring group-focus:ring" src={availableInFirefoxAddons} alt="Available in Firefox Addons" />
                     </a>
                   </div>
@@ -242,10 +242,10 @@ class Landing extends React.PureComponent {
                   <div className="px-4 md:mt-0.5 md:ml-4 md:px-0 md:w-1/2">
                     <h3 className="mt-5 text-xl text-white font-semibold leading-none md:mt-0 lg:text-2xl-extra lg:leading-none">Save via our Mobile App</h3>
                     <p className="mt-2.5 text-base text-gray-300 font-normal md:pr-8 lg:text-lg lg:leading-6">Install our Android or iOS app on your phone and just share a link with our app.</p>
-                    <a className="focus:outline-none group" href="https://play.google.com/store/apps/details?id=com.bracedotto">
+                    <a className="focus:outline-none group" href="https://play.google.com/store/apps/details?id=com.bracedotto" target="_blank" rel="noreferrer">
                       <img className="mx-auto mt-4 available-on-size rounded-lg group-hover:ring group-focus:ring md:mx-0" src={availableOnPlayStore} alt="Available on Google Play" />
                     </a>
-                    <a className="focus:outline-none group" href="https://apps.apple.com/us/app/id1531456778">
+                    <a className="focus:outline-none group" href="https://apps.apple.com/us/app/id1531456778" target="_blank" rel="noreferrer">
                       <img className="mx-auto mt-4 available-on-size rounded-lg group-hover:ring group-focus:ring md:mx-0" src={availableOnAppStore} alt="Available on App Store" />
                     </a>
                   </div>
@@ -273,7 +273,7 @@ class Landing extends React.PureComponent {
           <div className="block md:flex md:flex-row md:justify-center md:items-center">
             <img className="h-16 md:mt-1 md:h-28 xl:mt-2" src={stacksShort} alt="Stacks Logo" />
             <div className="mt-4 md:mt-0 md:ml-3">
-              <h2 className="text-3xl text-gray-900 font-semibold text-left leading-tight md:text-4xl md:text-center">Your privacy at heart <br className="hidden md:inline" />powered by <a className="text-purple-blockstack rounded hover:underline focus:outline-none focus:ring" href="https://www.stacks.co/">Stacks</a></h2>
+              <h2 className="text-3xl text-gray-900 font-semibold text-left leading-tight md:text-4xl md:text-center">Your privacy at heart <br className="hidden md:inline" />powered by <a className="text-purple-blockstack rounded hover:underline focus:outline-none focus:ring" href="https://www.stacks.co/" target="_blank" rel="noreferrer">Stacks</a></h2>
               <p className="mt-4 text-lg text-gray-500 text-left md:mt-2 md:text-center">Your identity is <span className="inline md:hidden">truly</span> yours. <br className="inline sm:hidden" />Your data is <span className="inline md:hidden">truly</span> yours.</p>
             </div>
           </div>

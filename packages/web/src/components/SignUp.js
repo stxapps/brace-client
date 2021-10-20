@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 import walletApi from '../apis/wallet';
-import { isString, copyTextToClipboard } from '../utils';
+import { isString, randomString, copyTextToClipboard } from '../utils';
 
 const VIEW_START = 1;
 const VIEW_YOUR = 2;
@@ -60,6 +60,8 @@ const SignUp = (props) => {
   const [isLoadingShown, setLoadingShown] = useState(false);
   const [isErrorShown, setErrorShown] = useState(false);
   const walletData = useRef(null);
+  const scrollView = useRef(null);
+  const prevViewId = useRef(viewId);
   const didClick = useRef(false);
 
   const onGetSecretKeyBtnClick = () => {
@@ -81,8 +83,8 @@ const SignUp = (props) => {
     });
   };
 
-  const onSignUpWithStacksWalletBtnClick = () => {
-    props.onSignUpWithStacksWalletBtnClick();
+  const onSignUpWithHiroWalletBtnClick = () => {
+    props.onSignUpWithHiroWalletBtnClick();
   };
 
   const onSignInBtnClick = () => {
@@ -121,15 +123,31 @@ const SignUp = (props) => {
   };
 
   useEffect(() => {
+    if (viewId === VIEW_YOUR && prevViewId.current === VIEW_START) {
+      if (window.PasswordCredential) {
+        const data = {
+          id: `U-${randomString(8)}`,
+          password: walletData.current.secretKey,
+        };
+        const cred = new window.PasswordCredential(data);
+        navigator.credentials.store(cred);
+      }
+    }
+    prevViewId.current = viewId;
+  }, [viewId]);
+
+  useEffect(() => {
     if (window.document.activeElement instanceof HTMLButtonElement) {
       window.document.activeElement.blur();
     }
+
+    if (scrollView.current) scrollView.current.scrollTo(0, 0);
   }, [viewId]);
 
   const _render = (content) => {
     return (
       <React.Fragment>
-        <div className="relative flex-1 overflow-x-hidden overflow-y-auto px-4 sm:px-6">
+        <div ref={scrollView} className="relative flex-1 overflow-x-hidden overflow-y-auto px-4 sm:px-6">
           {content}
           <div className="absolute top-0 right-0 p-1">
             <button onClick={props.onPopupCloseBtnClick} className="flex items-center justify-center h-7 w-7 group focus:outline-none" aria-label="Close sign up popup">
@@ -152,7 +170,7 @@ const SignUp = (props) => {
   const renderStartView = () => {
     const content = (
       <React.Fragment>
-        <div className="pt-20 flex justify-center items-center">
+        <div className="pt-16 flex justify-center items-center">
           <div className="w-40 flex justify-between items-center relative">
             <div className="w-16 h-16 bg-white border border-gray-900 rounded-xl flex justify-center items-center">
               <img className="h-11" src={appIcon} alt="App logo" />
@@ -168,7 +186,7 @@ const SignUp = (props) => {
             </svg>
           </div>
         </div>
-        <h2 className="mt-16 text-center text-xl font-semibold text-gray-900">{appName} guarantees your privacy by encrypting everything</h2>
+        <h2 className="mt-12 text-center text-xl font-semibold text-gray-900">{appName} guarantees your privacy by encrypting everything</h2>
         <ul className="mt-7 border-t border-b border-gray-200 divide-y divide-gray-200">
           <li className="py-4 flex">
             <svg className="w-9 h-9 text-blue-700" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -192,10 +210,10 @@ const SignUp = (props) => {
           <button onClick={onGetSecretKeyBtnClick} className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">Get your Secret Key</button>
           <p className="mt-5 text-center text-sm text-gray-500">
             Or
-            <button onClick={onSignUpWithStacksWalletBtnClick} className="ml-1 font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign up with Stacks wallet</button>
+            <button onClick={onSignUpWithHiroWalletBtnClick} className="ml-1 font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign up with Hiro Wallet</button>
           </p>
         </div>
-        <div className="flex mt-7">
+        <div className="flex mt-10 pt-1 mb-1.5">
           <button onClick={onSignInBtnClick} className="text-sm font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign in</button>
           <a className="ml-3 text-sm font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" href="https://docs.stacks.co/build-apps/guides/authentication#how-it-works" target="_blank" rel="noreferrer">How it works</a>
         </div>
@@ -209,14 +227,14 @@ const SignUp = (props) => {
     const content = (
       <React.Fragment>
         <h2 className="mt-8 text-left text-xl font-semibold text-gray-900">Your Secret Key</h2>
-        <p className="mt-4 text-sm text-gray-500 leading-6">These 24 words are your Secret Key. They create your account, and you sign in on different devices with them. Make sure to save these somewhere safe. If you lose these words, you lose your account.</p>
+        <p className="mt-3 text-sm text-gray-500 leading-6">These 24 words are your Secret Key. They create your account, and you sign in on different devices with them. Make sure to save these somewhere safe. If you lose these words, you lose your account.</p>
         <div className="mt-5 border border-gray-200 rounded-md">
           <p className="py-1 text-base font-medium text-gray-400 text-center border-b border-gray-200">Your Secret Key</p>
           <p className="p-3 text-sm text-gray-700 text-center leading-6">{walletData.current.secretKey}</p>
         </div>
         <div className="pt-5">
           <button onClick={onClipboardBtnClick} className="w-full py-2 px-4 border border-gray-200 text-sm font-medium rounded-md text-blue-700 bg-white hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">Copy to clipboard</button>
-          <button onClick={onSavedBtnClick} className="mt-3 w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">I've saved it</button>
+          <button onClick={onSavedBtnClick} className="mt-3.5 w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">I've saved it</button>
         </div>
         <ul className="mt-7 mb-5 border-t border-b border-gray-200 divide-y divide-gray-200">
           {faqs1.map(faq => <ExpListItem key={faq.key} title={faq.title} body={faq.body} />)}
@@ -231,13 +249,13 @@ const SignUp = (props) => {
     const content = (
       <React.Fragment>
         <h2 className="mt-8 text-left text-xl font-semibold text-gray-900">Save your Secret Key</h2>
-        <p className="mt-4 text-sm text-gray-500 leading-6">Paste your Secret Key wherever you keep critical, private information such as passwords.</p>
-        <p className="mt-4 text-sm text-gray-500 leading-6">Once lost, it's lost forever. So save it somewhere you won't forget.</p>
-        <div className="pt-16">
+        <p className="mt-3 text-sm text-gray-500 leading-6">Paste your Secret Key wherever you keep critical, private information such as passwords.</p>
+        <p className="mt-3 text-sm text-gray-500 leading-6">Once lost, it's lost forever. So save it somewhere you won't forget.</p>
+        <div className="pt-6">
           <button onClick={onBackedUpBtnClick} className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">I've backed up my Secret Key</button>
           <button onClick={onAgainBtnClick} className="mt-2 w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-white hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-600" type="button">View Secret Key again</button>
         </div>
-        <ul className="mt-24 mb-8 border-t border-b border-gray-200 divide-y divide-gray-200">
+        <ul className="mt-32 mb-8 border-t border-b border-gray-200 divide-y divide-gray-200">
           {faqs2.map(faq => <ExpListItem key={faq.key} title={faq.title} body={faq.body} />)}
         </ul>
       </React.Fragment>

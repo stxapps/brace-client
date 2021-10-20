@@ -190,7 +190,7 @@ class CardItemContent extends React.Component {
               {this.renderFavicon()}
               <div className="flex-shrink flex-grow min-w-0">
                 <p className="pl-2 text-base text-gray-500 truncate hover:text-gray-600">
-                  <a className="rounded-sm focus:outline-none focus:ring" href={origin}>
+                  <a className="rounded-sm focus:outline-none focus:ring" href={origin} target="_blank" rel="noreferrer">
                     {host}
                   </a>
                 </p>
@@ -205,7 +205,7 @@ class CardItemContent extends React.Component {
             </button>
           </div>
         </div>
-        <a className="group focus:outline-none" href={ensureContainUrlProtocol(url)}>
+        <a className="group focus:outline-none" href={ensureContainUrlProtocol(url)} target="_blank" rel="noreferrer">
           <h4 className={`mt-0 mb-3 ml-4 mr-3 text-base text-gray-800 font-medium leading-6 rounded-sm ${classNames} group-hover:text-gray-900 group-focus:ring lg:mb-4`}>
             {title}
           </h4>
