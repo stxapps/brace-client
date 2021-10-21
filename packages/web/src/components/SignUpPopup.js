@@ -15,8 +15,6 @@ import { popupBgFMV, ccPopupFMV } from '../types/animConfigs';
 import { useSafeAreaFrame } from '.';
 import SignUp from './SignUp';
 
-import shortLogo from '../images/logo-short.svg';
-
 const SignUpPopup = () => {
 
   const { height: safeAreaHeight } = useSafeAreaFrame();
@@ -81,7 +79,7 @@ const SignUpPopup = () => {
           </div>
           <motion.div className={'w-full max-w-sm bg-white rounded-lg overflow-hidden shadow-xl'} variants={ccPopupFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
             <div className="relative flex flex-col overflow-hidden bg-white rounded-lg" style={{ height: panelHeight }}>
-              <SignUp domainName={DOMAIN_NAME} appName={APP_NAME} appIcon={shortLogo} appIconUrl={appIconUrl} appScopes={APP_SCOPES} onPopupCloseBtnClick={onPopupCloseBtnClick} onSignUpWithHiroWalletBtnClick={onSignUpWithHiroWalletBtnClick} onSignInBtnClick={onSignInBtnClick} onBackedUpBtnClick={onBackedUpBtnClick} />
+              <SignUp domainName={DOMAIN_NAME} appName={APP_NAME} appIconUrl={appIconUrl} appScopes={APP_SCOPES} onPopupCloseBtnClick={onPopupCloseBtnClick} onSignUpWithHiroWalletBtnClick={onSignUpWithHiroWalletBtnClick} onSignInBtnClick={onSignInBtnClick} onBackedUpBtnClick={onBackedUpBtnClick} />
             </div>
           </motion.div>
         </div>

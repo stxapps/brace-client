@@ -17,6 +17,7 @@ const SignIn = (props) => {
   const [errMsg, setErrMsg] = useState('');
   const walletData = useRef(null);
   const scrollView = useRef(null);
+  const textarea = useRef(null);
   const didClick = useRef(false);
 
   const onSecretKeyInputChange = (e) => {
@@ -96,6 +97,7 @@ const SignIn = (props) => {
     }
 
     if (scrollView.current) scrollView.current.scrollTo(0, 0);
+    if (viewId === VIEW_YOUR) setTimeout(() => textarea.current.focus(), 1);
   }, [viewId]);
 
   const _render = (content) => {
@@ -128,7 +130,7 @@ const SignIn = (props) => {
         <p className="mt-2 text-sm text-gray-500 leading-6">Enter your Secret Key below to sign in.</p>
         <div className="pt-3.5">
           <label htmlFor="secret-key-input" className="sr-only">Secret Key</label>
-          <textarea onChange={onSecretKeyInputChange} className="py-2.5 px-4 block w-full h-36 shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md text-sm text-gray-700 leading-6 resize-none sm:py-3 sm:h-32" value={secretKeyInput} id="secret-key-input" name="secret-key-input" autoCapitalize="none"></textarea>
+          <textarea ref={textarea} onChange={onSecretKeyInputChange} className="py-2.5 px-4 block w-full h-36 shadow-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 rounded-md text-sm text-gray-700 leading-6 resize-none sm:py-3 sm:h-32" value={secretKeyInput} id="secret-key-input" name="secret-key-input" autoCapitalize="none"></textarea>
         </div>
         <div className={errMsg ? '' : 'pt-5'}>
           {errMsg && <p className="text-sm text-red-600 py-2">{errMsg}</p>}
@@ -152,7 +154,7 @@ const SignIn = (props) => {
       <React.Fragment>
         <h2 className="mt-8 text-left text-xl font-semibold text-gray-900">Choose an account</h2>
         <p className="mt-2 text-sm text-gray-500 leading-6">to use with {appName}</p>
-        <ul className="mt-8 border-t border-b border-gray-200 divide-y divide-gray-200">
+        <ul className="mt-5 border-t border-b border-gray-200 divide-y divide-gray-200">
           {walletData.current.wallet.accounts.map((account, i) => {
             let accountImage = (
               <svg className="w-7 h-7 text-blue-100 group-hover:text-blue-200" viewBox="0 0 28 28" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -171,7 +173,7 @@ const SignIn = (props) => {
             return (
               <li key={`account-${i}`}>
                 <button onClick={() => onChooseAccount(i)} className="group py-4 w-full flex justify-start items-center rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" aria-label={`Choose ${i}`}>
-                  <div className="w-10 h-10 bg-blue-300 rounded-full overflow-hidden flex justify-center items-center group-hover:bg-blue-400">
+                  <div className="w-10 h-10 bg-blue-300 rounded-full overflow-hidden flex-shrink-0 flex justify-center items-center group-hover:bg-blue-400">
                     {accountImage}
                   </div>
                   <div className="ml-3.5">

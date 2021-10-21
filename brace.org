@@ -628,7 +628,7 @@ This and CI/CD are very important!
 - follow steps in medium.com/@xijo/create-react-app-with-tailwind-via-postcss-plus-purgecss-5c36b4c33ba7 to config Tailwindcss
 - yarn add redux redux-loop react-redux
 - yarn add https://github.com/bracedotto/redux-offline#88a89e7ebe76415e83bd1943360e817274d8063d
-- yarn add @stacks/auth @stacks/keychain @stacks/storage @stacks/connect
+- yarn add @stacks/auth @stacks/storage @stacks/wallet-sdk @stacks/connect
 - Make sure history works:
   + Address bar i.e. change path, change hash!
   + redirect back i.e. from blockstack or other websites
@@ -640,7 +640,6 @@ This and CI/CD are very important!
   + Need to provide each history state a number for knowing back press or forward press or tag <a> click
   + ref: stackoverflow.com/questions/8980255/how-do-i-retrieve-if-the-popstate-event-comes-from-back-or-forward-actions-with/49329267#49329267, medium.com/@subwaymatch/disabling-back-button-in-react-with-react-router-v5-34bb316c99d7
 - yarn add reselect
-- no need anymore: yarn add react-stack-grid
 - yarn add react-graceful-image
 - yarn add jdenticon
 - yarn add axios
