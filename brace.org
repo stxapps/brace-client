@@ -755,55 +755,49 @@ This and CI/CD are very important!
 * react-native
 ** steps
 - npx react-native init Bracedotto
-- yarn add redux react-redux redux-loop
+- yarn add redux react-redux redux-loop reselect
+- yarn add url-parse axios jdenticon@2.2.0
+- yarn add @react-native-community/async-storage @react-native-community/netinfo @react-native-community/clipboard
 - yarn add https://github.com/bracedotto/redux-offline#a5a5da91de14b9e22c73a15e3617a0d627d3c0ec
-- yarn add reselect url-parse axios jdenticon@2.2.0
-- yarn add @react-native-community/async-storage @react-native-community/netinfo
-- yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?e3b45ca539d81c557d6a5d549eb3d0a3e9a1af5c'
+- yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?cad4d6b85620850ac6cc505e07bffd2fee779aca'
+- yarn add https://github.com/bracedotto/tailwind-rn#6047a3e3de6607a6cb5b738ab3392d80aa81fd13
+- yarn add react-native-default-preference react-native-fast-image react-native-keyboard-manager react-native-modal react-native-popup-menu
+- yarn add react-native-safe-area-context
+- yarn add react-native-svg react-native-animated-spinkit react-native-swiper
+- yarn add https://github.com/bracedotto/react-native-receive-sharing-intent#be4d3410fc96ba8e266a2a27535b3d531e56ef57
+- yarn add babel-plugin-inline-import --dev
+- yarn add @welldone-software/why-did-you-render --dev
+- yarn add typescript --dev
+- yarn add react-native-fs <-- NOT USING
 - change minSdkVersion from 16 to 21 in ./android/build.gradle
 - Allow CORS access on https://brace.to/manifest.json
 - Set up Android deep linking: reactnative.dev/docs/linking and developer.android.com/training/app-links/deep-linking
-- yarn add https://github.com/bracedotto/tailwind-rn#6047a3e3de6607a6cb5b738ab3392d80aa81fd13
 - npx react-native link to link assets i.e. fonts
   + medium.com/@mehrankhandev/ultimate-guide-to-use-custom-fonts-in-react-native-77fcdf859cf4
-- yarn add react-native-popup-menu
-- yarn add react-native-modal
-- yarn add react-native-svg
-- yarn add @react-native-community/clipboard
-- yarn add react-native-animated-spinkit
-- yarn add babel-plugin-inline-import --dev
-- yarn add react-native-swiper
-- yarn add https://github.com/bracedotto/react-native-receive-sharing-intent#be4d3410fc96ba8e266a2a27535b3d531e56ef57
-- yarn add @welldone-software/why-did-you-render --dev
-- yarn add react-native-fs <-- NOT USING
-- yarn add react-native-safe-area-context
 - ios
-  + Edit PodFile: ios target 11.0, pod 'Blockstack'
-  + In Xcode, Bracedotto General -> Target iOS 11.0
+  + Edit PodFile: ios target 12.0, pod 'Blockstack'
+  + In Xcode, Bracedotto General -> Target iOS 12.0
   + In AppDelegate.m, moduleName:@"Brace"
-  + In Build Settings/Search Paths/Library Search Paths, for both Debug and Release, add "${SDKROOT}/usr/lib/swift" non-recursive (developer.apple.com/forums/thread/655438)
+  + Select Bracedotto in left pane, new -> swift file and generate header binding
+  + Add image assets, update storyboard
 - ios share extension
   + Target Bracedotto -> Info -> URL Types -> URL Schemes: bracedotto
   + Add RCTLinkingManager in AppDelegate.m
   + File -> New -> Target -> Share Extension
     ~ Save to Brace, Swift
-  + Target Save to Brace -> General -> target iOS: 11.0
+  + Target Save to Brace -> General -> target iOS: 12.0
   + In Info.plist under Save To Brace
     ~ NSExtension -> NSExtensionAttributes -> NSExtensionActivationRule -> NSExtensionActivationSupportsWebURLWithMaxCount -> Number 1
   + Update ShareViewController.swift
-- yarn add react-native-default-preference
-  + github.com/kevinresol/react-native-default-preference
 - Add App groups from targets: Bracedotto and Save to Brace -> Signing & Capabilities
   + group.bracedotto.share
-- CryptoSwift dependency
-  + Add the dependency in Podfile with target 'Save to Brace'
-- NVActivityIndicatorView dependency
+- CryptoSwift and NVActivityIndicatorView dependency
   + Add the dependency in Podfile with target 'Save to Brace'
 - Add fonts to Save to Brace
   + Xcode's sidebar -> Resources, select all fonts
   + Xcode's rightbar -> Target Membership, select Save to Brace
   + Save to Brace -> Info.plist, add Fonts provided by application
-- 
+- Targets -> Bracedotto -> Build Settings -> Packaging -> Product Name: Brace
 * test cases
 - web, mobile
 - PC, laptop, tablet, phone
@@ -847,6 +841,7 @@ This and CI/CD are very important!
 - startup script in Custom metadata, key: startup-script, value:
   #! /bin/bash
   sudo -u linux bash -c 'cd /home/linux/brace-server-worker; mkdir -p ./logs; NOW=$(date +'%Y%m%d%H%M%S'); /home/linux/.nvm/versions/node/v14.17.4/bin/node index.js > "./logs/log_${NOW}.txt" 2>&1; sudo shutdown -h now'
+- *Check node version as it's hard coded!*
 ** Schedule the instance
 - IAM
   + Check include Google-provided role grants
