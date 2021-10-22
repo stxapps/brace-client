@@ -4722,6 +4722,9 @@
 	"self-stretch": {
 		"alignSelf": "stretch"
 	},
+	"self-baseline": {
+		"alignSelf": "baseline"
+	},
 	"overflow-hidden": {
 		"overflow": "hidden"
 	},

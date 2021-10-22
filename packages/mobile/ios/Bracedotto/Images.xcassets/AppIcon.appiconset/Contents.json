@@ -13,7 +13,7 @@
       "size" : "20x20"
     },
     {
-      "filename" : "ios58-1.png",
+      "filename" : "ios58.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "29x29"
@@ -67,7 +67,7 @@
       "size" : "29x29"
     },
     {
-      "filename" : "ios58.png",
+      "filename" : "ios58-1.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "29x29"

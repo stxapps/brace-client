@@ -43,7 +43,5 @@
           <data android:mimeType="text/plain" />
         </intent-filter>
       </activity>
-      <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
     </application>
-
 </manifest>
