@@ -15,9 +15,8 @@ import {
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
-  ALL, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
-  CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
-  BULK_EDIT_MOVE_TO_POPUP,
+  ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
+  LIST_NAME_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP, BULK_EDIT_MOVE_TO_POPUP,
   MY_LIST, TRASH, ARCHIVE,
   UPDATING, DIED_UPDATING,
 } from '../types/const';
@@ -26,6 +25,8 @@ import { doContainListName } from '../utils';
 const initialState = {
   listName: MY_LIST,
   searchString: '',
+  isSignUpPopupShown: false,
+  isSignInPopupShown: false,
   isAddPopupShown: false,
   isSearchPopupShown: false,
   isProfilePopupShown: false,
@@ -45,13 +46,15 @@ const initialState = {
   updateSettingsProgress: null,
 };
 
-export default (state = initialState, action) => {
+const displayReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
     return {
       ...state,
       ...action.payload.display,
       searchString: '',
+      isSignUpPopupShown: false,
+      isSignInPopupShown: false,
       isAddPopupShown: false,
       isSearchPopupShown: false,
       isProfilePopupShown: false,
@@ -93,6 +96,8 @@ export default (state = initialState, action) => {
     if (id === ALL) {
       return {
         ...state,
+        isSignUpPopupShown: isShown,
+        isSignInPopupShown: isShown,
         isAddPopupShown: isShown,
         isSearchPopupShown: isShown,
         isProfilePopupShown: isShown,
@@ -101,6 +106,14 @@ export default (state = initialState, action) => {
         isSettingsPopupShown: isShown,
         isBulkEditMoveToPopupShown: isShown,
       };
+    }
+
+    if (id === SIGN_UP_POPUP) {
+      return { ...state, isSignUpPopupShown: isShown };
+    }
+
+    if (id === SIGN_IN_POPUP) {
+      return { ...state, isSignInPopupShown: isShown };
     }
 
     if (id === ADD_POPUP) {
@@ -282,3 +295,5 @@ export default (state = initialState, action) => {
 
   return state;
 };
+
+export default displayReducer;

@@ -47,7 +47,7 @@ const toObjAndAddAttrs = (links, status, isPopupShown, popupAnchorPosition) => {
   return obj;
 };
 
-export default (state = initialState, action) => {
+const linksReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
     const newState = { ...state };
@@ -475,3 +475,5 @@ export default (state = initialState, action) => {
 
   return state;
 };
+
+export default linksReducer;

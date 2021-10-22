@@ -15,8 +15,8 @@ import {
   UPDATE_LINKS,
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
   MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
-  MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
-  CANCEL_DIED_LINKS,
+  MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT,
+  MOVE_LINKS_DELETE_STEP_ROLLBACK, CANCEL_DIED_LINKS,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
@@ -39,7 +39,7 @@ import {
 import {
   DOMAIN_NAME, APP_URL_SCHEME, APP_DOMAIN_NAME, BLOCKSTACK_AUTH,
   APP_GROUP_SHARE, APP_GROUP_SHARE_UKEY,
-  ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
+  SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
   CONFIRM_DELETE_POPUP, SETTINGS_POPUP, BULK_EDIT_MOVE_TO_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH,
@@ -158,6 +158,8 @@ const handlePendingSignIn = (url) => async (dispatch, getState) => {
 
 const getPopupShownId = (state) => {
 
+  if (state.display.isSignUpPopupShown) return SIGN_UP_POPUP;
+  if (state.display.isSignInPopupShown) return SIGN_IN_POPUP;
   if (state.display.isAddPopupShown) return ADD_POPUP;
   if (state.display.isProfilePopupShown) return PROFILE_POPUP;
   if (state.display.isListNamePopupShown) return LIST_NAME_POPUP;
@@ -196,101 +198,6 @@ export const updateMenuPopupAsBackPressed = (menuProvider, dispatch, getState) =
   return false;
 };
 
-export const signUp = () => async (dispatch, getState) => {
-  // On Android, signUp and signIn will always lead to handlePendingSignIn.
-  // On iOS, signUp and signIn will always return a promise.
-  if (Platform.OS === 'android') {
-    await userSession.signUp();
-  } else if (Platform.OS === 'ios') {
-
-    // As handle pending sign in takes time, show loading first.
-    dispatch({
-      type: UPDATE_HANDLING_SIGN_IN,
-      payload: true,
-    });
-
-    try {
-      await userSession.signUp();
-    } catch (e) {
-      // All errors thrown by signIn have the same next steps
-      //   - Invalid token
-      //   - Already signed in with the same account
-      //   - Already signed in with different account
-    }
-
-    const isUserSignedIn = await userSession.isUserSignedIn();
-    if (isUserSignedIn) {
-      const userData = await userSession.loadUserData();
-      if (Platform.OS === 'ios') {
-        await DefaultPreference.set(APP_GROUP_SHARE_UKEY, JSON.stringify(userData));
-      }
-      dispatch({
-        type: UPDATE_USER,
-        payload: {
-          isUserSignedIn: true,
-          username: userData.username,
-          image: getUserImageUrl(userData),
-        },
-      });
-    }
-
-    // Stop show loading
-    dispatch({
-      type: UPDATE_HANDLING_SIGN_IN,
-      payload: false,
-    });
-  } else {
-    throw new Error(`Invalid Platform.OS: ${Platform.OS}`);
-  }
-};
-
-export const signIn = () => async (dispatch, getState) => {
-
-  if (Platform.OS === 'android') {
-    await userSession.signIn();
-  } else if (Platform.OS === 'ios') {
-
-    // As handle pending sign in takes time, show loading first.
-    dispatch({
-      type: UPDATE_HANDLING_SIGN_IN,
-      payload: true,
-    });
-
-    try {
-      await userSession.signIn();
-    } catch (e) {
-      // All errors thrown by signIn have the same next steps
-      //   - Invalid token
-      //   - Already signed in with the same account
-      //   - Already signed in with different account
-    }
-
-    const isUserSignedIn = await userSession.isUserSignedIn();
-    if (isUserSignedIn) {
-      const userData = await userSession.loadUserData();
-      if (Platform.OS === 'ios') {
-        await DefaultPreference.set(APP_GROUP_SHARE_UKEY, JSON.stringify(userData));
-      }
-      dispatch({
-        type: UPDATE_USER,
-        payload: {
-          isUserSignedIn: true,
-          username: userData.username,
-          image: getUserImageUrl(userData),
-        },
-      });
-    }
-
-    // Stop show loading
-    dispatch({
-      type: UPDATE_HANDLING_SIGN_IN,
-      payload: false,
-    });
-  } else {
-    throw new Error(`Invalid Platform.OS: ${Platform.OS}`);
-  }
-};
-
 export const signOut = () => async (dispatch, getState) => {
 
   await userSession.signUserOut();
@@ -303,6 +210,10 @@ export const signOut = () => async (dispatch, getState) => {
   dispatch({
     type: RESET_STATE,
   });
+};
+
+export const updateUserData = (userData) => async (dispatch, getState) => {
+
 };
 
 export const updatePopup = (id, isShown, anchorPosition = null) => {

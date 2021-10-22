@@ -8,6 +8,14 @@ import {
 } from '../types/const';
 import { toPx } from '../utils';
 
+export const useSafeAreaFrame = () => {
+
+  const width = useSelector(state => state.window.width);
+  const height = useSelector(state => state.window.height);
+
+  return { x: 0, y: 0, width, height };
+};
+
 export const getTopBarSizes = (width) => {
 
   const topBarHeight = toPx(width < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD);
@@ -48,12 +56,4 @@ export const getTopBarSizes = (width) => {
     listNameArrowSpace,
     commandsWidth,
   };
-};
-
-export const useSafeAreaFrame = () => {
-
-  const width = useSelector(state => state.window.width);
-  const height = useSelector(state => state.window.height);
-
-  return { x: 0, y: 0, width, height };
 };

@@ -19,7 +19,7 @@ import {
 } */
 const initialState = {};
 
-export default (state = initialState, action) => {
+const isFetchMoreInterrupted = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
     return { ...initialState, ...action.payload.isFetchMoreInterrupted };
@@ -79,3 +79,5 @@ export default (state = initialState, action) => {
 
   return state;
 };
+
+export default isFetchMoreInterrupted;

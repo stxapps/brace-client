@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { View, Text, TouchableOpacity, Animated } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
-import { signIn } from '../actions';
-import { SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS } from '../types/const';
+import { updatePopup } from '../actions';
+import { SIGN_IN_POPUP, SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS } from '../types/const';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
@@ -20,9 +20,13 @@ import shortLogo from '../images/logo-short.svg';
 
 class TopBar extends React.PureComponent {
 
+  onSignInBtnClick = () => {
+    this.props.updatePopup(SIGN_IN_POPUP, true);
+  }
+
   renderSignInBtn() {
     return (
-      <TouchableOpacity onPress={() => this.props.signIn()} style={tailwind('justify-center items-center h-14')}>
+      <TouchableOpacity onPress={this.onSignInBtnClick} style={tailwind('justify-center items-center h-14')}>
         <View style={cache('TB_signInBtnView', tailwind('px-2.5 py-1.5 bg-white border border-gray-400 rounded-full shadow-sm'))}>
           <Text style={tailwind('text-sm text-gray-500 font-normal')}>Sign in</Text>
         </View>
@@ -246,6 +250,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { signIn };
+const mapDispatchToProps = { updatePopup };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(TopBar));

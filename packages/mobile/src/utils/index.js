@@ -857,3 +857,14 @@ export const shouldDispatchFetch = (outbox, payload) => {
 
   return true;
 };
+
+export const isIPadIPhoneIPod = () => {
+  const ua = navigator.userAgent;
+  if (/iPad|iPhone|iPod/.test(ua)) {
+    return true;
+  }
+  if (/Mac OS X/.test(ua) && /Safari/.test(ua) && !/Chrome/.test(ua) && !/Firefox/.test(ua)) {
+    return true;
+  }
+  return false;
+};

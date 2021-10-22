@@ -4,10 +4,9 @@ import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
 import Swiper from 'react-native-swiper';
 import Svg, { SvgXml, Path, Circle } from 'react-native-svg';
 
-import { signUp } from '../actions';
+import { updatePopup } from '../actions';
 import {
-  SHOW_SIGN_IN,
-  SM_WIDTH, MD_WIDTH, LG_WIDTH,
+  SIGN_UP_POPUP, SHOW_SIGN_IN, SM_WIDTH, MD_WIDTH, LG_WIDTH,
 } from '../types/const';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
@@ -15,6 +14,8 @@ import { tailwind } from '../stylesheets/tailwind';
 import { withSafeAreaContext } from '.';
 
 import TopBar from './TopBar';
+import SignUpPopup from './SignUpPopup';
+import SignInPopup from './SignInPopup';
 
 import saveLinksToVisitLater from '../images/save-links-to-visit-later.svg';
 import undrawLink from '../images/undraw-link.svg';
@@ -24,7 +25,7 @@ import logoFullWhite from '../images/logo-full-white.svg';
 class Landing extends React.PureComponent {
 
   onSignUpBtnClick = () => {
-    this.props.signUp();
+    this.props.updatePopup(SIGN_UP_POPUP, true);
   }
 
   renderSwiper(swiperHeight) {
@@ -205,11 +206,15 @@ class Landing extends React.PureComponent {
     const SWIPER_HEIGHT = 536;
     if (safeAreaHeight < 640) {
       return (
-        <ScrollView>
-          <TopBar rightPane={SHOW_SIGN_IN} />
-          {this.renderSwiper(SWIPER_HEIGHT)}
-          {this.renderSignUp()}
-        </ScrollView>
+        <React.Fragment>
+          <ScrollView>
+            <TopBar rightPane={SHOW_SIGN_IN} />
+            {this.renderSwiper(SWIPER_HEIGHT)}
+            {this.renderSignUp()}
+          </ScrollView>
+          <SignUpPopup />
+          <SignInPopup />
+        </React.Fragment>
       );
     } else if (safeAreaHeight < 900) {
       return (
@@ -219,6 +224,8 @@ class Landing extends React.PureComponent {
             {this.renderSwiper(undefined)}
           </View>
           {this.renderSignUp()}
+          <SignUpPopup />
+          <SignInPopup />
         </React.Fragment>
       );
     } else {
@@ -229,6 +236,8 @@ class Landing extends React.PureComponent {
             {this.renderSwiper(undefined)}
             {this.renderSignUp()}
           </View>
+          <SignUpPopup />
+          <SignInPopup />
         </React.Fragment>
       );
     }
@@ -242,6 +251,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = { signUp };
+const mapDispatchToProps = { updatePopup };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(Landing));

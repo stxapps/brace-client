@@ -13,7 +13,7 @@ const initialState = {
   pageYOffset: 0,
 };
 
-export default (state = initialState, action) => {
+const windowReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
     return { ...initialState };
@@ -58,3 +58,5 @@ export default (state = initialState, action) => {
 
   return state;
 };
+
+export default windowReducer;

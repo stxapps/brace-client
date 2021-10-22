@@ -16,7 +16,7 @@ const initialState = {
   [ARCHIVE]: null,
 };
 
-export default (state = initialState, action) => {
+const hasMoreLinksReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
     const newState = { ...state };
@@ -118,3 +118,5 @@ export default (state = initialState, action) => {
 
   return state;
 };
+
+export default hasMoreLinksReducer;

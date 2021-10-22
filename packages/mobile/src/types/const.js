@@ -1,15 +1,18 @@
 export const DOMAIN_NAME = 'https://brace.to';
+
+export const APP_NAME = 'Brace.to';
+export const APP_ICON_NAME = 'logo192.png';
+export const APP_SCOPES = ['store_write'];
 export const APP_URL_SCHEME = 'bracedotto';
 export const APP_DOMAIN_NAME = 'bracedotto://app';
 export const BLOCKSTACK_AUTH = '/blockstack-auth';
-
-export const APP_NAME = 'Brace';
-export const APP_ICON_NAME = 'logo192.png';
 
 export const BACK_DECIDER = 'BACK_DECIDER';
 export const BACK_POPUP = 'BACK_POPUP';
 
 export const ALL = 'ALL';
+export const SIGN_UP_POPUP = 'SIGN_UP_POPUP';
+export const SIGN_IN_POPUP = 'SIGN_IN_POPUP';
 export const ADD_POPUP = 'ADD_POPUP';
 export const SEARCH_POPUP = 'SEARCH_POPUP';
 export const PROFILE_POPUP = 'PROFILE_POPUP';

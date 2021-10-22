@@ -8,7 +8,7 @@ const initialState = {
   image: null,
 };
 
-export default (state = initialState, action) => {
+const userReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
     return { ...initialState };
@@ -33,3 +33,5 @@ export default (state = initialState, action) => {
 
   return state;
 };
+
+export default userReducer;
