@@ -759,12 +759,13 @@ This and CI/CD are very important!
 - yarn add url-parse axios jdenticon@2.2.0
 - yarn add @react-native-community/async-storage @react-native-community/netinfo @react-native-community/clipboard
 - yarn add https://github.com/bracedotto/redux-offline#a5a5da91de14b9e22c73a15e3617a0d627d3c0ec
-- yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?cad4d6b85620850ac6cc505e07bffd2fee779aca'
+- yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?fc54137d8f860daa78f52b8bf0437f18808c948c'
 - yarn add https://github.com/bracedotto/tailwind-rn#6047a3e3de6607a6cb5b738ab3392d80aa81fd13
 - yarn add react-native-default-preference react-native-fast-image react-native-keyboard-manager react-native-modal react-native-popup-menu
 - yarn add react-native-safe-area-context
 - yarn add react-native-svg react-native-animated-spinkit react-native-swiper
 - yarn add https://github.com/bracedotto/react-native-receive-sharing-intent#be4d3410fc96ba8e266a2a27535b3d531e56ef57
+- yarn add react-native-webview
 - yarn add babel-plugin-inline-import --dev
 - yarn add @welldone-software/why-did-you-render --dev
 - yarn add typescript --dev

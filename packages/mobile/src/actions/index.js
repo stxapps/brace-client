@@ -212,8 +212,24 @@ export const signOut = () => async (dispatch, getState) => {
   });
 };
 
-export const updateUserData = (userData) => async (dispatch, getState) => {
+export const updateUserData = (data) => async (dispatch, getState) => {
+  await userSession.updateUserData(data);
 
+  const isUserSignedIn = await userSession.isUserSignedIn();
+  if (isUserSignedIn) {
+    const userData = await userSession.loadUserData();
+    if (Platform.OS === 'ios') {
+      await DefaultPreference.set(APP_GROUP_SHARE_UKEY, JSON.stringify(userData));
+    }
+    dispatch({
+      type: UPDATE_USER,
+      payload: {
+        isUserSignedIn: true,
+        username: userData.username,
+        image: getUserImageUrl(userData),
+      },
+    });
+  }
 };
 
 export const updatePopup = (id, isShown, anchorPosition = null) => {

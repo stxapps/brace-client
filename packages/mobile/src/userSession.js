@@ -35,7 +35,8 @@ const signUserOut = async () => {
 };
 
 const updateUserData = async (userData) => {
-
+  const { updated } = await RNBlockstackSdk.updateUserData(userData);
+  return updated;
 };
 
 const loadUserData = async () => {

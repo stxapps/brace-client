@@ -29,10 +29,13 @@ class Main extends React.PureComponent {
     this.scrollYEvent = Animated.event([{
       nativeEvent: { contentOffset: { y: this.scrollY } },
     }], { useNativeDriver: true });
+    this.appStateListener = null;
   }
 
   componentDidMount() {
-    AppState.addEventListener('change', this.handleAppStateChange);
+    this.appStateListener = AppState.addEventListener(
+      'change', this.handleAppStateChange
+    );
 
     this.fetch();
   }
@@ -42,7 +45,7 @@ class Main extends React.PureComponent {
   }
 
   componentWillUnmount() {
-    AppState.removeEventListener('change', this.handleAppStateChange);
+    this.appStateListener.remove();
   }
 
   handleAppStateChange = (nextAppState) => {

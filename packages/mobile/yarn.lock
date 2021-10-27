@@ -2822,15 +2822,15 @@ escape-html@~1.0.3:
   resolved "https://registry.yarnpkg.com/escape-html/-/escape-html-1.0.3.tgz#0258eae4d3d0c0974de1c169188ef0051d1d1988"
   integrity sha1-Aljq5NPQwJdN4cFpGI7wBR0dGYg=
 
+escape-string-regexp@2.0.0, escape-string-regexp@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-2.0.0.tgz#a30304e99daa32e23b2fd20f51babd07cffca344"
+  integrity sha512-UpzcLCXolUWcNu5HtVMHYdXJjArjsF9C0aNnquZYY4uW/Vu0miy5YoWvbV345HauVvcAUnpRuhMMcqTcGOY2+w==
+
 escape-string-regexp@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
   integrity sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ=
-
-escape-string-regexp@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-2.0.0.tgz#a30304e99daa32e23b2fd20f51babd07cffca344"
-  integrity sha512-UpzcLCXolUWcNu5HtVMHYdXJjArjsF9C0aNnquZYY4uW/Vu0miy5YoWvbV345HauVvcAUnpRuhMMcqTcGOY2+w==
 
 escodegen@^2.0.0:
   version "2.0.0"
@@ -3697,7 +3697,7 @@ internal-slot@^1.0.3:
     has "^1.0.3"
     side-channel "^1.0.4"
 
-invariant@^2.2.4:
+invariant@2.2.4, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -5922,9 +5922,9 @@ react-native-animated-spinkit@^1.5.2:
   resolved "https://registry.yarnpkg.com/react-native-animated-spinkit/-/react-native-animated-spinkit-1.5.2.tgz#b1c00ecbadf48634273e6a843f8dfbcb7c006186"
   integrity sha512-YCQGR3HzEQvyaAnepiyf/hv88Sta3UIZ2CFZPtFqwu+VbFJfMgjJZniOx4157TuR5AAYajEJP9Fgy+JLIU3jzQ==
 
-"react-native-blockstack@https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?cad4d6b85620850ac6cc505e07bffd2fee779aca":
+"react-native-blockstack@https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?fc54137d8f860daa78f52b8bf0437f18808c948c":
   version "0.4.6"
-  resolved "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?cad4d6b85620850ac6cc505e07bffd2fee779aca#fd8a0d881b6ef8a9a9fa0909fafdff108f67796d"
+  resolved "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?fc54137d8f860daa78f52b8bf0437f18808c948c#4f8ca45cde4056b9a888adcf74f5b9b2a0887d7d"
 
 react-native-codegen@^0.0.7:
   version "0.0.7"
@@ -5986,6 +5986,14 @@ react-native-swiper@^1.6.0:
   integrity sha512-OnkTTZi+9uZUgy0uz1I9oYDhCU3z36lZn+LFsk9FXPRelxb/KeABzvPs3r3SrHWy1aA67KGtSFj0xNK2QD0NJQ==
   dependencies:
     prop-types "^15.5.10"
+
+react-native-webview@^11.14.1:
+  version "11.14.1"
+  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-11.14.1.tgz#9315df7d3c818583a51f4c19b27c737d9a8c54c8"
+  integrity sha512-EmJuj4pEtJfledDeKVhHmaeiAjnKRdswTgfS7IjoA1LhRakK2FQXuXjvjCEBwUkVTq08lDwuqukGSfteeOdCuQ==
+  dependencies:
+    escape-string-regexp "2.0.0"
+    invariant "2.2.4"
 
 react-native@0.66.1:
   version "0.66.1"
