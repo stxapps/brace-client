@@ -69,18 +69,20 @@ const SignUp = (props) => {
 
     didClick.current = true;
     setLoadingShown(true);
-    walletApi.createAccount().then((data) => {
-      didClick.current = false;
-      setLoadingShown(false);
+    setTimeout(() => {
+      walletApi.createAccount().then((data) => {
+        didClick.current = false;
+        setLoadingShown(false);
 
-      walletData.current = data;
-      setViewId(VIEW_YOUR);
-    }).catch((e) => {
-      console.log('onGetSecretKeyBtnClick error: ', e);
-      didClick.current = false;
-      setLoadingShown(false);
-      setErrorShown(true);
-    });
+        walletData.current = data;
+        setViewId(VIEW_YOUR);
+      }).catch((e) => {
+        console.log('onGetSecretKeyBtnClick error: ', e);
+        didClick.current = false;
+        setLoadingShown(false);
+        setErrorShown(true);
+      });
+    }, 1);
   };
 
   const onSignUpWithHiroWalletBtnClick = () => {
@@ -108,18 +110,20 @@ const SignUp = (props) => {
 
     didClick.current = true;
     setLoadingShown(true);
-    walletApi.chooseAccount(
-      walletData.current, { domainName, appName, appIconUrl, appScopes }, 0
-    ).then((data) => {
-      didClick.current = false;
-      setLoadingShown(false);
-      props.onBackedUpBtnClick(data);
-    }).catch((e) => {
-      console.log('onBackedUpBtnClick error: ', e);
-      didClick.current = false;
-      setLoadingShown(false);
-      setErrorShown(true);
-    });
+    setTimeout(() => {
+      walletApi.chooseAccount(
+        walletData.current, { domainName, appName, appIconUrl, appScopes }, 0
+      ).then((data) => {
+        didClick.current = false;
+        setLoadingShown(false);
+        props.onBackedUpBtnClick(data);
+      }).catch((e) => {
+        console.log('onBackedUpBtnClick error: ', e);
+        didClick.current = false;
+        setLoadingShown(false);
+        setErrorShown(true);
+      });
+    }, 1);
   };
 
   useEffect(() => {

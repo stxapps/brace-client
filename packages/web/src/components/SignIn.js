@@ -30,27 +30,29 @@ const SignIn = (props) => {
 
     didClick.current = true;
     setLoadingShown(true);
-    walletApi.restoreAccount(secretKeyInput).then((data) => {
-      didClick.current = false;
-      setLoadingShown(false);
+    setTimeout(() => {
+      walletApi.restoreAccount(secretKeyInput).then((data) => {
+        didClick.current = false;
+        setLoadingShown(false);
 
-      if (data.errMsg) {
-        setErrMsg(data.errMsg);
-      } else {
-        walletData.current = data;
-
-        if (walletData.current.wallet.accounts.length === 1) {
-          onChooseAccount(0);
+        if (data.errMsg) {
+          setErrMsg(data.errMsg);
         } else {
-          setViewId(VIEW_CHOOSE);
+          walletData.current = data;
+
+          if (walletData.current.wallet.accounts.length === 1) {
+            onChooseAccount(0);
+          } else {
+            setViewId(VIEW_CHOOSE);
+          }
         }
-      }
-    }).catch((e) => {
-      console.log('onContinueBtnClick error: ', e);
-      didClick.current = false;
-      setLoadingShown(false);
-      setErrorShown(true);
-    });
+      }).catch((e) => {
+        console.log('onContinueBtnClick error: ', e);
+        didClick.current = false;
+        setLoadingShown(false);
+        setErrorShown(true);
+      });
+    }, 1);
   };
 
   const onSignInWithHiroWalletBtnClick = () => {
@@ -66,18 +68,20 @@ const SignIn = (props) => {
 
     didClick.current = true;
     setLoadingShown(true);
-    walletApi.chooseAccount(
-      walletData.current, { domainName, appName, appIconUrl, appScopes }, accountIndex
-    ).then((data) => {
-      didClick.current = false;
-      setLoadingShown(false);
-      props.onChooseAccountBtnClick(data);
-    }).catch((e) => {
-      console.log('onChooseAccount error: ', e);
-      didClick.current = false;
-      setLoadingShown(false);
-      setErrorShown(true);
-    });
+    setTimeout(() => {
+      walletApi.chooseAccount(
+        walletData.current, { domainName, appName, appIconUrl, appScopes }, accountIndex
+      ).then((data) => {
+        didClick.current = false;
+        setLoadingShown(false);
+        props.onChooseAccountBtnClick(data);
+      }).catch((e) => {
+        console.log('onChooseAccount error: ', e);
+        didClick.current = false;
+        setLoadingShown(false);
+        setErrorShown(true);
+      });
+    }, 1);
   };
 
   useEffect(() => {
@@ -165,19 +169,19 @@ const SignIn = (props) => {
               const userImageUrl = getUserImageUrl({ profile: account.profile });
               if (userImageUrl) {
                 accountImage = (
-                  <GracefulImage className="h-full w-full bg-white object-cover" src={userImageUrl} alt={`Profile ${i}`} />
+                  <GracefulImage className="h-full w-full bg-white object-cover" src={userImageUrl} alt={`Profile ${i + 1}`} />
                 );
               }
             }
 
             return (
               <li key={`account-${i}`}>
-                <button onClick={() => onChooseAccount(i)} className="group py-4 w-full flex justify-start items-center rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" aria-label={`Choose ${i}`}>
+                <button onClick={() => onChooseAccount(i)} className="group py-4 w-full flex justify-start items-center rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" aria-label={`Choose ${i + 1}`}>
                   <div className="w-10 h-10 bg-blue-300 rounded-full overflow-hidden flex-shrink-0 flex justify-center items-center group-hover:bg-blue-400">
                     {accountImage}
                   </div>
                   <div className="ml-3.5">
-                    <p className="text-sm text-gray-500 group-hover:text-gray-600">{account.username || `Account${i}`}</p>
+                    <p className="text-sm text-gray-600 group-hover:text-gray-700">{account.username || `Account${i + 1}`}</p>
                   </div>
                 </button>
               </li>

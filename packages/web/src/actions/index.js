@@ -291,8 +291,8 @@ export const signOut = () => async (dispatch, getState) => {
   });
 };
 
-export const updateUserData = (userData) => async (dispatch, getState) => {
-  userSession.updateUserData(userData);
+export const updateUserData = (data) => async (dispatch, getState) => {
+  userSession.updateUserData(data);
 
   if (userSession.isUserSignedIn()) {
     const userData = userSession.loadUserData();

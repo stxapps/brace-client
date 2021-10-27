@@ -22,13 +22,15 @@ const DEFAULT_PASSWORD = 'password';
 const DEFAULT_GAIA_HUB_URL = 'https://hub.blockstack.org';
 const DEFAULT_GAIA_HUB_READ_URL = 'https://gaia.blockstack.org/hub/';
 
+const N_ACCOUNTS = 10;
+
 const createAccount = async () => {
   const secretKey = generateSecretKey(256);
   const wallet = await generateWallet({ secretKey, password: DEFAULT_PASSWORD });
   return { secretKey, wallet };
 };
 
-const restoreWalletAccounts = async ({ wallet, gaiaHubUrl }) => {
+const restoreConfigs = async (wallet, gaiaHubUrl) => {
   const hubInfo = await getHubInfo(gaiaHubUrl);
   const rootNode = getRootNode(wallet);
   const legacyGaiaConfig = connectToGaiaHubWithConfig({
@@ -113,8 +115,15 @@ const restoreWalletAccounts = async ({ wallet, gaiaHubUrl }) => {
     };
   }
 
-  for (const account of wallet.accounts) {
-    if (!account.username) {
+  return { wallet, walletGaiaConfig: currentGaiaConfig };
+};
+
+const restoreUsernames = async (wallet) => {
+  for (let i = 0, j = wallet.accounts.length; i < j; i += N_ACCOUNTS) {
+    const _accounts = wallet.accounts.slice(i, i + N_ACCOUNTS);
+    await Promise.all(_accounts.map(async (account) => {
+      if (account.username) return;
+
       const stxAddress = getStxAddress({
         account, transactionVersion: TransactionVersion.Mainnet,
       });
@@ -126,10 +135,21 @@ const restoreWalletAccounts = async ({ wallet, gaiaHubUrl }) => {
           account.username = json.names[0];
         }
       }
-    }
+    }));
   }
 
-  return { wallet, walletGaiaConfig: currentGaiaConfig };
+  return wallet;
+};
+
+const restoreProfiles = async (wallet, gaiaHubReadUrl) => {
+  for (let i = 0, j = wallet.accounts.length; i < j; i += N_ACCOUNTS) {
+    const _accounts = wallet.accounts.slice(i, i + N_ACCOUNTS);
+    await Promise.all(_accounts.map(async (account) => {
+      const profile = await fetchAccountProfile({ account, gaiaHubUrl: gaiaHubReadUrl });
+      if (profile) account.profile = profile;
+    }));
+  }
+  return wallet;
 };
 
 const restoreAccount = async (secretKey) => {
@@ -142,16 +162,11 @@ const restoreAccount = async (secretKey) => {
     return { errMsg: 'Your Secret Key is invaid. Please check and try again.' };
   }
 
-  const walletData = restoreWalletAccounts({
-    wallet, gaiaHubUrl: DEFAULT_GAIA_HUB_URL,
-  });
-
-  for (const account of wallet.accounts) {
-    const profile = await fetchAccountProfile({
-      account, gaiaHubUrl: DEFAULT_GAIA_HUB_READ_URL
-    });
-    if (profile) account.profile = profile;
-  }
+  const walletData = await restoreConfigs(wallet, DEFAULT_GAIA_HUB_URL);
+  walletData.wallet = await restoreUsernames(walletData.wallet);
+  walletData.wallet = await restoreProfiles(
+    walletData.wallet, DEFAULT_GAIA_HUB_READ_URL
+  );
 
   return walletData;
 };
