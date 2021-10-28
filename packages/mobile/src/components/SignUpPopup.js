@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
-  View, TouchableWithoutFeedback, BackHandler, Animated, Keyboard, Platform, Linking,
+  View, TouchableWithoutFeedback, BackHandler, Animated, Linking,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -30,9 +30,6 @@ const SignUpPopup = () => {
   const popupAnim = useRef(new Animated.Value(0)).current;
   const popupBackHandler = useRef(null);
   const webView = useRef(null);
-  const keyboardHeight = useRef(0);
-  const keyboardDidShowListener = useRef(null);
-  const keyboardDidHideListener = useRef(null);
   const appIconUrl = useMemo(() => {
     return DOMAIN_NAME + '/' + APP_ICON_NAME;
   }, []);
@@ -116,20 +113,6 @@ const SignUpPopup = () => {
     };
   }, [isShown, popupAnim, registerPopupBackHandler]);
 
-  useEffect(() => {
-    keyboardDidShowListener.current = Keyboard.addListener('keyboardDidShow', (e) => {
-      keyboardHeight.current = e.endCoordinates.height;
-    });
-    keyboardDidHideListener.current = Keyboard.addListener('keyboardDidHide', () => {
-      keyboardHeight.current = 0;
-    });
-
-    return () => {
-      keyboardDidShowListener.current.remove();
-      keyboardDidHideListener.current.remove();
-    };
-  }, []);
-
   if (derivedIsShown !== isShown) {
     if (derivedIsShown && !isShown) {
       if (didCloseAnimEnd) {
@@ -143,9 +126,6 @@ const SignUpPopup = () => {
 
   const statusBarHeight = 24;
   let appHeight = safeAreaHeight - statusBarHeight;
-  if (Platform.OS === 'ios' && keyboardHeight.current > 0) {
-    appHeight -= keyboardHeight.current;
-  }
   const panelHeight = Math.min(576 - 40, appHeight * 0.9);
 
   const canvasStyle = { paddingLeft: 16 + insets.left, paddingRight: 16 + insets.right };
