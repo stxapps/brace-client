@@ -46,12 +46,12 @@ const SignUpPopup = () => {
     dispatch(updatePopup(SIGN_IN_POPUP, true));
   }, [onPopupCloseBtnClick, dispatch]);
 
-  const onGetSecretKeyBtnClick = useCallback((viewId, walletData) => {
-    dispatch(updateStacksAccess({ viewId, walletData }));
+  const onGetSecretKeyBtnClick = useCallback((_viewId, _walletData) => {
+    dispatch(updateStacksAccess({ viewId: _viewId, walletData: _walletData }));
   }, [dispatch]);
 
-  const onSavedBtnClick = useCallback((viewId) => {
-    dispatch(updateStacksAccess({ viewId }));
+  const onUpdateViewIdBtnClick = useCallback((_viewId) => {
+    dispatch(updateStacksAccess({ viewId: _viewId }));
   }, [dispatch]);
 
   const onBackedUpBtnClick = useCallback((data) => {
@@ -69,10 +69,10 @@ const SignUpPopup = () => {
     } else if (change === 'update' && to === 'signInPopup' && value === 'true') {
       onSignInBtnClick();
     } else if (change === 'update' && to === 'viewId&walletData') {
-      const [viewId, walletData] = splitOnFirst(value, ':')
-      onGetSecretKeyBtnClick(viewId, walletData);
+      const [_viewId, _walletData] = splitOnFirst(value, ':');
+      onGetSecretKeyBtnClick(_viewId, _walletData);
     } else if (change === 'update' && to === 'viewId') {
-      onSavedBtnClick(value);
+      onUpdateViewIdBtnClick(value);
     } else if (change === 'update' && to === 'userData') {
       onBackedUpBtnClick(JSON.parse(value));
     } else if (change === 'editor' && to === 'isReady' && value === 'true') {
@@ -84,7 +84,10 @@ const SignUpPopup = () => {
       const escapedWalletData = escapeDoubleQuotes(walletData);
       webView.current.injectJavaScript('window.StacksAccessSignUp.updateSignUpProps("' + escapedDomainName + '", "' + escapedAppName + '", "' + escapedAppIconUrl + '", "' + escapedAppScopes + '", "' + escapedViewId + '", "' + escapedWalletData + '"); true;');
     } else throw new Error(`Invalid data: ${data}`);
-  }, [appIconUrl, onPopupCloseBtnClick, onSignInBtnClick, onBackedUpBtnClick]);
+  }, [
+    appIconUrl, viewId, walletData, onPopupCloseBtnClick, onSignInBtnClick,
+    onGetSecretKeyBtnClick, onUpdateViewIdBtnClick, onBackedUpBtnClick,
+  ]);
 
   const onShouldStartLoadWithRequest = useCallback((e) => {
     if (e.url.slice(0, 4) === 'http') {

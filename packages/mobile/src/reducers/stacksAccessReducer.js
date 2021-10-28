@@ -1,6 +1,4 @@
-import {
-  UPDATE_POPUP, UPDATE_STACKS_ACCESS,
-} from '../types/actionTypes';
+import { UPDATE_POPUP, UPDATE_STACKS_ACCESS } from '../types/actionTypes';
 import { REHYDRATE } from 'redux-persist/constants';
 
 const initialState = {
@@ -20,7 +18,7 @@ const stacksAccessReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_POPUP) {
-    return { ...state };
+    return { ...initialState };
   }
 
   return state;
