@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 
-import { updatePopup, updateUserData } from '../actions';
+import { updatePopup, updateStacksAccess, updateUserData } from '../actions';
 import {
   DOMAIN_NAME, APP_NAME, APP_ICON_NAME, APP_SCOPES, SIGN_UP_POPUP, SIGN_IN_POPUP,
 } from '../types/const';
@@ -25,12 +25,13 @@ const SignUpPopup = () => {
   const { height: safeAreaHeight } = useSafeAreaFrame();
   const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isSignUpPopupShown);
+  const viewId = useSelector(state => state.stacksAccess.viewId);
+  const walletData = useSelector(state => state.stacksAccess.walletData);
   const [didCloseAnimEnd, setDidCloseAnimEnd] = useState(!isShown);
   const [derivedIsShown, setDerivedIsShown] = useState(isShown);
   const popupAnim = useRef(new Animated.Value(0)).current;
   const popupBackHandler = useRef(null);
   const webView = useRef(null);
-  const walletData = useRef('');
   const appIconUrl = useMemo(() => {
     return DOMAIN_NAME + '/' + APP_ICON_NAME;
   }, []);
@@ -38,13 +39,20 @@ const SignUpPopup = () => {
 
   const onPopupCloseBtnClick = useCallback(() => {
     dispatch(updatePopup(SIGN_UP_POPUP, false));
-    walletData.current = '';
   }, [dispatch]);
 
   const onSignInBtnClick = useCallback(() => {
     onPopupCloseBtnClick();
     dispatch(updatePopup(SIGN_IN_POPUP, true));
   }, [onPopupCloseBtnClick, dispatch]);
+
+  const onGetSecretKeyBtnClick = useCallback((viewId, walletData) => {
+    dispatch(updateStacksAccess({ viewId, walletData }));
+  }, [dispatch]);
+
+  const onSavedBtnClick = useCallback((viewId) => {
+    dispatch(updateStacksAccess({ viewId }));
+  }, [dispatch]);
 
   const onBackedUpBtnClick = useCallback((data) => {
     onPopupCloseBtnClick();
@@ -56,21 +64,25 @@ const SignUpPopup = () => {
     const [change, rest1] = splitOnFirst(data, ':');
     const [to, value] = splitOnFirst(rest1, ':');
 
-    if (change === 'update' && to === 'SignUpPopup' && value === 'false') {
+    if (change === 'update' && to === 'signUpPopup' && value === 'false') {
       onPopupCloseBtnClick();
-    } else if (change === 'update' && to === 'SignInPopup' && value === 'true') {
+    } else if (change === 'update' && to === 'signInPopup' && value === 'true') {
       onSignInBtnClick();
-    } else if (change === 'update' && to === 'WalletData') {
-      walletData.current = value;
-    } else if (change === 'update' && to === 'UserData') {
+    } else if (change === 'update' && to === 'viewId&walletData') {
+      const [viewId, walletData] = splitOnFirst(value, ':')
+      onGetSecretKeyBtnClick(viewId, walletData);
+    } else if (change === 'update' && to === 'viewId') {
+      onSavedBtnClick(value);
+    } else if (change === 'update' && to === 'userData') {
       onBackedUpBtnClick(JSON.parse(value));
     } else if (change === 'editor' && to === 'isReady' && value === 'true') {
       const escapedDomainName = escapeDoubleQuotes(DOMAIN_NAME);
       const escapedAppName = escapeDoubleQuotes(APP_NAME);
       const escapedAppIconUrl = escapeDoubleQuotes(appIconUrl);
       const escapedAppScopes = escapeDoubleQuotes(APP_SCOPES.join(','));
-      const escapedWalletData = escapeDoubleQuotes(walletData.current);
-      webView.current.injectJavaScript('window.StacksAccessSignUp.updateSignUpProps("' + escapedDomainName + '", "' + escapedAppName + '", "' + escapedAppIconUrl + '", "' + escapedAppScopes + '", "' + escapedWalletData + '"); true;');
+      const escapedViewId = escapeDoubleQuotes(viewId);
+      const escapedWalletData = escapeDoubleQuotes(walletData);
+      webView.current.injectJavaScript('window.StacksAccessSignUp.updateSignUpProps("' + escapedDomainName + '", "' + escapedAppName + '", "' + escapedAppIconUrl + '", "' + escapedAppScopes + '", "' + escapedViewId + '", "' + escapedWalletData + '"); true;');
     } else throw new Error(`Invalid data: ${data}`);
   }, [appIconUrl, onPopupCloseBtnClick, onSignInBtnClick, onBackedUpBtnClick]);
 

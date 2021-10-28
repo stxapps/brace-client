@@ -54,11 +54,11 @@ const SignInPopup = () => {
     const [change, rest1] = splitOnFirst(data, ':');
     const [to, value] = splitOnFirst(rest1, ':');
 
-    if (change === 'update' && to === 'SignInPopup' && value === 'false') {
+    if (change === 'update' && to === 'signInPopup' && value === 'false') {
       onPopupCloseBtnClick();
-    } else if (change === 'update' && to === 'SignUpPopup' && value === 'true') {
+    } else if (change === 'update' && to === 'signUpPopup' && value === 'true') {
       onSignUpBtnClick();
-    } else if (change === 'update' && to === 'UserData') {
+    } else if (change === 'update' && to === 'userData') {
       onChooseAccountBtnClick(JSON.parse(value));
     } else if (change === 'editor' && to === 'isReady' && value === 'true') {
       const escapedDomainName = escapeDoubleQuotes(DOMAIN_NAME);
