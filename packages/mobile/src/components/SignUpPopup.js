@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
-  View, TouchableWithoutFeedback, BackHandler, Animated, Keyboard, Platform,
+  View, TouchableWithoutFeedback, BackHandler, Animated, Keyboard, Platform, Linking,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -71,6 +71,14 @@ const SignUpPopup = () => {
       webView.current.injectJavaScript('window.StacksAccessSignUp.updateSignUpProps("' + escapedDomainName + '", "' + escapedAppName + '", "' + escapedAppIconUrl + '", "' + escapedAppScopes + '"); true;');
     } else throw new Error(`Invalid data: ${data}`);
   }, [appIconUrl, onPopupCloseBtnClick, onSignInBtnClick, onBackedUpBtnClick]);
+
+  const onShouldStartLoadWithRequest = useCallback((e) => {
+    if (e.url.slice(0, 4) === 'http') {
+      Linking.openURL(e.url);
+      return false;
+    }
+    return true;
+  }, []);
 
   const registerPopupBackHandler = useCallback((doRegister) => {
     if (doRegister) {
@@ -154,9 +162,9 @@ const SignUpPopup = () => {
       <TouchableWithoutFeedback onPress={onPopupCloseBtnClick}>
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>
-      <Animated.View style={[tailwind('w-full max-w-4xl bg-white rounded-lg shadow-xl overflow-hidden'), popupStyle]}>
+      <Animated.View style={[tailwind('w-full max-w-sm bg-white rounded-lg shadow-xl overflow-hidden'), popupStyle]}>
         <View style={{ height: panelHeight }}>
-          <WebView ref={webView} style={tailwind('flex-1')} source={cache('SUP_webView_source', { baseUrl: '', html: stacksAccessSignUp })} originWhitelist={cache('SUP_webView_originWhitelist', ['*'])} onMessage={onMessage} keyboardDisplayRequiresUserAction={false} textZoom={100} androidLayerType="hardware" />
+          <WebView ref={webView} style={tailwind('flex-1')} source={cache('SUP_webView_source', { baseUrl: '', html: stacksAccessSignUp })} originWhitelist={cache('SUP_webView_originWhitelist', ['*'])} onMessage={onMessage} keyboardDisplayRequiresUserAction={false} textZoom={100} androidLayerType="hardware" onShouldStartLoadWithRequest={onShouldStartLoadWithRequest} />
         </View>
       </Animated.View>
     </View>
