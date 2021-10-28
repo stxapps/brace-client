@@ -641,7 +641,6 @@ This and CI/CD are very important!
   + ref: stackoverflow.com/questions/8980255/how-do-i-retrieve-if-the-popstate-event-comes-from-back-or-forward-actions-with/49329267#49329267, medium.com/@subwaymatch/disabling-back-button-in-react-with-react-router-v5-34bb316c99d7
 - yarn add reselect
 - yarn add react-graceful-image
-- yarn add jdenticon
 - yarn add axios
 - yarn add file-saver
 - yarn add @welldone-software/why-did-you-render
@@ -756,7 +755,7 @@ This and CI/CD are very important!
 ** steps
 - npx react-native init Bracedotto
 - yarn add redux react-redux redux-loop reselect
-- yarn add url-parse axios jdenticon@2.2.0
+- yarn add url-parse axios
 - yarn add @react-native-community/async-storage @react-native-community/netinfo @react-native-community/clipboard
 - yarn add https://github.com/bracedotto/redux-offline#a5a5da91de14b9e22c73a15e3617a0d627d3c0ec
 - yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?f928cd0381ac81b13b2c51fee1abf510ff8e8e95'

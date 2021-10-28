@@ -1,8 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { View, Text, TouchableOpacity } from 'react-native';
-import Svg, { SvgXml, Path } from 'react-native-svg';
-import jdenticon from 'jdenticon';
+import Svg, { Path } from 'react-native-svg';
 
 import { updatePopup, updateBulkEdit } from '../actions';
 import {
@@ -12,26 +11,7 @@ import { toPx } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
-import GracefulImage from './GracefulImage';
-
 class BottomBarCommands extends React.PureComponent {
-
-  constructor(props) {
-    super(props);
-
-    if (props.userImage) {
-      this.userImage = (
-        <GracefulImage style={tailwind('w-full h-full')} source={cache('BBC_userImage', { uri: props.userImage }, props.userImage)} />
-      );
-      this.profileBtnStyleClasses = 'rounded-full';
-    } else {
-      const svgString = jdenticon.toSvg(props.username, 32);
-      this.userImage = (
-        <SvgXml width={36} height={36} xml={svgString} />
-      );
-      this.profileBtnStyleClasses = 'rounded-lg';
-    }
-  }
 
   onAddBtnClick = () => {
     this.props.updatePopup(ADD_POPUP, true);
@@ -84,24 +64,22 @@ class BottomBarCommands extends React.PureComponent {
               <Text style={tailwind('mt-0.5 text-xs text-gray-500 font-normal leading-4')}>Select</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={this.onProfileBtnClick} style={tailwind('flex-1 justify-center items-center')}>
-            <View style={tailwind(`justify-center items-center h-10 w-10 bg-white overflow-hidden border-2 border-gray-300 ${this.profileBtnStyleClasses}`)}>
-              {this.userImage}
-            </View>
-          </TouchableOpacity>
+          <View style={tailwind('p-1 flex-1')}>
+            <TouchableOpacity onPress={this.onProfileBtnClick} style={tailwind('justify-center items-center w-full h-full')}>
+              <View style={tailwind('justify-center items-center w-6 h-6')}>
+                <Svg style={tailwind('mt-1 text-gray-500 font-normal')} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
+                  <Path d="M6 10C6 10.5304 5.78929 11.0391 5.41421 11.4142C5.03914 11.7893 4.53043 12 4 12C3.46957 12 2.96086 11.7893 2.58579 11.4142C2.21071 11.0391 2 10.5304 2 10C2 9.46957 2.21071 8.96086 2.58579 8.58579C2.96086 8.21071 3.46957 8 4 8C4.53043 8 5.03914 8.21071 5.41421 8.58579C5.78929 8.96086 6 9.46957 6 10ZM12 10C12 10.5304 11.7893 11.0391 11.4142 11.4142C11.0391 11.7893 10.5304 12 10 12C9.46957 12 8.96086 11.7893 8.58579 11.4142C8.21071 11.0391 8 10.5304 8 10C8 9.46957 8.21071 8.96086 8.58579 8.58579C8.96086 8.21071 9.46957 8 10 8C10.5304 8 11.0391 8.21071 11.4142 8.58579C11.7893 8.96086 12 9.46957 12 10ZM16 12C16.5304 12 17.0391 11.7893 17.4142 11.4142C17.7893 11.0391 18 10.5304 18 10C18 9.46957 17.7893 8.96086 17.4142 8.58579C17.0391 8.21071 16.5304 8 16 8C15.4696 8 14.9609 8.21071 14.5858 8.58579C14.2107 8.96086 14 9.46957 14 10C14 10.5304 14.2107 11.0391 14.5858 11.4142C14.9609 11.7893 15.4696 12 16 12Z" />
+                </Svg>
+              </View>
+              <Text style={tailwind('mt-0.5 text-xs text-gray-500 font-normal leading-4')}>More</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </React.Fragment>
     );
   }
 }
 
-const mapStateToProps = (state, props) => {
-  return {
-    username: state.user.username,
-    userImage: state.user.image,
-  };
-};
-
 const mapDispatchToProps = { updatePopup, updateBulkEdit };
 
-export default connect(mapStateToProps, mapDispatchToProps)(BottomBarCommands);
+export default connect(null, mapDispatchToProps)(BottomBarCommands);
