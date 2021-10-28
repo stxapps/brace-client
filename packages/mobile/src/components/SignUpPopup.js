@@ -30,6 +30,7 @@ const SignUpPopup = () => {
   const popupAnim = useRef(new Animated.Value(0)).current;
   const popupBackHandler = useRef(null);
   const webView = useRef(null);
+  const walletData = useRef('');
   const appIconUrl = useMemo(() => {
     return DOMAIN_NAME + '/' + APP_ICON_NAME;
   }, []);
@@ -37,6 +38,7 @@ const SignUpPopup = () => {
 
   const onPopupCloseBtnClick = useCallback(() => {
     dispatch(updatePopup(SIGN_UP_POPUP, false));
+    walletData.current = '';
   }, [dispatch]);
 
   const onSignInBtnClick = useCallback(() => {
@@ -58,6 +60,8 @@ const SignUpPopup = () => {
       onPopupCloseBtnClick();
     } else if (change === 'update' && to === 'SignInPopup' && value === 'true') {
       onSignInBtnClick();
+    } else if (change === 'update' && to === 'WalletData') {
+      walletData.current = value;
     } else if (change === 'update' && to === 'UserData') {
       onBackedUpBtnClick(JSON.parse(value));
     } else if (change === 'editor' && to === 'isReady' && value === 'true') {
@@ -65,7 +69,8 @@ const SignUpPopup = () => {
       const escapedAppName = escapeDoubleQuotes(APP_NAME);
       const escapedAppIconUrl = escapeDoubleQuotes(appIconUrl);
       const escapedAppScopes = escapeDoubleQuotes(APP_SCOPES.join(','));
-      webView.current.injectJavaScript('window.StacksAccessSignUp.updateSignUpProps("' + escapedDomainName + '", "' + escapedAppName + '", "' + escapedAppIconUrl + '", "' + escapedAppScopes + '"); true;');
+      const escapedWalletData = escapeDoubleQuotes(walletData.current);
+      webView.current.injectJavaScript('window.StacksAccessSignUp.updateSignUpProps("' + escapedDomainName + '", "' + escapedAppName + '", "' + escapedAppIconUrl + '", "' + escapedAppScopes + '", "' + escapedWalletData + '"); true;');
     } else throw new Error(`Invalid data: ${data}`);
   }, [appIconUrl, onPopupCloseBtnClick, onSignInBtnClick, onBackedUpBtnClick]);
 
