@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { View, Text, TouchableOpacity, Linking, Platform } from 'react-native';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
-import Svg, { SvgXml, Path } from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 
 import { signOut, updatePopup, updateBulkEdit } from '../actions';
 import { DOMAIN_NAME, PROFILE_POPUP, SETTINGS_POPUP } from '../types/const';
