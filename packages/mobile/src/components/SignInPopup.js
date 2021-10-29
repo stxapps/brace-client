@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 
-import { updatePopup, updateUserData } from '../actions';
+import { updatePopup, updateStacksAccess, updateUserData } from '../actions';
 import {
   DOMAIN_NAME, APP_NAME, APP_ICON_NAME, APP_SCOPES, SIGN_UP_POPUP, SIGN_IN_POPUP,
 } from '../types/const';
@@ -25,6 +25,8 @@ const SignInPopup = () => {
   const { height: safeAreaHeight } = useSafeAreaFrame();
   const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isSignInPopupShown);
+  const viewId = useSelector(state => state.stacksAccess.viewId);
+  const walletData = useSelector(state => state.stacksAccess.walletData);
   const [didCloseAnimEnd, setDidCloseAnimEnd] = useState(!isShown);
   const [derivedIsShown, setDerivedIsShown] = useState(isShown);
   const popupAnim = useRef(new Animated.Value(0)).current;
@@ -44,6 +46,10 @@ const SignInPopup = () => {
     dispatch(updatePopup(SIGN_UP_POPUP, true));
   }, [onPopupCloseBtnClick, dispatch]);
 
+  const onContinueBtnClick = useCallback((_viewId, _walletData) => {
+    dispatch(updateStacksAccess({ viewId: _viewId, walletData: _walletData }));
+  }, [dispatch]);
+
   const onChooseAccountBtnClick = useCallback((data) => {
     onPopupCloseBtnClick();
     dispatch(updateUserData(data));
@@ -58,6 +64,9 @@ const SignInPopup = () => {
       onPopupCloseBtnClick();
     } else if (change === 'update' && to === 'signUpPopup' && value === 'true') {
       onSignUpBtnClick();
+    } else if (change === 'update' && to === 'viewId&walletData') {
+      const [_viewId, _walletData] = splitOnFirst(value, ':');
+      onContinueBtnClick(_viewId, _walletData);
     } else if (change === 'update' && to === 'userData') {
       onChooseAccountBtnClick(JSON.parse(value));
     } else if (change === 'editor' && to === 'isReady' && value === 'true') {
@@ -65,7 +74,9 @@ const SignInPopup = () => {
       const escapedAppName = escapeDoubleQuotes(APP_NAME);
       const escapedAppIconUrl = escapeDoubleQuotes(appIconUrl);
       const escapedAppScopes = escapeDoubleQuotes(APP_SCOPES.join(','));
-      webView.current.injectJavaScript('window.StacksAccessSignIn.updateSignInProps("' + escapedDomainName + '", "' + escapedAppName + '", "' + escapedAppIconUrl + '", "' + escapedAppScopes + '"); true;');
+      const escapedViewId = escapeDoubleQuotes(viewId);
+      const escapedWalletData = escapeDoubleQuotes(walletData);
+      webView.current.injectJavaScript('window.StacksAccessSignIn.updateSignInProps("' + escapedDomainName + '", "' + escapedAppName + '", "' + escapedAppIconUrl + '", "' + escapedAppScopes + '", "' + escapedViewId + '", "' + escapedWalletData + '"); true;');
     } else throw new Error(`Invalid data: ${data}`);
   }, [appIconUrl, onPopupCloseBtnClick, onSignUpBtnClick, onChooseAccountBtnClick]);
 
