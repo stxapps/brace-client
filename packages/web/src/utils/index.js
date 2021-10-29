@@ -497,7 +497,6 @@ export const sample = (arr) => {
 };
 
 export const randomString = (length) => {
-
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   const charactersLength = characters.length;
 

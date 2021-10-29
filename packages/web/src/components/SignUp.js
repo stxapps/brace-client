@@ -209,7 +209,7 @@ const SignUp = (props) => {
         </div>
         <div className="flex mt-10 pt-1 mb-1.5">
           <button onClick={props.onSignInBtnClick} className="text-sm font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign in</button>
-          <a className="ml-3 text-sm font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" href="https://docs.stacks.co/build-apps/guides/authentication#how-it-works" target="_blank" rel="noreferrer">How it works</a>
+          <a className="ml-3 text-sm font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" href="https://docs.stacks.co/build-apps/references/authentication#how-it-works" target="_blank" rel="noreferrer">How it works</a>
         </div>
       </React.Fragment>
     );

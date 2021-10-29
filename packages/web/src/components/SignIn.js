@@ -31,7 +31,7 @@ const SignIn = (props) => {
     didClick.current = true;
     setLoadingShown(true);
     setTimeout(() => {
-      walletApi.restoreAccount(secretKeyInput).then((data) => {
+      walletApi.restoreAccount(secretKeyInput.trim()).then((data) => {
         didClick.current = false;
         setLoadingShown(false);
 

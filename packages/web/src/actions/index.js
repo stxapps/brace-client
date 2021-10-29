@@ -1227,8 +1227,8 @@ export const exportAllData = () => async (dispatch, getState) => {
   try {
     const data = await exportAllDataLoop(dispatch, fPaths, 0);
 
-    var blob = new Blob([JSON.stringify(data)], { type: "text/plain;charset=utf-8" });
-    saveAs(blob, "brace-data.txt");
+    var blob = new Blob([JSON.stringify(data)], { type: 'text/plain;charset=utf-8' });
+    saveAs(blob, 'brace-data.txt');
   } catch (e) {
     dispatch(updateExportAllDataProgress({
       total: -1,
