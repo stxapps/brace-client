@@ -868,3 +868,14 @@ export const isIPadIPhoneIPod = () => {
   }
   return false;
 };
+
+export const splitOnFirst = (str, sep) => {
+  const i = str.indexOf(sep);
+  if (i < 0) return [str, ''];
+
+  return [str.slice(0, i), str.slice(i + sep.length)];
+};
+
+export const escapeDoubleQuotes = (s) => {
+  return s.trim().replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+};

@@ -78,7 +78,10 @@ const SignInPopup = () => {
       const escapedWalletData = escapeDoubleQuotes(walletData);
       webView.current.injectJavaScript('window.StacksAccessSignIn.updateSignInProps("' + escapedDomainName + '", "' + escapedAppName + '", "' + escapedAppIconUrl + '", "' + escapedAppScopes + '", "' + escapedViewId + '", "' + escapedWalletData + '"); true;');
     } else throw new Error(`Invalid data: ${data}`);
-  }, [appIconUrl, onPopupCloseBtnClick, onSignUpBtnClick, onChooseAccountBtnClick]);
+  }, [
+    appIconUrl, viewId, walletData, onPopupCloseBtnClick, onSignUpBtnClick,
+    onContinueBtnClick, onChooseAccountBtnClick,
+  ]);
 
   const registerPopupBackHandler = useCallback((doRegister) => {
     if (doRegister) {

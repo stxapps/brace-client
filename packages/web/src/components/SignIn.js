@@ -37,15 +37,16 @@ const SignIn = (props) => {
 
         if (data.errMsg) {
           setErrMsg(data.errMsg);
-        } else {
-          walletData.current = data;
-
-          if (walletData.current.wallet.accounts.length === 1) {
-            onChooseAccount(0);
-          } else {
-            setViewId(VIEW_CHOOSE);
-          }
+          return;
         }
+
+        walletData.current = data;
+        if (walletData.current.wallet.accounts.length === 1) {
+          onChooseAccount(0);
+          return;
+        }
+
+        setViewId(VIEW_CHOOSE);
       }).catch((e) => {
         console.log('onContinueBtnClick error: ', e);
         didClick.current = false;
@@ -53,14 +54,6 @@ const SignIn = (props) => {
         setErrorShown(true);
       });
     }, 1);
-  };
-
-  const onSignInWithHiroWalletBtnClick = () => {
-    props.onSignInWithHiroWalletBtnClick();
-  };
-
-  const onSignUpBtnClick = () => {
-    props.onSignUpBtnClick();
   };
 
   const onChooseAccount = (accountIndex) => {
@@ -141,11 +134,11 @@ const SignIn = (props) => {
           <button onClick={onContinueBtnClick} className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">Continue</button>
           <p className="mt-5 text-center text-sm text-gray-500">
             Or
-            <button onClick={onSignInWithHiroWalletBtnClick} className="ml-1 font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign in with Hiro Wallet</button>
+            <button onClick={props.onSignInWithHiroWalletBtnClick} className="ml-1 font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign in with Hiro Wallet</button>
           </p>
         </div>
         <div className="flex mt-24 pt-2 mb-1.5 sm:mt-28 sm:pt-1">
-          <button onClick={onSignUpBtnClick} className="text-sm font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign up</button>
+          <button onClick={props.onSignUpBtnClick} className="text-sm font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign up</button>
         </div>
       </React.Fragment>
     );
@@ -180,8 +173,8 @@ const SignIn = (props) => {
                   <div className="w-10 h-10 bg-blue-300 rounded-full overflow-hidden flex-shrink-0 flex justify-center items-center group-hover:bg-blue-400">
                     {accountImage}
                   </div>
-                  <div className="ml-3.5">
-                    <p className="text-sm text-gray-600 group-hover:text-gray-700">{account.username || `Account${i + 1}`}</p>
+                  <div className="ml-3.5 flex-grow flex-shrink">
+                    <p className="text-sm text-gray-600 text-left group-hover:text-gray-700">{account.username || `Account${i + 1}`}</p>
                   </div>
                 </button>
               </li>

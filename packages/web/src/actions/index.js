@@ -32,7 +32,7 @@ import {
   UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
   UPDATE_UPDATE_SETTINGS_PROGRESS,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
-  UPDATE_PAGE_Y_OFFSET,
+  UPDATE_PAGE_Y_OFFSET, UPDATE_STACKS_ACCESS,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -1160,6 +1160,10 @@ export const updatePageYOffset = (pageYOffset) => {
     type: UPDATE_PAGE_Y_OFFSET,
     payload: pageYOffset,
   };
+};
+
+export const updateStacksAccess = (data) => {
+  return { type: UPDATE_STACKS_ACCESS, payload: data };
 };
 
 const exportAllDataLoop = async (dispatch, fPaths, doneCount) => {

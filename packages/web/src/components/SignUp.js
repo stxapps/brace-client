@@ -85,14 +85,6 @@ const SignUp = (props) => {
     }, 1);
   };
 
-  const onSignUpWithHiroWalletBtnClick = () => {
-    props.onSignUpWithHiroWalletBtnClick();
-  };
-
-  const onSignInBtnClick = () => {
-    props.onSignInBtnClick();
-  };
-
   const onClipboardBtnClick = () => {
     copyTextToClipboard(walletData.current.secretKey);
   };
@@ -194,8 +186,8 @@ const SignUp = (props) => {
             <svg className="w-7 h-7 text-blue-700 flex-grow-0 flex-shrink-0" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path fillRule="evenodd" clipRule="evenodd" d="M8.00005 14.4V11.2C8.00005 9.07822 8.8429 7.04339 10.3432 5.5431C11.8435 4.04281 13.8783 3.19995 16 3.19995C18.1218 3.19995 20.1566 4.04281 21.6569 5.5431C23.1572 7.04339 24 9.07822 24 11.2V14.4C24.8487 14.4 25.6627 14.7371 26.2628 15.3372C26.8629 15.9373 27.2 16.7513 27.2 17.6V25.6C27.2 26.4486 26.8629 27.2626 26.2628 27.8627C25.6627 28.4628 24.8487 28.8 24 28.8H8.00005C7.15136 28.8 6.33742 28.4628 5.73731 27.8627C5.13719 27.2626 4.80005 26.4486 4.80005 25.6V17.6C4.80005 16.7513 5.13719 15.9373 5.73731 15.3372C6.33742 14.7371 7.15136 14.4 8.00005 14.4ZM20.8 11.2V14.4H11.2V11.2C11.2 9.92691 11.7058 8.70601 12.6059 7.80584C13.5061 6.90566 14.727 6.39995 16 6.39995C17.2731 6.39995 18.494 6.90566 19.3942 7.80584C20.2943 8.70601 20.8 9.92691 20.8 11.2Z" />
             </svg>
-            <div className="ml-3">
-              <p className="text-sm text-gray-500">You'll get a Secret Key that automatically encrypts everything you do</p>
+            <div className="ml-3 flex-grow flex-shrink">
+              <p className="text-sm text-gray-500 text-left">You'll get a Secret Key that automatically encrypts everything you do</p>
             </div>
           </li>
           <li className="py-4 flex justify-start items-center">
@@ -203,8 +195,8 @@ const SignUp = (props) => {
               <path fillRule="evenodd" clipRule="evenodd" d="M5.93127 3.66862C5.6295 3.37717 5.22534 3.2159 4.80582 3.21954C4.38631 3.22319 3.98501 3.39146 3.68836 3.68811C3.3917 3.98476 3.22343 4.38606 3.21979 4.80558C3.21614 5.22509 3.37741 5.62926 3.66887 5.93102L26.0689 28.331C26.3706 28.6225 26.7748 28.7837 27.1943 28.7801C27.6138 28.7765 28.0151 28.6082 28.3118 28.3115C28.6084 28.0149 28.7767 27.6136 28.7803 27.1941C28.784 26.7745 28.6227 26.3704 28.3313 26.0686L25.9745 23.7118C28.4665 21.7248 30.3093 19.0397 31.2673 15.9998C29.2289 9.50862 23.1649 4.79982 16.0001 4.79982C13.492 4.79642 11.0185 5.38519 8.78087 6.51822L5.93287 3.66862H5.93127ZM12.7489 10.4846L15.1713 12.9086C15.7138 12.7645 16.2847 12.7655 16.8267 12.9114C17.3688 13.0573 17.863 13.343 18.26 13.7399C18.6569 14.1369 18.9426 14.6311 19.0885 15.1731C19.2344 15.7152 19.2353 16.2861 19.0913 16.8286L21.5137 19.251C22.2352 18.0287 22.53 16.6011 22.3515 15.1929C22.173 13.7847 21.5315 12.4758 20.5278 11.4721C19.5241 10.4684 18.2152 9.82685 16.807 9.64838C15.3988 9.46991 13.9712 9.76464 12.7489 10.4862V10.4846Z" />
               <path d="M19.9265 26.7151L15.6001 22.3871C14.0444 22.2896 12.5778 21.6277 11.4754 20.5257C10.3731 19.4236 9.71079 17.9571 9.61291 16.4015L3.73611 10.5247C2.38445 12.1343 1.36387 13.9949 0.73291 15.9999C2.77131 22.4911 8.83691 27.1999 16.0001 27.1999C17.3553 27.1999 18.6705 27.0319 19.9265 26.7151Z" />
             </svg>
-            <div className="ml-3">
-              <p className="text-sm text-gray-500">{appName} won't be able to see, access, or track your activity</p>
+            <div className="ml-3 flex-grow flex-shrink">
+              <p className="text-sm text-gray-500 text-left">{appName} won't be able to see, access, or track your activity</p>
             </div>
           </li>
         </ul>
@@ -212,11 +204,11 @@ const SignUp = (props) => {
           <button onClick={onGetSecretKeyBtnClick} className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">Get your Secret Key</button>
           <p className="mt-5 text-center text-sm text-gray-500">
             Or
-            <button onClick={onSignUpWithHiroWalletBtnClick} className="ml-1 font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign up with Hiro Wallet</button>
+            <button onClick={props.onSignUpWithHiroWalletBtnClick} className="ml-1 font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign up with Hiro Wallet</button>
           </p>
         </div>
         <div className="flex mt-10 pt-1 mb-1.5">
-          <button onClick={onSignInBtnClick} className="text-sm font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign in</button>
+          <button onClick={props.onSignInBtnClick} className="text-sm font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign in</button>
           <a className="ml-3 text-sm font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" href="https://docs.stacks.co/build-apps/guides/authentication#how-it-works" target="_blank" rel="noreferrer">How it works</a>
         </div>
       </React.Fragment>
@@ -306,7 +298,7 @@ const ExpListItem = (props) => {
   return (
     <li>
       <button onClick={onOpenBtnClick} className="w-full flex justify-between items-center rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">
-        <p className="text-sm text-gray-500 py-3">{title}</p>
+        <p className="flex-grow flex-shrink text-sm text-gray-500 text-left py-3">{title}</p>
         <div className="ml-3 flex-grow-0 flex-shrink-0">
           {arrowSvg}
         </div>
