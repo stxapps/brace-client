@@ -1172,8 +1172,8 @@ const exportAllDataLoop = async (dispatch, fPaths, doneCount) => {
 
   const selectedCount = Math.min(fPaths.length - doneCount, N_LINKS);
   const selectedFPaths = fPaths.slice(doneCount, doneCount + selectedCount);
-  const responses = await batchGetFileWithRetry(selectedFPaths, 0);
-  const data = responses.map((response) => {
+  const responses = await batchGetFileWithRetry(selectedFPaths, 0, true);
+  const data = responses.filter(r => r.success).map((response) => {
     return { path: response.fpath, data: JSON.parse(response.content) };
   });
 

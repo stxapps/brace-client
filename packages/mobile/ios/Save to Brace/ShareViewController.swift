@@ -19,9 +19,9 @@ class ShareViewController: UIViewController {
   let gray800 = UIColor.init(red: 31/255, green: 41/255, blue: 55/255, alpha: 1)
 
   let SM_WIDTH = CGFloat(640)
-  
-  override func viewDidLoad() {
-    super.viewDidLoad()
+
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
     self.renderAdding()
   }
   
@@ -32,12 +32,12 @@ class ShareViewController: UIViewController {
     }
   }
   
-  override func viewWillDisappear(_ animated: Bool) {
-    super.viewWillDisappear(animated)
-    if let t = self.timer {
-      t.invalidate()
-      self.timer = nil
-    }
+  override func viewDidDisappear(_ animated: Bool) {
+    super.viewDidDisappear(animated)
+
+    self.sharedUrls = []
+    self.didRenderAdded = false
+    self.timer = nil
   }
 
   private func processRequest() {
@@ -92,13 +92,10 @@ class ShareViewController: UIViewController {
   }
 
   @objc private func completeRequest() {
+    if let t = self.timer {
+      t.invalidate()
+    }
     self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
-  }
-
-  @objc private func cancelRequest() {
-    self.extensionContext!.cancelRequest(withError: NSError(domain:"BRACEDOTTO_ERROR",
-                                                            code: 0,
-                                                            userInfo: nil))
   }
 
   @objc private func onBackgroundBtnClick() {

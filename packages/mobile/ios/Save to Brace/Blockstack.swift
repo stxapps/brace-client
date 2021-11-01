@@ -32,8 +32,7 @@ class Blockstack {
   }
 
   private let defaultGaiaHubUrl = "https://hub.blockstack.org"
-  private let userDefaults = UserDefaults(suiteName: APP_GROUP_SHARE)  
-  private var gaiaConfig: GaiaConfig?
+  private let userDefaults = UserDefaults(suiteName: APP_GROUP_SHARE)
 
   private func getUserData() -> UserData? {
     // Can't store userData in a variable
@@ -47,13 +46,7 @@ class Blockstack {
   }
 
   private func getGaiaConfig(callback: @escaping (GaiaConfig?, Error?) -> Void) {
-    if let config = self.gaiaConfig {
-      callback(config, nil)
-      return
-    }
-
     if let config = self.retrieveGaiaConfig() {
-      self.gaiaConfig = config
       callback(config, nil)
       return
     }
@@ -71,7 +64,6 @@ class Blockstack {
       }
 
       self.saveGaiaConfig(config: config)
-      self.gaiaConfig = config
       callback(config, nil)
     }
   }

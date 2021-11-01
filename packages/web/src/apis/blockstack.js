@@ -115,7 +115,10 @@ export const batchGetFileWithRetry = async (
 
   if (failedResponses.length) {
     if (callCount + 1 >= MAX_TRY) {
-      if (dangerouslyIgnoreError) return responses;
+      if (dangerouslyIgnoreError) {
+        console.log('batchGetFileWithRetry error: ', failedResponses[0].error);
+        return responses;
+      }
       throw failedResponses[0].error;
     }
 
@@ -142,8 +145,8 @@ const fetch = async (params) => {
   if (doDescendingOrder) selectedLinkFPaths.reverse();
   selectedLinkFPaths = selectedLinkFPaths.slice(0, N_LINKS);
 
-  const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0);
-  const links = responses.map(response => JSON.parse(response.content));
+  const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0, true);
+  const links = responses.filter(r => r.success).map(r => JSON.parse(r.content));
   const hasMore = namedLinkFPaths.length > N_LINKS;
 
   // List names should be retrieve from settings
@@ -179,8 +182,8 @@ const fetchMore = async (params) => {
   const filteredLinkFPaths = sortedLinkFPaths.slice(maxIndex + 1);
   const selectedLinkFPaths = filteredLinkFPaths.slice(0, N_LINKS);
 
-  const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0);
-  const links = responses.map(response => JSON.parse(response.content));
+  const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0, true);
+  const links = responses.filter(r => r.success).map(r => JSON.parse(r.content));
   const hasMore = filteredLinkFPaths.length > N_LINKS;
 
   return { listName, doDescendingOrder, links, hasMore };
