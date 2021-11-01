@@ -24,14 +24,14 @@ class ShareViewController: UIViewController {
     super.viewWillAppear(animated)
     self.renderAdding()
   }
-  
+
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
     DispatchQueue.global(qos: .userInitiated).async {
       self.processRequest()
     }
   }
-  
+
   override func viewDidDisappear(_ animated: Bool) {
     super.viewDidDisappear(animated)
 
@@ -47,7 +47,7 @@ class ShareViewController: UIViewController {
       self.renderInvalid()
       return
     }
-    
+
     for (_, attachment) in attachments.enumerated() {
       if !attachment.hasItemConformingToTypeIdentifier(urlContentType) {
         self.renderInvalid()
@@ -78,7 +78,7 @@ class ShareViewController: UIViewController {
       self.renderNotSignedIn()
       return
     }
-    
+
     // Support only 1 url for now!
     Blockstack.shared.addLink(url: self.sharedUrls[0]) { publicUrl, error in
       guard let _ = publicUrl, error == nil else {
@@ -86,7 +86,7 @@ class ShareViewController: UIViewController {
         self.renderDiedAdding()
         return
       }
-      
+
       self.renderAdded()
     }
   }
@@ -139,7 +139,7 @@ class ShareViewController: UIViewController {
       }
     }
   }
-  
+
   private func renderAdding() {
     DispatchQueue.main.async {
       let contentView = UIView()
@@ -169,7 +169,7 @@ class ShareViewController: UIViewController {
       let s = NSMutableAttributedString(string: "Saving to ")
       s.append(NSMutableAttributedString(string: "Brace", attributes: [NSAttributedString.Key.font: self.semiBoldTextLg, NSAttributedString.Key.foregroundColor: self.gray800]))
       text.attributedText = s
-      
+
       let tlConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.left, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.left, multiplier: 1, constant: 16)
       let trConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.right, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.right, multiplier: 1, constant: -16)
       let tbConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.bottom, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.bottom, multiplier: 1, constant: -16)
@@ -180,7 +180,7 @@ class ShareViewController: UIViewController {
       loader.startAnimating()
     }
   }
-  
+
   private func renderAdded() {
     DispatchQueue.main.async {
       let contentView = UIView()
@@ -210,7 +210,7 @@ class ShareViewController: UIViewController {
       let s = NSMutableAttributedString(string: "Saved to ")
       s.append(NSMutableAttributedString(string: "Brace", attributes: [NSAttributedString.Key.font: self.semiBoldTextLg, NSAttributedString.Key.foregroundColor: self.gray800]))
       text.attributedText = s
-      
+
       let tlConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.left, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.left, multiplier: 1, constant: 16)
       let trConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.right, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.right, multiplier: 1, constant: -16)
       let tbConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.bottom, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.bottom, multiplier: 1, constant: -16)
@@ -226,7 +226,7 @@ class ShareViewController: UIViewController {
       }
     }
   }
-  
+
   private func renderDiedAdding() {
     DispatchQueue.main.async {
       let contentView = UIView()
@@ -254,7 +254,7 @@ class ShareViewController: UIViewController {
       head.numberOfLines = 2
       head.translatesAutoresizingMaskIntoConstraints = false
       contentView.addSubview(head)
-      
+
       let hlConstraint = NSLayoutConstraint(item: head, attribute: NSLayoutConstraint.Attribute.left, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.left, multiplier: 1, constant: 16)
       let hrConstraint = NSLayoutConstraint(item: head, attribute: NSLayoutConstraint.Attribute.right, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.right, multiplier: 1, constant: -16)
       let hbConstraint = NSLayoutConstraint(item: head, attribute: NSLayoutConstraint.Attribute.bottom, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.bottom, multiplier: 1, constant: (-16 + -36 + -16 + -72 + -8))
@@ -275,7 +275,7 @@ class ShareViewController: UIViewController {
       let tbConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.bottom, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.bottom, multiplier: 1, constant: (-16 + -36 + -16))
       let thConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: 72)
       contentView.addConstraints([tlConstraint, trConstraint, tbConstraint, thConstraint])
-      
+
       let btn = UIButton()
       btn.backgroundColor = .clear
       btn.setTitleColor(self.gray500, for: .normal)

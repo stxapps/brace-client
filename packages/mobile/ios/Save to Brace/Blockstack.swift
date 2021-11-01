@@ -8,21 +8,21 @@
 import Foundation
 
 class Blockstack {
-  
+
   public static let shared = Blockstack()
-  
+
   public func isUserSignedIn() -> Bool {
     return self.getUserData() != nil
   }
-  
+
   public func addLink(url: String, callback: @escaping (_ publicUrl: String?, _ error: Error?) -> Void) {
-    
+
     let listName = MY_LIST
-    
+
     let addedDT = Int64((Date().timeIntervalSince1970 * 1000.0).rounded())
     let id = "\(addedDT)-\(randomString(4))-\(randomString(4))"
     let decor = randomDecor(getUrlFirstChar(url))
-    
+
     let fpath = "links/\(listName)/\(id).json"
     let content = "{\"id\": \"\(id)\", \"url\": \"\(url)\", \"addedDT\": \(addedDT), \"decor\": \(decor)}"
 
@@ -85,24 +85,24 @@ class Blockstack {
       callback(config, nil)
     }
   }
-  
+
   private func getGaiaHubInfo(for hubUrl: String, callback: @escaping (GaiaHubInfo?, Error?) -> Void) {
     guard let url = URL(string: "\(hubUrl)/hub_info") else {
       callback(nil, NSError.create(description: "Error when declare url from hubInfoUrl"))
       return
     }
-    
+
     let task = URLSession.shared.dataTask(with: url) { data, response, error in
       guard let data = data, error == nil else {
         callback(nil, error)
         return
       }
-      
+
       guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
         callback(nil, NSError.create(description: "Error Gaia hub returns status code other than 2xx"))
         return
       }
-      
+
       do {
         let hubInfo = try JSONDecoder().decode(GaiaHubInfo.self, from: data)
         callback(hubInfo, nil)
@@ -178,7 +178,7 @@ class Blockstack {
       request.setValue(contentType, forHTTPHeaderField: "Content-Type")
       request.setValue("bearer \(config.token!)", forHTTPHeaderField: "Authorization")
       request.httpBody = data
-      
+
       let task = URLSession.shared.dataTask(with: request) { data, response, error in
         guard let data = data, error == nil else {
           callback(nil, error)
@@ -189,7 +189,7 @@ class Blockstack {
           callback(nil, NSError.create(description: "Error uploading to Gaia hub returns status code other than 2xx"))
           return
         }
-        
+
         do {
           let result = try JSONDecoder().decode(PutFileResponse.self, from: data)
           callback(result.publicUrl!, nil)
@@ -200,12 +200,12 @@ class Blockstack {
       task.resume()
     }
   }
-  
+
   private func randomString(_ length: Int) -> String {
     let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
     return String((0..<length).map{ _ in characters.randomElement()!})
   }
-  
+
   private func getUrlFirstChar(_ url: String) -> String {
     guard let url = URL(string: url), let host = url.host else {
       return randomString(1)
@@ -215,7 +215,7 @@ class Blockstack {
     guard let c = arr[(arr.count - 2)...].first?.first else {
       return randomString(1)
     }
-    
+
     return String(c)
   }
 
@@ -226,7 +226,7 @@ class Blockstack {
   private func sample(_ arr: [String]) -> String {
     return arr[randInt(arr.count)]
   }
-  
+
   private func randomDecor(_ text: String) -> String {
     var n: Int
 
