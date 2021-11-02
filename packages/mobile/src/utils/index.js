@@ -218,6 +218,11 @@ const choose = (obj, key) => {
 
 export const _ = { mapKeys, select, update, extract, exclude, ignore, copyAttr, choose };
 
+export const removeTailingSlash = (url) => {
+  if (url.slice(-1) === '/') return url.slice(0, -1);
+  return url;
+};
+
 export const containUrlProtocol = (url) => {
   const urlObj = new Url(url, {});
   return urlObj.protocol && urlObj.protocol !== '';

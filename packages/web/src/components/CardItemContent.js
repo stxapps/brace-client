@@ -6,7 +6,8 @@ import GracefulImage from 'react-graceful-image';
 import { updatePopup, updateBulkEdit, addSelectedLinkIds } from '../actions';
 import { COLOR, PATTERN, IMAGE } from '../types/const';
 import {
-  ensureContainUrlProtocol, ensureContainUrlSecureProtocol, extractUrl, isEqual,
+  removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
+  extractUrl, isEqual,
 } from '../utils';
 
 class CardItemContent extends React.Component {
@@ -158,7 +159,8 @@ class CardItemContent extends React.Component {
     }
 
     const { origin } = extractUrl(url);
-    favicon = ensureContainUrlSecureProtocol(origin) + '/favicon.ico';
+    favicon = removeTailingSlash(origin) + '/favicon.ico';
+    favicon = ensureContainUrlSecureProtocol(favicon);
 
     return <GracefulImage key="favicon-graceful-image-ico" className="flex-shrink-0 flex-grow-0 w-4 h-4" src={favicon} alt={`Favicon of ${url}`} customPlaceholder={placeholder} retry={{ count: 2, delay: 3, accumulate: 'multiply' }} />;
   }
