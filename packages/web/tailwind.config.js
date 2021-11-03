@@ -17,10 +17,6 @@ module.exports = {
         'gray-logo': '#1A202C',
         'purple-blockstack': '#211F6D',
       },
-      spacing: {
-        '45/100': '45%',
-        '55/100': '55%',
-      },
       minWidth: {
         '28': '7rem',
         '32': '8rem',
@@ -41,6 +37,10 @@ module.exports = {
       zIndex: {
         '41': '41',
         '51': '51',
+      },
+      spacing: {
+        '45/100': '45%',
+        '55/100': '55%',
       },
     },
   },
