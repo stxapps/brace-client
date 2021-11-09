@@ -1,13 +1,12 @@
 //import './wdyr';
 
 import React from 'react';
-import { Platform } from 'react-native';
+import { Text, TextInput, Platform } from 'react-native';
 import { Provider } from 'react-redux';
 import { createStore, compose } from 'redux';
 import { install as installReduxLoop } from 'redux-loop';
 import { offline } from '@redux-offline/redux-offline';
 import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
-import { Text, TextInput } from 'react-native';
 import {
   SafeAreaProvider, initialWindowMetrics, SafeAreaView,
 } from 'react-native-safe-area-context';
