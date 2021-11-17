@@ -19,6 +19,8 @@ import CardPanel from './CardPanel';
 import FetchedPopup from './FetchedPopup';
 import ConfirmDeletePopup from './ConfirmDeletePopup';
 import SettingsPopup from './SettingsPopup';
+import SettingsPopupListsMenuPopup from './SettingsPopupListsMenuPopup';
+import SettingsPopupErrorPopup from './SettingsPopupErrorPopup';
 
 class Main extends React.PureComponent {
 
@@ -86,6 +88,8 @@ class Main extends React.PureComponent {
         {columnWidth === PC_100 && <BottomBar />}
         <FetchedPopup />
         <SettingsPopup />
+        <SettingsPopupListsMenuPopup />
+        <SettingsPopupErrorPopup />
         <ConfirmDeletePopup />
       </React.Fragment>
     );

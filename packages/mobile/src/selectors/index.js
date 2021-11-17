@@ -30,10 +30,7 @@ const createSelectorListNameMap = createSelectorCreator(
 export const getListNameMap = createSelectorListNameMap(
   state => state,
   (state) => {
-    const listNameMap = [...state.settings.listNameMap.filter(listNameObj => {
-      return [ADDED, ADDING, UPDATING, MOVING, DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_DELETING].includes(listNameObj.status);
-    })];
-    return listNameMap;
+    return [...state.settings.listNameMap];
   }
 );
 

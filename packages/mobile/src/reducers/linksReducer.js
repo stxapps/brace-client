@@ -8,9 +8,8 @@ import {
   MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
   MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
-  CANCEL_DIED_LINKS,
-  DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT, UPDATE_EXTRACTED_CONTENTS,
-  ADD_LIST_NAMES_COMMIT, DELETE_LIST_NAMES_COMMIT,
+  CANCEL_DIED_LINKS, DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT,
+  UPDATE_EXTRACTED_CONTENTS, UPDATE_SETTINGS, CANCEL_DIED_SETTINGS,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -427,33 +426,26 @@ const linksReducer = (state = initialState, action) => {
     return newState;
   }
 
-  if (action.type === ADD_LIST_NAMES_COMMIT) {
-    const { listNameObjs } = action.meta;
-
-    const newState = { ...state };
-    for (const k of listNameObjs.map(obj => obj.listName)) {
-      newState[k] = state[k] || null;
-    }
-
-    return newState;
-  }
-
-  if (action.type === DELETE_LIST_NAMES_COMMIT) {
-    const { listNames } = action.meta;
+  if (action.type === UPDATE_SETTINGS || action.type === CANCEL_DIED_SETTINGS) {
+    const { settings } = action.payload;
+    const listNames = settings.listNameMap.map(obj => obj.listName);
 
     const newState = {};
     for (const listName in state) {
-      if (listNames.includes(listName)) {
+      if (!listNames.includes(listName)) {
         if (
-          state[listName] !== undefined &&
-          state[listName] !== null &&
-          !isEqual(state[listName], {})
-        ) {
-          throw new Error(`links: ${listName} should be undefined, null, or an empty object.`);
-        }
-        continue;
+          state[listName] === undefined ||
+          state[listName] === null ||
+          isEqual(state[listName], {})
+        ) continue;
+
+        console.log(`links: ${listName} should be undefined, null, or an empty object.`);
       }
       newState[listName] = state[listName];
+    }
+
+    for (const k of listNames) {
+      if (newState[k] === undefined) newState[k] = null;
     }
 
     return newState;

@@ -6,8 +6,8 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
-import { updatePopup } from '../actions';
-import { MD_WIDTH, SETTINGS_POPUP } from '../types/const';
+import { updateSettingsPopup } from '../actions';
+import { MD_WIDTH, LG_WIDTH } from '../types/const';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 import {
@@ -197,7 +197,7 @@ class SettingsPopup extends React.PureComponent {
   }
 
   onPopupCloseBtnClick = () => {
-    this.props.updatePopup(SETTINGS_POPUP, false);
+    this.props.updateSettingsPopup(false);
   }
 
   onSidebarOpenBtnClick = () => {
@@ -271,7 +271,9 @@ class SettingsPopup extends React.PureComponent {
     if (Platform.OS === 'android' && this.state.keyboardHeight > 0) {
       appHeight -= this.state.keyboardHeight;
     }
-    const panelHeight = appHeight * 0.9;
+    let panelHeight = appHeight * 0.9;
+    if (safeAreaWidth >= LG_WIDTH) panelHeight = Math.min(panelHeight, 608);
+    else if (safeAreaWidth >= MD_WIDTH) panelHeight = Math.min(panelHeight, 656);
 
     const { isSidebarShown, didSidebarAnimEnd } = this.state;
 
@@ -502,6 +504,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { updatePopup };
+const mapDispatchToProps = { updateSettingsPopup };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(SettingsPopup));

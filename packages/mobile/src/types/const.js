@@ -149,14 +149,6 @@ export const TOO_LONG_LIST_NAME = 'TOO_LONG_LIST_NAME';
 export const DUPLICATE_LIST_NAME = 'DUPLICATE_LIST_NAME';
 export const IN_USE_LIST_NAME = 'IN_USE_LIST_NAME';
 
-export const LIST_NAME_MSGS = {
-  [VALID_LIST_NAME]: '',
-  [NO_LIST_NAME]: 'List is blank',
-  [TOO_LONG_LIST_NAME]: 'List is too long',
-  [DUPLICATE_LIST_NAME]: 'List already exists',
-  [IN_USE_LIST_NAME]: 'List is in use',
-};
-
 export const SWAP_LEFT = 'SWAP_LEFT';
 export const SWAP_RIGHT = 'SWAP_RIGHT';
 

@@ -7,18 +7,15 @@ import {
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK, EXTRACT_CONTENTS_COMMIT,
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
-  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS,
-  DELETE_LIST_NAMES, UPDATE_DELETING_LIST_NAME,
-  UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
-  UPDATE_UPDATE_SETTINGS_PROGRESS,
-  UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
+  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_DELETING_LIST_NAME,
+  DELETE_LIST_NAMES, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
+  CANCEL_DIED_SETTINGS, UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   LIST_NAME_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP, BULK_EDIT_MOVE_TO_POPUP,
-  MY_LIST, TRASH, ARCHIVE,
-  UPDATING, DIED_UPDATING,
+  MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING,
 } from '../types/const';
 import { doContainListName } from '../utils';
 
@@ -41,9 +38,9 @@ const initialState = {
   deletingListName: null,
   fetchedListNames: [],
   listChangedCount: 0,
+  settingsStatus: null,
   exportAllDataProgress: null,
   deleteAllDataProgress: null,
-  updateSettingsProgress: null,
 };
 
 const displayReducer = (state = initialState, action) => {
@@ -69,10 +66,10 @@ const displayReducer = (state = initialState, action) => {
       deletingListName: null,
       fetchedListNames: [],
       listChangedCount: 0,
+      // If in outbox, continue after reload
+      //settingsStatus: null,
       exportAllDataProgress: null,
       deleteAllDataProgress: null,
-      // If in outbox, continue after reload
-      //updateSettingsProgress: null,
     };
   }
 
@@ -164,9 +161,11 @@ const displayReducer = (state = initialState, action) => {
 
     // Make sure listName is in listNameMap, if not, set to My List.
     const { listNames, doFetchSettings, settings } = action.payload;
-    if (listNames.includes(newState.listName)) return newState;
     if (!doFetchSettings) return newState;
 
+    newState.settingsStatus = null;
+
+    if (listNames.includes(newState.listName)) return newState;
     if (settings) {
       if (!doContainListName(newState.listName, settings.listNameMap)) {
         newState.listName = MY_LIST;
@@ -250,15 +249,46 @@ const displayReducer = (state = initialState, action) => {
     return { ...state, selectedLinkIds };
   }
 
-  if (action.type === DELETE_LIST_NAMES) {
-    const { listNames } = action.payload;
-    if (listNames.includes(state.listName)) {
-      return { ...state, listName: MY_LIST };
-    }
-  }
-
   if (action.type === UPDATE_DELETING_LIST_NAME) {
     return { ...state, deletingListName: action.payload };
+  }
+
+  if (action.type === DELETE_LIST_NAMES) {
+    const { listNames } = action.payload;
+    if (!listNames.includes(state.listName)) return state;
+    return { ...state, listName: MY_LIST };
+  }
+
+  if (action.type === UPDATE_SETTINGS) {
+    const { settings } = action.payload;
+    const listNames = settings.listNameMap.map(obj => obj.listName);
+
+    return {
+      ...state,
+      listName: listNames.includes(state.listName) ? state.listName : MY_LIST,
+      status: UPDATE_SETTINGS,
+      settingsStatus: UPDATING,
+    };
+  }
+
+  if (action.type === UPDATE_SETTINGS_COMMIT) {
+    return { ...state, status: UPDATE_SETTINGS_COMMIT, settingsStatus: null };
+  }
+
+  if (action.type === UPDATE_SETTINGS_ROLLBACK) {
+    return { ...state, status: UPDATE_SETTINGS_ROLLBACK, settingsStatus: DIED_UPDATING };
+  }
+
+  if (action.type === CANCEL_DIED_SETTINGS) {
+    const { settings } = action.payload;
+    const listNames = settings.listNameMap.map(obj => obj.listName);
+
+    return {
+      ...state,
+      listName: listNames.includes(state.listName) ? state.listName : MY_LIST,
+      status: null,
+      settingsStatus: null,
+    };
   }
 
   if (action.type === UPDATE_EXPORT_ALL_DATA_PROGRESS) {
@@ -267,22 +297,6 @@ const displayReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_DELETE_ALL_DATA_PROGRESS) {
     return { ...state, deleteAllDataProgress: action.payload };
-  }
-
-  if (action.type === UPDATE_SETTINGS) {
-    return { ...state, updateSettingsProgress: { status: UPDATING } };
-  }
-
-  if (action.type === UPDATE_SETTINGS_COMMIT) {
-    return { ...state, updateSettingsProgress: null };
-  }
-
-  if (action.type === UPDATE_SETTINGS_ROLLBACK) {
-    return { ...state, updateSettingsProgress: { status: DIED_UPDATING } };
-  }
-
-  if (action.type === UPDATE_UPDATE_SETTINGS_PROGRESS) {
-    return { ...state, updateSettingsProgress: action.payload };
   }
 
   if (action.type === DELETE_ALL_DATA) {
