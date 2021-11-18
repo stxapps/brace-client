@@ -1,4 +1,4 @@
-import { MY_LIST, TRASH, ARCHIVE } from '../types/const';
+import { MY_LIST, TRASH, ARCHIVE, MODE_VIEW } from '../types/const';
 
 export const initialSettingsState = {
   defaultListName: MY_LIST,
@@ -13,4 +13,11 @@ export const initialSettingsState = {
     { listName: TRASH, displayName: TRASH },
     { listName: ARCHIVE, displayName: ARCHIVE },
   ],
+};
+
+export const initialListNameEditorState = {
+  mode: MODE_VIEW,
+  value: '',
+  msg: '',
+  isCheckingCanDelete: false,
 };

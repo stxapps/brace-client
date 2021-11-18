@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import {
   View, Text, TouchableOpacity, TextInput, Keyboard, Platform, LayoutAnimation,
 } from 'react-native';
@@ -10,18 +10,20 @@ import KeyboardManager from 'react-native-keyboard-manager';
 
 import { canDeleteListNames } from '../apis/blockstack';
 import {
-  addListNames, updateListNames, moveListName, updateDeletingListName, updatePopup,
+  addListNames, updateListNames, moveListName, updateDeletingListName,
+  updateListNameEditors, updatePopup,
 } from '../actions';
 import {
-  MY_LIST, TRASH, ARCHIVE, ADDING, UPDATING, MOVING,
-  VALID_LIST_NAME, IN_USE_LIST_NAME,
+  MY_LIST, TRASH, ARCHIVE, VALID_LIST_NAME, IN_USE_LIST_NAME,
   NO_LIST_NAME, TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME,
   CONFIRM_DELETE_POPUP, SWAP_LEFT, SWAP_RIGHT,
+  MODE_VIEW, MODE_EDIT,
 } from '../types/const';
-import { getListNameMap } from '../selectors';
+import { getListNameMap, makeGetListNameEditor } from '../selectors';
 import { validateListNameDisplayName } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 import { spListsAnimConfig } from '../types/animConfigs';
+import { initialListNameEditorState } from '../types/initialStates';
 
 const SettingsPopupLists = (props) => {
 
@@ -61,9 +63,6 @@ const SettingsPopupLists = (props) => {
   );
 };
 
-const MODE_VIEW = 'MODE_VIEW';
-const MODE_EDIT = 'MODE_EDIT';
-
 const LIST_NAME_MSGS = {
   [VALID_LIST_NAME]: '',
   [NO_LIST_NAME]: 'List is blank',
@@ -75,14 +74,9 @@ const LIST_NAME_MSGS = {
 const _ListNameEditor = (props) => {
 
   const { listNameObj, validateDisplayName } = props;
-
-  const initialState = {
-    mode: MODE_VIEW,
-    value: '',
-    msg: '',
-    isCheckingCanDelete: false,
-  };
-  const [state, setState] = useState({ ...initialState });
+  const key = listNameObj ? listNameObj.listName : 'newListNameEditor';
+  const getListNameEditor = useMemo(makeGetListNameEditor, []);
+  const state = useSelector(s => getListNameEditor(s, key));
 
   const input = useRef(null);
   const didOkBtnJustPress = useRef(false);
@@ -90,26 +84,32 @@ const _ListNameEditor = (props) => {
   const dispatch = useDispatch();
 
   const onAddBtnClick = () => {
-    setState(s => ({ ...s, mode: MODE_EDIT, value: '', msg: '' }));
+    dispatch(updateListNameEditors({
+      [key]: { mode: MODE_EDIT, value: '', msg: '' },
+    }));
     input.current.focus();
   };
 
   const onEditBtnClick = () => {
-    setState(s => (
-      { ...s, mode: MODE_EDIT, value: listNameObj.displayName, msg: '' }
-    ));
+    dispatch(updateListNameEditors({
+      [key]: { mode: MODE_EDIT, value: listNameObj.displayName, msg: '' },
+    }));
     input.current.focus();
   };
 
   const onInputFocus = () => {
-    setState(s => ({ ...s, mode: MODE_EDIT }));
+    dispatch(updateListNameEditors({
+      [key]: { mode: MODE_EDIT },
+    }));
   };
 
   const onInputChange = (e) => {
     // Event is reused and will be nullified after the event handler has been called.
     // https://reactjs.org/docs/legacy-event-pooling.html
     const text = e.nativeEvent.text;
-    setState(s => ({ ...s, value: text, msg: '' }));
+    dispatch(updateListNameEditors({
+      [key]: { value: text, msg: '' },
+    }));
   };
 
   const onInputKeyPress = () => {
@@ -148,15 +148,15 @@ const _ListNameEditor = (props) => {
   const onAddOkBtnClick = () => {
     const listNameValidatedResult = validateDisplayName(state.value);
     if (listNameValidatedResult !== VALID_LIST_NAME) {
-      setState(s => (
-        { ...s, mode: MODE_EDIT, msg: LIST_NAME_MSGS[listNameValidatedResult] }
-      ));
+      dispatch(updateListNameEditors({
+        [key]: { mode: MODE_EDIT, msg: LIST_NAME_MSGS[listNameValidatedResult] },
+      }));
       input.current.focus();
       return;
     }
 
     dispatch(addListNames([state.value]));
-    setState(s => ({ ...s, ...initialState }));
+    dispatch(updateListNameEditors({ [key]: { ...initialListNameEditorState } }));
     input.current.blur();
   };
 
@@ -165,15 +165,17 @@ const _ListNameEditor = (props) => {
 
     const listNameValidatedResult = validateDisplayName(state.value);
     if (listNameValidatedResult !== VALID_LIST_NAME) {
-      setState(s => (
-        { ...s, mode: MODE_EDIT, msg: LIST_NAME_MSGS[listNameValidatedResult] }
-      ));
+      dispatch(updateListNameEditors({
+        [key]: { mode: MODE_EDIT, msg: LIST_NAME_MSGS[listNameValidatedResult] },
+      }));
       input.current.focus();
       return;
     }
 
     dispatch(updateListNames([listNameObj.listName], [state.value]));
-    setState(s => ({ ...s, ...initialState, value: state.value }));
+    dispatch(updateListNameEditors({
+      [key]: { ...initialListNameEditorState, value: state.value },
+    }));
     input.current.blur();
   };
 
@@ -183,12 +185,16 @@ const _ListNameEditor = (props) => {
 
   const onCancelBtnClick = () => {
     const value = listNameObj ? listNameObj.displayName : '';
-    setState(s => ({ ...s, mode: MODE_VIEW, value, msg: '' }));
+    dispatch(updateListNameEditors({
+      [key]: { mode: MODE_VIEW, value, msg: '' },
+    }));
     input.current.blur();
   };
 
   const onDeleteBtnClick = () => {
-    setState(s => ({ ...s, isCheckingCanDelete: true }));
+    dispatch(updateListNameEditors({
+      [key]: { isCheckingCanDelete: true },
+    }));
   };
 
   const onMoveUpBtnClick = () => {
@@ -208,8 +214,12 @@ const _ListNameEditor = (props) => {
   };
 
   useEffect(() => {
-    if (listNameObj) setState(s => ({ ...s, value: listNameObj.displayName }));
-  }, [listNameObj]);
+    if (listNameObj) {
+      dispatch(updateListNameEditors({
+        [key]: { value: listNameObj.displayName },
+      }));
+    }
+  }, [listNameObj, key, dispatch]);
 
   useEffect(() => {
     const deleteListName = async () => {
@@ -217,21 +227,21 @@ const _ListNameEditor = (props) => {
         const canDeletes = await canDeleteListNames([listNameObj.listName]);
         const canDelete = canDeletes[0];
         if (!canDelete) {
-          setState(s => ({
-            ...s,
-            msg: LIST_NAME_MSGS[IN_USE_LIST_NAME],
-            isCheckingCanDelete: false,
+          dispatch(updateListNameEditors({
+            [key]: { msg: LIST_NAME_MSGS[IN_USE_LIST_NAME], isCheckingCanDelete: false },
           }));
           return;
         }
 
         dispatch(updateDeletingListName(listNameObj.listName));
         dispatch(updatePopup(CONFIRM_DELETE_POPUP, true));
-        setState(s => ({ ...s, msg: '', isCheckingCanDelete: false }));
+        dispatch(updateListNameEditors({
+          [key]: { msg: '', isCheckingCanDelete: false },
+        }));
       }
     };
     deleteListName();
-  }, [state.isCheckingCanDelete, listNameObj, dispatch]);
+  }, [state.isCheckingCanDelete, listNameObj, key, dispatch]);
 
   const isBusy = state.isCheckingCanDelete;
 

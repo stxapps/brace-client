@@ -1,7 +1,7 @@
 import { REHYDRATE } from 'redux-persist/constants';
 import { loop, Cmd } from 'redux-loop';
 
-import { updateSnapshot } from '../actions';
+import { updateFetchedSettings } from '../actions';
 import {
   FETCH_COMMIT, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME,
   DELETE_LIST_NAMES, UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
@@ -37,7 +37,7 @@ const settingsReducer = (state = initialState, action) => {
     return loop(
       newState,
       Cmd.run(
-        updateSnapshot({ settings: newState }),
+        updateFetchedSettings(newState),
         { args: [Cmd.dispatch, Cmd.getState] })
     );
   }

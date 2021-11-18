@@ -21,8 +21,8 @@ import {
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
   UPDATE_EXTRACTED_CONTENTS,
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
-  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS,
-  UPDATE_SNAPSHOT, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME,
+  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_FETCHED_SETTINGS,
+  UPDATE_LIST_NAME_EDITORS, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME,
   DELETE_LIST_NAMES, UPDATE_DELETING_LIST_NAME, UPDATE_DO_EXTRACT_CONTENTS,
   UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH, UPDATE_DO_DESCENDING_ORDER,
   UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
@@ -826,6 +826,14 @@ export const tryUpdateExtractedContents = (payload) => async (dispatch, getState
   });
 };
 
+export const updateFetchedSettings = (settings) => async (dispatch, getState) => {
+  dispatch({ type: UPDATE_FETCHED_SETTINGS, payload: settings });
+};
+
+export const updateListNameEditors = (listNameEditors) => {
+  return { type: UPDATE_LIST_NAME_EDITORS, payload: listNameEditors };
+};
+
 export const updateSettingsPopup = (isShown) => async (dispatch, getState) => {
   /*
     A settings snapshot is made when FETCH_COMMIT and UPDATE_SETTINGS_COMMIT
@@ -840,10 +848,6 @@ export const updateSettingsPopup = (isShown) => async (dispatch, getState) => {
   if (!isShown) dispatch(updateSettings());
 
   dispatch(updatePopup(SETTINGS_POPUP, isShown));
-};
-
-export const updateSnapshot = (snapshot) => async (dispatch, getState) => {
-  dispatch({ type: UPDATE_SNAPSHOT, payload: snapshot });
 };
 
 export const addListNames = (newNames) => {

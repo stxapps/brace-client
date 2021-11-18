@@ -162,3 +162,6 @@ export const EDGE_TRIGGER = 'EDGE_TRIGGER'; // bottom or right of the trigger
 
 export const APP_GROUP_SHARE = 'group.bracedotto.share';
 export const APP_GROUP_SHARE_UKEY = 'uKey';
+
+export const MODE_VIEW = 'MODE_VIEW';
+export const MODE_EDIT = 'MODE_EDIT';

@@ -2,14 +2,14 @@ import { createSelectorCreator, defaultMemoize, createSelector } from 'reselect'
 
 import {
   ID, STATUS,
-  ADDED, MOVED, ADDING, UPDATING, MOVING, DIED_ADDING, DIED_UPDATING, DIED_MOVING,
-  DIED_REMOVING, DIED_DELETING,
+  ADDED, MOVED, ADDING, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
 } from '../types/const';
 import { FETCH_MORE } from '../types/actionTypes';
 import {
   _, isStringIn, excludeWithMainIds, isObject, isArrayEqual, isEqual, isOfflineAction,
 } from '../utils';
+import { initialListNameEditorState } from '../types/initialStates';
 
 const createSelectorListNameMap = createSelectorCreator(
   defaultMemoize,
@@ -250,3 +250,15 @@ export const getIsFetchingMore = createSelectorIsFetchingMore(
     return false;
   }
 );
+
+/** @return {function(any, any): initialListNameEditorState} */
+export const makeGetListNameEditor = () => {
+  return createSelector(
+    state => state.listNameEditors,
+    (__, key) => key,
+    (listNameEditors, key) => {
+      return { ...initialListNameEditorState, ...listNameEditors[key] };
+    },
+    { memoizeOptions: { resultEqualityCheck: isEqual } },
+  );
+};

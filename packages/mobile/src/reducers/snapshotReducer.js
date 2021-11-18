@@ -1,7 +1,7 @@
 import { REHYDRATE } from 'redux-persist/constants';
 
 import {
-  UPDATE_SNAPSHOT, UPDATE_SETTINGS_COMMIT, DELETE_ALL_DATA, RESET_STATE,
+  UPDATE_FETCHED_SETTINGS, UPDATE_SETTINGS_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import { initialSettingsState } from '../types/initialStates';
 
@@ -15,8 +15,8 @@ const snapshotReducer = (state = initialState, action) => {
     return { ...initialState, ...action.payload.snapshot };
   }
 
-  if (action.type === UPDATE_SNAPSHOT) {
-    return { ...state, ...action.payload };
+  if (action.type === UPDATE_FETCHED_SETTINGS) {
+    return { ...state, settings: { ...action.payload } };
   }
 
   if (action.type === UPDATE_SETTINGS_COMMIT) {
