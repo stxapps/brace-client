@@ -31,6 +31,55 @@ const axisPosition = (oDim, wDim, tPos, tDim) => {
   return [pos, CENTER];
 };
 
+export const computePosition = (layouts, triggerOffsets, popupMargin = 0) => {
+
+  const { windowLayout, triggerLayout, optionsLayout } = layouts;
+
+  const { x: wX, y: wY, width: wWidth, height: wHeight } = windowLayout;
+  let { x: tX, y: tY, height: tHeight, width: tWidth } = triggerLayout;
+  if (triggerOffsets) {
+    const { x: xOffset, y: yOffset, width: wOffset, height: hOffset } = triggerOffsets;
+    tX = tX + xOffset;
+    tY = tY + yOffset;
+    tWidth = tWidth + wOffset;
+    tHeight = tHeight + hOffset;
+  }
+  const { height: oHeight, width: oWidth } = optionsLayout;
+
+  let [top, topOrigin] = axisPosition(oHeight, wHeight, tY - wY, tHeight);
+  let [left, leftOrigin] = axisPosition(oWidth, wWidth, tX - wX, tWidth);
+
+  if (topOrigin === ZERO) top += popupMargin;
+  else if (topOrigin === EDGE) top -= popupMargin;
+
+  if (leftOrigin === ZERO) left += popupMargin;
+  else if (leftOrigin === EDGE) left -= popupMargin;
+
+  return { top, left, topOrigin, leftOrigin };
+};
+
+export const createLayouts = (triggerLayout, optionsLayout, windowLayout) => {
+  return {
+    windowLayout: { x: 0, y: 0, width: windowLayout.width, height: windowLayout.height },
+    triggerLayout: triggerLayout,
+    optionsLayout: optionsLayout,
+  };
+};
+
+export const getOriginClassName = (topOrigin, leftOrigin) => {
+  if (topOrigin === AT_TRIGGER && leftOrigin === AT_TRIGGER) {
+    return 'origin-top-left';
+  } else if (topOrigin === AT_TRIGGER && leftOrigin === EDGE_TRIGGER) {
+    return 'origin-top-right';
+  } else if (topOrigin === EDGE_TRIGGER && leftOrigin === AT_TRIGGER) {
+    return 'origin-bottom-left';
+  } else if (topOrigin === EDGE_TRIGGER && leftOrigin === EDGE_TRIGGER) {
+    return 'origin-bottom-right';
+  } else {
+    return 'origin-center';
+  }
+};
+
 function fit(pos, len, minPos, maxPos) {
   if (pos === undefined) {
     return undefined;
@@ -60,7 +109,7 @@ export const fitPositionIntoSafeArea = (position, layouts) => {
   return { top, left, right };
 };
 
-export const computePosition = (layouts, isRTL, triggerOffsets) => {
+export const originalComputePosition = (layouts, isRTL, triggerOffsets) => {
 
   const { windowLayout, triggerLayout, optionsLayout } = layouts;
 
@@ -119,7 +168,7 @@ export default class MenuPopupRenderer extends React.PureComponent {
     const { scaleAnim } = this.state;
     const {
       topOrigin, leftOrigin, ...position
-    } = computePosition(layouts, I18nManager.isRTL, triggerOffsets);
+    } = originalComputePosition(layouts, I18nManager.isRTL, triggerOffsets);
 
     const { height: oHeight, width: oWidth } = layouts.optionsLayout;
 
@@ -167,7 +216,7 @@ export default class MenuPopupRenderer extends React.PureComponent {
 }
 
 // public exports
-MenuPopupRenderer.computePosition = computePosition;
+MenuPopupRenderer.computePosition = originalComputePosition;
 MenuPopupRenderer.fitPositionIntoSafeArea = fitPositionIntoSafeArea;
 
 export const styles = StyleSheet.create({

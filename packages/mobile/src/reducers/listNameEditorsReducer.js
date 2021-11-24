@@ -24,6 +24,7 @@ const listNameEditorsReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_POPUP) {
     const { id } = action.payload;
+
     if ([ALL, SETTINGS_POPUP].includes(id)) return { ...initialState };
     return state;
   }

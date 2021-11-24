@@ -13,7 +13,7 @@ import {
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
-  ALL, ADD_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
+  ALL, ADD_POPUP, PROFILE_POPUP, LIST_NAMES_POPUP,
   IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE,
   ID, STATUS, N_LINKS,
@@ -399,26 +399,25 @@ const linksReducer = (state = initialState, action) => {
     return state;
   }
 
-  if (action.type === UPDATE_POPUP &&
-    (action.payload.id === ALL ||
-      ![ADD_POPUP, PROFILE_POPUP, LIST_NAME_POPUP].includes(action.payload.id))) {
+  if (action.type === UPDATE_POPUP) {
+    const { id, isShown, anchorPosition } = action.payload;
+    if ([ADD_POPUP, PROFILE_POPUP, LIST_NAMES_POPUP].includes(id)) return state;
 
     const newState = {};
-
     for (const listName in state) {
       // BUG ALERT
       // _.update return {} if links is null, maybe it's ok, maybe it's not.
-      if (action.payload.id === ALL) {
+      if (id === ALL) {
         newState[listName] = _.update(
-          state[listName], null, null, IS_POPUP_SHOWN, action.payload.isShown
+          state[listName], null, null, IS_POPUP_SHOWN, isShown
         );
       } else {
         newState[listName] = _.update(
           state[listName],
           ID,
-          action.payload.id,
+          id,
           [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION],
-          [action.payload.isShown, action.payload.anchorPosition]
+          [isShown, anchorPosition]
         );
       }
     }

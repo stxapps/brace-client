@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, Linking } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useSafeAreaFrame } from 'react-native-safe-area-context';
@@ -8,7 +8,7 @@ import { retryDiedSettings, cancelDiedSettings } from '../actions';
 import { DIED_UPDATING, SM_WIDTH } from '../types/const';
 import { tailwind } from '../stylesheets/tailwind';
 
-const SettingsPopupErrorPopup = () => {
+const SettingsErrorPopup = () => {
 
   const { width: safeAreaWidth } = useSafeAreaFrame();
   const settingsStatus = useSelector(state => state.display.settingsStatus);
@@ -60,4 +60,4 @@ const SettingsPopupErrorPopup = () => {
   );
 };
 
-export default React.memo(SettingsPopupErrorPopup);
+export default React.memo(SettingsErrorPopup);

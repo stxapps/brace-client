@@ -21,6 +21,7 @@ const stacksAccessReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_POPUP) {
     const { id } = action.payload;
+
     if ([ALL, SIGN_UP_POPUP, SIGN_IN_POPUP].includes(id)) return { ...initialState };
     return state;
   }

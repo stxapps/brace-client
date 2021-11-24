@@ -7,14 +7,16 @@ import {
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK, EXTRACT_CONTENTS_COMMIT,
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
-  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_DELETING_LIST_NAME,
+  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS,
+  UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME,
   DELETE_LIST_NAMES, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
   CANCEL_DIED_SETTINGS, UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
-  LIST_NAME_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP, BULK_EDIT_MOVE_TO_POPUP,
+  LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
+  BULK_EDIT_MOVE_TO_POPUP,
   MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING,
 } from '../types/const';
 import { doContainListName } from '../utils';
@@ -27,14 +29,18 @@ const initialState = {
   isAddPopupShown: false,
   isSearchPopupShown: false,
   isProfilePopupShown: false,
-  isListNamePopupShown: false,
+  isListNamesPopupShown: false,
+  listNamesPopupPosition: null,
   isConfirmDeletePopupShown: false,
   isSettingsPopupShown: false,
+  isSettingsListsMenuPopupShown: false,
+  settingsListsMenuPopupPosition: null,
+  isBulkEditMoveToPopupShown: false,
   status: null,
   isHandlingSignIn: false,
   isBulkEditing: false,
   selectedLinkIds: [],
-  isBulkEditMoveToPopupShown: false,
+  selectingListName: null,
   deletingListName: null,
   fetchedListNames: [],
   listChangedCount: 0,
@@ -55,14 +61,19 @@ const displayReducer = (state = initialState, action) => {
       isAddPopupShown: false,
       isSearchPopupShown: false,
       isProfilePopupShown: false,
-      isListNamePopupShown: false,
+      isListNamesPopupShown: false,
+      listNamesPopupPosition: null,
       isConfirmDeletePopupShown: false,
       isSettingsPopupShown: false,
+      isSettingsListsMenuPopupShown: false,
+      settingsListsMenuPopupPosition: null,
+      isBulkEditMoveToPopupShown: false,
       status: null,
       isHandlingSignIn: false,
       isBulkEditing: false,
+      selectingLinkId: null,
       selectedLinkIds: [],
-      isBulkEditMoveToPopupShown: false,
+      selectingListName: null,
       deletingListName: null,
       fetchedListNames: [],
       listChangedCount: 0,
@@ -87,22 +98,27 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_POPUP) {
-
-    const { id, isShown } = action.payload;
+    const { id, isShown, anchorPosition } = action.payload;
 
     if (id === ALL) {
-      return {
+      const newState = {
         ...state,
         isSignUpPopupShown: isShown,
         isSignInPopupShown: isShown,
         isAddPopupShown: isShown,
         isSearchPopupShown: isShown,
         isProfilePopupShown: isShown,
-        isListNamePopupShown: isShown,
         isConfirmDeletePopupShown: isShown,
         isSettingsPopupShown: isShown,
         isBulkEditMoveToPopupShown: isShown,
       };
+      if (!isShown) {
+        newState.isListNamesPopupShown = false;
+        newState.listNamesPopupPosition = null;
+        newState.isSettingsListsMenuPopupShown = false;
+        newState.settingsListsMenuPopupPosition = null;
+      }
+      return newState;
     }
 
     if (id === SIGN_UP_POPUP) {
@@ -125,8 +141,16 @@ const displayReducer = (state = initialState, action) => {
       return { ...state, isProfilePopupShown: isShown };
     }
 
-    if (id === LIST_NAME_POPUP) {
-      return { ...state, isListNamePopupShown: isShown };
+    if (id === LIST_NAMES_POPUP) {
+      const newState = {
+        ...state,
+        isListNamesPopupShown: isShown,
+        listNamesPopupPosition: anchorPosition,
+      };
+      if (!isShown) {
+        newState.selectingListName = null;
+      }
+      return newState;
     }
 
     if (id === CONFIRM_DELETE_POPUP) {
@@ -136,7 +160,17 @@ const displayReducer = (state = initialState, action) => {
     }
 
     if (id === SETTINGS_POPUP) {
-      return { ...state, isSettingsPopupShown: isShown };
+      const newState = { ...state, isSettingsPopupShown: isShown };
+      if (!isShown) newState.selectingListName = null;
+      return newState;
+    }
+
+    if (id === SETTINGS_LISTS_MENU_POPUP) {
+      return {
+        ...state,
+        isSettingsListsMenuPopupShown: isShown,
+        settingsListsMenuPopupPosition: anchorPosition,
+      };
     }
 
     if (id === BULK_EDIT_MOVE_TO_POPUP) {
@@ -247,6 +281,10 @@ const displayReducer = (state = initialState, action) => {
       if (!action.payload.includes(linkId)) selectedLinkIds.push(linkId);
     }
     return { ...state, selectedLinkIds };
+  }
+
+  if (action.type === UPDATE_SELECTING_LIST_NAME) {
+    return { ...state, selectingListName: action.payload };
   }
 
   if (action.type === UPDATE_DELETING_LIST_NAME) {

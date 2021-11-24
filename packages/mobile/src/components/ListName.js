@@ -6,7 +6,7 @@ import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-m
 
 import { changeListName, updatePopup } from '../actions';
 import {
-  LIST_NAME_POPUP, SM_WIDTH, MD_WIDTH, LG_WIDTH,
+  LIST_NAMES_POPUP, SM_WIDTH, MD_WIDTH, LG_WIDTH,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
 import { getListNameDisplayName, getLastHalfHeight } from '../utils';
@@ -19,16 +19,16 @@ import MenuPopupRenderer from './MenuPopupRenderer';
 class ListName extends React.PureComponent {
 
   onListNameBtnClick = () => {
-    this.props.updatePopup(LIST_NAME_POPUP, true);
+    this.props.updatePopup(LIST_NAMES_POPUP, true);
   };
 
   onListNamePopupClick = (newListName) => {
     this.props.changeListName(newListName);
-    this.props.updatePopup(LIST_NAME_POPUP, false);
+    this.props.updatePopup(LIST_NAMES_POPUP, false);
   };
 
   onListNameCancelBtnClick = () => {
-    this.props.updatePopup(LIST_NAME_POPUP, false);
+    this.props.updatePopup(LIST_NAMES_POPUP, false);
   };
 
   renderMenu() {

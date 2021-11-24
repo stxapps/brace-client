@@ -1,4 +1,4 @@
-import { LayoutAnimation } from 'react-native';
+import { LayoutAnimation, Easing } from 'react-native';
 
 import { SM_WIDTH } from './const';
 
@@ -83,12 +83,6 @@ export const spListsAnimConfig = () => {
 };
 
 export const statusPopupAnimConfig = {
-  visible: {
-    stiffness: 300,
-    damping: 20,
-    mass: 1,
-    useNativeDriver: true,
-  },
   hidden: {
     stiffness: 200,
     damping: 10,
@@ -96,4 +90,16 @@ export const statusPopupAnimConfig = {
     overshootClamping: true,
     useNativeDriver: true,
   },
+  visible: {
+    stiffness: 300,
+    damping: 20,
+    mass: 1,
+    useNativeDriver: true,
+  },
+};
+
+export const slideAnimConfig = {
+  duration: 300,
+  easing: Easing.bezier(0.4, 0, 0.2, 1),
+  useNativeDriver: true,
 };

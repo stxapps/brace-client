@@ -23,18 +23,20 @@ import {
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_FETCHED_SETTINGS,
   UPDATE_LIST_NAME_EDITORS, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME,
-  DELETE_LIST_NAMES, UPDATE_DELETING_LIST_NAME, UPDATE_DO_EXTRACT_CONTENTS,
-  UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH, UPDATE_DO_DESCENDING_ORDER,
-  UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
-  CANCEL_DIED_SETTINGS,
+  MOVE_TO_LIST_NAME, DELETE_LIST_NAMES,
+  UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME,
+  UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
+  UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
+  UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   DOMAIN_NAME, APP_URL_SCHEME, APP_DOMAIN_NAME, BLOCKSTACK_AUTH,
   APP_GROUP_SHARE, APP_GROUP_SHARE_UKEY,
-  SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, LIST_NAME_POPUP,
-  CONFIRM_DELETE_POPUP, SETTINGS_POPUP, BULK_EDIT_MOVE_TO_POPUP,
+  SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
+  LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
+  BULK_EDIT_MOVE_TO_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH,
   ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
@@ -155,9 +157,10 @@ const getPopupShownId = (state) => {
   if (state.display.isSignInPopupShown) return SIGN_IN_POPUP;
   if (state.display.isAddPopupShown) return ADD_POPUP;
   if (state.display.isProfilePopupShown) return PROFILE_POPUP;
-  if (state.display.isListNamePopupShown) return LIST_NAME_POPUP;
+  if (state.display.isListNamesPopupShown) return LIST_NAMES_POPUP;
   if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
   if (state.display.isSettingsPopupShown) return SETTINGS_POPUP;
+  if (state.display.isSettingsListsMenuPopupShown) return SETTINGS_LISTS_MENU_POPUP;
   if (state.display.isBulkEditMoveToPopupShown) return BULK_EDIT_MOVE_TO_POPUP;
 
   for (const listName in state.links) {
@@ -877,6 +880,10 @@ export const moveListName = (listName, direction) => {
   return { type: MOVE_LIST_NAME, payload: { listName, direction } };
 };
 
+export const moveToListName = (listName, parent) => {
+  return { type: MOVE_TO_LIST_NAME, payload: { listName, parent } };
+};
+
 export const deleteListNames = (listNames) => {
   return { type: DELETE_LIST_NAMES, payload: { listNames } };
 };
@@ -893,6 +900,13 @@ export const updateDoDeleteOldLinksInTrash = (doDeleteOldLinksInTrash) => {
 
 export const updateDoDescendingOrder = (doDescendingOrder) => {
   return { type: UPDATE_DO_DESCENDING_ORDER, payload: doDescendingOrder };
+};
+
+export const updateSelectingListName = (listName) => {
+  return {
+    type: UPDATE_SELECTING_LIST_NAME,
+    payload: listName,
+  };
 };
 
 export const updateDeletingListName = (listName) => {

@@ -20,4 +20,6 @@ export const initialListNameEditorState = {
   value: '',
   msg: '',
   isCheckingCanDelete: false,
+  doExpand: false,
+  focusCount: 0,
 };
