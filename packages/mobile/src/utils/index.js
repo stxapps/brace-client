@@ -539,6 +539,18 @@ export const copyListNameObjs = (listNameObjs, excludedListNames = []) => {
   return objs;
 };
 
+export const getAllListNames = (listNameObjs) => {
+  const listNames = [];
+  if (!listNameObjs) return listNames;
+
+  for (const listNameObj of listNameObjs) {
+    listNames.push(listNameObj.listName);
+    listNames.push(...getAllListNames(listNameObj.children));
+  }
+
+  return listNames;
+};
+
 export const isDiedStatus = (status) => {
   return [
     DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,

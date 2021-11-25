@@ -6,11 +6,11 @@ import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-m
 import Svg, { Path } from 'react-native-svg';
 import Clipboard from '@react-native-community/clipboard';
 
-import { updatePopup, moveLinks } from '../actions';
+import { updatePopup, updateSelectingLinkId, moveLinks } from '../actions';
 import {
   MY_LIST, TRASH, ADDING, MOVING,
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
-  CARD_ITEM_POPUP_MENU, CONFIRM_DELETE_POPUP,
+  CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
 import {
@@ -28,12 +28,13 @@ class CardItemMenuPopup extends React.PureComponent {
   constructor(props) {
     super(props);
 
+    this.menuBtn = React.createRef();
     this.didClick = false;
   }
 
   populateMenu() {
 
-    const { link, listName, listNameMap } = this.props;
+    const { link, listName } = this.props;
 
     let menu = null;
     if (listName in CARD_ITEM_POPUP_MENU) {
@@ -45,19 +46,7 @@ class CardItemMenuPopup extends React.PureComponent {
       menu = menu.slice(0, 2);
     }
 
-    const moveTo = [];
-    if (menu.includes(MOVE_TO)) {
-      for (const listNameObj of listNameMap) {
-        if ([TRASH, ARCHIVE].includes(listNameObj.listName)) continue;
-        if (listName === listNameObj.listName) continue;
-
-        moveTo.push(listNameObj);
-      }
-    }
-
-    menu = menu.filter(text => text !== MOVE_TO);
-
-    return { menu, moveTo };
+    return { menu };
   }
 
   onMenuBtnClick = () => {
@@ -85,9 +74,14 @@ class CardItemMenuPopup extends React.PureComponent {
     } else if (text === RESTORE) {
       LayoutAnimation.configureNext(animConfig);
       this.props.moveLinks(MY_LIST, [id]);
-    } else if (text.startsWith(MOVE_TO)) {
-      LayoutAnimation.configureNext(animConfig);
-      this.props.moveLinks(text.substring(MOVE_TO.length + 1), [id]);
+    } else if (text === MOVE_TO) {
+      this.menuBtn.current.measure((_fx, _fy, width, height, x, y) => {
+        const rect = {
+          x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
+        };
+        this.props.updateSelectingLinkId(this.props.link.id);
+        this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
+      });
     } else if (text === DELETE) {
       this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
       return false;
@@ -107,24 +101,7 @@ class CardItemMenuPopup extends React.PureComponent {
   renderMenu() {
 
     const { listNameMap } = this.props;
-    const { menu, moveTo } = this.populateMenu();
-
-    let _moveTo = null;
-    if (moveTo && moveTo.length) {
-      _moveTo = (
-        <React.Fragment>
-          <Text style={tailwind('py-2 pl-4 pr-4 w-full text-sm text-gray-700 font-normal')}>Move to...</Text>
-          {moveTo.map(listNameObj => {
-            const key = MOVE_TO + ' ' + listNameObj.listName;
-            return (
-              <MenuOption key={key} onSelect={() => this.onMenuPopupClick(key)} customStyles={cache('CIMP_menuOption', { optionWrapper: { padding: 0 } })}>
-                <Text style={tailwind('py-2 pl-8 pr-4 w-full text-sm text-gray-700 font-normal')} numberOfLines={1} ellipsizeMode="tail">{listNameObj.displayName}</Text>
-              </MenuOption>
-            );
-          })}
-        </React.Fragment>
-      );
-    }
+    const { menu } = this.populateMenu();
 
     return (
       <React.Fragment>
@@ -137,7 +114,6 @@ class CardItemMenuPopup extends React.PureComponent {
             </MenuOption>
           );
         })}
-        {_moveTo}
       </React.Fragment>
     );
   }
@@ -154,7 +130,7 @@ class CardItemMenuPopup extends React.PureComponent {
       <Menu renderer={MenuPopupRenderer} rendererProps={cache('CIMP_menuRendererProps', { triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 } })} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
         <MenuTrigger>
           {/* View with paddingBottom is required because there is this space on the web. */}
-          <View style={cache('CIMP_menuTriggerViewStyle', { paddingBottom: 6 })}>
+          <View ref={this.menuBtn} style={cache('CIMP_menuTriggerViewStyle', { paddingBottom: 6 })}>
             {/* Change the paddings here, need to change triggerOffsets too */}
             <View style={tailwind('pt-2 pb-0 pl-4 pr-2 flex-shrink-0 flex-grow-0')}>
               <Svg style={tailwind('text-gray-400 font-normal rounded-full')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">
@@ -186,6 +162,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { updatePopup, moveLinks };
+const mapDispatchToProps = { updatePopup, updateSelectingLinkId, moveLinks };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(CardItemMenuPopup));

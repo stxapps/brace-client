@@ -5,15 +5,13 @@ import Svg, { Path } from 'react-native-svg';
 
 import { updatePopup, updateBulkEdit, moveLinks } from '../actions';
 import {
-  CONFIRM_DELETE_POPUP, MY_LIST, ARCHIVE, TRASH, TOP_HEADER_HEIGHT,
+  CONFIRM_DELETE_POPUP, LIST_NAMES_POPUP, MY_LIST, ARCHIVE, TRASH, TOP_HEADER_HEIGHT,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
 import { getListNameDisplayName, toPx } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
-
-import TopBarBulkEditMoveToPopup from './TopBarBulkEditMoveToPopup';
 
 class TopBarBulkEditCommands extends React.Component {
 
@@ -24,7 +22,7 @@ class TopBarBulkEditCommands extends React.Component {
 
     this.emptyErrorScale = new Animated.Value(0);
     this.backHandler = null;
-
+    this.moveToBtn = React.createRef();
     this.didClick = false;
   }
 
@@ -139,6 +137,17 @@ class TopBarBulkEditCommands extends React.Component {
     this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
   }
 
+  onBulkEditMoveToBtnClick = () => {
+    if (this.checkNoLinkIdSelected()) return;
+    this.moveToBtn.current.measure((_fx, _fy, width, height, x, y) => {
+      y = y - 4; // Hacky to make sure the popup overlap all the button on iOS
+      const rect = {
+        x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
+      };
+      this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
+    });
+  }
+
   onBulkEditCancelBtnClick = () => {
     this.props.updateBulkEdit(false);
   }
@@ -230,7 +239,17 @@ class TopBarBulkEditCommands extends React.Component {
             </View>
           </TouchableOpacity>
         </View>}
-        {isMoveToBtnShown && <TopBarBulkEditMoveToPopup checkNoLinkIdSelected={this.checkNoLinkIdSelected} />}
+        {isMoveToBtnShown && <View style={tailwind('ml-4')}>
+          <TouchableOpacity ref={this.moveToBtn} onPress={this.onBulkEditMoveToBtnClick}>
+            <View style={btnStyle}>
+              <Svg style={tailwind('text-gray-500 font-normal')} width={18} height={18} viewBox="0 0 20 20" fill="currentColor">
+                <Path d="M4 3C2.89543 3 2 3.89543 2 5C2 6.10457 2.89543 7 4 7H16C17.1046 7 18 6.10457 18 5C18 3.89543 17.1046 3 16 3H4Z" />
+                <Path fillRule="evenodd" clipRule="evenodd" d="M3 8H17V15C17 16.1046 16.1046 17 15 17H5C3.89543 17 3 16.1046 3 15V8ZM8 11C8 10.4477 8.44772 10 9 10H11C11.5523 10 12 10.4477 12 11C12 11.5523 11.5523 12 11 12H9C8.44772 12 8 11.5523 8 11Z" />
+              </Svg>
+              <Text style={tailwind('ml-1 text-sm text-gray-500 font-normal')}>Move to</Text>
+            </View>
+          </TouchableOpacity>
+        </View>}
         <TouchableOpacity onPress={this.onBulkEditCancelBtnClick} style={tailwind('ml-1 justify-center items-center w-10 h-8')}>
           <Svg style={tailwind('text-gray-400 font-normal rounded-full')} width={24} height={24} viewBox="0 0 28 28" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M14 25.2001C20.1857 25.2001 25.2001 20.1857 25.2001 14C25.2001 7.81446 20.1857 2.80005 14 2.80005C7.81446 2.80005 2.80005 7.81446 2.80005 14C2.80005 20.1857 7.81446 25.2001 14 25.2001ZM12.19 10.2101C11.6433 9.66337 10.7568 9.66337 10.2101 10.2101C9.66337 10.7568 9.66337 11.6433 10.2101 12.19L12.0202 14L10.2101 15.8101C9.66337 16.3568 9.66337 17.2433 10.2101 17.79C10.7568 18.3367 11.6433 18.3367 12.19 17.79L14 15.9799L15.8101 17.79C16.3568 18.3367 17.2433 18.3367 17.79 17.79C18.3367 17.2433 18.3367 16.3568 17.79 15.8101L15.9799 14L17.79 12.19C18.3367 11.6433 18.3367 10.7568 17.79 10.2101C17.2433 9.66337 16.3568 9.66337 15.8101 10.2101L14 12.0202L12.19 10.2101Z" />

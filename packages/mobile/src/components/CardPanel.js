@@ -156,7 +156,7 @@ class CardPanel extends React.PureComponent {
       );
     }
 
-    const textName = listName === ARCHIVE ? `"${displayName}"` : `"Move to... -> ${displayName}"`;
+    const textName = listName === ARCHIVE ? `"${displayName}"` : `"Move to -> ${displayName}"`;
 
     return (
       <View style={tailwind('px-4 pb-6 items-center w-full md:px-6 lg:px-8', safeAreaWidth)}>

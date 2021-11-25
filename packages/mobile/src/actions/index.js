@@ -8,6 +8,8 @@ import { batchGetFileWithRetry, batchDeleteFileWithRetry } from '../apis/blockst
 import {
   INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW_SIZE, UPDATE_PAGE_Y_OFFSET,
   UPDATE_STACKS_ACCESS, UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
+  UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
+  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
   UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE, CLEAR_FETCHED_LIST_NAMES,
@@ -19,9 +21,7 @@ import {
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
-  UPDATE_EXTRACTED_CONTENTS,
-  UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
-  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_FETCHED_SETTINGS,
+  UPDATE_EXTRACTED_CONTENTS, UPDATE_FETCHED_SETTINGS,
   UPDATE_LIST_NAME_EDITORS, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME,
   MOVE_TO_LIST_NAME, DELETE_LIST_NAMES,
   UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME,
@@ -36,7 +36,6 @@ import {
   APP_GROUP_SHARE, APP_GROUP_SHARE_UKEY,
   SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
-  BULK_EDIT_MOVE_TO_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH,
   ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
@@ -161,7 +160,6 @@ const getPopupShownId = (state) => {
   if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
   if (state.display.isSettingsPopupShown) return SETTINGS_POPUP;
   if (state.display.isSettingsListsMenuPopupShown) return SETTINGS_LISTS_MENU_POPUP;
-  if (state.display.isBulkEditMoveToPopupShown) return BULK_EDIT_MOVE_TO_POPUP;
 
   for (const listName in state.links) {
     for (const id in state.links[listName]) {
@@ -297,6 +295,13 @@ export const deleteSelectedLinkIds = (ids) => {
   return {
     type: DELETE_SELECTED_LINK_IDS,
     payload: ids,
+  };
+};
+
+export const updateSelectingLinkId = (id) => {
+  return {
+    type: UPDATE_SELECTING_LINK_ID,
+    payload: id,
   };
 };
 
@@ -829,7 +834,8 @@ export const tryUpdateExtractedContents = (payload) => async (dispatch, getState
   });
 };
 
-export const updateFetchedSettings = (settings) => async (dispatch, getState) => {
+export const updateFetchedSettings = () => async (dispatch, getState) => {
+  const settings = getState().settings;
   dispatch({ type: UPDATE_FETCHED_SETTINGS, payload: settings });
 };
 

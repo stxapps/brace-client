@@ -5,9 +5,7 @@ import Svg, { Path } from 'react-native-svg';
 
 import { updatePopup, updateBulkEdit, moveLinks } from '../actions';
 import {
-  CONFIRM_DELETE_POPUP, BULK_EDIT_MOVE_TO_POPUP,
-  MY_LIST, ARCHIVE, TRASH,
-  BOTTOM_BAR_HEIGHT,
+  CONFIRM_DELETE_POPUP, LIST_NAMES_POPUP, MY_LIST, ARCHIVE, TRASH, BOTTOM_BAR_HEIGHT,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
 import { getListNameDisplayName, toPx } from '../utils';
@@ -24,7 +22,7 @@ class BottomBarBulkEditCommands extends React.Component {
 
     this.backHandler = null;
     this.emptyErrorScale = new Animated.Value(0);
-
+    this.moveToBtn = React.createRef();
     this.didClick = false;
   }
 
@@ -143,7 +141,12 @@ class BottomBarBulkEditCommands extends React.Component {
 
   onBulkEditMoveToBtnClick = () => {
     if (this.checkNoLinkIdSelected()) return;
-    this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, true);
+    this.moveToBtn.current.measure((_fx, _fy, width, height, x, y) => {
+      const rect = {
+        x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
+      };
+      this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
+    });
   }
 
   onBulkEditCancelBtnClick = () => {
@@ -232,13 +235,13 @@ class BottomBarBulkEditCommands extends React.Component {
             </TouchableOpacity>
           </View>}
           {isMoveToBtnShown && <View style={tailwind('p-1 flex-1')}>
-            <TouchableOpacity onPress={this.onBulkEditMoveToBtnClick} style={tailwind('justify-center items-center w-full h-full')}>
+            <TouchableOpacity ref={this.moveToBtn} onPress={this.onBulkEditMoveToBtnClick} style={tailwind('justify-center items-center w-full h-full')}>
               <View style={tailwind('justify-center items-center w-6 h-6')}>
                 <Svg style={tailwind('text-gray-500 font-normal')} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
                   <Path d="M2 6C2 5.46957 2.21071 4.96086 2.58579 4.58579C2.96086 4.21071 3.46957 4 4 4H9L11 6H16C16.5304 6 17.0391 6.21071 17.4142 6.58579C17.7893 6.96086 18 7.46957 18 8V14C18 14.5304 17.7893 15.0391 17.4142 15.4142C17.0391 15.7893 16.5304 16 16 16H4C3.46957 16 2.96086 15.7893 2.58579 15.4142C2.21071 15.0391 2 14.5304 2 14V6Z" />
                 </Svg>
               </View>
-              <Text style={tailwind('mt-0.5 text-xs text-gray-500 font-normal leading-4')}>Move to...</Text>
+              <Text style={tailwind('mt-0.5 text-xs text-gray-500 font-normal leading-4')}>Move to</Text>
             </TouchableOpacity>
           </View>}
           <View style={tailwind('p-1 flex-1')}>

@@ -7,7 +7,7 @@ import {
 import {
   MY_LIST, TRASH, ARCHIVE, STATUS, ADDED, N_LINKS,
 } from '../types/const';
-import { _ } from '../utils';
+import { _, getAllListNames } from '../utils';
 
 const initialState = {
   [MY_LIST]: null,
@@ -41,7 +41,7 @@ const hasMoreLinksReducer = (state = initialState, action) => {
     const newState = {};
     if (doFetchSettings) {
       if (settings) {
-        for (const k of settings.listNameMap.map(obj => obj.listName)) {
+        for (const k of getAllListNames(settings.listNameMap)) {
           // Be careful as possible values are true, false, null, undefined
           newState[k] = state[k] === undefined ? null : state[k];
         }
@@ -77,7 +77,7 @@ const hasMoreLinksReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_SETTINGS || action.type === CANCEL_DIED_SETTINGS) {
     const { settings } = action.payload;
-    const listNames = settings.listNameMap.map(obj => obj.listName);
+    const listNames = getAllListNames(settings.listNameMap);
 
     const newState = {};
     for (const listName in state) {

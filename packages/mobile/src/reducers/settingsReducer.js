@@ -25,6 +25,7 @@ const settingsReducer = (state = initialState, action) => {
     if (!doFetchSettings) return state;
 
     const newState = settings ? { ...initialState, ...settings } : { ...initialState };
+    newState.listNameMap = copyListNameObjs(newState.listNameMap);
 
     let i = 1;
     for (const listName of listNames) {
@@ -39,7 +40,7 @@ const settingsReducer = (state = initialState, action) => {
     return loop(
       newState,
       Cmd.run(
-        updateFetchedSettings(newState),
+        updateFetchedSettings(),
         { args: [Cmd.dispatch, Cmd.getState] })
     );
   }

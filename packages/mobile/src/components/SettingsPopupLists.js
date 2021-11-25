@@ -20,7 +20,7 @@ import {
   SWAP_LEFT, SWAP_RIGHT, MODE_VIEW, MODE_EDIT,
 } from '../types/const';
 import { getListNameMap, makeGetListNameEditor } from '../selectors';
-import { validateListNameDisplayName } from '../utils';
+import { validateListNameDisplayName, getAllListNames } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 import { spListsAnimConfig } from '../types/animConfigs';
 import { initialListNameEditorState } from '../types/initialStates';
@@ -269,9 +269,11 @@ const _ListNameEditor = (props) => {
   useEffect(() => {
     const deleteListName = async () => {
       if (state.isCheckingCanDelete) {
-        const canDeletes = await canDeleteListNames([listNameObj.listName]);
-        const canDelete = canDeletes[0];
-        if (!canDelete) {
+        const listNames = [listNameObj.listName];
+        listNames.push(...getAllListNames(listNameObj.children));
+
+        const canDeletes = await canDeleteListNames(listNames);
+        if (!canDeletes.every(canDelete => canDelete === true)) {
           dispatch(updateListNameEditors({
             [key]: { msg: LIST_NAME_MSGS[IN_USE_LIST_NAME], isCheckingCanDelete: false },
           }));

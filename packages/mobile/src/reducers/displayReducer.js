@@ -7,7 +7,7 @@ import {
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK, EXTRACT_CONTENTS_COMMIT,
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
-  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS,
+  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
   UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME,
   DELETE_LIST_NAMES, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
   CANCEL_DIED_SETTINGS, UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
@@ -16,7 +16,6 @@ import {
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
-  BULK_EDIT_MOVE_TO_POPUP,
   MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING,
 } from '../types/const';
 import { doContainListName } from '../utils';
@@ -35,11 +34,11 @@ const initialState = {
   isSettingsPopupShown: false,
   isSettingsListsMenuPopupShown: false,
   settingsListsMenuPopupPosition: null,
-  isBulkEditMoveToPopupShown: false,
   status: null,
   isHandlingSignIn: false,
   isBulkEditing: false,
   selectedLinkIds: [],
+  selectingLinkId: null,
   selectingListName: null,
   deletingListName: null,
   fetchedListNames: [],
@@ -67,12 +66,11 @@ const displayReducer = (state = initialState, action) => {
       isSettingsPopupShown: false,
       isSettingsListsMenuPopupShown: false,
       settingsListsMenuPopupPosition: null,
-      isBulkEditMoveToPopupShown: false,
       status: null,
       isHandlingSignIn: false,
       isBulkEditing: false,
-      selectingLinkId: null,
       selectedLinkIds: [],
+      selectingLinkId: null,
       selectingListName: null,
       deletingListName: null,
       fetchedListNames: [],
@@ -110,7 +108,6 @@ const displayReducer = (state = initialState, action) => {
         isProfilePopupShown: isShown,
         isConfirmDeletePopupShown: isShown,
         isSettingsPopupShown: isShown,
-        isBulkEditMoveToPopupShown: isShown,
       };
       if (!isShown) {
         newState.isListNamesPopupShown = false;
@@ -148,6 +145,7 @@ const displayReducer = (state = initialState, action) => {
         listNamesPopupPosition: anchorPosition,
       };
       if (!isShown) {
+        newState.selectingLinkId = null;
         newState.selectingListName = null;
       }
       return newState;
@@ -171,10 +169,6 @@ const displayReducer = (state = initialState, action) => {
         isSettingsListsMenuPopupShown: isShown,
         settingsListsMenuPopupPosition: anchorPosition,
       };
-    }
-
-    if (id === BULK_EDIT_MOVE_TO_POPUP) {
-      return { ...state, isBulkEditMoveToPopupShown: isShown };
     }
 
     return state;
@@ -283,6 +277,10 @@ const displayReducer = (state = initialState, action) => {
     return { ...state, selectedLinkIds };
   }
 
+  if (action.type === UPDATE_SELECTING_LINK_ID) {
+    return { ...state, selectingLinkId: action.payload };
+  }
+
   if (action.type === UPDATE_SELECTING_LIST_NAME) {
     return { ...state, selectingListName: action.payload };
   }
@@ -299,11 +297,11 @@ const displayReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_SETTINGS) {
     const { settings } = action.payload;
-    const listNames = settings.listNameMap.map(obj => obj.listName);
+    const doContain = doContainListName(state.listName, settings.listNameMap);
 
     return {
       ...state,
-      listName: listNames.includes(state.listName) ? state.listName : MY_LIST,
+      listName: doContain ? state.listName : MY_LIST,
       status: UPDATE_SETTINGS,
       settingsStatus: UPDATING,
     };
@@ -319,11 +317,11 @@ const displayReducer = (state = initialState, action) => {
 
   if (action.type === CANCEL_DIED_SETTINGS) {
     const { settings } = action.payload;
-    const listNames = settings.listNameMap.map(obj => obj.listName);
+    const doContain = doContainListName(state.listName, settings.listNameMap);
 
     return {
       ...state,
-      listName: listNames.includes(state.listName) ? state.listName : MY_LIST,
+      listName: doContain ? state.listName : MY_LIST,
       status: null,
       settingsStatus: null,
     };

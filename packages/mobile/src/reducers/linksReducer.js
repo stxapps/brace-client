@@ -20,7 +20,7 @@ import {
   ADDED, MOVED, ADDING, MOVING, REMOVING, DELETING,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
 } from '../types/const';
-import { _, isEqual } from '../utils';
+import { _, isEqual, getAllListNames } from '../utils';
 import {
   tryUpdateFetched, tryUpdateFetchedMore, moveLinksDeleteStep, deleteOldLinksInTrash,
   extractContents, tryUpdateExtractedContents,
@@ -68,7 +68,7 @@ const linksReducer = (state = initialState, action) => {
       );
 
       // Care only status ADDED.
-      // Sort and get just first N based on doDescendingorder
+      // Sort and get just first N based on doDescendingOrder
       //   so be able to compare and do update or not.
       const ids = Object.keys(fetchedLinks).sort();
       if (action.payload.settings.doDescendingOrder) ids.reverse();
@@ -91,7 +91,7 @@ const linksReducer = (state = initialState, action) => {
     const newState = {};
     if (doFetchSettings) {
       if (settings) {
-        for (const k of settings.listNameMap.map(obj => obj.listName)) {
+        for (const k of getAllListNames(settings.listNameMap)) {
           newState[k] = state[k] || null;
         }
       } else {
@@ -427,7 +427,7 @@ const linksReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_SETTINGS || action.type === CANCEL_DIED_SETTINGS) {
     const { settings } = action.payload;
-    const listNames = settings.listNameMap.map(obj => obj.listName);
+    const listNames = getAllListNames(settings.listNameMap);
 
     const newState = {};
     for (const listName in state) {
