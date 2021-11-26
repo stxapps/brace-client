@@ -184,7 +184,7 @@ const SettingsListsMenuPopup = () => {
     </View>
   );
 
-  let popupClassNames = 'absolute w-36 mt-1 rounded-md shadow-lg bg-white z-30';
+  let popupClassNames = 'absolute w-36 mt-1 rounded-md bg-white shadow-xl';
   let panel;
   let bgStyle = { opacity: 0 };
   if (popupSize) {
@@ -241,12 +241,12 @@ const SettingsListsMenuPopup = () => {
   }
 
   return (
-    <React.Fragment>
+    <View style={tailwind('absolute inset-0 bg-transparent shadow-xl z-40')}>
       <TouchableWithoutFeedback onPress={onCancelBtnClick}>
-        <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25 z-30'), bgStyle]} />
+        <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>
       {panel}
-    </React.Fragment >
+    </View>
   );
 };
 

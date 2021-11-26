@@ -36,7 +36,6 @@ const ListNamesPopup = () => {
   const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isListNamesPopupShown);
   const anchorPosition = useSelector(state => state.display.listNamesPopupPosition);
-
   const listName = useSelector(state => state.display.listName);
   const selectingLinkId = useSelector(state => state.display.selectingLinkId);
   const selectedLinkIds = useSelector(state => state.display.selectedLinkIds);
@@ -48,6 +47,15 @@ const ListNamesPopup = () => {
   const [didCloseAnimEnd, setDidCloseAnimEnd] = useState(!isShown);
   const [derivedIsShown, setDerivedIsShown] = useState(isShown);
   const [derivedAnchorPosition, setDerivedAnchorPosition] = useState(anchorPosition);
+  const [derivedListName, setDerivedListName] = useState(listName);
+  const [derivedSelectingLinkId, setDerivedSelectingLinkId] = useState(selectingLinkId);
+  const [derivedSelectedLinkIds, setDerivedSelectedLinkIds] = useState(selectedLinkIds);
+  const [derivedSelectingListName, setDerivedSelectingListName] = useState(
+    selectingListName
+  );
+  const [derivedListNameMap, setDerivedListNameMap] = useState(listNameMap);
+  const [derivedUpdates, setDerivedUpdates] = useState(updates);
+
   const [forwardCount, setForwardCount] = useState(0);
   const [prevForwardCount, setPrevForwardCount] = useState(forwardCount);
   const [backCount, setBackCount] = useState(0);
@@ -59,26 +67,30 @@ const ListNamesPopup = () => {
   const dispatch = useDispatch();
 
   const mode = useMemo(() => {
-    if (selectingListName) return MODE_MOVE_LIST_NAME;
-    if (selectedLinkIds.length > 0) return MODE_MOVE_LINKS;
-    if (selectingLinkId) return MODE_MOVE_LINKS;
+    if (derivedSelectingListName) return MODE_MOVE_LIST_NAME;
+    if (derivedSelectedLinkIds.length > 0) return MODE_MOVE_LINKS;
+    if (derivedSelectingLinkId) return MODE_MOVE_LINKS;
     return MODE_CHANGE_LIST_NAME;
-  }, [selectingLinkId, selectedLinkIds, selectingListName]);
+  }, [derivedSelectingLinkId, derivedSelectedLinkIds, derivedSelectingListName]);
   const animType = useMemo(() => {
-    if (selectedLinkIds.length > 0 && safeAreaWidth < SM_WIDTH) return ANIM_TYPE_BMODAL;
+    if (derivedSelectedLinkIds.length > 0 && safeAreaWidth < SM_WIDTH) {
+      return ANIM_TYPE_BMODAL;
+    }
     return ANIM_TYPE_POPUP;
-  }, [selectedLinkIds, safeAreaWidth]);
+  }, [derivedSelectedLinkIds, safeAreaWidth]);
   const { listNameObj, parent, children } = useMemo(() => {
-    const { listNameObj: obj, parent: p } = getListNameObj(currentListName, listNameMap);
-    const c = currentListName === null ? listNameMap : obj.children;
+    const { listNameObj: obj, parent: p } = getListNameObj(
+      currentListName, derivedListNameMap
+    );
+    const c = currentListName === null ? derivedListNameMap : obj.children;
     return { listNameObj: obj, parent: p, children: c };
-  }, [currentListName, listNameMap]);
+  }, [currentListName, derivedListNameMap]);
   const longestDisplayName = useMemo(() => {
-    return getLongestListNameDisplayName(listNameMap);
-  }, [listNameMap]);
+    return getLongestListNameDisplayName(derivedListNameMap);
+  }, [derivedListNameMap]);
   const maxChildrenSize = useMemo(() => {
-    return getMaxListNameChildrenSize(listNameMap);
-  }, [listNameMap]);
+    return getMaxListNameChildrenSize(derivedListNameMap);
+  }, [derivedListNameMap]);
 
   const onCancelBtnClick = useCallback(() => {
     if (didClick.current) return;
@@ -90,9 +102,11 @@ const ListNamesPopup = () => {
     if (didClick.current) return;
     onCancelBtnClick();
     if (mode === MODE_MOVE_LIST_NAME) {
-      dispatch(moveToListName(selectingListName, selectedListName));
+      dispatch(moveToListName(derivedSelectingListName, selectedListName));
     } else if (mode === MODE_MOVE_LINKS) {
-      const ids = selectedLinkIds.length > 0 ? selectedLinkIds : [selectingLinkId];
+      let ids = [derivedSelectingLinkId];
+      if (derivedSelectedLinkIds.length > 0) ids = derivedSelectedLinkIds;
+
       dispatch(moveLinks(selectedListName, ids));
       dispatch(updateBulkEdit(false));
     } else if (mode === MODE_CHANGE_LIST_NAME) {
@@ -105,12 +119,14 @@ const ListNamesPopup = () => {
     if (didClick.current) return;
     onCancelBtnClick();
     if (mode === MODE_MOVE_LIST_NAME) {
-      dispatch(moveToListName(selectingListName, currentListName));
+      dispatch(moveToListName(derivedSelectingListName, currentListName));
     } else if (mode === MODE_MOVE_LINKS) {
       if (!currentListName) {
         throw new Error(`Invalid currentListName: ${currentListName}`);
       }
-      const ids = selectedLinkIds.length > 0 ? selectedLinkIds : [selectingLinkId];
+
+      let ids = [derivedSelectingLinkId];
+      if (derivedSelectedLinkIds.length > 0) ids = derivedSelectedLinkIds;
       dispatch(moveLinks(currentListName, ids));
       dispatch(updateBulkEdit(false));
     } else throw new Error(`Invalid mode: ${mode}`);
@@ -150,7 +166,7 @@ const ListNamesPopup = () => {
 
   useEffect(() => {
     let didMount = true;
-    if (isShown) {
+    if (derivedIsShown) {
       let animConfig = popupOpenAnimConfig;
       if (animType === ANIM_TYPE_BMODAL) animConfig = bModalOpenAnimConfig;
       Animated.spring(popupAnim, { toValue: 1, ...animConfig }).start(() => {
@@ -168,12 +184,12 @@ const ListNamesPopup = () => {
       });
     }
 
-    registerPopupBackHandler(isShown);
+    registerPopupBackHandler(derivedIsShown);
     return () => {
       didMount = false;
       registerPopupBackHandler(false);
     };
-  }, [isShown, popupAnim, animType, registerPopupBackHandler]);
+  }, [derivedIsShown, popupAnim, animType, registerPopupBackHandler]);
 
   useEffect(() => {
     Animated.timing(slideAnim, { toValue: 0, ...slideAnimConfig }).start();
@@ -182,23 +198,26 @@ const ListNamesPopup = () => {
   if (derivedIsShown !== isShown) {
     if (derivedIsShown && !isShown) setDidCloseAnimEnd(false);
     if (!derivedIsShown && isShown) {
-      if (mode === MODE_MOVE_LIST_NAME) {
+      setDerivedAnchorPosition(anchorPosition);
+      setDerivedListName(listName);
+      setDerivedSelectingLinkId(selectingLinkId);
+      setDerivedSelectedLinkIds(selectedLinkIds);
+      setDerivedSelectingListName(selectingListName);
+      setDerivedListNameMap(listNameMap);
+      setDerivedUpdates(updates);
+
+      if (selectingListName) {
         const { parent: p } = getListNameObj(selectingListName, listNameMap);
         setCurrentListName(p);
-      } else if ([MODE_MOVE_LINKS, MODE_CHANGE_LIST_NAME].includes(mode)) {
+      } else {
         const { parent: p } = getListNameObj(listName, listNameMap);
         setCurrentListName(p);
-      } else throw new Error(`Invalid mode: ${mode}`);
+      }
     }
     setDerivedIsShown(isShown);
   }
 
-  if (!isShown && didCloseAnimEnd) return null;
-
-  if (anchorPosition && anchorPosition !== derivedAnchorPosition) {
-    setDerivedAnchorPosition(anchorPosition);
-  }
-
+  if (!derivedIsShown && didCloseAnimEnd) return null;
   if (!derivedAnchorPosition) return null;
 
   if (forwardCount !== prevForwardCount) {
@@ -261,11 +280,13 @@ const ListNamesPopup = () => {
         {children.map(obj => {
           let disabled = false, forwardDisabled = false;
           if (mode === MODE_MOVE_LIST_NAME) {
-            const { parent: p } = getListNameObj(selectingListName, listNameMap);
-            disabled = [TRASH, selectingListName, p].includes(obj.listName);
-            forwardDisabled = [TRASH, selectingListName].includes(obj.listName);
+            const { parent: p } = getListNameObj(
+              derivedSelectingListName, derivedListNameMap
+            );
+            disabled = [TRASH, derivedSelectingListName, p].includes(obj.listName);
+            forwardDisabled = [TRASH, derivedSelectingListName].includes(obj.listName);
           } else if (mode === MODE_MOVE_LINKS) {
-            disabled = [TRASH, listName].includes(obj.listName);
+            disabled = [TRASH, derivedListName].includes(obj.listName);
             forwardDisabled = [TRASH].includes(obj.listName);
           }
 
@@ -273,7 +294,7 @@ const ListNamesPopup = () => {
             <View key={obj.listName} style={tailwind('w-full flex-row justify-start items-center')}>
               <TouchableOpacity onPress={() => onMoveToItemBtnClick(obj.listName)} style={tailwind(`flex-grow flex-shrink pl-4 ${btnClassNames} flex-row items-center`)} disabled={disabled}>
                 <Text style={tailwind(`text-sm font-normal ${disabled ? 'text-gray-400' : 'text-gray-700'}`)} numberOfLines={1} ellipsizeMode="tail">{obj.displayName}</Text>
-                {(mode === MODE_CHANGE_LIST_NAME && obj.listName in updates) && <View style={tailwind('ml-1 flex-grow-0 flex-shrink-0 self-start w-1.5 h-1.5 bg-blue-400 rounded-full')} />}
+                {(mode === MODE_CHANGE_LIST_NAME && obj.listName in derivedUpdates) && <View style={tailwind('ml-1 flex-grow-0 flex-shrink-0 self-start w-1.5 h-1.5 bg-blue-400 rounded-full')} />}
               </TouchableOpacity>
               {(obj.children && obj.children.length > 0) && <TouchableOpacity onPress={() => onForwardBtnClick(obj.listName)} style={tailwind('flex-grow-0 flex-shrink-0 w-10 h-10 justify-center items-center')} disabled={forwardDisabled}>
                 <Svg style={tailwind(`${forwardDisabled ? 'text-gray-300' : 'text-gray-500'} font-normal`)} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
@@ -302,10 +323,12 @@ const ListNamesPopup = () => {
 
     let moveHereDisabled = false;
     if (mode === MODE_MOVE_LIST_NAME) {
-      const { parent: p } = getListNameObj(selectingListName, listNameMap);
+      const { parent: p } = getListNameObj(derivedSelectingListName, derivedListNameMap);
       moveHereDisabled = [TRASH, p].includes(currentListName);
     } else if (mode === MODE_MOVE_LINKS) {
-      moveHereDisabled = !currentListName || [TRASH, listName].includes(currentListName)
+      moveHereDisabled = (
+        !currentListName || [TRASH, derivedListName].includes(currentListName)
+      );
     }
 
     const viewClassNames = animType === ANIM_TYPE_BMODAL ? 'h-14 pt-1' : 'h-11 pt-1';
@@ -337,10 +360,10 @@ const ListNamesPopup = () => {
 
   let panel;
   if (animType === ANIM_TYPE_BMODAL) {
-    popupHeight = popupHeight + insets.bottom + 64; // 64 for pb-16 and -bottom-12
+    popupHeight = popupHeight + insets.bottom + 48; // 48 for -bottom-12
     const popupStyle = {
       height: popupHeight,
-      paddingBottom: insets.bottom + 64,
+      paddingBottom: insets.bottom + 48,
       transform: [{
         translateY: popupAnim.interpolate({
           inputRange: [0, 1], outputRange: [popupHeight, 0],
@@ -349,7 +372,7 @@ const ListNamesPopup = () => {
     };
 
     panel = (
-      <Animated.View style={[tailwind('absolute inset-x-0 -bottom-12 bg-white border border-gray-100 rounded-t-lg shadow-xl z-41'), popupStyle]}>
+      <Animated.View style={[tailwind('absolute inset-x-0 -bottom-12 bg-white border border-gray-100 rounded-t-lg shadow-xl'), popupStyle]}>
         {_render()}
       </Animated.View>
     );
@@ -391,11 +414,33 @@ const ListNamesPopup = () => {
           inputRange: [0, 1], outputRange: [-1 * popupHeight / 2, 0],
         }),
       });
+    } else if (originClassName === 'origin-bottom-left') {
+      popupStyle.transform.push({
+        translateX: popupAnim.interpolate({
+          inputRange: [0, 1], outputRange: [-1 * popupWidth / 2, 0],
+        }),
+      });
+      popupStyle.transform.push({
+        translateY: popupAnim.interpolate({
+          inputRange: [0, 1], outputRange: [popupHeight / 2, 0],
+        }),
+      });
+    } else if (originClassName === 'origin-bottom-right') {
+      popupStyle.transform.push({
+        translateX: popupAnim.interpolate({
+          inputRange: [0, 1], outputRange: [popupWidth / 2, 0],
+        }),
+      });
+      popupStyle.transform.push({
+        translateY: popupAnim.interpolate({
+          inputRange: [0, 1], outputRange: [popupHeight / 2, 0],
+        }),
+      });
     }
     popupStyle.transform.push({ scale: popupAnim });
 
     panel = (
-      <Animated.View style={[tailwind('absolute mt-1 rounded-md shadow-lg bg-white z-41'), popupStyle]}>
+      <Animated.View style={[tailwind('absolute mt-1 rounded-md bg-white shadow-xl'), popupStyle]}>
         {_render()}
       </Animated.View>
     );
@@ -404,12 +449,12 @@ const ListNamesPopup = () => {
   const bgStyle = { opacity: popupAnim };
 
   return (
-    <React.Fragment>
+    <View style={tailwind('absolute inset-0 bg-transparent shadow-xl z-40')}>
       <TouchableWithoutFeedback onPress={onCancelBtnClick}>
-        <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25 z-40'), bgStyle]} />
+        <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>
       {panel}
-    </React.Fragment >
+    </View>
   );
 };
 

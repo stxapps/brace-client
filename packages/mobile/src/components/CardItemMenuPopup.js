@@ -130,7 +130,7 @@ class CardItemMenuPopup extends React.PureComponent {
       <Menu renderer={MenuPopupRenderer} rendererProps={cache('CIMP_menuRendererProps', { triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 } })} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
         <MenuTrigger>
           {/* View with paddingBottom is required because there is this space on the web. */}
-          <View ref={this.menuBtn} style={cache('CIMP_menuTriggerViewStyle', { paddingBottom: 6 })}>
+          <View ref={this.menuBtn} style={cache('CIMP_menuTriggerViewStyle', { paddingBottom: 6 })} collapsable={false}>
             {/* Change the paddings here, need to change triggerOffsets too */}
             <View style={tailwind('pt-2 pb-0 pl-4 pr-2 flex-shrink-0 flex-grow-0')}>
               <Svg style={tailwind('text-gray-400 font-normal rounded-full')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">

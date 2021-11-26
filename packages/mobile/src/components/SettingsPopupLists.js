@@ -17,7 +17,7 @@ import {
   VALID_LIST_NAME, IN_USE_LIST_NAME,
   NO_LIST_NAME, TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME,
   SETTINGS_LISTS_MENU_POPUP, CONFIRM_DELETE_POPUP,
-  SWAP_LEFT, SWAP_RIGHT, MODE_VIEW, MODE_EDIT,
+  SWAP_LEFT, SWAP_RIGHT, MODE_VIEW, MODE_EDIT, SM_WIDTH,
 } from '../types/const';
 import { getListNameMap, makeGetListNameEditor } from '../selectors';
 import { validateListNameDisplayName, getAllListNames } from '../utils';
@@ -304,9 +304,12 @@ const _ListNameEditor = (props) => {
     }
   }
 
+  const tabWidth = safeAreaWidth < SM_WIDTH ? 16 : 32;
+  const viewStyle = { paddingLeft: tabWidth * level };
+
   return (
     <React.Fragment>
-      <View style={[tailwind('mt-1 flex-row justify-start items-center'), { paddingLeft: 12 * level }]}>
+      <View style={[tailwind('mt-1 flex-row justify-start items-center'), viewStyle]}>
         {(state.mode === MODE_VIEW && listNameObj === null) && <TouchableOpacity onPress={onAddBtnClick} style={tailwind('flex-grow-0 flex-shrink-0 flex-row justify-start items-center w-8 h-10')}>
           <Svg style={tailwind('text-gray-500 font-normal')} width={14} height={14} viewBox="0 0 14 14" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M7 0C7.5523 0 8 0.44772 8 1V6H13C13.5523 6 14 6.44772 14 7C14 7.5523 13.5523 8 13 8H8V13C8 13.5523 7.5523 14 7 14C6.44772 14 6 13.5523 6 13V8H1C0.44772 8 0 7.5523 0 7C0 6.44771 0.44772 6 1 6H6V1C6 0.44772 6.44772 0 7 0Z" />

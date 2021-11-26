@@ -825,10 +825,8 @@ This and CI/CD are very important!
 ** Access the instance
 - gcloud compute ssh --zone=us-central1-a brace-server-worker
 ** Setup the instance
-- apt update, apt upgrade
-  + no need sudo as now it's root user
+- sudo apt update, sudo apt upgrade
 - install nvm, nodejs, yarn
-- sudo apt install chromium-browser
 - git clone https://github.com/bracedotto/brace-server-worker.git
 - cd brace-server-worker
 - git pull
@@ -849,8 +847,8 @@ This and CI/CD are very important!
 - Under VM instances, select tab Instance Schedule
   + Name: brace-server-worker-scheduler
   + Region: us-central1
-  + Start CRON expression: 17 * * * *
-  + Stop CRON expression: 0 * * * * (at least 15 mins apart)
+  + Start CRON expression: 0 * * * *
+  + Stop CRON expression: 20 * * * * (at least 15 mins apart)
   + Time zone: Indochina Time (ICT)
   + Add the instance to the schedule
 - ref: cloud.google.com/compute/docs/instances/schedule-instance-start-stop

@@ -193,7 +193,7 @@ class CardPanel extends React.PureComponent {
         <AnimateSharedLayout>
           {colData.map((colItems, i) => {
             return (
-              <div key={`col-${i}`} className={`w-full ${columnClassNames}`}>
+              <div key={`col-${i}`} className={`w-full ${columnClassNames} min-w-0`}>
                 {colItems.map(link => {
                   return (
                     <motion.div key={link.id} layoutId={link.id} variants={cardItemFMV} initial="hidden" animate="visible">

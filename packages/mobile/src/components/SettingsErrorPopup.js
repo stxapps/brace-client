@@ -25,7 +25,7 @@ const SettingsErrorPopup = () => {
   if (settingsStatus !== DIED_UPDATING) return null;
 
   return (
-    <View style={tailwind('absolute top-14 inset-x-0 flex-row justify-center items-start md:top-0 z-41', safeAreaWidth)}>
+    <View style={tailwind('absolute top-14 inset-x-0 flex-row justify-center items-start bg-transparent shadow-xl z-40 md:top-0', safeAreaWidth)}>
       <View style={tailwind('w-full max-w-md')}>
         <View style={tailwind('m-4 p-4 bg-red-50 rounded-md shadow-lg')}>
           <View style={tailwind('flex-row')}>
