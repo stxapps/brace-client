@@ -14,9 +14,9 @@ import {
   updateDeletingListName, updateListNameEditors, updatePopup,
 } from '../actions';
 import {
-  MY_LIST, TRASH, ARCHIVE, VALID_LIST_NAME, IN_USE_LIST_NAME,
+  VALID_LIST_NAME, IN_USE_LIST_NAME,
   NO_LIST_NAME, TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME,
-  SETTINGS_LISTS_MENU_POPUP, LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP,
+  SETTINGS_LISTS_MENU_POPUP, CONFIRM_DELETE_POPUP,
   SWAP_LEFT, SWAP_RIGHT, MODE_VIEW, MODE_EDIT,
 } from '../types/const';
 import { getListNameMap, makeGetListNameEditor } from '../selectors';
@@ -218,22 +218,6 @@ const _ListNameEditor = (props) => {
     dispatch(moveListName(listNameObj.listName, SWAP_RIGHT));
   };
 
-  const onMoveToBtnClick = () => {
-    menuBtn.current.measure((_fx, _fy, width, height, x, y) => {
-      const rect = {
-        x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
-      };
-      dispatch(updateSelectingListName(listNameObj.listName));
-      dispatch(updatePopup(LIST_NAMES_POPUP, true, rect));
-    });
-  };
-
-  const onDeleteBtnClick = () => {
-    dispatch(updateListNameEditors({
-      [key]: { isCheckingCanDelete: true },
-    }));
-  };
-
   const onMenuBtnClick = () => {
     menuBtn.current.measure((_fx, _fy, width, height, x, y) => {
       const rect = {
@@ -350,26 +334,16 @@ const _ListNameEditor = (props) => {
           </Svg>
         </TouchableOpacity>}
         {(state.mode === MODE_VIEW && listNameObj !== null) && <TouchableOpacity onPress={onMoveUpBtnClick} style={tailwind('flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10 hidden lg:flex', safeAreaWidth)} disabled={isBusy}>
-          <Svg style={tailwind('text-gray-500 font-normal')} width={14} height={16} viewBox="0 0 14 16" fill="currentColor">
+          <Svg style={tailwind('text-gray-500 font-normal')} width={16} height={18} viewBox="0 0 14 16" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M0 15C0 14.4477 0.44772 14 1 14H13C13.5523 14 14 14.4477 14 15C14 15.5523 13.5523 16 13 16H1C0.44772 16 0 15.5523 0 15ZM3.29289 4.70711C2.90237 4.31658 2.90237 3.68342 3.29289 3.29289L6.29289 0.29289C6.48043 0.10536 6.73478 0 7 0C7.2652 0 7.5196 0.10536 7.7071 0.29289L10.7071 3.29289C11.0976 3.68342 11.0976 4.31658 10.7071 4.70711C10.3166 5.09763 9.6834 5.09763 9.2929 4.70711L8 3.41421V11C8 11.5523 7.5523 12 7 12C6.44771 12 6 11.5523 6 11V3.41421L4.70711 4.70711C4.31658 5.09763 3.68342 5.09763 3.29289 4.70711Z" />
           </Svg>
         </TouchableOpacity>}
         {(state.mode === MODE_VIEW && listNameObj !== null) && <TouchableOpacity onPress={onMoveDownBtnClick} style={tailwind('flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10 hidden lg:flex', safeAreaWidth)} disabled={isBusy}>
-          <Svg style={tailwind('text-gray-500 font-normal')} width={14} height={16} viewBox="0 0 14 16" fill="currentColor">
+          <Svg style={tailwind('text-gray-500 font-normal')} width={16} height={18} viewBox="0 0 14 16" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M0 15C0 14.4477 0.44772 14 1 14H13C13.5523 14 14 14.4477 14 15C14 15.5523 13.5523 16 13 16H1C0.44772 16 0 15.5523 0 15ZM3.29289 7.29289C3.68342 6.90237 4.31658 6.90237 4.70711 7.29289L6 8.5858V1C6 0.44772 6.44771 0 7 0C7.5523 0 8 0.44771 8 1V8.5858L9.2929 7.29289C9.6834 6.90237 10.3166 6.90237 10.7071 7.29289C11.0976 7.68342 11.0976 8.3166 10.7071 8.7071L7.7071 11.7071C7.5196 11.8946 7.2652 12 7 12C6.73478 12 6.48043 11.8946 6.29289 11.7071L3.29289 8.7071C2.90237 8.3166 2.90237 7.68342 3.29289 7.29289Z" />
           </Svg>
         </TouchableOpacity>}
-        {(state.mode === MODE_VIEW && listNameObj !== null) && <TouchableOpacity onPress={onMoveToBtnClick} style={tailwind('flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10 hidden lg:flex', safeAreaWidth)} disabled={isBusy}>
-          <Svg style={tailwind('text-gray-500 font-normal')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
-            <Path d="M2 6C2 5.46957 2.21071 4.96086 2.58579 4.58579C2.96086 4.21071 3.46957 4 4 4H9L11 6H16C16.5304 6 17.0391 6.21071 17.4142 6.58579C17.7893 6.96086 18 7.46957 18 8V14C18 14.5304 17.7893 15.0391 17.4142 15.4142C17.0391 15.7893 16.5304 16 16 16H4C3.46957 16 2.96086 15.7893 2.58579 15.4142C2.21071 15.0391 2 14.5304 2 14V6Z" />
-          </Svg>
-        </TouchableOpacity>}
-        {(state.mode === MODE_VIEW && listNameObj !== null && ![MY_LIST, TRASH, ARCHIVE].includes(listNameObj.listName)) && <TouchableOpacity onPress={onDeleteBtnClick} style={tailwind('flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10 hidden lg:flex', safeAreaWidth)} disabled={isBusy}>
-          <Svg style={tailwind('text-gray-500 font-normal')} width={14} height={16} viewBox="0 0 14 16" fill="currentColor">
-            <Path fillRule="evenodd" clipRule="evenodd" d="M6 0C5.62123 0 5.27497 0.214 5.10557 0.55279L4.38197 2H1C0.44772 2 0 2.44772 0 3C0 3.55228 0.44772 4 1 4V14C1 15.1046 1.89543 16 3 16H11C12.1046 16 13 15.1046 13 14V4C13.5523 4 14 3.55228 14 3C14 2.44772 13.5523 2 13 2H9.618L8.8944 0.55279C8.725 0.214 8.3788 0 8 0H6ZM4 6C4 5.44772 4.44772 5 5 5C5.55228 5 6 5.44772 6 6V12C6 12.5523 5.55228 13 5 13C4.44772 13 4 12.5523 4 12V6ZM9 5C8.4477 5 8 5.44772 8 6V12C8 12.5523 8.4477 13 9 13C9.5523 13 10 12.5523 10 12V6C10 5.44772 9.5523 5 9 5Z" />
-          </Svg>
-        </TouchableOpacity>}
-        {(state.mode === MODE_VIEW && listNameObj !== null) && <TouchableOpacity ref={menuBtn} onPress={onMenuBtnClick} style={tailwind('flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10 lg:hidden', safeAreaWidth)} disabled={isBusy}>
+        {(state.mode === MODE_VIEW && listNameObj !== null) && <TouchableOpacity ref={menuBtn} onPress={onMenuBtnClick} style={tailwind('flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10')} disabled={isBusy}>
           <Svg style={tailwind('text-gray-500 font-normal')} width={18} height={18} viewBox="0 0 20 20" fill="currentColor">
             <Path d="M10 6C9.46957 6 8.96086 5.78929 8.58579 5.41421C8.21071 5.03914 8 4.53043 8 4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2C10.5304 2 11.0391 2.21071 11.4142 2.58579C11.7893 2.96086 12 3.46957 12 4C12 4.53043 11.7893 5.03914 11.4142 5.41421C11.0391 5.78929 10.5304 6 10 6ZM10 12C9.46957 12 8.96086 11.7893 8.58579 11.4142C8.21071 11.0391 8 10.5304 8 10C8 9.46957 8.21071 8.96086 8.58579 8.58579C8.96086 8.21071 9.46957 8 10 8C10.5304 8 11.0391 8.21071 11.4142 8.58579C11.7893 8.96086 12 9.46957 12 10C12 10.5304 11.7893 11.0391 11.4142 11.4142C11.0391 11.7893 10.5304 12 10 12ZM10 18C9.46957 18 8.96086 17.7893 8.58579 17.4142C8.21071 17.0391 8 16.5304 8 16C8 15.4696 8.21071 14.9609 8.58579 14.5858C8.96086 14.2107 9.46957 14 10 14C10.5304 14 11.0391 14.2107 11.4142 14.5858C11.7893 14.9609 12 15.4696 12 16C12 16.5304 11.7893 17.0391 11.4142 17.4142C11.0391 17.7893 10.5304 18 10 18Z" />
           </Svg>

@@ -10,7 +10,7 @@ import Svg, { Path } from 'react-native-svg';
 import {
   updatePopup, updateBulkEdit, changeListName, moveLinks, moveToListName,
 } from '../actions';
-import { LIST_NAMES_POPUP, SM_WIDTH } from '../types/const';
+import { LIST_NAMES_POPUP, TRASH, SM_WIDTH } from '../types/const';
 import { getListNameMap } from '../selectors';
 import {
   getLastHalfHeight, getListNameObj, getLongestListNameDisplayName,
@@ -262,11 +262,11 @@ const ListNamesPopup = () => {
           let disabled = false, forwardDisabled = false;
           if (mode === MODE_MOVE_LIST_NAME) {
             const { parent: p } = getListNameObj(selectingListName, listNameMap);
-            disabled = (obj.listName === selectingListName || obj.listName === p);
-            forwardDisabled = obj.listName === selectingListName;
+            disabled = [TRASH, selectingListName, p].includes(obj.listName);
+            forwardDisabled = [TRASH, selectingListName].includes(obj.listName);
           } else if (mode === MODE_MOVE_LINKS) {
-            disabled = obj.listName === listName;
-            forwardDisabled = false;
+            disabled = [TRASH, listName].includes(obj.listName);
+            forwardDisabled = [TRASH].includes(obj.listName);
           }
 
           return (
@@ -303,9 +303,9 @@ const ListNamesPopup = () => {
     let moveHereDisabled = false;
     if (mode === MODE_MOVE_LIST_NAME) {
       const { parent: p } = getListNameObj(selectingListName, listNameMap);
-      moveHereDisabled = (currentListName === p);
+      moveHereDisabled = [TRASH, p].includes(currentListName);
     } else if (mode === MODE_MOVE_LINKS) {
-      moveHereDisabled = currentListName === listName || !currentListName;
+      moveHereDisabled = !currentListName || [TRASH, listName].includes(currentListName)
     }
 
     const viewClassNames = animType === ANIM_TYPE_BMODAL ? 'h-14 pt-1' : 'h-11 pt-1';
