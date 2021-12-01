@@ -2,11 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion";
 
-import { updatePopup, moveLinks } from '../actions';
+import { updatePopup, updateSelectingLinkId, moveLinks } from '../actions';
 import {
   MY_LIST, TRASH, ADDING, MOVING,
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
-  CARD_ITEM_POPUP_MENU, CONFIRM_DELETE_POPUP,
+  CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP,
 } from '../types/const';
 import { getListNameMap, getPopupLink } from '../selectors';
 import {
@@ -80,7 +80,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
   populateMenu() {
 
-    const { listName, listNameMap, popupLink } = this.props;
+    const { listName, popupLink } = this.props;
 
     let menu = null;
     if (listName in CARD_ITEM_POPUP_MENU) {
@@ -92,25 +92,13 @@ class CardItemMenuPopup extends React.PureComponent {
       menu = menu.slice(0, 2);
     }
 
-    const moveTo = [];
-    if (menu.includes(MOVE_TO)) {
-      for (const listNameObj of listNameMap) {
-        if ([TRASH, ARCHIVE].includes(listNameObj.listName)) continue;
-        if (listName === listNameObj.listName) continue;
-
-        moveTo.push(listNameObj);
-      }
-    }
-
-    menu = menu.filter(text => text !== MOVE_TO);
-
-    return { menu, moveTo };
+    return { menu };
   }
 
   onMenuPopupClick = (text) => {
     if (!text || this.didClick) return;
 
-    const { id, url } = this.props.popupLink;
+    const { id, url, popupAnchorPosition } = this.props.popupLink;
 
     if (text === OPEN) {
       window.open(ensureContainUrlProtocol(url));
@@ -125,8 +113,19 @@ class CardItemMenuPopup extends React.PureComponent {
     } else if (text === DELETE) {
       this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
       return;
-    } else if (text.startsWith(MOVE_TO)) {
-      this.props.moveLinks(text.substring(MOVE_TO.length + 1), [id]);
+    } else if (text === MOVE_TO) {
+      this.props.updateSelectingLinkId(id);
+
+      const newX = popupAnchorPosition.x + 16;
+      const newY = popupAnchorPosition.y + 8;
+      const rect = {
+        x: newX, y: newY,
+        width: popupAnchorPosition.width - 16 - 8,
+        height: popupAnchorPosition.height - 8,
+        top: newY, bottom: popupAnchorPosition.bottom,
+        left: newX, right: popupAnchorPosition.right - 8,
+      };
+      this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
     } else {
       throw new Error(`Invalid text: ${text}`);
     }
@@ -144,20 +143,7 @@ class CardItemMenuPopup extends React.PureComponent {
   renderMenu() {
 
     const { listNameMap } = this.props;
-    const { menu, moveTo } = this.populateMenu();
-
-    let _moveTo = null;
-    if (moveTo && moveTo.length) {
-      _moveTo = (
-        <React.Fragment>
-          <div className="py-2 pl-4 pr-4 block w-full text-sm text-gray-700 text-left">Move to...</div>
-          {moveTo.map(listNameObj => {
-            const key = MOVE_TO + ' ' + listNameObj.listName;
-            return <button key={key} onClick={() => this.onMenuPopupClick(key)} className="py-2 pl-8 pr-4 block w-full text-sm text-gray-700 text-left truncate rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">{listNameObj.displayName}</button>;
-          })}
-        </React.Fragment>
-      );
-    }
+    const { menu } = this.populateMenu();
 
     return (
       <React.Fragment>
@@ -166,7 +152,6 @@ class CardItemMenuPopup extends React.PureComponent {
           if (text === ARCHIVE) displayText = getListNameDisplayName(text, listNameMap);
           return <button key={text} onClick={() => this.onMenuPopupClick(text)} className="py-2 pl-4 pr-4 block w-full text-sm text-gray-700 text-left truncate rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">{displayText}</button>;
         })}
-        {_moveTo}
       </React.Fragment>
     );
   }
@@ -232,6 +217,6 @@ const mapStateToProps = (state, props) => {
   }
 };
 
-const mapDispatchToProps = { updatePopup, moveLinks };
+const mapDispatchToProps = { updatePopup, updateSelectingLinkId, moveLinks };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardItemMenuPopup);

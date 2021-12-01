@@ -4,13 +4,11 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import { updatePopup, updateBulkEdit, moveLinks } from '../actions';
 import {
-  CONFIRM_DELETE_POPUP, BULK_EDIT_MOVE_TO_POPUP, MY_LIST, ARCHIVE, TRASH,
+  CONFIRM_DELETE_POPUP, LIST_NAMES_POPUP, MY_LIST, ARCHIVE, TRASH,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
 import { getListNameDisplayName } from '../utils';
 import { ccPopupFMV } from '../types/animConfigs';
-
-import TopBarBulkEditMoveToPopup from './TopBarBulkEditMoveToPopup';
 
 class TopBarBulkEditCommands extends React.Component {
 
@@ -93,9 +91,17 @@ class TopBarBulkEditCommands extends React.Component {
     this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
   }
 
-  onBulkEditMoveToBtnClick = () => {
+  onBulkEditMoveToBtnClick = (e) => {
     if (this.checkNoLinkIdSelected()) return;
-    this.props.updatePopup(BULK_EDIT_MOVE_TO_POPUP, true);
+    const _rect = e.currentTarget.getBoundingClientRect();
+    // Hacky to make sure the popup overlap all the button
+    const rect = {
+      x: _rect.x - 4, y: _rect.y - 8,
+      width: _rect.width + 8, height: _rect.height,
+      top: _rect.top - 8, bottom: _rect.bottom - 8,
+      left: _rect.left - 4, right: _rect.right + 4,
+    };
+    this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
   }
 
   onBulkEditCancelBtnClick = () => {
@@ -195,10 +201,9 @@ class TopBarBulkEditCommands extends React.Component {
               <svg style={svgStyle} className="text-gray-500 group-hover:text-gray-600" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 6C2 4.89543 2.89543 4 4 4H9L11 6H16C17.1046 6 18 6.89543 18 8V14C18 15.1046 17.1046 16 16 16H4C2.89543 16 2 15.1046 2 14V6Z" />
               </svg>
-              <span className="ml-1 text-sm text-gray-500 group-hover:text-gray-600">Move to...</span>
+              <span className="ml-1 text-sm text-gray-500 group-hover:text-gray-600">Move to</span>
             </div>
           </button>
-          <TopBarBulkEditMoveToPopup />
         </div>}
         <button onClick={this.onBulkEditCancelBtnClick} className={`ml-1 w-10 h-8 group focus:outline-none`}>
           <svg className="mx-auto w-6 h-6 text-gray-400 rounded-full group-hover:text-gray-500 group-focus:ring" viewBox="0 0 28 28" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

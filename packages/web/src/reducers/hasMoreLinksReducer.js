@@ -1,14 +1,13 @@
 import { REHYDRATE } from 'redux-persist/constants';
 
 import {
-  FETCH_COMMIT, UPDATE_FETCHED, UPDATE_FETCHED_MORE,
-  ADD_LIST_NAMES_COMMIT, DELETE_LIST_NAMES_COMMIT,
-  DELETE_ALL_DATA, RESET_STATE,
+  FETCH_COMMIT, UPDATE_FETCHED, UPDATE_FETCHED_MORE, UPDATE_SETTINGS,
+  CANCEL_DIED_SETTINGS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   MY_LIST, TRASH, ARCHIVE, STATUS, ADDED, N_LINKS,
 } from '../types/const';
-import { _ } from '../utils';
+import { _, getAllListNames } from '../utils';
 
 const initialState = {
   [MY_LIST]: null,
@@ -42,7 +41,7 @@ const hasMoreLinksReducer = (state = initialState, action) => {
     const newState = {};
     if (doFetchSettings) {
       if (settings) {
-        for (const k of settings.listNameMap.map(obj => obj.listName)) {
+        for (const k of getAllListNames(settings.listNameMap)) {
           // Be careful as possible values are true, false, null, undefined
           newState[k] = state[k] === undefined ? null : state[k];
         }
@@ -76,27 +75,19 @@ const hasMoreLinksReducer = (state = initialState, action) => {
     return { ...state, [listName]: hasMore };
   }
 
-  if (action.type === ADD_LIST_NAMES_COMMIT) {
-
-    const { listNameObjs } = action.meta;
-
-    const newState = { ...state };
-    for (const k of listNameObjs.map(obj => obj.listName)) {
-      // Be careful as possible values are true, false, null, undefined
-      newState[k] = state[k] === undefined ? null : state[k];
-    }
-
-    return newState;
-  }
-
-  if (action.type === DELETE_LIST_NAMES_COMMIT) {
-
-    const { listNames } = action.meta;
+  if (action.type === UPDATE_SETTINGS || action.type === CANCEL_DIED_SETTINGS) {
+    const { settings } = action.payload;
+    const listNames = getAllListNames(settings.listNameMap);
 
     const newState = {};
     for (const listName in state) {
-      if (listNames.includes(listName)) continue;
+      if (!listNames.includes(listName)) continue;
       newState[listName] = state[listName];
+    }
+
+    for (const k of listNames) {
+      // Be careful as possible values are true, false, null, undefined
+      if (newState[k] === undefined) newState[k] = null;
     }
 
     return newState;

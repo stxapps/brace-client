@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion";
 
-import { signOut, updatePopup, updateBulkEdit } from '../actions';
-import { PROFILE_POPUP, SETTINGS_POPUP } from '../types/const';
+import { signOut, updatePopup, updateSettingsPopup, updateBulkEdit } from '../actions';
+import { PROFILE_POPUP } from '../types/const';
 import { popupBgFMV, trPopupFMV } from '../types/animConfigs';
 
 import TopBarAddPopup from './TopBarAddPopup';
@@ -25,7 +25,7 @@ class TopBarCommands extends React.PureComponent {
 
   onSettingsBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
-    this.props.updatePopup(SETTINGS_POPUP, true);
+    this.props.updateSettingsPopup(true);
   }
 
   onSupportBtnClick = () => {
@@ -94,6 +94,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { signOut, updatePopup, updateBulkEdit };
+const mapDispatchToProps = { signOut, updatePopup, updateSettingsPopup, updateBulkEdit };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TopBarCommands);

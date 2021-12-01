@@ -16,10 +16,10 @@ export const SIGN_IN_POPUP = 'SIGN_IN_POPUP';
 export const ADD_POPUP = 'ADD_POPUP';
 export const SEARCH_POPUP = 'SEARCH_POPUP';
 export const PROFILE_POPUP = 'PROFILE_POPUP';
-export const LIST_NAME_POPUP = 'LIST_NAME_POPUP';
+export const LIST_NAMES_POPUP = 'LIST_NAMES_POPUP';
 export const CONFIRM_DELETE_POPUP = 'CONFIRM_DELETE_POPUP';
 export const SETTINGS_POPUP = 'SETTINGS_POPUP';
-export const BULK_EDIT_MOVE_TO_POPUP = 'BULK_EDIT_MOVE_TO_POPUP';
+export const SETTINGS_LISTS_MENU_POPUP = 'SETTINGS_LISTS_MENU_POPUP';
 
 export const IS_POPUP_SHOWN = 'isPopupShown';
 export const POPUP_ANCHOR_POSITION = 'popupAnchorPosition';
@@ -149,14 +149,6 @@ export const TOO_LONG_LIST_NAME = 'TOO_LONG_LIST_NAME';
 export const DUPLICATE_LIST_NAME = 'DUPLICATE_LIST_NAME';
 export const IN_USE_LIST_NAME = 'IN_USE_LIST_NAME';
 
-export const LIST_NAME_MSGS = {
-  [VALID_LIST_NAME]: '',
-  [NO_LIST_NAME]: 'List is blank',
-  [TOO_LONG_LIST_NAME]: 'List is too long',
-  [DUPLICATE_LIST_NAME]: 'List already exists',
-  [IN_USE_LIST_NAME]: 'List is in use',
-};
-
 export const SWAP_LEFT = 'SWAP_LEFT';
 export const SWAP_RIGHT = 'SWAP_RIGHT';
 
@@ -170,3 +162,6 @@ export const EDGE_TRIGGER = 'EDGE_TRIGGER'; // bottom or right of the trigger
 
 export const APP_GROUP_SHARE = 'group.bracedotto.share';
 export const APP_GROUP_SHARE_UKEY = 'uKey';
+
+export const MODE_VIEW = 'MODE_VIEW';
+export const MODE_EDIT = 'MODE_EDIT';

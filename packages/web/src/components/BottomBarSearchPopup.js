@@ -91,7 +91,7 @@ const mapStateToProps = (state, props) => {
 
   return {
     searchString: state.display.searchString,
-    isBottomBarShown: popupLink === null,
+    isBottomBarShown: popupLink === null && state.display.selectingLinkId === null,
     isSearchPopupShown: state.display.isSearchPopupShown,
   };
 };

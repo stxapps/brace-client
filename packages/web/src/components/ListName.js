@@ -1,128 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { motion, AnimatePresence } from "framer-motion";
 
-import { changeListName, updatePopup } from '../actions';
-import { LIST_NAME_POPUP, SM_WIDTH, LG_WIDTH } from '../types/const';
+import { updatePopup } from '../actions';
+import { LIST_NAMES_POPUP, SM_WIDTH, LG_WIDTH } from '../types/const';
 import { getListNameMap } from '../selectors';
-import { getListNameDisplayName, isEqual, getLastHalfHeight } from '../utils';
-import { popupBgFMV, tlPopupFMV } from '../types/animConfigs';
+import { getListNameDisplayName } from '../utils';
 
 import { getTopBarSizes } from '.';
 
 class ListName extends React.PureComponent {
 
-  constructor(props) {
-    super(props);
-
-    this.state = { menuPopupSize: null };
-    this.menuPopup = React.createRef();
-  }
-
-  componentDidMount() {
-    this.updateState(this.props.isListNamePopupShown);
-  }
-
-  componentDidUpdate(prevProps) {
-    if (!prevProps.isListNamePopupShown && this.props.isListNamePopupShown) {
-      this.updateState(true);
-    }
-
-    if (prevProps.isListNamePopupShown && !this.props.isListNamePopupShown) {
-      this.updateState(false);
-    }
-  }
-
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (!this.props.isListNamePopupShown && nextProps.isListNamePopupShown) {
-      this.setState({ menuPopupSize: null });
-    }
-  }
-
-  componentWillUnmount() {
-    this.updateState(false);
-  }
-
-  updateState(isShown) {
-    if (isShown) {
-      const menuPopupSize = this.menuPopup.current.getBoundingClientRect();
-      if (!isEqual(menuPopupSize, this.state.menuPopupSize)) {
-        this.setState({ menuPopupSize });
-      }
-    }
-  }
-
-  onListNameBtnClick = () => {
-    this.props.updatePopup(LIST_NAME_POPUP, true);
+  onListNameBtnClick = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
     if (window.document.activeElement instanceof HTMLElement) {
       window.document.activeElement.blur();
     }
   };
-
-  onListNamePopupClick = (newListName) => {
-    if (!newListName) return;
-
-    this.props.changeListName(newListName);
-    this.props.updatePopup(LIST_NAME_POPUP, false);
-  };
-
-  onListNameCancelBtnClick = () => {
-    this.props.updatePopup(LIST_NAME_POPUP, false);
-  };
-
-  renderMenu() {
-
-    const { listNameMap, updates } = this.props;
-
-    return listNameMap.map(listNameObj => {
-      return (
-        <button key={listNameObj.listName} onClick={() => this.onListNamePopupClick(listNameObj.listName)} className="py-2 pl-4 pr-4 flex items-center w-full rounded-md group hover:bg-gray-100 focus:outline-none focus:ring focus:ring-inset">
-          <div className="text-sm text-gray-700 truncate group-hover:text-gray-900">{listNameObj.displayName}</div>
-          {listNameObj.listName in updates && <div className="ml-1 flex-grow-0 flex-shrink-0 self-start w-1.5 h-1.5 bg-blue-400 rounded-full" />}
-        </button>
-      );
-    });
-  }
-
-  renderListNamePopup() {
-
-    const { isListNamePopupShown } = this.props;
-    if (!isListNamePopupShown) return (
-      <AnimatePresence key="AnimatePresence_ListNamePopup" />
-    );
-
-    const { menuPopupSize } = this.state;
-    const menuPopupClassNames = 'py-2 absolute top-0 left-0 min-w-28 max-w-64 bg-white border border-gray-100 rounded-lg shadow-xl overflow-auto z-41';
-
-    let menuPopup;
-    if (menuPopupSize) {
-
-      const popupStyle = {
-        maxHeight: getLastHalfHeight(
-          Math.min(256, window.innerHeight - menuPopupSize.top - 8), 36, 8, 0
-        ),
-      };
-
-      menuPopup = (
-        <motion.div key="ListNamePopup_menuPopup" ref={this.menuPopup} style={popupStyle} className={menuPopupClassNames} variants={tlPopupFMV} initial="hidden" animate="visible" exit="hidden">
-          {this.renderMenu()}
-        </motion.div>
-      );
-    } else {
-      menuPopup = (
-        <div key="ListNamePopup_menuPopup" ref={this.menuPopup} className={menuPopupClassNames}>
-          {this.renderMenu()}
-        </div>
-      );
-    }
-
-    return (
-      <AnimatePresence key="AnimatePresence_ListNamePopup">
-        <motion.button key="ListNamePopup_cancelBtn" onClick={this.onListNameCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
-        {menuPopup}
-      </AnimatePresence>
-    );
-  }
 
   render() {
 
@@ -154,7 +48,6 @@ class ListName extends React.PureComponent {
             <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        {this.renderListNamePopup()}
       </div>
     );
   }
@@ -164,11 +57,10 @@ const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
     listNameMap: getListNameMap(state),
-    isListNamePopupShown: state.display.isListNamePopupShown,
     updates: state.fetched,
   };
 };
 
-const mapDispatchToProps = { changeListName, updatePopup };
+const mapDispatchToProps = { updatePopup };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListName);

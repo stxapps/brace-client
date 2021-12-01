@@ -197,3 +197,9 @@ export const fetchedPopupFMV = {
     translateX: '-50%',
   },
 };
+
+export const slideFMV = {
+  type: 'tween',
+  ease: 'easeInOut',
+  duration: 0.3,
+};

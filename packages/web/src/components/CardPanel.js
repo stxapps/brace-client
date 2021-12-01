@@ -124,7 +124,7 @@ class CardPanel extends React.PureComponent {
       );
     }
 
-    const textName = listName === ARCHIVE ? `"${displayName}"` : `"Move to... -> ${displayName}"`;
+    const textName = listName === ARCHIVE ? `"${displayName}"` : `"Move to -> ${displayName}"`;
 
     return (
       <React.Fragment>

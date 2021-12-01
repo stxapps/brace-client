@@ -1,391 +1,354 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useRef, useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimateSharedLayout, AnimatePresence } from 'framer-motion';
 
-import {
-  MY_LIST, TRASH, ARCHIVE,
-  ADDING, UPDATING, MOVING,
-  VALID_LIST_NAME, IN_USE_LIST_NAME, LIST_NAME_MSGS,
-  CONFIRM_DELETE_POPUP, SWAP_LEFT, SWAP_RIGHT,
-} from '../types/const';
-import {
-  addListNames, updateListNames, moveListName, updateDeletingListName,
-  retryDiedListNames, cancelDiedListNames, updatePopup,
-} from '../actions';
-import { getListNameMap } from '../selectors';
 import { canDeleteListNames } from '../apis/blockstack';
-import { validateListNameDisplayName, isDiedStatus } from '../utils';
+import {
+  addListNames, updateListNames, moveListName, updateSelectingListName,
+  updateDeletingListName, updateListNameEditors, updatePopup,
+} from '../actions';
+import {
+  VALID_LIST_NAME, IN_USE_LIST_NAME,
+  NO_LIST_NAME, TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME,
+  SETTINGS_LISTS_MENU_POPUP, CONFIRM_DELETE_POPUP,
+  SWAP_LEFT, SWAP_RIGHT, MODE_VIEW, MODE_EDIT, SM_WIDTH,
+} from '../types/const';
+import { getListNameMap, makeGetListNameEditor } from '../selectors';
+import { validateListNameDisplayName, getAllListNames } from '../utils';
 import { spListsFMV } from '../types/animConfigs';
+import { initialListNameEditorState } from '../types/initialStates';
 
-class SettingsPopupLists extends React.PureComponent {
+import { useSafeAreaFrame } from '.';
 
-  validateDisplayName = (displayName) => {
-    return validateListNameDisplayName(displayName, this.props.listNameMap);
-  }
+const SettingsPopupLists = (props) => {
 
-  render() {
+  const { onSidebarOpenBtnClick } = props;
+  const listNameMap = useSelector(getListNameMap);
 
-    return (
-      <div className="p-4 md:p-6 md:pt-4">
-        <div className="border-b border-gray-200 md:hidden">
-          <button onClick={this.props.onSidebarOpenBtnClick} className="pb-1 group focus:outline-none" >
-            <span className="text-sm text-gray-500 rounded group-focus:ring">{'<'} <span className="group-hover:underline">Settings</span></span>
-          </button>
-          <h3 className="pb-2 text-xl text-gray-800 font-medium leading-none">Lists</h3>
-        </div>
-        <div className="hidden md:block">
-          <h4 className="text-base text-gray-800 font-medium leading-none">Lists</h4>
-        </div>
-        <div className="pt-2.5">
-          <ListNameEditor key="SPL_newListNameEditor" listNameObj={null} validateDisplayName={this.validateDisplayName} />
-          <AnimateSharedLayout>
-            <AnimatePresence initial={false}>
-              {this.props.listNameMap.map(listNameObj => {
-                return (
-                  <motion.div key={listNameObj.listName} layoutId={listNameObj.listName} variants={spListsFMV} initial="hidden" animate="visible" exit="exit">
-                    <ListNameEditor listNameObj={listNameObj} validateDisplayName={this.validateDisplayName} />
-                  </motion.div>
-                )
-              })}
-            </AnimatePresence>
-          </AnimateSharedLayout>
+  const validateDisplayName = (displayName) => {
+    return validateListNameDisplayName(displayName, listNameMap);
+  };
+
+  return (
+    <div className="p-4 md:p-6 md:pt-4">
+      <div className="border-b border-gray-200 md:hidden">
+        <button onClick={onSidebarOpenBtnClick} className="pb-1 group focus:outline-none" >
+          <span className="text-sm text-gray-500 rounded group-focus:ring">{'<'} <span className="group-hover:underline">Settings</span></span>
+        </button>
+        <h3 className="pb-2 text-xl text-gray-800 font-medium leading-none">Lists</h3>
+      </div>
+      <div className="hidden md:block">
+        <h4 className="text-base text-gray-800 font-medium leading-none">Lists</h4>
+      </div>
+      <div className="pt-2.5">
+        <ListNameEditor key="SPL_newListNameEditor" listNameObj={null} validateDisplayName={validateDisplayName} level={0} />
+        <AnimateSharedLayout>
+          <AnimatePresence initial={false}>
+            {listNameMap.map(listNameObj => {
+              return (
+                <motion.div key={listNameObj.listName} layoutId={listNameObj.listName} variants={spListsFMV} initial="hidden" animate="visible" exit="exit">
+                  <ListNameEditor listNameObj={listNameObj} validateDisplayName={validateDisplayName} level={0} />
+                </motion.div>
+              )
+            })}
+          </AnimatePresence>
+        </AnimateSharedLayout>
+      </div>
+    </div>
+  );
+};
+
+const LIST_NAME_MSGS = {
+  [VALID_LIST_NAME]: '',
+  [NO_LIST_NAME]: 'List is blank',
+  [TOO_LONG_LIST_NAME]: 'List is too long',
+  [DUPLICATE_LIST_NAME]: 'List already exists',
+  [IN_USE_LIST_NAME]: 'List is in use',
+};
+
+const _ListNameEditor = (props) => {
+
+  const { listNameObj, validateDisplayName, level } = props;
+  const { width: safeAreaWidth } = useSafeAreaFrame();
+  const key = listNameObj ? listNameObj.listName : 'newListNameEditor';
+  const getListNameEditor = useMemo(makeGetListNameEditor, []);
+  const state = useSelector(s => getListNameEditor(s, key));
+  const prevFocusCount = useRef(0);
+  const input = useRef(null);
+  const menuBtn = useRef(null);
+  const didOkBtnJustPress = useRef(false);
+  const didCancelBtnJustPress = useRef(false);
+  const dispatch = useDispatch();
+
+  const onAddBtnClick = () => {
+    dispatch(updateListNameEditors({
+      [key]: { mode: MODE_EDIT, value: '', msg: '', focusCount: state.focusCount + 1 },
+    }));
+  };
+
+  const onEditBtnClick = () => {
+    dispatch(updateListNameEditors({
+      [key]: {
+        mode: MODE_EDIT,
+        value: listNameObj.displayName,
+        msg: '',
+        focusCount: state.focusCount + 1,
+      },
+    }));
+  };
+
+  const onInputFocus = () => {
+    dispatch(updateListNameEditors({
+      [key]: { mode: MODE_EDIT },
+    }));
+  };
+
+  const onInputChange = (e) => {
+    // Event is reused and will be nullified after the event handler has been called.
+    // https://reactjs.org/docs/legacy-event-pooling.html
+    const text = e.target.value;
+    dispatch(updateListNameEditors({
+      [key]: { value: text, msg: '' },
+    }));
+  };
+
+  const onInputKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      onOkBtnClick();
+      if (!listNameObj) setTimeout(() => onInputFocus(), 1);
+    }
+  };
+
+  const onInputBlur = () => {
+    if (didOkBtnJustPress.current || didCancelBtnJustPress.current) {
+      didOkBtnJustPress.current = false;
+      didCancelBtnJustPress.current = false;
+      return;
+    }
+
+    if (listNameObj) {
+      if (listNameObj.displayName === state.value) {
+        onCancelBtnClick();
+        return;
+      }
+    } else {
+      if (state.value === '') {
+        onCancelBtnClick();
+        return;
+      }
+    }
+  };
+
+  const onOkBtnPress = () => {
+    didOkBtnJustPress.current = true;
+  };
+
+  const onOkBtnClick = () => {
+    if (listNameObj) return onEditOkBtnClick();
+    return onAddOkBtnClick();
+  };
+
+  const onAddOkBtnClick = () => {
+    const listNameValidatedResult = validateDisplayName(state.value);
+    if (listNameValidatedResult !== VALID_LIST_NAME) {
+      dispatch(updateListNameEditors({
+        [key]: {
+          mode: MODE_EDIT,
+          msg: LIST_NAME_MSGS[listNameValidatedResult],
+          focusCount: state.focusCount + 1,
+        },
+      }));
+      return;
+    }
+
+    dispatch(addListNames([state.value]));
+    dispatch(updateListNameEditors({ [key]: { ...initialListNameEditorState } }));
+    input.current.blur();
+  };
+
+  const onEditOkBtnClick = () => {
+    if (state.value === listNameObj.displayName) return onCancelBtnClick();
+
+    const listNameValidatedResult = validateDisplayName(state.value);
+    if (listNameValidatedResult !== VALID_LIST_NAME) {
+      dispatch(updateListNameEditors({
+        [key]: {
+          mode: MODE_EDIT,
+          msg: LIST_NAME_MSGS[listNameValidatedResult],
+          focusCount: state.focusCount + 1,
+        },
+      }));
+      return;
+    }
+
+    dispatch(updateListNames([listNameObj.listName], [state.value]));
+    dispatch(updateListNameEditors({
+      [key]: { ...initialListNameEditorState, value: state.value },
+    }));
+    input.current.blur();
+  };
+
+  const onCancelBtnPress = () => {
+    didCancelBtnJustPress.current = true;
+  };
+
+  const onCancelBtnClick = () => {
+    const value = listNameObj ? listNameObj.displayName : '';
+    dispatch(updateListNameEditors({
+      [key]: { mode: MODE_VIEW, value, msg: '' },
+    }));
+    input.current.blur();
+  };
+
+  const onMoveUpBtnClick = () => {
+    dispatch(moveListName(listNameObj.listName, SWAP_LEFT));
+  };
+
+  const onMoveDownBtnClick = () => {
+    dispatch(moveListName(listNameObj.listName, SWAP_RIGHT));
+  };
+
+  const onMenuBtnClick = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    dispatch(updateSelectingListName(listNameObj.listName));
+    dispatch(updatePopup(SETTINGS_LISTS_MENU_POPUP, true, rect));
+  };
+
+  const onExpandBtnClick = () => {
+    dispatch(updateListNameEditors({
+      [key]: { doExpand: !state.doExpand },
+    }));
+  };
+
+  useEffect(() => {
+    if (listNameObj) {
+      dispatch(updateListNameEditors({
+        [key]: { value: listNameObj.displayName },
+      }));
+    }
+  }, [listNameObj, key, dispatch]);
+
+  useEffect(() => {
+    // state.focusCount can be undefined when the popup is close, so can't use !==
+    if (state.focusCount > prevFocusCount.current) {
+      input.current.focus();
+      prevFocusCount.current = state.focusCount;
+    }
+  }, [state.focusCount]);
+
+  useEffect(() => {
+    const deleteListName = async () => {
+      if (state.isCheckingCanDelete) {
+        const listNames = [listNameObj.listName];
+        listNames.push(...getAllListNames(listNameObj.children));
+
+        const canDeletes = await canDeleteListNames(listNames);
+        if (!canDeletes.every(canDelete => canDelete === true)) {
+          dispatch(updateListNameEditors({
+            [key]: { msg: LIST_NAME_MSGS[IN_USE_LIST_NAME], isCheckingCanDelete: false },
+          }));
+          return;
+        }
+
+        dispatch(updateDeletingListName(listNameObj.listName));
+        dispatch(updatePopup(CONFIRM_DELETE_POPUP, true));
+        dispatch(updateListNameEditors({
+          [key]: { msg: '', isCheckingCanDelete: false },
+        }));
+      }
+    };
+    deleteListName();
+  }, [state.isCheckingCanDelete, listNameObj, key, dispatch]);
+
+  const isBusy = state.isCheckingCanDelete;
+
+  let expandBtn;
+  if (isBusy) {
+    expandBtn = (
+      <div className="flex-grow-0 flex-shrink-0 flex justify-start items-center w-8 h-10">
+        <div className="ball-clip-rotate">
+          <div />
         </div>
       </div>
     );
-  }
-}
-
-const mapStateToProps = (state) => {
-  return {
-    listNameMap: getListNameMap(state),
-  };
-};
-
-export default connect(mapStateToProps)(SettingsPopupLists);
-
-const MODE_VIEW = 'MODE_VIEW';
-const MODE_EDIT = 'MODE_EDIT';
-
-class _ListNameEditor extends React.PureComponent {
-
-  constructor(props) {
-    super(props);
-
-    this.initialState = {
-      mode: MODE_VIEW,
-      value: '',
-      msg: '',
-      isCheckingCanDelete: false,
-    };
-    this.state = { ...this.initialState };
-
-    this.input = React.createRef();
-
-    this.didOkBtnJustPress = false;
-    this.didCancelBtnJustPress = false;
-
-    this.didClick = false;
-  }
-
-  componentDidMount() {
-    if (this.props.listNameObj) {
-      this.setState({ value: this.props.listNameObj.displayName });
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.listNameObj && this.props.listNameObj) {
-      if (
-        (!isDiedStatus(prevProps.listNameObj.status) &&
-          isDiedStatus(this.props.listNameObj.status)) ||
-        (prevProps.listNameObj.status === UPDATING &&
-          this.props.listNameObj.status !== UPDATING) ||
-        (prevProps.listNameObj.status === MOVING &&
-          this.props.listNameObj.status !== MOVING)
-      ) {
-        this.didClick = false;
-      }
-    }
-
-    if (prevState.mode === MODE_VIEW && this.state.mode === MODE_EDIT) {
-      this.didClick = false;
-    }
-  }
-
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.props.listNameObj && nextProps.listNameObj) {
-      if (
-        this.props.listNameObj.displayName === this.state.value &&
-        this.props.listNameObj.displayName !== nextProps.listNameObj.displayName
-      ) {
-        this.setState({ value: nextProps.listNameObj.displayName });
-      }
-    }
-  }
-
-  onAddBtnClick = () => {
-    this.setState({ mode: MODE_EDIT, value: '', msg: '' });
-    this.input.current.focus();
-  }
-
-  onEditBtnClick = () => {
-
-    const { listNameObj } = this.props;
-
-    this.setState({ mode: MODE_EDIT, value: listNameObj.displayName, msg: '' });
-    this.input.current.focus();
-  }
-
-  onInputFocus = () => {
-    this.setState({ mode: MODE_EDIT });
-  }
-
-  onInputChange = (e) => {
-    this.setState({ value: e.target.value, msg: '' });
-  }
-
-  onInputKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      this.onOkBtnClick();
-      if (!this.props.listNameObj) setTimeout(() => this.onInputFocus(), 1);
-    }
-  }
-
-  onInputBlur = () => {
-
-    if (this.didOkBtnJustPress || this.didCancelBtnJustPress) {
-      this.didOkBtnJustPress = false;
-      this.didCancelBtnJustPress = false;
-      return;
-    }
-
-    if (this.props.listNameObj) {
-      if (this.props.listNameObj.displayName === this.state.value) {
-        this.onCancelBtnClick();
-        return;
-      }
-    } else {
-      if (this.state.value === '') {
-        this.onCancelBtnClick();
-        return;
-      }
-    }
-  }
-
-  onOkBtnPress = () => {
-    this.didOkBtnJustPress = true;
-  }
-
-  onOkBtnClick = () => {
-    if (this.props.listNameObj) return this.onEditOkBtnClick();
-    return this.onAddOkBtnClick();
-  }
-
-  onAddOkBtnClick = () => {
-    if (this.didClick) return;
-
-    const { validateDisplayName } = this.props;
-    const { value } = this.state;
-
-    const listNameValidatedResult = validateDisplayName(value);
-    if (listNameValidatedResult !== VALID_LIST_NAME) {
-      this.setState({ mode: MODE_EDIT, msg: LIST_NAME_MSGS[listNameValidatedResult] });
-      this.input.current.focus();
-      return;
-    }
-
-    this.props.addListNames([value]);
-    this.setState({ ...this.initialState });
-    this.didClick = true;
-  }
-
-  onEditOkBtnClick = () => {
-    if (this.didClick) return;
-
-    const { listNameObj, validateDisplayName } = this.props;
-    const { value } = this.state;
-
-    if (value === listNameObj.displayName) return this.onCancelBtnClick();
-
-    const listNameValidatedResult = validateDisplayName(value);
-    if (listNameValidatedResult !== VALID_LIST_NAME) {
-      this.setState({ mode: MODE_EDIT, msg: LIST_NAME_MSGS[listNameValidatedResult] });
-      this.input.current.focus();
-      return;
-    }
-
-    this.props.updateListNames([listNameObj.listName], [value]);
-    this.setState({ ...this.initialState, value: value });
-    this.didClick = true;
-  }
-
-  onCancelBtnPress = () => {
-    this.didCancelBtnJustPress = true;
-  }
-
-  onCancelBtnClick = () => {
-    const value = this.props.listNameObj ? this.props.listNameObj.displayName : '';
-    this.setState({ mode: MODE_VIEW, value: value, msg: '' });
-    this.input.current.blur();
-  }
-
-  onDeleteBtnClick = () => {
-    if (this.didClick) return;
-
-    this.setState({ isCheckingCanDelete: true }, async () => {
-
-      const { listNameObj } = this.props;
-
-      const canDeletes = await canDeleteListNames([listNameObj.listName]);
-      const canDelete = canDeletes[0];
-      if (!canDelete) {
-        this.setState({
-          msg: LIST_NAME_MSGS[IN_USE_LIST_NAME],
-          isCheckingCanDelete: false,
-        });
-        this.didClick = false;
-        return;
-      }
-
-      this.props.updateDeletingListName(listNameObj.listName);
-      this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
-      this.setState({ msg: '', isCheckingCanDelete: false });
-      this.didClick = false;
-    });
-
-    this.didClick = true;
-  }
-
-  onMoveUpBtnClick = () => {
-    if (this.didClick) return;
-
-    const { listNameObj } = this.props;
-    this.props.moveListName(listNameObj.listName, SWAP_LEFT);
-
-    this.didClick = true;
-  }
-
-  onMoveDownBtnClick = () => {
-    if (this.didClick) return;
-
-    const { listNameObj } = this.props;
-    this.props.moveListName(listNameObj.listName, SWAP_RIGHT);
-
-    this.didClick = true;
-  }
-
-  onRetryRetryBtnClick = () => {
-    if (this.didClick) return;
-    this.props.retryDiedListNames([this.props.listNameObj.listName]);
-    this.didClick = true;
-  }
-
-  onRetryCancelBtnClick = () => {
-    this.props.cancelDiedListNames([this.props.listNameObj.listName]);
-  }
-
-  render() {
-
-    const { listNameObj } = this.props;
-    const { mode, value, msg, isCheckingCanDelete } = this.state;
-
-    const isBusy = (listNameObj && [ADDING, UPDATING, MOVING].includes(listNameObj.status)) || isCheckingCanDelete;
-    const doRetry = listNameObj && isDiedStatus(listNameObj.status);
-
-    let deleteBtn;
-    if (isBusy) {
-      deleteBtn = (
-        <div className="flex-grow-0 flex-shrink-0 flex justify-start items-center w-8 h-10">
-          <div className="ball-clip-rotate">
-            <div />
+  } else {
+    if (listNameObj && listNameObj.children && listNameObj.children.length > 0) {
+      const expandSvg = state.doExpand ? (
+        <svg className="w-3.5" viewBox="0 0 11 7" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fillRule="evenodd" clipRule="evenodd" d="M0.292787 1.29302C0.480314 1.10555 0.734622 1.00023 0.999786 1.00023C1.26495 1.00023 1.51926 1.10555 1.70679 1.29302L4.99979 4.58602L8.29279 1.29302C8.38503 1.19751 8.49538 1.12133 8.61738 1.06892C8.73939 1.01651 8.87061 0.988924 9.00339 0.98777C9.13616 0.986616 9.26784 1.01192 9.39074 1.0622C9.51364 1.11248 9.62529 1.18673 9.71918 1.28062C9.81307 1.37452 9.88733 1.48617 9.93761 1.60907C9.98789 1.73196 10.0132 1.86364 10.012 1.99642C10.0109 2.1292 9.9833 2.26042 9.93089 2.38242C9.87848 2.50443 9.8023 2.61477 9.70679 2.70702L5.70679 6.70702C5.51926 6.89449 5.26495 6.99981 4.99979 6.99981C4.73462 6.99981 4.48031 6.89449 4.29279 6.70702L0.292787 2.70702C0.105316 2.51949 0 2.26518 0 2.00002C0 1.73486 0.105316 1.48055 0.292787 1.29302V1.29302Z" />
+        </svg>
+      ) : (
+        <svg className="h-3 text-gray-500 rounded-sm group-hover:text-gray-600" viewBox="0 0 6 10" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fillRule="evenodd" clipRule="evenodd" d="M0.292787 9.70698C0.105316 9.51945 0 9.26514 0 8.99998C0 8.73482 0.105316 8.48051 0.292787 8.29298L3.58579 4.99998L0.292787 1.70698C0.110629 1.51838 0.00983372 1.26578 0.0121121 1.00358C0.0143906 0.741382 0.11956 0.49057 0.304968 0.305162C0.490376 0.119753 0.741189 0.0145843 1.00339 0.0123059C1.26558 0.0100274 1.51818 0.110822 1.70679 0.29298L5.70679 4.29298C5.89426 4.48051 5.99957 4.73482 5.99957 4.99998C5.99957 5.26514 5.89426 5.51945 5.70679 5.70698L1.70679 9.70698C1.51926 9.89445 1.26495 9.99977 0.999786 9.99977C0.734622 9.99977 0.480314 9.89445 0.292787 9.70698Z" />
+        </svg>
+      );
+      expandBtn = (
+        <button onClick={onExpandBtnClick} className={'flex-grow-0 flex-shrink-0 flex justify-start items-center w-8 h-10 group focus:outline-none'}>
+          <div className="w-3.5 h-3.5 flex justify-center items-center text-gray-500 rounded-sm group-hover:text-gray-600 group-focus:ring group-focus:ring-offset-4">
+            {expandSvg}
           </div>
-        </div>
-      );
-    } else if (doRetry) {
-      deleteBtn = (
-        <div className="flex-grow-0 flex-shrink-0 flex justify-start items-center w-8 h-10">
-          <svg className="h-5 w-5 text-red-500" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path fillRule="evenodd" clipRule="evenodd" d="M16 8C16 12.4183 12.4183 16 8 16C3.58172 16 0 12.4183 0 8C0 3.58172 3.58172 0 8 0C12.4183 0 16 3.58172 16 8ZM9 12C9 12.5523 8.5523 13 8 13C7.44772 13 7 12.5523 7 12C7 11.4477 7.44772 11 8 11C8.5523 11 9 11.4477 9 12ZM8 3C7.44772 3 7 3.44772 7 4V8C7 8.5523 7.44772 9 8 9C8.5523 9 9 8.5523 9 8V4C9 3.44772 8.5523 3 8 3Z" />
-          </svg>
-        </div>
+        </button>
       );
     } else {
-      if (listNameObj && [MY_LIST, TRASH, ARCHIVE].includes(listNameObj.listName)) {
-        deleteBtn = (
-          <div className="flex-grow-0 flex-shrink-0 w-8 h-10" />
-        );
-      } else {
-        deleteBtn = (
-          <button onClick={this.onDeleteBtnClick} className={'flex-grow-0 flex-shrink-0 flex justify-start items-center w-8 h-10 group focus:outline-none'}>
-            <svg className="h-4 text-gray-500 rounded-sm group-hover:text-gray-600 group-focus:ring group-focus:ring-offset-4" viewBox="0 0 14 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path fillRule="evenodd" clipRule="evenodd" d="M6 0C5.62123 0 5.27497 0.214 5.10557 0.55279L4.38197 2H1C0.44772 2 0 2.44772 0 3C0 3.55228 0.44772 4 1 4V14C1 15.1046 1.89543 16 3 16H11C12.1046 16 13 15.1046 13 14V4C13.5523 4 14 3.55228 14 3C14 2.44772 13.5523 2 13 2H9.618L8.8944 0.55279C8.725 0.214 8.3788 0 8 0H6ZM4 6C4 5.44772 4.44772 5 5 5C5.55228 5 6 5.44772 6 6V12C6 12.5523 5.55228 13 5 13C4.44772 13 4 12.5523 4 12V6ZM9 5C8.4477 5 8 5.44772 8 6V12C8 12.5523 8.4477 13 9 13C9.5523 13 10 12.5523 10 12V6C10 5.44772 9.5523 5 9 5Z" />
-            </svg>
-          </button>
-        );
-      }
+      expandBtn = (
+        <div className="flex-grow-0 flex-shrink-0 w-8 h-10" />
+      );
     }
+  }
 
-    let errMsg;
-    if (listNameObj && isDiedStatus(listNameObj.status)) {
-      errMsg = 'Oops..., something went wrong!';
-    } else {
-      errMsg = msg;
-    }
+  const tabWidth = safeAreaWidth < SM_WIDTH ? 16 : 32;
+  const viewStyle = { paddingLeft: tabWidth * level };
 
-    return (
-      <div className="mt-1 flex justify-start items-center">
-        {(mode === MODE_VIEW && listNameObj === null) && <button onClick={this.onAddBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-start items-center w-8 h-10 group focus:outline-none">
+  return (
+    <React.Fragment>
+      <div style={viewStyle} className="mt-1 flex justify-start items-center">
+        {(state.mode === MODE_VIEW && listNameObj === null) && <button onClick={onAddBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-start items-center w-8 h-10 group focus:outline-none">
           <svg style={{ width: '0.875rem', height: '0.875rem' }} className="text-gray-500 rounded-sm group-hover:text-gray-600 group-focus:ring group-focus:ring-offset-4" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M7 0C7.5523 0 8 0.44772 8 1V6H13C13.5523 6 14 6.44772 14 7C14 7.5523 13.5523 8 13 8H8V13C8 13.5523 7.5523 14 7 14C6.44772 14 6 13.5523 6 13V8H1C0.44772 8 0 7.5523 0 7C0 6.44771 0.44772 6 1 6H6V1C6 0.44772 6.44772 0 7 0Z" />
           </svg>
         </button>}
-        {(mode === MODE_VIEW && listNameObj !== null) && deleteBtn}
-        {mode === MODE_EDIT && <button onTouchStart={this.onCancelBtnPress} onMouseDown={this.onCancelBtnPress} onClick={this.onCancelBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-start items-center w-8 h-10 group focus:outline-none">
+        {(state.mode === MODE_VIEW && listNameObj !== null) && expandBtn}
+        {state.mode === MODE_EDIT && <button onTouchStart={onCancelBtnPress} onMouseDown={onCancelBtnPress} onClick={onCancelBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-start items-center w-8 h-10 group focus:outline-none">
           <svg className="w-3 h-3 text-gray-500 rounded-sm group-hover:text-gray-600 group-focus:ring group-focus:ring-offset-4" viewBox="0 0 12 12" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M0.29289 0.29289C0.68342 -0.09763 1.31658 -0.09763 1.70711 0.29289L6 4.58579L10.2929 0.29289C10.6834 -0.09763 11.3166 -0.09763 11.7071 0.29289C12.0976 0.68342 12.0976 1.31658 11.7071 1.70711L7.4142 6L11.7071 10.2929C12.0976 10.6834 12.0976 11.3166 11.7071 11.7071C11.3166 12.0976 10.6834 12.0976 10.2929 11.7071L6 7.4142L1.70711 11.7071C1.31658 12.0976 0.68342 12.0976 0.29289 11.7071C-0.09763 11.3166 -0.09763 10.6834 0.29289 10.2929L4.58579 6L0.29289 1.70711C-0.09763 1.31658 -0.09763 0.68342 0.29289 0.29289Z" />
           </svg>
         </button>}
         <div className="relative flex-grow flex-shrink">
-          <input ref={this.input} onFocus={this.onInputFocus} onBlur={this.onInputBlur} onChange={this.onInputChange} onKeyPress={this.onInputKeyPress} className="px-0 py-2 w-full bg-white text-base text-gray-600 border-0 focus:outline-none focus:ring-0" type="text" placeholder="Create new list" value={value} disabled={isBusy || doRetry} />
-          <p style={{ bottom: '-0.5rem' }} className="absolute left-0 right-0 text-sm text-red-600 font-medium leading-5 truncate">{errMsg}</p>
+          <input ref={input} onFocus={onInputFocus} onBlur={onInputBlur} onChange={onInputChange} onKeyPress={onInputKeyPress} className="px-0 py-2 w-full bg-white text-base text-gray-600 border-0 focus:outline-none focus:ring-0" type="text" placeholder="Create new list" value={state.value} disabled={isBusy} />
+          <p style={{ bottom: '-0.5rem' }} className="absolute left-0 right-0 text-sm text-red-600 font-medium leading-5 truncate">{state.msg}</p>
         </div>
-        {mode === MODE_EDIT && <button onTouchStart={this.onOkBtnPress} onMouseDown={this.onOkBtnPress} onClick={this.onOkBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-center items-center w-10 h-10 group focus:outline-none">
+        {state.mode === MODE_EDIT && <button onTouchStart={onOkBtnPress} onMouseDown={onOkBtnPress} onClick={onOkBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-center items-center w-10 h-10 group focus:outline-none">
           <svg className="w-4 text-gray-500 rounded-sm group-hover:text-gray-600 group-focus:ring group-focus:ring-offset-4" viewBox="0 0 14 10" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M13.7071 0.29289C14.0976 0.68342 14.0976 1.31658 13.7071 1.70711L5.70711 9.7071C5.31658 10.0976 4.68342 10.0976 4.29289 9.7071L0.29289 5.7071C-0.09763 5.3166 -0.09763 4.68342 0.29289 4.29289C0.68342 3.90237 1.31658 3.90237 1.70711 4.29289L5 7.5858L12.2929 0.29289C12.6834 -0.09763 13.3166 -0.09763 13.7071 0.29289Z" />
           </svg>
         </button>}
-        {(mode === MODE_VIEW && listNameObj !== null && !doRetry) && <button onClick={this.onEditBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-center items-center w-10 h-10 group focus:outline-none" disabled={isBusy}>
-          <svg className="w-4 h-4 text-gray-500 rounded-sm group-hover:text-gray-600 group-focus:ring group-focus:ring-offset-4" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        {(state.mode === MODE_VIEW && listNameObj !== null) && <button onClick={onEditBtnClick} className="flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10 group hidden focus:outline-none sm:flex" disabled={isBusy}>
+          <svg className="w-4 text-gray-500 rounded-sm group-hover:text-gray-600 group-focus:ring group-focus:ring-offset-4" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M10.5859 0.585788C11.3669 -0.195262 12.6333 -0.195262 13.4143 0.585788C14.1954 1.36683 14.1954 2.63316 13.4143 3.41421L12.6214 4.20711L9.79297 1.37868L10.5859 0.585788Z" />
             <path d="M8.3787 2.79289L0 11.1716V14H2.82842L11.2071 5.62132L8.3787 2.79289Z" />
           </svg>
         </button>}
-        {(mode === MODE_VIEW && listNameObj !== null && !doRetry) && <button onClick={this.onMoveUpBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-center items-center w-10 h-10 group focus:outline-none" disabled={isBusy}>
+        {(state.mode === MODE_VIEW && listNameObj !== null) && <button onClick={onMoveUpBtnClick} className="flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10 group hidden focus:outline-none lg:flex" disabled={isBusy}>
           <svg className="h-4 text-gray-500 rounded-sm group-hover:text-gray-600 group-focus:ring group-focus:ring-offset-4" viewBox="0 0 14 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M0 15C0 14.4477 0.44772 14 1 14H13C13.5523 14 14 14.4477 14 15C14 15.5523 13.5523 16 13 16H1C0.44772 16 0 15.5523 0 15ZM3.29289 4.70711C2.90237 4.31658 2.90237 3.68342 3.29289 3.29289L6.29289 0.29289C6.48043 0.10536 6.73478 0 7 0C7.2652 0 7.5196 0.10536 7.7071 0.29289L10.7071 3.29289C11.0976 3.68342 11.0976 4.31658 10.7071 4.70711C10.3166 5.09763 9.6834 5.09763 9.2929 4.70711L8 3.41421V11C8 11.5523 7.5523 12 7 12C6.44771 12 6 11.5523 6 11V3.41421L4.70711 4.70711C4.31658 5.09763 3.68342 5.09763 3.29289 4.70711Z" />
           </svg>
         </button>}
-        {(mode === MODE_VIEW && listNameObj !== null && !doRetry) && <button onClick={this.onMoveDownBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-center items-center w-10 h-10 group focus:outline-none" disabled={isBusy}>
+        {(state.mode === MODE_VIEW && listNameObj !== null) && <button onClick={onMoveDownBtnClick} className="flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10 group hidden focus:outline-none lg:flex" disabled={isBusy}>
           <svg className="h-4 text-gray-500 rounded-sm group-hover:text-gray-600 group-focus:ring group-focus:ring-offset-4" viewBox="0 0 14 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M0 15C0 14.4477 0.44772 14 1 14H13C13.5523 14 14 14.4477 14 15C14 15.5523 13.5523 16 13 16H1C0.44772 16 0 15.5523 0 15ZM3.29289 7.29289C3.68342 6.90237 4.31658 6.90237 4.70711 7.29289L6 8.5858V1C6 0.44772 6.44771 0 7 0C7.5523 0 8 0.44771 8 1V8.5858L9.2929 7.29289C9.6834 6.90237 10.3166 6.90237 10.7071 7.29289C11.0976 7.68342 11.0976 8.3166 10.7071 8.7071L7.7071 11.7071C7.5196 11.8946 7.2652 12 7 12C6.73478 12 6.48043 11.8946 6.29289 11.7071L3.29289 8.7071C2.90237 8.3166 2.90237 7.68342 3.29289 7.29289Z" />
           </svg>
         </button>}
-        {(mode === MODE_VIEW && listNameObj !== null && doRetry) && <button onClick={this.onRetryRetryBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-center items-center w-20 h-10 group focus:outline-none">
-          <div style={{ height: '1.75rem', paddingLeft: '0.625rem', paddingRight: '0.625rem' }} className="flex justify-center items-center bg-white border border-gray-400 rounded-full group-hover:border-gray-500 group-focus:ring">
-            <span className="text-sm text-gray-500 group-hover:text-gray-600">Retry</span>
-          </div>
-        </button>}
-        {(mode === MODE_VIEW && listNameObj !== null && doRetry) && <button onClick={this.onRetryCancelBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-center items-center w-16 h-10 group focus:outline-none">
-          <div className="px-1 py-0.5 text-sm text-gray-500 rounded group-hover:bg-gray-100 group-focus:ring group-focus:ring-inset">Cancel</div>
+        {(state.mode === MODE_VIEW && listNameObj !== null) && <button ref={menuBtn} onClick={onMenuBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-center items-center w-10 h-10 group focus:outline-none" disabled={isBusy}>
+          <svg style={{ width: '1.2rem', height: '1.2rem' }} className="text-gray-500 rounded-sm group-hover:text-gray-600 group-focus:ring group-focus:ring-offset-4" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 6C9.46957 6 8.96086 5.78929 8.58579 5.41421C8.21071 5.03914 8 4.53043 8 4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2C10.5304 2 11.0391 2.21071 11.4142 2.58579C11.7893 2.96086 12 3.46957 12 4C12 4.53043 11.7893 5.03914 11.4142 5.41421C11.0391 5.78929 10.5304 6 10 6ZM10 12C9.46957 12 8.96086 11.7893 8.58579 11.4142C8.21071 11.0391 8 10.5304 8 10C8 9.46957 8.21071 8.96086 8.58579 8.58579C8.96086 8.21071 9.46957 8 10 8C10.5304 8 11.0391 8.21071 11.4142 8.58579C11.7893 8.96086 12 9.46957 12 10C12 10.5304 11.7893 11.0391 11.4142 11.4142C11.0391 11.7893 10.5304 12 10 12ZM10 18C9.46957 18 8.96086 17.7893 8.58579 17.4142C8.21071 17.0391 8 16.5304 8 16C8 15.4696 8.21071 14.9609 8.58579 14.5858C8.96086 14.2107 9.46957 14 10 14C10.5304 14 11.0391 14.2107 11.4142 14.5858C11.7893 14.9609 12 15.4696 12 16C12 16.5304 11.7893 17.0391 11.4142 17.4142C11.0391 17.7893 10.5304 18 10 18Z" />
+          </svg>
         </button>}
       </div>
-    );
-  }
-}
-
-const _mapDispatchToProps = {
-  addListNames, updateListNames, moveListName, updateDeletingListName,
-  retryDiedListNames, cancelDiedListNames, updatePopup,
+      {state.doExpand && listNameObj.children.map(child => <ListNameEditor key={child.listName} listNameObj={child} validateDisplayName={validateDisplayName} level={level + 1} />)}
+    </React.Fragment>
+  );
 };
 
-const ListNameEditor = connect(null, _mapDispatchToProps)(_ListNameEditor);
+const ListNameEditor = React.memo(_ListNameEditor);
+
+export default React.memo(SettingsPopupLists);

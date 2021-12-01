@@ -9,6 +9,8 @@ import settingsReducer from './settingsReducer';
 import fetchedReducer from './fetchedReducer';
 import isFetchMoreInterrupted from './isFetchMoreInterrupted';
 import stacksAccessReducer from './stacksAccessReducer';
+import snapshotReducer from './snapshotReducer';
+import listNameEditorsReducer from './listNameEditorsReducer';
 
 export default combineReducers({
   window: windowReducer,
@@ -20,4 +22,6 @@ export default combineReducers({
   fetched: fetchedReducer,
   isFetchMoreInterrupted: isFetchMoreInterrupted,
   stacksAccess: stacksAccessReducer,
+  snapshot: snapshotReducer,
+  listNameEditors: listNameEditorsReducer,
 });

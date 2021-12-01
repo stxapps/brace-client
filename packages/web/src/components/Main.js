@@ -17,8 +17,11 @@ import BottomBar from './BottomBar';
 import CardPanel from './CardPanel';
 import FetchedPopup from './FetchedPopup';
 import CardItemMenuPopup from './CardItemMenuPopup';
-import ConfirmDeletePopup from './ConfirmDeletePopup';
 import SettingsPopup from './SettingsPopup';
+import SettingsListsMenuPopup from './SettingsListsMenuPopup';
+import SettingsErrorPopup from './SettingsErrorPopup';
+import ListNamesPopup from './ListNamesPopup';
+import ConfirmDeletePopup from './ConfirmDeletePopup';
 
 class Main extends React.PureComponent {
 
@@ -91,8 +94,11 @@ class Main extends React.PureComponent {
         {columnWidth === PC_100 && <BottomBar />}
         <TopBar rightPane={topBarRightPane} isListNameShown={true} />
         <FetchedPopup />
-        <SettingsPopup />
         <CardItemMenuPopup />
+        <SettingsPopup />
+        <SettingsListsMenuPopup />
+        <SettingsErrorPopup />
+        <ListNamesPopup />
         <ConfirmDeletePopup />
       </React.Fragment>
     );

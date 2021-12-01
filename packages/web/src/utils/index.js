@@ -425,10 +425,39 @@ export const isArrayEqual = (arr1, arr2) => {
   return true;
 };
 
-export const getListNameDisplayName = (listName, listNameMap) => {
-  for (const listNameObj of listNameMap) {
-    if (listNameObj.listName === listName) return listNameObj.displayName;
+export const getListNameObj = (listName, listNameObjs, parent = null) => {
+  if (!listName || !listNameObjs) return { listNameObj: null, parent: null };
+
+  for (const listNameObj of listNameObjs) {
+    if (listNameObj.listName === listName) return { listNameObj, parent };
+
+    const res = getListNameObj(listName, listNameObj.children, listNameObj.listName);
+    if (res.listNameObj) return res;
   }
+
+  return { listNameObj: null, parent: null };
+};
+
+export const getListNameObjFromDisplayName = (
+  displayName, listNameObjs, parent = null
+) => {
+  if (!displayName || !listNameObjs) return { listNameObj: null, parent: null };
+
+  for (const listNameObj of listNameObjs) {
+    if (listNameObj.displayName === displayName) return { listNameObj, parent };
+
+    const res = getListNameObjFromDisplayName(
+      displayName, listNameObj.children, listNameObj.listName
+    );
+    if (res.listNameObj) return res;
+  }
+
+  return { listNameObj: null, parent: null };
+};
+
+export const getListNameDisplayName = (listName, listNameMap) => {
+  const { listNameObj } = getListNameObj(listName, listNameMap);
+  if (listNameObj) return listNameObj.displayName;
 
   // Not throw an error because it can happen:
   //   - Delete a link
@@ -438,30 +467,47 @@ export const getListNameDisplayName = (listName, listNameMap) => {
   return listName;
 };
 
-export const getLongestListNameDisplayName = (listNameMap) => {
+export const getLongestListNameDisplayName = (listNameObjs) => {
   let displayName = '';
-  for (const listNameObj of listNameMap) {
+  if (!listNameObjs) return displayName;
+
+  for (const listNameObj of listNameObjs) {
     if (listNameObj.displayName.length > displayName.length) {
       displayName = listNameObj.displayName;
     }
+
+    const childrenDisplayName = getLongestListNameDisplayName(listNameObj.children);
+    if (childrenDisplayName.length > displayName.length) {
+      displayName = childrenDisplayName;
+    }
   }
+
   return displayName;
 };
 
-export const doContainListName = (listName, listNameObjs) => {
+export const getMaxListNameChildrenSize = (listNameObjs) => {
+  let size = 0;
+  if (!listNameObjs) return size;
 
+  size = listNameObjs.length;
   for (const listNameObj of listNameObjs) {
-    if (listNameObj.listName === listName) return true;
+    const childrenSize = getMaxListNameChildrenSize(listNameObj.children);
+    if (childrenSize > size) size = childrenSize;
   }
+
+  return size;
+};
+
+export const doContainListName = (listName, listNameObjs) => {
+  const { listNameObj } = getListNameObj(listName, listNameObjs);
+  if (listNameObj) return true;
 
   return false;
 };
 
 export const doContainListNameDisplayName = (displayName, listNameObjs) => {
-
-  for (const listNameObj of listNameObjs) {
-    if (listNameObj.displayName === displayName) return true;
-  }
+  const { listNameObj } = getListNameObjFromDisplayName(displayName, listNameObjs);
+  if (listNameObj) return true;
 
   return false;
 };
@@ -480,6 +526,29 @@ export const validateListNameDisplayName = (displayName, listNameMap) => {
   if (doContainListNameDisplayName(displayName, listNameMap)) return DUPLICATE_LIST_NAME;
 
   return VALID_LIST_NAME;
+};
+
+export const copyListNameObjs = (listNameObjs, excludedListNames = []) => {
+  const objs = listNameObjs.filter(listNameObj => {
+    return !excludedListNames.includes(listNameObj.listName);
+  }).map(listNameObj => {
+    const obj = { ...listNameObj };
+    if (obj.children) obj.children = copyListNameObjs(obj.children, excludedListNames);
+    return obj;
+  });
+  return objs;
+};
+
+export const getAllListNames = (listNameObjs) => {
+  const listNames = [];
+  if (!listNameObjs) return listNames;
+
+  for (const listNameObj of listNameObjs) {
+    listNames.push(listNameObj.listName);
+    listNames.push(...getAllListNames(listNameObj.children));
+  }
+
+  return listNames;
 };
 
 export const isDiedStatus = (status) => {
@@ -776,37 +845,6 @@ export const swapArrayElements = (a, x, y) => (a[x] && a[y] && [
   a[x],
   ...a.slice(y + 1),
 ]) || a;
-
-export const getInsertIndex = (listNameObj, oldListNameMap, newListNameMap) => {
-
-  // listNameObj is in oldListNameMap and try to find where to insert into newListNameMap
-  //   while preserving the order.
-
-  const i = oldListNameMap.findIndex(obj => obj.listName === listNameObj.listName);
-  if (i < 0) {
-    console.log(`getInsertIndex: invalid listNameObj: ${listNameObj} and oldListNameMap: ${oldListNameMap}`);
-    return -1;
-  }
-
-  let prev = i - 1;
-  let next = i + 1;
-  while (prev >= 0 || next < oldListNameMap.length) {
-    if (prev >= 0) {
-      const listName = oldListNameMap[prev].listName;
-      const listNameIndex = newListNameMap.findIndex(obj => obj.listName === listName);
-      if (listNameIndex >= 0) return listNameIndex + 1;
-      prev -= 1;
-    }
-    if (next < oldListNameMap.length) {
-      const listName = oldListNameMap[next].listName;
-      const listNameIndex = newListNameMap.findIndex(obj => obj.listName === listName);
-      if (listNameIndex >= 0) return listNameIndex;
-      next += 1;
-    }
-  }
-
-  return -1;
-};
 
 export const isOfflineAction = (action, actionType, listName = null) => {
   try {

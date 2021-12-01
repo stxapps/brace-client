@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion";
 
-import { updatePopup } from '../actions';
-import { MD_WIDTH, SETTINGS_POPUP } from '../types/const';
+import { updateSettingsPopup } from '../actions';
+import { MD_WIDTH, LG_WIDTH } from '../types/const';
 import { isEqual } from '../utils';
 import {
   popupBgFMV, ccPopupFMV, spSideBarCanvasFMV, spSideBarOverlayFMV, spSideBarFMV,
@@ -63,7 +63,7 @@ class SettingsPopup extends React.PureComponent {
   }
 
   onPopupCloseBtnClick = () => {
-    this.props.updatePopup(SETTINGS_POPUP, false);
+    this.props.updateSettingsPopup(false);
   }
 
   onSidebarOpenBtnClick = () => {
@@ -125,7 +125,10 @@ class SettingsPopup extends React.PureComponent {
 
     const { isSidebarShown } = this.state;
 
-    const panelHeight = window.innerHeight * 0.9;
+    let panelHeight = window.innerHeight * 0.9;
+    if (window.innerWidth >= LG_WIDTH) panelHeight = Math.min(panelHeight, 608);
+    else if (window.innerWidth >= MD_WIDTH) panelHeight = Math.min(panelHeight, 656);
+
     const animate = isSidebarShown ? 'visible' : 'hidden';
 
     const selectedMenuTextStyleClasses = 'bg-gray-100 text-gray-800';
@@ -139,9 +142,9 @@ class SettingsPopup extends React.PureComponent {
         <div className="hidden border-b border-gray-200 md:block md:mt-6 md:ml-6 md:mr-6">
           <h2 className="pb-4 text-xl text-gray-800 font-medium leading-6">Settings</h2>
         </div>
-        <div className="hidden absolute top-0 right-0 p-1 md:block">
-          <button onClick={this.onPopupCloseBtnClick} className="flex items-center justify-center h-7 w-7 group focus:outline-none" aria-label="Close settings popup">
-            <svg className="h-5 w-5 text-gray-400 rounded group-hover:text-gray-500 group-focus:ring" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+        <div className="hidden absolute top-0 right-0 md:block">
+          <button onClick={this.onPopupCloseBtnClick} className="flex items-center justify-center h-10 w-10 group focus:outline-none" aria-label="Close settings popup">
+            <svg className="h-5 w-5 text-gray-300 rounded group-hover:text-gray-500 group-focus:ring" stroke="currentColor" fill="none" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -190,9 +193,9 @@ class SettingsPopup extends React.PureComponent {
           <div key="panel-content" className="flex flex-col flex-shrink flex-grow overflow-hidden">
             <div ref={this.panelContent} className="flex-1 relative overflow-y-auto focus:outline-none">
               {content}
-              <div className="absolute top-0 right-0 p-1 md:hidden">
-                <button onClick={this.onPopupCloseBtnClick} className="flex items-center justify-center h-7 w-7 group focus:outline-none" aria-label="Close settings popup">
-                  <svg className="h-5 w-5 text-gray-400 rounded group-hover:text-gray-500 group-focus:ring" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+              <div className="absolute top-0 right-0 md:hidden">
+                <button onClick={this.onPopupCloseBtnClick} className="flex items-center justify-center h-10 w-10 group focus:outline-none" aria-label="Close settings popup">
+                  <svg className="h-5 w-5 text-gray-300 rounded group-hover:text-gray-500 group-focus:ring" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
@@ -204,9 +207,9 @@ class SettingsPopup extends React.PureComponent {
             <motion.button onClick={this.onSidebarCloseBtnClick} className="absolute inset-0 w-full h-full" variants={spSideBarOverlayFMV}>
               <div className="absolute inset-0 bg-gray-100" />
             </motion.button>
-            <div className="absolute top-0 right-0 p-1">
-              <button onClick={this.onPopupCloseBtnClick} className="flex items-center justify-center h-7 w-7 group focus:outline-none" aria-label="Close settings popup">
-                <svg className="h-5 w-5 text-gray-400 rounded group-hover:text-gray-500 group-focus:ring" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+            <div className="absolute top-0 right-0">
+              <button onClick={this.onPopupCloseBtnClick} className="flex items-center justify-center h-10 w-10 group focus:outline-none" aria-label="Close settings popup">
+                <svg className="h-5 w-5 text-gray-300 rounded group-hover:text-gray-500 group-focus:ring" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -339,6 +342,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { updatePopup };
+const mapDispatchToProps = { updateSettingsPopup };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsPopup);

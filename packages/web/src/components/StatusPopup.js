@@ -7,6 +7,7 @@ import {
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
+  UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
 } from '../types/actionTypes';
 import { SM_WIDTH } from '../types/const';
 import { updateStatus } from '../actions';
@@ -22,6 +23,9 @@ const MSGS = {
   [DELETE_OLD_LINKS_IN_TRASH]: 'Deleting old links in trash...',
   [DELETE_OLD_LINKS_IN_TRASH_COMMIT]: 'Finished deleting old links.',
   [DELETE_OLD_LINKS_IN_TRASH_ROLLBACK]: 'Error deleting old links!',
+  [UPDATE_SETTINGS]: 'Updating settings...',
+  [UPDATE_SETTINGS_COMMIT]: 'Finished updating settings.',
+  [UPDATE_SETTINGS_ROLLBACK]: 'Error updating settings!',
 };
 
 const MSGS_SHRT = {
@@ -34,6 +38,9 @@ const MSGS_SHRT = {
   [DELETE_OLD_LINKS_IN_TRASH]: 'Deleting old links...',
   [DELETE_OLD_LINKS_IN_TRASH_COMMIT]: 'Finished deleting.',
   [DELETE_OLD_LINKS_IN_TRASH_ROLLBACK]: 'Error deleting!',
+  [UPDATE_SETTINGS]: 'Updating settings...',
+  [UPDATE_SETTINGS_COMMIT]: 'Finished updating.',
+  [UPDATE_SETTINGS_ROLLBACK]: 'Error updating!',
 };
 
 class StatusPopup extends React.PureComponent {
@@ -66,6 +73,7 @@ class StatusPopup extends React.PureComponent {
         FETCH_COMMIT,
         DELETE_OLD_LINKS_IN_TRASH_COMMIT,
         EXTRACT_CONTENTS_COMMIT,
+        UPDATE_SETTINGS_COMMIT,
       ].includes(status)) {
         this.timeout = window.setTimeout(this.onTimeout, 1000);
       }

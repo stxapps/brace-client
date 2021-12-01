@@ -11,7 +11,6 @@ import BottomBarAddPopup from './BottomBarAddPopup';
 import BottomBarSearchPopup from './BottomBarSearchPopup';
 import BottomBarProfilePopup from './BottomBarProfilePopup';
 import BottomBarBulkEditCommands from './BottomBarBulkEditCommands';
-import BottomBarBulkEditMoveToPopup from './BottomBarBulkEditMoveToPopup';
 
 class BottomBar extends React.PureComponent {
 
@@ -28,7 +27,6 @@ class BottomBar extends React.PureComponent {
         <BottomBarAddPopup />
         <BottomBarSearchPopup />
         <BottomBarProfilePopup />
-        <BottomBarBulkEditMoveToPopup />
       </React.Fragment>
     );
   }
@@ -39,7 +37,7 @@ const mapStateToProps = (state, props) => {
   const popupLink = getPopupLink(state);
 
   return {
-    isShown: popupLink === null,
+    isShown: popupLink === null && state.display.selectingLinkId === null,
     isBulkEditing: state.display.isBulkEditing,
   };
 };
