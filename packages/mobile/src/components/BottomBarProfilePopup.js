@@ -92,8 +92,8 @@ class BottomBarProfilePopup extends React.PureComponent {
   }
 
   onSettingsBtnClick = () => {
-    this.props.updateSettingsPopup(true);
     this.props.updatePopup(PROFILE_POPUP, false);
+    this.props.updateSettingsPopup(true);
   }
 
   onSupportBtnClick = () => {

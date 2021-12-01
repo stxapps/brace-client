@@ -156,10 +156,10 @@ const getPopupShownId = (state) => {
   if (state.display.isSignInPopupShown) return SIGN_IN_POPUP;
   if (state.display.isAddPopupShown) return ADD_POPUP;
   if (state.display.isProfilePopupShown) return PROFILE_POPUP;
-  if (state.display.isListNamesPopupShown) return LIST_NAMES_POPUP;
   if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
-  if (state.display.isSettingsPopupShown) return SETTINGS_POPUP;
+  if (state.display.isListNamesPopupShown) return LIST_NAMES_POPUP;
   if (state.display.isSettingsListsMenuPopupShown) return SETTINGS_LISTS_MENU_POPUP;
+  if (state.display.isSettingsPopupShown) return SETTINGS_POPUP;
 
   for (const listName in state.links) {
     for (const id in state.links[listName]) {
@@ -788,7 +788,7 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
     console.log('Error when contact Brace server to extract contents with links: ', links, ' Error: ', error);
     return;
   }
-  /* @ts-ignore */
+
   const extractedResults = res.data.extractedResults;
 
   const extractedLinks = [];

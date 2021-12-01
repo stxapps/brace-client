@@ -19,7 +19,7 @@
     "@react-native-community/clipboard": "^1.5.1",
     "@react-native-community/netinfo": "^6.0.2",
     "@redux-offline/redux-offline": "https://github.com/bracedotto/redux-offline#a5a5da91de14b9e22c73a15e3617a0d627d3c0ec",
-    "axios": "^0.23.0",
+    "axios": "^0.24.0",
     "react": "17.0.2",
     "react-native": "0.66.1",
     "react-native-animated-spinkit": "^1.5.2",
@@ -37,7 +37,7 @@
     "react-redux": "^7.2.5",
     "redux": "^4.1.1",
     "redux-loop": "^6.1.0",
-    "reselect": "^4.1.4",
+    "reselect": "^4.1.5",
     "tailwind-rn": "https://github.com/bracedotto/tailwind-rn#6047a3e3de6607a6cb5b738ab3392d80aa81fd13",
     "url-parse": "^1.5.3"
   },

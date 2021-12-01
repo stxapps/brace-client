@@ -79,7 +79,7 @@ class CardItemMenuPopup extends React.PureComponent {
         const rect = {
           x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
         };
-        this.props.updateSelectingLinkId(this.props.link.id);
+        this.props.updateSelectingLinkId(id);
         this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
       });
     } else if (text === DELETE) {
@@ -130,10 +130,10 @@ class CardItemMenuPopup extends React.PureComponent {
       <Menu renderer={MenuPopupRenderer} rendererProps={cache('CIMP_menuRendererProps', { triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 } })} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
         <MenuTrigger>
           {/* View with paddingBottom is required because there is this space on the web. */}
-          <View ref={this.menuBtn} style={cache('CIMP_menuTriggerViewStyle', { paddingBottom: 6 })} collapsable={false}>
+          <View style={cache('CIMP_menuTriggerViewStyle', { paddingBottom: 6 })}>
             {/* Change the paddings here, need to change triggerOffsets too */}
             <View style={tailwind('pt-2 pb-0 pl-4 pr-2 flex-shrink-0 flex-grow-0')}>
-              <Svg style={tailwind('text-gray-400 font-normal rounded-full')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <Svg ref={this.menuBtn} style={tailwind('text-gray-400 font-normal rounded-full')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none" collapsable={false}>
                 <Path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </Svg>
             </View>
