@@ -167,13 +167,11 @@ const ListNamesPopup = () => {
   useEffect(() => {
     let didMount = true;
     if (derivedIsShown) {
+      didClick.current = false;
+
       let animConfig = popupOpenAnimConfig;
       if (animType === ANIM_TYPE_BMODAL) animConfig = bModalOpenAnimConfig;
-      Animated.spring(popupAnim, { toValue: 1, ...animConfig }).start(() => {
-        if (didMount) {
-          didClick.current = false;
-        }
-      });
+      Animated.spring(popupAnim, { toValue: 1, ...animConfig }).start();
     } else {
       let animConfig = popupCloseAnimConfig;
       if (animType === ANIM_TYPE_BMODAL) animConfig = bModalCloseAnimConfig;
