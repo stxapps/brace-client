@@ -199,12 +199,12 @@ class CardPanel extends React.PureComponent {
 
       classNames += ' pb-6';
     } else if (columnWidth === PC_33) {
-      if (columnIndex === 0) classNames = 'pl-8 pr-6';
-      else if (columnIndex === 1) classNames = 'pr-3 pl-3';
-      else if (columnIndex === 2) classNames = 'pl-6 pr-8';
+      if (columnIndex === 0) classNames = 'pl-8 pr-2';
+      else if (columnIndex === 1) classNames = 'pr-5 pl-5';
+      else if (columnIndex === 2) classNames = 'pl-2 pr-8';
       else throw new Error(`Invalid columnIndex: ${columnIndex}`);
 
-      classNames += ' pb-9';
+      classNames += ' pb-7';
     }
 
     return <CardItem style={tailwind(classNames)} link={item.data} />;
