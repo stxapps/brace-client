@@ -10,7 +10,7 @@ import {
 } from '../types/const';
 import { getListNameMap, getPopupLink } from '../selectors';
 import {
-  copyTextToClipboard, ensureContainUrlProtocol, getListNameDisplayName,
+  copyTextToClipboard, ensureContainUrlProtocol, getListNameDisplayName, getAllListNames,
   isEqual, throttle, getLastHalfHeight,
 } from '../utils';
 import { popupBgFMV, getPopupFMV } from '../types/animConfigs';
@@ -80,7 +80,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
   populateMenu() {
 
-    const { listName, popupLink } = this.props;
+    const { listName, listNameMap, popupLink } = this.props;
 
     let menu = null;
     if (listName in CARD_ITEM_POPUP_MENU) {
@@ -88,6 +88,11 @@ class CardItemMenuPopup extends React.PureComponent {
     } else {
       menu = CARD_ITEM_POPUP_MENU[MY_LIST];
     }
+
+    if (listName === MY_LIST && getAllListNames(listNameMap).length === 3) {
+      menu = menu.slice(0, -1);
+    }
+
     if ([ADDING, MOVING].includes(popupLink.status)) {
       menu = menu.slice(0, 2);
     }

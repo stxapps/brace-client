@@ -115,7 +115,6 @@ const _ListNameEditor = (props) => {
   const onInputKeyPress = (e) => {
     if (e.key === 'Enter') {
       onOkBtnClick();
-      if (!listNameObj) setTimeout(() => onInputFocus(), 1);
     }
   };
 

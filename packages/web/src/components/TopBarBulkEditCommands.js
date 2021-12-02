@@ -7,7 +7,7 @@ import {
   CONFIRM_DELETE_POPUP, LIST_NAMES_POPUP, MY_LIST, ARCHIVE, TRASH,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
-import { getListNameDisplayName } from '../utils';
+import { getListNameDisplayName, getAllListNames } from '../utils';
 import { ccPopupFMV } from '../types/animConfigs';
 
 class TopBarBulkEditCommands extends React.Component {
@@ -143,7 +143,7 @@ class TopBarBulkEditCommands extends React.Component {
     const isRemoveBtnShown = [MY_LIST, ARCHIVE].includes(rListName);
     const isRestoreBtnShown = [TRASH].includes(rListName);
     const isDeleteBtnShown = [TRASH].includes(rListName);
-    const isMoveToBtnShown = [ARCHIVE].includes(rListName) || (rListName === MY_LIST && listNameMap.length > 3);
+    const isMoveToBtnShown = [ARCHIVE].includes(rListName) || (rListName === MY_LIST && getAllListNames(listNameMap).length > 3);
 
     const btnStyle = {
       height: '2.125rem',

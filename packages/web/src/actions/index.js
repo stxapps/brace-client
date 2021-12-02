@@ -97,6 +97,15 @@ export const init = async (store) => {
       });
     }, 16));
   }
+
+  window.addEventListener('beforeunload', (e) => {
+    const settings = store.getState().settings;
+    const snapshotSettings = store.getState().snapshot.settings;
+    if (!isEqual(settings, snapshotSettings)) {
+      e.preventDefault();
+      return e.returnValue = 'It looks like your changes to the settings hasn\'t been saved. Do you want to leave this site and discard your changes?';
+    }
+  }, { capture: true });
 };
 
 const handlePendingSignIn = () => async (dispatch, getState) => {

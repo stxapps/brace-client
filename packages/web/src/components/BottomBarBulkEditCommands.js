@@ -7,7 +7,7 @@ import {
   CONFIRM_DELETE_POPUP, LIST_NAMES_POPUP, MY_LIST, ARCHIVE, TRASH, BOTTOM_BAR_HEIGHT,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
-import { getListNameDisplayName } from '../utils';
+import { getListNameDisplayName, getAllListNames } from '../utils';
 import { ccPopupFMV } from '../types/animConfigs';
 
 class BottomBarBulkEditCommands extends React.Component {
@@ -140,7 +140,7 @@ class BottomBarBulkEditCommands extends React.Component {
     const isRemoveBtnShown = [MY_LIST, ARCHIVE].includes(rListName);
     const isRestoreBtnShown = [TRASH].includes(rListName);
     const isDeleteBtnShown = [TRASH].includes(rListName);
-    const isMoveToBtnShown = [ARCHIVE].includes(rListName) || (rListName === MY_LIST && listNameMap.length > 3);
+    const isMoveToBtnShown = [ARCHIVE].includes(rListName) || (rListName === MY_LIST && getAllListNames(listNameMap).length > 3);
 
     return (
       <React.Fragment>

@@ -273,11 +273,13 @@ const ListNamesPopup = () => {
 
   const renderListNameBtns = () => {
     const viewClassNames = animType === ANIM_TYPE_BMODAL ? '-mt-0.5' : '-mt-0.5';
-    const btnClassNames = animType === ANIM_TYPE_BMODAL ? 'py-4' : 'py-3';
 
     return (
       <View style={tailwind(viewClassNames)}>
         {children.map(obj => {
+          let btnClassNames = animType === ANIM_TYPE_BMODAL ? 'py-4' : 'py-3';
+          if (!obj.children || obj.children.length === 0) btnClassNames += ' pr-4';
+
           let disabled = false, forwardDisabled = false;
           if (mode === MODE_MOVE_LIST_NAME) {
             const { parent: p } = getListNameObj(

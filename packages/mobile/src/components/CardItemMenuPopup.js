@@ -14,7 +14,7 @@ import {
 } from '../types/const';
 import { getListNameMap } from '../selectors';
 import {
-  ensureContainUrlProtocol, getListNameDisplayName, getLastHalfHeight,
+  ensureContainUrlProtocol, getListNameDisplayName, getAllListNames, getLastHalfHeight,
 } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
@@ -34,7 +34,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
   populateMenu() {
 
-    const { link, listName } = this.props;
+    const { link, listNameMap, listName } = this.props;
 
     let menu = null;
     if (listName in CARD_ITEM_POPUP_MENU) {
@@ -42,6 +42,11 @@ class CardItemMenuPopup extends React.PureComponent {
     } else {
       menu = CARD_ITEM_POPUP_MENU[MY_LIST];
     }
+
+    if (listName === MY_LIST && getAllListNames(listNameMap).length === 3) {
+      menu = menu.slice(0, -1);
+    }
+
     if ([ADDING, MOVING].includes(link.status)) {
       menu = menu.slice(0, 2);
     }
