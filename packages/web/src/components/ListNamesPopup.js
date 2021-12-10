@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence, useMotionValue, animate } from 'framer-motion';
 
@@ -85,11 +85,11 @@ const ListNamesPopup = () => {
     return getMaxListNameChildrenSize(derivedListNameMap);
   }, [derivedListNameMap]);
 
-  const onCancelBtnClick = useCallback(() => {
+  const onCancelBtnClick = () => {
     if (didClick.current) return;
     dispatch(updatePopup(LIST_NAMES_POPUP, false, null));
     didClick.current = true;
-  }, [dispatch]);
+  };
 
   const onMoveToItemBtnClick = (selectedListName) => {
     if (didClick.current) return;
@@ -143,7 +143,10 @@ const ListNamesPopup = () => {
   };
 
   useEffect(() => {
-    if (derivedIsShown) didClick.current = false;
+    if (derivedIsShown) {
+      cancelBtn.current.focus();
+      didClick.current = false;
+    }
   }, [derivedIsShown]);
 
   useEffect(() => {

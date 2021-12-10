@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -29,11 +29,11 @@ const SettingsListsMenuPopup = () => {
   const didClick = useRef(false);
   const dispatch = useDispatch();
 
-  const onCancelBtnClick = useCallback(() => {
+  const onCancelBtnClick = () => {
     if (didClick.current) return;
     dispatch(updatePopup(SETTINGS_LISTS_MENU_POPUP, false, null));
     didClick.current = true;
-  }, [dispatch]);
+  };
 
   const onEditBtnClick = () => {
     if (didClick.current) return;

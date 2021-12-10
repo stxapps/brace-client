@@ -1,6 +1,6 @@
-import { UPDATE_POPUP, UPDATE_STACKS_ACCESS } from '../types/actionTypes';
 import { REHYDRATE } from 'redux-persist/constants';
 
+import { UPDATE_POPUP, UPDATE_STACKS_ACCESS } from '../types/actionTypes';
 import { ALL, SIGN_UP_POPUP, SIGN_IN_POPUP } from '../types/const';
 
 const initialState = {

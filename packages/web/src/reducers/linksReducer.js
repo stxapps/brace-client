@@ -71,7 +71,9 @@ const linksReducer = (state = initialState, action) => {
       // Sort and get just first N based on doDescendingOrder
       //   so be able to compare and do update or not.
       const ids = Object.keys(fetchedLinks).sort();
-      if (action.payload.settings.doDescendingOrder) ids.reverse();
+      if (action.payload.settings && action.payload.settings.doDescendingOrder) {
+        ids.reverse();
+      }
 
       const selectedIds = ids.slice(0, N_LINKS);
       const selectedLinks = {};

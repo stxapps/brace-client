@@ -45,7 +45,7 @@ import {
   _, isEqual, throttle, isIPadIPhoneIPod,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam, extractUrl, getUserImageUrl, randomDecor,
-  isOfflineActionWithPayload, shouldDispatchFetch,
+  isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
 } from '../utils';
 
 export const init = async (store) => {
@@ -970,8 +970,17 @@ export const moveToListName = (listName, parent) => {
   return { type: MOVE_TO_LIST_NAME, payload: { listName, parent } };
 };
 
-export const deleteListNames = (listNames) => {
-  return { type: DELETE_LIST_NAMES, payload: { listNames } };
+export const deleteListNames = (listNames) => async (dispatch, getState) => {
+  const { listNameMap } = getState().settings;
+
+  const allListNames = [];
+  for (const listName of listNames) {
+    const { listNameObj } = getListNameObj(listName, listNameMap);
+    allListNames.push(listNameObj.listName);
+    allListNames.push(...getAllListNames(listNameObj.children));
+  }
+
+  dispatch({ type: DELETE_LIST_NAMES, payload: { listNames: allListNames } });
 };
 
 export const updateDoExtractContents = (doExtractContents) => {

@@ -321,11 +321,7 @@ class CardPanel extends React.PureComponent {
 
   render() {
 
-    const { links, hasMoreLinks, columnWidth } = this.props;
-
-    if (links === null) {
-      throw new Error(`Invalid links: ${links}. Links cannot be undefined as in LinkSelector and if links is null, it should be handled in Main, not in CardPanel.`);
-    }
+    const { hasMoreLinks, columnWidth } = this.props;
 
     const panelData = [{ id: PANEL_HEAD }, { id: PANEL_BODY }];
     if (hasMoreLinks) panelData.push({ id: PANEL_FOOTER });
@@ -358,10 +354,16 @@ const mapStateToProps = (state, props) => {
 
   const listName = state.display.listName;
 
+  let links = getLinks(state);
+  if (!links) {
+    console.log(`Invalid links: ${links}. Links cannot be undefined as in LinkSelector and if links is null, it should be handled in Main, not in CardPanel.`);
+    links = [];
+  }
+
   return {
     listName: listName,
     listNameMap: getListNameMap(state),
-    links: getLinks(state),
+    links: links,
     hasMoreLinks: state.hasMoreLinks[listName],
     isFetchingMore: getIsFetchingMore(state),
     searchString: state.display.searchString,

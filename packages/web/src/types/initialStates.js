@@ -1,5 +1,9 @@
 import { MY_LIST, TRASH, ARCHIVE, MODE_VIEW } from '../types/const';
 
+export const myListListNameObj = { listName: MY_LIST, displayName: MY_LIST };
+export const trashListNameObj = { listName: TRASH, displayName: TRASH };
+export const archiveListNameObj = { listName: ARCHIVE, displayName: ARCHIVE };
+
 export const initialSettingsState = {
   defaultListName: MY_LIST,
   doEncrypt: true,
@@ -9,9 +13,7 @@ export const initialSettingsState = {
   doRemoveAfterClick: false,
   doExitBulkEditAfterAction: true,
   listNameMap: [
-    { listName: MY_LIST, displayName: MY_LIST },
-    { listName: TRASH, displayName: TRASH },
-    { listName: ARCHIVE, displayName: ARCHIVE },
+    { ...myListListNameObj }, { ...trashListNameObj }, { ...archiveListNameObj },
   ],
 };
 

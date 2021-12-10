@@ -78,7 +78,8 @@ const _ListNameEditor = (props) => {
   const key = listNameObj ? listNameObj.listName : 'newListNameEditor';
   const getListNameEditor = useMemo(makeGetListNameEditor, []);
   const state = useSelector(s => getListNameEditor(s, key));
-  const prevFocusCount = useRef(0);
+  const prevFocusCount = useRef(state.focusCount);
+  const prevDisplayName = useRef(null);
   const input = useRef(null);
   const menuBtn = useRef(null);
   const didOkBtnJustPress = useRef(false);
@@ -164,7 +165,9 @@ const _ListNameEditor = (props) => {
     }
 
     dispatch(addListNames([state.value]));
-    dispatch(updateListNameEditors({ [key]: { ...initialListNameEditorState } }));
+    dispatch(updateListNameEditors({
+      [key]: { ...initialListNameEditorState, focusCount: state.focusCount },
+    }));
     input.current.blur();
   };
 
@@ -185,7 +188,12 @@ const _ListNameEditor = (props) => {
 
     dispatch(updateListNames([listNameObj.listName], [state.value]));
     dispatch(updateListNameEditors({
-      [key]: { ...initialListNameEditorState, value: state.value },
+      [key]: {
+        ...initialListNameEditorState,
+        value: state.value,
+        doExpand: state.doExpand,
+        focusCount: state.focusCount,
+      },
     }));
     input.current.blur();
   };
@@ -235,19 +243,18 @@ const _ListNameEditor = (props) => {
   };
 
   useEffect(() => {
-    if (listNameObj) {
+    if (listNameObj && listNameObj.displayName !== prevDisplayName.current) {
       dispatch(updateListNameEditors({
         [key]: { value: listNameObj.displayName },
       }));
+      prevDisplayName.current = listNameObj.displayName;
     }
   }, [listNameObj, key, dispatch]);
 
   useEffect(() => {
     // state.focusCount can be undefined when the popup is close, so can't use !==
-    if (state.focusCount > prevFocusCount.current) {
-      input.current.focus();
-      prevFocusCount.current = state.focusCount;
-    }
+    if (state.focusCount > prevFocusCount.current) input.current.focus();
+    prevFocusCount.current = state.focusCount;
   }, [state.focusCount]);
 
   useEffect(() => {
@@ -286,16 +293,20 @@ const _ListNameEditor = (props) => {
   } else {
     if (listNameObj && listNameObj.children && listNameObj.children.length > 0) {
       const expandSvg = state.doExpand ? (
-        <Svg style={tailwind('text-gray-500 font-normal')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
-          <Path fillRule="evenodd" clipRule="evenodd" d="M5.29303 7.29302C5.48056 7.10555 5.73487 7.00023 6.00003 7.00023C6.26519 7.00023 6.5195 7.10555 6.70703 7.29302L10 10.586L13.293 7.29302C13.3853 7.19751 13.4956 7.12133 13.6176 7.06892C13.7396 7.01651 13.8709 6.98892 14.0036 6.98777C14.1364 6.98662 14.2681 7.01192 14.391 7.0622C14.5139 7.11248 14.6255 7.18673 14.7194 7.28062C14.8133 7.37452 14.8876 7.48617 14.9379 7.60907C14.9881 7.73196 15.0134 7.86364 15.0123 7.99642C15.0111 8.1292 14.9835 8.26042 14.9311 8.38242C14.8787 8.50443 14.8025 8.61477 14.707 8.70702L10.707 12.707C10.5195 12.8945 10.2652 12.9998 10 12.9998C9.73487 12.9998 9.48056 12.8945 9.29303 12.707L5.29303 8.70702C5.10556 8.51949 5.00024 8.26518 5.00024 8.00002C5.00024 7.73486 5.10556 7.48055 5.29303 7.29302Z" />
+        <Svg style={tailwind('text-gray-500 font-normal')} width={14} height={9} viewBox="0 0 11 7" fill="currentColor">
+          <Path fillRule="evenodd" clipRule="evenodd" d="M0.292787 1.29302C0.480314 1.10555 0.734622 1.00023 0.999786 1.00023C1.26495 1.00023 1.51926 1.10555 1.70679 1.29302L4.99979 4.58602L8.29279 1.29302C8.38503 1.19751 8.49538 1.12133 8.61738 1.06892C8.73939 1.01651 8.87061 0.988924 9.00339 0.98777C9.13616 0.986616 9.26784 1.01192 9.39074 1.0622C9.51364 1.11248 9.62529 1.18673 9.71918 1.28062C9.81307 1.37452 9.88733 1.48617 9.93761 1.60907C9.98789 1.73196 10.0132 1.86364 10.012 1.99642C10.0109 2.1292 9.9833 2.26042 9.93089 2.38242C9.87848 2.50443 9.8023 2.61477 9.70679 2.70702L5.70679 6.70702C5.51926 6.89449 5.26495 6.99981 4.99979 6.99981C4.73462 6.99981 4.48031 6.89449 4.29279 6.70702L0.292787 2.70702C0.105316 2.51949 0 2.26518 0 2.00002C0 1.73486 0.105316 1.48055 0.292787 1.29302V1.29302Z" />
         </Svg>
       ) : (
-        <Svg style={tailwind('text-gray-500 font-normal')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
-          <Path fillRule="evenodd" clipRule="evenodd" d="M7.29303 14.707C7.10556 14.5195 7.00024 14.2651 7.00024 14C7.00024 13.7348 7.10556 13.4805 7.29303 13.293L10.586 9.99998L7.29303 6.70698C7.11087 6.51838 7.01008 6.26578 7.01236 6.00358C7.01463 5.74138 7.1198 5.49057 7.30521 5.30516C7.49062 5.11975 7.74143 5.01458 8.00363 5.01231C8.26583 5.01003 8.51843 5.11082 8.70703 5.29298L12.707 9.29298C12.8945 9.48051 12.9998 9.73482 12.9998 9.99998C12.9998 10.2651 12.8945 10.5195 12.707 10.707L8.70703 14.707C8.5195 14.8945 8.26519 14.9998 8.00003 14.9998C7.73487 14.9998 7.48056 14.8945 7.29303 14.707Z" />
+        <Svg style={tailwind('text-gray-500 font-normal')} width={20} height={12} viewBox="0 0 6 10" fill="currentColor">
+          <Path fillRule="evenodd" clipRule="evenodd" d="M0.292787 9.70698C0.105316 9.51945 0 9.26514 0 8.99998C0 8.73482 0.105316 8.48051 0.292787 8.29298L3.58579 4.99998L0.292787 1.70698C0.110629 1.51838 0.00983372 1.26578 0.0121121 1.00358C0.0143906 0.741382 0.11956 0.49057 0.304968 0.305162C0.490376 0.119753 0.741189 0.0145843 1.00339 0.0123059C1.26558 0.0100274 1.51818 0.110822 1.70679 0.29298L5.70679 4.29298C5.89426 4.48051 5.99957 4.73482 5.99957 4.99998C5.99957 5.26514 5.89426 5.51945 5.70679 5.70698L1.70679 9.70698C1.51926 9.89445 1.26495 9.99977 0.999786 9.99977C0.734622 9.99977 0.480314 9.89445 0.292787 9.70698Z" />
         </Svg>
       );
       expandBtn = (
-        <TouchableOpacity onPress={onExpandBtnClick} style={tailwind('flex-grow-0 flex-shrink-0 flex-row justify-start items-center w-8 h-10')}>{expandSvg}</TouchableOpacity>
+        <TouchableOpacity onPress={onExpandBtnClick} style={tailwind('flex-grow-0 flex-shrink-0 flex-row justify-start items-center w-8 h-10')}>
+          <View style={tailwind('pl-1 w-3.5 h-3.5 justify-center items-center')}>
+            {expandSvg}
+          </View>
+        </TouchableOpacity>
       );
     } else {
       expandBtn = (
@@ -352,7 +363,7 @@ const _ListNameEditor = (props) => {
           </Svg>
         </TouchableOpacity>}
       </View>
-      {state.doExpand && listNameObj.children.map(child => <ListNameEditor key={child.listName} listNameObj={child} validateDisplayName={validateDisplayName} level={level + 1} />)}
+      {(state.doExpand && listNameObj && listNameObj.children && listNameObj.children.length > 0) && listNameObj.children.map(child => <ListNameEditor key={child.listName} listNameObj={child} validateDisplayName={validateDisplayName} level={level + 1} />)}
     </React.Fragment>
   );
 };

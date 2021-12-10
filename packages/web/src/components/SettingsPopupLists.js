@@ -32,7 +32,7 @@ const SettingsPopupLists = (props) => {
   return (
     <div className="p-4 md:p-6 md:pt-4">
       <div className="border-b border-gray-200 md:hidden">
-        <button onClick={onSidebarOpenBtnClick} className="pb-1 group focus:outline-none" >
+        <button onClick={onSidebarOpenBtnClick} className="pb-1 group focus:outline-none">
           <span className="text-sm text-gray-500 rounded group-focus:ring">{'<'} <span className="group-hover:underline">Settings</span></span>
         </button>
         <h3 className="pb-2 text-xl text-gray-800 font-medium leading-none">Lists</h3>
@@ -73,7 +73,8 @@ const _ListNameEditor = (props) => {
   const key = listNameObj ? listNameObj.listName : 'newListNameEditor';
   const getListNameEditor = useMemo(makeGetListNameEditor, []);
   const state = useSelector(s => getListNameEditor(s, key));
-  const prevFocusCount = useRef(0);
+  const prevFocusCount = useRef(state.focusCount);
+  const prevDisplayName = useRef(null);
   const input = useRef(null);
   const menuBtn = useRef(null);
   const didOkBtnJustPress = useRef(false);
@@ -161,7 +162,9 @@ const _ListNameEditor = (props) => {
     }
 
     dispatch(addListNames([state.value]));
-    dispatch(updateListNameEditors({ [key]: { ...initialListNameEditorState } }));
+    dispatch(updateListNameEditors({
+      [key]: { ...initialListNameEditorState, focusCount: state.focusCount },
+    }));
     input.current.blur();
   };
 
@@ -182,7 +185,12 @@ const _ListNameEditor = (props) => {
 
     dispatch(updateListNames([listNameObj.listName], [state.value]));
     dispatch(updateListNameEditors({
-      [key]: { ...initialListNameEditorState, value: state.value },
+      [key]: {
+        ...initialListNameEditorState,
+        value: state.value,
+        doExpand: state.doExpand,
+        focusCount: state.focusCount,
+      },
     }));
     input.current.blur();
   };
@@ -220,19 +228,18 @@ const _ListNameEditor = (props) => {
   };
 
   useEffect(() => {
-    if (listNameObj) {
+    if (listNameObj && listNameObj.displayName !== prevDisplayName.current) {
       dispatch(updateListNameEditors({
         [key]: { value: listNameObj.displayName },
       }));
+      prevDisplayName.current = listNameObj.displayName;
     }
   }, [listNameObj, key, dispatch]);
 
   useEffect(() => {
     // state.focusCount can be undefined when the popup is close, so can't use !==
-    if (state.focusCount > prevFocusCount.current) {
-      input.current.focus();
-      prevFocusCount.current = state.focusCount;
-    }
+    if (state.focusCount > prevFocusCount.current) input.current.focus();
+    prevFocusCount.current = state.focusCount;
   }, [state.focusCount]);
 
   useEffect(() => {
@@ -277,12 +284,12 @@ const _ListNameEditor = (props) => {
           <path fillRule="evenodd" clipRule="evenodd" d="M0.292787 1.29302C0.480314 1.10555 0.734622 1.00023 0.999786 1.00023C1.26495 1.00023 1.51926 1.10555 1.70679 1.29302L4.99979 4.58602L8.29279 1.29302C8.38503 1.19751 8.49538 1.12133 8.61738 1.06892C8.73939 1.01651 8.87061 0.988924 9.00339 0.98777C9.13616 0.986616 9.26784 1.01192 9.39074 1.0622C9.51364 1.11248 9.62529 1.18673 9.71918 1.28062C9.81307 1.37452 9.88733 1.48617 9.93761 1.60907C9.98789 1.73196 10.0132 1.86364 10.012 1.99642C10.0109 2.1292 9.9833 2.26042 9.93089 2.38242C9.87848 2.50443 9.8023 2.61477 9.70679 2.70702L5.70679 6.70702C5.51926 6.89449 5.26495 6.99981 4.99979 6.99981C4.73462 6.99981 4.48031 6.89449 4.29279 6.70702L0.292787 2.70702C0.105316 2.51949 0 2.26518 0 2.00002C0 1.73486 0.105316 1.48055 0.292787 1.29302V1.29302Z" />
         </svg>
       ) : (
-        <svg className="h-3 text-gray-500 rounded-sm group-hover:text-gray-600" viewBox="0 0 6 10" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <svg className="h-3" viewBox="0 0 6 10" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
           <path fillRule="evenodd" clipRule="evenodd" d="M0.292787 9.70698C0.105316 9.51945 0 9.26514 0 8.99998C0 8.73482 0.105316 8.48051 0.292787 8.29298L3.58579 4.99998L0.292787 1.70698C0.110629 1.51838 0.00983372 1.26578 0.0121121 1.00358C0.0143906 0.741382 0.11956 0.49057 0.304968 0.305162C0.490376 0.119753 0.741189 0.0145843 1.00339 0.0123059C1.26558 0.0100274 1.51818 0.110822 1.70679 0.29298L5.70679 4.29298C5.89426 4.48051 5.99957 4.73482 5.99957 4.99998C5.99957 5.26514 5.89426 5.51945 5.70679 5.70698L1.70679 9.70698C1.51926 9.89445 1.26495 9.99977 0.999786 9.99977C0.734622 9.99977 0.480314 9.89445 0.292787 9.70698Z" />
         </svg>
       );
       expandBtn = (
-        <button onClick={onExpandBtnClick} className={'flex-grow-0 flex-shrink-0 flex justify-start items-center w-8 h-10 group focus:outline-none'}>
+        <button onClick={onExpandBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-start items-center w-8 h-10 group focus:outline-none">
           <div className="w-3.5 h-3.5 flex justify-center items-center text-gray-500 rounded-sm group-hover:text-gray-600 group-focus:ring group-focus:ring-offset-4">
             {expandSvg}
           </div>
@@ -343,7 +350,7 @@ const _ListNameEditor = (props) => {
           </svg>
         </button>}
       </div>
-      {state.doExpand && listNameObj.children.map(child => <ListNameEditor key={child.listName} listNameObj={child} validateDisplayName={validateDisplayName} level={level + 1} />)}
+      {(state.doExpand && listNameObj && listNameObj.children && listNameObj.children.length > 0) && listNameObj.children.map(child => <ListNameEditor key={child.listName} listNameObj={child} validateDisplayName={validateDisplayName} level={level + 1} />)}
     </React.Fragment>
   );
 };
