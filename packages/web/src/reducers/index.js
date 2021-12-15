@@ -6,6 +6,7 @@ import hasMoreLinksReducer from './hasMoreLinksReducer';
 import displayReducer from './displayReducer';
 import userReducer from './userReducer';
 import settingsReducer from './settingsReducer';
+import localSettingsReducer from './localSettingsReducer';
 import fetchedReducer from './fetchedReducer';
 import isFetchMoreInterrupted from './isFetchMoreInterrupted';
 import stacksAccessReducer from './stacksAccessReducer';
@@ -19,6 +20,7 @@ export default combineReducers({
   display: displayReducer,
   user: userReducer,
   settings: settingsReducer,
+  localSettings: localSettingsReducer,
   fetched: fetchedReducer,
   isFetchMoreInterrupted: isFetchMoreInterrupted,
   stacksAccess: stacksAccessReducer,

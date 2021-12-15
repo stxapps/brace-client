@@ -27,7 +27,7 @@ import {
   UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME,
   UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
-  UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS,
+  UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_LAYOUT_TYPE,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -1045,6 +1045,10 @@ export const cancelDiedSettings = () => async (dispatch, getState) => {
     type: CANCEL_DIED_SETTINGS,
     payload: payload,
   });
+};
+
+export const updateLayoutType = (type) => {
+  return { type: UPDATE_LAYOUT_TYPE, payload: type };
 };
 
 const exportAllDataLoop = async (dispatch, fPaths, doneCount) => {

@@ -126,7 +126,6 @@ class CardItemContent extends React.Component {
   }
 
   renderFavicon() {
-
     const placeholder = (ref) => {
       if (decor.favicon.bg.type === COLOR) {
         return <div ref={ref} className={`flex-shrink-0 flex-grow-0 w-4 h-4 ${decor.favicon.bg.value} rounded-full`} />;

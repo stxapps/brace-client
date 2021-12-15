@@ -45,7 +45,7 @@ class CardItem extends React.Component {
   }
 
   renderRetry() {
-    let { url } = this.props.link;
+    const { url } = this.props.link;
 
     return (
       <React.Fragment>

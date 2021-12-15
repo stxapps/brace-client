@@ -7,6 +7,7 @@ import {
   MY_LIST, TRASH, ADDING, MOVING,
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
   CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP,
+  LG_WIDTH, LAYOUT_LIST,
 } from '../types/const';
 import { getListNameMap, getPopupLink } from '../selectors';
 import {
@@ -80,7 +81,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
   populateMenu() {
 
-    const { listName, listNameMap, popupLink } = this.props;
+    const { listName, listNameMap, popupLink, layoutType } = this.props;
 
     let menu = null;
     if (listName in CARD_ITEM_POPUP_MENU) {
@@ -95,6 +96,10 @@ class CardItemMenuPopup extends React.PureComponent {
 
     if ([ADDING, MOVING].includes(popupLink.status)) {
       menu = menu.slice(0, 2);
+    }
+
+    if (layoutType === LAYOUT_LIST && window.innerWidth >= LG_WIDTH) {
+      menu = menu.filter(text => ![ARCHIVE, REMOVE].includes(text));
     }
 
     return { menu };
@@ -219,6 +224,7 @@ const mapStateToProps = (state, props) => {
     listName: state.display.listName,
     listNameMap: getListNameMap(state),
     popupLink: getPopupLink(state),
+    layoutType: state.localSettings.layoutType,
   }
 };
 

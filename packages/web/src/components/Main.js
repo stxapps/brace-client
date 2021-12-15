@@ -6,7 +6,7 @@ import {
   BACK_DECIDER, BACK_POPUP,
   PC_100, PC_50, PC_33,
   SHOW_BLANK, SHOW_COMMANDS,
-  SM_WIDTH, LG_WIDTH,
+  SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
 } from '../types/const';
 import { getLinks } from '../selectors';
 import { throttle } from '../utils';
@@ -15,6 +15,7 @@ import Loading from './Loading';
 import TopBar from './TopBar';
 import BottomBar from './BottomBar';
 import CardPanel from './CardPanel';
+import ListPanel from './ListPanel';
 import FetchedPopup from './FetchedPopup';
 import CardItemMenuPopup from './CardItemMenuPopup';
 import SettingsPopup from './SettingsPopup';
@@ -78,7 +79,7 @@ class Main extends React.PureComponent {
 
   render() {
 
-    const { links } = this.props;
+    const { links, layoutType } = this.props;
     const { columnWidth } = this.state;
 
     if (links === null) {
@@ -89,8 +90,11 @@ class Main extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <CardPanel columnWidth={columnWidth} />
-        {/* BottomBar before TopBar so listNamePopup's bg in TopBar is above BottomBar */}
+        {layoutType === LAYOUT_LIST ?
+          <ListPanel columnWidth={columnWidth} /> :
+          <CardPanel columnWidth={columnWidth} />
+        }
+        {/* BottomBar before TopBar so listNamePopup's bg in TopBar's above BottomBar */}
         {columnWidth === PC_100 && <BottomBar />}
         <TopBar rightPane={topBarRightPane} isListNameShown={true} />
         <FetchedPopup />
@@ -110,6 +114,7 @@ const mapStateToProps = (state, props) => {
     listName: state.display.listName,
     links: getLinks(state),
     fetchedListNames: state.display.fetchedListNames,
+    layoutType: state.localSettings.layoutType,
   };
 };
 

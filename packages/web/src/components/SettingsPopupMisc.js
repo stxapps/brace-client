@@ -3,7 +3,9 @@ import { connect } from 'react-redux';
 
 import {
   updateDoExtractContents, updateDoDeleteOldLinksInTrash, updateDoDescendingOrder,
+  updateLayoutType,
 } from '../actions';
+import { LAYOUT_CARD, LAYOUT_LIST } from '../types/const';
 
 class SettingsPopupMisc extends React.PureComponent {
 
@@ -29,9 +31,15 @@ class SettingsPopupMisc extends React.PureComponent {
     this.props.updateDoDescendingOrder(doDescendingOrder);
   }
 
+  onLayoutTypeInputChange = (e) => {
+    this.props.updateLayoutType(e.target.value);
+  }
+
   render() {
 
-    const { doExtractContents, doDeleteOldLinksInTrash, doDescendingOrder } = this.props;
+    const {
+      doExtractContents, doDeleteOldLinksInTrash, doDescendingOrder, layoutType,
+    } = this.props;
 
     const doExtractBtnClassNames = doExtractContents ? 'bg-blue-500' : 'bg-gray-200';
     const doExtractBtnInnerClassNames = doExtractContents ? 'translate-x-5' : 'translate-x-0';
@@ -44,6 +52,12 @@ class SettingsPopupMisc extends React.PureComponent {
 
     const descendingBtnClassNames = doDescendingOrder ? 'bg-blue-100 border-blue-200 z-10' : 'border-gray-200';
     const descendingBtnInnerClassNames = doDescendingOrder ? 'text-blue-800' : 'text-gray-600';
+
+    const layoutCardBtnClassNames = layoutType === LAYOUT_CARD ? 'bg-blue-100 border-blue-200 z-10' : 'border-gray-200';
+    const layoutCardBtnInnerClassNames = layoutType === LAYOUT_CARD ? 'text-blue-800' : 'text-gray-600';
+
+    const layoutListBtnClassNames = layoutType === LAYOUT_LIST ? 'bg-blue-100 border-blue-200 z-10' : 'border-gray-200';
+    const layoutListBtnInnerClassNames = layoutType === LAYOUT_LIST ? 'text-blue-800' : 'text-gray-600';
 
     return (
       <div className="p-4 relative md:p-6 md:pt-4">
@@ -72,13 +86,13 @@ class SettingsPopupMisc extends React.PureComponent {
           </span>
         </div>
         <div className="mt-10 mb-4 flex flex-col">
-          <h4 id="auto-delete-option-label" className="text-base text-gray-800 font-medium leading-none">List Order</h4>
+          <h4 id="list-order-option-label" className="text-base text-gray-800 font-medium leading-none">List Order</h4>
           <div className="sm:flex sm:items-start sm:justify-between sm:space-x-4">
-            <p id="auto-delete-option-description" className="mt-2.5 flex-grow flex-shrink text-base text-gray-500 leading-relaxed">Choose whether your saved links are sorted by saved date in <span className="font-semibold">ascending order</span> (links you save first appear first) or <span className="font-semibold">descending order</span> (links you save last appear first) when you browse your saved links.</p>
+            <p id="list-order-option-description" className="mt-2.5 flex-grow flex-shrink text-base text-gray-500 leading-relaxed">Choose whether your saved links are sorted by saved date in <span className="font-semibold">ascending order</span> (links you save first appear first) or <span className="font-semibold">descending order</span> (links you save last appear first) when you browse your saved links.</p>
             <div className="mx-auto mt-2.5 w-full max-w-48 bg-white rounded-md shadow-sm -space-y-px sm:mt-1 sm:flex-grow-0 sm:flex-shrink-0 sm:w-48 sm:max-w-none">
               <div className={`${ascendingBtnClassNames} p-4 relative flex border rounded-tl-md rounded-tr-md`}>
                 <div className="flex items-center h-5">
-                  <input onChange={this.onDoDescendingInputChange} id="list-order-option-1" name="list-order" type="radio" className="h-4 w-4 text-blue-600 transition duration-150 ease-in-out cursor-pointer focus:ring" checked={!doDescendingOrder} value="ascending" />
+                  <input onChange={this.onDoDescendingInputChange} id="list-order-option-1" name="list-order-option-1" type="radio" className="h-4 w-4 text-blue-600 transition duration-150 ease-in-out cursor-pointer focus:ring" checked={!doDescendingOrder} value="ascending" />
                 </div>
                 <label htmlFor="list-order-option-1" className="ml-3 flex flex-col cursor-pointer">
                   <span className={`${ascendingBtnInnerClassNames} block text-sm leading-5 font-medium`}>Ascending order</span>
@@ -86,10 +100,34 @@ class SettingsPopupMisc extends React.PureComponent {
               </div>
               <div className={`${descendingBtnClassNames} p-4 flex relative border rounded-bl-md rounded-br-md`}>
                 <div className="flex items-center h-5">
-                  <input onChange={this.onDoDescendingInputChange} id="list-order-option-2" name="list-order" type="radio" className="h-4 w-4 text-blue-600 transition duration-150 ease-in-out cursor-pointer focus:ring" checked={doDescendingOrder} value="descending" />
+                  <input onChange={this.onDoDescendingInputChange} id="list-order-option-2" name="list-order-option-2" type="radio" className="h-4 w-4 text-blue-600 transition duration-150 ease-in-out cursor-pointer focus:ring" checked={doDescendingOrder} value="descending" />
                 </div>
                 <label htmlFor="list-order-option-2" className="ml-3 flex flex-col cursor-pointer">
                   <span className={`${descendingBtnInnerClassNames} block text-sm leading-5 font-medium`}>Descending order</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="mt-10 mb-4 flex flex-col">
+          <h4 id="layout-type-option-label" className="text-base text-gray-800 font-medium leading-none">Layout View</h4>
+          <div className="sm:flex sm:items-start sm:justify-between sm:space-x-4">
+            <p id="layout-type-option-description" className="mt-2.5 flex-grow flex-shrink text-base text-gray-500 leading-relaxed">Choose whether your saved links are displayed in Cards view or in List view. This setting is not synced so you can have a different layout for each of your devices.</p>
+            <div className="mx-auto mt-2.5 w-full max-w-48 bg-white rounded-md shadow-sm -space-y-px sm:mt-1 sm:flex-grow-0 sm:flex-shrink-0 sm:w-48 sm:max-w-none">
+              <div className={`${layoutCardBtnClassNames} p-4 relative flex border rounded-tl-md rounded-tr-md`}>
+                <div className="flex items-center h-5">
+                  <input onChange={this.onLayoutTypeInputChange} id="layout-type-option-1" name="layout-type-option-1" type="radio" className="h-4 w-4 text-blue-600 transition duration-150 ease-in-out cursor-pointer focus:ring" checked={layoutType === LAYOUT_CARD} value={LAYOUT_CARD} />
+                </div>
+                <label htmlFor="layout-type-option-1" className="ml-3 flex flex-col cursor-pointer">
+                  <span className={`${layoutCardBtnInnerClassNames} block text-sm leading-5 font-medium`}>Cards view</span>
+                </label>
+              </div>
+              <div className={`${layoutListBtnClassNames} p-4 flex relative border rounded-bl-md rounded-br-md`}>
+                <div className="flex items-center h-5">
+                  <input onChange={this.onLayoutTypeInputChange} id="layout-type-option-2" name="layout-type-option-2" type="radio" className="h-4 w-4 text-blue-600 transition duration-150 ease-in-out cursor-pointer focus:ring" checked={layoutType === LAYOUT_LIST} value={LAYOUT_LIST} />
+                </div>
+                <label htmlFor="layout-type-option-2" className="ml-3 flex flex-col cursor-pointer">
+                  <span className={`${layoutListBtnInnerClassNames} block text-sm leading-5 font-medium`}>List view</span>
                 </label>
               </div>
             </div>
@@ -105,11 +143,13 @@ const mapStateToProps = (state) => {
     doExtractContents: state.settings.doExtractContents,
     doDeleteOldLinksInTrash: state.settings.doDeleteOldLinksInTrash,
     doDescendingOrder: state.settings.doDescendingOrder,
+    layoutType: state.localSettings.layoutType,
   };
 };
 
 const mapDispatchToProps = {
   updateDoExtractContents, updateDoDeleteOldLinksInTrash, updateDoDescendingOrder,
+  updateLayoutType,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsPopupMisc);
