@@ -158,7 +158,7 @@ const ListItemContent = (props) => {
   return (
     <div className="flex items-center">
       <div className="flex-grow-0 flex-shrink-0 w-16 pl-px">
-        <div onTouchStart={onTouchPress} onTouchMove={onTouchPressRelease} onTouchEnd={onTouchPressRelease} onTouchCancel={onTouchPressRelease} onMouseDown={onClickPress} onMouseMove={onClickPressRelease} onMouseUp={onClickPressRelease} onMouseLeave={onClickPressRelease} className={`relative pb-7/12 rounded-sm ${isBulkEditing ? 'invisible' : ''}`}>
+        <div onTouchStart={onTouchPress} onTouchMove={onTouchPressRelease} onTouchEnd={onTouchPressRelease} onTouchCancel={onTouchPressRelease} onMouseDown={onClickPress} onMouseMove={onClickPressRelease} onMouseUp={onClickPressRelease} onMouseLeave={onClickPressRelease} className={`relative pb-7/12 rounded overflow-hidden ${isBulkEditing ? 'invisible' : ''}`}>
           {renderImage()}
         </div>
       </div>

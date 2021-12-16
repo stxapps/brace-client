@@ -160,7 +160,7 @@ class CardItemMenuPopup extends React.PureComponent {
         {menu.map(text => {
           let displayText = text;
           if (text === ARCHIVE) displayText = getListNameDisplayName(text, listNameMap);
-          return <button key={text} onClick={() => this.onMenuPopupClick(text)} className="py-2 pl-4 pr-4 block w-full text-sm text-gray-700 text-left truncate rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">{displayText}</button>;
+          return <button key={text} onClick={() => this.onMenuPopupClick(text)} className="py-2.5 pl-4 pr-4 block w-full text-sm text-gray-700 text-left truncate rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">{displayText}</button>;
         })}
       </React.Fragment>
     );
