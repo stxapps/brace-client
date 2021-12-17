@@ -53,7 +53,7 @@ class CardItemMenuPopup extends React.PureComponent {
     }
 
     if (layoutType === LAYOUT_LIST && safeAreaWidth >= LG_WIDTH) {
-      menu = menu.filter(text => ![ARCHIVE, REMOVE].includes(text));
+      menu = menu.filter(text => ![ARCHIVE, REMOVE, RESTORE].includes(text));
     }
 
     return { menu };
