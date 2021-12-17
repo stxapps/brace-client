@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import GracefulImage from 'react-graceful-image';
 
 import { updatePopup, updateBulkEdit, addSelectedLinkIds, moveLinks } from '../actions';
