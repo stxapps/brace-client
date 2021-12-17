@@ -15,7 +15,6 @@ const ListItemContent = (props) => {
 
   const { link } = props;
   const { width: safeAreaWidth } = useSafeAreaFrame();
-  const isBulkEditing = useSelector(state => state.display.isBulkEditing);
   const [extractedFaviconError, setExtractedFaviconError] = useState(false);
   const clickPressTimer = useRef(null);
   const touchPressTimer = useRef(null);
@@ -158,7 +157,7 @@ const ListItemContent = (props) => {
   return (
     <div className="flex items-center">
       <div className="flex-grow-0 flex-shrink-0 w-16 pl-px">
-        <div onTouchStart={onTouchPress} onTouchMove={onTouchPressRelease} onTouchEnd={onTouchPressRelease} onTouchCancel={onTouchPressRelease} onMouseDown={onClickPress} onMouseMove={onClickPressRelease} onMouseUp={onClickPressRelease} onMouseLeave={onClickPressRelease} className={`relative pb-7/12 rounded overflow-hidden ${isBulkEditing ? 'invisible' : ''}`}>
+        <div onTouchStart={onTouchPress} onTouchMove={onTouchPressRelease} onTouchEnd={onTouchPressRelease} onTouchCancel={onTouchPressRelease} onMouseDown={onClickPress} onMouseMove={onClickPressRelease} onMouseUp={onClickPressRelease} onMouseLeave={onClickPressRelease} className="relative pb-7/12 rounded overflow-hidden">
           {renderImage()}
         </div>
       </div>
@@ -178,18 +177,18 @@ const ListItemContent = (props) => {
         </div>
       </div>
       <div className="flex-grow-0 flex-shrink-0 flex justify-end items-center -mr-3 sm:-mr-1">
-        {safeAreaWidth >= LG_WIDTH && <button onClick={onArchiveBtnClick} className="px-2.5 py-3.5 rounded group focus:outline-none focus:ring" disabled={isBulkEditing}>
+        {safeAreaWidth >= LG_WIDTH && <button onClick={onArchiveBtnClick} className="px-2.5 py-3.5 rounded group focus:outline-none focus:ring">
           <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-500" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M4 3C2.89543 3 2 3.89543 2 5C2 6.10457 2.89543 7 4 7H16C17.1046 7 18 6.10457 18 5C18 3.89543 17.1046 3 16 3H4Z" />
             <path fillRule="evenodd" clipRule="evenodd" d="M3 8H17V15C17 16.1046 16.1046 17 15 17H5C3.89543 17 3 16.1046 3 15V8ZM8 11C8 10.4477 8.44772 10 9 10H11C11.5523 10 12 10.4477 12 11C12 11.5523 11.5523 12 11 12H9C8.44772 12 8 11.5523 8 11Z" />
           </svg>
         </button>}
-        {safeAreaWidth >= LG_WIDTH && <button onClick={onRemoveBtnClick} className="px-2.5 py-3.5 rounded group focus:outline-none focus:ring" disabled={isBulkEditing}>
+        {safeAreaWidth >= LG_WIDTH && <button onClick={onRemoveBtnClick} className="px-2.5 py-3.5 rounded group focus:outline-none focus:ring">
           <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-500" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M9 2C8.62123 2 8.27497 2.214 8.10557 2.55279L7.38197 4H4C3.44772 4 3 4.44772 3 5C3 5.55228 3.44772 6 4 6V16C4 17.1046 4.89543 18 6 18H14C15.1046 18 16 17.1046 16 16V6C16.5523 6 17 5.55228 17 5C17 4.44772 16.5523 4 16 4H12.618L11.8944 2.55279C11.725 2.214 11.3788 2 11 2H9ZM7 8C7 7.44772 7.44772 7 8 7C8.55228 7 9 7.44772 9 8V14C9 14.5523 8.55228 15 8 15C7.44772 15 7 14.5523 7 14V8ZM12 7C11.4477 7 11 7.44772 11 8V14C11 14.5523 11.4477 15 12 15C12.5523 15 13 14.5523 13 14V8C13 7.44772 12.5523 7 12 7Z" />
           </svg>
         </button>}
-        <button onClick={onMenuBtnClick} className="px-2 py-1 group focus:outline-none" disabled={isBulkEditing}>
+        <button onClick={onMenuBtnClick} className="px-2 py-1 group focus:outline-none">
           <svg className="py-2 w-6 text-gray-400 rounded-full group-hover:text-gray-500 group-focus:ring" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>

@@ -42,11 +42,11 @@ const ListPanel = (props) => {
 
   const onFetchMoreBtnClick = () => {
     dispatch(fetchMore());
-  }
+  };
 
   const renderFetchMoreBtn = () => {
     return (
-      <div className="my-6 px-4 sm:px-6">
+      <div className="my-4 px-4 sm:px-6">
         <button onClick={onFetchMoreBtnClick} className="py-2 block w-full group focus:outline-none">
           <span className="px-3 py-1 inline-block bg-white text-sm text-gray-500 border border-gray-400 rounded-full group-hover:text-gray-600 group-hover:border-gray-500 group-focus:ring">More</span>
         </button>
@@ -110,7 +110,7 @@ const ListPanel = (props) => {
 
   return (
     <div style={style} className="mx-auto px-4 relative max-w-6xl md:px-6 lg:px-8">
-      <div className="pt-3 md:pt-6">
+      <div className="pt-6">
         {links.length === 0 && <EmptyContent />}
         {links.length > 0 && renderItems()}
         {showFetchMoreBtn && renderFetchMoreBtn()}

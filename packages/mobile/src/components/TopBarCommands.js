@@ -48,13 +48,13 @@ class TopBarCommands extends React.PureComponent {
     return (
       <React.Fragment>
         <MenuOption onSelect={this.onSettingsBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
-          <Text style={tailwind('py-2 pl-4 text-sm text-gray-700 font-normal')}>Settings</Text>
+          <Text style={tailwind('py-2.5 pl-4 text-sm text-gray-700 font-normal')}>Settings</Text>
         </MenuOption>
         <MenuOption onSelect={this.onSupportBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
-          <Text style={tailwind('py-2 pl-4 text-sm text-gray-700 font-normal')}>Support</Text>
+          <Text style={tailwind('py-2.5 pl-4 text-sm text-gray-700 font-normal')}>Support</Text>
         </MenuOption>
         <MenuOption onSelect={this.onSignOutBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
-          <Text style={tailwind('py-2 pl-4 text-sm text-gray-700 font-normal')}>Sign out</Text>
+          <Text style={tailwind('py-2.5 pl-4 text-sm text-gray-700 font-normal')}>Sign out</Text>
         </MenuOption>
       </React.Fragment>
     );

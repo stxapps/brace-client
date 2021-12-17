@@ -4,7 +4,9 @@ import { View, Text, TouchableOpacity, Switch, Linking, Platform } from 'react-n
 
 import {
   updateDoExtractContents, updateDoDeleteOldLinksInTrash, updateDoDescendingOrder,
+  updateLayoutType,
 } from '../actions';
+import { LAYOUT_CARD, LAYOUT_LIST } from '../types/const';
 import { tailwind } from '../stylesheets/tailwind';
 
 import { withSafeAreaContext } from '.';
@@ -32,10 +34,15 @@ class SettingsPopupMisc extends React.PureComponent {
     this.props.updateDoDescendingOrder(doDescendingOrder);
   }
 
+  onLayoutTypeInputChange = (value) => {
+    this.props.updateLayoutType(value);
+  }
+
   render() {
 
     const {
-      doExtractContents, doDeleteOldLinksInTrash, doDescendingOrder, safeAreaWidth,
+      doExtractContents, doDeleteOldLinksInTrash, doDescendingOrder, layoutType,
+      safeAreaWidth,
     } = this.props;
 
     const ascendingBtnClassNames = !doDescendingOrder ? 'bg-blue-100 border-blue-200 z-10' : 'border-gray-200';
@@ -47,6 +54,16 @@ class SettingsPopupMisc extends React.PureComponent {
     const descendingBtnInnerClassNames = doDescendingOrder ? 'text-blue-800' : 'text-gray-600';
     const descendingRBtnClassNames = doDescendingOrder ? 'border-blue-600' : 'border-gray-200';
     const descendingRBtnInnerClassNames = doDescendingOrder ? 'bg-blue-600' : 'bg-gray-200';
+
+    const layoutCardBtnClassNames = layoutType === LAYOUT_CARD ? 'bg-blue-100 border-blue-200 z-10' : 'border-gray-200';
+    const layoutCardBtnInnerClassNames = layoutType === LAYOUT_CARD ? 'text-blue-800' : 'text-gray-600';
+    const layoutCardRBtnClassNames = layoutType === LAYOUT_CARD ? 'border-blue-600' : 'border-gray-200';
+    const layoutCardRBtnInnerClassNames = layoutType === LAYOUT_CARD ? 'bg-blue-600' : 'bg-gray-200';
+
+    const layoutListBtnClassNames = layoutType === LAYOUT_LIST ? 'bg-blue-100 border-blue-200 z-10' : 'border-gray-200';
+    const layoutListBtnInnerClassNames = layoutType === LAYOUT_LIST ? 'text-blue-800' : 'text-gray-600';
+    const layoutListRBtnClassNames = layoutType === LAYOUT_LIST ? 'border-blue-600' : 'border-gray-200';
+    const layoutListRBtnInnerClassNames = layoutType === LAYOUT_LIST ? 'bg-blue-600' : 'bg-gray-200';
 
     const switchThumbColorOn = 'rgb(59, 130, 246)';
     const switchThumbColorOff = 'rgb(229, 231, 235)';
@@ -111,6 +128,38 @@ class SettingsPopupMisc extends React.PureComponent {
             </View>
           </View>
         </View>
+        <View style={tailwind('mt-10 mb-4')}>
+          <Text style={tailwind('text-base text-gray-800 font-medium leading-4')}>Layout View</Text>
+          <View style={tailwind('sm:flex-row sm:items-start sm:justify-between', safeAreaWidth)}>
+            <View style={tailwind('mt-2.5 sm:flex-grow sm:flex-shrink', safeAreaWidth)}>
+              <Text style={tailwind('text-base text-gray-500 font-normal leading-6.5')}>Choose whether your saved links are displayed in Cards view or in List view. This setting is not synced so you can have a different layout for each of your devices.</Text>
+            </View>
+            <View style={tailwind('mt-2.5 items-center sm:ml-4 sm:flex-grow-0 sm:flex-shrink-0', safeAreaWidth)}>
+              <View style={tailwind('w-full max-w-48 bg-white rounded-md shadow-sm sm:w-48', safeAreaWidth)}>
+                <TouchableOpacity onPress={() => this.onLayoutTypeInputChange(LAYOUT_CARD)}>
+                  <View style={tailwind(`${layoutCardBtnClassNames} p-4 flex-row border rounded-tl-md rounded-tr-md`)}>
+                    <View style={tailwind('flex-row items-center h-5')}>
+                      <View style={tailwind(`${layoutCardRBtnClassNames} justify-center items-center h-4 w-4 bg-transparent border rounded-full`)}>
+                        <View style={tailwind(`${layoutCardRBtnInnerClassNames} h-3 w-3 rounded-full`)} />
+                      </View>
+                    </View>
+                    <Text style={tailwind(`${layoutCardBtnInnerClassNames} ml-3 text-sm leading-5 font-medium`)}>Cards view</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => this.onLayoutTypeInputChange(LAYOUT_LIST)}>
+                  <View style={tailwind(`${layoutListBtnClassNames} p-4 flex-row border rounded-bl-md rounded-br-md`)}>
+                    <View style={tailwind('flex-row items-center h-5')}>
+                      <View style={tailwind(`${layoutListRBtnClassNames} justify-center items-center h-4 w-4 bg-transparent border rounded-full`)}>
+                        <View style={tailwind(`${layoutListRBtnInnerClassNames} h-3 w-3 rounded-full`)} />
+                      </View>
+                    </View>
+                    <Text style={tailwind(`${layoutListBtnInnerClassNames} ml-3 text-sm leading-5 font-medium`)}>List View</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </View>
       </View>
     );
   }
@@ -121,12 +170,14 @@ const mapStateToProps = (state) => {
     doExtractContents: state.settings.doExtractContents,
     doDeleteOldLinksInTrash: state.settings.doDeleteOldLinksInTrash,
     doDescendingOrder: state.settings.doDescendingOrder,
+    layoutType: state.localSettings.layoutType,
     windowWidth: state.window.width,
   };
 };
 
 const mapDispatchToProps = {
   updateDoExtractContents, updateDoDeleteOldLinksInTrash, updateDoDescendingOrder,
+  updateLayoutType,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(SettingsPopupMisc));

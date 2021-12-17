@@ -165,3 +165,6 @@ export const APP_GROUP_SHARE_UKEY = 'uKey';
 
 export const MODE_VIEW = 'MODE_VIEW';
 export const MODE_EDIT = 'MODE_EDIT';
+
+export const LAYOUT_CARD = 'LAYOUT_CARD';
+export const LAYOUT_LIST = 'LAYOUT_LIST';
