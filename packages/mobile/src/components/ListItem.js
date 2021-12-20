@@ -52,7 +52,7 @@ const ListItem = (props) => {
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={onRetryCancelBtnClick} style={tailwind('justify-center items-center sm:px-2', safeAreaWidth)}>
-              <View style={tailwind('m-0.5 p-0.5 bg-tranparent')}>
+              <View style={tailwind('m-0.5 p-0.5 bg-transparent')}>
                 <Text style={tailwind('text-sm text-gray-100 font-medium')}>Cancel</Text>
               </View>
             </TouchableOpacity>
