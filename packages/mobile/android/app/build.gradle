@@ -134,8 +134,8 @@ android {
         applicationId "com.bracedotto"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 19
-        versionName "0.9.1"
+        versionCode 20
+        versionName "0.10.0"
     }
     splits {
         abi {
