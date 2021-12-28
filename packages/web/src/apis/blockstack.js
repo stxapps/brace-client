@@ -135,9 +135,15 @@ export const batchGetFileWithRetry = async (
 
 const fetch = async (params) => {
 
-  const { listName, doDescendingOrder, doFetchSettings } = params;
-
+  let { listName, doDescendingOrder, doFetchSettings } = params;
   const { linkFPaths, settingsFPath } = await listFPaths();
+
+  let settings;
+  if (settingsFPath && doFetchSettings) {
+    settings = JSON.parse(/** @type {string} */(await userSession.getFile(settingsFPath)));
+
+    doDescendingOrder = settings.doDescendingOrder;
+  }
 
   const namedLinkFPaths = linkFPaths[listName] || [];
 
@@ -152,12 +158,6 @@ const fetch = async (params) => {
   // List names should be retrieve from settings
   //   but also retrive from file paths in case the settings is gone.
   const listNames = Object.keys(linkFPaths);
-
-  // If there is settings, fetch settings
-  let settings;
-  if (settingsFPath && doFetchSettings) {
-    settings = JSON.parse(/** @type {string} */(await userSession.getFile(settingsFPath)));
-  }
 
   return {
     listName, doDescendingOrder, links, hasMore, listNames, doFetchSettings, settings,
