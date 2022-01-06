@@ -1025,7 +1025,8 @@ export const updateSettings = () => async (dispatch, getState) => {
     return;
   }
 
-  const payload = { settings };
+  const doFetch = settings.doDescendingOrder !== snapshotSettings.doDescendingOrder;
+  const payload = { settings, doFetch };
   dispatch({
     type: UPDATE_SETTINGS,
     payload: payload,
@@ -1261,7 +1262,7 @@ const parseImportedFile = (dispatch, text) => {
       }
     } else {
       for (const match of text.matchAll(
-        /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi
+        /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/gi
       )) {
         const url = match[0];
         const addedDT = now;

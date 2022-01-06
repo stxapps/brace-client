@@ -1,11 +1,11 @@
 import { REHYDRATE } from 'redux-persist/constants';
 import { loop, Cmd } from 'redux-loop';
 
-import { updateFetchedSettings } from '../actions';
+import { updateFetchedSettings, fetch } from '../actions';
 import {
   FETCH_COMMIT, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME,
   DELETE_LIST_NAMES, UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
-  UPDATE_DO_DESCENDING_ORDER, CANCEL_DIED_SETTINGS,
+  UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS_COMMIT, CANCEL_DIED_SETTINGS,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import { MY_LIST, TRASH, ARCHIVE, SWAP_LEFT, SWAP_RIGHT } from '../types/const';
@@ -184,6 +184,19 @@ const settingsReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_DO_DESCENDING_ORDER) {
     return { ...state, doDescendingOrder: action.payload };
+  }
+
+  if (action.type === UPDATE_SETTINGS_COMMIT) {
+    const { doFetch } = action.meta;
+    if (doFetch) {
+      return loop(
+        state,
+        Cmd.run(
+          fetch(false, false, false),
+          { args: [Cmd.dispatch, Cmd.getState] })
+      );
+    }
+    return state;
   }
 
   if (action.type === CANCEL_DIED_SETTINGS) {
