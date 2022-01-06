@@ -10,7 +10,8 @@ import {
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
   UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME,
   DELETE_LIST_NAMES, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
-  CANCEL_DIED_SETTINGS, UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
+  CANCEL_DIED_SETTINGS, UPDATE_IMPORT_ALL_DATA_PROGRESS,
+  UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -44,6 +45,7 @@ const initialState = {
   fetchedListNames: [],
   listChangedCount: 0,
   settingsStatus: null,
+  importAllDataProgress: null,
   exportAllDataProgress: null,
   deleteAllDataProgress: null,
 };
@@ -77,6 +79,7 @@ const displayReducer = (state = initialState, action) => {
       listChangedCount: 0,
       // If in outbox, continue after reload
       //settingsStatus: null,
+      importAllDataProgress: null,
       exportAllDataProgress: null,
       deleteAllDataProgress: null,
     };
@@ -325,6 +328,10 @@ const displayReducer = (state = initialState, action) => {
       status: null,
       settingsStatus: null,
     };
+  }
+
+  if (action.type === UPDATE_IMPORT_ALL_DATA_PROGRESS) {
+    return { ...state, importAllDataProgress: action.payload };
   }
 
   if (action.type === UPDATE_EXPORT_ALL_DATA_PROGRESS) {

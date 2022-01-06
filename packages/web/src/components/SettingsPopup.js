@@ -11,13 +11,15 @@ import {
 
 import SettingsPopupAccount from './SettingsPopupAccount';
 import {
-  SettingsPopupData, SettingsPopupDataExport, SettingsPopupDataDelete,
+  SettingsPopupData, SettingsPopupDataImport, SettingsPopupDataExport,
+  SettingsPopupDataDelete,
 } from './SettingsPopupData';
 import SettingsPopupLists from './SettingsPopupLists';
 import SettingsPopupMisc from './SettingsPopupMisc';
 
 const VIEW_ACCOUNT = 1;
 const VIEW_DATA = 2;
+const VIEW_DATA_IMPORT = 7;
 const VIEW_DATA_EXPORT = 3;
 const VIEW_DATA_DELETE = 4;
 const VIEW_LISTS = 5;
@@ -54,7 +56,7 @@ class SettingsPopup extends React.PureComponent {
   }
 
   isViewSelected = (viewId) => {
-    const dataViews = [VIEW_DATA, VIEW_DATA_EXPORT, VIEW_DATA_DELETE];
+    const dataViews = [VIEW_DATA, VIEW_DATA_IMPORT, VIEW_DATA_EXPORT, VIEW_DATA_DELETE];
     if (viewId === VIEW_DATA) {
       return dataViews.includes(this.state.viewId);
     }
@@ -104,6 +106,10 @@ class SettingsPopup extends React.PureComponent {
       viewId: VIEW_MISC,
       isSidebarShown: false,
     });
+  }
+
+  onToImportAllDataViewBtnClick = () => {
+    this.setState({ viewId: VIEW_DATA_IMPORT });
   }
 
   onToExportAllDataViewBtnClick = () => {
@@ -284,7 +290,14 @@ class SettingsPopup extends React.PureComponent {
 
   renderDataView() {
     const content = (
-      <SettingsPopupData onSidebarOpenBtnClick={this.onSidebarOpenBtnClick} onToExportAllDataViewBtnClick={this.onToExportAllDataViewBtnClick} onToDeleteAllDataViewBtnClick={this.onToDeleteAllDataViewBtnClick} />
+      <SettingsPopupData onSidebarOpenBtnClick={this.onSidebarOpenBtnClick} onToImportAllDataViewBtnClick={this.onToImportAllDataViewBtnClick} onToExportAllDataViewBtnClick={this.onToExportAllDataViewBtnClick} onToDeleteAllDataViewBtnClick={this.onToDeleteAllDataViewBtnClick} />
+    );
+    return this._render(content);
+  }
+
+  renderImportAllDataView() {
+    const content = (
+      <SettingsPopupDataImport onBackToDataViewBtnClick={this.onBackToDataViewBtnClick} />
     );
     return this._render(content);
   }
@@ -328,6 +341,7 @@ class SettingsPopup extends React.PureComponent {
 
     if (viewId === VIEW_ACCOUNT) return this.renderAccountView();
     else if (viewId === VIEW_DATA) return this.renderDataView();
+    else if (viewId === VIEW_DATA_IMPORT) return this.renderImportAllDataView();
     else if (viewId === VIEW_DATA_EXPORT) return this.renderExportAllDataView();
     else if (viewId === VIEW_DATA_DELETE) return this.renderDeleteAllDataView();
     else if (viewId === VIEW_LISTS) return this.renderListsView();
