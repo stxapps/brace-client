@@ -1260,8 +1260,21 @@ const parseImportedFile = (dispatch, text) => {
         }
       }
     } else {
-      //const arr = text.trim().split('');
+      for (const match of text.matchAll(
+        /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi
+      )) {
+        const url = match[0];
+        const addedDT = now;
 
+        const id = `${addedDT}-${randomString(4)}-${randomString(4)}`;
+        const decor = randomDecor(getUrlFirstChar(url));
+        const link = { id, url, addedDT, decor };
+        const fpath = createLinkFPath(listName, link.id);
+
+        fpaths.push(fpath);
+        contents.push(link);
+        now += 1;
+      }
     }
   }
 
