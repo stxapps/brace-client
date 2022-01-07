@@ -53,7 +53,7 @@ export const effect = async (effectObj, _action) => {
   throw new Error(`${method} is invalid for blockstack effect.`);
 };
 
-const createLinkFPath = (listName, id = null) => {
+export const createLinkFPath = (listName, id = null) => {
   // Cannot encode because fpaths in etags are not encoded
   // When fetch, unencoded fpaths are saved in etags
   // When update, if encode, fpath will be different to the fpath in etags,
@@ -189,7 +189,7 @@ const fetchMore = async (params) => {
   return { listName, doDescendingOrder, links, hasMore };
 };
 
-const batchPutFileWithRetry = async (fpaths, contents, callCount) => {
+export const batchPutFileWithRetry = async (fpaths, contents, callCount) => {
 
   const responses = await Promise.all(
     fpaths.map((fpath, i) =>

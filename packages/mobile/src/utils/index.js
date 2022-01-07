@@ -361,12 +361,20 @@ export const throttle = (func, limit) => {
   };
 };
 
+export const sleep = ms => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};
+
 export const isObject = val => {
   return typeof val === 'object' && val !== null;
 };
 
 export const isString = val => {
   return typeof val === 'string' || val instanceof String;
+};
+
+export const isNumber = val => {
+  return typeof val === 'number' && isFinite(val);
 };
 
 export const isEqual = (x, y) => {
@@ -920,4 +928,84 @@ export const splitOnFirst = (str, sep) => {
 
 export const escapeDoubleQuotes = (s) => {
   return s.trim().replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+};
+
+export const isDecorValid = (data) => {
+  if (!('decor' in data)) return false;
+  if (!('image' in data.decor && 'favicon' in data.decor)) return false;
+  if (!('bg' in data.decor.image && 'bg' in data.decor.favicon)) return false;
+  if (!(isObject(data.decor.image.bg) && isObject(data.decor.favicon.bg))) return false;
+
+  if (!('type' in data.decor.image.bg && 'value' in data.decor.image.bg)) return false;
+  if (!(isString(data.decor.image.bg.type) && isString(data.decor.image.bg.value))) {
+    return false;
+  }
+
+  if ('fg' in data.decor.image) {
+    if (!(
+      data.decor.image.fg === null ||
+      (
+        isObject(data.decor.image.fg) &&
+        'text' in data.decor.image.fg &&
+        isString(data.decor.image.fg.text)
+      )
+    )) return false;
+  }
+
+
+  if (!('type' in data.decor.favicon.bg && 'value' in data.decor.favicon.bg)) {
+    return false;
+  }
+  if (!(
+    isString(data.decor.favicon.bg.type) &&
+    isString(data.decor.favicon.bg.value))
+  ) {
+    return false;
+  }
+
+  return true;
+};
+
+export const isExtractedResultValid = (data) => {
+  if (!('extractedResult' in data)) return false;
+  if (!(
+    'url' in data.extractedResult &&
+    'extractedDT' in data.extractedResult &&
+    'status' in data.extractedResult
+  )) return false;
+
+  if (!(
+    isString(data.extractedResult.url) &&
+    isNumber(data.extractedResult.extractedDT) &&
+    isString(data.extractedResult.status)
+  )) return false;
+
+  if ('title' in data.extractedResult) {
+    if (!isString(data.extractedResult.title)) return false;
+  }
+  if ('image' in data.extractedResult) {
+    if (!isString(data.extractedResult.image)) return false;
+  }
+  if ('favicon' in data.extractedResult) {
+    if (!isString(data.extractedResult.favicon)) return false;
+  }
+
+  return true;
+};
+
+export const isListNameObjsValid = (listNameObjs) => {
+  if (listNameObjs === undefined || listNameObjs === null) return true;
+  if (!Array.isArray(listNameObjs)) return false;
+
+  for (const listNameObj of listNameObjs) {
+    if (!('listName' in listNameObj && 'displayName' in listNameObj)) return false;
+    if (!(isString(listNameObj.listName) && isString(listNameObj.displayName))) {
+      return false;
+    }
+    if ('children' in listNameObj) {
+      if (!isListNameObjsValid(listNameObj.children)) return false;
+    }
+  }
+
+  return true;
 };

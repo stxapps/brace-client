@@ -28,8 +28,8 @@ import {
   UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
   UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_LAYOUT_TYPE,
-  UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
-  DELETE_ALL_DATA, RESET_STATE,
+  UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
+  UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   DOMAIN_NAME, APP_URL_SCHEME, APP_DOMAIN_NAME, BLOCKSTACK_AUTH,
@@ -37,10 +37,9 @@ import {
   SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
-  MY_LIST, TRASH,
+  MY_LIST, TRASH, N_LINKS,
   ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
-  N_LINKS,
 } from '../types/const';
 import {
   _, isEqual,
@@ -940,7 +939,8 @@ export const updateSettings = () => async (dispatch, getState) => {
     return;
   }
 
-  const payload = { settings };
+  const doFetch = settings.doDescendingOrder !== snapshotSettings.doDescendingOrder;
+  const payload = { settings, doFetch };
   dispatch({
     type: UPDATE_SETTINGS,
     payload: payload,
@@ -969,6 +969,265 @@ export const cancelDiedSettings = () => async (dispatch, getState) => {
 
 export const updateLayoutType = (type) => {
   return { type: UPDATE_LAYOUT_TYPE, payload: type };
+};
+
+const importAllDataLoop = async (dispatch, fpaths, contents) => {
+  let total = fpaths.length, doneCount = 0;
+  dispatch(updateImportAllDataProgress({ total, done: doneCount }));
+
+  try {
+    for (let i = 0; i < fpaths.length; i += N_LINKS) {
+      const selectedFPaths = fpaths.slice(i, i + N_LINKS);
+      const selectedContents = contents.slice(i, i + N_LINKS).map(content => {
+        return JSON.stringify(content);
+      });
+      await batchPutFileWithRetry(selectedFPaths, selectedContents, 0);
+
+      doneCount += selectedFPaths.length;
+      dispatch(updateImportAllDataProgress({ total, done: doneCount }));
+
+      await sleep(1000); // Make it slow to not overwhelm the server
+    }
+
+    dispatch(fetch(false, null, true));
+  } catch (e) {
+    dispatch(updateImportAllDataProgress({
+      total: -1,
+      done: -1,
+      error: e.name + ': ' + e.message,
+    }));
+
+    if (doneCount < total) {
+      let msg = 'There is an error while importing! Below are contents that have not been imported:\n';
+      for (let i = doneCount; i < fpaths.length; i++) {
+        const fpath = fpaths[i];
+        if (fpath.startsWith('links')) {
+          msg += '    • ' + contents[i].url + '\n';
+        }
+        if (fpath === SETTINGS_FNAME) {
+          msg += '    • Settings\n';
+        }
+      }
+      window.alert(msg);
+    }
+  }
+};
+
+const parseImportedFile = (dispatch, text) => {
+
+  dispatch(updateImportAllDataProgress({
+    total: 'calculating...',
+    done: 0,
+  }));
+
+  // 3 formats: json, html, and plain text
+  const fpaths = [], contents = [];
+  try {
+    const json = JSON.parse(text);
+    if (Array.isArray(json)) {
+      for (const obj of json) {
+        if (
+          !obj.path ||
+          !isString(obj.path) ||
+          !(obj.path.startsWith('links') || obj.path === SETTINGS_FNAME)
+        ) continue;
+
+        if (!obj.data || !isObject(obj.data)) continue;
+
+        if (obj.path.startsWith('links')) {
+          if (
+            !('id' in obj.data && 'url' in obj.data && 'addedDT' in obj.data)
+          ) continue;
+
+          if (!(isString(obj.data.id) && isString(obj.data.url))) continue;
+          if (!isNumber(obj.data.addedDT)) continue;
+
+          const arr = obj.path.split('/');
+          if (arr.length !== 3) continue;
+          if (arr[0] !== 'links') continue;
+
+          const listName = arr[1], fname = arr[2];
+          if (!fname.endsWith('.json')) continue;
+
+          const id = fname.slice(0, -5);
+          if (id !== obj.data.id) continue;
+
+          const tokens = id.split('-');
+          if (listName === TRASH) {
+            if (tokens.length !== 4) continue;
+            if (!(/^\d+$/.test(tokens[0]) && /^\d+$/.test(tokens[3]))) continue;
+          } else {
+            if (tokens.length !== 3) continue;
+            if (!(/^\d+$/.test(tokens[0]))) continue;
+          }
+
+          if (!isDecorValid(obj.data)) {
+            obj.data.decor = randomDecor(getUrlFirstChar(obj.data.url));
+          }
+
+          if ('extractedResult' in obj.data) {
+            if (!isExtractedResultValid(obj.data)) {
+              obj.data.extractedResult = null;
+            }
+          }
+        }
+
+        if (obj.path === SETTINGS_FNAME) {
+          const settings = { ...initialSettingsState };
+          if ('doExtractContents' in obj.data) {
+            settings.doExtractContents = obj.data.doExtractContents;
+          }
+          if ('doDeleteOldLinksInTrash' in obj.data) {
+            settings.doDeleteOldLinksInTrash = obj.data.doDeleteOldLinksInTrash;
+          }
+          if ('doDescendingOrder' in obj.data) {
+            settings.doDescendingOrder = obj.data.doDescendingOrder;
+          }
+          if ('listNameMap' in obj.data && isListNameObjsValid(obj.data.listNameMap)) {
+            settings.listNameMap = obj.data.listNameMap;
+          }
+          obj.data = settings;
+        }
+
+        fpaths.push(obj.path);
+        contents.push(obj.data);
+      }
+    }
+  } catch (e) {
+    console.log('parseImportedFile: JSON.parse error: ', e);
+
+    let listName = MY_LIST;
+    let now = Date.now();
+
+    if (text.includes('</a>') || text.includes('</A>')) {
+      let start, end;
+      for (const match of text.matchAll(/<h[^<]*<\/h|<a[^<]*<\/a>/gi)) {
+        const str = match[0];
+        if (str.toLowerCase().startsWith('<h')) {
+          start = str.indexOf('>');
+          if (start < 0) {
+            console.log(`Not found > from <h, str: ${str}`);
+            continue;
+          }
+          start += 1;
+
+          end = str.indexOf('<', start);
+          if (end < 0) {
+            console.log(`Not found < from <h, str: ${str}, start: ${start}`);
+            continue;
+          }
+
+          const value = str.slice(start, end);
+          if (value.toLowerCase().includes(ARCHIVE.toLowerCase())) listName = ARCHIVE;
+          else listName = MY_LIST;
+        }
+
+        if (str.toLowerCase().startsWith('<a')) {
+          start = str.toLowerCase().indexOf('href="');
+          if (start < 0) {
+            console.log(`Not found href= from <a, str: ${str}`);
+            continue;
+          }
+          start += 6;
+
+          end = str.indexOf('"', start);
+          if (end < 0) {
+            console.log(`Not found " from href, str: ${str}, start: ${start}`);
+            continue;
+          }
+
+          const url = str.slice(start, end);
+          if (url.length === 0) continue;
+
+          let addDate;
+          start = str.toLowerCase().indexOf('add_date="');
+          if (start > 0) start += 10;
+          else {
+            start = str.toLowerCase().indexOf('time_added="');
+            if (start > 0) start += 12;
+          }
+          if (start > 0) {
+            end = str.indexOf('"', start);
+            if (end < 0) {
+              console.log(`Not found " from add_date, str: ${str}, start: ${start}`);
+              continue;
+            }
+
+            addDate = str.slice(start, end);
+          }
+
+          let addedDT = now;
+          if (addDate && /^\d+$/.test(addDate)) {
+            if (addDate.length === 16) addDate = addDate.slice(0, 13);
+            if (addDate.length === 10) addDate = addDate + '000';
+            const dt = parseInt(addDate, 10);
+            if (isNumber(dt)) addedDT = dt;
+          }
+
+          const id = `${addedDT}-${randomString(4)}-${randomString(4)}`;
+          const decor = randomDecor(getUrlFirstChar(url));
+          const link = { id, url, addedDT, decor };
+          const fpath = createLinkFPath(listName, link.id);
+
+          fpaths.push(fpath);
+          contents.push(link);
+          now += 1;
+        }
+      }
+    } else {
+      for (const match of text.matchAll(
+        /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/gi
+      )) {
+        const url = match[0];
+        const addedDT = now;
+
+        const id = `${addedDT}-${randomString(4)}-${randomString(4)}`;
+        const decor = randomDecor(getUrlFirstChar(url));
+        const link = { id, url, addedDT, decor };
+        const fpath = createLinkFPath(listName, link.id);
+
+        fpaths.push(fpath);
+        contents.push(link);
+        now += 1;
+      }
+    }
+  }
+
+  importAllDataLoop(dispatch, fpaths, contents);
+};
+
+export const importAllData = () => async (dispatch, getState) => {
+
+  const onError = () => {
+    window.alert('Read failed: could not read content in the file. Please recheck your file.');
+  };
+
+  const onReaderLoad = (e) => {
+    const text = e.target.result;
+    parseImportedFile(dispatch, text);
+  };
+
+  const onInputChange = () => {
+    if (input.files) {
+      const reader = new FileReader();
+      reader.onload = onReaderLoad;
+      reader.onerror = onError;
+      reader.readAsText(input.files[0]);
+    }
+  };
+
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.txt, .html, .json';
+  input.addEventListener('change', onInputChange);
+  input.click();
+};
+
+export const updateImportAllDataProgress = (progress) => {
+  return {
+    type: UPDATE_IMPORT_ALL_DATA_PROGRESS,
+    payload: progress,
+  };
 };
 
 const exportAllDataLoop = async (dispatch, fPaths, doneCount) => {

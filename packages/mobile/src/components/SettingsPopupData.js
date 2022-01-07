@@ -34,6 +34,10 @@ class _SettingsPopupData extends React.PureComponent {
           <Text style={tailwind('mt-2.5 text-base text-gray-500 font-normal leading-6.5')}>Brace.to stores your data in a Stacks data server. You can specify which Stacks data server to store your data. By default, your Stacks data server is at <Text onPress={() => Linking.openURL('https://hub.blockstack.org/hub_info')} style={tailwind('text-base text-gray-500 font-normal leading-6.5 underline')}>hub.blockstack.org</Text> provided by <Text onPress={() => Linking.openURL('https://www.hiro.so')} style={tailwind('text-base text-gray-500 font-normal leading-6.5 underline')}>Hiro Systems</Text>. You can also deploy your own Stacks data server. To change your Stacks data server, you need to record your server’s information to Stacks blockchain. Brace.to stores your data to the server specified in the blockchain. For more details, please visit <Text onPress={() => Linking.openURL('https://docs.stacks.co/build-apps/references/gaia')} style={tailwind('text-base text-gray-500 font-normal leading-6.5 underline')}>Stacks Gaia</Text>.</Text>
         </View>
         <View style={tailwind('mt-8')}>
+          <Text style={tailwind('text-base text-gray-800 font-medium leading-4')}>Import Data</Text>
+          <Text style={tailwind('mt-2.5 text-base text-gray-500 font-normal leading-6.5')}>Import data from a text file. Please go to <Text onPress={() => Linking.openURL('https://brace.to')} style={tailwind('text-base text-gray-500 font-normal underline leading-6.5')}>Brace.to</Text> to take the action.</Text>
+        </View>
+        <View style={tailwind('mt-8')}>
           <Text style={tailwind('text-base text-gray-800 font-medium leading-4')}>Export All Data</Text>
           <Text style={tailwind('mt-2.5 text-base text-gray-500 font-normal leading-6.5')}>Export all your data from server to your device in a text file. Please go to <Text onPress={() => Linking.openURL('https://brace.to')} style={tailwind('text-base text-gray-500 font-normal underline leading-6.5')}>Brace.to</Text> to take the action.</Text>
         </View>
