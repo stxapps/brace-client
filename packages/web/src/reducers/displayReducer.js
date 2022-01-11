@@ -42,6 +42,7 @@ const initialState = {
   selectingLinkId: null,
   selectingListName: null,
   deletingListName: null,
+  didFetch: false,
   fetchedListNames: [],
   listChangedCount: 0,
   settingsStatus: null,
@@ -75,6 +76,7 @@ const displayReducer = (state = initialState, action) => {
       selectingLinkId: null,
       selectingListName: null,
       deletingListName: null,
+      didFetch: false,
       fetchedListNames: [],
       listChangedCount: 0,
       // If in outbox, continue after reload
@@ -187,6 +189,7 @@ const displayReducer = (state = initialState, action) => {
       ...state,
       status: FETCH_COMMIT,
       selectedLinkIds: [],
+      didFetch: true,
       fetchedListNames: [...state.fetchedListNames, listName],
     };
 
@@ -311,7 +314,11 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_SETTINGS_COMMIT) {
-    return { ...state, status: UPDATE_SETTINGS_COMMIT, settingsStatus: null };
+    const { doFetch } = action.meta;
+
+    const newState = { ...state, status: UPDATE_SETTINGS_COMMIT, settingsStatus: null };
+    if (doFetch) newState.fetchedListNames = [];
+    return newState;
   }
 
   if (action.type === UPDATE_SETTINGS_ROLLBACK) {
@@ -343,7 +350,7 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === DELETE_ALL_DATA) {
-    return { ...initialState, fetchedListNames: [MY_LIST] };
+    return { ...initialState, didFetch: true, fetchedListNames: [MY_LIST] };
   }
 
   if (action.type === RESET_STATE) {

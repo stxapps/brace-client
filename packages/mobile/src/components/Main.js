@@ -45,7 +45,11 @@ class Main extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.listName !== this.props.listName) this.fetch();
+    if (
+      prevProps.listName !== this.props.listName ||
+      prevProps.didFetch !== this.props.didFetch ||
+      prevProps.fetchedListNames !== this.props.fetchedListNames
+    ) this.fetch();
   }
 
   componentWillUnmount() {
@@ -66,8 +70,9 @@ class Main extends React.PureComponent {
   }
 
   fetch = () => {
-    if (!this.props.fetchedListNames.includes(this.props.listName)) {
-      const didFetch = this.props.fetchedListNames.length > 0;
+    const { listName, didFetch, fetchedListNames } = this.props;
+
+    if (!fetchedListNames.includes(listName)) {
       this.props.fetch(didFetch ? false : null, null, !didFetch);
     }
   }
@@ -106,6 +111,7 @@ const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
     links: getLinks(state),
+    didFetch: state.display.didFetch,
     fetchedListNames: state.display.fetchedListNames,
     layoutType: state.localSettings.layoutType,
     windowWidth: state.window.width,
