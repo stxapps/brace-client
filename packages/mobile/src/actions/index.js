@@ -4,7 +4,10 @@ import axios from 'axios';
 //import RNFS from 'react-native-fs';
 
 import userSession from '../userSession';
-import { batchGetFileWithRetry, batchDeleteFileWithRetry } from '../apis/blockstack';
+import {
+  createLinkFPath, batchGetFileWithRetry, batchPutFileWithRetry,
+  batchDeleteFileWithRetry,
+} from '../apis/blockstack';
 import {
   INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW_SIZE, UPDATE_PAGE_Y_OFFSET,
   UPDATE_STACKS_ACCESS, UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
@@ -37,16 +40,18 @@ import {
   SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
-  MY_LIST, TRASH, N_LINKS,
+  MY_LIST, TRASH, ARCHIVE, N_LINKS, SETTINGS_FNAME,
   ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
 } from '../types/const';
 import {
-  _, isEqual,
+  _, isEqual, isString, isObject, isNumber, sleep,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam, getUserImageUrl, randomDecor,
   isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
+  isDecorValid, isExtractedResultValid, isListNameObjsValid,
 } from '../utils';
+import { initialSettingsState } from '../types/initialStates';
 
 import DefaultPreference from 'react-native-default-preference';
 if (Platform.OS === 'ios') DefaultPreference.setName(APP_GROUP_SHARE);
@@ -988,8 +993,6 @@ const importAllDataLoop = async (dispatch, fpaths, contents) => {
 
       await sleep(1000); // Make it slow to not overwhelm the server
     }
-
-    dispatch(fetch(false, null, true));
   } catch (e) {
     dispatch(updateImportAllDataProgress({
       total: -1,
@@ -1203,16 +1206,17 @@ export const importAllData = () => async (dispatch, getState) => {
   };
 
   const onReaderLoad = (e) => {
-    const text = e.target.result;
-    parseImportedFile(dispatch, text);
+    parseImportedFile(dispatch, e.target.result);
   };
 
   const onInputChange = () => {
     if (input.files) {
+      const file = input.files[0];
+
       const reader = new FileReader();
       reader.onload = onReaderLoad;
       reader.onerror = onError;
-      reader.readAsText(input.files[0]);
+      reader.readAsText(file);
     }
   };
 

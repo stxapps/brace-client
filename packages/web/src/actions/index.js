@@ -1073,8 +1073,6 @@ const importAllDataLoop = async (dispatch, fpaths, contents) => {
 
       await sleep(1000); // Make it slow to not overwhelm the server
     }
-
-    dispatch(fetch(false, null, true));
   } catch (e) {
     dispatch(updateImportAllDataProgress({
       total: -1,
@@ -1288,16 +1286,17 @@ export const importAllData = () => async (dispatch, getState) => {
   };
 
   const onReaderLoad = (e) => {
-    const text = e.target.result;
-    parseImportedFile(dispatch, text);
+    parseImportedFile(dispatch, e.target.result);
   };
 
   const onInputChange = () => {
     if (input.files) {
+      const file = input.files[0];
+
       const reader = new FileReader();
       reader.onload = onReaderLoad;
       reader.onerror = onError;
-      reader.readAsText(input.files[0]);
+      reader.readAsText(file);
     }
   };
 

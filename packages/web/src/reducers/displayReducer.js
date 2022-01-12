@@ -43,6 +43,7 @@ const initialState = {
   selectingListName: null,
   deletingListName: null,
   didFetch: false,
+  didFetchSettings: false,
   fetchedListNames: [],
   listChangedCount: 0,
   settingsStatus: null,
@@ -77,6 +78,7 @@ const displayReducer = (state = initialState, action) => {
       selectingListName: null,
       deletingListName: null,
       didFetch: false,
+      didFetchSettings: false,
       fetchedListNames: [],
       listChangedCount: 0,
       // If in outbox, continue after reload
@@ -190,6 +192,7 @@ const displayReducer = (state = initialState, action) => {
       status: FETCH_COMMIT,
       selectedLinkIds: [],
       didFetch: true,
+      didFetchSettings: true,
       fetchedListNames: [...state.fetchedListNames, listName],
     };
 
@@ -226,7 +229,7 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === CLEAR_FETCHED_LIST_NAMES) {
-    return { ...state, fetchedListNames: [] };
+    return { ...state, didFetchSettings: false, fetchedListNames: [] };
   }
 
   if (action.type === DELETE_OLD_LINKS_IN_TRASH) {
@@ -338,7 +341,14 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_IMPORT_ALL_DATA_PROGRESS) {
-    return { ...state, importAllDataProgress: action.payload };
+    const newState = { ...state, importAllDataProgress: action.payload };
+    if (action.payload && action.payload.total && action.payload.done) {
+      if (action.payload.total === action.payload.done) {
+        newState.didFetchSettings = false;
+        newState.fetchedListNames = [];
+      }
+    }
+    return newState;
   }
 
   if (action.type === UPDATE_EXPORT_ALL_DATA_PROGRESS) {
@@ -350,7 +360,10 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === DELETE_ALL_DATA) {
-    return { ...initialState, didFetch: true, fetchedListNames: [MY_LIST] };
+    return {
+      ...initialState,
+      didFetch: true, didFetchSettings: true, fetchedListNames: [MY_LIST],
+    };
   }
 
   if (action.type === RESET_STATE) {
