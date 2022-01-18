@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Animated, AppState } from 'react-native';
+import { Animated } from 'react-native';
 
-import { fetch, clearFetchedListNames } from '../actions';
+import { fetch } from '../actions';
 import {
   PC_100, PC_50, PC_33,
   SHOW_BLANK, SHOW_COMMANDS,
@@ -33,14 +33,9 @@ class Main extends React.PureComponent {
     this.scrollYEvent = Animated.event([{
       nativeEvent: { contentOffset: { y: this.scrollY } },
     }], { useNativeDriver: true });
-    this.appStateListener = null;
   }
 
   componentDidMount() {
-    this.appStateListener = AppState.addEventListener(
-      'change', this.handleAppStateChange
-    );
-
     this.fetch();
   }
 
@@ -51,14 +46,6 @@ class Main extends React.PureComponent {
       prevProps.didFetchSettings !== this.props.didFetchSettings ||
       prevProps.fetchedListNames !== this.props.fetchedListNames
     ) this.fetch();
-  }
-
-  componentWillUnmount() {
-    this.appStateListener.remove();
-  }
-
-  handleAppStateChange = (nextAppState) => {
-    if (nextAppState === 'active') this.props.clearFetchedListNames();
   }
 
   getColumnWidth = (safeAreaWidth) => {
@@ -119,6 +106,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { fetch, clearFetchedListNames };
+const mapDispatchToProps = { fetch };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(Main));

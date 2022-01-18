@@ -1,4 +1,4 @@
-import { Linking, Dimensions, Platform } from 'react-native';
+import { Linking, Dimensions, AppState, Platform } from 'react-native';
 import { RESET_STATE as OFFLINE_RESET_STATE } from '@redux-offline/redux-offline/lib/constants';
 import axios from 'axios';
 //import RNFS from 'react-native-fs';
@@ -83,6 +83,15 @@ export const init = async (store) => {
         windowHeight: window.height,
       },
     });
+  });
+
+  AppState.addEventListener('change', async (nextAppState) => {
+    if (nextAppState === 'active') {
+      const isUserSignedIn = await userSession.isUserSignedIn();
+      if (isUserSignedIn) {
+        store.dispatch(clearFetchedListNames());
+      }
+    }
   });
 
   const isUserSignedIn = await userSession.isUserSignedIn();
