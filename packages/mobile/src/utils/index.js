@@ -1,7 +1,7 @@
 import Url from 'url-parse';
 
 import {
-  HTTP, HTTPS, WWW,
+  HTTP, HTTPS, WWW, STATUS,
   DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   COLOR, PATTERN, IMAGE,
   BG_COLOR_STYLES, PATTERNS,
@@ -541,6 +541,7 @@ export const copyListNameObjs = (listNameObjs, excludedListNames = []) => {
     return !excludedListNames.includes(listNameObj.listName);
   }).map(listNameObj => {
     const obj = { ...listNameObj };
+    if (STATUS in obj) delete obj[STATUS];
     if (obj.children) obj.children = copyListNameObjs(obj.children, excludedListNames);
     return obj;
   });
