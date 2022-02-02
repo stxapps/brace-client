@@ -20,7 +20,13 @@ import {
 const settingsReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
-    return { ...initialState, ...action.payload.settings };
+    const newState = { ...initialState, ...action.payload.settings };
+
+    // Copy listNameObjs to remove status in listNameObj
+    //   to prevent mismatch between settings and snapshotSettings in beforeunload.
+    newState.listNameMap = copyListNameObjs(newState.listNameMap);
+
+    return newState;
   }
 
   if (action.type === FETCH_COMMIT) {
