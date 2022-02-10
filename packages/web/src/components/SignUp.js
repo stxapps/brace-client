@@ -202,7 +202,8 @@ const SignUp = (props) => {
         </ul>
         <div className="pt-5">
           <button onClick={onGetSecretKeyBtnClick} className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">Get your Secret Key</button>
-          <p className="mt-5 text-center text-sm text-gray-500">
+          {/* !!!Not visible as derive to different Gaia storage!!! */}
+          <p className="mt-5 text-center text-sm text-gray-500 invisible">
             Or
             <button onClick={props.onSignUpWithHiroWalletBtnClick} className="ml-1 font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign up with Hiro Wallet</button>
           </p>
