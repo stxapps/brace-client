@@ -132,8 +132,7 @@ const SignIn = (props) => {
         <div className={errMsg ? '' : 'pt-5'}>
           {errMsg && <p className="text-sm text-red-600 py-2">{errMsg}</p>}
           <button onClick={onContinueBtnClick} className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">Continue</button>
-          {/* !!!Not visible as derive to different Gaia storage!!! */}
-          <p className="mt-5 text-center text-sm text-gray-500 invisible">
+          <p className="mt-5 text-center text-sm text-gray-500">
             Or
             <button onClick={props.onSignInWithHiroWalletBtnClick} className="ml-1 font-medium text-blue-700 rounded-sm hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" type="button">Sign in with Hiro Wallet</button>
           </p>
