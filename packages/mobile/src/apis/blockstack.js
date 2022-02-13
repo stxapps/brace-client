@@ -43,7 +43,7 @@ export const effect = async (effectObj, _action) => {
   }
 
   if (method === DELETE_OLD_LINKS_IN_TRASH) {
-    return deleteOldLinksInTrash();
+    return deleteOldLinksInTrash(params);
   }
 
   if (method === UPDATE_SETTINGS) {
@@ -160,7 +160,8 @@ const fetch = async (params) => {
   const listNames = Object.keys(linkFPaths);
 
   return {
-    listName, doDescendingOrder, links, hasMore, listNames, doFetchSettings, settings,
+    listName, doDescendingOrder, links, hasMore, linkFPaths,
+    listNames, doFetchSettings, settings,
   };
 };
 
@@ -273,9 +274,9 @@ const deleteLinks = async (params) => {
   return { listName, ids };
 };
 
-const deleteOldLinksInTrash = async () => {
+const deleteOldLinksInTrash = async (params) => {
 
-  const { linkFPaths } = await listFPaths();
+  const { linkFPaths } = params;
 
   const trashLinkFPaths = linkFPaths[TRASH] || [];
   let oldFPaths = trashLinkFPaths.filter(fpath => {

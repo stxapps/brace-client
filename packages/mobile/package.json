@@ -15,10 +15,10 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@react-native-community/async-storage": "^1.12.1",
+    "@react-native-async-storage/async-storage": "^1.16.1",
     "@react-native-community/clipboard": "^1.5.1",
-    "@react-native-community/netinfo": "^6.0.2",
-    "@redux-offline/redux-offline": "https://github.com/bracedotto/redux-offline#a5a5da91de14b9e22c73a15e3617a0d627d3c0ec",
+    "@react-native-community/netinfo": "^8.0.0",
+    "@redux-offline/redux-offline": "https://github.com/bracedotto/redux-offline#a09e3618b9a03204cd30b0d900ebf2ec0c2c5b69",
     "axios": "^0.24.0",
     "react": "17.0.2",
     "react-native": "0.66.1",

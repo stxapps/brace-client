@@ -354,7 +354,7 @@ export const fetch = (
 
 export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) => {
 
-  const { listName, doDescendingOrder, links } = payload;
+  const { listName, doDescendingOrder, links, linkFPaths } = payload;
 
   if (listName !== getState().display.listName) {
     dispatch(updateFetched(payload, meta));
@@ -411,7 +411,9 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
 
   if (updateAction === 0) {
     const { doDeleteOldLinksInTrash, doExtractContents } = meta;
-    dispatch(deleteOldLinksInTrash(doDeleteOldLinksInTrash, doExtractContents));
+    dispatch(deleteOldLinksInTrash(
+      doDeleteOldLinksInTrash, doExtractContents, linkFPaths
+    ));
     return;
   }
 
@@ -716,7 +718,9 @@ export const cancelDiedLinks = (ids, listName = null) => async (dispatch, getSta
   });
 };
 
-export const deleteOldLinksInTrash = (doDeleteOldLinksInTrash, doExtractContents) => async (dispatch, getState) => {
+export const deleteOldLinksInTrash = (
+  doDeleteOldLinksInTrash, doExtractContents, linkFPaths
+) => async (dispatch, getState) => {
 
   // If not specified, get from settings. Get it here so that it's the most updated.
   if (doDeleteOldLinksInTrash === null) {
@@ -727,11 +731,13 @@ export const deleteOldLinksInTrash = (doDeleteOldLinksInTrash, doExtractContents
     return;
   }
 
+  const payload = { linkFPaths };
   dispatch({
     type: DELETE_OLD_LINKS_IN_TRASH,
+    payload,
     meta: {
       offline: {
-        effect: { method: DELETE_OLD_LINKS_IN_TRASH },
+        effect: { method: DELETE_OLD_LINKS_IN_TRASH, params: payload },
         commit: { type: DELETE_OLD_LINKS_IN_TRASH_COMMIT, meta: { doExtractContents } },
         rollback: { type: DELETE_OLD_LINKS_IN_TRASH_ROLLBACK },
       },
