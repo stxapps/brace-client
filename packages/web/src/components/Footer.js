@@ -25,7 +25,7 @@ class Footer extends React.PureComponent {
         </div>
         <div className="pt-16 md:flex md:justify-between">
           <p className="text-base text-gray-400 text-left">©2022 <a className="text-gray-400 rounded-sm hover:text-gray-500 focus:outline-none focus:ring" href="https://www.stxapps.com" target="_blank" rel="noreferrer">STX Apps Co., Ltd.</a></p>
-          <p className="text-base text-gray-400 text-left">Crafted with ❤ and ℅ in Bangkok</p>
+          <p className="text-base text-gray-400 text-left">Crafted with ❤ and ℅ for a better web</p>
         </div>
       </footer>
 
