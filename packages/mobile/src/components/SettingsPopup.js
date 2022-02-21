@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import {
   ScrollView, View, Text, TouchableOpacity, TouchableWithoutFeedback, BackHandler,
-  Animated, Keyboard, Platform,
+  Animated,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
@@ -45,7 +45,6 @@ class SettingsPopup extends React.PureComponent {
       viewId: VIEW_ACCOUNT,
       isSidebarShown: props.safeAreaWidth < MD_WIDTH,
       didSidebarAnimEnd: true,
-      keyboardHeight: 0,
     };
 
     this.panelContent = React.createRef();
@@ -56,13 +55,10 @@ class SettingsPopup extends React.PureComponent {
     );
 
     this.settingsPopupBackHandler = null;
-    this.keyboardDidShowListener = null;
-    this.keyboardDidHideListener = null;
   }
 
   componentDidMount() {
     this.registerSettingsPopupBackHandler(this.props.isSettingsPopupShown);
-    this.registerKeyboardListeners(this.props.isSettingsPopupShown);
 
     if (this.props.isSettingsPopupShown) {
       Animated.spring(
@@ -76,7 +72,6 @@ class SettingsPopup extends React.PureComponent {
     const { isSettingsPopupShown } = this.props;
     if (prevProps.isSettingsPopupShown !== isSettingsPopupShown) {
       this.registerSettingsPopupBackHandler(isSettingsPopupShown);
-      this.registerKeyboardListeners(isSettingsPopupShown);
     }
 
     if (!prevProps.isSettingsPopupShown && isSettingsPopupShown) {
@@ -131,7 +126,6 @@ class SettingsPopup extends React.PureComponent {
           viewId: VIEW_ACCOUNT,
           isSidebarShown: nextProps.safeAreaWidth < MD_WIDTH,
           didSidebarAnimEnd: true,
-          keyboardHeight: 0,
         });
       }
     }
@@ -139,7 +133,6 @@ class SettingsPopup extends React.PureComponent {
 
   componentWillUnmount() {
     this.registerSettingsPopupBackHandler(false);
-    this.registerKeyboardListeners(false);
   }
 
   registerSettingsPopupBackHandler = (isSettingsPopupShown) => {
@@ -159,30 +152,6 @@ class SettingsPopup extends React.PureComponent {
       if (this.settingsPopupBackHandler) {
         this.settingsPopupBackHandler.remove();
         this.settingsPopupBackHandler = null;
-      }
-    }
-  }
-
-  registerKeyboardListeners = (isSettingsPopupShown) => {
-    if (isSettingsPopupShown) {
-      if (!this.keyboardDidShowListener) {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
-          this.setState({ keyboardHeight: e.endCoordinates.height });
-        });
-      }
-      if (!this.keyboardDidHideListener) {
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-          this.setState({ keyboardHeight: 0 });
-        });
-      }
-    } else {
-      if (this.keyboardDidShowListener) {
-        this.keyboardDidShowListener.remove();
-        this.keyboardDidShowListener = null;
-      }
-      if (this.keyboardDidHideListener) {
-        this.keyboardDidHideListener.remove();
-        this.keyboardDidHideListener = null;
       }
     }
   }
@@ -267,10 +236,8 @@ class SettingsPopup extends React.PureComponent {
     const { safeAreaWidth, safeAreaHeight, insets } = this.props;
 
     const statusBarHeight = 24;
-    let appHeight = safeAreaHeight - statusBarHeight;
-    if (Platform.OS === 'android' && this.state.keyboardHeight > 0) {
-      appHeight -= this.state.keyboardHeight;
-    }
+    const appHeight = safeAreaHeight - statusBarHeight;
+
     let panelHeight = appHeight * 0.9;
     if (safeAreaWidth >= LG_WIDTH) panelHeight = Math.min(panelHeight, 608);
     else if (safeAreaWidth >= MD_WIDTH) panelHeight = Math.min(panelHeight, 656);
@@ -499,8 +466,6 @@ class SettingsPopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     isSettingsPopupShown: state.display.isSettingsPopupShown,
-    windowWidth: state.window.width,
-    windowHeight: state.window.height,
   };
 };
 

@@ -1,5 +1,7 @@
 import React from 'react';
-import { withSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  SafeAreaFrameContext, withSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 import {
   TOP_HEADER_HEIGHT, TOP_LIST_NAME_HEIGHT,
@@ -9,34 +11,16 @@ import {
 } from '../types/const';
 import { toPx } from '../utils';
 
-const withSafeAreaSize = (Component) => {
-
-  class SafeAreaSizeCompoment extends React.PureComponent {
-    render() {
-      const { forwardedRef, windowWidth, windowHeight, insets, ...rest } = this.props;
-      if (!insets) throw new Error(`Illegal insets: ${insets}`);
-
-      const props = { windowWidth, windowHeight, insets, ...rest };
-      if (windowWidth) {
-        const safeAreaWidth = windowWidth - insets.left - insets.right;
-        props['safeAreaWidth'] = safeAreaWidth;
-      }
-      if (windowHeight) {
-        const safeAreaHeight = windowHeight - insets.top - insets.bottom;
-        props['safeAreaHeight'] = safeAreaHeight;
-      }
-
-      return <Component {...props} ref={forwardedRef} />;
-    }
-  }
-
-  return React.forwardRef((props, ref) => {
-    return <SafeAreaSizeCompoment {...props} forwardedRef={ref} />;
-  });
+const withSafeAreaFrame = (Component) => {
+  return React.forwardRef((props, ref) => (
+    <SafeAreaFrameContext.Consumer>
+      {(frame) => <Component {...props} safeAreaWidth={frame.width} safeAreaHeight={frame.height} ref={ref} />}
+    </SafeAreaFrameContext.Consumer>
+  ));
 };
 
 export const withSafeAreaContext = (Component) => {
-  return withSafeAreaInsets(withSafeAreaSize(Component));
+  return withSafeAreaFrame(withSafeAreaInsets(Component));
 };
 
 export const getTopBarSizes = (safeAreaWidth) => {

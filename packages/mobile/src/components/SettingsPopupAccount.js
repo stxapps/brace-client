@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { View, Text, TouchableOpacity, Linking } from 'react-native';
 
 import { tailwind } from '../stylesheets/tailwind';
@@ -35,10 +34,4 @@ class SettingsPopupAccount extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    windowWidth: state.window.width,
-  };
-};
-
-export default connect(mapStateToProps)(withSafeAreaContext(SettingsPopupAccount));
+export default withSafeAreaContext(SettingsPopupAccount);

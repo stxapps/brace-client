@@ -95,8 +95,12 @@ class ConfirmDeletePopup extends React.Component {
   render() {
 
     const {
-      isConfirmDeletePopupShown, windowWidth, windowHeight, safeAreaWidth,
+      isConfirmDeletePopupShown, safeAreaWidth, safeAreaHeight, insets,
     } = this.props;
+
+    const windowWidth = safeAreaWidth + insets.left + insets.right;
+    const windowHeight = safeAreaHeight + insets.top + insets.bottom;
+
     let modalClassNames = 'm-0 items-center';
     if (safeAreaWidth < SM_WIDTH) modalClassNames += ' pt-4 px-4 pb-20 justify-end';
     else modalClassNames += ' p-0 justify-center';
@@ -139,8 +143,6 @@ const mapStateToProps = (state, props) => {
     popupLink: getPopupLink(state),
     selectedLinkIds: state.display.selectedLinkIds,
     deletingListName: state.display.deletingListName,
-    windowWidth: state.window.width,
-    windowHeight: state.window.height,
   };
 };
 

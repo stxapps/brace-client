@@ -246,7 +246,6 @@ TopBar.defaultProps = {
 const mapStateToProps = (state, props) => {
   return {
     isBulkEditing: state.display.isBulkEditing,
-    windowWidth: state.window.width,
   };
 };
 

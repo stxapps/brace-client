@@ -144,7 +144,6 @@ class StatusPopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     status: state.display.status,
-    windowWidth: state.window.width,
   };
 };
 

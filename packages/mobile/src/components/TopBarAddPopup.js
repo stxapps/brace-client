@@ -146,7 +146,6 @@ class TopBarAddPopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     isAddPopupShown: state.display.isAddPopupShown,
-    windowWidth: state.window.width,
   };
 };
 

@@ -244,13 +244,6 @@ class Landing extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    windowWidth: state.window.width,
-    windowHeight: state.window.height,
-  };
-};
-
 const mapDispatchToProps = { updatePopup };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(Landing));
+export default connect(null, mapDispatchToProps)(withSafeAreaContext(Landing));

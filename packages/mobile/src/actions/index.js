@@ -1,4 +1,4 @@
-import { Linking, Dimensions, AppState, Platform } from 'react-native';
+import { Linking, AppState, Platform } from 'react-native';
 import { RESET_STATE as OFFLINE_RESET_STATE } from '@redux-offline/redux-offline/lib/constants';
 import axios from 'axios';
 //import RNFS from 'react-native-fs';
@@ -8,7 +8,7 @@ import {
   batchDeleteFileWithRetry,
 } from '../apis/blockstack';
 import {
-  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW_SIZE, UPDATE_PAGE_Y_OFFSET,
+  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_PAGE_Y_OFFSET,
   UPDATE_STACKS_ACCESS, UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
@@ -75,16 +75,6 @@ export const init = async (store) => {
     await handlePendingSignIn(e.url)(store.dispatch, store.getState);
   });
 
-  Dimensions.addEventListener('change', ({ window }) => {
-    store.dispatch({
-      type: UPDATE_WINDOW_SIZE,
-      payload: {
-        windowWidth: window.width,
-        windowHeight: window.height,
-      },
-    });
-  });
-
   AppState.addEventListener('change', async (nextAppState) => {
     if (nextAppState === 'active') {
       const isUserSignedIn = await userSession.isUserSignedIn();
@@ -109,8 +99,8 @@ export const init = async (store) => {
       username,
       userImage,
       href,
-      windowWidth: Dimensions.get('window').width,
-      windowHeight: Dimensions.get('window').height,
+      windowWidth: null,
+      windowHeight: null,
     },
   });
 };

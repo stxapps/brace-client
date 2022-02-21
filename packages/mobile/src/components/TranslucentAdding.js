@@ -549,8 +549,6 @@ const mapStateToProps = (state) => {
   return {
     isUserSignedIn: state.user.isUserSignedIn,
     links: state.links[MY_LIST],
-    windowWidth: state.window.width,
-    windowHeight: state.window.height,
   };
 };
 

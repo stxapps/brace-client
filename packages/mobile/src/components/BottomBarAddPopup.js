@@ -87,8 +87,11 @@ class BottomBarAddPopup extends React.PureComponent {
 
   render() {
 
-    const { isAddPopupShown, windowWidth, windowHeight } = this.props;
+    const { isAddPopupShown, safeAreaWidth, safeAreaHeight, insets } = this.props;
     const { url, msg, isAskingConfirm } = this.state;
+
+    const windowWidth = safeAreaWidth + insets.left + insets.right;
+    const windowHeight = safeAreaHeight + insets.top + insets.bottom;
 
     const inputClassNames = Platform.OS === 'ios' ? 'py-1.5 leading-5' : 'py-0.5';
 
@@ -118,8 +121,6 @@ class BottomBarAddPopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     isAddPopupShown: state.display.isAddPopupShown,
-    windowWidth: state.window.width,
-    windowHeight: state.window.height,
   };
 };
 

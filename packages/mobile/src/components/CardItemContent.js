@@ -185,12 +185,6 @@ CardItemContent.propTypes = {
   link: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (state, props) => {
-  return {
-    windowWidth: state.window.width,
-  };
-};
-
 const mapDispatchToProps = { updateBulkEdit, addSelectedLinkIds };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(CardItemContent));
+export default connect(null, mapDispatchToProps)(withSafeAreaContext(CardItemContent));

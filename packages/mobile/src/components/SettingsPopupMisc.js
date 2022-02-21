@@ -171,7 +171,6 @@ const mapStateToProps = (state) => {
     doDeleteOldLinksInTrash: state.settings.doDeleteOldLinksInTrash,
     doDescendingOrder: state.settings.doDescendingOrder,
     layoutType: state.localSettings.layoutType,
-    windowWidth: state.window.width,
   };
 };
 

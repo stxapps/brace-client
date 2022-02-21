@@ -183,8 +183,6 @@ const mapStateToProps = (state, props) => {
     listName: state.display.listName,
     listNameMap: getListNameMap(state),
     layoutType: state.localSettings.layoutType,
-    windowWidth: state.window.width,
-    windowHeight: state.window.height,
   };
 };
 

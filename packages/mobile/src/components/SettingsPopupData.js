@@ -52,13 +52,7 @@ class _SettingsPopupData extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    windowWidth: state.window.width,
-  };
-};
-
-export const SettingsPopupData = connect(mapStateToProps)(withSafeAreaContext(_SettingsPopupData));
+export const SettingsPopupData = withSafeAreaContext(_SettingsPopupData);
 
 class _SettingsPopupDataExport extends React.PureComponent {
 
@@ -164,7 +158,6 @@ class _SettingsPopupDataExport extends React.PureComponent {
 const mapStateToPropsExport = (state) => {
   return {
     exportAllDataProgress: state.display.exportAllDataProgress,
-    windowWidth: state.window.width,
   };
 };
 
@@ -316,7 +309,6 @@ class _SettingsPopupDataDelete extends React.PureComponent {
 const mapStateToPropsDelete = (state) => {
   return {
     deleteAllDataProgress: state.display.deleteAllDataProgress,
-    windowWidth: state.window.width,
   };
 };
 

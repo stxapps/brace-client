@@ -13,6 +13,8 @@ import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
 
+import { withSafeAreaContext } from '.';
+
 class BottomBarBulkEditCommands extends React.Component {
 
   constructor(props) {
@@ -80,8 +82,8 @@ class BottomBarBulkEditCommands extends React.Component {
     if (
       this.props.listName !== nextProps.listName ||
       this.props.listNameMap !== nextProps.listNameMap ||
-      this.props.windowWidth !== nextProps.windowWidth ||
-      this.props.windowHeight !== nextProps.windowHeight ||
+      this.props.safeAreaWidth !== nextProps.safeAreaWidth ||
+      this.props.safeAreaHeight !== nextProps.safeAreaHeight ||
       this.state.isEmptyErrorShown !== nextState.isEmptyErrorShown ||
       this.state.didEmptyErrorCloseAnimEnd !== nextState.didEmptyErrorCloseAnimEnd
     ) {
@@ -266,11 +268,9 @@ const mapStateToProps = (state, props) => {
     listName: state.display.listName,
     listNameMap: getListNameMap(state),
     selectedLinkIds: state.display.selectedLinkIds,
-    windowWidth: state.window.width,
-    windowHeight: state.window.height,
   };
 };
 
 const mapDispatchToProps = { updatePopup, updateBulkEdit, moveLinks };
 
-export default connect(mapStateToProps, mapDispatchToProps)(BottomBarBulkEditCommands);
+export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(BottomBarBulkEditCommands));

@@ -272,7 +272,6 @@ const mapStateToProps = (state, props) => {
     hasMoreLinks: state.hasMoreLinks[listName],
     isFetchingMore: getIsFetchingMore(state),
     listChangedCount: state.display.listChangedCount,
-    windowWidth: state.window.width,
   };
 };
 

@@ -67,7 +67,6 @@ const mapStateToProps = (state, props) => {
     listName: state.display.listName,
     listNameMap: getListNameMap(state),
     updates: state.fetched,
-    windowWidth: state.window.width,
   };
 };
 

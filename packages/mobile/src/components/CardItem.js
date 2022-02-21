@@ -132,12 +132,6 @@ CardItem.propTypes = {
   link: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (state, props) => {
-  return {
-    windowWidth: state.window.width,
-  };
-};
-
 const mapDispatchToProps = { retryDiedLinks, cancelDiedLinks };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(CardItem));
+export default connect(null, mapDispatchToProps)(withSafeAreaContext(CardItem));

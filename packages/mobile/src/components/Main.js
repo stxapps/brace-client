@@ -102,7 +102,6 @@ const mapStateToProps = (state, props) => {
     didFetchSettings: state.display.didFetchSettings,
     fetchedListNames: state.display.fetchedListNames,
     layoutType: state.localSettings.layoutType,
-    windowWidth: state.window.width,
   };
 };
 
