@@ -359,7 +359,7 @@ class Landing extends React.PureComponent {
           <div className="relative">
             <img className="mx-auto static h-16 start-saving-links-img md:absolute md:top-0 md:left-0" src={undrawLink} alt="unDraw link icon" />
             <h2 className="mt-4 first-h1-text text-gray-900 font-bold leading-none text-center">Start saving links</h2>
-            <button onClick={() => this.props.signUp()} style={{ padding: '0.875rem 1.375rem' }} className="mt-6 mx-auto flex justify-center items-center bg-gray-800 rounded-full hover:bg-gray-900 focus:outline-none focus:ring">
+            <button onClick={this.onSignUpBtnClick} style={{ padding: '0.875rem 1.375rem' }} className="mt-6 mx-auto flex justify-center items-center bg-gray-800 rounded-full hover:bg-gray-900 focus:outline-none focus:ring">
               <span className="text-lg text-gray-50 font-medium">Get started now</span>
               <svg className="ml-2 w-2 text-gray-50" viewBox="0 0 6 10" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path fillRule="evenodd" clipRule="evenodd" d="M0.29289 9.7071C-0.09763 9.3166 -0.09763 8.6834 0.29289 8.2929L3.5858 5L0.29289 1.70711C-0.09763 1.31658 -0.09763 0.68342 0.29289 0.29289C0.68342 -0.09763 1.31658 -0.09763 1.70711 0.29289L5.7071 4.29289C6.0976 4.68342 6.0976 5.3166 5.7071 5.7071L1.70711 9.7071C1.31658 10.0976 0.68342 10.0976 0.29289 9.7071Z" />
