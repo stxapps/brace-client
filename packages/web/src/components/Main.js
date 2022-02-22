@@ -9,7 +9,6 @@ import {
   SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
 } from '../types/const';
 import { getLinks } from '../selectors';
-import { throttle } from '../utils';
 
 import Loading from './Loading';
 import TopBar from './TopBar';
@@ -26,26 +25,13 @@ import ConfirmDeletePopup from './ConfirmDeletePopup';
 
 class Main extends React.PureComponent {
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      columnWidth: this.getColumnWidth(),
-    };
-
-    this.updateColumnWidth = throttle(this.updateColumnWidth, 16);
-  }
-
   componentDidMount() {
-
     if (window.history.state === null) {
       this.props.updateHistoryPosition(BACK_POPUP);
 
       window.history.replaceState(BACK_DECIDER, '', window.location.href);
       window.history.pushState(BACK_POPUP, '', window.location.href);
     }
-
-    window.addEventListener('resize', this.updateColumnWidth);
 
     this.fetch();
   }
@@ -59,22 +45,12 @@ class Main extends React.PureComponent {
     ) this.fetch();
   }
 
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.updateColumnWidth);
-  }
-
-  getColumnWidth = () => {
-    const { safeAreaWidth } = this.props;
-
+  getColumnWidth = (safeAreaWidth) => {
     let columnWidth = PC_100;
     if (safeAreaWidth >= SM_WIDTH) columnWidth = PC_50;
     if (safeAreaWidth >= LG_WIDTH) columnWidth = PC_33;
 
     return columnWidth;
-  }
-
-  updateColumnWidth = () => {
-    this.setState({ columnWidth: this.getColumnWidth() });
   }
 
   fetch = () => {
@@ -87,8 +63,8 @@ class Main extends React.PureComponent {
 
   render() {
 
-    const { links, layoutType } = this.props;
-    const { columnWidth } = this.state;
+    const { links, layoutType, safeAreaWidth } = this.props;
+    const columnWidth = this.getColumnWidth(safeAreaWidth);
 
     if (links === null) {
       return <Loading />;
