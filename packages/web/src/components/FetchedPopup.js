@@ -34,13 +34,13 @@ class FetchedPopup extends React.PureComponent {
 
   render() {
 
-    const { fetched } = this.props;
+    const { fetched, safeAreaWidth } = this.props;
     const { isShown } = this.state;
     if (!fetched || !isShown) return (
       <AnimatePresence key="AnimatePresence_FetchedPopup" />
     );
 
-    const initialTop = window.innerWidth < MD_WIDTH ? '4.625rem' : '5.125rem';
+    const initialTop = safeAreaWidth < MD_WIDTH ? '4.625rem' : '5.125rem';
     const style = { top: initialTop };
     const updateBtnStyle = { padding: '0.25rem 0rem 0.3125rem 0.75rem' };
     const closeBtnStyle = { marginRight: '0.5rem' };
@@ -67,6 +67,7 @@ const mapStateToProps = (state, props) => {
 
   return {
     fetched: state.fetched[listName],
+    safeAreaWidth: state.window.width,
   };
 };
 

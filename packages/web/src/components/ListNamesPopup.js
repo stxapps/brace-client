@@ -326,9 +326,11 @@ const ListNamesPopup = () => {
       </motion.div>
     );
   } else {
-    const layouts = createLayouts(derivedAnchorPosition, {
-      width: popupWidth, height: popupHeight,
-    });
+    const layouts = createLayouts(
+      derivedAnchorPosition,
+      { width: popupWidth, height: popupHeight },
+      { width: safeAreaWidth, height: safeAreaHeight },
+    );
     const popupPosition = computePosition(layouts, null, 8);
 
     const { top, left, topOrigin, leftOrigin } = popupPosition;

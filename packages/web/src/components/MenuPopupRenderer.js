@@ -54,18 +54,13 @@ export const computePosition = (layouts, triggerOffsets, popupMargin = 0) => {
   return { top, left, topOrigin, leftOrigin };
 };
 
-export const createLayouts = (triggerLayout, optionsLayout) => {
+export const createLayouts = (triggerLayout, optionsLayout, windowLayout) => {
 
   // Not include scroll bar width if possible
-  const windowWidth = document.documentElement.clientWidth || window.innerWidth;
+  const windowWidth = document.documentElement.clientWidth || windowLayout.width;
 
   return {
-    windowLayout: {
-      x: 0,
-      y: 0,
-      width: windowWidth,
-      height: window.innerHeight,
-    },
+    windowLayout: { x: 0, y: 0, width: windowWidth, height: windowLayout.height },
     triggerLayout: triggerLayout,
     optionsLayout: optionsLayout,
   };

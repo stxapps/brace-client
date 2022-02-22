@@ -174,7 +174,7 @@ class _SettingsPopupDataExport extends React.PureComponent {
   }
 
   render() {
-    const { exportAllDataProgress } = this.props;
+    const { exportAllDataProgress, safeAreaWidth } = this.props;
 
     let actionPanel;
     if (!exportAllDataProgress) {
@@ -243,7 +243,7 @@ class _SettingsPopupDataExport extends React.PureComponent {
       <div className="p-4 md:p-6 md:pt-4">
         <div className="border-b border-gray-200 md:border-b-0">
           <button onClick={this.props.onBackToDataViewBtnClick} className="pb-1 group focus:outline-none md:pb-0">
-            <span className="text-sm text-gray-500 rounded group-focus:ring">{'<'} <span className="group-hover:underline">{window.innerWidth < SM_WIDTH ? 'Settings / ' : ''}Data</span></span>
+            <span className="text-sm text-gray-500 rounded group-focus:ring">{'<'} <span className="group-hover:underline">{safeAreaWidth < SM_WIDTH ? 'Settings / ' : ''}Data</span></span>
           </button>
           <h3 className="pb-2 text-xl text-gray-800 font-medium leading-none md:pb-0">Export All Data</h3>
         </div>
@@ -258,6 +258,7 @@ class _SettingsPopupDataExport extends React.PureComponent {
 const mapStateToPropsExport = (state) => {
   return {
     exportAllDataProgress: state.display.exportAllDataProgress,
+    safeAreaWidth: state.window.width,
   };
 };
 
@@ -308,7 +309,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
 
   render() {
 
-    const { deleteAllDataProgress } = this.props;
+    const { deleteAllDataProgress, safeAreaWidth } = this.props;
 
     let actionPanel;
     if (!deleteAllDataProgress) {
@@ -380,7 +381,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
       <div className="p-4 md:p-6 md:pt-4">
         <div className="border-b border-gray-200 md:border-b-0">
           <button onClick={this.props.onBackToDataViewBtnClick} className="pb-1 group focus:outline-none md:pb-0">
-            <span className="text-sm text-gray-500 rounded group-focus:ring">{'<'} <span className="group-hover:underline">{window.innerWidth < SM_WIDTH ? 'Settings / ' : ''}Data</span></span>
+            <span className="text-sm text-gray-500 rounded group-focus:ring">{'<'} <span className="group-hover:underline">{safeAreaWidth < SM_WIDTH ? 'Settings / ' : ''}Data</span></span>
           </button>
           <h3 className="pb-2 text-xl text-gray-800 font-medium leading-none md:pb-0">Delete All Data</h3>
         </div>
@@ -401,6 +402,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
 const mapStateToPropsDelete = (state) => {
   return {
     deleteAllDataProgress: state.display.deleteAllDataProgress,
+    safeAreaWidth: state.window.width,
   };
 };
 

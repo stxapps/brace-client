@@ -20,19 +20,19 @@ class ListName extends React.PureComponent {
 
   render() {
 
-    const { listName, listNameMap, updates } = this.props;
+    const { listName, listNameMap, updates, safeAreaWidth } = this.props;
     const displayName = getListNameDisplayName(listName, listNameMap);
 
     let textMaxWidth = 160;
-    if (window.innerWidth >= SM_WIDTH) textMaxWidth = 320;
-    if (window.innerWidth >= LG_WIDTH) textMaxWidth = 512;
+    if (safeAreaWidth >= SM_WIDTH) textMaxWidth = 320;
+    if (safeAreaWidth >= LG_WIDTH) textMaxWidth = 512;
 
-    if (window.innerWidth >= SM_WIDTH) {
+    if (safeAreaWidth >= SM_WIDTH) {
       const {
         headerPaddingX, commandsWidth,
         listNameDistanceX, listNameArrowWidth, listNameArrowSpace,
-      } = getTopBarSizes(window.innerWidth);
-      let headerSpaceLeftover = window.innerWidth - headerPaddingX - listNameDistanceX - listNameArrowWidth - listNameArrowSpace - commandsWidth - 4;
+      } = getTopBarSizes(safeAreaWidth);
+      let headerSpaceLeftover = safeAreaWidth - headerPaddingX - listNameDistanceX - listNameArrowWidth - listNameArrowSpace - commandsWidth - 4;
       if (listName in updates) headerSpaceLeftover -= 8;
 
       textMaxWidth = Math.min(textMaxWidth, headerSpaceLeftover);
@@ -58,6 +58,7 @@ const mapStateToProps = (state, props) => {
     listName: state.display.listName,
     listNameMap: getListNameMap(state),
     updates: state.fetched,
+    safeAreaWidth: state.window.width,
   };
 };
 

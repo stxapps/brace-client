@@ -32,7 +32,7 @@ class SettingsPopup extends React.PureComponent {
 
     this.initialState = {
       viewId: VIEW_ACCOUNT,
-      isSidebarShown: window.innerWidth < MD_WIDTH,
+      isSidebarShown: props.safeAreaWidth < MD_WIDTH,
     };
     this.state = { ...this.initialState };
 
@@ -128,12 +128,12 @@ class SettingsPopup extends React.PureComponent {
   }
 
   _render(content) {
-
+    const { safeAreaWidth, safeAreaHeight } = this.props;
     const { isSidebarShown } = this.state;
 
-    let panelHeight = window.innerHeight * 0.9;
-    if (window.innerWidth >= LG_WIDTH) panelHeight = Math.min(panelHeight, 608);
-    else if (window.innerWidth >= MD_WIDTH) panelHeight = Math.min(panelHeight, 656);
+    let panelHeight = safeAreaHeight * 0.9;
+    if (safeAreaWidth >= LG_WIDTH) panelHeight = Math.min(panelHeight, 608);
+    else if (safeAreaWidth >= MD_WIDTH) panelHeight = Math.min(panelHeight, 656);
 
     const animate = isSidebarShown ? 'visible' : 'hidden';
 
@@ -268,7 +268,7 @@ class SettingsPopup extends React.PureComponent {
     return (
       <AnimatePresence key="AnimatePresence_SP">
         <div className="fixed inset-0 overflow-hidden z-30">
-          <div className="p-4 flex items-center justify-center" style={{ minHeight: window.innerHeight }}>
+          <div className="p-4 flex items-center justify-center" style={{ minHeight: safeAreaHeight }}>
             <div className={'fixed inset-0'}>
               <motion.button onClick={this.onPopupCloseBtnClick} tabIndex={-1} className="absolute inset-0 w-full h-full bg-black opacity-25 cursor-default focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
             </div>
@@ -353,6 +353,8 @@ class SettingsPopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     isSettingsPopupShown: state.display.isSettingsPopupShown,
+    safeAreaWidth: state.window.width,
+    safeAreaHeight: state.window.height,
   };
 };
 

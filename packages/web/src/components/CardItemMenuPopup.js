@@ -15,6 +15,7 @@ import {
   isEqual, throttle, getLastHalfHeight,
 } from '../utils';
 import { popupBgFMV, getPopupFMV } from '../types/animConfigs';
+
 import { computePosition, createLayouts } from './MenuPopupRenderer';
 
 class CardItemMenuPopup extends React.PureComponent {
@@ -81,7 +82,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
   populateMenu() {
 
-    const { listName, listNameMap, popupLink, layoutType } = this.props;
+    const { listName, listNameMap, popupLink, layoutType, safeAreaWidth } = this.props;
 
     let menu = null;
     if (listName in CARD_ITEM_POPUP_MENU) {
@@ -98,7 +99,7 @@ class CardItemMenuPopup extends React.PureComponent {
       menu = menu.slice(0, 2);
     }
 
-    if (layoutType === LAYOUT_LIST && window.innerWidth >= LG_WIDTH) {
+    if (layoutType === LAYOUT_LIST && safeAreaWidth >= LG_WIDTH) {
       menu = menu.filter(text => ![ARCHIVE, REMOVE, RESTORE].includes(text));
     }
 
@@ -168,7 +169,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
   render() {
 
-    const { popupLink } = this.props;
+    const { popupLink, safeAreaWidth, safeAreaHeight } = this.props;
     if (!popupLink) return (
       <AnimatePresence key="AnimatePresence_CIMP_menuPopup" />
     );
@@ -180,13 +181,17 @@ class CardItemMenuPopup extends React.PureComponent {
     if (menuPopupSize) {
 
       const maxHeight = getLastHalfHeight(
-        Math.min(288, window.innerHeight - 16), 36, 8, 0
+        Math.min(288, safeAreaHeight - 16), 36, 8, 0
       );
 
       const anchorPosition = popupLink.popupAnchorPosition;
       const layouts = createLayouts(
         anchorPosition,
-        { width: menuPopupSize.width, height: Math.min(menuPopupSize.height, maxHeight) }
+        {
+          width: menuPopupSize.width,
+          height: Math.min(menuPopupSize.height, maxHeight),
+        },
+        { width: safeAreaWidth, height: safeAreaHeight },
       );
       const triggerOffsets = { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 };
       const popupPosition = computePosition(layouts, triggerOffsets, 8);
@@ -225,6 +230,8 @@ const mapStateToProps = (state, props) => {
     listNameMap: getListNameMap(state),
     popupLink: getPopupLink(state),
     layoutType: state.localSettings.layoutType,
+    safeAreaWidth: state.window.width,
+    safeAreaHeight: state.window.height,
   }
 };
 

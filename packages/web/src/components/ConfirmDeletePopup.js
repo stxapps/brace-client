@@ -75,16 +75,16 @@ class ConfirmDeletePopup extends React.Component {
 
   render() {
 
-    const { isConfirmDeletePopupShown } = this.props;
+    const { isConfirmDeletePopupShown, safeAreaWidth, safeAreaHeight } = this.props;
     if (!isConfirmDeletePopupShown) return <AnimatePresence key="AP_CDP" />;
 
     const spanStyle = {};
-    if (window.innerWidth >= SM_WIDTH) spanStyle.height = window.innerHeight;
+    if (safeAreaWidth >= SM_WIDTH) spanStyle.height = safeAreaHeight;
 
     return (
       <AnimatePresence key="AP_CDP">
         <div className="fixed inset-0 overflow-y-auto z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-          <div style={{ minHeight: window.innerHeight }} className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+          <div style={{ minHeight: safeAreaHeight }} className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div className="fixed inset-0" aria-hidden="true">
               <motion.button onClick={this.onConfirmDeleteCancelBtnClick} tabIndex={-1} className="absolute inset-0 w-full h-full bg-black opacity-25 cursor-default focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
             </div>
@@ -123,6 +123,8 @@ const mapStateToProps = (state, props) => {
     popupLink: getPopupLink(state),
     selectedLinkIds: state.display.selectedLinkIds,
     deletingListName: state.display.deletingListName,
+    safeAreaWidth: state.window.width,
+    safeAreaHeight: state.window.height,
   };
 };
 

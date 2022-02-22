@@ -137,7 +137,9 @@ class CardPanel extends React.PureComponent {
 
   render() {
 
-    const { links, hasMoreLinks, isFetchingMore, columnWidth } = this.props;
+    const {
+      links, hasMoreLinks, isFetchingMore, columnWidth, safeAreaWidth,
+    } = this.props;
 
     const showFetchMoreBtn = hasMoreLinks && !isFetchingMore;
     const showFetchingMore = hasMoreLinks && isFetchingMore;
@@ -148,7 +150,7 @@ class CardPanel extends React.PureComponent {
     }
 
     const style = {
-      paddingTop: window.innerWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD,
+      paddingTop: safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD,
       paddingBottom,
     };
 
@@ -184,6 +186,7 @@ const mapStateToProps = (state, props) => {
     hasMoreLinks: state.hasMoreLinks[listName],
     isFetchingMore: getIsFetchingMore(state),
     listChangedCount: state.display.listChangedCount,
+    safeAreaWidth: state.window.width,
   };
 };
 

@@ -22,7 +22,7 @@ class TopBar extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    const { listNameDistanceY } = getTopBarSizes(window.innerWidth);
+    const { listNameDistanceY } = getTopBarSizes(props.safeAreaWidth);
 
     this.state = {
       offsetY: Math.min(window.pageYOffset, listNameDistanceY),
@@ -42,7 +42,8 @@ class TopBar extends React.PureComponent {
   }
 
   updateScrollY = () => {
-    const { listNameDistanceY } = getTopBarSizes(window.innerWidth);
+    const { safeAreaWidth } = this.props;
+    const { listNameDistanceY } = getTopBarSizes(safeAreaWidth);
     if (window.pageYOffset >= listNameDistanceY && this.state.offsetY >= listNameDistanceY) return;
     this.setState({ offsetY: Math.min(window.pageYOffset, listNameDistanceY) });
   }
@@ -60,12 +61,12 @@ class TopBar extends React.PureComponent {
   }
 
   renderListName() {
-
+    const { safeAreaWidth } = this.props;
     const { offsetY } = this.state;
     const {
       listNameDistanceX,
       listNameStartY, listNameEndY, listNameDistanceY,
-    } = getTopBarSizes(window.innerWidth);
+    } = getTopBarSizes(safeAreaWidth);
 
     let top = listNameStartY + (offsetY * (listNameEndY - listNameStartY) / listNameDistanceY) + 3;
     const left = offsetY * listNameDistanceX / listNameDistanceY;
@@ -79,13 +80,13 @@ class TopBar extends React.PureComponent {
   }
 
   renderStatusPopup() {
-
+    const { safeAreaWidth } = this.props;
     const { offsetY } = this.state;
     const {
       statusPopupDistanceY,
-    } = getTopBarSizes(window.innerWidth);
+    } = getTopBarSizes(safeAreaWidth);
 
-    const initialTop = window.innerWidth < MD_WIDTH ? '4.75rem' : '5.25rem';
+    const initialTop = safeAreaWidth < MD_WIDTH ? '4.75rem' : '5.25rem';
     const top = Math.max(0, toPx(initialTop) - offsetY);
     const right = 0;
     const opacity = Math.max(0, 1.0 - (offsetY / statusPopupDistanceY));
@@ -101,9 +102,7 @@ class TopBar extends React.PureComponent {
   }
 
   render() {
-
-    const rightPaneProp = this.props.rightPane;
-    const isBulkEditing = this.props.isBulkEditing;
+    const { rightPane: rightPaneProp, isBulkEditing, safeAreaWidth } = this.props;
 
     let rightPane;
     if (rightPaneProp === SHOW_BLANK) rightPane = null;
@@ -121,7 +120,7 @@ class TopBar extends React.PureComponent {
       const {
         topBarHeight, headerHeight,
         listNameDistanceY,
-      } = getTopBarSizes(window.innerWidth);
+      } = getTopBarSizes(safeAreaWidth);
 
       const height = topBarHeight + (offsetY * (headerHeight - topBarHeight) / listNameDistanceY);
 
@@ -131,7 +130,7 @@ class TopBar extends React.PureComponent {
         topBarStyleClasses += ' border-b border-gray-200';
       }
     } else {
-      const { headerHeight } = getTopBarSizes(window.innerWidth);
+      const { headerHeight } = getTopBarSizes(safeAreaWidth);
       topBarStyle = { height: headerHeight };
       topBarStyleClasses = '';
     }
@@ -165,6 +164,7 @@ TopBar.defaultProps = {
 const mapStateToProps = (state, props) => {
   return {
     isBulkEditing: state.display.isBulkEditing,
+    safeAreaWidth: state.window.width,
   };
 };
 

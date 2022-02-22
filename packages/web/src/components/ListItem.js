@@ -8,9 +8,12 @@ import { ensureContainUrlProtocol, isDiedStatus } from '../utils';
 import ListItemContent from './ListItemContent';
 import ListItemSelector from './ListItemSelector';
 
+import { useSafeAreaFrame } from '.';
+
 const ListItem = (props) => {
 
   const { link } = props;
+  const { width: safeAreaWidth } = useSafeAreaFrame();
   const didClick = useRef(false);
   const dispatch = useDispatch();
 
@@ -30,7 +33,7 @@ const ListItem = (props) => {
 
   const renderRetry = () => {
     const { url } = link;
-    const errMsg = window.innerWidth < SM_WIDTH ? 'Something went wrong!' : 'Oops..., something went wrong!';
+    const errMsg = safeAreaWidth < SM_WIDTH ? 'Something went wrong!' : 'Oops..., something went wrong!';
 
     return (
       <React.Fragment>

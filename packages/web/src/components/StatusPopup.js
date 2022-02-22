@@ -57,7 +57,7 @@ class StatusPopup extends React.PureComponent {
   }
 
   render() {
-    const { status } = this.props;
+    const { status, safeAreaWidth } = this.props;
 
     if (this.timeout) {
       window.clearTimeout(this.timeout);
@@ -66,7 +66,7 @@ class StatusPopup extends React.PureComponent {
 
     let animate = 'hidden';
     if (status) {
-      this.msg = window.innerWidth < SM_WIDTH ? MSGS_SHRT[status] : MSGS[status];
+      this.msg = safeAreaWidth < SM_WIDTH ? MSGS_SHRT[status] : MSGS[status];
       animate = 'visible';
 
       if ([
@@ -91,6 +91,7 @@ class StatusPopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     status: state.display.status,
+    safeAreaWidth: state.window.width,
   };
 };
 

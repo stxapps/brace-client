@@ -64,9 +64,11 @@ class Main extends React.PureComponent {
   }
 
   getColumnWidth = () => {
+    const { safeAreaWidth } = this.props;
+
     let columnWidth = PC_100;
-    if (window.innerWidth >= SM_WIDTH) columnWidth = PC_50;
-    if (window.innerWidth >= LG_WIDTH) columnWidth = PC_33;
+    if (safeAreaWidth >= SM_WIDTH) columnWidth = PC_50;
+    if (safeAreaWidth >= LG_WIDTH) columnWidth = PC_33;
 
     return columnWidth;
   }
@@ -123,6 +125,7 @@ const mapStateToProps = (state, props) => {
     didFetchSettings: state.display.didFetchSettings,
     fetchedListNames: state.display.fetchedListNames,
     layoutType: state.localSettings.layoutType,
+    safeAreaWidth: state.window.width,
   };
 };
 

@@ -75,17 +75,17 @@ class TopBarAddPopup extends React.PureComponent {
 
   renderAddPopup() {
 
-    const { isAddPopupShown } = this.props;
+    const { isAddPopupShown, safeAreaWidth, safeAreaHeight } = this.props;
     if (!isAddPopupShown) return (
       <AnimatePresence key="AnimatePresence_TopBarAddPopup" />
     );
 
     const { url, msg, isAskingConfirm } = this.state;
 
-    const style = window.innerWidth < 832 ? { left: 0 } : { right: 0 };
-    if (window.innerHeight <= 360) style.top = -12;
+    const style = safeAreaWidth < 832 ? { left: 0 } : { right: 0 };
+    if (safeAreaHeight <= 360) style.top = -12;
 
-    const popupFMV = window.innerWidth < 832 ? tlPopupFMV : trPopupFMV;
+    const popupFMV = safeAreaWidth < 832 ? tlPopupFMV : trPopupFMV;
 
     return (
       <AnimatePresence key="AnimatePresence_TopBarAddPopup">
@@ -126,6 +126,8 @@ class TopBarAddPopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     isAddPopupShown: state.display.isAddPopupShown,
+    safeAreaWidth: state.window.width,
+    safeAreaHeight: state.window.height,
   };
 };
 

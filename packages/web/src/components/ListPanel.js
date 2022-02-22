@@ -11,12 +11,14 @@ import { getLinks, getIsFetchingMore } from '../selectors';
 import { addRem, getWindowHeight, getWindowScrollHeight, throttle } from '../utils';
 import { cardItemFMV } from '../types/animConfigs';
 
+import { useSafeAreaFrame } from '.';
 import ListItem from './ListItem';
 import EmptyContent from './EmptyContent';
 
 const ListPanel = (props) => {
 
   const { columnWidth } = props;
+  const { width: safeAreaWidth } = useSafeAreaFrame();
   const listName = useSelector(state => state.display.listName);
   const hasMore = useSelector(state => state.hasMoreLinks[listName]);
   const isFetchingMore = useSelector(state => getIsFetchingMore(state));
@@ -104,7 +106,7 @@ const ListPanel = (props) => {
   }
 
   const style = {
-    paddingTop: window.innerWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD,
+    paddingTop: safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD,
     paddingBottom,
   };
 
