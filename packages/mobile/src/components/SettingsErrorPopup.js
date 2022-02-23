@@ -1,12 +1,13 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Linking } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useSafeAreaFrame } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 
 import { retryDiedSettings, cancelDiedSettings } from '../actions';
 import { DIED_UPDATING, SM_WIDTH } from '../types/const';
 import { tailwind } from '../stylesheets/tailwind';
+
+import { useSafeAreaFrame } from '.';
 
 const SettingsErrorPopup = () => {
 

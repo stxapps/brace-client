@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { FlatList, View, Text, TouchableOpacity, Animated } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useSafeAreaFrame } from 'react-native-safe-area-context';
 import { Flow } from 'react-native-animated-spinkit';
 
 import { fetchMore, updatePageYOffset } from '../actions';
@@ -14,6 +13,7 @@ import { toPx } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
+import { useSafeAreaFrame } from '.';
 import ListItem from './ListItem';
 import EmptyContent from './EmptyContent';
 

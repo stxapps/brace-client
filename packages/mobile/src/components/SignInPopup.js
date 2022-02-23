@@ -3,7 +3,6 @@ import {
   View, TouchableWithoutFeedback, BackHandler, Animated,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 
 import { updatePopup, updateStacksAccess, updateUserData } from '../actions';
@@ -14,6 +13,8 @@ import { splitOnFirst, escapeDoubleQuotes } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 import cache from '../utils/cache';
 import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
+
+import { useSafeAreaFrame, useSafeAreaInsets } from '.';
 
 const stacksAccessSignIn = require('../../stacks-access-sign-in');
 
@@ -130,6 +131,7 @@ const SignInPopup = () => {
 
   if (!isShown && didCloseAnimEnd) return null;
 
+  // safeAreaHeight doesn't include status bar height, but minus it anyway.
   const statusBarHeight = 24;
   let appHeight = safeAreaHeight - statusBarHeight;
   const panelHeight = Math.min(480 - 40, appHeight * 0.9);

@@ -34,7 +34,7 @@ class Landing extends React.PureComponent {
     let saveLinksSvgWidth = 240;
     if (safeAreaWidth >= SM_WIDTH) saveLinksSvgWidth = 288;
     // iPhone 11 Pro Max landscape is wider than MD (414x896)
-    if (safeAreaHeight >= 640) {
+    if (safeAreaHeight >= (640 - 24)) {
       if (safeAreaWidth >= MD_WIDTH) saveLinksSvgWidth = 432;
       if (safeAreaWidth >= LG_WIDTH) saveLinksSvgWidth = 384;
     }
@@ -203,8 +203,11 @@ class Landing extends React.PureComponent {
     // if safeAreaHeight < ~56 + ~576 + ~80, fix height on Swiper and use ScrollView
     // else if safeAreaHeight < 900, expand Swiper so the content cover the screen
     // else center the content in the middle
+    //
+    // safeAreaHeight is not included status bar height
+    //   so less than Dimensions.get('window').height around 24 pixels
     const SWIPER_HEIGHT = 536;
-    if (safeAreaHeight < 640) {
+    if (safeAreaHeight < (640 - 24)) {
       return (
         <React.Fragment>
           <ScrollView>
@@ -216,7 +219,7 @@ class Landing extends React.PureComponent {
           <SignInPopup />
         </React.Fragment>
       );
-    } else if (safeAreaHeight < 900) {
+    } else if (safeAreaHeight < (900 - 24)) {
       return (
         <React.Fragment>
           <TopBar rightPane={SHOW_SIGN_IN} />

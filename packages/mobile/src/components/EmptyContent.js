@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Platform } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useSafeAreaFrame } from 'react-native-safe-area-context';
 import Svg, { SvgXml, Path } from 'react-native-svg';
 
 import { updatePopup } from '../actions';
@@ -10,6 +9,8 @@ import { getListNameMap } from '../selectors';
 import { getListNameDisplayName } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
+
+import { useSafeAreaFrame } from '.';
 
 import emptyBox from '../images/empty-box-sided.svg';
 import undrawLink from '../images/undraw-link.svg';

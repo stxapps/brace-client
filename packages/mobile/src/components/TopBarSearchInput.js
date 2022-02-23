@@ -6,8 +6,6 @@ import Svg, { Path } from 'react-native-svg';
 import { updateSearchString } from '../actions';
 import { tailwind } from '../stylesheets/tailwind';
 
-import { withSafeAreaContext } from '.';
-
 class TopBarSearchInput extends React.PureComponent {
 
   onSearchInputChange = (e) => {
@@ -52,4 +50,4 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = { updateSearchString };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(TopBarSearchInput));
+export default connect(mapStateToProps, mapDispatchToProps)(TopBarSearchInput);

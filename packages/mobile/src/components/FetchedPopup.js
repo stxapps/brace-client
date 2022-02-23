@@ -87,14 +87,14 @@ class FetchedPopup extends React.PureComponent {
 
   render() {
 
-    const { fetched, safeAreaWidth } = this.props;
+    const { fetched, safeAreaWidth, insets } = this.props;
     const { isShown, didCloseAnimEnd } = this.state;
     if ((!fetched && didCloseAnimEnd) || (!isShown && didCloseAnimEnd)) return null;
 
     // width is 163 from onLayout
     const style = {
       top: this.getTop(this.props),
-      left: (safeAreaWidth - 163) / 2,
+      left: ((safeAreaWidth - 163) / 2) + insets.left,
       transform: [{ translateY: this.popupTranslateY }],
     };
     const updateBtnStyle = {

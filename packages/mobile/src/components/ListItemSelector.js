@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { View, Text, TouchableOpacity, Animated } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useSafeAreaFrame } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 
 import { MAX_SELECTED_LINK_IDS } from '../types/const';
@@ -9,6 +8,8 @@ import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
 import { makeIsLinkIdSelected, getSelectedLinkIdsLength } from '../selectors';
 import { tailwind } from '../stylesheets/tailwind';
 import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
+
+import { useSafeAreaFrame } from '.';
 
 const ListItemSelector = (props) => {
 

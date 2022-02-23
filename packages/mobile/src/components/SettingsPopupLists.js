@@ -3,7 +3,6 @@ import {
   View, Text, TouchableOpacity, TextInput, Keyboard, Platform, LayoutAnimation,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useSafeAreaFrame } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { Circle } from 'react-native-animated-spinkit';
 import KeyboardManager from 'react-native-keyboard-manager';
@@ -24,6 +23,8 @@ import { validateListNameDisplayName, getAllListNames } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 import { spListsAnimConfig } from '../types/animConfigs';
 import { initialListNameEditorState } from '../types/initialStates';
+
+import { useSafeAreaFrame } from '.';
 
 const SettingsPopupLists = (props) => {
 

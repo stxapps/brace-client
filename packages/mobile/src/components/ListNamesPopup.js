@@ -4,7 +4,6 @@ import {
   BackHandler,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useSafeAreaFrame, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 
 import {
@@ -17,11 +16,13 @@ import {
   getMaxListNameChildrenSize,
 } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
-import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
 import {
   popupOpenAnimConfig, popupCloseAnimConfig,
   bModalOpenAnimConfig, bModalCloseAnimConfig, slideAnimConfig,
 } from '../types/animConfigs';
+
+import { useSafeAreaFrame, useSafeAreaInsets } from '.';
+import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
 
 const MODE_CHANGE_LIST_NAME = 'MODE_CHANGE_LIST_NAME';
 const MODE_MOVE_LINKS = 'MODE_MOVE_LINKS';
@@ -229,7 +230,7 @@ const ListNamesPopup = () => {
 
   let popupWidth, popupHeight;
   if (animType === ANIM_TYPE_BMODAL) {
-    popupWidth = safeAreaWidth;
+    popupWidth = safeAreaWidth + insets.left + insets.right;
 
     popupHeight = Math.min(371, 52 * maxChildrenSize + 56 + 55);
     if (maxChildrenSize > 4) {
@@ -380,7 +381,7 @@ const ListNamesPopup = () => {
     const layouts = createLayouts(
       derivedAnchorPosition,
       { width: popupWidth, height: popupHeight },
-      { width: safeAreaWidth, height: safeAreaHeight }
+      { width: safeAreaWidth + insets.left, height: safeAreaHeight + insets.top },
     );
     const popupPosition = computePosition(layouts, null, 8);
 

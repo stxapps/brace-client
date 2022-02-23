@@ -3,7 +3,6 @@ import {
   View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated, BackHandler,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useSafeAreaFrame } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 
 import { moveListName, updateListNameEditors, updatePopup } from '../actions';
@@ -13,12 +12,15 @@ import {
 } from '../types/const';
 import { makeGetListNameEditor } from '../selectors';
 import { tailwind } from '../stylesheets/tailwind';
-import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
 import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
+
+import { useSafeAreaFrame, useSafeAreaInsets } from '.';
+import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
 
 const SettingsListsMenuPopup = () => {
 
   const { width: safeAreaWidth, height: safeAreaHeight } = useSafeAreaFrame();
+  const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isSettingsListsMenuPopupShown);
   const anchorPosition = useSelector(
     state => state.display.settingsListsMenuPopupPosition
@@ -192,7 +194,7 @@ const SettingsListsMenuPopup = () => {
     const layouts = createLayouts(
       derivedAnchorPosition,
       { width: popupSize.width, height: popupSize.height },
-      { width: safeAreaWidth, height: safeAreaHeight }
+      { width: safeAreaWidth + insets.left, height: safeAreaHeight + insets.top },
     );
     const popupPosition = computePosition(layouts, null, 8);
 
@@ -234,7 +236,7 @@ const SettingsListsMenuPopup = () => {
     );
   } else {
     panel = (
-      <Animated.View onLayout={onPopupLayout} style={[tailwind(popupClassNames), { top: safeAreaHeight, left: safeAreaWidth }]}>
+      <Animated.View onLayout={onPopupLayout} style={[tailwind(popupClassNames), { top: safeAreaHeight + 256, left: safeAreaWidth + 256 }]}>
         {buttons}
       </Animated.View>
     );

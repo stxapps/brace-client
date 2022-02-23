@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, Linking } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { useSafeAreaFrame } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
@@ -9,6 +8,7 @@ import { ADDING, MOVING, SM_WIDTH } from '../types/const';
 import { ensureContainUrlProtocol, isDiedStatus } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 
+import { useSafeAreaFrame } from '.';
 import ListItemContent from './ListItemContent';
 import ListItemSelector from './ListItemSelector';
 

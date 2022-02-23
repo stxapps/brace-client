@@ -235,6 +235,7 @@ class SettingsPopup extends React.PureComponent {
 
     const { safeAreaWidth, safeAreaHeight, insets } = this.props;
 
+    // safeAreaHeight doesn't include status bar height, but minus it anyway.
     const statusBarHeight = 24;
     const appHeight = safeAreaHeight - statusBarHeight;
 

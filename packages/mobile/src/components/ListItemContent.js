@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, Linking } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useSafeAreaFrame } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 
 import { updateBulkEdit, addSelectedLinkIds, moveLinks } from '../actions';
@@ -16,6 +15,7 @@ import cache from '../utils/cache';
 import { PATTERN_MAP } from '../types/patternPaths';
 import { tailwind } from '../stylesheets/tailwind';
 
+import { useSafeAreaFrame } from '.';
 import GracefulImage from './GracefulImage';
 import CardItemMenuPopup from './CardItemMenuPopup';
 
