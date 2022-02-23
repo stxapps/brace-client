@@ -215,8 +215,8 @@ class Landing extends React.PureComponent {
             {this.renderSwiper(SWIPER_HEIGHT)}
             {this.renderSignUp()}
           </ScrollView>
-          <SignUpPopup />
-          <SignInPopup />
+          <SignUpPopup key="SignUpPopup" />
+          <SignInPopup key="SignInPopup" />
         </React.Fragment>
       );
     } else if (safeAreaHeight < (900 - 24)) {
@@ -227,8 +227,8 @@ class Landing extends React.PureComponent {
             {this.renderSwiper(undefined)}
           </View>
           {this.renderSignUp()}
-          <SignUpPopup />
-          <SignInPopup />
+          <SignUpPopup key="SignUpPopup" />
+          <SignInPopup key="SignInPopup" />
         </React.Fragment>
       );
     } else {
@@ -239,8 +239,8 @@ class Landing extends React.PureComponent {
             {this.renderSwiper(undefined)}
             {this.renderSignUp()}
           </View>
-          <SignUpPopup />
-          <SignInPopup />
+          <SignUpPopup key="SignUpPopup" />
+          <SignInPopup key="SignInPopup" />
         </React.Fragment>
       );
     }
