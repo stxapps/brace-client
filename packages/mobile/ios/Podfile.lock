@@ -314,11 +314,11 @@ PODS:
   - react-native-blockstack (0.4.6):
     - Blockstack
     - React
-  - react-native-netinfo (6.0.2):
+  - react-native-netinfo (8.0.0):
     - React-Core
   - react-native-receive-sharing-intent (1.0.4):
     - React
-  - react-native-safe-area-context (3.3.2):
+  - react-native-safe-area-context (3.4.1):
     - React-Core
   - react-native-webview (11.14.1):
     - React-Core
@@ -391,7 +391,7 @@ PODS:
     - IQKeyboardManagerSwift (= 6.5.4)
     - React-Core
     - React-RCTText
-  - RNCAsyncStorage (1.12.1):
+  - RNCAsyncStorage (1.16.1):
     - React-Core
   - RNCClipboard (1.5.1):
     - React-Core
@@ -480,7 +480,7 @@ DEPENDENCIES:
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeKeyboardManager (from `../node_modules/react-native-keyboard-manager`)
-  - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
+  - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-community/clipboard`)"
   - RNDefaultPreference (from `../node_modules/react-native-default-preference`)
   - RNFastImage (from `../node_modules/react-native-fast-image`)
@@ -591,7 +591,7 @@ EXTERNAL SOURCES:
   ReactNativeKeyboardManager:
     :path: "../node_modules/react-native-keyboard-manager"
   RNCAsyncStorage:
-    :path: "../node_modules/@react-native-community/async-storage"
+    :path: "../node_modules/@react-native-async-storage/async-storage"
   RNCClipboard:
     :path: "../node_modules/@react-native-community/clipboard"
   RNDefaultPreference:
@@ -649,9 +649,9 @@ SPEC CHECKSUMS:
   React-jsinspector: 8c0517dee5e8c70cd6c3066f20213ff7ce54f176
   React-logger: bfddd3418dc1d45b77b822958f3e31422e2c179b
   react-native-blockstack: a54aed35a241b7be1e735a334f9c644f6d9237fe
-  react-native-netinfo: 92e6e4476eb8bf6fc2d7c0a6ca0a1406f663d73a
+  react-native-netinfo: ba4ea50d836c60580c59079233c400753fe5bcb6
   react-native-receive-sharing-intent: feba0a332a07977549a85aa58b496eb44368366a
-  react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
+  react-native-safe-area-context: 9e40fb181dac02619414ba1294d6c2a807056ab9
   react-native-webview: db22ab831b8c5f7697957a67f7a7ac1cecfed18d
   React-perflogger: fcac6090a80e3d967791b4c7f1b1a017f9d4a398
   React-RCTActionSheet: caf5913d9f9e605f5467206cf9d1caa6d47d7ad6
@@ -666,7 +666,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: 33a949a51bec5f8a3c9e8d8092deb259600d761e
   ReactCommon: 620442811dc6f707b4bf5e3b27d4f19c12d5a821
   ReactNativeKeyboardManager: 4fb4d82d670ec6c00e9a2d2cc576f7cbb14975d6
-  RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
+  RNCAsyncStorage: b49b4e38a1548d03b74b30e558a1d18465b94be7
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
   RNDefaultPreference: 2f8d6d54230edbd78708ada8d63bb275e5a8415b
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
