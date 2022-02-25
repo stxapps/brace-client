@@ -44,6 +44,34 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>Brace.to - Save links to visit later</title>
+
+    <script>
+      const isIPadIPhoneIPod = () => {
+        const ua = navigator.userAgent;
+        if (/iPad|iPhone|iPod/.test(ua)) {
+          return true;
+        }
+        if (/Mac OS X/.test(ua) && /Safari/.test(ua) && !/Chrome/.test(ua) && !/Firefox/.test(ua)) {
+          return true;
+        }
+        return false;
+      };
+
+      const addMaximumScaleToMetaViewport = () => {
+        const el = document.querySelector('meta[name=viewport]');
+        if (el !== null) {
+          let content = el.getAttribute('content');
+          const re = /maximum\-scale=[0-9\.]+/g;
+
+          if (re.test(content)) content = content.replace(re, 'maximum-scale=1.0');
+          else content = [content, 'maximum-scale=1.0'].join(', ');
+
+          el.setAttribute('content', content);
+        }
+      };
+
+      if (isIPadIPhoneIPod()) addMaximumScaleToMetaViewport();
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
