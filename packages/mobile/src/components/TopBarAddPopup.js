@@ -6,12 +6,9 @@ import {
 import { Menu, MenuOptions, MenuTrigger, withMenuContext } from 'react-native-popup-menu';
 import Svg, { Path } from 'react-native-svg';
 
-import { updatePopup, addLink } from '../actions';
-import {
-  ADD_POPUP,
-  NO_URL, ASK_CONFIRM_URL, URL_MSGS,
-} from '../types/const';
-import { validateUrl, isEqual } from '../utils';
+import { updatePopup, updateLinkEditor, addLink } from '../actions';
+import { ADD_POPUP, NO_URL, ASK_CONFIRM_URL, URL_MSGS } from '../types/const';
+import { validateUrl } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 import { cardItemAnimConfig } from '../types/animConfigs';
@@ -26,14 +23,15 @@ class TopBarAddPopup extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.initialState = {
-      url: '',
-      msg: '',
-      isAskingConfirm: false,
-    };
-    this.state = { ...this.initialState };
-
     this.didClick = false;
+  }
+
+  componentDidMount() {
+    if (this.props.isAddPopupShown) {
+      if (!this.props.ctx.menuActions.isMenuOpen()) {
+        this.props.ctx.menuActions.openMenu(ADD_POPUP_MENU_NAME);
+      }
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -44,21 +42,15 @@ class TopBarAddPopup extends React.PureComponent {
     }
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (!this.props.isAddPopupShown && nextProps.isAddPopupShown) {
-      if (!isEqual(this.state, this.initialState)) {
-        this.setState({ ...this.initialState });
-      }
-    }
-  }
-
   onAddBtnClick = () => {
     this.props.updatePopup(ADD_POPUP, true);
     this.didClick = false;
   }
 
   onAddInputChange = (e) => {
-    this.setState({ url: e.nativeEvent.text, msg: '', isAskingConfirm: false });
+    this.props.updateLinkEditor(
+      { url: e.nativeEvent.text, msg: '', isAskingConfirm: false }
+    );
   }
 
   onAddInputKeyPress = () => {
@@ -68,14 +60,18 @@ class TopBarAddPopup extends React.PureComponent {
   onAddOkBtnClick = () => {
     if (this.didClick) return;
 
-    if (!this.state.isAskingConfirm) {
-      const urlValidatedResult = validateUrl(this.state.url);
+    if (!this.props.isAskingConfirm) {
+      const urlValidatedResult = validateUrl(this.props.url);
       if (urlValidatedResult === NO_URL) {
-        this.setState({ msg: URL_MSGS[urlValidatedResult], isAskingConfirm: false });
+        this.props.updateLinkEditor(
+          { msg: URL_MSGS[urlValidatedResult], isAskingConfirm: false }
+        );
         return;
       }
       if (urlValidatedResult === ASK_CONFIRM_URL) {
-        this.setState({ msg: URL_MSGS[urlValidatedResult], isAskingConfirm: true });
+        this.props.updateLinkEditor(
+          { msg: URL_MSGS[urlValidatedResult], isAskingConfirm: true }
+        );
         return;
       }
     }
@@ -84,7 +80,7 @@ class TopBarAddPopup extends React.PureComponent {
     const animConfig = cardItemAnimConfig(safeAreaWidth);
 
     LayoutAnimation.configureNext(animConfig);
-    this.props.addLink(this.state.url, null, null);
+    this.props.addLink(this.props.url, null, null);
     this.props.ctx.menuActions.closeMenu();
     this.props.updatePopup(ADD_POPUP, false);
 
@@ -92,12 +88,16 @@ class TopBarAddPopup extends React.PureComponent {
   }
 
   onAddCancelBtnClick = () => {
+    this.props.ctx.menuActions.closeMenu();
+    this.onAddPopupClosed();
+  }
+
+  onAddPopupClosed = () => {
     this.props.updatePopup(ADD_POPUP, false);
   }
 
   renderAddPopup() {
-    const { safeAreaWidth } = this.props;
-    const { url, msg, isAskingConfirm } = this.state;
+    const { url, msg, isAskingConfirm, safeAreaWidth } = this.props;
 
     const inputClassNames = Platform.OS === 'ios' ? 'py-1.5 leading-5' : 'py-0.5';
 
@@ -113,7 +113,7 @@ class TopBarAddPopup extends React.PureComponent {
           <TouchableOpacity onPress={this.onAddOkBtnClick} style={[tailwind('px-4 justify-center items-center bg-gray-800 rounded-full'), { paddingTop: 7, paddingBottom: 7 }]}>
             <Text style={tailwind('text-sm text-gray-50 font-medium')}>{isAskingConfirm ? 'Sure' : 'Save'}</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.props.ctx.menuActions.closeMenu()} style={tailwind('ml-2 px-2.5 py-1.5 rounded-md')}>
+          <TouchableOpacity onPress={this.onAddCancelBtnClick} style={tailwind('ml-2 px-2.5 py-1.5 rounded-md')}>
             <Text style={tailwind('text-sm text-gray-500 font-normal')}>Cancel</Text>
           </TouchableOpacity>
         </View>
@@ -126,8 +126,8 @@ class TopBarAddPopup extends React.PureComponent {
     const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' });
 
     return (
-      <Menu name={ADD_POPUP_MENU_NAME} renderer={MenuPopoverRenderers} rendererProps={cache('TBAP_menuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onOpen={this.onAddBtnClick} onClose={this.onAddCancelBtnClick}>
-        <MenuTrigger>
+      <Menu name={ADD_POPUP_MENU_NAME} renderer={MenuPopoverRenderers} rendererProps={cache('TBAP_menuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(anchorClasses) })} onBackdropPress={this.onAddPopupClosed}>
+        <MenuTrigger onPress={this.onAddBtnClick}>
           <View style={cache('TBAP_menuTriggerViewStyle', [tailwind('flex-row justify-center items-center bg-white border border-gray-400 rounded-full'), { height: 32, paddingLeft: 10, paddingRight: 12 }])}>
             <Svg style={tailwind('text-gray-500 font-normal')} width={12} height={11} viewBox="0 0 16 14" stroke="currentColor" fill="none">
               <Path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -146,9 +146,12 @@ class TopBarAddPopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     isAddPopupShown: state.display.isAddPopupShown,
+    url: state.linkEditor.url,
+    msg: state.linkEditor.msg,
+    isAskingConfirm: state.linkEditor.isAskingConfirm,
   };
 };
 
-const mapDispatchToProps = { updatePopup, addLink };
+const mapDispatchToProps = { updatePopup, updateLinkEditor, addLink };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(withMenuContext(TopBarAddPopup)));

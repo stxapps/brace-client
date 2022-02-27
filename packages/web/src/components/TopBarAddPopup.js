@@ -2,9 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion";
 
-import { updatePopup, addLink } from '../actions';
+import { updatePopup, updateLinkEditor, addLink } from '../actions';
 import { ADD_POPUP, NO_URL, ASK_CONFIRM_URL, URL_MSGS } from '../types/const';
-import { validateUrl, isEqual } from '../utils';
+import { validateUrl } from '../utils';
 import { popupBgFMV, tlPopupFMV, trPopupFMV } from '../types/animConfigs';
 
 class TopBarAddPopup extends React.PureComponent {
@@ -12,22 +12,7 @@ class TopBarAddPopup extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.initialState = {
-      url: '',
-      msg: '',
-      isAskingConfirm: false,
-    };
-    this.state = { ...this.initialState };
-
     this.didClick = false;
-  }
-
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (!this.props.isAddPopupShown && nextProps.isAddPopupShown) {
-      if (!isEqual(this.state, this.initialState)) {
-        this.setState({ ...this.initialState });
-      }
-    }
   }
 
   onAddBtnClick = () => {
@@ -36,7 +21,9 @@ class TopBarAddPopup extends React.PureComponent {
   }
 
   onAddInputChange = (e) => {
-    this.setState({ url: e.target.value, msg: '', isAskingConfirm: false });
+    this.props.updateLinkEditor(
+      { url: e.target.value, msg: '', isAskingConfirm: false }
+    );
   }
 
   onAddInputKeyPress = (e) => {
@@ -51,19 +38,23 @@ class TopBarAddPopup extends React.PureComponent {
   onAddOkBtnClick = () => {
     if (this.didClick) return;
 
-    if (!this.state.isAskingConfirm) {
-      const urlValidatedResult = validateUrl(this.state.url);
+    if (!this.props.isAskingConfirm) {
+      const urlValidatedResult = validateUrl(this.props.url);
       if (urlValidatedResult === NO_URL) {
-        this.setState({ msg: URL_MSGS[urlValidatedResult], isAskingConfirm: false });
+        this.props.updateLinkEditor(
+          { msg: URL_MSGS[urlValidatedResult], isAskingConfirm: false }
+        );
         return;
       }
       if (urlValidatedResult === ASK_CONFIRM_URL) {
-        this.setState({ msg: URL_MSGS[urlValidatedResult], isAskingConfirm: true });
+        this.props.updateLinkEditor(
+          { msg: URL_MSGS[urlValidatedResult], isAskingConfirm: true }
+        );
         return;
       }
     }
 
-    this.props.addLink(this.state.url, null, null);
+    this.props.addLink(this.props.url, null, null);
     this.props.updatePopup(ADD_POPUP, false);
 
     this.didClick = true;
@@ -80,7 +71,7 @@ class TopBarAddPopup extends React.PureComponent {
       <AnimatePresence key="AnimatePresence_TopBarAddPopup" />
     );
 
-    const { url, msg, isAskingConfirm } = this.state;
+    const { url, msg, isAskingConfirm } = this.props;
 
     const style = safeAreaWidth < 832 ? { left: 0 } : { right: 0 };
     if (safeAreaHeight <= 360) style.top = -12;
@@ -126,11 +117,14 @@ class TopBarAddPopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     isAddPopupShown: state.display.isAddPopupShown,
+    url: state.linkEditor.url,
+    msg: state.linkEditor.msg,
+    isAskingConfirm: state.linkEditor.isAskingConfirm,
     safeAreaWidth: state.window.width,
     safeAreaHeight: state.window.height,
   };
 };
 
-const mapDispatchToProps = { updatePopup, addLink };
+const mapDispatchToProps = { updatePopup, updateLinkEditor, addLink };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TopBarAddPopup);

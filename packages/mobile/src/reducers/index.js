@@ -11,6 +11,7 @@ import fetchedReducer from './fetchedReducer';
 import isFetchMoreInterrupted from './isFetchMoreInterrupted';
 import stacksAccessReducer from './stacksAccessReducer';
 import snapshotReducer from './snapshotReducer';
+import linkEditorReducer from './linkEditorReducer';
 import listNameEditorsReducer from './listNameEditorsReducer';
 
 export default combineReducers({
@@ -25,5 +26,6 @@ export default combineReducers({
   isFetchMoreInterrupted: isFetchMoreInterrupted,
   stacksAccess: stacksAccessReducer,
   snapshot: snapshotReducer,
+  linkEditor: linkEditorReducer,
   listNameEditors: listNameEditorsReducer,
 });

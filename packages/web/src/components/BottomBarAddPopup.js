@@ -1,24 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { updatePopup, addLink } from '../actions';
-import {
-  ADD_POPUP,
-  NO_URL, ASK_CONFIRM_URL, URL_MSGS,
-} from '../types/const';
-import { validateUrl, isEqual } from '../utils';
+import { updatePopup, updateLinkEditor, addLink } from '../actions';
+import { ADD_POPUP, NO_URL, ASK_CONFIRM_URL, URL_MSGS } from '../types/const';
+import { validateUrl } from '../utils';
 
 class BottomBarAddPopup extends React.PureComponent {
 
   constructor(props) {
     super(props);
-
-    this.initialState = {
-      url: '',
-      msg: '',
-      isAskingConfirm: false,
-    };
-    this.state = { ...this.initialState };
 
     this.addInput = React.createRef();
     this.didClick = false;
@@ -31,16 +21,10 @@ class BottomBarAddPopup extends React.PureComponent {
     }
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (!this.props.isAddPopupShown && nextProps.isAddPopupShown) {
-      if (!isEqual(this.state, this.initialState)) {
-        this.setState({ ...this.initialState });
-      }
-    }
-  }
-
   onAddInputChange = (e) => {
-    this.setState({ url: e.target.value, msg: '', isAskingConfirm: false });
+    this.props.updateLinkEditor(
+      { url: e.target.value, msg: '', isAskingConfirm: false }
+    );
   }
 
   onAddInputKeyPress = (e) => {
@@ -55,19 +39,23 @@ class BottomBarAddPopup extends React.PureComponent {
   onAddOkBtnClick = () => {
     if (this.didClick) return;
 
-    if (!this.state.isAskingConfirm) {
-      const urlValidatedResult = validateUrl(this.state.url);
+    if (!this.props.isAskingConfirm) {
+      const urlValidatedResult = validateUrl(this.props.url);
       if (urlValidatedResult === NO_URL) {
-        this.setState({ msg: URL_MSGS[urlValidatedResult], isAskingConfirm: false });
+        this.props.updateLinkEditor(
+          { msg: URL_MSGS[urlValidatedResult], isAskingConfirm: false }
+        );
         return;
       }
       if (urlValidatedResult === ASK_CONFIRM_URL) {
-        this.setState({ msg: URL_MSGS[urlValidatedResult], isAskingConfirm: true });
+        this.props.updateLinkEditor(
+          { msg: URL_MSGS[urlValidatedResult], isAskingConfirm: true }
+        );
         return;
       }
     }
 
-    this.props.addLink(this.state.url, null, null);
+    this.props.addLink(this.props.url, null, null);
     this.props.updatePopup(ADD_POPUP, false);
     this.didClick = true;
   }
@@ -78,8 +66,7 @@ class BottomBarAddPopup extends React.PureComponent {
 
   render() {
 
-    const { isAddPopupShown } = this.props;
-    const { url, msg, isAskingConfirm } = this.state;
+    const { isAddPopupShown, url, msg, isAskingConfirm } = this.props;
 
     return (
       <React.Fragment>
@@ -105,9 +92,12 @@ class BottomBarAddPopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     isAddPopupShown: state.display.isAddPopupShown,
+    url: state.linkEditor.url,
+    msg: state.linkEditor.msg,
+    isAskingConfirm: state.linkEditor.isAskingConfirm,
   };
 };
 
-const mapDispatchToProps = { updatePopup, addLink };
+const mapDispatchToProps = { updatePopup, updateLinkEditor, addLink };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BottomBarAddPopup);

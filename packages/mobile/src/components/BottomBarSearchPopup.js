@@ -32,16 +32,28 @@ class BottomBarSearchPopup extends React.PureComponent {
     this.searchPopupBackHandler = null;
     this.keyboardDidShowListener = null;
     this.keyboardDidHideListener = null;
+    this.doFocus = true;
   }
 
   componentDidMount() {
-    this.registerSearchPopupBackHandler(this.props.isSearchPopupShown);
-    this.registerKeyboardListeners(this.props.isSearchPopupShown);
+    const { searchString, isSearchPopupShown } = this.props;
+
+    this.registerSearchPopupBackHandler(isSearchPopupShown);
+    this.registerKeyboardListeners(isSearchPopupShown);
+
+    if (searchString && !isSearchPopupShown) {
+      this.doFocus = false;
+      this.props.updatePopup(SEARCH_POPUP, true);
+    } else if (searchString && isSearchPopupShown) {
+      this.translateSearchPopup(true);
+    } else if (!searchString && isSearchPopupShown) {
+      this.props.updatePopup(SEARCH_POPUP, false);
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
 
-    const { isBottomBarShown, isSearchPopupShown, insets } = this.props;
+    const { isBottomBarShown, isSearchPopupShown } = this.props;
     if (prevProps.isSearchPopupShown !== isSearchPopupShown) {
       this.registerSearchPopupBackHandler(isSearchPopupShown);
     }
@@ -49,7 +61,8 @@ class BottomBarSearchPopup extends React.PureComponent {
     if (!prevProps.isSearchPopupShown && isSearchPopupShown) {
       // Register keyboard listerners before input focus
       this.registerKeyboardListeners(isSearchPopupShown);
-      this.searchInput.current.focus();
+      if (this.doFocus) this.searchInput.current.focus();
+      this.doFocus = true;
     }
 
     if (prevProps.isSearchPopupShown && !isSearchPopupShown) {
@@ -63,31 +76,7 @@ class BottomBarSearchPopup extends React.PureComponent {
       prevProps.isSearchPopupShown !== isSearchPopupShown ||
       prevState.keyboardHeight !== this.state.keyboardHeight
     ) {
-
-      let toValue;
-      if (!isBottomBarShown) {
-        toValue = toPx(BOTTOM_BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT) + insets.bottom;
-      } else {
-        if (!isSearchPopupShown) toValue = toPx(SEARCH_POPUP_HEIGHT);
-        else {
-          // Avoid keyboard only on iOS
-          //   as on Android, the window is resized already.
-          const bottom = toPx(BOTTOM_BAR_HEIGHT) + insets.bottom;
-          if (Platform.OS === 'ios' && this.state.keyboardHeight > bottom) {
-            toValue = -1 * (this.state.keyboardHeight - bottom);
-          } else toValue = 0;
-        }
-      }
-
-      if (!prevProps.isBottomBarShown && isBottomBarShown) {
-        Animated.spring(this.searchPopupTranslateY, { toValue, ...bbAnimConfig }).start();
-      } else {
-        Animated.timing(this.searchPopupTranslateY, {
-          toValue: toValue,
-          duration: 0,
-          useNativeDriver: true,
-        }).start();
-      }
+      this.translateSearchPopup(prevProps.isBottomBarShown);
     }
   }
 
@@ -139,6 +128,35 @@ class BottomBarSearchPopup extends React.PureComponent {
         this.keyboardDidHideListener.remove();
         this.keyboardDidHideListener = null;
       }
+    }
+  }
+
+  translateSearchPopup = (prevIsBottomBarShown) => {
+    const { isBottomBarShown, isSearchPopupShown, insets } = this.props;
+
+    let toValue;
+    if (!isBottomBarShown) {
+      toValue = toPx(BOTTOM_BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT) + insets.bottom;
+    } else {
+      if (!isSearchPopupShown) toValue = toPx(SEARCH_POPUP_HEIGHT);
+      else {
+        // Avoid keyboard only on iOS
+        //   as on Android, the window is resized already.
+        const bottom = toPx(BOTTOM_BAR_HEIGHT) + insets.bottom;
+        if (Platform.OS === 'ios' && this.state.keyboardHeight > bottom) {
+          toValue = -1 * (this.state.keyboardHeight - bottom);
+        } else toValue = 0;
+      }
+    }
+
+    if (!prevIsBottomBarShown && isBottomBarShown) {
+      Animated.spring(this.searchPopupTranslateY, { toValue, ...bbAnimConfig }).start();
+    } else {
+      Animated.timing(this.searchPopupTranslateY, {
+        toValue: toValue,
+        duration: 0,
+        useNativeDriver: true,
+      }).start();
     }
   }
 

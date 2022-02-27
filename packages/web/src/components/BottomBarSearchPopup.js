@@ -16,6 +16,16 @@ class BottomBarSearchPopup extends React.PureComponent {
     this.animate = this.getAnimate(null, props);
   }
 
+  componentDidMount() {
+    const { searchString, isSearchPopupShown } = this.props;
+
+    if (searchString && !isSearchPopupShown) {
+      this.props.updatePopup(SEARCH_POPUP, true);
+    } else if (!searchString && isSearchPopupShown) {
+      this.props.updatePopup(SEARCH_POPUP, false);
+    }
+  }
+
   componentDidUpdate(prevProps) {
 
     const { isSearchPopupShown } = this.props;

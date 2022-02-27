@@ -8,8 +8,8 @@ import {
   batchDeleteFileWithRetry,
 } from '../apis/blockstack';
 import {
-  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_PAGE_Y_OFFSET,
-  UPDATE_STACKS_ACCESS, UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
+  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_PAGE_Y_OFFSET, UPDATE_STACKS_ACCESS,
+  UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING, UPDATE_LINK_EDITOR,
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED,
@@ -261,6 +261,10 @@ export const updateSearchString = (searchString) => {
     type: UPDATE_SEARCH_STRING,
     payload: searchString,
   };
+};
+
+export const updateLinkEditor = (values) => {
+  return { type: UPDATE_LINK_EDITOR, payload: values };
 };
 
 export const updateStatus = (status) => {
