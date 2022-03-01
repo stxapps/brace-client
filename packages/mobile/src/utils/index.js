@@ -520,7 +520,28 @@ export const doContainListNameDisplayName = (displayName, listNameObjs) => {
   return false;
 };
 
-export const validateListNameDisplayName = (displayName, listNameMap) => {
+export const doDuplicateDisplayName = (listName, displayName, listNameMap) => {
+  // Check duplicate only in the same level
+  const { parent } = getListNameObj(listName, listNameMap);
+  if (parent) {
+    const { listNameObj: parentObj } = getListNameObj(parent, listNameMap);
+    if (parentObj && parentObj.children) {
+      for (const obj of parentObj.children) {
+        if (obj.listName === listName) continue;
+        if (obj.displayName === displayName) return true;
+      }
+    }
+  } else {
+    for (const obj of listNameMap) {
+      if (obj.listName === listName) continue;
+      if (obj.displayName === displayName) return true;
+    }
+  }
+
+  return false;
+};
+
+export const validateListNameDisplayName = (listName, displayName, listNameMap) => {
 
   // Validate:
   //   1. Empty 2. Contain space at the begining or the end 3. Contain invalid characters
@@ -531,7 +552,9 @@ export const validateListNameDisplayName = (displayName, listNameMap) => {
   if (!displayName || !isString(displayName) || displayName === '') return NO_LIST_NAME;
   if (displayName.length > 256) return TOO_LONG_LIST_NAME;
 
-  if (doContainListNameDisplayName(displayName, listNameMap)) return DUPLICATE_LIST_NAME;
+  if (doDuplicateDisplayName(listName, displayName, listNameMap)) {
+    return DUPLICATE_LIST_NAME;
+  }
 
   return VALID_LIST_NAME;
 };

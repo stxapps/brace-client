@@ -32,8 +32,8 @@ const SettingsPopupLists = (props) => {
   const { width: safeAreaWidth } = useSafeAreaFrame();
   const listNameMap = useSelector(getListNameMap);
 
-  const validateDisplayName = (displayName) => {
-    return validateListNameDisplayName(displayName, listNameMap);
+  const validateDisplayName = (listName, displayName) => {
+    return validateListNameDisplayName(listName, displayName, listNameMap);
   };
 
   useEffect(() => {
@@ -153,7 +153,7 @@ const _ListNameEditor = (props) => {
   };
 
   const onAddOkBtnClick = () => {
-    const listNameValidatedResult = validateDisplayName(state.value);
+    const listNameValidatedResult = validateDisplayName(null, state.value);
     if (listNameValidatedResult !== VALID_LIST_NAME) {
       dispatch(updateListNameEditors({
         [key]: {
@@ -175,7 +175,9 @@ const _ListNameEditor = (props) => {
   const onEditOkBtnClick = () => {
     if (state.value === listNameObj.displayName) return onCancelBtnClick();
 
-    const listNameValidatedResult = validateDisplayName(state.value);
+    const listNameValidatedResult = validateDisplayName(
+      listNameObj.listName, state.value
+    );
     if (listNameValidatedResult !== VALID_LIST_NAME) {
       dispatch(updateListNameEditors({
         [key]: {
