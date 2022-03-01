@@ -53,7 +53,7 @@
     "redux-loop": "^6.1.0",
     "reselect": "^4.1.5",
     "tailwindcss": "^2.2.16",
-    "url-parse": "^1.5.6",
+    "url-parse": "^1.5.8",
     "web-vitals": "^0.2.4",
     "workbox-background-sync": "^5.1.3",
     "workbox-broadcast-update": "^5.1.3",
