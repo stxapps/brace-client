@@ -38,7 +38,7 @@
         android:theme="@style/ShareTheme"
         android:excludeFromRecents="true"
         android:noHistory="true"
-        android:exported="false">
+        android:exported="true">
         <intent-filter>
           <action android:name="android.intent.action.SEND" />
           <category android:name="android.intent.category.DEFAULT" />
