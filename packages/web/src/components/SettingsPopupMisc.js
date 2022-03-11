@@ -5,7 +5,7 @@ import {
   updateDoExtractContents, updateDoDeleteOldLinksInTrash, updateDoDescendingOrder,
   updateLayoutType,
 } from '../actions';
-import { LAYOUT_CARD, LAYOUT_LIST } from '../types/const';
+import { HASH_PRIVACY, LAYOUT_CARD, LAYOUT_LIST } from '../types/const';
 
 class SettingsPopupMisc extends React.PureComponent {
 
@@ -70,7 +70,7 @@ class SettingsPopupMisc extends React.PureComponent {
         <div className="mt-6 flex items-center justify-between space-x-4 md:mt-0">
           <div className="flex flex-col">
             <h4 id="link-previews-option-label" className="text-base text-gray-800 font-medium leading-none">Link Previews</h4>
-            <p id="link-previews-option-description" className="mt-2.5 text-base text-gray-500 leading-relaxed">Allow your saved links to be sent to our server for extracting their representative title and image. No your personal information involved at all so there is no way to know who saves what links. These titles and images are used in our website and app for you to easily find and recognize your saved links. For more information, please visit <a className="underline rounded hover:text-gray-700 focus:outline-none focus:ring" href="/#privacy">our privacy policy page</a>.</p>
+            <p id="link-previews-option-description" className="mt-2.5 text-base text-gray-500 leading-relaxed">Allow your saved links to be sent to our server for extracting their representative title and image. No your personal information involved at all so there is no way to know who saves what links. These titles and images are used in our website and app for you to easily find and recognize your saved links. For more information, please visit <a className="underline rounded hover:text-gray-700 focus:outline-none focus:ring" href={'/' + HASH_PRIVACY}>our privacy policy page</a>.</p>
           </div>
           <span onClick={this.onDoExtractBtnClick} role="checkbox" tabIndex={0} aria-checked="true" aria-labelledby="link-previews-option-label" aria-describedby="link-previews-option-description" className={`${doExtractBtnClassNames} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring`}>
             <span aria-hidden="true" className={`${doExtractBtnInnerClassNames} inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`} />

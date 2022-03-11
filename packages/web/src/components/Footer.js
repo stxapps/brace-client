@@ -1,15 +1,17 @@
 import React from 'react';
 
+import { HASH_ABOUT, HASH_TERMS, HASH_PRIVACY, HASH_SUPPORT } from '../types/const';
+
 class Footer extends React.PureComponent {
 
   render() {
     return (
       <footer className="mx-auto px-4 pt-28 pb-6 max-w-6xl md:px-6 lg:px-8">
         <div className="text-left md:text-center">
-          <a className="block text-base text-gray-500 rounded-sm hover:text-gray-900 focus:outline-none focus:ring md:inline md:mr-10" href="/#about">About</a>
-          <a className="mt-4 block text-base text-gray-500 rounded-sm hover:text-gray-900 focus:outline-none focus:ring md:inline md:mt-0 md:mr-10" href="/#terms">Terms</a>
-          <a className="mt-4 block text-base text-gray-500 rounded-sm hover:text-gray-900 focus:outline-none focus:ring md:inline md:mt-0 md:mr-10" href="/#privacy">Privacy</a>
-          <a className="mt-4 block text-base text-gray-500 rounded-sm hover:text-gray-900 focus:outline-none focus:ring md:inline md:mt-0" href="/#support">Support</a>
+          <a className="block text-base text-gray-500 rounded-sm hover:text-gray-900 focus:outline-none focus:ring md:inline md:mr-10" href={'/' + HASH_ABOUT}>About</a>
+          <a className="mt-4 block text-base text-gray-500 rounded-sm hover:text-gray-900 focus:outline-none focus:ring md:inline md:mt-0 md:mr-10" href={'/' + HASH_TERMS}>Terms</a>
+          <a className="mt-4 block text-base text-gray-500 rounded-sm hover:text-gray-900 focus:outline-none focus:ring md:inline md:mt-0 md:mr-10" href={'/' + HASH_PRIVACY}>Privacy</a>
+          <a className="mt-4 block text-base text-gray-500 rounded-sm hover:text-gray-900 focus:outline-none focus:ring md:inline md:mt-0" href={'/' + HASH_SUPPORT}>Support</a>
         </div>
         <div className="pt-6 flex justify-start items-center md:justify-center">
           <a className="rounded focus:outline-none focus:ring" href="https://twitter.com/bracedotto" target="_blank" rel="noreferrer">

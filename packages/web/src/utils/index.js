@@ -861,6 +861,11 @@ export const getWindowScrollHeight = () => {
   );
 };
 
+export const getOffsetTop = (element) => {
+  if (!element) return 0;
+  return getOffsetTop(element.offsetParent) + element.offsetTop;
+};
+
 export const indexesOf = (text, searchValue) => {
   const indexes = [];
 

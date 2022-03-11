@@ -1,8 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import Url from 'url-parse';
 
 import { updatePopup } from '../actions';
-import { SIGN_UP_POPUP, SHOW_SIGN_IN } from '../types/const';
+import {
+  HASH_LANDING_HOW, HASH_LANDING_MOBILE, SIGN_UP_POPUP, SHOW_BLANK, SHOW_SIGN_IN,
+} from '../types/const';
+import { isNumber, getOffsetTop } from '../utils';
 
 import TopBar from './TopBar';
 import Footer from './Footer';
@@ -48,18 +52,56 @@ import logoFullWhite from '../images/logo-full-white.svg';
 
 class Landing extends React.PureComponent {
 
+  constructor(props) {
+    super(props);
+
+    this.howSection = React.createRef();
+    this.mobileSection = React.createRef();
+  }
+
   componentDidMount() {
+    const hrefObj = new Url(window.location.href, {});
+    if (hrefObj.hash === HASH_LANDING_HOW) {
+      setTimeout(() => {
+        if (this.howSection.current) {
+          const top = getOffsetTop(this.howSection.current);
+          if (isNumber(top)) window.scrollTo(0, top + 80);
+        }
+      }, 100);
+      return;
+    }
+    if (hrefObj.hash === HASH_LANDING_MOBILE) {
+      setTimeout(() => {
+        if (this.mobileSection.current) {
+          const top = getOffsetTop(this.mobileSection.current);
+          if (isNumber(top)) window.scrollTo(0, top);
+        }
+      }, 100);
+      return;
+    }
+
     window.scrollTo(0, 0);
   }
 
   onSignUpBtnClick = () => {
+    const { isUserSignedIn } = this.props;
+    if (isUserSignedIn) {
+      const urlObj = new Url(window.location.href, {});
+      urlObj.set('pathname', '/');
+      urlObj.set('hash', '');
+      window.location.href = urlObj.toString();
+      return;
+    }
+
     this.props.updatePopup(SIGN_UP_POPUP, true);
   }
 
   render() {
+    const { isUserSignedIn } = this.props;
+
     return (
       <React.Fragment>
-        <TopBar rightPane={SHOW_SIGN_IN} />
+        <TopBar rightPane={isUserSignedIn ? SHOW_BLANK : SHOW_SIGN_IN} />
         <section className="mx-auto px-4 pt-16 pb-4 flex items-center max-w-6xl md:px-6 lg:px-8 lg:pt-12">
           <div className="w-full md:w-55/100 lg:pt-10">
             <img className="mx-auto w-11/12 max-w-sm object-contain md:hidden" src={saveLinksToVisitLater} alt="Save links to visit later" />
@@ -161,7 +203,7 @@ class Landing extends React.PureComponent {
             </ul>
           </div>
         </section>
-        <section className="pt-24 howitwork-pb">
+        <section ref={this.howSection} className="pt-24 howitwork-pb">
           <div className="bg-gray-900">
             <div className="mx-auto relative max-w-6xl">
               <div style={{ top: '-0.75rem' }} className="absolute bookmark-icon-left flex items-center">
@@ -230,7 +272,7 @@ class Landing extends React.PureComponent {
                   </div>
                 </div>
               </div>
-              <div className="pt-16 md:flex">
+              <div ref={this.mobileSection} className="pt-16 md:flex">
                 <div className="pl-4 md:pl-6 md:flex-shrink-0 lg:pl-8">
                   <div className="flex items-center justify-center w-14 h-14 bg-gray-300 rounded-full">
                     <svg className="h-6 text-gray-900" viewBox="0 0 14 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -375,4 +417,10 @@ class Landing extends React.PureComponent {
   }
 }
 
-export default connect(null, { updatePopup })(Landing);
+const mapStateToProps = (state) => {
+  return {
+    isUserSignedIn: state.user.isUserSignedIn,
+  };
+};
+
+export default connect(mapStateToProps, { updatePopup })(Landing);

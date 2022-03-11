@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Text, TouchableOpacity, Linking, Animated, BackHandler } from 'react-native';
 
 import { signOut, updatePopup, updateSettingsPopup } from '../actions';
-import { DOMAIN_NAME, PROFILE_POPUP } from '../types/const';
+import { DOMAIN_NAME, HASH_LANDING_HOW, HASH_SUPPORT, PROFILE_POPUP } from '../types/const';
 import { tailwind } from '../stylesheets/tailwind';
 import { bModalOpenAnimConfig, bModalCloseAnimConfig } from '../types/animConfigs';
 
@@ -98,7 +98,12 @@ class BottomBarProfilePopup extends React.PureComponent {
 
   onSupportBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
-    Linking.openURL(DOMAIN_NAME + '/#support');
+    Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT);
+  }
+
+  onHowBtnClick = () => {
+    this.props.updatePopup(PROFILE_POPUP, false);
+    Linking.openURL(DOMAIN_NAME + '/' + HASH_LANDING_HOW);
   }
 
   onSignOutBtnClick = () => {
@@ -122,6 +127,9 @@ class BottomBarProfilePopup extends React.PureComponent {
           </TouchableOpacity>
           <TouchableOpacity onPress={this.onSupportBtnClick} style={tailwind('py-4 pl-4 w-full')}>
             <Text style={tailwind('text-sm text-gray-700 font-normal')}>Support</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.onHowBtnClick} style={tailwind('py-4 pl-4 w-full')}>
+            <Text style={tailwind('text-sm text-gray-700 font-normal')}>How to</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.onSignOutBtnClick} style={tailwind('py-4 pl-4 w-full')}>
             <Text style={tailwind('text-sm text-gray-700 font-normal')}>Sign out</Text>

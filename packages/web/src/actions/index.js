@@ -35,7 +35,7 @@ import {
   UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
-  BACK_DECIDER, BACK_POPUP, ALL,
+  BACK_DECIDER, BACK_POPUP, ALL, HASH_BACK,
   SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
@@ -252,7 +252,7 @@ export const popHistoryState = (store) => {
     setTimeout(function () {
       // if location was not changed, then there is no history back
       if (href === window.location.href) {
-        window.history.replaceState(null, '', '#back');
+        window.history.replaceState(null, '', HASH_BACK);
         window.history.pushState(null, '', href);
         window.history.go(-1);
       }
