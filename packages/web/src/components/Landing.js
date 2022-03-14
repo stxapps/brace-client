@@ -60,7 +60,15 @@ class Landing extends React.PureComponent {
   }
 
   componentDidMount() {
-    const hrefObj = new Url(window.location.href, {});
+    this.scrollWindow();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.href !== this.props.href) this.scrollWindow();
+  }
+
+  scrollWindow() {
+    const hrefObj = new Url(this.props.href, {});
     if (hrefObj.hash === HASH_LANDING_HOW) {
       setTimeout(() => {
         if (this.howSection.current) {
@@ -420,6 +428,7 @@ class Landing extends React.PureComponent {
 const mapStateToProps = (state) => {
   return {
     isUserSignedIn: state.user.isUserSignedIn,
+    href: state.window.href,
   };
 };
 
