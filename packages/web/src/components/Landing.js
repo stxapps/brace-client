@@ -291,7 +291,7 @@ class Landing extends React.PureComponent {
                 <div className="md:flex-grow md:flex md:items-start">
                   <div className="px-4 md:mt-0.5 md:ml-4 md:px-0 md:w-1/2">
                     <h3 className="mt-5 text-xl text-white font-semibold leading-none md:mt-0 lg:text-2xl-extra lg:leading-none">Save via our Mobile App</h3>
-                    <p className="mt-2.5 text-base text-gray-300 font-normal md:pr-8 lg:text-lg lg:leading-6">Install our Android or iOS app on your phone and just share a link with our app.</p>
+                    <p className="mt-2.5 text-base text-gray-300 font-normal md:pr-8 lg:text-lg lg:leading-6">Install our app on your device and just share a link with it.</p>
                     <a className="focus:outline-none group" href="https://play.google.com/store/apps/details?id=com.bracedotto" target="_blank" rel="noreferrer">
                       <img className="mx-auto mt-4 available-on-size rounded-lg group-hover:ring group-focus:ring md:mx-0" src={availableOnPlayStore} alt="Available on Google Play" />
                     </a>
