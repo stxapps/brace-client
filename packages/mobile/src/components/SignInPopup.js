@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
-  View, TouchableWithoutFeedback, BackHandler, Animated,
+  View, TouchableWithoutFeedback, BackHandler, Animated, Linking,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { WebView } from 'react-native-webview';
@@ -84,6 +84,15 @@ const SignInPopup = () => {
     onContinueBtnClick, onChooseAccountBtnClick,
   ]);
 
+  const onShouldStartLoadWithRequest = useCallback((e) => {
+    if (e.url.slice(0, 4) === 'http') Linking.openURL(e.url);
+    return false;
+  }, []);
+
+  const onContentProcessDidTerminate = useCallback(() => {
+    webView.current.reload();
+  }, []);
+
   const registerPopupBackHandler = useCallback((doRegister) => {
     if (doRegister) {
       if (!popupBackHandler.current) {
@@ -152,7 +161,7 @@ const SignInPopup = () => {
       </TouchableWithoutFeedback>
       <Animated.View style={[tailwind('w-full max-w-sm bg-white rounded-lg shadow-xl overflow-hidden'), popupStyle]}>
         <View style={{ height: panelHeight }}>
-          <WebView ref={webView} style={tailwind('flex-1')} source={cache('SIP_webView_source', { baseUrl: '', html: stacksAccessSignIn })} originWhitelist={cache('SIP_webView_originWhitelist', ['*'])} onMessage={onMessage} keyboardDisplayRequiresUserAction={false} textZoom={100} androidLayerType="hardware" />
+          <WebView ref={webView} style={tailwind('flex-1')} source={cache('SIP_webView_source', { baseUrl: '', html: stacksAccessSignIn })} originWhitelist={cache('SIP_webView_originWhitelist', ['*'])} onMessage={onMessage} keyboardDisplayRequiresUserAction={false} textZoom={100} androidLayerType="hardware" onShouldStartLoadWithRequest={onShouldStartLoadWithRequest} onContentProcessDidTerminate={onContentProcessDidTerminate} />
         </View>
       </Animated.View>
     </View>

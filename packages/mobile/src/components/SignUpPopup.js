@@ -91,11 +91,12 @@ const SignUpPopup = () => {
   ]);
 
   const onShouldStartLoadWithRequest = useCallback((e) => {
-    if (e.url.slice(0, 4) === 'http') {
-      Linking.openURL(e.url);
-      return false;
-    }
-    return true;
+    if (e.url.slice(0, 4) === 'http') Linking.openURL(e.url);
+    return false;
+  }, []);
+
+  const onContentProcessDidTerminate = useCallback(() => {
+    webView.current.reload();
   }, []);
 
   const registerPopupBackHandler = useCallback((doRegister) => {
@@ -166,7 +167,7 @@ const SignUpPopup = () => {
       </TouchableWithoutFeedback>
       <Animated.View style={[tailwind('w-full max-w-sm bg-white rounded-lg shadow-xl overflow-hidden'), popupStyle]}>
         <View style={{ height: panelHeight }}>
-          <WebView ref={webView} style={tailwind('flex-1')} source={cache('SUP_webView_source', { baseUrl: '', html: stacksAccessSignUp })} originWhitelist={cache('SUP_webView_originWhitelist', ['*'])} onMessage={onMessage} keyboardDisplayRequiresUserAction={false} textZoom={100} androidLayerType="hardware" onShouldStartLoadWithRequest={onShouldStartLoadWithRequest} />
+          <WebView ref={webView} style={tailwind('flex-1')} source={cache('SUP_webView_source', { baseUrl: '', html: stacksAccessSignUp })} originWhitelist={cache('SUP_webView_originWhitelist', ['*'])} onMessage={onMessage} keyboardDisplayRequiresUserAction={false} textZoom={100} androidLayerType="hardware" onShouldStartLoadWithRequest={onShouldStartLoadWithRequest} onContentProcessDidTerminate={onContentProcessDidTerminate} />
         </View>
       </Animated.View>
     </View>
