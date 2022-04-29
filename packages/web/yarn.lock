@@ -1426,6 +1426,16 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
+"@noble/hashes@^1.0.0", "@noble/hashes@~1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.0.0.tgz#d5e38bfbdaba174805a4e649f13be9a9ed3351ae"
+  integrity sha512-DZVbtY62kc3kkBtMHqwCOfXrT/hnoORy5BJ4+HU1IR59X0KWAOqsfzQPcUl/lQLlG7qXbe/fZ3r/emxtAl+sqg==
+
+"@noble/secp256k1@^1.5.5":
+  version "1.5.5"
+  resolved "https://registry.yarnpkg.com/@noble/secp256k1/-/secp256k1-1.5.5.tgz#315ab5745509d1a8c8e90d0bdf59823ccf9bcfc3"
+  integrity sha512-sZ1W6gQzYnu45wPrWx8D3kwI2/U29VYTx9OjbDAd7jwRItJ0cSTMPRL/C8AWZFn9kWFLQGqEXVEE86w4Z8LpIQ==
+
 "@nodelib/fs.scandir@2.1.4":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.4.tgz#d4b3549a5db5de2683e0c1071ab4f140904bbf69"
@@ -1502,6 +1512,19 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
+"@scure/base@~1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@scure/base/-/base-1.0.0.tgz#109fb595021de285f05a7db6806f2f48296fcee7"
+  integrity sha512-gIVaYhUsy+9s58m/ETjSJVKHhKTBMmcRb9cEV5/5dwvfDlfORjKrFsDeDHWRrm6RjcPvCLZFwGJjAjLj1gg4HA==
+
+"@scure/bip39@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@scure/bip39/-/bip39-1.0.0.tgz#47504e58de9a56a4bbed95159d2d6829fa491bb0"
+  integrity sha512-HrtcikLbd58PWOkl02k9V6nXWQyoa7A0+Ek9VF7z17DDk9XZAFUcIdqfh0jJXLypmizc5/8P6OxoUeKliiWv4w==
+  dependencies:
+    "@noble/hashes" "~1.0.0"
+    "@scure/base" "~1.0.0"
+
 "@sinonjs/commons@^1.7.0":
   version "1.8.2"
   resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-1.8.2.tgz#858f5c4b48d80778fde4b9d541f27edc0d56488b"
@@ -1561,6 +1584,16 @@
     buffer "^6.0.3"
     cross-fetch "^3.1.4"
 
+"@stacks/common@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@stacks/common/-/common-4.0.0.tgz#b671474ff7f8317a10bc356d086702d71bbd314f"
+  integrity sha512-labnD6und7ax9MX2jxahZhLBDqi6MNnMHF0Prro6/ZzGnjfg2qYDqG2xBjof21D+XSWP9IitzOiBZ3Hdye6DWw==
+  dependencies:
+    "@types/node" "^14.14.43"
+    bn.js "^5.2.0"
+    buffer "^6.0.3"
+    cross-fetch "^3.1.4"
+
 "@stacks/connect-ui@5.2.0":
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/@stacks/connect-ui/-/connect-ui-5.2.0.tgz#b475029823a6bc3ebc8fda27acfc583527347cce"
@@ -1613,6 +1646,23 @@
     randombytes "^2.1.0"
     ripemd160-min "^0.0.6"
     sha.js "^2.4.11"
+
+"@stacks/encryption@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@stacks/encryption/-/encryption-4.0.0.tgz#d74613c2462a8d63adb1d41cfda4f49a9c959a7a"
+  integrity sha512-nk2XzL/35b0Te3j1MsApe9XD0aPg/AH9gGdqzns9d5HSL3j/zjSdHS45LDm6GmNDypUoh+WptrD13Z+VM+JywQ==
+  dependencies:
+    "@noble/hashes" "^1.0.0"
+    "@noble/secp256k1" "^1.5.5"
+    "@scure/bip39" "^1.0.0"
+    "@stacks/common" "^4.0.0"
+    "@types/bn.js" "^4.11.6"
+    "@types/node" "^14.14.43"
+    bn.js "^5.2.0"
+    bs58 "^5.0.0"
+    ripemd160-min "^0.0.6"
+    sha.js "^2.4.11"
+    varuint-bitcoin "^1.1.2"
 
 "@stacks/network@2.0.1", "@stacks/network@^2.0.1":
   version "2.0.1"
@@ -3143,6 +3193,11 @@ base-x@^3.0.2, base-x@^3.0.8:
   dependencies:
     safe-buffer "^5.0.1"
 
+base-x@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/base-x/-/base-x-4.0.0.tgz#d0e3b7753450c73f8ad2389b5c018a4af7b2224a"
+  integrity sha512-FuwxlW4H5kh37X/oW59pwTzzTKRzfrrQwhmyspRM7swOEZcHtDZSCt45U6oKgtuFE+WYPblePMVIPR4RZrh/hw==
+
 base64-js@^1.0.2, base64-js@^1.3.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
@@ -3474,6 +3529,13 @@ bs58@^4.0.0:
   integrity sha1-vhYedsNU9veIrkBx9j806MTwpCo=
   dependencies:
     base-x "^3.0.2"
+
+bs58@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/bs58/-/bs58-5.0.0.tgz#865575b4d13c09ea2a84622df6c8cbeb54ffc279"
+  integrity sha512-r+ihvQJvahgYT50JD05dyJNKlmmSlMoOGwn1lCcEzanPglg7TxYjioQUYehQ9mAR/+hOSd2jRc/Z2y5UxBymvQ==
+  dependencies:
+    base-x "^4.0.0"
 
 bs58check@<3.0.0, bs58check@^2.0.0, bs58check@^2.1.1:
   version "2.1.2"
@@ -12340,7 +12402,7 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-varuint-bitcoin@^1.0.4:
+varuint-bitcoin@^1.0.4, varuint-bitcoin@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/varuint-bitcoin/-/varuint-bitcoin-1.1.2.tgz#e76c138249d06138b480d4c5b40ef53693e24e92"
   integrity sha512-4EVb+w4rx+YfVM32HQX42AbbT7/1f5zwAYhIujKXKk8NQK+JfRVl3pqT3hjNn/L+RstigmGGKVwHA/P0wgITZw==

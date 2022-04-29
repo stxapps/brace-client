@@ -177,3 +177,24 @@ export const MODE_EDIT = 'MODE_EDIT';
 
 export const LAYOUT_CARD = 'LAYOUT_CARD';
 export const LAYOUT_LIST = 'LAYOUT_LIST';
+
+export const IAP_URL = 'http://127.0.0.1:8088';
+export const IAP_STATUS_URL = IAP_URL + '/status';
+
+export const APPSTORE = 'AppStore';
+export const PLAYSTORE = 'PlayStore';
+export const COM_BRACEDOTTO = 'com.bracedotto';
+export const COM_BRACEDOTTO_SUPPORTER = 'com.bracedotto.supporter';
+export const SIGNED_TEST_STRING = 'Privacy Security UX';
+
+export const VALID = 'VALID';
+export const INVALID = 'INVALID';
+export const UNKNOWN = 'UNKNOWN';
+export const ERROR = 'ERROR';
+
+export const ACTIVE = 'Active';
+export const NO_RENEW = 'NoRenew';
+export const GRACE = 'GracePeriod';
+export const ON_HOLD = 'OnHold';
+export const PAUSED = 'Paused';
+export const EXPIRED = 'Expired';

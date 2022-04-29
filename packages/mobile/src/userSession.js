@@ -65,8 +65,15 @@ const listFiles = async (callback) => {
   return fileCount;
 };
 
+const signECDSA = async (content) => {
+  const userData = await loadUserData();
+  const sigObj = await RNBlockstackSdk.signECDSA(userData.appPrivateKey, content);
+  return sigObj;
+};
+
 export default {
   didSessionCreate, hasSession, createSession,
   isUserSignedIn, handlePendingSignIn, signUserOut,
-  updateUserData, loadUserData, putFile, getFile, deleteFile, listFiles,
+  updateUserData, loadUserData, putFile, getFile, deleteFile,
+  listFiles, signECDSA,
 };

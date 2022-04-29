@@ -1,5 +1,6 @@
 import { UserSession, AppConfig } from '@stacks/auth'
 import { Storage } from '@stacks/storage';
+import { signECDSA as _signECDSA } from '@stacks/encryption';
 
 import { DOMAIN_NAME, APP_SCOPES } from './types/const';
 
@@ -52,9 +53,15 @@ const listFiles = (callback) => {
   return storage.listFiles(callback);
 };
 
+const signECDSA = (content) => {
+  const userData = userSession.loadUserData();
+  const sigObj = _signECDSA(userData.appPrivateKey, content);
+  return sigObj;
+};
+
 const userSession = {
   _userSession, isUserSignedIn, isSignInPending, handlePendingSignIn, signUserOut,
-  updateUserData, loadUserData, putFile, getFile, deleteFile, listFiles,
+  updateUserData, loadUserData, putFile, getFile, deleteFile, listFiles, signECDSA,
 };
 
 export default userSession;

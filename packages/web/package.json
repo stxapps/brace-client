@@ -21,6 +21,7 @@
     "@redux-offline/redux-offline": "https://github.com/bracedotto/redux-offline#a09e3618b9a03204cd30b0d900ebf2ec0c2c5b69",
     "@stacks/auth": "^2.0.1",
     "@stacks/connect": "^6.2.0",
+    "@stacks/encryption": "^4.0.0",
     "@stacks/storage": "^2.0.1",
     "@stacks/wallet-sdk": "^2.0.1",
     "@tailwindcss/aspect-ratio": "^0.2.2",

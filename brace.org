@@ -757,7 +757,7 @@ This and CI/CD are very important!
 - yarn add url-parse axios @react-native-community/clipboard
 - yarn add https://github.com/bracedotto/redux-offline#a09e3618b9a03204cd30b0d900ebf2ec0c2c5b69
 - yarn add @react-native-community/async-storage @react-native-community/netinfo
-- yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?f928cd0381ac81b13b2c51fee1abf510ff8e8e95'
+- yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?414786075849b51b511ea261ade6f8ccc623d68b'
 - yarn add https://github.com/bracedotto/tailwind-rn#6047a3e3de6607a6cb5b738ab3392d80aa81fd13
 - yarn add react-native-default-preference react-native-fast-image react-native-keyboard-manager react-native-modal react-native-popup-menu
 - yarn add react-native-safe-area-context
@@ -858,3 +858,34 @@ This and CI/CD are very important!
   + select * from ExtractedResult where status = 'EXTRACT_ERROR'
 - Delete old extracted results
   + select * from ExtractedResult ORDER BY extractedDT
+* In-App Purchase
+** Setup in Connect
+- Need to provide a screenshot and description for review
+- Get App-Specific Shared Secret in Features: In-App Purchases tab
+- Sandbox Testers
+  + Use an email address that has never been used as an Apple ID or used to purchase iTunes or App Store content. Consider creating a dedicated email address for each sandbox tester.
+  + Test, User01, testuser01@brace.to, normal pass + Conf
+- Add server url to URL for App Store Server Notifications in General -> App information
+** Setup in XCode
+- Add In-App Purchase capability in Xcode
+- When testing in-app purchases in the sandbox environment, make sure you’re running a development-signed build of your app; production-signed builds use the production environment.
+** Setup in React Native
+- yarn add react-native-iap
+- Add missingDimensionStrategy 'store', 'play' in defaultConfig in android/app/build.gradle
+** Setup in Play console
+- Release to Closed testing: Alpha
+- Add Testers and the license testers
+- Setup -> API access (account level, both apps can use it)
+  + Create a new Google Cloud Project
+  + Create new service account, choose Editor for the project access. Allow all permissions for financial data, create new key
+** Setup in Google Cloud
+- Add pub/sub topic: projects/iap-001/topics/playstore-notifications-bracedotto
+- Change to push with the server endpoint
+- Add permission to the topic
+- Add the topic in Play Console -> Brace.to app -> Monetization setup
+** Setup in iap-server
+- cd Drive/Workspace/iap-server
+- gcloud app create --project=iap-001 --region=us-central
+- assume unchanged: git update-index --assume-unchanged src/appstore-keys.json src/playstore-service-account.json
+- yarn add googleapis node-apple-receipt-verify
+-
