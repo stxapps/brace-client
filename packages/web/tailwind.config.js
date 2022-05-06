@@ -42,6 +42,9 @@ module.exports = {
         '45/100': '45%',
         '55/100': '55%',
       },
+      listStyleType: {
+        alpha: 'lower-alpha',
+      },
     },
   },
   variants: {
