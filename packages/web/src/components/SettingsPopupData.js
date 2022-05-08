@@ -14,7 +14,7 @@ class _SettingsPopupData extends React.PureComponent {
   render() {
 
     return (
-      <div className="p-4 md:p-6 md:pt-4">
+      <div className="p-4 md:p-6">
         <div className="border-b border-gray-200 md:hidden">
           <button onClick={this.props.onSidebarOpenBtnClick} className="pb-1 group focus:outline-none">
             <span className="text-sm text-gray-500 rounded group-focus:ring">{'<'} <span className="group-hover:underline">Settings</span></span>
