@@ -5,9 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { updateSettingsPopup } from '../actions';
 import { MD_WIDTH } from '../types/const';
 import { isEqual } from '../utils';
-import {
-  spSideBarCanvasFMV, spSideBarOverlayFMV, spSideBarFMV,
-} from '../types/animConfigs';
+import { canvasFMV, sideBarOverlayFMV, sideBarFMV } from '../types/animConfigs';
 
 import SettingsPopupAccount from './SettingsPopupAccount';
 import {
@@ -235,8 +233,8 @@ class SettingsPopup extends React.PureComponent {
                   </div>
                 </div>
                 {/* Sidebar for mobile */}
-                <motion.div key="sidebar-for-mobile" className="absolute inset-0 flex z-10 md:hidden" variants={spSideBarCanvasFMV} initial={false} animate={animate}>
-                  <motion.button onClick={this.onSidebarCloseBtnClick} className="absolute inset-0 w-full h-full" variants={spSideBarOverlayFMV}>
+                <motion.div key="sidebar-for-mobile" className="absolute inset-0 flex z-10 md:hidden" variants={canvasFMV} initial={false} animate={animate}>
+                  <motion.button onClick={this.onSidebarCloseBtnClick} className="absolute inset-0 w-full h-full" variants={sideBarOverlayFMV}>
                     <div className="absolute inset-0 bg-gray-100" />
                   </motion.button>
                   <div className="absolute top-0 right-0">
@@ -246,7 +244,7 @@ class SettingsPopup extends React.PureComponent {
                       </svg>
                     </button>
                   </div>
-                  <motion.div className="-ml-8 relative flex-1 flex flex-col max-w-56 w-full bg-white rounded-l-lg" variants={spSideBarFMV}>
+                  <motion.div className="-ml-8 relative flex-1 flex flex-col max-w-56 w-full bg-white rounded-l-lg" variants={sideBarFMV}>
                     <div className="pt-8 pb-4 pl-8 flex-1 h-0">
                       <div className="px-4 flex-shrink-0 flex items-center">
                         <h2 className="text-xl text-gray-800 font-medium leading-6">Settings</h2>

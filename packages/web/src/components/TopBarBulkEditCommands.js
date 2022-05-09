@@ -8,7 +8,7 @@ import {
 } from '../types/const';
 import { getListNameMap } from '../selectors';
 import { getListNameDisplayName, getAllListNames } from '../utils';
-import { ccPopupFMV } from '../types/animConfigs';
+import { popupFMV } from '../types/animConfigs';
 
 class TopBarBulkEditCommands extends React.Component {
 
@@ -116,7 +116,7 @@ class TopBarBulkEditCommands extends React.Component {
 
     return (
       <AnimatePresence key="AnimatePresence_TBBEC_emptyError">
-        <motion.div className="absolute top-full left-0 flex justify-center items-start" variants={ccPopupFMV} initial="hidden" animate="visible" exit="hidden">
+        <motion.div className="absolute top-full left-0 flex justify-center items-start" variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
           <div className="mt-3 ml-4 p-4 bg-red-50 rounded-md shadow-lg">
             <div className="flex">
               <div className="flex-shrink-0">

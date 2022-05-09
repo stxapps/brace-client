@@ -8,9 +8,9 @@ import {
   SWAP_LEFT, SWAP_RIGHT,
 } from '../types/const';
 import { makeGetListNameEditor } from '../selectors';
-import { popupBgFMV, getPopupFMV } from '../types/animConfigs';
-import { computePosition, createLayouts } from './MenuPopupRenderer';
+import { popupBgFMV, popupFMV } from '../types/animConfigs';
 
+import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
 import { useSafeAreaFrame } from '.';
 
 const SettingsListsMenuPopup = () => {
@@ -144,8 +144,7 @@ const SettingsListsMenuPopup = () => {
 
     const { top, left, topOrigin, leftOrigin } = popupPosition;
     const popupStyle = { top, left, maxHeight };
-
-    const popupFMV = getPopupFMV(topOrigin, leftOrigin);
+    popupClassNames += ' ' + getOriginClassName(topOrigin, leftOrigin);
 
     panel = (
       <motion.div key="SLMP_popup" ref={popup} style={popupStyle} className={popupClassNames} variants={popupFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
@@ -162,7 +161,7 @@ const SettingsListsMenuPopup = () => {
 
   return (
     <AnimatePresence key="AP_slmPopup">
-      <motion.button key="SLMP_cancelBtn" ref={cancelBtn} onClick={onCancelBtnClick} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
+      <motion.button key="SLMP_cancelBtn" ref={cancelBtn} onClick={onCancelBtnClick} className="fixed inset-0 w-full h-full bg-black bg-opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
       {panel}
     </AnimatePresence>
   );

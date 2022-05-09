@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MAX_SELECTED_LINK_IDS } from '../types/const';
 import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
 import { makeIsLinkIdSelected, getSelectedLinkIdsLength } from '../selectors';
-import { popupBgFMV, ccPopupFMV } from '../types/animConfigs';
+import { popupBgFMV, popupFMV } from '../types/animConfigs';
 
 class CardItemSelector extends React.Component {
 
@@ -59,7 +59,7 @@ class CardItemSelector extends React.Component {
 
     return (
       <AnimatePresence key="AnimatePresence_CIS_maxError">
-        <motion.div className="absolute top-0 inset-x-0 flex justify-center items-start" variants={ccPopupFMV} initial="hidden" animate="visible" exit="hidden">
+        <motion.div className="absolute top-0 inset-x-0 flex justify-center items-start" variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
           <div className="m-4 p-4 bg-red-50 rounded-md shadow">
             <div className="flex">
               <div className="flex-shrink-0">
@@ -89,8 +89,8 @@ class CardItemSelector extends React.Component {
 
     return (
       <AnimatePresence key={`AnimatePresence_CardItemSelector_${linkId}`}>
-        <motion.div key={`CardItemSelector_shade_${linkId}`} className="absolute inset-0 bg-black opacity-20" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
-        <motion.button key={`CardItemSelector_selectBtn_${linkId}`} onClick={this.onSelectBtnClick} className="absolute inset-0 flex justify-center items-center w-full h-full bg-transparent group focus:outline-none" variants={ccPopupFMV} initial="hidden" animate="visible" exit="hidden">
+        <motion.div key={`CardItemSelector_shade_${linkId}`} className="absolute inset-0 bg-black bg-opacity-20" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
+        <motion.button key={`CardItemSelector_selectBtn_${linkId}`} onClick={this.onSelectBtnClick} className="absolute inset-0 flex justify-center items-center w-full h-full bg-transparent group focus:outline-none" variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
           <div className="rounded-full group-hover:ring group-focus:ring">
             <div className={`flex justify-center items-center w-32 h-32 rounded-full ${circleStyleClasses}`}>
               <svg className={`w-20 h-20 ${svgStyleClasses}`} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

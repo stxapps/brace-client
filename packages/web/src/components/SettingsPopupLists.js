@@ -15,7 +15,7 @@ import {
 } from '../types/const';
 import { getListNameMap, makeGetListNameEditor } from '../selectors';
 import { validateListNameDisplayName, getAllListNames } from '../utils';
-import { spListsFMV } from '../types/animConfigs';
+import { listsFMV } from '../types/animConfigs';
 import { initialListNameEditorState } from '../types/initialStates';
 
 import { useSafeAreaFrame } from '.';
@@ -46,7 +46,7 @@ const SettingsPopupLists = (props) => {
           <AnimatePresence initial={false}>
             {listNameMap.map(listNameObj => {
               return (
-                <motion.div key={listNameObj.listName} layoutId={listNameObj.listName} variants={spListsFMV} initial="hidden" animate="visible" exit="exit">
+                <motion.div key={listNameObj.listName} layoutId={listNameObj.listName} variants={listsFMV} initial="hidden" animate="visible" exit="exit">
                   <ListNameEditor listNameObj={listNameObj} validateDisplayName={validateDisplayName} level={0} />
                 </motion.div>
               )

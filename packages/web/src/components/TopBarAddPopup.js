@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { updatePopup, updateLinkEditor, addLink } from '../actions';
 import { ADD_POPUP, NO_URL, ASK_CONFIRM_URL, URL_MSGS } from '../types/const';
 import { validateUrl } from '../utils';
-import { popupBgFMV, tlPopupFMV, trPopupFMV } from '../types/animConfigs';
+import { popupBgFMV, popupFMV } from '../types/animConfigs';
 
 class TopBarAddPopup extends React.PureComponent {
 
@@ -73,14 +73,18 @@ class TopBarAddPopup extends React.PureComponent {
 
     const { url, msg, isAskingConfirm } = this.props;
 
-    const style = safeAreaWidth < 832 ? { left: 0 } : { right: 0 };
-    if (safeAreaHeight <= 360) style.top = -12;
+    let style;
+    if (safeAreaWidth < 832) {
+      style = { top: 'auto', left: 0, transformOrigin: 'top left' };
+    } else {
+      style = { top: 'auto', right: 0, transformOrigin: 'top right' };
+    }
 
-    const popupFMV = safeAreaWidth < 832 ? tlPopupFMV : trPopupFMV;
+    if (safeAreaHeight <= 360) style.top = '-12px';
 
     return (
       <AnimatePresence key="AnimatePresence_TopBarAddPopup">
-        <motion.button key="TopBarAddPopup_cancelBtn" onClick={this.onAddCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
+        <motion.button key="TopBarAddPopup_cancelBtn" onClick={this.onAddCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black bg-opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
         <motion.div key="TopBarAddPopup_addPopup" style={style} className="mt-2 px-4 pt-6 pb-5 absolute w-96 bg-white border border-gray-100 rounded-lg shadow-xl z-41" variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
           <div className="flex">
             <span className="inline-flex items-center bg-white text-sm text-gray-600">Url:</span>

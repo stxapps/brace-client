@@ -14,9 +14,9 @@ import {
   copyTextToClipboard, ensureContainUrlProtocol, getListNameDisplayName, getAllListNames,
   isEqual, throttle, getLastHalfHeight,
 } from '../utils';
-import { popupBgFMV, getPopupFMV } from '../types/animConfigs';
+import { popupBgFMV, popupFMV } from '../types/animConfigs';
 
-import { computePosition, createLayouts } from './MenuPopupRenderer';
+import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
 
 class CardItemMenuPopup extends React.PureComponent {
 
@@ -175,8 +175,8 @@ class CardItemMenuPopup extends React.PureComponent {
     );
 
     const { scrollY, menuPopupSize } = this.state;
-    const menuPopupClassNames = 'py-2 fixed min-w-32 max-w-64 bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41';
 
+    let popupClassNames = 'py-2 fixed min-w-32 max-w-64 bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41';
     let menuPopup;
     if (menuPopupSize) {
 
@@ -199,17 +199,16 @@ class CardItemMenuPopup extends React.PureComponent {
       const { top, left, topOrigin, leftOrigin } = popupPosition;
       const offsetScrollY = this.initialScrollY - scrollY;
       const popupStyle = { top: top + offsetScrollY, left: left, maxHeight };
-
-      const popupFMV = getPopupFMV(topOrigin, leftOrigin);
+      popupClassNames += ' ' + getOriginClassName(topOrigin, leftOrigin);
 
       menuPopup = (
-        <motion.div key="CIMP_menuPopup" ref={this.menuPopup} style={popupStyle} className={menuPopupClassNames} variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
+        <motion.div key="CIMP_menuPopup" ref={this.menuPopup} style={popupStyle} className={popupClassNames} variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
           {this.renderMenu()}
         </motion.div>
       )
     } else {
       menuPopup = (
-        <div key="CIMP_menuPopup" ref={this.menuPopup} className={menuPopupClassNames}>
+        <div key="CIMP_menuPopup" ref={this.menuPopup} className={popupClassNames}>
           {this.renderMenu()}
         </div>
       );
@@ -217,7 +216,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
     return (
       <AnimatePresence key="AnimatePresence_CIMP_menuPopup">
-        <motion.button key="CIMP_cancelBtn" onClick={this.onCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
+        <motion.button key="CIMP_cancelBtn" onClick={this.onCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black bg-opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
         {menuPopup}
       </AnimatePresence>
     );

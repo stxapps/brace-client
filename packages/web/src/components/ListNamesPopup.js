@@ -11,9 +11,11 @@ import {
   getLastHalfHeight, getListNameObj, getLongestListNameDisplayName,
   getMaxListNameChildrenSize,
 } from '../utils';
-import { popupBgFMV, getPopupFMV, bModalFMV, slideFMV } from '../types/animConfigs';
-import { computePosition, createLayouts } from './MenuPopupRenderer';
+import {
+  popupBgFMV, popupFMV, bModalBgFMV, bModalFMV, slideInPopupFMV, slideInModalFMV,
+} from '../types/animConfigs';
 
+import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
 import { useSafeAreaFrame } from '.';
 
 // eslint-disable-next-line
@@ -84,6 +86,10 @@ const ListNamesPopup = () => {
   const maxChildrenSize = useMemo(() => {
     return getMaxListNameChildrenSize(derivedListNameMap);
   }, [derivedListNameMap]);
+  const slideFMV = useMemo(() => {
+    if (animType === ANIM_TYPE_BMODAL) return slideInModalFMV;
+    return slideInPopupFMV;
+  }, [animType]);
 
   const onCancelBtnClick = () => {
     if (didClick.current) return;
@@ -335,19 +341,20 @@ const ListNamesPopup = () => {
 
     const { top, left, topOrigin, leftOrigin } = popupPosition;
     const popupStyle = { top, left, width: popupWidth, height: popupHeight };
-
-    const popupFMV = getPopupFMV(topOrigin, leftOrigin);
+    const popupClassNames = getOriginClassName(topOrigin, leftOrigin);
 
     panel = (
-      <motion.div key="LNP_popup" style={popupStyle} className="fixed mt-1 rounded-md shadow-xl bg-white overflow-auto ring-1 ring-black ring-opacity-5 z-41" variants={popupFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+      <motion.div key="LNP_popup" style={popupStyle} className={`fixed mt-1 rounded-md shadow-xl bg-white overflow-auto ring-1 ring-black ring-opacity-5 z-41 ${popupClassNames}`} variants={popupFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
         {_render()}
       </motion.div>
     );
   }
 
+  const bgFMV = animType === ANIM_TYPE_BMODAL ? bModalBgFMV : popupBgFMV;
+
   return (
     <AnimatePresence key="AP_lnPopup">
-      <motion.button key="LNP_cancelBtn" ref={cancelBtn} onClick={onCancelBtnClick} className="fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
+      <motion.button key="LNP_cancelBtn" ref={cancelBtn} onClick={onCancelBtnClick} className="fixed inset-0 w-full h-full bg-black bg-opacity-25 cursor-default z-40 focus:outline-none" variants={bgFMV} initial="hidden" animate="visible" exit="hidden" />
       {panel}
     </AnimatePresence>
   );

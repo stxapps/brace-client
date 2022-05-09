@@ -65,3 +65,17 @@ export const createLayouts = (triggerLayout, optionsLayout, windowLayout) => {
     optionsLayout: optionsLayout,
   };
 };
+
+export const getOriginClassName = (topOrigin, leftOrigin) => {
+  if (topOrigin === AT_TRIGGER && leftOrigin === AT_TRIGGER) {
+    return 'origin-top-left';
+  } else if (topOrigin === AT_TRIGGER && leftOrigin === EDGE_TRIGGER) {
+    return 'origin-top-right';
+  } else if (topOrigin === EDGE_TRIGGER && leftOrigin === AT_TRIGGER) {
+    return 'origin-bottom-left';
+  } else if (topOrigin === EDGE_TRIGGER && leftOrigin === EDGE_TRIGGER) {
+    return 'origin-bottom-right';
+  } else {
+    return 'origin-center';
+  }
+};
