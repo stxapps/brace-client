@@ -20,6 +20,8 @@ class SettingsPopupAccount extends React.PureComponent {
         <div className="mt-8 mb-4">
           <h4 className="text-base text-red-600 font-medium leading-none">Delete Account</h4>
           <p className="mt-2.5 text-base text-gray-500 leading-relaxed">As no one without your Secret Key can access your account or your data, you can just leave them as is. To delete all your data, please go to Settings -&gt; Data -&gt; Delete All Data.</p>
+          <p className="mt-4 text-base text-gray-500 leading-relaxed">If you get started with us, currently we create your Stacks account without username, profile, and data server location. So there is no data stored in Stacks blockchain and your data server is automatically selected.</p>
+          <p className="mt-4 text-base text-gray-500 leading-relaxed">After you delete all your data in Settings -&gt; Data -&gt; Delete All Data, there's nothing left. You can just forget your Secret Key. It's permanently deleting your account.</p>
         </div>
       </div>
     );

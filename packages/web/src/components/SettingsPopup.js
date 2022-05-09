@@ -44,7 +44,7 @@ class SettingsPopup extends React.PureComponent {
       if (this.state.isSidebarShown) {
         this.overflowPanel.current.style.overflowY = 'hidden';
       } else {
-        this.overflowPanel.current.style.overflowY = 'auto';
+        this.overflowPanel.current.style.overflowY = 'scroll';
       }
     }
 
@@ -64,7 +64,7 @@ class SettingsPopup extends React.PureComponent {
       if (this.state.isSidebarShown) {
         this.overflowPanel.current.style.overflowY = 'hidden';
       } else {
-        this.overflowPanel.current.style.overflowY = 'auto';
+        this.overflowPanel.current.style.overflowY = 'scroll';
       }
     }
 
@@ -169,7 +169,7 @@ class SettingsPopup extends React.PureComponent {
     return (
       <AnimatePresence key="AnimatePresence_SP">
         <div className="fixed inset-0 bg-white z-30">
-          <div ref={this.overflowPanel} className="relative h-full">
+          <div ref={this.overflowPanel} className="relative h-full max-w-6xl mx-auto">
             <div className="hidden absolute top-0 right-0 md:block">
               <button onClick={this.onPopupCloseBtnClick} className="flex items-center justify-center h-12 w-12 group focus:outline-none" aria-label="Close settings popup">
                 <svg className="h-7 w-7 text-gray-300 rounded group-hover:text-gray-500 group-focus:ring" stroke="currentColor" fill="none" viewBox="0 0 24 24">
