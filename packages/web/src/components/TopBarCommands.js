@@ -4,9 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Url from 'url-parse';
 
 import { signOut, updatePopup, updateSettingsPopup, updateBulkEdit } from '../actions';
-import {
-  HASH_LANDING_HOW, HASH_LANDING_MOBILE, HASH_SUPPORT, PROFILE_POPUP,
-} from '../types/const';
+import { HASH_SUPPORT, PROFILE_POPUP } from '../types/const';
 import { popupBgFMV, popupFMV } from '../types/animConfigs';
 
 import TopBarAddPopup from './TopBarAddPopup';
@@ -40,24 +38,6 @@ class TopBarCommands extends React.PureComponent {
     window.location.href = urlObj.toString();
   }
 
-  onHowBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, false);
-
-    const urlObj = new Url(window.location.href, {});
-    urlObj.set('pathname', '/');
-    urlObj.set('hash', HASH_LANDING_HOW);
-    window.location.href = urlObj.toString();
-  };
-
-  onMobileBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, false);
-
-    const urlObj = new Url(window.location.href, {});
-    urlObj.set('pathname', '/');
-    urlObj.set('hash', HASH_LANDING_MOBILE);
-    window.location.href = urlObj.toString();
-  };
-
   onSignOutBtnClick = () => {
     // No need to update it, will get already unmount
     //this.props.updatePopup(PROFILE_POPUP, false);
@@ -77,8 +57,6 @@ class TopBarCommands extends React.PureComponent {
         <motion.div key="ProfilePopup_menuPopup" className="mt-2 py-2 absolute right-0 w-28 bg-white border border-gray-100 rounded-lg shadow-xl z-41 origin-top-right" variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
           <button onClick={this.onSettingsBtnClick} className="py-2.5 pl-4 block w-full text-sm text-gray-700 text-left rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">Settings</button>
           <button onClick={this.onSupportBtnClick} className="py-2.5 pl-4 block w-full text-sm text-gray-700 text-left rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">Support</button>
-          <button onClick={this.onHowBtnClick} className="py-2.5 pl-4 block w-full text-sm text-gray-700 text-left rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">How to</button>
-          <button onClick={this.onMobileBtnClick} className="py-2.5 pl-4 block w-full text-sm text-gray-700 text-left rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">Mobile apps</button>
           <button onClick={this.onSignOutBtnClick} className="py-2.5 pl-4 block w-full text-sm text-gray-700 text-left rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">Sign out</button>
         </motion.div>
       </AnimatePresence>

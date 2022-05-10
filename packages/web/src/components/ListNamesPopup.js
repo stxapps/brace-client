@@ -320,14 +320,9 @@ const ListNamesPopup = () => {
 
   let panel;
   if (animType === ANIM_TYPE_BMODAL) {
-    popupHeight = popupHeight + 48; // 48 for -bottom-12
-    const popupStyle = {
-      height: popupHeight,
-      paddingBottom: 48,
-    };
-
+    const popupStyle = { height: popupHeight };
     panel = (
-      <motion.div key="LNP_popup" style={popupStyle} className="fixed inset-x-0 -bottom-12 bg-white border border-gray-100 rounded-t-lg shadow-xl z-41" variants={bModalFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+      <motion.div key="LNP_popup" style={popupStyle} className="fixed inset-x-0 bottom-0 bg-white border border-gray-100 rounded-t-lg shadow-xl z-41" variants={bModalFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
         {_render()}
       </motion.div>
     );
