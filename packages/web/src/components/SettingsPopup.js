@@ -8,6 +8,7 @@ import { isEqual } from '../utils';
 import { canvasFMV, sideBarOverlayFMV, sideBarFMV } from '../types/animConfigs';
 
 import SettingsPopupAccount from './SettingsPopupAccount';
+import SettingsPopupIap from './SettingsPopupIap';
 import {
   SettingsPopupData, SettingsPopupDataImport, SettingsPopupDataExport,
   SettingsPopupDataDelete,
@@ -17,6 +18,7 @@ import SettingsPopupMisc from './SettingsPopupMisc';
 import SettingsPopupAbout from './SettingsPopupAbout';
 
 const VIEW_ACCOUNT = 1;
+const VIEW_IAP = 9;
 const VIEW_DATA = 2;
 const VIEW_DATA_IMPORT = 7;
 const VIEW_DATA_EXPORT = 3;
@@ -119,6 +121,13 @@ class SettingsPopup extends React.PureComponent {
     });
   }
 
+  onIapBtnClick = () => {
+    this.setState({
+      viewId: VIEW_IAP,
+      isSidebarShown: false,
+    });
+  }
+
   onDataBtnClick = () => {
     this.setState({
       viewId: VIEW_DATA,
@@ -181,7 +190,7 @@ class SettingsPopup extends React.PureComponent {
       <AnimatePresence key="AnimatePresence_SP">
         <div className="fixed inset-0 bg-white z-30">
           <div ref={this.overflowPanel} className="h-full">
-            <div className="relative max-w-6xl mx-auto">
+            <div className="relative h-full max-w-6xl mx-auto">
               <div className="hidden absolute top-0 right-0 md:block">
                 <button onClick={this.onPopupCloseBtnClick} className="flex items-center justify-center h-12 w-12 group focus:outline-none" aria-label="Close settings popup">
                   <svg className="h-7 w-7 text-gray-300 rounded group-hover:text-gray-500 group-focus:ring" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -189,22 +198,28 @@ class SettingsPopup extends React.PureComponent {
                   </svg>
                 </button>
               </div>
-              <div key="panel-with-sidebar" className="flex flex-col max-w-4xl mx-auto px-0 md:px-6 lg:px-8">
-                <div className="hidden border-b border-gray-200 md:block md:mt-12">
+              <div key="panel-with-sidebar" className="max-w-4xl mx-auto px-0 md:px-6 lg:px-8">
+                <div className="hidden border-b border-gray-200 md:block md:pt-12">
                   <h2 className="pb-4 text-xl text-gray-800 font-medium leading-6">Settings</h2>
                 </div>
-                <div className="flex-1 flex">
+                <div className="flex">
                   {/* Sidebar for desktop */}
                   <div key="sidebar-for-desktop" className="hidden md:flex md:flex-shrink-0 md:flex-grow-0">
                     <div className="flex flex-col w-48">
-                      <div className="mt-2 flex flex-col h-0 flex-1 border-r border-gray-200 md:mb-6">
+                      <div className="mt-2 mb-6 flex flex-col h-0 flex-1 border-r border-gray-200 min-h-xl">
                         <div className="flex-1 flex flex-col">
-                          <nav className="mt-2 pr-2 flex-1 space-y-1">
+                          <nav className="mt-2 pr-2 flex-1 space-y-2">
                             <button onClick={this.onAccountBtnClick} className={`group flex items-center px-2 py-2 w-full text-sm font-medium leading-5 rounded-md focus:outline-none ${this.isViewSelected(VIEW_ACCOUNT) ? selectedMenuTextStyleClasses : menuTextStyleClasses}`}>
                               <svg className={`mr-3 h-5 w-5 ${this.isViewSelected(VIEW_ACCOUNT) ? selectedMenuSvgStyleClasses : menuSvgStyleClasses}`} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM12 7C12 8.10457 11.1046 9 10 9C8.89543 9 8 8.10457 8 7C8 5.89543 8.89543 5 10 5C11.1046 5 12 5.89543 12 7ZM9.99993 11C7.98239 11 6.24394 12.195 5.45374 13.9157C6.55403 15.192 8.18265 16 9.99998 16C11.8173 16 13.4459 15.1921 14.5462 13.9158C13.756 12.195 12.0175 11 9.99993 11Z" />
                               </svg>
                               Account
+                            </button>
+                            <button onClick={this.onIapBtnClick} className={`group flex items-center px-2 py-2 w-full text-sm font-medium leading-5 rounded-md focus:outline-none ${this.isViewSelected(VIEW_IAP) ? selectedMenuTextStyleClasses : menuTextStyleClasses}`}>
+                              <svg className={`mr-3 h-5 w-5 ${this.isViewSelected(VIEW_IAP) ? selectedMenuSvgStyleClasses : menuSvgStyleClasses}`} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fillRule="evenodd" clipRule="evenodd" d="M5 2C5.26522 2 5.51957 2.10536 5.70711 2.29289C5.89464 2.48043 6 2.73478 6 3V4H7C7.26522 4 7.51957 4.10536 7.70711 4.29289C7.89464 4.48043 8 4.73478 8 5C8 5.26522 7.89464 5.51957 7.70711 5.70711C7.51957 5.89464 7.26522 6 7 6H6V7C6 7.26522 5.89464 7.51957 5.70711 7.70711C5.51957 7.89464 5.26522 8 5 8C4.73478 8 4.48043 7.89464 4.29289 7.70711C4.10536 7.51957 4 7.26522 4 7V6H3C2.73478 6 2.48043 5.89464 2.29289 5.70711C2.10536 5.51957 2 5.26522 2 5C2 4.73478 2.10536 4.48043 2.29289 4.29289C2.48043 4.10536 2.73478 4 3 4H4V3C4 2.73478 4.10536 2.48043 4.29289 2.29289C4.48043 2.10536 4.73478 2 5 2ZM5 12C5.26522 12 5.51957 12.1054 5.70711 12.2929C5.89464 12.4804 6 12.7348 6 13V14H7C7.26522 14 7.51957 14.1054 7.70711 14.2929C7.89464 14.4804 8 14.7348 8 15C8 15.2652 7.89464 15.5196 7.70711 15.7071C7.51957 15.8946 7.26522 16 7 16H6V17C6 17.2652 5.89464 17.5196 5.70711 17.7071C5.51957 17.8946 5.26522 18 5 18C4.73478 18 4.48043 17.8946 4.29289 17.7071C4.10536 17.5196 4 17.2652 4 17V16H3C2.73478 16 2.48043 15.8946 2.29289 15.7071C2.10536 15.5196 2 15.2652 2 15C2 14.7348 2.10536 14.4804 2.29289 14.2929C2.48043 14.1054 2.73478 14 3 14H4V13C4 12.7348 4.10536 12.4804 4.29289 12.2929C4.48043 12.1054 4.73478 12 5 12ZM12 2C12.2207 1.99993 12.4352 2.07286 12.6101 2.20744C12.785 2.34201 12.9105 2.53066 12.967 2.744L14.146 7.2L17.5 9.134C17.652 9.22177 17.7782 9.34801 17.866 9.50002C17.9538 9.65204 18 9.82447 18 10C18 10.1755 17.9538 10.348 17.866 10.5C17.7782 10.652 17.652 10.7782 17.5 10.866L14.146 12.801L12.966 17.256C12.9094 17.4691 12.7839 17.6576 12.6091 17.792C12.4343 17.9264 12.22 17.9993 11.9995 17.9993C11.779 17.9993 11.5647 17.9264 11.3899 17.792C11.2151 17.6576 11.0896 17.4691 11.033 17.256L9.854 12.8L6.5 10.866C6.34799 10.7782 6.22177 10.652 6.13401 10.5C6.04625 10.348 6.00004 10.1755 6.00004 10C6.00004 9.82447 6.04625 9.65204 6.13401 9.50002C6.22177 9.34801 6.34799 9.22177 6.5 9.134L9.854 7.199L11.034 2.744C11.0905 2.53083 11.2158 2.3423 11.3905 2.20774C11.5652 2.07318 11.7795 2.00015 12 2Z" />
+                              </svg>
+                              Subscription
                             </button>
                             <button onClick={this.onDataBtnClick} className={`group flex items-center px-2 py-2 w-full text-sm font-medium leading-5 rounded-md focus:outline-none ${this.isViewSelected(VIEW_DATA) ? selectedMenuTextStyleClasses : menuTextStyleClasses}`}>
                               <svg className={`mr-3 h-5 w-5 ${this.isViewSelected(VIEW_DATA) ? selectedMenuSvgStyleClasses : menuSvgStyleClasses}`} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -269,12 +284,18 @@ class SettingsPopup extends React.PureComponent {
                         <div className="px-4 flex-shrink-0 flex items-center">
                           <h2 className="text-xl text-gray-800 font-medium leading-6">Settings</h2>
                         </div>
-                        <nav className="mt-5 px-2 space-y-1">
+                        <nav className="mt-6 px-2 space-y-2">
                           <button onClick={this.onAccountBtnClick} className={'px-2 py-2.5 flex items-center w-full text-base text-gray-500 font-medium leading-5 rounded-md group focus:outline-none hover:bg-gray-50 hover:text-gray-700 focus:bg-gray-50 focus:text-gray-700'}>
                             <svg className={'mr-2 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500'} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                               <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM12 7C12 8.10457 11.1046 9 10 9C8.89543 9 8 8.10457 8 7C8 5.89543 8.89543 5 10 5C11.1046 5 12 5.89543 12 7ZM9.99993 11C7.98239 11 6.24394 12.195 5.45374 13.9157C6.55403 15.192 8.18265 16 9.99998 16C11.8173 16 13.4459 15.1921 14.5462 13.9158C13.756 12.195 12.0175 11 9.99993 11Z" />
                             </svg>
                             Account
+                          </button>
+                          <button onClick={this.onIapBtnClick} className={'px-2 py-2.5 flex items-center w-full text-base text-gray-500 font-medium leading-5 rounded-md group focus:outline-none hover:bg-gray-50 hover:text-gray-700 focus:bg-gray-50 focus:text-gray-700'}>
+                            <svg className={'mr-2 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500'} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                              <path fillRule="evenodd" clipRule="evenodd" d="M5 2C5.26522 2 5.51957 2.10536 5.70711 2.29289C5.89464 2.48043 6 2.73478 6 3V4H7C7.26522 4 7.51957 4.10536 7.70711 4.29289C7.89464 4.48043 8 4.73478 8 5C8 5.26522 7.89464 5.51957 7.70711 5.70711C7.51957 5.89464 7.26522 6 7 6H6V7C6 7.26522 5.89464 7.51957 5.70711 7.70711C5.51957 7.89464 5.26522 8 5 8C4.73478 8 4.48043 7.89464 4.29289 7.70711C4.10536 7.51957 4 7.26522 4 7V6H3C2.73478 6 2.48043 5.89464 2.29289 5.70711C2.10536 5.51957 2 5.26522 2 5C2 4.73478 2.10536 4.48043 2.29289 4.29289C2.48043 4.10536 2.73478 4 3 4H4V3C4 2.73478 4.10536 2.48043 4.29289 2.29289C4.48043 2.10536 4.73478 2 5 2ZM5 12C5.26522 12 5.51957 12.1054 5.70711 12.2929C5.89464 12.4804 6 12.7348 6 13V14H7C7.26522 14 7.51957 14.1054 7.70711 14.2929C7.89464 14.4804 8 14.7348 8 15C8 15.2652 7.89464 15.5196 7.70711 15.7071C7.51957 15.8946 7.26522 16 7 16H6V17C6 17.2652 5.89464 17.5196 5.70711 17.7071C5.51957 17.8946 5.26522 18 5 18C4.73478 18 4.48043 17.8946 4.29289 17.7071C4.10536 17.5196 4 17.2652 4 17V16H3C2.73478 16 2.48043 15.8946 2.29289 15.7071C2.10536 15.5196 2 15.2652 2 15C2 14.7348 2.10536 14.4804 2.29289 14.2929C2.48043 14.1054 2.73478 14 3 14H4V13C4 12.7348 4.10536 12.4804 4.29289 12.2929C4.48043 12.1054 4.73478 12 5 12ZM12 2C12.2207 1.99993 12.4352 2.07286 12.6101 2.20744C12.785 2.34201 12.9105 2.53066 12.967 2.744L14.146 7.2L17.5 9.134C17.652 9.22177 17.7782 9.34801 17.866 9.50002C17.9538 9.65204 18 9.82447 18 10C18 10.1755 17.9538 10.348 17.866 10.5C17.7782 10.652 17.652 10.7782 17.5 10.866L14.146 12.801L12.966 17.256C12.9094 17.4691 12.7839 17.6576 12.6091 17.792C12.4343 17.9264 12.22 17.9993 11.9995 17.9993C11.779 17.9993 11.5647 17.9264 11.3899 17.792C11.2151 17.6576 11.0896 17.4691 11.033 17.256L9.854 12.8L6.5 10.866C6.34799 10.7782 6.22177 10.652 6.13401 10.5C6.04625 10.348 6.00004 10.1755 6.00004 10C6.00004 9.82447 6.04625 9.65204 6.13401 9.50002C6.22177 9.34801 6.34799 9.22177 6.5 9.134L9.854 7.199L11.034 2.744C11.0905 2.53083 11.2158 2.3423 11.3905 2.20774C11.5652 2.07318 11.7795 2.00015 12 2Z" />
+                            </svg>
+                            Subscription
                           </button>
                           <button onClick={this.onDataBtnClick} className={'px-2 py-2.5 flex items-center w-full text-base text-gray-500 font-medium leading-5 rounded-md group focus:outline-none hover:bg-gray-50 hover:text-gray-700 focus:bg-gray-50 focus:text-gray-700'}>
                             <svg className={'mr-2 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500'} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -323,6 +344,13 @@ class SettingsPopup extends React.PureComponent {
   renderAccountView() {
     const content = (
       <SettingsPopupAccount onSidebarOpenBtnClick={this.onSidebarOpenBtnClick} />
+    );
+    return this._render(content);
+  }
+
+  renderIapView() {
+    const content = (
+      <SettingsPopupIap onSidebarOpenBtnClick={this.onSidebarOpenBtnClick} />
     );
     return this._render(content);
   }
@@ -386,6 +414,7 @@ class SettingsPopup extends React.PureComponent {
     const { viewId } = this.state;
 
     if (viewId === VIEW_ACCOUNT) return this.renderAccountView();
+    else if (viewId === VIEW_IAP) return this.renderIapView();
     else if (viewId === VIEW_DATA) return this.renderDataView();
     else if (viewId === VIEW_DATA_IMPORT) return this.renderImportAllDataView();
     else if (viewId === VIEW_DATA_EXPORT) return this.renderExportAllDataView();

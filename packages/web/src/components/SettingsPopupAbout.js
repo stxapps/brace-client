@@ -21,7 +21,7 @@ const SettingsPopupAbout = (props) => {
       </div>
       <div className="mt-6 md:mt-0">
         <img className="hidden h-7 md:block" src={shortLogo} alt="Brace logo" />
-        <div className="md:pt-10">
+        <div className="pt-1 md:pt-10">
           <a className="block text-base text-gray-500 rounded-sm hover:text-gray-900 focus:outline-none focus:ring md:inline" href={'/' + HASH_LANDING} target="_blank" rel="noreferrer">Home page</a>
           <a className="mt-4 block text-base text-gray-500 rounded-sm hover:text-gray-900 focus:outline-none focus:ring md:inline md:mt-0 md:ml-14" href={'/' + HASH_LANDING_HOW} target="_blank" rel="noreferrer">How to</a>
           <a className="mt-4 block text-base text-gray-500 rounded-sm hover:text-gray-900 focus:outline-none focus:ring md:inline md:mt-0 md:ml-14" href={'/' + HASH_LANDING_MOBILE} target="_blank" rel="noreferrer">Mobile apps</a>
