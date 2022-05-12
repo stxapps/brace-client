@@ -2,11 +2,13 @@ import { REHYDRATE } from 'redux-persist/constants';
 
 import {
   RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
-  UPDATE_IAP_RESTORE_STATUS, UPDATE_POPUP, DELETE_ALL_DATA, RESET_STATE,
+  UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_RESTORE_STATUS, UPDATE_POPUP,
+  DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import { ALL, SETTINGS_POPUP } from '../types/const';
 
 const initialState = {
+  publicKey: null,
   canMakePayments: null,
   products: null,
   purchaseStatus: null,
@@ -30,6 +32,10 @@ const iapReducer = (state = initialState, action) => {
 
   if (action.type === RESTORE_PURCHASES_ROLLBACK) {
     return { ...state, restoreStatus: RESTORE_PURCHASES_ROLLBACK };
+  }
+
+  if (action.type === UPDATE_IAP_PUBLIC_KEY) {
+    return { ...state, publicKey: action.payload };
   }
 
   if (action.type === UPDATE_IAP_RESTORE_STATUS) {

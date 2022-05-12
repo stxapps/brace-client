@@ -32,7 +32,7 @@ import {
   UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
   UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_LAYOUT_TYPE,
   RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
-  UPDATE_IAP_RESTORE_STATUS,
+  UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_RESTORE_STATUS,
   UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
   UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -1506,6 +1506,11 @@ export const restorePurchases = () => async (dispatch, getState) => {
     console.log(`Error when contact IAP server to get status with reqBody: ${JSON.stringify(reqBody)}, Error: `, error);
     dispatch({ type: RESTORE_PURCHASES_ROLLBACK });
   }
+};
+
+export const updateIapPublicKey = () => async (dispatch, getState) => {
+  const sigObj = userSession.signECDSA(SIGNED_TEST_STRING);
+  dispatch({ type: UPDATE_IAP_PUBLIC_KEY, payload: sigObj.publicKey });
 };
 
 export const updateIapRestoreStatus = (status) => {

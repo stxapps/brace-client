@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { restorePurchases, updateIapRestoreStatus } from '../actions';
+import {
+  restorePurchases, updateIapPublicKey, updateIapRestoreStatus,
+} from '../actions';
 import { RESTORE_PURCHASES } from '../types/actionTypes';
 import { HASH_LANDING_MOBILE, HASH_SUPPORT, VALID, SM_WIDTH } from '../types/const';
 import { getValidPurchase } from '../selectors';
@@ -11,7 +13,13 @@ import { useSafeAreaFrame } from '.';
 const _SettingsPopupIap = (props) => {
 
   const { onSidebarOpenBtnClick, onToRestoreIapViewBtnClick } = props;
+  const publicKey = useSelector(state => state.iap.publicKey);
   const purchase = useSelector(state => getValidPurchase(state));
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!publicKey) dispatch(updateIapPublicKey());
+  }, [publicKey, dispatch]);
 
   const renderHome = () => {
     return (
@@ -26,7 +34,11 @@ const _SettingsPopupIap = (props) => {
 
   const renderPurchased = () => {
     return (
-      <div><h4>Your subscription</h4></div>
+      <div className="mt-6 md:mt-0">
+        <h4 className="text-base text-gray-800 font-medium leading-none">Your subscription</h4>
+        <p className="mt-2.5 text-base text-gray-500 leading-relaxed"></p>
+        <p className="mt-4 text-base text-gray-500 leading-relaxed"></p>
+      </div>
     );
   };
 
@@ -47,6 +59,7 @@ const _SettingsPopupIapRestore = (props) => {
 
   const { onBackToIapViewBtnClick } = props;
   const { width: safeAreaWidth } = useSafeAreaFrame();
+  const publicKey = useSelector(state => state.iap.publicKey);
   const purchase = useSelector(state => getValidPurchase(state));
   const restoreStatus = useSelector(state => state.iap.restoreStatus);
   const dispatch = useDispatch();
@@ -54,6 +67,10 @@ const _SettingsPopupIapRestore = (props) => {
   const onRestoreBtnClick = () => {
     dispatch(restorePurchases());
   };
+
+  useEffect(() => {
+    if (!publicKey) dispatch(updateIapPublicKey());
+  }, [publicKey, dispatch]);
 
   useEffect(() => {
     if (purchase) onBackToIapViewBtnClick();
@@ -86,6 +103,17 @@ const _SettingsPopupIapRestore = (props) => {
       </div>
     );
   } else if (restoreStatus === VALID) {
+    let publicKeyText = (
+      <div className="pt-1 flex-shrink flex-grow sm:pl-3">
+        <div className="ball-clip-rotate">
+          <div />
+        </div>
+      </div>
+    );
+    if (publicKey) publicKeyText = (
+      <p className="pt-1 flex-shrink flex-grow text-base text-gray-500 break-all sm:pt-0 sm:pl-3">{publicKey}</p>
+    );
+
     actionPanel = (
       <div className="mt-6 mb-4">
         <div className="flex items-center">
@@ -99,8 +127,12 @@ const _SettingsPopupIapRestore = (props) => {
           <svg className="mb-2 inline-block w-4" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M11 3C10.4477 3 10 3.44772 10 4C10 4.55228 10.4477 5 11 5H13.5858L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L15 6.41421V9C15 9.55228 15.4477 10 16 10C16.5523 10 17 9.55228 17 9V4C17 3.44772 16.5523 3 16 3H11Z" />
             <path d="M5 5C3.89543 5 3 5.89543 3 7V15C3 16.1046 3.89543 17 5 17H13C14.1046 17 15 16.1046 15 15V12C15 11.4477 14.5523 11 14 11C13.4477 11 13 11.4477 13 12V15H5V7H8C8.55228 7 9 6.55228 9 6C9 5.44772 8.55228 5 8 5H5Z" />
-          </svg></a>.
+          </svg></a> with your app public key below and order ID in your order confirmation email.
         </p>
+        <div className="mt-6 flex flex-col sm:flex-row">
+          <p className="flex-shrink-0 flex-grow-0 text-base text-gray-500">App public key:</p>
+          {publicKeyText}
+        </div>
       </div>
     );
   } else {
