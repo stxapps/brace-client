@@ -31,6 +31,8 @@ import {
   UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
   UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_LAYOUT_TYPE,
+  RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
+  UPDATE_IAP_RESTORE_STATUS,
   UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
   UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -42,6 +44,7 @@ import {
   MY_LIST, TRASH, ARCHIVE, N_LINKS, SETTINGS_FNAME,
   ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
+  IAP_STATUS_URL, COM_BRACEDOTTO, SIGNED_TEST_STRING,
 } from '../types/const';
 import {
   _, isEqual, isString, isObject, isNumber, throttle, sleep, isIPadIPhoneIPod,
@@ -1482,5 +1485,32 @@ export const updateDeleteAllDataProgress = (progress) => {
   return {
     type: UPDATE_DELETE_ALL_DATA_PROGRESS,
     payload: progress,
+  };
+};
+
+export const restorePurchases = () => async (dispatch, getState) => {
+  dispatch({ type: RESTORE_PURCHASES });
+
+  const sigObj = userSession.signECDSA(SIGNED_TEST_STRING);
+  const reqBody = {
+    userId: sigObj.publicKey,
+    signature: sigObj.signature,
+    appId: COM_BRACEDOTTO,
+    doForce: false,
+  };
+
+  try {
+    const res = await axios.post(IAP_STATUS_URL, reqBody);
+    dispatch({ type: RESTORE_PURCHASES_COMMIT, payload: res.data });
+  } catch (error) {
+    console.log(`Error when contact IAP server to get status with reqBody: ${JSON.stringify(reqBody)}, Error: `, error);
+    dispatch({ type: RESTORE_PURCHASES_ROLLBACK });
+  }
+};
+
+export const updateIapRestoreStatus = (status) => {
+  return {
+    type: UPDATE_IAP_RESTORE_STATUS,
+    payload: status,
   };
 };

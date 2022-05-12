@@ -5,10 +5,10 @@ import { updateFetchedSettings } from '../actions';
 import {
   FETCH_COMMIT, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME,
   DELETE_LIST_NAMES, UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
-  UPDATE_DO_DESCENDING_ORDER, CANCEL_DIED_SETTINGS,
+  UPDATE_DO_DESCENDING_ORDER, CANCEL_DIED_SETTINGS, RESTORE_PURCHASES_COMMIT,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
-import { MY_LIST, TRASH, ARCHIVE, SWAP_LEFT, SWAP_RIGHT } from '../types/const';
+import { MY_LIST, TRASH, ARCHIVE, SWAP_LEFT, SWAP_RIGHT, VALID } from '../types/const';
 import {
   getListNameObj, doContainListName, copyListNameObjs, swapArrayElements,
 } from '../utils';
@@ -195,6 +195,18 @@ const settingsReducer = (state = initialState, action) => {
   if (action.type === CANCEL_DIED_SETTINGS) {
     const { settings } = action.payload;
     return { ...state, ...settings };
+  }
+
+  if (action.type === RESTORE_PURCHASES_COMMIT) {
+    const { status, purchases } = action.payload;
+    if (status !== VALID || !purchases) return state;
+
+    const newState = { ...state };
+
+    if (purchases.length === 0) newState.purchases = null;
+    else newState.purchases = purchases.map(p => ({ ...p }));
+
+    return newState;
   }
 
   if (action.type === DELETE_ALL_DATA || action.type === RESET_STATE) {

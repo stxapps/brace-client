@@ -159,7 +159,7 @@ const ListNamesPopup = () => {
     const transition = /** @type Tween */({ ...slideFMV });
     const controls = animate(slideAnim, '0%', transition);
     return () => controls.stop();
-  }, [backCount, slideAnim]);
+  }, [backCount, slideFMV, slideAnim]);
 
   if (derivedIsShown !== isShown) {
     if (!derivedIsShown && isShown) {

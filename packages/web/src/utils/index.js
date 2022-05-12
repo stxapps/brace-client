@@ -7,6 +7,7 @@ import {
   BG_COLOR_STYLES, PATTERNS,
   VALID_URL, NO_URL, ASK_CONFIRM_URL,
   VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME,
+  ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, UNKNOWN,
 } from '../types/const';
 import { FETCH } from '../types/actionTypes';
 import { IMAGES } from '../types/imagePaths';
@@ -1037,4 +1038,45 @@ export const isListNameObjsValid = (listNameObjs) => {
   }
 
   return true;
+};
+
+export const getLatestPurchase = (purchases) => {
+  if (!Array.isArray(purchases) || purchases.length === 0) return null;
+
+  const _purchases = purchases.sort((a, b) => {
+    return b.endDate.getTime() - a.endDate.getTime();
+  });
+
+  for (const status of [ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED]) {
+    const purchase = _purchases.find(p => p.status === status);
+    if (purchase) return purchase;
+  }
+
+  return _purchases[0];
+};
+
+export const getValidPurchase = (purchases) => {
+  const purchase = getLatestPurchase(purchases);
+
+  if (!purchase) return null;
+  if ([ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED].includes(purchase.status)) {
+    return purchase;
+  }
+  return null;
+};
+
+export const doEnableExtraFeatures = (purchases) => {
+  // If just purchased, enable extra features.
+  // Can have pro features or premium features that not included here,
+  //   just don't use this function to enable the features.
+  const purchase = getLatestPurchase(purchases);
+
+  if (!purchase) return false;
+  if ([ACTIVE, NO_RENEW, GRACE].includes(purchase.status)) return true;
+  if (purchase.status === UNKNOWN) return null;
+  return false;
+};
+
+export const shouldUpdateIapStatus = () => {
+
 };

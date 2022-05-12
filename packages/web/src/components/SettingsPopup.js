@@ -8,7 +8,7 @@ import { isEqual } from '../utils';
 import { canvasFMV, sideBarOverlayFMV, sideBarFMV } from '../types/animConfigs';
 
 import SettingsPopupAccount from './SettingsPopupAccount';
-import SettingsPopupIap from './SettingsPopupIap';
+import { SettingsPopupIap, SettingsPopupIapRestore } from './SettingsPopupIap';
 import {
   SettingsPopupData, SettingsPopupDataImport, SettingsPopupDataExport,
   SettingsPopupDataDelete,
@@ -19,6 +19,7 @@ import SettingsPopupAbout from './SettingsPopupAbout';
 
 const VIEW_ACCOUNT = 1;
 const VIEW_IAP = 9;
+const VIEW_IAP_RESTORE = 10;
 const VIEW_DATA = 2;
 const VIEW_DATA_IMPORT = 7;
 const VIEW_DATA_EXPORT = 3;
@@ -95,6 +96,9 @@ class SettingsPopup extends React.PureComponent {
       return dataViews.includes(this.state.viewId);
     }
 
+    const iapViews = [VIEW_IAP, VIEW_IAP_RESTORE];
+    if (viewId === VIEW_IAP) return iapViews.includes(this.state.viewId);
+
     return viewId === this.state.viewId;
   }
 
@@ -152,6 +156,17 @@ class SettingsPopup extends React.PureComponent {
   onAboutBtnClick = () => {
     this.setState({
       viewId: VIEW_ABOUT,
+      isSidebarShown: false,
+    });
+  }
+
+  onToRestoreIapViewBtnClick = () => {
+    this.setState({ viewId: VIEW_IAP_RESTORE });
+  }
+
+  onBackToIapViewBtnClick = () => {
+    this.setState({
+      viewId: VIEW_IAP,
       isSidebarShown: false,
     });
   }
@@ -350,7 +365,14 @@ class SettingsPopup extends React.PureComponent {
 
   renderIapView() {
     const content = (
-      <SettingsPopupIap onSidebarOpenBtnClick={this.onSidebarOpenBtnClick} />
+      <SettingsPopupIap onSidebarOpenBtnClick={this.onSidebarOpenBtnClick} onToRestoreIapViewBtnClick={this.onToRestoreIapViewBtnClick} />
+    );
+    return this._render(content);
+  }
+
+  renderRestoreIapView() {
+    const content = (
+      <SettingsPopupIapRestore onBackToIapViewBtnClick={this.onBackToIapViewBtnClick} />
     );
     return this._render(content);
   }
@@ -415,6 +437,7 @@ class SettingsPopup extends React.PureComponent {
 
     if (viewId === VIEW_ACCOUNT) return this.renderAccountView();
     else if (viewId === VIEW_IAP) return this.renderIapView();
+    else if (viewId === VIEW_IAP_RESTORE) return this.renderRestoreIapView();
     else if (viewId === VIEW_DATA) return this.renderDataView();
     else if (viewId === VIEW_DATA_IMPORT) return this.renderImportAllDataView();
     else if (viewId === VIEW_DATA_EXPORT) return this.renderExportAllDataView();
