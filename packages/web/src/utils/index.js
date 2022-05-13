@@ -884,6 +884,16 @@ export const swapArrayElements = (a, x, y) => (a[x] && a[y] && [
   ...a.slice(y + 1),
 ]) || a;
 
+export const getFormattedDate = (d) => {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  const year = d.getFullYear();
+  const month = months[d.getMonth()];
+  const date = d.getDate();
+
+  return `${date} ${month} ${year}`;
+};
+
 export const isOfflineAction = (action, actionType, listName = null) => {
   try {
     const { method, params } = action.meta.offline.effect;

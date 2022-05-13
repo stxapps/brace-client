@@ -32,7 +32,8 @@ import {
   UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
   UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_LAYOUT_TYPE,
   RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
-  UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_RESTORE_STATUS,
+  REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
+  UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
   UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
   UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -1488,9 +1489,7 @@ export const updateDeleteAllDataProgress = (progress) => {
   };
 };
 
-export const restorePurchases = () => async (dispatch, getState) => {
-  dispatch({ type: RESTORE_PURCHASES });
-
+const getIapStatus = async () => {
   const sigObj = userSession.signECDSA(SIGNED_TEST_STRING);
   const reqBody = {
     userId: sigObj.publicKey,
@@ -1498,13 +1497,29 @@ export const restorePurchases = () => async (dispatch, getState) => {
     appId: COM_BRACEDOTTO,
     doForce: false,
   };
+  const res = await axios.post(IAP_STATUS_URL, reqBody);
+  return res;
+};
 
+export const restorePurchases = () => async (dispatch, getState) => {
+  dispatch({ type: RESTORE_PURCHASES });
   try {
-    const res = await axios.post(IAP_STATUS_URL, reqBody);
+    const res = await getIapStatus();
     dispatch({ type: RESTORE_PURCHASES_COMMIT, payload: res.data });
   } catch (error) {
-    console.log(`Error when contact IAP server to get status with reqBody: ${JSON.stringify(reqBody)}, Error: `, error);
+    console.log(`Error when contact IAP server to restore purchases: `, error);
     dispatch({ type: RESTORE_PURCHASES_ROLLBACK });
+  }
+};
+
+export const refreshPurchases = () => async (dispatch, getState) => {
+  dispatch({ type: REFRESH_PURCHASES });
+  try {
+    const res = await getIapStatus();
+    dispatch({ type: REFRESH_PURCHASES_COMMIT, payload: res.data });
+  } catch (error) {
+    console.log(`Error when contact IAP server to refresh purchases: `, error);
+    dispatch({ type: REFRESH_PURCHASES_ROLLBACK });
   }
 };
 
@@ -1516,6 +1531,13 @@ export const updateIapPublicKey = () => async (dispatch, getState) => {
 export const updateIapRestoreStatus = (status) => {
   return {
     type: UPDATE_IAP_RESTORE_STATUS,
+    payload: status,
+  };
+};
+
+export const updateIapRefreshStatus = (status) => {
+  return {
+    type: UPDATE_IAP_REFRESH_STATUS,
     payload: status,
   };
 };
