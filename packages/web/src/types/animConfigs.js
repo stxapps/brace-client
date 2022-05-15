@@ -85,18 +85,18 @@ export const bbSearchPopupFMV = {
 };
 
 export const bModalBgFMV = {
-  hidden: { opacity: 0, transition: { ease: 'easeIn', duration: 0.075 } },
-  visible: { opacity: 1, transition: { ease: 'easeOut', duration: 0.1 } },
+  hidden: { opacity: 0, transition: { ease: 'easeIn', duration: 0.2 } },
+  visible: { opacity: 1, transition: { ease: 'easeOut', duration: 0.2 } },
 };
 
 export const bModalFMV = {
   hidden: {
     translateY: '100%',
-    transition: { ease: 'easeIn', duration: 0.075 },
+    transition: { ease: 'easeIn', duration: 0.2 },
   },
   visible: {
     translateY: '0%',
-    transition: { ease: 'easeOut', duration: 0.1 },
+    transition: { ease: 'easeOut', duration: 0.2 },
   },
 };
 
@@ -111,18 +111,18 @@ export const canvasFMV = /** @type {any} */ ({
 });
 
 export const sideBarOverlayFMV = {
-  hidden: { opacity: 0, transition: { ease: 'easeIn', duration: 0.075 }, },
-  visible: { opacity: 1, transition: { ease: 'easeOut', duration: 0.1 }, },
+  hidden: { opacity: 0, transition: { ease: 'easeIn', duration: 0.2 }, },
+  visible: { opacity: 1, transition: { ease: 'easeOut', duration: 0.2 }, },
 };
 
 export const sideBarFMV = {
   hidden: {
     translateX: '-100%',
-    transition: { ease: 'easeIn', duration: 0.075 },
+    transition: { ease: 'easeIn', duration: 0.2 },
   },
   visible: {
     translateX: '0%',
-    transition: { ease: 'easeOut', duration: 0.1 },
+    transition: { ease: 'easeOut', duration: 0.2 },
   },
 };
 
@@ -130,27 +130,27 @@ export const listsFMV = {
   hidden: {
     scaleY: 0,
     translateY: '-100%',
-    transition: { ease: 'easeIn', duration: 0.075 },
+    transition: { ease: 'easeIn', duration: 0.15 },
   },
   visible: {
     scaleY: 1,
     translateY: '0%',
-    transition: { ease: 'easeOut', duration: 0.1 },
+    transition: { ease: 'easeOut', duration: 0.15 },
   },
   exit: {
     opacity: 0,
-    transition: { ease: 'easeIn', duration: 0.075 }
+    transition: { ease: 'easeIn', duration: 0.15 }
   },
 };
 
 export const statusPopupFMV = {
   hidden: {
     translateX: '100%',
-    transition: { ease: 'easeIn', duration: 0.075 },
+    transition: { ease: 'easeIn', duration: 0.15 },
   },
   visible: {
     translateX: '0%',
-    transition: { ease: 'easeOut', duration: 0.1 },
+    transition: { ease: 'easeOut', duration: 0.15 },
   },
   hiddenNoAnim: {
     translateX: '100%',
@@ -166,12 +166,12 @@ export const fetchedPopupFMV = {
   hidden: {
     translateY: '-8rem',
     translateX: '-50%',
-    transition: { ease: 'easeIn', duration: 0.075 },
+    transition: { ease: 'easeIn', duration: 0.15 },
   },
   visible: {
     translateY: '0rem',
     translateX: '-50%',
-    transition: { ease: 'easeOut', duration: 0.1 },
+    transition: { ease: 'easeOut', duration: 0.15 },
   },
 };
 
