@@ -14,7 +14,7 @@ class SettingsPopupAccount extends React.PureComponent {
         <div className="mt-6 md:mt-0">
           <h4 className="text-base text-gray-800 font-medium leading-none">Stacks Account</h4>
           <p className="mt-2.5 text-base text-gray-500 leading-relaxed">Your account is a <a className="underline rounded hover:text-gray-700 focus:outline-none focus:ring" href="https://www.stacks.co" target="_blank" rel="noreferrer">Stacks</a> account and a Stacks account is used to access Stacks blockchain and Stacks data server. Stacks blockchain stores your account's information i.e. username, profile, and data server location. And Stacks data server stores your encrypted app data i.e. all your saved links.</p>
-          <p className="mt-4 text-base text-gray-500 leading-relaxed">Your account is derived from your Secret Key. Your Secret Key is a password that is only known to you. If you lose it, there is no way to retrieve it back. You need to keep it safe.</p>
+          <p className="mt-4 text-base text-gray-500 leading-relaxed">Your Secret Key is a password that is only known to you. If you lose it, there is no way to retrieve it back. You need to keep it safe.</p>
           <p className="mt-4 text-base text-gray-500 leading-relaxed">Your Secret Key cannot be changed or reset. As your Secret Key is used to encrypt your data, each file individually, if you change your Secret Key, every file needs to be decrypted with your old Secret Key and encrypted again with your new Secret Key.</p>
         </div>
         <div className="mt-8 mb-4">
