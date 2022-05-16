@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Animated } from 'react-native';
 
-import { fetch } from '../actions';
+import { fetch, endIapConnection } from '../actions';
 import {
   PC_100, PC_50, PC_33,
   SHOW_BLANK, SHOW_COMMANDS,
@@ -46,6 +46,10 @@ class Main extends React.PureComponent {
       prevProps.didFetchSettings !== this.props.didFetchSettings ||
       prevProps.fetchedListNames !== this.props.fetchedListNames
     ) this.fetch();
+  }
+
+  componentWillUnmount() {
+    this.props.endIapConnection();
   }
 
   getColumnWidth = (safeAreaWidth) => {
@@ -105,6 +109,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { fetch };
+const mapDispatchToProps = { fetch, endIapConnection };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(Main));

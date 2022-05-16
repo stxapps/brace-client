@@ -115,9 +115,6 @@ export const TOP_BAR_HEIGHT_MD = '6.75rem';
 export const BOTTOM_BAR_HEIGHT = '3.5rem';
 export const SEARCH_POPUP_HEIGHT = '3.625rem';
 
-export const BOTTOM_BAR_DURATION_CLASSNAME = 'duration-300';
-export const BOTTOM_BAR_DURATION = 225;
-
 export const SHARE_BORDER_RADIUS = {
   borderTopLeftRadius: 16,
   borderTopRightRadius: 16,
@@ -178,7 +175,7 @@ export const MODE_EDIT = 'MODE_EDIT';
 export const LAYOUT_CARD = 'LAYOUT_CARD';
 export const LAYOUT_LIST = 'LAYOUT_LIST';
 
-export const IAP_URL = 'http://127.0.0.1:8088';
+export const IAP_URL = 'https://iap-001.uc.r.appspot.com'; //'http://127.0.0.1:8088';
 export const IAP_STATUS_URL = IAP_URL + '/status';
 
 export const APPSTORE = 'AppStore';
@@ -198,3 +195,4 @@ export const GRACE = 'GracePeriod';
 export const ON_HOLD = 'OnHold';
 export const PAUSED = 'Paused';
 export const EXPIRED = 'Expired';
+//export const UNKNOWN = 'UNKNOWN';

@@ -15,6 +15,7 @@ export const initialSettingsState = {
   listNameMap: [
     { ...myListListNameObj }, { ...trashListNameObj }, { ...archiveListNameObj },
   ],
+  purchases: null, // an array with elements as purchase objs
 };
 
 export const initialListNameEditorState = {

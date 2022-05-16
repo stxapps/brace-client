@@ -8,6 +8,7 @@ import {
 import { FETCH_MORE } from '../types/actionTypes';
 import {
   _, isStringIn, excludeWithMainIds, isObject, isArrayEqual, isEqual, isOfflineAction,
+  getValidPurchase as _getValidPurchase,
 } from '../utils';
 import { initialListNameEditorState } from '../types/initialStates';
 
@@ -262,3 +263,8 @@ export const makeGetListNameEditor = () => {
     { memoizeOptions: { resultEqualityCheck: isEqual } },
   );
 };
+
+export const getValidPurchase = createSelector(
+  state => state.settings.purchases,
+  purchases => _getValidPurchase(purchases),
+);

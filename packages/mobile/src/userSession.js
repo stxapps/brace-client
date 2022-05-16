@@ -71,9 +71,11 @@ const signECDSA = async (content) => {
   return sigObj;
 };
 
-export default {
+const userSession = {
   didSessionCreate, hasSession, createSession,
   isUserSignedIn, handlePendingSignIn, signUserOut,
   updateUserData, loadUserData, putFile, getFile, deleteFile,
   listFiles, signECDSA,
 };
+
+export default userSession;

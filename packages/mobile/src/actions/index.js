@@ -2,6 +2,7 @@ import { Linking, AppState, Platform } from 'react-native';
 import { RESET_STATE as OFFLINE_RESET_STATE } from '@redux-offline/redux-offline/lib/constants';
 import axios from 'axios';
 //import RNFS from 'react-native-fs';
+import * as RNIap from 'react-native-iap';
 
 import userSession from '../userSession';
 import {
@@ -30,6 +31,9 @@ import {
   UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
   UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_LAYOUT_TYPE,
+  RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
+  REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
+  UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
   UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
   UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -42,6 +46,8 @@ import {
   MY_LIST, TRASH, N_LINKS,
   ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
+  IAP_STATUS_URL, APPSTORE, PLAYSTORE, COM_BRACEDOTTO, COM_BRACEDOTTO_SUPPORTER,
+  SIGNED_TEST_STRING, INVALID, UNKNOWN,
 } from '../types/const';
 import {
   _, isEqual,
@@ -1082,5 +1088,211 @@ export const updateDeleteAllDataProgress = (progress) => {
   return {
     type: UPDATE_DELETE_ALL_DATA_PROGRESS,
     payload: progress,
+  };
+};
+
+const getIapStatus = async () => {
+  const sigObj = await userSession.signECDSA(SIGNED_TEST_STRING);
+  const reqBody = {
+    userId: sigObj.publicKey,
+    signature: sigObj.signature,
+    appId: COM_BRACEDOTTO,
+    doForce: false,
+  };
+
+  let res = await axios.post(IAP_STATUS_URL, reqBody);
+  return res;
+};
+
+const verifyIapToken = async (productId, token) => {
+  let source;
+  if (Platform.OS === 'ios') source = APPSTORE;
+  else if (Platform.OS === 'android') source = PLAYSTORE;
+  else {
+    console.log(`Invalid Platform.OS: ${Platform.OS}`);
+    return { status: INVALID };
+  }
+
+  const sigObj = await userSession.signECDSA(SIGNED_TEST_STRING);
+  const userId = sigObj.publicKey;
+
+  const reqBody = { source, userId, productId, token };
+
+  let res;
+  try {
+    res = await axios.post(IAP_STATUS_URL, reqBody);
+    return res;
+  } catch (error) {
+    console.log(`Error when contact IAP server to verify with reqBody: ${JSON.stringify(reqBody)}, Error: `, error);
+    return { status: UNKNOWN };
+  }
+};
+
+const iapUpdatedListener = async (purchase) => {
+  console.log('purchaseUpdatedListener', purchase);
+  if (!purchase) {
+    //dispatch();
+    return;
+  }
+
+  // Need to check purchaseStateAndroid?
+
+  // Need to handle PENDING state?
+
+  let token = null;
+  if (Platform.OS === 'ios') token = purchase.transactionReceipt
+  else if (Platform.OS === 'android') token = purchase.purchaseToken
+
+
+
+  if (token) {
+
+    const verifyResult = await verifyIapToken(purchase.purchaseToken);
+
+    // dispatch unlock features
+
+    try {
+
+      // Need to check already acknowledge?
+      if (Platform.OS !== 'android') {
+        await RNIap.finishTransaction(purchase, false);
+      }
+    } catch (e) {
+
+    }
+  } else {
+    // dispatch();
+  }
+};
+
+const iapErrorListener = async (error) => {
+
+};
+
+let iapUpdatedEventEmitter = null, iapErrorEventEmitter = null;
+const registerIapListeners = (doRegister) => {
+  if (doRegister) {
+    if (!iapUpdatedEventEmitter) {
+      iapUpdatedEventEmitter = RNIap.purchaseUpdatedListener(iapUpdatedListener);
+    }
+    if (!iapErrorEventEmitter) {
+      iapErrorEventEmitter = RNIap.purchaseErrorListener(iapErrorListener);
+    }
+  } else {
+    if (iapUpdatedEventEmitter) {
+      iapUpdatedEventEmitter.remove();
+      iapUpdatedEventEmitter = null;
+    }
+    if (iapErrorEventEmitter) {
+      iapErrorEventEmitter.remove();
+      iapErrorEventEmitter = null;
+    }
+  }
+};
+
+export const endIapConnection = () => async (dispatch, getState) => {
+  registerIapListeners(false);
+  try {
+    await RNIap.endConnection();
+  } catch (e) {
+
+  }
+  //dispatch();
+};
+
+let didGetIapProducts = false;
+export const initIapConnectionAndGetProducts = (doForce) => async (
+  dispatch, getState
+) => {
+  if (didGetIapProducts && !doForce) {
+    //dispatch();
+    return;
+  }
+  didGetIapProducts = true;
+
+  if (doForce) {
+    await endIapConnection()(dispatch, getState);
+  }
+
+  try {
+    registerIapListeners(true);
+    const canMakePayments = await RNIap.initConnection();
+    if (canMakePayments) {
+      const products = await RNIap.getSubscriptions([COM_BRACEDOTTO_SUPPORTER]);
+      //dispatch();
+    } else {
+      //dispatch();
+    }
+  } catch (e) {
+    //dispatch();
+  }
+};
+
+export const requestPurchase = (productId) => async (dispatch, getState) => {
+  //dispatch({ type: REQUEST_PURCHASE });
+  try {
+    await RNIap.requestSubscription(productId);
+    // should be in listener?
+    //dispatch({ type: REQUEST_PURCHASE_COMMIT });
+  } catch (error) {
+    console.log(`Error when request purchase: `, error);
+    // should be in listener?
+    //dispatch({ type: REQUEST_PURCHASE_ROLLBACK });
+  }
+};
+
+export const restorePurchases = () => async (dispatch, getState) => {
+  dispatch({ type: RESTORE_PURCHASES });
+
+  // get status, do force = true?
+  let res;
+  try {
+    res = await getIapStatus();
+    //dispatch({ type: RESTORE_PURCHASES_COMMIT, payload: res.data });
+  } catch (error) {
+    console.log(`Error when contact IAP server to restore purchases: `, error);
+    //dispatch({ type: RESTORE_PURCHASES_ROLLBACK });
+  }
+
+  // if res and has a purchase
+  //   return
+
+
+  // getAvailableItemsByType, iapUpdatedListener can be missed!
+  //   check status is PURCHASED, not PENDING
+  // return only ACTIVE, NO_RENEW, and GRACE
+
+  // if not in iap-server yet, need to verify!
+
+
+};
+
+export const refreshPurchases = () => async (dispatch, getState) => {
+  dispatch({ type: REFRESH_PURCHASES });
+  try {
+    const res = await getIapStatus();
+    dispatch({ type: REFRESH_PURCHASES_COMMIT, payload: res.data });
+  } catch (error) {
+    console.log(`Error when contact IAP server to refresh purchases: `, error);
+    dispatch({ type: REFRESH_PURCHASES_ROLLBACK });
+  }
+};
+
+export const updateIapPublicKey = () => async (dispatch, getState) => {
+  const sigObj = await userSession.signECDSA(SIGNED_TEST_STRING);
+  dispatch({ type: UPDATE_IAP_PUBLIC_KEY, payload: sigObj.publicKey });
+};
+
+export const updateIapRestoreStatus = (status) => {
+  return {
+    type: UPDATE_IAP_RESTORE_STATUS,
+    payload: status,
+  };
+};
+
+export const updateIapRefreshStatus = (status) => {
+  return {
+    type: UPDATE_IAP_REFRESH_STATUS,
+    payload: status,
   };
 };

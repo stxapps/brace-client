@@ -13,6 +13,7 @@ import stacksAccessReducer from './stacksAccessReducer';
 import snapshotReducer from './snapshotReducer';
 import linkEditorReducer from './linkEditorReducer';
 import listNameEditorsReducer from './listNameEditorsReducer';
+import iapReducer from './iapReducer';
 
 export default combineReducers({
   window: windowReducer,
@@ -28,4 +29,5 @@ export default combineReducers({
   snapshot: snapshotReducer,
   linkEditor: linkEditorReducer,
   listNameEditors: listNameEditorsReducer,
+  iap: iapReducer,
 });
