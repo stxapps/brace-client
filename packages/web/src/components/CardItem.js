@@ -49,7 +49,7 @@ class CardItem extends React.Component {
 
     return (
       <React.Fragment>
-        <div className="absolute inset-0 bg-black opacity-75" />
+        <div className="absolute inset-0 bg-black bg-opacity-75" />
         <div className="px-4 absolute inset-0 flex flex-col justify-center items-center bg-transparent">
           <h3 className="text-base text-white font-semibold text-center">Oops..., something went wrong!</h3>
           <div className="pt-4 flex justify-center items-center">
@@ -84,9 +84,9 @@ class CardItem extends React.Component {
     return (
       <div className="mx-auto relative max-w-md bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm sm:max-w-none">
         <CardItemContent link={link} />
-        {isDiedStatus(status) && this.renderRetry()}
         {[ADDING, MOVING].includes(status) && this.renderBusy()}
         {![ADDING, MOVING].includes(status) && <CardItemSelector linkId={link.id} />}
+        {isDiedStatus(status) && this.renderRetry()}
       </div>
     );
   }

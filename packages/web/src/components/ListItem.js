@@ -37,7 +37,7 @@ const ListItem = (props) => {
 
     return (
       <React.Fragment>
-        <div className="absolute inset-0 bg-black opacity-75" />
+        <div className="absolute inset-0 bg-black bg-opacity-75" />
         <div className="absolute inset-0 flex bg-transparent p-1">
           <div className="flex-grow flex-shrink min-w-0 flex flex-col justify-center items-center">
             <h3 className="text-base text-white font-semibold text-center leading-5">{errMsg}</h3>
@@ -79,9 +79,9 @@ const ListItem = (props) => {
   return (
     <li className="bg-white relative">
       <ListItemContent link={link} />
-      {isDiedStatus(status) && renderRetry()}
       {[ADDING, MOVING].includes(status) && renderBusy()}
       {![ADDING, MOVING].includes(status) && <ListItemSelector linkId={link.id} />}
+      {isDiedStatus(status) && renderRetry()}
     </li>
   );
 };

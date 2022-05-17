@@ -70,7 +70,7 @@ class BottomBarAddPopup extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <button onClick={this.onAddCancelBtnClick} tabIndex={-1} className={`${!isAddPopupShown ? 'hidden' : ''} fixed inset-0 w-full h-full bg-black opacity-25 cursor-default z-40 focus:outline-none`} />
+        <button onClick={this.onAddCancelBtnClick} tabIndex={-1} className={`${!isAddPopupShown ? 'hidden' : ''} fixed inset-0 w-full h-full bg-black bg-opacity-25 cursor-default z-40 focus:outline-none`} />
         <div className={`px-4 pt-6 pb-6 fixed inset-x-0 bottom-0 bg-white border border-gray-100 rounded-t-lg shadow-xl transform ${!isAddPopupShown ? 'translate-y-full' : ''} z-41`}>
           <div className="flex">
             <span className="inline-flex items-center bg-white text-sm text-gray-600">Url:</span>

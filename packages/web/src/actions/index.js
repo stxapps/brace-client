@@ -1507,7 +1507,7 @@ export const restorePurchases = () => async (dispatch, getState) => {
     const res = await getIapStatus();
     dispatch({ type: RESTORE_PURCHASES_COMMIT, payload: res.data });
   } catch (error) {
-    console.log(`Error when contact IAP server to restore purchases: `, error);
+    console.log('Error when contact IAP server to restore purchases: ', error);
     dispatch({ type: RESTORE_PURCHASES_ROLLBACK });
   }
 };
@@ -1518,7 +1518,7 @@ export const refreshPurchases = () => async (dispatch, getState) => {
     const res = await getIapStatus();
     dispatch({ type: REFRESH_PURCHASES_COMMIT, payload: res.data });
   } catch (error) {
-    console.log(`Error when contact IAP server to refresh purchases: `, error);
+    console.log('Error when contact IAP server to refresh purchases: ', error);
     dispatch({ type: REFRESH_PURCHASES_ROLLBACK });
   }
 };
