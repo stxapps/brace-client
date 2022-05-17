@@ -6,7 +6,7 @@ import { BOTTOM_BAR_HEIGHT } from '../types/const';
 import { getPopupLink } from '../selectors';
 import { toPx } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
-import { bbAnimConfig } from '../types/animConfigs';
+import { bbFMV } from '../types/animConfigs';
 
 import { withSafeAreaContext } from '.';
 
@@ -32,8 +32,8 @@ class BottomBar extends React.PureComponent {
 
       const totalHeight = toPx(BOTTOM_BAR_HEIGHT) + insets.bottom;
       const toValue = isShown ? 0 : totalHeight;
-
-      Animated.spring(this.bottomBarTranslateY, { toValue, ...bbAnimConfig }).start();
+      const animConfig = isShown ? bbFMV.visible : bbFMV.hidden;
+      Animated.timing(this.bottomBarTranslateY, { toValue, ...animConfig }).start();
     }
   }
 

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { I18nManager, Animated, StyleSheet, View } from 'react-native';
 
-import { popoverOpenAnimConfig, popoverCloseAnimConfig } from '../types/animConfigs';
+import { popupFMV } from '../types/animConfigs';
 
 const popoverPadding = 7;
 const anchorSize = 15;
@@ -208,15 +208,15 @@ export default class MenuPopoverRenderer extends React.PureComponent {
   }
 
   componentDidMount() {
-    Animated.spring(
-      this.state.scaleAnim, { toValue: 1, ...popoverOpenAnimConfig }
+    Animated.timing(
+      this.state.scaleAnim, { toValue: 1, ...popupFMV.visible }
     ).start();
   }
 
   close() {
     return new Promise(resolve => {
-      Animated.spring(
-        this.state.scaleAnim, { toValue: 0, ...popoverCloseAnimConfig }
+      Animated.timing(
+        this.state.scaleAnim, { toValue: 0, ...popupFMV.hidden }
       ).start(resolve);
     });
   }
@@ -237,15 +237,15 @@ export default class MenuPopoverRenderer extends React.PureComponent {
     let startTranslateX, startTranslateY;
     if (placement === 'top') {
       startTranslateX = 0;
-      startTranslateY = oHeight / 2;
+      startTranslateY = oHeight * 0.05 / 2;
     } else if (placement === 'bottom') {
       startTranslateX = 0;
-      startTranslateY = -1 * oHeight / 2;
+      startTranslateY = -1 * oHeight * 0.05 / 2;
     } else if (placement === 'left') {
-      startTranslateX = oWidth / 2;
+      startTranslateX = oWidth * 0.05 / 2;
       startTranslateY = 0;
     } else if (placement === 'right') {
-      startTranslateX = -1 * oWidth / 2;
+      startTranslateX = -1 * oWidth * 0.05 / 2;
       startTranslateY = 0;
     } else throw new Error(`Invalid placement: ${placement}`);
 
@@ -262,7 +262,9 @@ export default class MenuPopoverRenderer extends React.PureComponent {
       transform: [
         { translateX: changingTranslateX },
         { translateY: changingTranslateY },
-        { scale: scaleAnim },
+        {
+          scale: scaleAnim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }),
+        },
       ],
     };
 

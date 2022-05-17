@@ -2,7 +2,7 @@ import React from 'react';
 import { I18nManager, Animated, StyleSheet } from 'react-native';
 
 import { ZERO, CENTER, EDGE, AT_TRIGGER, EDGE_TRIGGER } from '../types/const';
-import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
+import { popupFMV } from '../types/animConfigs';
 
 const axisPosition = (oDim, wDim, tPos, tDim) => {
   // if options are bigger than window dimension, then render at 0
@@ -150,15 +150,15 @@ export default class MenuPopupRenderer extends React.PureComponent {
   }
 
   componentDidMount() {
-    Animated.spring(
-      this.state.scaleAnim, { toValue: 1, ...popupOpenAnimConfig }
+    Animated.timing(
+      this.state.scaleAnim, { toValue: 1, ...popupFMV.visible }
     ).start();
   }
 
   close() {
     return new Promise(resolve => {
-      Animated.spring(
-        this.state.scaleAnim, { toValue: 0, ...popupCloseAnimConfig }
+      Animated.timing(
+        this.state.scaleAnim, { toValue: 0, ...popupFMV.hidden }
       ).start(resolve);
     });
   }
@@ -174,17 +174,17 @@ export default class MenuPopupRenderer extends React.PureComponent {
 
     let startTranslateX, startTranslateY;
     if (topOrigin === AT_TRIGGER && leftOrigin === AT_TRIGGER) {
-      startTranslateX = -1 * oWidth / 2;
-      startTranslateY = -1 * oHeight / 2;
+      startTranslateX = -1 * oWidth * 0.05 / 2;
+      startTranslateY = -1 * oHeight * 0.05 / 2;
     } else if (topOrigin === AT_TRIGGER && leftOrigin === EDGE_TRIGGER) {
-      startTranslateX = oWidth / 2;
-      startTranslateY = -1 * oHeight / 2;
+      startTranslateX = oWidth * 0.05 / 2;
+      startTranslateY = -1 * oHeight * 0.05 / 2;
     } else if (topOrigin === EDGE_TRIGGER && leftOrigin === AT_TRIGGER) {
-      startTranslateX = -1 * oWidth / 2;
-      startTranslateY = oHeight / 2;
+      startTranslateX = -1 * oWidth * 0.05 / 2;
+      startTranslateY = oHeight * 0.05 / 2;
     } else if (topOrigin === EDGE_TRIGGER && leftOrigin === EDGE_TRIGGER) {
-      startTranslateX = oWidth / 2;
-      startTranslateY = oHeight / 2;
+      startTranslateX = oWidth * 0.05 / 2;
+      startTranslateY = oHeight * 0.05 / 2;
     } else {
       startTranslateX = 0;
       startTranslateY = 0;
@@ -203,7 +203,11 @@ export default class MenuPopupRenderer extends React.PureComponent {
       transform: [
         { translateX: changingTranslateX },
         { translateY: changingTranslateY },
-        { scale: scaleAnim },
+        {
+          scale: scaleAnim.interpolate({
+            inputRange: [0, 1], outputRange: [0.95, 1],
+          }),
+        },
       ],
     };
 

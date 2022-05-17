@@ -57,8 +57,8 @@ class CardItem extends React.Component {
 
     return (
       <React.Fragment>
-        <View style={tailwind('absolute inset-0 bg-black opacity-75 rounded-lg elevation-xs')} />
-        <View style={tailwind('px-4 absolute inset-0 justify-center items-center bg-transparent rounded-lg elevation-xs')}>
+        <View style={tailwind('absolute inset-0 bg-black bg-opacity-75 rounded-lg')} />
+        <View style={tailwind('px-4 absolute inset-0 justify-center items-center bg-transparent rounded-lg')}>
           <Text style={tailwind('text-base text-white font-semibold text-center')}>Oops..., something went wrong!</Text>
           <View style={tailwind('pt-4 flex-row justify-center items-center')}>
             <TouchableOpacity onPress={this.onRetryRetryBtnClick}>
@@ -118,9 +118,9 @@ class CardItem extends React.Component {
       <View style={style}>
         <View style={tailwind(`self-center bg-white rounded-lg ${viewStyle}`)}>
           <CardItemContent link={link} />
-          {isDiedStatus(status) && this.renderRetry()}
           {[ADDING, MOVING].includes(status) && this.renderBusy()}
           {![ADDING, MOVING].includes(status) && <CardItemSelector linkId={link.id} />}
+          {isDiedStatus(status) && this.renderRetry()}
         </View>
       </View>
     );

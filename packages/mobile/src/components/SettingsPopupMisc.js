@@ -71,7 +71,7 @@ class SettingsPopupMisc extends React.PureComponent {
     const switchTrackColorOff = 'rgb(156, 163, 175)';
 
     return (
-      <View style={tailwind('p-4 relative md:p-6 md:pt-4', safeAreaWidth)}>
+      <View style={tailwind('p-4 relative md:p-6', safeAreaWidth)}>
         <View style={tailwind('border-b border-gray-200 md:hidden', safeAreaWidth)}>
           <TouchableOpacity onPress={this.props.onSidebarOpenBtnClick} style={tailwind('pb-1')}>
             <Text style={tailwind('text-sm text-gray-500 font-normal')}>{'<'} <Text style={tailwind('text-sm text-gray-500 font-normal')}>Settings</Text></Text>

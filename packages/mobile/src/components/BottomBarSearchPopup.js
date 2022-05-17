@@ -12,7 +12,7 @@ import {
 import { getPopupLink } from '../selectors';
 import { toPx } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
-import { bbAnimConfig } from '../types/animConfigs';
+import { bbFMV } from '../types/animConfigs';
 
 import { withSafeAreaContext } from '.';
 
@@ -150,7 +150,7 @@ class BottomBarSearchPopup extends React.PureComponent {
     }
 
     if (!prevIsBottomBarShown && isBottomBarShown) {
-      Animated.spring(this.searchPopupTranslateY, { toValue, ...bbAnimConfig }).start();
+      Animated.timing(this.searchPopupTranslateY, { toValue, ...bbFMV.visible }).start();
     } else {
       Animated.timing(this.searchPopupTranslateY, {
         toValue: toValue,

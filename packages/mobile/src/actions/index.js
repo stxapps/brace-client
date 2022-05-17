@@ -1140,8 +1140,8 @@ const iapUpdatedListener = async (purchase) => {
   // Need to handle PENDING state?
 
   let token = null;
-  if (Platform.OS === 'ios') token = purchase.transactionReceipt
-  else if (Platform.OS === 'android') token = purchase.purchaseToken
+  if (Platform.OS === 'ios') token = purchase.transactionReceipt;
+  else if (Platform.OS === 'android') token = purchase.purchaseToken;
 
 
 
@@ -1235,7 +1235,7 @@ export const requestPurchase = (productId) => async (dispatch, getState) => {
     // should be in listener?
     //dispatch({ type: REQUEST_PURCHASE_COMMIT });
   } catch (error) {
-    console.log(`Error when request purchase: `, error);
+    console.log('Error when request purchase: ', error);
     // should be in listener?
     //dispatch({ type: REQUEST_PURCHASE_ROLLBACK });
   }
@@ -1250,10 +1250,11 @@ export const restorePurchases = () => async (dispatch, getState) => {
     res = await getIapStatus();
     //dispatch({ type: RESTORE_PURCHASES_COMMIT, payload: res.data });
   } catch (error) {
-    console.log(`Error when contact IAP server to restore purchases: `, error);
+    console.log('Error when contact IAP server to restore purchases: ', error);
     //dispatch({ type: RESTORE_PURCHASES_ROLLBACK });
   }
 
+  if (res) { }
   // if res and has a purchase
   //   return
 
@@ -1273,7 +1274,7 @@ export const refreshPurchases = () => async (dispatch, getState) => {
     const res = await getIapStatus();
     dispatch({ type: REFRESH_PURCHASES_COMMIT, payload: res.data });
   } catch (error) {
-    console.log(`Error when contact IAP server to refresh purchases: `, error);
+    console.log('Error when contact IAP server to refresh purchases: ', error);
     dispatch({ type: REFRESH_PURCHASES_ROLLBACK });
   }
 };

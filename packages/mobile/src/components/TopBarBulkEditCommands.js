@@ -11,7 +11,7 @@ import { getListNameMap } from '../selectors';
 import { getListNameDisplayName, getAllListNames, toPx } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
-import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
+import { popupFMV } from '../types/animConfigs';
 
 class TopBarBulkEditCommands extends React.Component {
 
@@ -43,14 +43,14 @@ class TopBarBulkEditCommands extends React.Component {
     const { isEmptyErrorShown } = this.state;
 
     if (!prevState.isEmptyErrorShown && isEmptyErrorShown) {
-      Animated.spring(
-        this.emptyErrorScale, { toValue: 1, ...popupOpenAnimConfig }
+      Animated.timing(
+        this.emptyErrorScale, { toValue: 1, ...popupFMV.visible }
       ).start();
     }
 
     if (prevState.isEmptyErrorShown && !isEmptyErrorShown) {
-      Animated.spring(
-        this.emptyErrorScale, { toValue: 0, ...popupCloseAnimConfig }
+      Animated.timing(
+        this.emptyErrorScale, { toValue: 0, ...popupFMV.hidden }
       ).start(() => {
         this.setState({ didEmptyErrorCloseAnimEnd: true });
       });
@@ -158,7 +158,13 @@ class TopBarBulkEditCommands extends React.Component {
       return null;
     }
 
-    const emptyErrorStyle = { transform: [{ scale: this.emptyErrorScale }] };
+    const emptyErrorStyle = {
+      transform: [{
+        scale: this.emptyErrorScale.interpolate({
+          inputRange: [0, 1], outputRange: [0.95, 1],
+        }),
+      }],
+    };
 
     return (
       <View style={cache('TBBEC_emptyError', [tailwind('absolute inset-x-0 justify-center items-center'), { top: toPx(TOP_HEADER_HEIGHT) }])}>

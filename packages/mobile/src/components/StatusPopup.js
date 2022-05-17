@@ -12,7 +12,7 @@ import {
 import { SM_WIDTH } from '../types/const';
 import { updateStatus } from '../actions';
 import { tailwind } from '../stylesheets/tailwind';
-import { statusPopupAnimConfig } from '../types/animConfigs';
+import { statusPopupFMV } from '../types/animConfigs';
 
 import { withSafeAreaContext } from '.';
 
@@ -74,24 +74,24 @@ class StatusPopup extends React.PureComponent {
 
     if (!this.prevProps.status && this.props.status) {
       if (this.animation) this.animation.stop();
-      this.animation = Animated.spring(
-        this.translateX, { toValue: -1 * textWidth, ...statusPopupAnimConfig.visible }
+      this.animation = Animated.timing(
+        this.translateX, { toValue: -1 * textWidth, ...statusPopupFMV.visible }
       );
       this.animation.start();
     }
 
     if (this.prevProps.status && !this.props.status) {
       if (this.animation) this.animation.stop();
-      this.animation = Animated.spring(
-        this.translateX, { toValue: 0, ...statusPopupAnimConfig.hidden }
+      this.animation = Animated.timing(
+        this.translateX, { toValue: 0, ...statusPopupFMV.hidden }
       );
       this.animation.start();
     }
 
     if (this.prevProps.status && this.props.status && this.textWidth !== textWidth) {
       if (this.animation) this.animation.stop();
-      this.animation = Animated.spring(
-        this.translateX, { toValue: -1 * textWidth, ...statusPopupAnimConfig.visible }
+      this.animation = Animated.timing(
+        this.translateX, { toValue: -1 * textWidth, ...statusPopupFMV.visible }
       );
       this.animation.start();
     }

@@ -19,7 +19,7 @@ import {
 } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
-import { cardItemAnimConfig } from '../types/animConfigs';
+import { cardItemFMV } from '../types/animConfigs';
 
 import { withSafeAreaContext } from '.';
 import MenuPopupRenderer from './MenuPopupRenderer';
@@ -69,7 +69,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
     const { id, url } = this.props.link;
     const { safeAreaWidth } = this.props;
-    const animConfig = cardItemAnimConfig(safeAreaWidth);
+    const animConfig = cardItemFMV(safeAreaWidth);
 
     if (text === OPEN) {
       Linking.openURL(ensureContainUrlProtocol(url));

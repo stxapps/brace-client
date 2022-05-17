@@ -5,9 +5,7 @@ import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-m
 import Svg, { Path } from 'react-native-svg';
 
 import { signOut, updatePopup, updateSettingsPopup, updateBulkEdit } from '../actions';
-import {
-  DOMAIN_NAME, HASH_LANDING_HOW, HASH_SUPPORT, PROFILE_POPUP,
-} from '../types/const';
+import { DOMAIN_NAME, HASH_SUPPORT, PROFILE_POPUP } from '../types/const';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
@@ -40,11 +38,6 @@ class TopBarCommands extends React.PureComponent {
     Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT);
   }
 
-  onHowBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, false);
-    Linking.openURL(DOMAIN_NAME + '/' + HASH_LANDING_HOW);
-  }
-
   onSignOutBtnClick = () => {
     // No need to update it, will get already unmount
     //this.props.updatePopup(PROFILE_POPUP, false);
@@ -59,9 +52,6 @@ class TopBarCommands extends React.PureComponent {
         </MenuOption>
         <MenuOption onSelect={this.onSupportBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
           <Text style={tailwind('py-2.5 pl-4 text-sm text-gray-700 font-normal')}>Support</Text>
-        </MenuOption>
-        <MenuOption onSelect={this.onHowBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
-          <Text style={tailwind('py-2.5 pl-4 text-sm text-gray-700 font-normal')}>How to</Text>
         </MenuOption>
         <MenuOption onSelect={this.onSignOutBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
           <Text style={tailwind('py-2.5 pl-4 text-sm text-gray-700 font-normal')}>Sign out</Text>

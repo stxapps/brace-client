@@ -2,13 +2,11 @@ import { LayoutAnimation, Easing } from 'react-native';
 
 import { SM_WIDTH } from './const';
 
-export const cardItemAnimConfig = (safeAreaWidth) => {
-
+export const cardItemFMV = (safeAreaWidth) => {
   if (safeAreaWidth < SM_WIDTH) {
     return LayoutAnimation.create(
       225,
       LayoutAnimation.Types.easeInEaseOut,
-      /** @ts-ignore */
       LayoutAnimation.Properties.scaleY
     );
   }
@@ -20,85 +18,112 @@ export const cardItemAnimConfig = (safeAreaWidth) => {
   );
 };
 
-export const popupOpenAnimConfig = {
-  stiffness: 220,
-  damping: 17,
-  mass: 1,
-  useNativeDriver: true,
+export const popupFMV = {
+  hidden: {
+    duration: 75,
+    easing: Easing.bezier(0.4, 0, 1, 1),
+    useNativeDriver: true,
+  },
+  visible: {
+    duration: 100,
+    easing: Easing.bezier(0, 0, 0.2, 1),
+    useNativeDriver: true,
+  },
 };
 
-export const popupCloseAnimConfig = {
-  stiffness: 110,
-  damping: 10,
-  mass: 1,
-  overshootClamping: true,
-  useNativeDriver: true,
+export const dialogFMV = {
+  hidden: {
+    duration: 200,
+    easing: Easing.bezier(0.4, 0, 1, 1),
+    useNativeDriver: true,
+  },
+  visible: {
+    duration: 300,
+    easing: Easing.bezier(0, 0, 0.2, 1),
+    useNativeDriver: true,
+  },
 };
 
-export const popoverOpenAnimConfig = {
-  stiffness: 220,
-  damping: 17,
-  mass: 1,
-  useNativeDriver: true,
+export const bbFMV = {
+  hidden: {
+    duration: 75,
+    easing: Easing.bezier(0.4, 0, 1, 1),
+    useNativeDriver: true,
+  },
+  visible: {
+    duration: 100,
+    easing: Easing.bezier(0, 0, 0.2, 1),
+    useNativeDriver: true,
+  },
 };
 
-export const popoverCloseAnimConfig = {
-  stiffness: 110,
-  damping: 10,
-  mass: 1,
-  overshootClamping: true,
-  useNativeDriver: true,
+export const bModalFMV = {
+  hidden: {
+    duration: 200,
+    easing: Easing.bezier(0.4, 0, 1, 1),
+    useNativeDriver: true,
+  },
+  visible: {
+    duration: 200,
+    easing: Easing.bezier(0, 0, 0.2, 1),
+    useNativeDriver: true,
+  },
 };
 
-export const bbAnimConfig = {
-  stiffness: 220,
-  damping: 17,
-  mass: 1,
-  overshootClamping: true,
-  useNativeDriver: true,
+export const sidebarFMV = {
+  hidden: {
+    duration: 200,
+    easing: Easing.bezier(0.4, 0, 1, 1),
+    useNativeDriver: true,
+  },
+  visible: {
+    duration: 200,
+    easing: Easing.bezier(0, 0, 0.2, 1),
+    useNativeDriver: true,
+  },
 };
 
-export const bModalOpenAnimConfig = {
-  stiffness: 300,
-  damping: 20,
-  mass: 1,
-  useNativeDriver: true,
-};
-
-export const bModalCloseAnimConfig = {
-  stiffness: 200,
-  damping: 10,
-  mass: 1,
-  overshootClamping: true,
-  useNativeDriver: true,
-};
-
-export const spListsAnimConfig = () => {
+export const listsFMV = () => {
   return LayoutAnimation.create(
-    225,
+    150,
     LayoutAnimation.Types.easeInEaseOut,
-    /** @ts-ignore */
     LayoutAnimation.Properties.scaleY
   );
 };
 
-export const statusPopupAnimConfig = {
+export const statusPopupFMV = {
   hidden: {
-    stiffness: 200,
-    damping: 10,
-    mass: 1,
-    overshootClamping: true,
+    duration: 150,
+    easing: Easing.bezier(0.4, 0, 1, 1),
     useNativeDriver: true,
   },
   visible: {
-    stiffness: 300,
-    damping: 20,
-    mass: 1,
+    duration: 150,
+    easing: Easing.bezier(0, 0, 0.2, 1),
     useNativeDriver: true,
   },
 };
 
-export const slideAnimConfig = {
+export const fetchedPopupFMV = {
+  hidden: {
+    duration: 150,
+    easing: Easing.bezier(0.4, 0, 1, 1),
+    useNativeDriver: true,
+  },
+  visible: {
+    duration: 150,
+    easing: Easing.bezier(0, 0, 0.2, 1),
+    useNativeDriver: true,
+  },
+};
+
+export const slideInPopupFMV = {
+  duration: 225,
+  easing: Easing.bezier(0.4, 0, 0.2, 1),
+  useNativeDriver: true,
+};
+
+export const slideInModalFMV = {
   duration: 300,
   easing: Easing.bezier(0.4, 0, 0.2, 1),
   useNativeDriver: true,

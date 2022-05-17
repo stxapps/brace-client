@@ -17,8 +17,7 @@ import {
 } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 import {
-  popupOpenAnimConfig, popupCloseAnimConfig,
-  bModalOpenAnimConfig, bModalCloseAnimConfig, slideAnimConfig,
+  popupFMV, bModalFMV, slideInPopupFMV, slideInModalFMV,
 } from '../types/animConfigs';
 
 import { useSafeAreaFrame, useSafeAreaInsets } from '.';
@@ -92,6 +91,10 @@ const ListNamesPopup = () => {
   const maxChildrenSize = useMemo(() => {
     return getMaxListNameChildrenSize(derivedListNameMap);
   }, [derivedListNameMap]);
+  const slideFMV = useMemo(() => {
+    if (animType === ANIM_TYPE_BMODAL) return slideInModalFMV;
+    return slideInPopupFMV;
+  }, [animType]);
 
   const onCancelBtnClick = useCallback(() => {
     if (didClick.current) return;
@@ -140,7 +143,7 @@ const ListNamesPopup = () => {
   };
 
   const onForwardBtnClick = (selectedListName) => {
-    Animated.timing(slideAnim, { toValue: 1, ...slideAnimConfig }).start(() => {
+    Animated.timing(slideAnim, { toValue: 1, ...slideFMV }).start(() => {
       setCurrentListName(selectedListName);
       setForwardCount(forwardCount + 1);
     });
@@ -170,13 +173,13 @@ const ListNamesPopup = () => {
     if (derivedIsShown) {
       didClick.current = false;
 
-      let animConfig = popupOpenAnimConfig;
-      if (animType === ANIM_TYPE_BMODAL) animConfig = bModalOpenAnimConfig;
-      Animated.spring(popupAnim, { toValue: 1, ...animConfig }).start();
+      let animConfig = popupFMV.visible;
+      if (animType === ANIM_TYPE_BMODAL) animConfig = bModalFMV.visible;
+      Animated.timing(popupAnim, { toValue: 1, ...animConfig }).start();
     } else {
-      let animConfig = popupCloseAnimConfig;
-      if (animType === ANIM_TYPE_BMODAL) animConfig = bModalCloseAnimConfig;
-      Animated.spring(popupAnim, { toValue: 0, ...animConfig }).start(() => {
+      let animConfig = popupFMV.hidden;
+      if (animType === ANIM_TYPE_BMODAL) animConfig = bModalFMV.hidden;
+      Animated.timing(popupAnim, { toValue: 0, ...animConfig }).start(() => {
         if (didMount) {
           setDidCloseAnimEnd(true);
         }
@@ -191,8 +194,8 @@ const ListNamesPopup = () => {
   }, [derivedIsShown, popupAnim, animType, registerPopupBackHandler]);
 
   useEffect(() => {
-    Animated.timing(slideAnim, { toValue: 0, ...slideAnimConfig }).start();
-  }, [backCount, slideAnim]);
+    Animated.timing(slideAnim, { toValue: 0, ...slideFMV }).start();
+  }, [backCount, slideFMV, slideAnim]);
 
   if (derivedIsShown !== isShown) {
     if (derivedIsShown && !isShown) setDidCloseAnimEnd(false);
@@ -361,10 +364,10 @@ const ListNamesPopup = () => {
 
   let panel;
   if (animType === ANIM_TYPE_BMODAL) {
-    popupHeight = popupHeight + insets.bottom + 48; // 48 for -bottom-12
+    popupHeight = popupHeight + insets.bottom;
     const popupStyle = {
       height: popupHeight,
-      paddingBottom: insets.bottom + 48,
+      paddingBottom: insets.bottom,
       transform: [{
         translateY: popupAnim.interpolate({
           inputRange: [0, 1], outputRange: [popupHeight, 0],
@@ -373,7 +376,7 @@ const ListNamesPopup = () => {
     };
 
     panel = (
-      <Animated.View style={[tailwind('absolute inset-x-0 -bottom-12 bg-white border border-gray-100 rounded-t-lg shadow-xl'), popupStyle]}>
+      <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 bg-white border border-gray-100 rounded-t-lg shadow-xl'), popupStyle]}>
         {_render()}
       </Animated.View>
     );
@@ -396,49 +399,51 @@ const ListNamesPopup = () => {
     if (originClassName === 'origin-top-left') {
       popupStyle.transform.push({
         translateX: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [-1 * popupWidth / 2, 0],
+          inputRange: [0, 1], outputRange: [-1 * popupWidth * 0.05 / 2, 0],
         }),
       });
       popupStyle.transform.push({
         translateY: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [-1 * popupHeight / 2, 0],
+          inputRange: [0, 1], outputRange: [-1 * popupHeight * 0.05 / 2, 0],
         }),
       });
     } else if (originClassName === 'origin-top-right') {
       popupStyle.transform.push({
         translateX: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [popupWidth / 2, 0],
+          inputRange: [0, 1], outputRange: [popupWidth * 0.05 / 2, 0],
         }),
       });
       popupStyle.transform.push({
         translateY: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [-1 * popupHeight / 2, 0],
+          inputRange: [0, 1], outputRange: [-1 * popupHeight * 0.05 / 2, 0],
         }),
       });
     } else if (originClassName === 'origin-bottom-left') {
       popupStyle.transform.push({
         translateX: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [-1 * popupWidth / 2, 0],
+          inputRange: [0, 1], outputRange: [-1 * popupWidth * 0.05 / 2, 0],
         }),
       });
       popupStyle.transform.push({
         translateY: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [popupHeight / 2, 0],
+          inputRange: [0, 1], outputRange: [popupHeight * 0.05 / 2, 0],
         }),
       });
     } else if (originClassName === 'origin-bottom-right') {
       popupStyle.transform.push({
         translateX: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [popupWidth / 2, 0],
+          inputRange: [0, 1], outputRange: [popupWidth * 0.05 / 2, 0],
         }),
       });
       popupStyle.transform.push({
         translateY: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [popupHeight / 2, 0],
+          inputRange: [0, 1], outputRange: [popupHeight * 0.05 / 2, 0],
         }),
       });
     }
-    popupStyle.transform.push({ scale: popupAnim });
+    popupStyle.transform.push({
+      scale: popupAnim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }),
+    });
 
     panel = (
       <Animated.View style={[tailwind('absolute mt-1 rounded-md bg-white shadow-xl'), popupStyle]}>

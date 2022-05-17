@@ -8,7 +8,7 @@ import { MAX_SELECTED_LINK_IDS } from '../types/const';
 import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
 import { makeIsLinkIdSelected, getSelectedLinkIdsLength } from '../selectors';
 import { tailwind } from '../stylesheets/tailwind';
-import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
+import { popupFMV } from '../types/animConfigs';
 
 class CardItemSelector extends React.Component {
 
@@ -27,8 +27,8 @@ class CardItemSelector extends React.Component {
 
   componentDidMount() {
     if (this.props.isBulkEditing) {
-      Animated.spring(
-        this.circleScale, { toValue: 1, ...popupOpenAnimConfig }
+      Animated.timing(
+        this.circleScale, { toValue: 1, ...popupFMV.visible }
       ).start();
     }
   }
@@ -38,28 +38,28 @@ class CardItemSelector extends React.Component {
     const { isMaxErrorShown } = this.state;
 
     if (!prevProps.isBulkEditing && isBulkEditing) {
-      Animated.spring(
-        this.circleScale, { toValue: 1, ...popupOpenAnimConfig }
+      Animated.timing(
+        this.circleScale, { toValue: 1, ...popupFMV.visible }
       ).start();
     }
 
     if (prevProps.isBulkEditing && !isBulkEditing) {
-      Animated.spring(
-        this.circleScale, { toValue: 0, ...popupCloseAnimConfig }
+      Animated.timing(
+        this.circleScale, { toValue: 0, ...popupFMV.hidden }
       ).start(() => {
         this.setState({ didCloseAnimEnd: true });
       });
     }
 
     if (!prevState.isMaxErrorShown && isMaxErrorShown) {
-      Animated.spring(
-        this.maxErrorScale, { toValue: 1, ...popupOpenAnimConfig }
+      Animated.timing(
+        this.maxErrorScale, { toValue: 1, ...popupFMV.visible }
       ).start();
     }
 
     if (prevState.isMaxErrorShown && !isMaxErrorShown) {
-      Animated.spring(
-        this.maxErrorScale, { toValue: 0, ...popupCloseAnimConfig }
+      Animated.timing(
+        this.maxErrorScale, { toValue: 0, ...popupFMV.hidden }
       ).start(() => {
         this.setState({ didMaxErrorCloseAnimEnd: true });
       });
@@ -114,7 +114,13 @@ class CardItemSelector extends React.Component {
 
     if (!this.state.isMaxErrorShown && this.state.didMaxErrorCloseAnimEnd) return null;
 
-    const maxErrorStyle = { transform: [{ scale: this.maxErrorScale }] };
+    const maxErrorStyle = {
+      transform: [{
+        scale: this.maxErrorScale.interpolate({
+          inputRange: [0, 1], outputRange: [0.95, 1],
+        }),
+      }],
+    };
 
     return (
       <View style={tailwind('absolute top-0 inset-x-0 justify-center items-center')}>
@@ -143,11 +149,17 @@ class CardItemSelector extends React.Component {
     const circleStyleClasses = isSelected ? 'bg-gray-800' : 'bg-white opacity-50';
     const svgStyleClasses = isSelected ? 'text-gray-50' : 'text-gray-400';
 
-    const circleStyle = { transform: [{ scale: this.circleScale }] };
+    const circleStyle = {
+      transform: [{
+        scale: this.circleScale.interpolate({
+          inputRange: [0, 1], outputRange: [0.95, 1],
+        }),
+      }],
+    };
 
     return (
       <React.Fragment>
-        <View style={tailwind('absolute inset-0 bg-black opacity-20 rounded-lg elevation-xs')} />
+        <View style={tailwind('absolute inset-0 bg-black bg-opacity-20 rounded-lg')} />
         <TouchableOpacity activeOpacity={1.0} onPress={this.onSelectBtnClick} style={tailwind('absolute inset-0 justify-center items-center bg-transparent')}>
           <Animated.View style={[tailwind(`justify-center items-center w-32 h-32 rounded-full ${circleStyleClasses}`), circleStyle]}>
             <Svg style={tailwind(`${svgStyleClasses} font-normal`)} width={80} height={80} viewBox="0 0 20 20" fill="currentColor">

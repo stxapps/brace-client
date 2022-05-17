@@ -12,7 +12,7 @@ import {
 import { splitOnFirst, escapeDoubleQuotes } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 import cache from '../utils/cache';
-import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
+import { dialogFMV } from '../types/animConfigs';
 
 import { useSafeAreaFrame, useSafeAreaInsets } from '.';
 
@@ -115,9 +115,9 @@ const SignInPopup = () => {
   useEffect(() => {
     let didMount = true;
     if (isShown) {
-      Animated.timing(popupAnim, { toValue: 1, ...popupOpenAnimConfig }).start();
+      Animated.timing(popupAnim, { toValue: 1, ...dialogFMV.visible }).start();
     } else {
-      Animated.timing(popupAnim, { toValue: 0, ...popupCloseAnimConfig }).start(() => {
+      Animated.timing(popupAnim, { toValue: 0, ...dialogFMV.hidden }).start(() => {
         if (didMount) setDidCloseAnimEnd(true);
       });
     }

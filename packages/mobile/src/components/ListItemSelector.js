@@ -7,7 +7,7 @@ import { MAX_SELECTED_LINK_IDS } from '../types/const';
 import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
 import { makeIsLinkIdSelected, getSelectedLinkIdsLength } from '../selectors';
 import { tailwind } from '../stylesheets/tailwind';
-import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
+import { popupFMV } from '../types/animConfigs';
 
 import { useSafeAreaFrame } from '.';
 
@@ -39,7 +39,13 @@ const ListItemSelector = (props) => {
   const renderMaxError = () => {
     if (!isMaxErrorShown && didMaxErrorCloseAnimEnd) return null;
 
-    const maxErrorStyle = { transform: [{ scale: maxErrorScale }] };
+    const maxErrorStyle = {
+      transform: [{
+        scale: maxErrorScale.interpolate({
+          inputRange: [0, 1], outputRange: [0.95, 1],
+        }),
+      }],
+    };
 
     return (
       <Animated.View style={[tailwind('flex-row bg-red-50 rounded-md p-2 shadow'), maxErrorStyle]}>
@@ -57,10 +63,10 @@ const ListItemSelector = (props) => {
 
   useEffect(() => {
     if (isMaxErrorShown) {
-      Animated.spring(maxErrorScale, { toValue: 1, ...popupOpenAnimConfig }).start();
+      Animated.timing(maxErrorScale, { toValue: 1, ...popupFMV.visible }).start();
     } else {
-      Animated.spring(
-        maxErrorScale, { toValue: 0, ...popupCloseAnimConfig }
+      Animated.timing(
+        maxErrorScale, { toValue: 0, ...popupFMV.hidden }
       ).start(() => {
         setDidMaxErrorCloseAnimEnd(true);
       });

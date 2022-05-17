@@ -12,7 +12,7 @@ import {
 } from '../types/const';
 import { makeGetListNameEditor } from '../selectors';
 import { tailwind } from '../stylesheets/tailwind';
-import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
+import { popupFMV } from '../types/animConfigs';
 
 import { useSafeAreaFrame, useSafeAreaInsets } from '.';
 import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
@@ -113,7 +113,7 @@ const SettingsListsMenuPopup = () => {
 
   useEffect(() => {
     if (isShown && popupSize) {
-      Animated.spring(popupAnim, { toValue: 1, ...popupOpenAnimConfig }).start();
+      Animated.timing(popupAnim, { toValue: 1, ...popupFMV.visible }).start();
     }
   }, [isShown, popupSize, popupAnim]);
 
@@ -122,7 +122,7 @@ const SettingsListsMenuPopup = () => {
     if (isShown) {
       didClick.current = false;
     } else {
-      Animated.spring(popupAnim, { toValue: 0, ...popupCloseAnimConfig }).start(() => {
+      Animated.timing(popupAnim, { toValue: 0, ...popupFMV.hidden }).start(() => {
         if (didMount) {
           setPopupSize(null);
           setDidCloseAnimEnd(true);
@@ -205,27 +205,29 @@ const SettingsListsMenuPopup = () => {
     if (originClassName === 'origin-top-right') {
       popupStyle.transform.push({
         translateX: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [popupSize.width / 2, 0],
+          inputRange: [0, 1], outputRange: [popupSize.width * 0.05 / 2, 0],
         }),
       });
       popupStyle.transform.push({
         translateY: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [-1 * popupSize.height / 2, 0],
+          inputRange: [0, 1], outputRange: [-1 * popupSize.height * 0.05 / 2, 0],
         }),
       });
     } else if (originClassName === 'origin-bottom-right') {
       popupStyle.transform.push({
         translateX: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [popupSize.width / 2, 0],
+          inputRange: [0, 1], outputRange: [popupSize.width * 0.05 / 2, 0],
         }),
       });
       popupStyle.transform.push({
         translateY: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [popupSize.height / 2, 0],
+          inputRange: [0, 1], outputRange: [popupSize.height * 0.05 / 2, 0],
         }),
       });
     }
-    popupStyle.transform.push({ scale: popupAnim });
+    popupStyle.transform.push({
+      scale: popupAnim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }),
+    });
     /* @ts-ignore */
     bgStyle = { opacity: popupAnim };
 

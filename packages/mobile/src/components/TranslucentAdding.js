@@ -334,7 +334,7 @@ class TranslucentAdding extends React.PureComponent {
     return (
       <View style={tailwind('flex-1 justify-end items-center')}>
         <TouchableWithoutFeedback onPress={this.onBackgroundBtnClick}>
-          <View style={tailwind('absolute inset-0 bg-black opacity-50')} />
+          <View style={tailwind('absolute inset-0 bg-black bg-opacity-50')} />
         </TouchableWithoutFeedback>
         {content}
       </View>

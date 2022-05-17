@@ -12,7 +12,7 @@ import {
   CONFIRM_DELETE_POPUP, MODAL_SUPPORTED_ORIENTATIONS, SM_WIDTH,
 } from '../types/const';
 import { getPopupLink } from '../selectors';
-import { cardItemAnimConfig, spListsAnimConfig } from '../types/animConfigs';
+import { cardItemFMV, listsFMV } from '../types/animConfigs';
 import { tailwind } from '../stylesheets/tailwind';
 
 import { withSafeAreaContext } from '.';
@@ -57,7 +57,7 @@ class ConfirmDeletePopup extends React.Component {
     }
 
     if (popupLink) {
-      const animConfig = cardItemAnimConfig(safeAreaWidth);
+      const animConfig = cardItemFMV(safeAreaWidth);
 
       LayoutAnimation.configureNext(animConfig);
       this.props.deleteLinks([popupLink.id]);
@@ -75,7 +75,7 @@ class ConfirmDeletePopup extends React.Component {
     }
 
     if (deletingListName) {
-      const animConfig = spListsAnimConfig();
+      const animConfig = listsFMV();
 
       LayoutAnimation.configureNext(animConfig);
       this.props.deleteListNames([deletingListName]);

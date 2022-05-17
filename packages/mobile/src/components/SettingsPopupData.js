@@ -20,7 +20,7 @@ class _SettingsPopupData extends React.PureComponent {
     const { safeAreaWidth } = this.props;
 
     return (
-      <View style={tailwind('p-4 md:p-6 md:pt-4', safeAreaWidth)}>
+      <View style={tailwind('p-4 md:p-6', safeAreaWidth)}>
         <View style={tailwind('border-b border-gray-200 md:hidden', safeAreaWidth)}>
           <TouchableOpacity onPress={this.props.onSidebarOpenBtnClick} style={tailwind('pb-1')}>
             <Text style={tailwind('text-sm text-gray-500 font-normal')}>{'<'} <Text style={tailwind('text-sm text-gray-500 font-normal')}>Settings</Text></Text>

@@ -39,7 +39,7 @@ const ListItem = (props) => {
 
     return (
       <React.Fragment>
-        <View style={tailwind('absolute inset-0 bg-black opacity-75')} />
+        <View style={tailwind('absolute inset-0 bg-black bg-opacity-75')} />
         <View style={tailwind('absolute inset-0 flex-row bg-transparent p-1')}>
           <View style={tailwind('flex-grow flex-shrink min-w-0 justify-center items-center')}>
             <Text style={tailwind('text-base text-white font-semibold text-center leading-5')}>{errMsg}</Text>
@@ -88,9 +88,9 @@ const ListItem = (props) => {
   return (
     <View style={tailwind('bg-white border-b border-gray-200')}>
       <ListItemContent link={link} />
-      {isDiedStatus(status) && renderRetry()}
       {[ADDING, MOVING].includes(status) && renderBusy()}
       {![ADDING, MOVING].includes(status) && <ListItemSelector linkId={link.id} />}
+      {isDiedStatus(status) && renderRetry()}
     </View>
   );
 };

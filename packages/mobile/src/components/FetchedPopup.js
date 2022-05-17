@@ -7,7 +7,7 @@ import { updateFetched } from '../actions';
 import { MD_WIDTH } from '../types/const';
 import { tailwind } from '../stylesheets/tailwind';
 import cache from '../utils/cache';
-import { popupOpenAnimConfig, popupCloseAnimConfig } from '../types/animConfigs';
+import { fetchedPopupFMV } from '../types/animConfigs';
 
 import { withSafeAreaContext } from '.';
 
@@ -25,8 +25,8 @@ class FetchedPopup extends React.PureComponent {
   componentDidMount() {
     if (this.props.fetched) {
       if (this.animation) this.animation.stop();
-      this.animation = Animated.spring(
-        this.popupTranslateY, { toValue: 0, ...popupOpenAnimConfig }
+      this.animation = Animated.timing(
+        this.popupTranslateY, { toValue: 0, ...fetchedPopupFMV.visible }
       );
       this.animation.start();
     }
@@ -38,17 +38,17 @@ class FetchedPopup extends React.PureComponent {
 
     if (!prevProps.fetched && fetched) {
       if (this.animation) this.animation.stop();
-      this.animation = Animated.spring(
-        this.popupTranslateY, { toValue: 0, ...popupOpenAnimConfig }
+      this.animation = Animated.timing(
+        this.popupTranslateY, { toValue: 0, ...fetchedPopupFMV.visible }
       );
       this.animation.start();
     }
 
     if ((prevProps.fetched && !fetched) || (prevState.isShown && !isShown)) {
       if (this.animation) this.animation.stop();
-      this.animation = Animated.spring(
+      this.animation = Animated.timing(
         this.popupTranslateY,
-        { toValue: this.getMinusTopPlus(this.props), ...popupCloseAnimConfig }
+        { toValue: this.getMinusTopPlus(this.props), ...fetchedPopupFMV.hidden }
       );
       this.animation.start(() => {
         this.setState({ didCloseAnimEnd: true });

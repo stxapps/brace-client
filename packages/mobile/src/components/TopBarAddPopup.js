@@ -11,7 +11,7 @@ import { ADD_POPUP, NO_URL, ASK_CONFIRM_URL, URL_MSGS } from '../types/const';
 import { validateUrl } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
-import { cardItemAnimConfig } from '../types/animConfigs';
+import { cardItemFMV } from '../types/animConfigs';
 
 import { withSafeAreaContext } from '.';
 import MenuPopoverRenderers from './MenuPopoverRenderer';
@@ -77,7 +77,7 @@ class TopBarAddPopup extends React.PureComponent {
     }
 
     const { safeAreaWidth } = this.props;
-    const animConfig = cardItemAnimConfig(safeAreaWidth);
+    const animConfig = cardItemFMV(safeAreaWidth);
 
     LayoutAnimation.configureNext(animConfig);
     this.props.addLink(this.props.url, null, null);

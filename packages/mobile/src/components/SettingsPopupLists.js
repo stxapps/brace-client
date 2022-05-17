@@ -21,7 +21,7 @@ import {
 import { getListNameMap, makeGetListNameEditor } from '../selectors';
 import { validateListNameDisplayName, getAllListNames } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
-import { spListsAnimConfig } from '../types/animConfigs';
+import { listsFMV } from '../types/animConfigs';
 import { initialListNameEditorState } from '../types/initialStates';
 
 import { useSafeAreaFrame } from '.';
@@ -46,7 +46,7 @@ const SettingsPopupLists = (props) => {
   }, []);
 
   return (
-    <View style={tailwind('p-4 md:p-6 md:pt-4', safeAreaWidth)}>
+    <View style={tailwind('p-4 md:p-6', safeAreaWidth)}>
       <View style={tailwind('border-b border-gray-200 md:hidden', safeAreaWidth)}>
         <TouchableOpacity onPress={onSidebarOpenBtnClick} style={tailwind('pb-1')}>
           <Text style={tailwind('text-sm text-gray-500 font-normal')}>{'<'} <Text style={tailwind('text-sm text-gray-500 font-normal')}>Settings</Text></Text>
@@ -215,7 +215,7 @@ const _ListNameEditor = (props) => {
 
   const onMoveUpBtnClick = () => {
     if (Platform.OS === 'ios') {
-      const animConfig = spListsAnimConfig();
+      const animConfig = listsFMV();
       LayoutAnimation.configureNext(animConfig);
     }
     dispatch(moveListName(listNameObj.listName, SWAP_LEFT));
@@ -223,7 +223,7 @@ const _ListNameEditor = (props) => {
 
   const onMoveDownBtnClick = () => {
     if (Platform.OS === 'ios') {
-      const animConfig = spListsAnimConfig();
+      const animConfig = listsFMV();
       LayoutAnimation.configureNext(animConfig);
     }
     dispatch(moveListName(listNameObj.listName, SWAP_RIGHT));

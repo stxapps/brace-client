@@ -11,7 +11,7 @@ import {
 } from '../types/const';
 import { validateUrl } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
-import { cardItemAnimConfig } from '../types/animConfigs';
+import { cardItemFMV } from '../types/animConfigs';
 
 import { withSafeAreaContext } from '.';
 
@@ -63,7 +63,7 @@ class BottomBarAddPopup extends React.PureComponent {
     }
 
     const { safeAreaWidth } = this.props;
-    const animConfig = cardItemAnimConfig(safeAreaWidth);
+    const animConfig = cardItemFMV(safeAreaWidth);
 
     LayoutAnimation.configureNext(animConfig);
     this.props.addLink(this.props.url, null, null);

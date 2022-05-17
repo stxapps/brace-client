@@ -10,10 +10,7 @@ import { updateSettingsPopup } from '../actions';
 import { MD_WIDTH, LG_WIDTH } from '../types/const';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
-import {
-  popupOpenAnimConfig, popupCloseAnimConfig,
-  bModalOpenAnimConfig, bModalCloseAnimConfig,
-} from '../types/animConfigs';
+import { dialogFMV, sidebarFMV } from '../types/animConfigs';
 
 import { withSafeAreaContext } from '.';
 
@@ -61,8 +58,8 @@ class SettingsPopup extends React.PureComponent {
     this.registerSettingsPopupBackHandler(this.props.isSettingsPopupShown);
 
     if (this.props.isSettingsPopupShown) {
-      Animated.spring(
-        this.popupScale, { toValue: 1, ...popupOpenAnimConfig }
+      Animated.timing(
+        this.popupScale, { toValue: 1, ...dialogFMV.visible }
       ).start();
     }
   }
@@ -75,14 +72,14 @@ class SettingsPopup extends React.PureComponent {
     }
 
     if (!prevProps.isSettingsPopupShown && isSettingsPopupShown) {
-      Animated.spring(
-        this.popupScale, { toValue: 1, ...popupOpenAnimConfig }
+      Animated.timing(
+        this.popupScale, { toValue: 1, ...dialogFMV.visible }
       ).start();
     }
 
     if (prevProps.isSettingsPopupShown && !isSettingsPopupShown) {
-      Animated.spring(
-        this.popupScale, { toValue: 0, ...popupCloseAnimConfig }
+      Animated.timing(
+        this.popupScale, { toValue: 0, ...dialogFMV.hidden }
       ).start(() => {
         this.setState({ didCloseAnimEnd: true });
       });
@@ -91,17 +88,17 @@ class SettingsPopup extends React.PureComponent {
     const { isSidebarShown } = this.state;
 
     if (!prevState.isSidebarShown && isSidebarShown) {
-      Animated.spring(
-        this.sidebarTranslateX, { toValue: 0, ...bModalOpenAnimConfig }
+      Animated.timing(
+        this.sidebarTranslateX, { toValue: 0, ...sidebarFMV.visible }
       ).start(() => {
         this.setState({ didSidebarAnimEnd: true });
       });
     }
 
     if (prevState.isSidebarShown && !isSidebarShown) {
-      Animated.spring(
+      Animated.timing(
         this.sidebarTranslateX,
-        { toValue: SIDE_BAR_WIDTH * -1, ...bModalCloseAnimConfig }
+        { toValue: SIDE_BAR_WIDTH * -1, ...sidebarFMV.hidden }
       ).start(() => {
         this.setState({ didSidebarAnimEnd: true });
       });
@@ -340,7 +337,7 @@ class SettingsPopup extends React.PureComponent {
                 </Svg>
               </TouchableOpacity>
             </View>
-            <Animated.View style={[tailwind('-ml-8 pt-5 pb-4 pl-8 flex-1 max-w-56 w-full bg-white'), sidebarStyle]}>
+            <Animated.View style={[tailwind('pt-5 pb-4 flex-1 max-w-56 w-full bg-white'), sidebarStyle]}>
               <View style={tailwind('px-4 flex-shrink-0 flex-row items-center')}>
                 <Text style={tailwind('text-xl text-gray-800 font-medium leading-6')}>Settings</Text>
               </View>
@@ -384,12 +381,18 @@ class SettingsPopup extends React.PureComponent {
     );
 
     const modalStyle = { paddingLeft: 16 + insets.left, paddingRight: 16 + insets.right };
-    const popupStyle = { transform: [{ scale: this.popupScale }] };
+    const popupStyle = {
+      transform: [{
+        scale: this.popupScale.interpolate({
+          inputRange: [0, 1], outputRange: [0.95, 1],
+        }),
+      }],
+    };
 
     return (
       <View style={cache('SP_modal', [tailwind('absolute inset-0 items-center justify-center shadow-xl z-30'), modalStyle], [insets.left, insets.right])}>
         <TouchableWithoutFeedback onPress={this.onPopupCloseBtnClick}>
-          <View style={tailwind('absolute inset-0 bg-black opacity-25')} />
+          <View style={tailwind('absolute inset-0 bg-black bg-opacity-25')} />
         </TouchableWithoutFeedback>
         <Animated.View style={[tailwind('w-full max-w-4xl bg-white rounded-lg shadow-xl'), popupStyle]}>
           <View style={tailwind('w-full bg-white rounded-lg overflow-hidden')}>
