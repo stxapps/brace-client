@@ -193,13 +193,6 @@ class SettingsPopup extends React.PureComponent {
           <div className="fixed inset-0 bg-white z-30">
             <div ref={this.overflowPanel} className="h-full overflow-scroll">
               <div className="relative max-w-6xl mx-auto">
-                <div className="hidden absolute top-0 right-0 md:block">
-                  <button onClick={this.onPopupCloseBtnClick} className="flex items-center justify-center h-12 w-12 group focus:outline-none" aria-label="Close settings popup">
-                    <svg className="h-7 w-7 text-gray-300 rounded group-hover:text-gray-500 group-focus:ring" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
                 <div key="panel-with-sidebar" className="max-w-4xl mx-auto px-0 md:px-6 lg:px-8">
                   <div className="hidden border-b border-gray-200 md:block md:pt-12">
                     <h2 className="pb-4 text-xl text-gray-800 font-medium leading-6">Settings</h2>
@@ -271,6 +264,13 @@ class SettingsPopup extends React.PureComponent {
                     </div>
                   </div>
                 </div>
+                <div className="hidden absolute top-0 right-0 md:block">
+                  <button onClick={this.onPopupCloseBtnClick} className="flex items-center justify-center h-12 w-12 group focus:outline-none" aria-label="Close settings popup">
+                    <svg className="h-7 w-7 text-gray-300 rounded group-hover:text-gray-500 group-focus:ring" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -281,13 +281,6 @@ class SettingsPopup extends React.PureComponent {
             <motion.button onClick={this.onSidebarCloseBtnClick} className="absolute inset-0 w-full h-full" variants={sideBarOverlayFMV}>
               <div className="absolute inset-0 bg-gray-100" />
             </motion.button>
-            <div className="absolute top-0 right-0">
-              <button onClick={this.onPopupCloseBtnClick} className="flex items-center justify-center h-12 w-12 group focus:outline-none" aria-label="Close settings popup">
-                <svg className="h-5 w-5 text-gray-300 rounded group-hover:text-gray-500 group-focus:ring" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
             <motion.div className="flex-1 flex flex-col max-w-56 w-full bg-white" variants={sideBarFMV}>
               <div className="pt-8 pb-4 overflow-auto">
                 <div className="px-4 flex-shrink-0 flex items-center">
@@ -339,6 +332,13 @@ class SettingsPopup extends React.PureComponent {
             </motion.div>
             <div className="flex-shrink-0 w-14">
               {/* Force sidebar to shrink to fit close icon */}
+            </div>
+            <div className="absolute top-0 right-0">
+              <button onClick={this.onPopupCloseBtnClick} className="flex items-center justify-center h-12 w-12 group focus:outline-none" aria-label="Close settings popup">
+                <svg className="h-5 w-5 text-gray-300 rounded group-hover:text-gray-500 group-focus:ring" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
           </div>
         </motion.div>

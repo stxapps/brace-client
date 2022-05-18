@@ -4315,6 +4315,9 @@
 	"min-h-full": {
 		"minHeight": "100%"
 	},
+	"min-h-xl": {
+		"minHeight": 576
+	},
 	"w-0": {
 		"width": 0
 	},
