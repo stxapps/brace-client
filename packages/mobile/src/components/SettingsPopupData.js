@@ -87,13 +87,13 @@ class _SettingsPopupDataExport extends React.PureComponent {
       actionPanel = (
         <View style={tailwind('mt-6 mb-4')}>
           <View style={tailwind('flex-row items-center')}>
-            <Svg style={tailwind('text-red-500 font-normal')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('flex-grow-0 flex-shrink-0 text-red-500 font-normal')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
             </Svg>
             <Text style={tailwind('ml-1 text-base text-red-600 font-normal')}>Oops..., something went wrong!</Text>
           </View>
           <Text style={tailwind('text-base text-red-600 font-normal leading-6.5')}>{exportAllDataProgress.error}</Text>
-          <Text style={tailwind('mt-6 text-base text-gray-500 font-normal leading-6.5')}>Please wait a moment and try again. If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base text-gray-500 font-normal underline')}>contact us</Text>
+          <Text style={tailwind('mt-6 text-base text-gray-500 font-normal leading-6.5')}>Please wait a moment and try again. If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base text-gray-500 font-normal leading-6.5 underline')}>contact us</Text>
             <Svg style={tailwind('mb-2 text-gray-500 font-normal')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
               <Path d="M11 3C10.4477 3 10 3.44772 10 4C10 4.55228 10.4477 5 11 5H13.5858L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L15 6.41421V9C15 9.55228 15.4477 10 16 10C16.5523 10 17 9.55228 17 9V4C17 3.44772 16.5523 3 16 3H11Z" />
               <Path d="M5 5C3.89543 5 3 5.89543 3 7V15C3 16.1046 3.89543 17 5 17H13C14.1046 17 15 16.1046 15 15V12C15 11.4477 14.5523 11 14 11C13.4477 11 13 11.4477 13 12V15H5V7H8C8.55228 7 9 6.55228 9 6C9 5.44772 8.55228 5 8 5H5Z" />
@@ -105,7 +105,7 @@ class _SettingsPopupDataExport extends React.PureComponent {
       actionPanel = (
         <View style={tailwind('mt-6 mb-4')}>
           <View style={tailwind('flex-row items-center')}>
-            <Svg style={tailwind('text-gray-400 font-normal')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('flex-grow-0 flex-shrink-0 text-gray-400 font-normal')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 6C11 6.55228 10.5523 7 10 7C9.44772 7 9 6.55228 9 6C9 5.44772 9.44772 5 10 5C10.5523 5 11 5.44772 11 6ZM9 9C8.44772 9 8 9.44772 8 10C8 10.5523 8.44772 11 9 11V14C9 14.5523 9.44772 15 10 15H11C11.5523 15 12 14.5523 12 14C12 13.4477 11.5523 13 11 13V10C11 9.44772 10.5523 9 10 9H9Z" />
             </Svg>
             <Text style={tailwind('ml-1 text-base text-gray-500 font-normal')}>No data to export.</Text>
@@ -117,7 +117,7 @@ class _SettingsPopupDataExport extends React.PureComponent {
       actionPanel = (
         <View style={tailwind('mt-6 mb-4')}>
           <View style={tailwind('flex-row items-center')}>
-            <Svg style={tailwind('text-green-500 font-normal')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('flex-grow-0 flex-shrink-0 text-green-500 font-normal')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.7071 8.70711C14.0976 8.31658 14.0976 7.68342 13.7071 7.29289C13.3166 6.90237 12.6834 6.90237 12.2929 7.29289L9 10.5858L7.70711 9.29289C7.31658 8.90237 6.68342 8.90237 6.29289 9.29289C5.90237 9.68342 5.90237 10.3166 6.29289 10.7071L8.29289 12.7071C8.68342 13.0976 9.31658 13.0976 9.70711 12.7071L13.7071 8.70711Z" />
             </Svg>
             <Text style={tailwind('ml-1 text-base text-gray-500 font-normal')}>Done</Text>
@@ -232,13 +232,13 @@ class _SettingsPopupDataDelete extends React.PureComponent {
       actionPanel = (
         <View style={tailwind('mt-6 mb-4')}>
           <View style={tailwind('flex-row items-center')}>
-            <Svg style={tailwind('text-red-500 font-normal')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('flex-grow-0 flex-shrink-0 text-red-500 font-normal')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
             </Svg>
             <Text style={tailwind('ml-1 text-base text-red-600 font-normal')}>Oops..., something went wrong!</Text>
           </View>
           <Text style={tailwind('text-base text-red-600 font-normal leading-6.5')}>{deleteAllDataProgress.error}</Text>
-          <Text style={tailwind('mt-6 text-base text-gray-500 font-normal leading-6.5')}>Please wait a moment and try again. If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base text-gray-500 font-normal underline')}>contact us</Text>
+          <Text style={tailwind('mt-6 text-base text-gray-500 font-normal leading-6.5')}>Please wait a moment and try again. If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base text-gray-500 font-normal leading-6.5 underline')}>contact us</Text>
             <Svg style={tailwind('mb-2 text-gray-500 font-normal')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
               <Path d="M11 3C10.4477 3 10 3.44772 10 4C10 4.55228 10.4477 5 11 5H13.5858L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L15 6.41421V9C15 9.55228 15.4477 10 16 10C16.5523 10 17 9.55228 17 9V4C17 3.44772 16.5523 3 16 3H11Z" />
               <Path d="M5 5C3.89543 5 3 5.89543 3 7V15C3 16.1046 3.89543 17 5 17H13C14.1046 17 15 16.1046 15 15V12C15 11.4477 14.5523 11 14 11C13.4477 11 13 11.4477 13 12V15H5V7H8C8.55228 7 9 6.55228 9 6C9 5.44772 8.55228 5 8 5H5Z" />
@@ -250,7 +250,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
       actionPanel = (
         <View style={tailwind('mt-6 mb-4')}>
           <View style={tailwind('flex-row items-center')}>
-            <Svg style={tailwind('text-gray-400 font-normal')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('flex-grow-0 flex-shrink-0 text-gray-400 font-normal')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 6C11 6.55228 10.5523 7 10 7C9.44772 7 9 6.55228 9 6C9 5.44772 9.44772 5 10 5C10.5523 5 11 5.44772 11 6ZM9 9C8.44772 9 8 9.44772 8 10C8 10.5523 8.44772 11 9 11V14C9 14.5523 9.44772 15 10 15H11C11.5523 15 12 14.5523 12 14C12 13.4477 11.5523 13 11 13V10C11 9.44772 10.5523 9 10 9H9Z" />
             </Svg>
             <Text style={tailwind('ml-1 text-base text-gray-500 font-normal')}>No data to delete.</Text>
@@ -262,7 +262,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
       actionPanel = (
         <View style={tailwind('mt-6 mb-4')}>
           <View style={tailwind('flex-row items-center')}>
-            <Svg style={tailwind('text-green-500 font-normal')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('flex-grow-0 flex-shrink-0 text-green-500 font-normal')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.7071 8.70711C14.0976 8.31658 14.0976 7.68342 13.7071 7.29289C13.3166 6.90237 12.6834 6.90237 12.2929 7.29289L9 10.5858L7.70711 9.29289C7.31658 8.90237 6.68342 8.90237 6.29289 9.29289C5.90237 9.68342 5.90237 10.3166 6.29289 10.7071L8.29289 12.7071C8.68342 13.0976 9.31658 13.0976 9.70711 12.7071L13.7071 8.70711Z" />
             </Svg>
             <Text style={tailwind('ml-1 text-base text-gray-500 font-normal')}>Done</Text>

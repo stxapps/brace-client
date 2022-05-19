@@ -191,7 +191,7 @@ class SettingsPopup extends React.PureComponent {
       <React.Fragment>
         <AnimatePresence key="AnimatePresence_SP">
           <div className="fixed inset-0 bg-white z-30">
-            <div ref={this.overflowPanel} className="h-full overflow-scroll">
+            <div ref={this.overflowPanel} className="h-full overflow-y-scroll">
               <div className="relative max-w-6xl mx-auto">
                 <div key="panel-with-sidebar" className="max-w-4xl mx-auto px-0 md:px-6 lg:px-8">
                   <div className="hidden border-b border-gray-200 md:block md:pt-12">

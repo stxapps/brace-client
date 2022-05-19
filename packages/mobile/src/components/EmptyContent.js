@@ -97,7 +97,7 @@ const EmptyContent = () => {
           </Svg>
         </View>
         <Text style={tailwind('mt-6 text-lg text-gray-800 font-medium text-center')}>No links in {displayName}</Text>
-        <Text style={tailwind('mt-4 max-w-md text-base text-gray-500 font-normal text-center tracking-wide')}>Tap <Text style={tailwind('text-base text-gray-500 font-semibold')}>"Remove"</Text> from the menu to move links you don't need anymore here.</Text>
+        <Text style={tailwind('mt-4 max-w-md text-base text-gray-500 font-normal text-center tracking-wide')}>Tap <Text style={tailwind('text-base text-gray-500 font-semibold tracking-wide')}>"Remove"</Text> from the menu to move links you don't need anymore here.</Text>
       </View>
     );
   }
@@ -106,7 +106,7 @@ const EmptyContent = () => {
     <View style={tailwind('px-4 pb-6 items-center w-full md:px-6 lg:px-8', safeAreaWidth)}>
       <SvgXml style={tailwind('mt-10')} width={160} height={146.66} xml={emptyBox} />
       <Text style={tailwind('mt-6 text-lg text-gray-800 font-medium text-center')}>No links in {displayName}</Text>
-      <Text style={tailwind('mt-2 max-w-md text-base text-gray-500 font-normal text-center tracking-wide')}>Tap <Text style={tailwind('text-base text-gray-500 font-semibold')}>{textName}</Text> from the menu to move links here.</Text>
+      <Text style={tailwind('mt-2 max-w-md text-base text-gray-500 font-normal text-center tracking-wide')}>Tap <Text style={tailwind('text-base text-gray-500 font-semibold tracking-wide')}>{textName}</Text> from the menu to move links here.</Text>
     </View>
   );
 };
