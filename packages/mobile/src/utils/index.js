@@ -7,7 +7,7 @@ import {
   BG_COLOR_STYLES, PATTERNS,
   VALID_URL, NO_URL, ASK_CONFIRM_URL,
   VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME,
-  ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, UNKNOWN,
+  COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, UNKNOWN,
 } from '../types/const';
 import { FETCH } from '../types/actionTypes';
 import { IMAGES } from '../types/imagePaths';
@@ -1050,6 +1050,14 @@ export const isListNameObjsValid = (listNameObjs) => {
   }
 
   return true;
+};
+
+export const getValidProduct = (products) => {
+  if (!Array.isArray(products) || products.length === 0) return null;
+  for (const product of products) {
+    if (product.productId === COM_BRACEDOTTO_SUPPORTER) return product;
+  }
+  return null;
 };
 
 export const getLatestPurchase = (purchases) => {

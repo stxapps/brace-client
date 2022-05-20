@@ -5,10 +5,13 @@ import { updateFetchedSettings } from '../actions';
 import {
   FETCH_COMMIT, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME,
   DELETE_LIST_NAMES, UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
-  UPDATE_DO_DESCENDING_ORDER, CANCEL_DIED_SETTINGS, RESTORE_PURCHASES_COMMIT,
+  UPDATE_DO_DESCENDING_ORDER, CANCEL_DIED_SETTINGS,
+  REQUEST_PURCHASE_COMMIT, RESTORE_PURCHASES_COMMIT, REFRESH_PURCHASES_COMMIT,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
-import { MY_LIST, TRASH, ARCHIVE, SWAP_LEFT, SWAP_RIGHT, VALID } from '../types/const';
+import {
+  MY_LIST, TRASH, ARCHIVE, SWAP_LEFT, SWAP_RIGHT, VALID, UNKNOWN,
+} from '../types/const';
 import {
   getListNameObj, doContainListName, copyListNameObjs, swapArrayElements,
 } from '../utils';
@@ -197,7 +200,23 @@ const settingsReducer = (state = initialState, action) => {
     return { ...state, ...settings };
   }
 
-  if (action.type === RESTORE_PURCHASES_COMMIT) {
+  if (action.type === REQUEST_PURCHASE_COMMIT) {
+    const { status, purchase } = action.payload;
+    if (status !== VALID || !purchase) return state;
+
+    const newState = { ...state };
+
+    if (Array.isArray(newState.purchases)) {
+      newState.purchases = [...newState.purchases, purchase];
+    } else newState.purchases = [purchase];
+
+    return newState;
+  }
+
+  if (
+    action.type === RESTORE_PURCHASES_COMMIT ||
+    action.type === REFRESH_PURCHASES_COMMIT
+  ) {
     const { status, purchases } = action.payload;
     if (status !== VALID || !purchases) return state;
 
