@@ -233,7 +233,7 @@ const IapHome = (props) => {
     <View style={tailwind('mt-6 mb-4 md:mt-0', safeAreaWidth)}>
       <Text style={tailwind('text-base text-gray-800 font-medium leading-4')}>Purchase subscription</Text>
       <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Brace.to is free and we offer a paid subscription for use of extra feature(s). It's our intention to never show advertisments and we don't rent, sell or share your information with other companies. Our optional paid subscription is the only way we make money.</Text>
-      <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Support us and unlock extra feature: pin an item at the top.</Text>
+      <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Support us and unlock extra feature: pin to the top.</Text>
       <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Start with a 14 day free trial.</Text>
       {actionPanel}
       <Text style={tailwind('mt-6 text-sm text-gray-400 font-normal leading-6.5')}>By subscribing, you agree to our <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_TERMS)} style={tailwind('text-sm text-gray-400 font-normal leading-6.5 underline')}>Terms of Service</Text> and <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-sm text-gray-400 font-normal leading-6.5 underline')}>Privacy Policy</Text>. Only one free trial per user, the App Store Terms and Conditions apply.</Text>
@@ -305,21 +305,21 @@ const IapPurchased = (props) => {
   if (purchase.status === ACTIVE) {
     infoText = (
       <React.Fragment>
-        <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Thank you very much for supporting us. You've unlocked extra feature: pin an item at the top.</Text>
+        <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Thank you very much for supporting us. You've unlocked extra feature: pin to the top.</Text>
         <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Your subscription will be expired on {getFormattedDate(new Date(purchase.expiryDate))} and it'll be automatically renewed. You can manage your subscription at {appStoreLink}.</Text>
       </React.Fragment>
     );
   } else if (purchase.status === NO_RENEW) {
     infoText = (
       <React.Fragment>
-        <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Thank you very much for supporting us. You've unlocked extra feature: pin an item at the top.</Text>
+        <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Thank you very much for supporting us. You've unlocked extra feature: pin to the top.</Text>
         <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Your subscription will be expired on {getFormattedDate(new Date(purchase.expiryDate))} and it won't be automatically renewed. If you want to enable automatically renewal, please go to {appStoreLink} to manage your subscription.</Text>
       </React.Fragment>
     );
   } else if (purchase.status === GRACE) {
     infoText = (
       <React.Fragment>
-        <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Thank you very much for supporting us. You've unlocked extra feature: pin an item at the top.</Text>
+        <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Thank you very much for supporting us. You've unlocked extra feature: pin to the top.</Text>
         <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>
           <Svg style={[tailwind('text-red-500 font-normal'), markStyle]} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
