@@ -1064,7 +1064,7 @@ export const getLatestPurchase = (purchases) => {
   if (!Array.isArray(purchases) || purchases.length === 0) return null;
 
   const _purchases = purchases.sort((a, b) => {
-    return b.endDate.getTime() - a.endDate.getTime();
+    return (new Date(b.endDate)).getTime() - (new Date(a.endDate)).getTime();
   });
 
   for (const status of [ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED]) {
@@ -1095,8 +1095,4 @@ export const doEnableExtraFeatures = (purchases) => {
   if ([ACTIVE, NO_RENEW, GRACE].includes(purchase.status)) return true;
   if (purchase.status === UNKNOWN) return null;
   return false;
-};
-
-export const shouldUpdateIapStatus = () => {
-
 };

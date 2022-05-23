@@ -1,7 +1,7 @@
 import { REHYDRATE } from 'redux-persist/constants';
 import { loop, Cmd } from 'redux-loop';
 
-import { updateFetchedSettings } from '../actions';
+import { updateFetchedSettings, tryUpdateSettings } from '../actions';
 import {
   FETCH_COMMIT, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME,
   DELETE_LIST_NAMES, UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
@@ -9,9 +9,7 @@ import {
   REQUEST_PURCHASE_COMMIT, RESTORE_PURCHASES_COMMIT, REFRESH_PURCHASES_COMMIT,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
-import {
-  MY_LIST, TRASH, ARCHIVE, SWAP_LEFT, SWAP_RIGHT, VALID, UNKNOWN,
-} from '../types/const';
+import { MY_LIST, TRASH, ARCHIVE, SWAP_LEFT, SWAP_RIGHT, VALID } from '../types/const';
 import {
   getListNameObj, doContainListName, copyListNameObjs, swapArrayElements,
 } from '../utils';
@@ -204,13 +202,15 @@ const settingsReducer = (state = initialState, action) => {
     const { status, purchase } = action.payload;
     if (status !== VALID || !purchase) return state;
 
-    const newState = { ...state };
+    const newState = { ...state, checkPurchasesDT: Date.now() };
 
     if (Array.isArray(newState.purchases)) {
       newState.purchases = [...newState.purchases, purchase];
     } else newState.purchases = [purchase];
 
-    return newState;
+    return loop(
+      newState, Cmd.run(tryUpdateSettings(), { args: [Cmd.dispatch, Cmd.getState] })
+    );
   }
 
   if (
@@ -220,12 +220,14 @@ const settingsReducer = (state = initialState, action) => {
     const { status, purchases } = action.payload;
     if (status !== VALID || !purchases) return state;
 
-    const newState = { ...state };
+    const newState = { ...state, checkPurchasesDT: Date.now() };
 
     if (purchases.length === 0) newState.purchases = null;
     else newState.purchases = purchases.map(p => ({ ...p }));
 
-    return newState;
+    return loop(
+      newState, Cmd.run(tryUpdateSettings(), { args: [Cmd.dispatch, Cmd.getState] })
+    );
   }
 
   if (action.type === DELETE_ALL_DATA || action.type === RESET_STATE) {

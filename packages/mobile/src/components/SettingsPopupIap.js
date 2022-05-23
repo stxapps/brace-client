@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, Linking } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { Svg, Path } from 'react-native-svg';
@@ -50,22 +50,31 @@ const IapHome = (props) => {
   const product = useSelector(state => getValidProduct(state));
   const productStatus = useSelector(state => state.iap.productStatus);
   const purchaseStatus = useSelector(state => state.iap.purchaseStatus);
+  const didClick = useRef(false);
   const dispatch = useDispatch();
 
   const onRequestBtnClick = () => {
+    if (didClick.current) return;
     dispatch(requestPurchase(product));
+    didClick.current = true;
   };
 
   const onRetryGetProductsBtnClick = () => {
+    if (didClick.current) return;
     dispatch(initIapConnectionAndGetProducts(true));
+    didClick.current = true;
   };
 
   const onRetryRequestPurchaseBtnClick = () => {
+    if (didClick.current) return;
     dispatch(initIapConnectionAndGetProducts(true));
+    didClick.current = true;
   };
 
   const onRetryVerifyPurchaseBtnClick = () => {
+    if (didClick.current) return;
     dispatch(retryVerifyPurchase());
+    didClick.current = true;
   };
 
   useEffect(() => {
@@ -76,16 +85,22 @@ const IapHome = (props) => {
     dispatch(initIapConnectionAndGetProducts());
   }, [dispatch]);
 
+  useEffect(() => {
+    didClick.current = false;
+  }, [product, canMakePayments, purchaseStatus, productStatus]);
+
   let publicKeyText = (
     <View style={tailwind('pt-1 flex-shrink flex-grow sm:pl-3', safeAreaWidth)}>
       <Circle size={20} color="rgba(107, 114, 128, 1)" />
     </View>
   );
-  if (publicKey) publicKeyText = (
-    <View style={tailwind('pt-1 flex-shrink flex-grow sm:pt-0 sm:pl-3', safeAreaWidth)}>
-      <Text style={tailwind('text-base text-gray-500 font-normal')}>{publicKey}</Text>
-    </View>
-  );
+  if (publicKey) {
+    publicKeyText = (
+      <View style={tailwind('pt-1 flex-shrink flex-grow sm:pt-0 sm:pl-3', safeAreaWidth)}>
+        <Text style={tailwind('text-base text-gray-500 font-normal')}>{publicKey}</Text>
+      </View>
+    );
+  }
 
   let actionPanel;
   if (product && canMakePayments) {
@@ -219,13 +234,10 @@ const IapHome = (props) => {
       <Text style={tailwind('text-base text-gray-800 font-medium leading-4')}>Purchase subscription</Text>
       <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Brace.to is free and we offer a paid subscription for use of extra feature(s). It's our intention to never show advertisments and we don't rent, sell or share your information with other companies. Our optional paid subscription is the only way we make money.</Text>
       <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Support us and unlock extra feature: pin an item at the top.</Text>
-      <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Start with a 14 day free trial.*</Text>
+      <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Start with a 14 day free trial.</Text>
       {actionPanel}
-      <Text style={tailwind('mt-6 text-base text-gray-500 font-normal leading-6.5')}>
-        <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_TERMS)} style={tailwind('text-base text-gray-500 font-normal leading-6.5 underline')}>Terms of Service</Text> and <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-base text-gray-500 font-normal leading-6.5 underline')}>Privacy Policy</Text>
-      </Text>
+      <Text style={tailwind('mt-6 text-sm text-gray-400 font-normal leading-6.5')}>By subscribing, you agree to our <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_TERMS)} style={tailwind('text-sm text-gray-400 font-normal leading-6.5 underline')}>Terms of Service</Text> and <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-sm text-gray-400 font-normal leading-6.5 underline')}>Privacy Policy</Text>. Only one free trial per user, the App Store Terms and Conditions apply.</Text>
       <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>If you've already purchased the subscription, try <Text onPress={onToRestoreIapViewBtnClick} style={tailwind('text-base text-gray-500 font-normal leading-6.5 underline')}>Restore purchases</Text></Text>
-      <Text style={tailwind('mt-4 text-sm text-gray-400 font-normal leading-6.5')}>* Only one free trial. Terms and Conditions apply.</Text>
     </View>
   );
 };
@@ -236,10 +248,13 @@ const IapPurchased = (props) => {
   const { width: safeAreaWidth } = useSafeAreaFrame();
   const publicKey = useSelector(state => state.iap.publicKey);
   const refreshStatus = useSelector(state => state.iap.refreshStatus);
+  const didClick = useRef(false);
   const dispatch = useDispatch();
 
   const onRefreshBtnClick = () => {
+    if (didClick.current) return;
     dispatch(refreshPurchases());
+    didClick.current = true;
   };
 
   useEffect(() => {
@@ -253,6 +268,10 @@ const IapPurchased = (props) => {
       }
     };
   }, [refreshStatus, dispatch]);
+
+  useEffect(() => {
+    didClick.current = false;
+  }, [refreshStatus]);
 
   let appStoreLink = (
     <Text style={tailwind('text-base text-gray-500 font-normal leading-6.5 underline')}>N/A</Text>
@@ -272,11 +291,13 @@ const IapPurchased = (props) => {
       <Circle size={20} color="rgb(107, 114, 128)" />
     </View>
   );
-  if (publicKey) publicKeyText = (
-    <View style={tailwind('pt-1 flex-shrink flex-grow sm:pt-0 sm:pl-3', safeAreaWidth)}>
-      <Text style={tailwind('text-base text-gray-500 font-normal')}>{publicKey}</Text>
-    </View>
-  );
+  if (publicKey) {
+    publicKeyText = (
+      <View style={tailwind('pt-1 flex-shrink flex-grow sm:pt-0 sm:pl-3', safeAreaWidth)}>
+        <Text style={tailwind('text-base text-gray-500 font-normal')}>{publicKey}</Text>
+      </View>
+    );
+  }
 
   const markStyle = { transform: [{ translateY: 4 }] };
 
@@ -285,14 +306,14 @@ const IapPurchased = (props) => {
     infoText = (
       <React.Fragment>
         <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Thank you very much for supporting us. You've unlocked extra feature: pin an item at the top.</Text>
-        <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Your subscription will be expired on {getFormattedDate(purchase.expiryDate)} and it'll be automatically renewed. You can manage your subscription at {appStoreLink}.</Text>
+        <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Your subscription will be expired on {getFormattedDate(new Date(purchase.expiryDate))} and it'll be automatically renewed. You can manage your subscription at {appStoreLink}.</Text>
       </React.Fragment>
     );
   } else if (purchase.status === NO_RENEW) {
     infoText = (
       <React.Fragment>
         <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Thank you very much for supporting us. You've unlocked extra feature: pin an item at the top.</Text>
-        <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Your subscription will be expired on {getFormattedDate(purchase.expiryDate)} and it won't be automatically renewed. If you want to enable automatically renewal, please go to {appStoreLink} to manage your subscription.</Text>
+        <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Your subscription will be expired on {getFormattedDate(new Date(purchase.expiryDate))} and it won't be automatically renewed. If you want to enable automatically renewal, please go to {appStoreLink} to manage your subscription.</Text>
       </React.Fragment>
     );
   } else if (purchase.status === GRACE) {
@@ -333,7 +354,7 @@ const IapPurchased = (props) => {
           <Svg style={tailwind('flex-grow-0 flex-shrink-0 mt-0.5 text-red-500 font-normal')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
           </Svg>
-          <Text style={tailwind('flex-grow flex-shrink ml-1 text-base text-red-600 font-normal leading-6.5')}>We cannot determine  your subscription's status.</Text>
+          <Text style={tailwind('flex-grow flex-shrink ml-1 text-base text-red-600 font-normal leading-6.5')}>We cannot determine your subscription's status.</Text>
         </View>
       </React.Fragment>
     );
@@ -402,10 +423,13 @@ const _SettingsPopupIapRestore = (props) => {
   const publicKey = useSelector(state => state.iap.publicKey);
   const purchase = useSelector(state => getValidPurchase(state));
   const restoreStatus = useSelector(state => state.iap.restoreStatus);
+  const didClick = useRef(false);
   const dispatch = useDispatch();
 
   const onRestoreBtnClick = () => {
+    if (didClick.current) return;
     dispatch(restorePurchases());
+    didClick.current = true;
   };
 
   useEffect(() => {
@@ -423,6 +447,10 @@ const _SettingsPopupIapRestore = (props) => {
       }
     };
   }, [restoreStatus, dispatch]);
+
+  useEffect(() => {
+    didClick.current = false;
+  }, [restoreStatus]);
 
   let actionPanel;
   if (restoreStatus === null) {
@@ -448,11 +476,13 @@ const _SettingsPopupIapRestore = (props) => {
         <Circle size={20} color="rgba(107, 114, 128, 1)" />
       </View>
     );
-    if (publicKey) publicKeyText = (
-      <View style={tailwind('pt-1 flex-shrink flex-grow sm:pt-0 sm:pl-3', safeAreaWidth)}>
-        <Text style={tailwind('text-base text-gray-500 font-normal')}>{publicKey}</Text>
-      </View>
-    );
+    if (publicKey) {
+      publicKeyText = (
+        <View style={tailwind('pt-1 flex-shrink flex-grow sm:pt-0 sm:pl-3', safeAreaWidth)}>
+          <Text style={tailwind('text-base text-gray-500 font-normal')}>{publicKey}</Text>
+        </View>
+      );
+    }
 
     actionPanel = (
       <View style={tailwind('mt-6 mb-4')}>

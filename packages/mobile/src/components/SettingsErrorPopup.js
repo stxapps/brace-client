@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, Linking } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
@@ -13,15 +13,24 @@ const SettingsErrorPopup = () => {
 
   const { width: safeAreaWidth } = useSafeAreaFrame();
   const settingsStatus = useSelector(state => state.display.settingsStatus);
+  const didClick = useRef(false);
   const dispatch = useDispatch();
 
   const onRetryBtnClick = () => {
+    if (didClick.current) return;
     dispatch(retryDiedSettings());
+    didClick.current = true;
   };
 
   const onCancelBtnClick = () => {
+    if (didClick.current) return;
     dispatch(cancelDiedSettings());
+    didClick.current = true;
   };
+
+  useEffect(() => {
+    didClick.current = false;
+  }, [settingsStatus]);
 
   if (settingsStatus !== DIED_UPDATING) return null;
 

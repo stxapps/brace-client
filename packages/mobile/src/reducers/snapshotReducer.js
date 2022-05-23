@@ -1,5 +1,7 @@
 import { REHYDRATE } from 'redux-persist/constants';
+import { loop, Cmd } from 'redux-loop';
 
+import { checkPurchases } from '../actions';
 import {
   UPDATE_FETCHED_SETTINGS, UPDATE_SETTINGS_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -16,7 +18,10 @@ const snapshotReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_FETCHED_SETTINGS) {
-    return { ...state, settings: { ...action.payload } };
+    const newState = { ...state, settings: { ...action.payload } };
+    return loop(
+      newState, Cmd.run(checkPurchases(), { args: [Cmd.dispatch, Cmd.getState] })
+    );
   }
 
   if (action.type === UPDATE_SETTINGS_COMMIT) {

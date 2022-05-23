@@ -46,7 +46,7 @@ import {
   SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
-  MY_LIST, TRASH, N_LINKS,
+  MY_LIST, TRASH, N_LINKS, N_DAYS,
   ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
   IAP_VERIFY_URL, IAP_STATUS_URL, APPSTORE, PLAYSTORE, COM_BRACEDOTTO,
@@ -951,6 +951,13 @@ export const updateDeletingListName = (listName) => {
   };
 };
 
+export const tryUpdateSettings = () => async (dispatch, getState) => {
+  const isSettingsPopupShown = getState().display.isSettingsPopupShown;
+  if (isSettingsPopupShown) return;
+
+  dispatch(updateSettings());
+};
+
 export const updateSettings = () => async (dispatch, getState) => {
 
   const settings = getState().settings;
@@ -1128,7 +1135,11 @@ const verifyPurchase = async (purchase) => {
 
   let verifyResult;
   try {
-    const res = await axios.post(IAP_VERIFY_URL, reqBody);
+    const res = await axios.post(
+      IAP_VERIFY_URL,
+      reqBody,
+      { headers: { Referer: DOMAIN_NAME } }
+    );
     verifyResult = res.data;
   } catch (error) {
     console.log(`Error when contact IAP server to verify with reqBody: ${JSON.stringify(reqBody)}, Error: `, error);
@@ -1155,19 +1166,29 @@ const getIapStatus = async () => {
     doForce: false,
   };
 
-  const res = await axios.post(IAP_STATUS_URL, reqBody);
+  const res = await axios.post(
+    IAP_STATUS_URL,
+    reqBody,
+    { headers: { Referer: DOMAIN_NAME } }
+  );
   return res;
 };
 
-const getPurchases = (action, commitAction, rollbackAction) => async (
-  dispatch, getState
-) => {
+const getPurchases = (
+  action, commitAction, rollbackAction, serverOnly = false
+) => async (dispatch, getState) => {
+
   dispatch({ type: action });
 
   let statusResult;
   try {
     const res = await getIapStatus();
     statusResult = res.data;
+
+    if (serverOnly) {
+      dispatch({ type: commitAction, payload: statusResult });
+      return;
+    }
 
     if (statusResult.status === VALID) {
       const purchase = getLatestPurchase(statusResult.purchases);
@@ -1212,7 +1233,7 @@ const getPurchases = (action, commitAction, rollbackAction) => async (
       statusResult.status = VALID;
       for (const purchase of statusResult.purchases) {
         const found = validPurchases.find(p => {
-          return p.transactionId === purchase.transactionId
+          return p.transactionId === purchase.transactionId;
         });
         if (!found) validPurchases.push(purchase);
       }
@@ -1291,14 +1312,14 @@ export const initIapConnectionAndGetProducts = (doForce) => async (
     const canMakePayments = await RNIap.initConnection();
     registerIapListeners(true, dispatch, getState);
 
-    let products = null
+    let products = null;
     if (canMakePayments) {
       products = await RNIap.getSubscriptions([COM_BRACEDOTTO_SUPPORTER]);
     }
 
     dispatch({
       type: GET_PRODUCTS_COMMIT,
-      payload: { canMakePayments, products }
+      payload: { canMakePayments, products },
     });
   } catch (e) {
     dispatch({ type: GET_PRODUCTS_ROLLBACK });
@@ -1324,6 +1345,29 @@ export const restorePurchases = () => async (dispatch, getState) => {
 export const refreshPurchases = () => async (dispatch, getState) => {
   await getPurchases(
     REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK
+  )(dispatch, getState);
+};
+
+export const checkPurchases = () => async (dispatch, getState) => {
+  const { purchases, checkPurchasesDT } = getState().settings;
+
+  const purchase = getLatestPurchase(purchases);
+  if (!purchase) return;
+
+  const now = Date.now();
+  const expiryDT = (new Date(purchase.expiryDate)).getTime();
+
+  let doCheck = false;
+  if (now >= expiryDT || !checkPurchasesDT) doCheck = true;
+  else {
+    let p = 1.0 / (N_DAYS * 24 * 60 * 60 * 1000) * Math.abs(now - checkPurchasesDT);
+    p = Math.max(0.01, Math.min(p, 0.99));
+    doCheck = p > Math.random();
+  }
+  if (!doCheck) return;
+
+  await getPurchases(
+    REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK, true
   )(dispatch, getState);
 };
 
