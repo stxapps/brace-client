@@ -85,8 +85,11 @@ const SignInPopup = () => {
   ]);
 
   const onShouldStartLoadWithRequest = useCallback((e) => {
-    if (e.url.slice(0, 4) === 'http') Linking.openURL(e.url);
-    return false;
+    if (e.url.slice(0, 4) === 'http') {
+      Linking.openURL(e.url);
+      return false;
+    }
+    return true;
   }, []);
 
   const onContentProcessDidTerminate = useCallback(() => {
