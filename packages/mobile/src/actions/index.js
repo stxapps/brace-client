@@ -1233,7 +1233,7 @@ const getPurchases = (
       statusResult.status = VALID;
       for (const purchase of statusResult.purchases) {
         const found = validPurchases.find(p => {
-          return p.transactionId === purchase.transactionId;
+          return p.orderId === purchase.orderId;
         });
         if (!found) validPurchases.push(purchase);
       }
