@@ -6,8 +6,8 @@ import { Circle } from 'react-native-animated-spinkit';
 
 import {
   initIapConnectionAndGetProducts, requestPurchase, restorePurchases, refreshPurchases,
-  retryVerifyPurchase, updateIapPublicKey, updateIapRestoreStatus,
-  updateIapRefreshStatus,
+  retryVerifyPurchase, updateIapPublicKey, updateIapPurchaseStatus,
+  updateIapRestoreStatus, updateIapRefreshStatus,
 } from '../actions';
 import {
   GET_PRODUCTS_ROLLBACK, REQUEST_PURCHASE, RESTORE_PURCHASES, REFRESH_PURCHASES,
@@ -46,12 +46,16 @@ const IapHome = (props) => {
   const { onToRestoreIapViewBtnClick } = props;
   const { width: safeAreaWidth } = useSafeAreaFrame();
   const publicKey = useSelector(state => state.iap.publicKey);
+  const productStatus = useSelector(state => state.iap.productStatus);
   const canMakePayments = useSelector(state => state.iap.canMakePayments);
   const product = useSelector(state => getValidProduct(state));
-  const productStatus = useSelector(state => state.iap.productStatus);
   const purchaseStatus = useSelector(state => state.iap.purchaseStatus);
   const didClick = useRef(false);
   const dispatch = useDispatch();
+
+  // To make sure useEffect is componentWillUnmount
+  const purchaseStatusRef = useRef(purchaseStatus);
+  const dispatchRef = useRef(dispatch);
 
   const onRequestBtnClick = () => {
     if (didClick.current) return;
@@ -89,6 +93,19 @@ const IapHome = (props) => {
     didClick.current = false;
   }, [product, canMakePayments, purchaseStatus, productStatus]);
 
+  useEffect(() => {
+    purchaseStatusRef.current = purchaseStatus;
+    dispatchRef.current = dispatch;
+  }, [purchaseStatus, dispatch]);
+
+  useEffect(() => {
+    return () => {
+      if (![null, REQUEST_PURCHASE].includes(purchaseStatusRef.current)) {
+        dispatchRef.current(updateIapPurchaseStatus(null, null));
+      }
+    };
+  }, []);
+
   let publicKeyText = (
     <View style={tailwind('pt-1 flex-shrink flex-grow sm:pl-3', safeAreaWidth)}>
       <Circle size={20} color="rgba(107, 114, 128, 1)" />
@@ -117,7 +134,7 @@ const IapHome = (props) => {
           </TouchableOpacity>
         </View>
       );
-    } else if (purchaseStatus === REQUEST_PURCHASE || purchaseStatus === VALID) {
+    } else if (purchaseStatus === REQUEST_PURCHASE) {
       actionPanel = (
         <View style={tailwind('mt-6 py-1 border border-transparent flex-row justify-start items-start')}>
           <Circle size={20} color="rgba(107, 114, 128, 1)" />
@@ -251,6 +268,10 @@ const IapPurchased = (props) => {
   const didClick = useRef(false);
   const dispatch = useDispatch();
 
+  // To make sure useEffect is componentWillUnmount
+  const refreshStatusRef = useRef(refreshStatus);
+  const dispatchRef = useRef(dispatch);
+
   const onRefreshBtnClick = () => {
     if (didClick.current) return;
     dispatch(refreshPurchases());
@@ -262,16 +283,21 @@ const IapPurchased = (props) => {
   }, [publicKey, dispatch]);
 
   useEffect(() => {
-    return () => {
-      if (![null, REFRESH_PURCHASES].includes(refreshStatus)) {
-        dispatch(updateIapRefreshStatus(null));
-      }
-    };
+    didClick.current = false;
+  }, [refreshStatus]);
+
+  useEffect(() => {
+    refreshStatusRef.current = refreshStatus;
+    dispatchRef.current = dispatch;
   }, [refreshStatus, dispatch]);
 
   useEffect(() => {
-    didClick.current = false;
-  }, [refreshStatus]);
+    return () => {
+      if (![null, REFRESH_PURCHASES].includes(refreshStatusRef.current)) {
+        dispatchRef.current(updateIapRefreshStatus(null));
+      }
+    };
+  }, []);
 
   let appStoreLink = (
     <Text style={tailwind('text-base text-gray-500 font-normal leading-6.5 underline')}>N/A</Text>
@@ -305,7 +331,11 @@ const IapPurchased = (props) => {
   if (purchase.status === ACTIVE) {
     infoText = (
       <React.Fragment>
-        <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Thank you very much for supporting us. You've unlocked extra feature: pin to the top.</Text>
+        <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>
+          <Svg style={[tailwind('text-green-500 font-normal'), markStyle]} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.7071 8.70711C14.0976 8.31658 14.0976 7.68342 13.7071 7.29289C13.3166 6.90237 12.6834 6.90237 12.2929 7.29289L9 10.5858L7.70711 9.29289C7.31658 8.90237 6.68342 8.90237 6.29289 9.29289C5.90237 9.68342 5.90237 10.3166 6.29289 10.7071L8.29289 12.7071C8.68342 13.0976 9.31658 13.0976 9.70711 12.7071L13.7071 8.70711Z" />
+          </Svg>
+          <Text style={tailwind('text-base text-green-600 font-normal leading-6.5')}> Thank you very much for supporting us.</Text> You've unlocked extra feature: pin to the top.</Text>
         <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Your subscription will be expired on {getFormattedDate(new Date(purchase.expiryDate))} and it'll be automatically renewed. You can manage your subscription at {appStoreLink}.</Text>
       </React.Fragment>
     );
@@ -420,11 +450,15 @@ const _SettingsPopupIapRestore = (props) => {
 
   const { onBackToIapViewBtnClick } = props;
   const { width: safeAreaWidth } = useSafeAreaFrame();
-  const publicKey = useSelector(state => state.iap.publicKey);
   const purchase = useSelector(state => getValidPurchase(state));
+  const publicKey = useSelector(state => state.iap.publicKey);
   const restoreStatus = useSelector(state => state.iap.restoreStatus);
   const didClick = useRef(false);
   const dispatch = useDispatch();
+
+  // To make sure useEffect is componentWillUnmount
+  const restoreStatusRef = useRef(restoreStatus);
+  const dispatchRef = useRef(dispatch);
 
   const onRestoreBtnClick = () => {
     if (didClick.current) return;
@@ -441,16 +475,21 @@ const _SettingsPopupIapRestore = (props) => {
   }, [purchase, onBackToIapViewBtnClick]);
 
   useEffect(() => {
-    return () => {
-      if (![null, RESTORE_PURCHASES, VALID].includes(restoreStatus)) {
-        dispatch(updateIapRestoreStatus(null));
-      }
-    };
+    didClick.current = false;
+  }, [restoreStatus]);
+
+  useEffect(() => {
+    restoreStatusRef.current = restoreStatus;
+    dispatchRef.current = dispatch;
   }, [restoreStatus, dispatch]);
 
   useEffect(() => {
-    didClick.current = false;
-  }, [restoreStatus]);
+    return () => {
+      if (![null, RESTORE_PURCHASES].includes(restoreStatusRef.current)) {
+        dispatchRef.current(updateIapRestoreStatus(null));
+      }
+    };
+  }, []);
 
   let actionPanel;
   if (restoreStatus === null) {

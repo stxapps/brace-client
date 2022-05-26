@@ -35,7 +35,7 @@ import {
   REQUEST_PURCHASE, REQUEST_PURCHASE_COMMIT, REQUEST_PURCHASE_ROLLBACK,
   RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
   REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
-  UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS,
+  UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS, UPDATE_IAP_PURCHASE_STATUS,
   UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
   UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
   UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
@@ -57,7 +57,7 @@ import {
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam, getUserImageUrl, randomDecor,
   isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
-  getLatestPurchase,
+  getLatestPurchase, getValidPurchase,
 } from '../utils';
 
 import DefaultPreference from 'react-native-default-preference';
@@ -1157,13 +1157,13 @@ const verifyPurchase = async (purchase) => {
   return verifyResult;
 };
 
-const getIapStatus = async () => {
+const getIapStatus = async (doForce) => {
   const sigObj = await userSession.signECDSA(SIGNED_TEST_STRING);
   const reqBody = {
     userId: sigObj.publicKey,
     signature: sigObj.signature,
     appId: COM_BRACEDOTTO,
-    doForce: false,
+    doForce: doForce,
   };
 
   const res = await axios.post(
@@ -1175,14 +1175,14 @@ const getIapStatus = async () => {
 };
 
 const getPurchases = (
-  action, commitAction, rollbackAction, serverOnly = false
+  action, commitAction, rollbackAction, doForce, serverOnly
 ) => async (dispatch, getState) => {
 
   dispatch({ type: action });
 
   let statusResult;
   try {
-    const res = await getIapStatus();
+    const res = await getIapStatus(doForce);
     statusResult = res.data;
 
     if (serverOnly) {
@@ -1256,7 +1256,12 @@ const iapUpdatedListener = (dispatch, getState) => async (purchase) => {
 };
 
 const iapErrorListener = (dispatch, getState) => async (error) => {
-  dispatch({ type: REQUEST_PURCHASE_ROLLBACK });
+  console.log('Error in iapErrorListener: ', error);
+  if (error.code === 'E_USER_CANCELLED') {
+    dispatch(updateIapPurchaseStatus(null, null));
+  } else {
+    dispatch({ type: REQUEST_PURCHASE_ROLLBACK });
+  }
 };
 
 let iapUpdatedEventEmitter = null, iapErrorEventEmitter = null;
@@ -1295,7 +1300,7 @@ export const endIapConnection = (isInit = false) => async (dispatch, getState) =
 
   if (!isInit) {
     didGetProducts = false;
-    dispatch({ type: UPDATE_IAP_PRODUCT_STATUS, payload: null });
+    dispatch(updateIapProductStatus(null, null, null));
   }
 };
 
@@ -1332,26 +1337,32 @@ export const requestPurchase = (product) => async (dispatch, getState) => {
     await RNIap.requestSubscription(product.productId);
   } catch (error) {
     console.log('Error when request purchase: ', error);
-    dispatch({ type: REQUEST_PURCHASE_ROLLBACK });
+    if (error.code === 'E_USER_CANCELLED') {
+      dispatch(updateIapPurchaseStatus(null, null));
+    } else {
+      dispatch({ type: REQUEST_PURCHASE_ROLLBACK });
+    }
   }
 };
 
 export const restorePurchases = () => async (dispatch, getState) => {
   await getPurchases(
-    RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK
+    RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
+    false, false
   )(dispatch, getState);
 };
 
 export const refreshPurchases = () => async (dispatch, getState) => {
   await getPurchases(
-    REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK
+    REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
+    true, false
   )(dispatch, getState);
 };
 
 export const checkPurchases = () => async (dispatch, getState) => {
   const { purchases, checkPurchasesDT } = getState().settings;
 
-  const purchase = getLatestPurchase(purchases);
+  const purchase = getValidPurchase(purchases);
   if (!purchase) return;
 
   const now = Date.now();
@@ -1367,7 +1378,8 @@ export const checkPurchases = () => async (dispatch, getState) => {
   if (!doCheck) return;
 
   await getPurchases(
-    REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK, true
+    REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
+    false, true
   )(dispatch, getState);
 };
 
@@ -1385,6 +1397,20 @@ export const retryVerifyPurchase = () => async (dispatch, getState) => {
 export const updateIapPublicKey = () => async (dispatch, getState) => {
   const sigObj = await userSession.signECDSA(SIGNED_TEST_STRING);
   dispatch({ type: UPDATE_IAP_PUBLIC_KEY, payload: sigObj.publicKey });
+};
+
+export const updateIapProductStatus = (status, canMakePayments, products) => {
+  return {
+    type: UPDATE_IAP_PRODUCT_STATUS,
+    payload: { status, canMakePayments, products },
+  };
+};
+
+export const updateIapPurchaseStatus = (status, rawPurchase) => {
+  return {
+    type: UPDATE_IAP_PURCHASE_STATUS,
+    payload: { status, rawPurchase },
+  };
 };
 
 export const updateIapRestoreStatus = (status) => {

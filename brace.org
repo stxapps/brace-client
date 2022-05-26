@@ -875,12 +875,15 @@ This and CI/CD are very important!
 ** Setup in Play console
 - Release to Closed testing: Alpha
 - Add Testers and the license testers
+  + Join in https://play.google.com/apps/testing/com.bracedotto
+- Add iap subscription and activate
+- Use same versionCode and versionName as in Closed testing
 - Setup -> API access (account level, both apps can use it)
   + Create a new Google Cloud Project
   + Create new service account, choose Editor for the project access. Allow all permissions for financial data, create new key
 ** Setup in Google Cloud
 - Add pub/sub topic: projects/iap-001/topics/playstore-notifications-bracedotto
-- Change to push with the server endpoint
+- Change to push with the server endpoint, Set the subscriber to never expire
 - Add permission to the topic
 - Add the topic in Play Console -> Brace.to app -> Monetization setup
 ** Setup in iap-server
@@ -888,4 +891,9 @@ This and CI/CD are very important!
 - gcloud app create --project=iap-001 --region=us-central
 - assume unchanged: git update-index --assume-unchanged src/appstore-keys.json src/playstore-service-account.json
 - yarn add googleapis node-apple-receipt-verify
--
+- Create Application Default Credential (ADC)
+  + select project: iap-001, go to IAM & Admin -> Service Accounts -> Select App Engine default service account -> Keys -> Add Key -> Create new Key
+  + Move the file to ~/.config/gcloud/legacy_credentials/brace@brace.to
+  + Refer to it in package.json -> scripts -> start-local
+  + cloud.google.com/nodejs/docs/reference/datastore/latest/datastore/datastore
+  + cloud.google.com/docs/authentication/production#providing_credentials_to_your_application

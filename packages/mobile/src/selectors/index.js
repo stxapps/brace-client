@@ -265,7 +265,7 @@ export const makeGetListNameEditor = () => {
 };
 
 export const getValidProduct = createSelector(
-  state => state.settings.products,
+  state => state.iap.products,
   products => _getValidProduct(products),
 );
 
