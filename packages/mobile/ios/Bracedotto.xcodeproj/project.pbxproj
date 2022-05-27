@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* BracedottoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* BracedottoTests.m */; };
+		0433977F27FAE26C00A2137D /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0433977E27FAE26C00A2137D /* StoreKit.framework */; };
 		045764EB27227E63003A625C /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045764EA27227E63003A625C /* ShareViewController.swift */; };
 		045764EE27227E63003A625C /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 045764EC27227E63003A625C /* MainInterface.storyboard */; };
 		045764F227227E63003A625C /* Save to Brace.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 045764E827227E63003A625C /* Save to Brace.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -110,6 +111,8 @@
 		00E356EE1AD99517003FC87E /* BracedottoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BracedottoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* BracedottoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BracedottoTests.m; sourceTree = "<group>"; };
+		0433977E27FAE26C00A2137D /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		0444554A2840BC5000680CB7 /* supporter.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = supporter.storekit; sourceTree = "<group>"; };
 		045764E827227E63003A625C /* Save to Brace.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Save to Brace.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		045764EA27227E63003A625C /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		045764ED27227E63003A625C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
@@ -194,6 +197,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B0112C5C24B550BBF2E58B92 /* libPods-Bracedotto.a in Frameworks */,
+				0433977F27FAE26C00A2137D /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,6 +266,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0433977E27FAE26C00A2137D /* StoreKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				8BC4763DEF653BB01BAFCBAD /* libPods-Bracedotto.a */,
 				1CB7AB508BD834732F562DD9 /* libPods-Bracedotto-BracedottoTests.a */,
@@ -288,6 +293,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				AAC6E40A5338E462754C325B /* Pods */,
 				D2321545C099418CB029BA4F /* Resources */,
+				0444554A2840BC5000680CB7 /* supporter.storekit */,
 				0457650A272280E5003A625C /* Dummy.swift */,
 				04576509272280E4003A625C /* Bracedotto-Bridging-Header.h */,
 			);

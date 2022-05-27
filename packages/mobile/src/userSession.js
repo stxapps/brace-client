@@ -40,7 +40,9 @@ const updateUserData = async (userData) => {
 };
 
 const loadUserData = async () => {
-  return await RNBlockstackSdk.loadUserData();
+  const userData = await RNBlockstackSdk.loadUserData();
+  if (!userData.appPrivateKey) userData.appPrivateKey = userData.private_key;
+  return userData;
 };
 
 const putFile = async (path, content, options = { encrypt: true }) => {

@@ -1,0 +1,59 @@
+{
+  "identifier" : "AB4ABE97",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_billingIssuesEnabled" : false,
+    "_compatibilityTimeRate" : 6,
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitError" : 0,
+    "_timeRate" : 15
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "9A8388A8",
+      "localizations" : [
+
+      ],
+      "name" : "Brace.to",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "displayPrice" : "4.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "8217F1DE",
+          "introductoryOffer" : {
+            "internalID" : "D2D42C43",
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P2W"
+          },
+          "localizations" : [
+            {
+              "description" : "Support us and unlock extra feature(s)",
+              "displayName" : "Brace.to",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.bracedotto.supporter",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Supporter",
+          "subscriptionGroupID" : "9A8388A8",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 1,
+    "minor" : 1
+  }
+}
