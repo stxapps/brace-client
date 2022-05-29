@@ -864,7 +864,6 @@ This and CI/CD are very important!
 - Get App-Specific Shared Secret in Features: In-App Purchases tab
 - Sandbox Testers
   + Use an email address that has never been used as an Apple ID or used to purchase iTunes or App Store content. Consider creating a dedicated email address for each sandbox tester.
-  + Test, User01, testuser01@brace.to, normal pass + Conf
 - Add server url to URL for App Store Server Notifications in General -> App information -> v1
 ** Setup in XCode
 - Add In-App Purchase capability in Xcode
@@ -897,3 +896,22 @@ This and CI/CD are very important!
   + Refer to it in package.json -> scripts -> start-local
   + cloud.google.com/nodejs/docs/reference/datastore/latest/datastore/datastore
   + cloud.google.com/docs/authentication/production#providing_credentials_to_your_application
+** Test
+*** iOS
+**** XCode (developer.apple.com/documentation/xcode/setting-up-storekit-testing-in-xcode)
+- Create supporter.storekit
+- In Edit Scheme... -> Run -> Options, Storekit Configuration: supporter.storekit
+- Choose Build Configuration: Debug, Debug executable, and localhost in Info.plist
+- Test interrupted Purchases by Editor -> Enable Interrupted Purchases
+- Test failed transactions by Editor -> Fail transactions -> SKErrorUnknown
+- Manage Transactions by Debug > StoreKit > Manage Transactions
+- Don't forget to change Storekit Configuration back to None
+**** Sandbox
+- Don't need to sign out, just run the app in debug mode, when make a purchase, there will a popup to use test user
+- Sign in with test id: testuser01@brace.to, normal pass + Conf in the popup
+- Manage the test user in Settings -> App Store -> Sandbox account
+- 
+*** Android
+- Join a test program
+- Choose approve purchase, or reject purchase in both purchase popup and in subscription management in Google Play App
+- Choose cancel subscription in subscription management in Google Play App

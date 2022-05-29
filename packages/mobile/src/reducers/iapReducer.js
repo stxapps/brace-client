@@ -108,8 +108,8 @@ const iapReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_POPUP) {
-    const { id } = action.payload;
-    if ([ALL, SETTINGS_POPUP].includes(id)) {
+    const { id, isShown } = action.payload;
+    if ([ALL, SETTINGS_POPUP].includes(id) && isShown) {
       const newState = { ...state };
 
       if (![null, REQUEST_PURCHASE].includes(newState.purchaseStatus)) {
