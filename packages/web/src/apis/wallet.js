@@ -2,11 +2,12 @@ import { SECP256K1Client } from 'jsontokens';
 import { makeDIDFromAddress } from '@stacks/auth'
 import {
   generateSecretKey, generateWallet, getRootNode, deriveLegacyConfigPrivateKey,
-  fetchWalletConfig, deriveAccount, makeWalletConfig, updateWalletConfigWithApp,
-  getAppPrivateKey, getStxAddress,
-} from '@stacks/wallet-sdk/dist';
+  fetchWalletConfig, fetchUsernameForAccountByDerivationType, DerivationType,
+  deriveStxPrivateKey, deriveAccount, makeWalletConfig, updateWalletConfigWithApp,
+  getAppPrivateKey,
+} from '@stacks/wallet-sdk';
 import {
-  DEFAULT_PROFILE, fetchAccountProfile,
+  DEFAULT_PROFILE, fetchAccountProfileUrl, fetchProfileFromUrl,
 } from '@stacks/wallet-sdk/dist/models/profile';
 import {
   fetchLegacyWalletConfig,
@@ -14,15 +15,16 @@ import {
 import {
   getHubInfo, connectToGaiaHubWithConfig, makeGaiaAssociationToken,
 } from '@stacks/wallet-sdk/dist/utils';
-import { TransactionVersion } from '@stacks/transactions';
 import { getPublicKeyFromPrivate, publicKeyToAddress } from '@stacks/encryption';
-import { fetchPrivate } from '@stacks/common';
+import { StacksMainnet } from '@stacks/network';
 
 const DEFAULT_PASSWORD = 'password';
 const DEFAULT_GAIA_HUB_URL = 'https://hub.blockstack.org';
 const DEFAULT_GAIA_HUB_READ_URL = 'https://gaia.blockstack.org/hub/';
 
 const N_ACCOUNTS = 10;
+
+const network = new StacksMainnet();
 
 const createAccount = async () => {
   const secretKey = generateSecretKey(256);
@@ -31,7 +33,7 @@ const createAccount = async () => {
 };
 
 const restoreConfigs = async (wallet, gaiaHubUrl) => {
-  const hubInfo = await getHubInfo(gaiaHubUrl);
+  const hubInfo = await getHubInfo(gaiaHubUrl, network.fetchFn);
   const rootNode = getRootNode(wallet);
   const legacyGaiaConfig = connectToGaiaHubWithConfig({
     hubInfo,
@@ -45,8 +47,12 @@ const restoreConfigs = async (wallet, gaiaHubUrl) => {
   });
 
   const [walletConfig, legacyWalletConfig] = await Promise.all([
-    fetchWalletConfig({ wallet, gaiaHubConfig: currentGaiaConfig }),
-    fetchLegacyWalletConfig({ wallet, gaiaHubConfig: legacyGaiaConfig }),
+    fetchWalletConfig({
+      wallet, gaiaHubConfig: currentGaiaConfig, fetchFn: network.fetchFn,
+    }),
+    fetchLegacyWalletConfig({
+      wallet, gaiaHubConfig: legacyGaiaConfig, fetchFn: network.fetchFn,
+    }),
   ]);
 
   let walletConfigAccountsLength = 0;
@@ -58,40 +64,68 @@ const restoreConfigs = async (wallet, gaiaHubUrl) => {
     walletConfigIdentitiesLength = legacyWalletConfig.identities.length;
   }
   if (walletConfig && walletConfigAccountsLength >= walletConfigIdentitiesLength) {
-    const newAccounts = walletConfig.accounts.map((account, index) => {
-      let existingAccount = wallet.accounts[index];
-      if (!existingAccount) {
-        existingAccount = deriveAccount({
+    const newAccounts = await Promise.all(
+      walletConfig.accounts.map(async (_, index) => {
+        let existingAccount = wallet.accounts[index];
+        const { username } = await fetchUsernameForAccountByDerivationType({
           rootNode,
           index,
-          salt: wallet.salt,
+          derivationType: DerivationType.Wallet,
+          network,
         });
-      }
-      return {
-        ...existingAccount,
-        username: account.username,
-      };
-    });
+        if (!existingAccount) {
+          existingAccount = deriveAccount({
+            rootNode,
+            index,
+            salt: wallet.salt,
+            stxDerivationType: DerivationType.Wallet,
+          });
+        } else {
+          existingAccount = {
+            ...existingAccount,
+            stxPrivateKey: deriveStxPrivateKey({
+              rootNode,
+              index,
+            }),
+          };
+        }
+        return { ...existingAccount, username: username };
+      })
+    );
 
     wallet = { ...wallet, accounts: newAccounts };
     return { wallet, walletConfig, walletGaiaConfig: currentGaiaConfig };
   }
 
   if (legacyWalletConfig) {
-    const newAccounts = legacyWalletConfig.identities.map((identity, index) => {
-      let existingAccount = wallet.accounts[index];
-      if (!existingAccount) {
-        existingAccount = deriveAccount({
+    const newAccounts = await Promise.all(
+      legacyWalletConfig.identities.map(async (_, index) => {
+        let existingAccount = wallet.accounts[index];
+        const { username } = await fetchUsernameForAccountByDerivationType({
           rootNode,
           index,
-          salt: wallet.salt,
+          derivationType: DerivationType.Wallet,
+          network,
         });
-      }
-      return {
-        ...existingAccount,
-        username: identity.username,
-      };
-    });
+        if (!existingAccount) {
+          existingAccount = deriveAccount({
+            rootNode,
+            index,
+            salt: wallet.salt,
+            stxDerivationType: DerivationType.Wallet,
+          });
+        } else {
+          existingAccount = {
+            ...existingAccount,
+            stxPrivateKey: deriveStxPrivateKey({
+              rootNode,
+              index,
+            }),
+          };
+        }
+        return { ...existingAccount, username };
+      })
+    );
 
     wallet = { ...wallet, accounts: newAccounts };
 
@@ -118,34 +152,14 @@ const restoreConfigs = async (wallet, gaiaHubUrl) => {
   return { wallet, walletGaiaConfig: currentGaiaConfig };
 };
 
-const restoreUsernames = async (wallet) => {
-  for (let i = 0, j = wallet.accounts.length; i < j; i += N_ACCOUNTS) {
-    const _accounts = wallet.accounts.slice(i, i + N_ACCOUNTS);
-    await Promise.all(_accounts.map(async (account) => {
-      if (account.username) return;
-
-      const stxAddress = getStxAddress({
-        account, transactionVersion: TransactionVersion.Mainnet,
-      });
-      const nameUrl = `https://stacks-node-api.mainnet.stacks.co/v1/addresses/stacks/${stxAddress}`;
-      const res = await fetchPrivate(nameUrl);
-      if (res.ok) {
-        const json = await res.json();
-        if (Array.isArray(json.names) && json.names.length > 0) {
-          account.username = json.names[0];
-        }
-      }
-    }));
-  }
-
-  return wallet;
-};
-
 const restoreProfiles = async (wallet, gaiaHubReadUrl) => {
   for (let i = 0, j = wallet.accounts.length; i < j; i += N_ACCOUNTS) {
     const _accounts = wallet.accounts.slice(i, i + N_ACCOUNTS);
     await Promise.all(_accounts.map(async (account) => {
-      const profile = await fetchAccountProfile({ account, gaiaHubUrl: gaiaHubReadUrl });
+      const profileUrl = await fetchAccountProfileUrl(
+        { account, gaiaHubUrl: gaiaHubReadUrl }
+      );
+      const profile = await fetchProfileFromUrl(profileUrl, network.fetchFn);
       if (profile) account.profile = profile;
     }));
   }
@@ -163,7 +177,6 @@ const restoreAccount = async (secretKey) => {
   }
 
   const walletData = await restoreConfigs(wallet, DEFAULT_GAIA_HUB_URL);
-  walletData.wallet = await restoreUsernames(walletData.wallet);
   walletData.wallet = await restoreProfiles(
     walletData.wallet, DEFAULT_GAIA_HUB_READ_URL
   );
