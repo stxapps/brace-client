@@ -1,5 +1,7 @@
 import { Linking, AppState, Platform } from 'react-native';
-import { RESET_STATE as OFFLINE_RESET_STATE } from '@redux-offline/redux-offline/lib/constants';
+import {
+  RESET_STATE as OFFLINE_RESET_STATE,
+} from '@redux-offline/redux-offline/lib/constants';
 import axios from 'axios';
 //import RNFS from 'react-native-fs';
 import * as RNIap from 'react-native-iap';

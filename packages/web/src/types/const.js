@@ -175,7 +175,8 @@ export const MODE_EDIT = 'MODE_EDIT';
 export const LAYOUT_CARD = 'LAYOUT_CARD';
 export const LAYOUT_LIST = 'LAYOUT_LIST';
 
-export const IAP_URL = 'https://iap-001.uc.r.appspot.com'; //'http://127.0.0.1:8088';
+export const IAP_URL = 'https://iap-001.uc.r.appspot.com'; //'http://192.168.1.44:8088';
+export const IAP_VERIFY_URL = IAP_URL + '/verify';
 export const IAP_STATUS_URL = IAP_URL + '/status';
 
 export const APPSTORE = 'AppStore';

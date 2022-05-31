@@ -906,8 +906,8 @@ This and CI/CD are very important!
 - Test failed transactions by Editor -> Fail transactions -> SKErrorUnknown
 - Manage Transactions by Debug > StoreKit > Manage Transactions
 - Don't forget to change Storekit Configuration back to None
-**** Sandbox
-- Don't need to sign out, just run the app in debug mode, when make a purchase, there will a popup to use test user
+**** Sandbox (help.apple.com/app-store-connect/#/dev7e89e149d)
+- Don't need to sign out, just run the app in *debug mode*, when make a purchase, there will a popup to use test user
 - Sign in with test id: testuser01@brace.to, normal pass + Conf in the popup
 - Manage the test user in Settings -> App Store -> Sandbox account
 - 

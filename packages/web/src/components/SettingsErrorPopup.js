@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { retryDiedSettings, cancelDiedSettings } from '../actions';
@@ -7,15 +7,24 @@ import { HASH_SUPPORT, DIED_UPDATING } from '../types/const';
 const SettingsErrorPopup = () => {
 
   const settingsStatus = useSelector(state => state.display.settingsStatus);
+  const didClick = useRef(false);
   const dispatch = useDispatch();
 
   const onRetryBtnClick = () => {
+    if (didClick.current) return;
     dispatch(retryDiedSettings());
+    didClick.current = true;
   };
 
   const onCancelBtnClick = () => {
+    if (didClick.current) return;
     dispatch(cancelDiedSettings());
+    didClick.current = true;
   };
+
+  useEffect(() => {
+    didClick.current = false;
+  }, [settingsStatus]);
 
   if (settingsStatus !== DIED_UPDATING) return null;
 

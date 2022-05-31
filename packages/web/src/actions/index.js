@@ -1,4 +1,6 @@
-import { RESET_STATE as OFFLINE_RESET_STATE } from '@redux-offline/redux-offline/lib/constants';
+import {
+  RESET_STATE as OFFLINE_RESET_STATE,
+} from '@redux-offline/redux-offline/lib/constants';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 
@@ -33,7 +35,8 @@ import {
   UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_LAYOUT_TYPE,
   RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
   REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
-  UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
+  UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS, UPDATE_IAP_PURCHASE_STATUS,
+  UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
   UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
   UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -42,10 +45,11 @@ import {
   SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
   ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
-  MY_LIST, TRASH, ARCHIVE, N_LINKS, SETTINGS_FNAME,
+  MY_LIST, TRASH, ARCHIVE, N_LINKS, N_DAYS, SETTINGS_FNAME,
   ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
-  IAP_STATUS_URL, COM_BRACEDOTTO, SIGNED_TEST_STRING,
+  IAP_STATUS_URL, COM_BRACEDOTTO,
+  SIGNED_TEST_STRING, VALID, ACTIVE,
 } from '../types/const';
 import {
   _, isEqual, isString, isObject, isNumber, throttle, sleep, isIPadIPhoneIPod,
@@ -53,6 +57,7 @@ import {
   getUrlFirstChar, separateUrlAndParam, extractUrl, getUserImageUrl, randomDecor,
   isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
   isDecorValid, isExtractedResultValid, isListNameObjsValid,
+  getLatestPurchase, getValidPurchase,
 } from '../utils';
 import { initialSettingsState } from '../types/initialStates';
 
@@ -1029,6 +1034,13 @@ export const updateDeletingListName = (listName) => {
   };
 };
 
+export const tryUpdateSettings = () => async (dispatch, getState) => {
+  const isSettingsPopupShown = getState().display.isSettingsPopupShown;
+  if (isSettingsPopupShown) return;
+
+  dispatch(updateSettings());
+};
+
 export const updateSettings = () => async (dispatch, getState) => {
 
   const settings = getState().settings;
@@ -1489,43 +1501,109 @@ export const updateDeleteAllDataProgress = (progress) => {
   };
 };
 
-const getIapStatus = async () => {
+const getIapStatus = async (doForce) => {
   const sigObj = userSession.signECDSA(SIGNED_TEST_STRING);
   const reqBody = {
     userId: sigObj.publicKey,
     signature: sigObj.signature,
     appId: COM_BRACEDOTTO,
-    doForce: false,
+    doForce: doForce,
   };
-  const res = await axios.post(IAP_STATUS_URL, reqBody);
+
+  const res = await axios.post(
+    IAP_STATUS_URL,
+    reqBody,
+  );
   return res;
 };
 
-export const restorePurchases = () => async (dispatch, getState) => {
-  dispatch({ type: RESTORE_PURCHASES });
+const getPurchases = (
+  action, commitAction, rollbackAction, doForce, serverOnly
+) => async (dispatch, getState) => {
+
+  dispatch({ type: action });
+
+  let statusResult;
   try {
-    const res = await getIapStatus();
-    dispatch({ type: RESTORE_PURCHASES_COMMIT, payload: res.data });
+    const res = await getIapStatus(doForce);
+    statusResult = res.data;
+
+    if (serverOnly) {
+      dispatch({ type: commitAction, payload: statusResult });
+      return;
+    }
+
+    if (statusResult.status === VALID) {
+      const purchase = getLatestPurchase(statusResult.purchases);
+      if (purchase && purchase.status === ACTIVE) {
+        dispatch({ type: commitAction, payload: statusResult });
+        return;
+      }
+    }
   } catch (error) {
-    console.log('Error when contact IAP server to restore purchases: ', error);
-    dispatch({ type: RESTORE_PURCHASES_ROLLBACK });
+    console.log('Error when contact IAP server to get purchases: ', error);
+    dispatch({ type: rollbackAction });
+    return;
   }
+
+  dispatch({ type: commitAction, payload: statusResult });
+};
+
+export const restorePurchases = () => async (dispatch, getState) => {
+  await getPurchases(
+    RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
+    false, false
+  )(dispatch, getState);
 };
 
 export const refreshPurchases = () => async (dispatch, getState) => {
-  dispatch({ type: REFRESH_PURCHASES });
-  try {
-    const res = await getIapStatus();
-    dispatch({ type: REFRESH_PURCHASES_COMMIT, payload: res.data });
-  } catch (error) {
-    console.log('Error when contact IAP server to refresh purchases: ', error);
-    dispatch({ type: REFRESH_PURCHASES_ROLLBACK });
+  await getPurchases(
+    REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
+    true, false
+  )(dispatch, getState);
+};
+
+export const checkPurchases = () => async (dispatch, getState) => {
+  const { purchases, checkPurchasesDT } = getState().settings;
+
+  const purchase = getValidPurchase(purchases);
+  if (!purchase) return;
+
+  const now = Date.now();
+  const expiryDT = (new Date(purchase.expiryDate)).getTime();
+
+  let doCheck = false;
+  if (now >= expiryDT || !checkPurchasesDT) doCheck = true;
+  else {
+    let p = 1.0 / (N_DAYS * 24 * 60 * 60 * 1000) * Math.abs(now - checkPurchasesDT);
+    p = Math.max(0.01, Math.min(p, 0.99));
+    doCheck = p > Math.random();
   }
+  if (!doCheck) return;
+
+  await getPurchases(
+    REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
+    false, true
+  )(dispatch, getState);
 };
 
 export const updateIapPublicKey = () => async (dispatch, getState) => {
   const sigObj = userSession.signECDSA(SIGNED_TEST_STRING);
   dispatch({ type: UPDATE_IAP_PUBLIC_KEY, payload: sigObj.publicKey });
+};
+
+export const updateIapProductStatus = (status, canMakePayments, products) => {
+  return {
+    type: UPDATE_IAP_PRODUCT_STATUS,
+    payload: { status, canMakePayments, products },
+  };
+};
+
+export const updateIapPurchaseStatus = (status, rawPurchase) => {
+  return {
+    type: UPDATE_IAP_PURCHASE_STATUS,
+    payload: { status, rawPurchase },
+  };
 };
 
 export const updateIapRestoreStatus = (status) => {

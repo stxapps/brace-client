@@ -8,7 +8,7 @@ import {
 import { FETCH_MORE } from '../types/actionTypes';
 import {
   _, isStringIn, excludeWithMainIds, isObject, isArrayEqual, isEqual, isOfflineAction,
-  getValidPurchase as _getValidPurchase,
+  getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
 } from '../utils';
 import { initialListNameEditorState } from '../types/initialStates';
 
@@ -263,6 +263,11 @@ export const makeGetListNameEditor = () => {
     { memoizeOptions: { resultEqualityCheck: isEqual } },
   );
 };
+
+export const getValidProduct = createSelector(
+  state => state.iap.products,
+  products => _getValidProduct(products),
+);
 
 export const getValidPurchase = createSelector(
   state => state.settings.purchases,
