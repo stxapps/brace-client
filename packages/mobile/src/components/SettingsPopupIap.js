@@ -253,7 +253,7 @@ const IapHome = (props) => {
       <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Support us and unlock extra feature: pin to the top.</Text>
       <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>Start with a 14 day free trial.</Text>
       {actionPanel}
-      <Text style={tailwind('mt-6 text-sm text-gray-400 font-normal leading-6.5')}>By subscribing, you agree to our <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_TERMS)} style={tailwind('text-sm text-gray-400 font-normal leading-6.5 underline')}>Terms of Service</Text> and <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-sm text-gray-400 font-normal leading-6.5 underline')}>Privacy Policy</Text>. Only one free trial per user, the App Store Terms and Conditions apply.</Text>
+      <Text style={tailwind('mt-6 text-sm text-gray-400 font-normal leading-6.5')}>By subscribing, you agree to our <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_TERMS)} style={tailwind('text-sm text-gray-500 font-normal leading-6.5 underline')}>Terms of Service</Text> and <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-sm text-gray-500 font-normal leading-6.5 underline')}>Privacy Policy</Text>. Only one free trial per user, the App Store Terms and Conditions apply.</Text>
       <Text style={tailwind('mt-4 text-base text-gray-500 font-normal leading-6.5')}>If you've already purchased the subscription, try <Text onPress={onToRestoreIapViewBtnClick} style={tailwind('text-base text-gray-500 font-normal leading-6.5 underline')}>Restore purchases</Text></Text>
     </View>
   );

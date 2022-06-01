@@ -5,7 +5,7 @@ import { updateFetchedSettings, tryUpdateSettings } from '../actions';
 import {
   FETCH_COMMIT, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME,
   DELETE_LIST_NAMES, UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
-  UPDATE_DO_DESCENDING_ORDER, CANCEL_DIED_SETTINGS,
+  UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS_COMMIT, CANCEL_DIED_SETTINGS,
   REQUEST_PURCHASE_COMMIT, RESTORE_PURCHASES_COMMIT, REFRESH_PURCHASES_COMMIT,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -18,6 +18,7 @@ import {
   myListListNameObj, trashListNameObj, archiveListNameObj,
 } from '../types/initialStates';
 
+let _didJustPurchase = false;
 const settingsReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
@@ -45,6 +46,16 @@ const settingsReducer = (state = initialState, action) => {
         );
         i += 1;
       }
+    }
+
+    if (_didJustPurchase) {
+      // It can happen that FETCH_COMMIT is after just purchased
+      //  and not close the settings popup yet
+      //  i.e. 1. just open the app and go to purchase
+      //       2. back to foreground and fetch again
+      //  and replace the newly purchase with old value in settings from server.
+      newState.purchases = state.purchases;
+      newState.checkPurchasesDT = state.checkPurchasesDT;
     }
 
     return loop(
@@ -193,8 +204,14 @@ const settingsReducer = (state = initialState, action) => {
     return { ...state, doDescendingOrder: action.payload };
   }
 
+  if (action.type === UPDATE_SETTINGS_COMMIT) {
+    _didJustPurchase = false;
+    return state;
+  }
+
   if (action.type === CANCEL_DIED_SETTINGS) {
     const { settings } = action.payload;
+    _didJustPurchase = false;
     return { ...state, ...settings };
   }
 
@@ -205,8 +222,10 @@ const settingsReducer = (state = initialState, action) => {
     const newState = { ...state, checkPurchasesDT: Date.now() };
 
     if (Array.isArray(newState.purchases)) {
-      newState.purchases = [...newState.purchases, purchase];
-    } else newState.purchases = [purchase];
+      newState.purchases = [...newState.purchases, { ...purchase }];
+    } else newState.purchases = [{ ...purchase }];
+
+    _didJustPurchase = true;
 
     return loop(
       newState, Cmd.run(tryUpdateSettings(), { args: [Cmd.dispatch, Cmd.getState] })
@@ -217,6 +236,10 @@ const settingsReducer = (state = initialState, action) => {
     action.type === RESTORE_PURCHASES_COMMIT ||
     action.type === REFRESH_PURCHASES_COMMIT
   ) {
+    // It can happen that checkPurchases is after just purchased
+    //  and replace old purchases with the current newly one.
+    if (_didJustPurchase) return state;
+
     const { status, purchases } = action.payload;
     if (status !== VALID || !purchases) return state;
 
@@ -231,6 +254,7 @@ const settingsReducer = (state = initialState, action) => {
   }
 
   if (action.type === DELETE_ALL_DATA || action.type === RESET_STATE) {
+    _didJustPurchase = false;
     return { ...initialState };
   }
 

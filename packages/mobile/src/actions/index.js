@@ -91,6 +91,13 @@ export const init = async (store) => {
     if (nextAppState === 'active') {
       const isUserSignedIn = await userSession.isUserSignedIn();
       if (isUserSignedIn) {
+        const { purchaseStatus } = store.getState().iap;
+        if (purchaseStatus === REQUEST_PURCHASE) return;
+
+        const interval = (Date.now() - _lastFetchDT) / 1000 / 60 / 60;
+        //if (interval < 0.1) return;
+        if (isPopupShown(store.getState()) && interval < 0.2) return;
+
         store.dispatch(clearFetchedListNames());
       }
     }
@@ -321,6 +328,7 @@ export const updateSelectingLinkId = (id) => {
   };
 };
 
+let _lastFetchDT = 0;
 export const fetch = (
   doDeleteOldLinksInTrash, doExtractContents, doFetchSettings = false
 ) => async (dispatch, getState) => {
@@ -356,6 +364,8 @@ export const fetch = (
       },
     },
   });
+
+  if (doFetchSettings) _lastFetchDT = Date.now();
 };
 
 export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) => {
@@ -1104,9 +1114,9 @@ export const updateDeleteAllDataProgress = (progress) => {
   };
 };
 
-const verifyPurchase = async (purchase) => {
-  if (!purchase) return { status: INVALID };
-  if (Platform.OS === 'android' && purchase.purchaseStateAndroid === 0) {
+const verifyPurchase = async (rawPurchase) => {
+  if (!rawPurchase) return { status: INVALID };
+  if (Platform.OS === 'android' && rawPurchase.purchaseStateAndroid === 0) {
     return { status: INVALID };
   }
 
@@ -1122,14 +1132,14 @@ const verifyPurchase = async (purchase) => {
   const sigObj = await userSession.signECDSA(SIGNED_TEST_STRING);
   const userId = sigObj.publicKey;
 
-  const productId = purchase.productId;
+  const productId = rawPurchase.productId;
 
   let token;
-  if (Platform.OS === 'ios') token = purchase.transactionReceipt;
-  else if (Platform.OS === 'android') token = purchase.purchaseToken;
+  if (Platform.OS === 'ios') token = rawPurchase.transactionReceipt;
+  else if (Platform.OS === 'android') token = rawPurchase.purchaseToken;
 
   if (!token) {
-    console.log('No purchaseToken in purchase');
+    console.log('No purchaseToken in rawPurchase');
     return { status: INVALID };
   }
 
@@ -1150,7 +1160,7 @@ const verifyPurchase = async (purchase) => {
 
   try {
     if (Platform.OS !== 'android') {
-      await RNIap.finishTransaction(purchase, false);
+      await RNIap.finishTransaction(rawPurchase, false);
     }
   } catch (error) {
     console.log('Error when finishTransaction: ', error);
@@ -1179,6 +1189,15 @@ const getIapStatus = async (doForce) => {
 const getPurchases = (
   action, commitAction, rollbackAction, doForce, serverOnly
 ) => async (dispatch, getState) => {
+
+  const { purchaseState, restoreStatus, refreshStatus } = getState().iap;
+  if (
+    purchaseState === REQUEST_PURCHASE ||
+    restoreStatus === RESTORE_PURCHASES ||
+    refreshStatus === REFRESH_PURCHASES
+  ) {
+    return
+  }
 
   dispatch({ type: action });
 
@@ -1221,11 +1240,21 @@ const getPurchases = (
 
   try {
     // As iapUpdatedListener can be missed, need to getAvailablePurchases
-    const validPurchases = [];
+    const validPurchases = [], originalOrderIds = [];
 
-    const purchases = await RNIap.getAvailablePurchases();
-    for (const purchase of purchases) {
-      const verifyResult = await verifyPurchase(purchase);
+    const rawPurchases = await RNIap.getAvailablePurchases();
+    for (const rawPurchase of rawPurchases) {
+      let originalOrderId;
+      if (Platform.OS === 'ios') {
+        originalOrderId = rawPurchase.originalTransactionIdentifierIOS;
+      } else if (Platform.OS === 'android') {
+        originalOrderId = rawPurchase.purchaseToken;
+      }
+
+      if (originalOrderIds.includes(originalOrderId)) continue;
+      originalOrderIds.push(originalOrderId);
+
+      const verifyResult = await verifyPurchase(rawPurchase);
       if (verifyResult.status === VALID) {
         validPurchases.push(verifyResult.purchase);
       }
@@ -1249,11 +1278,11 @@ const getPurchases = (
   }
 };
 
-const iapUpdatedListener = (dispatch, getState) => async (purchase) => {
-  const verifyResult = await verifyPurchase(purchase);
+const iapUpdatedListener = (dispatch, getState) => async (rawPurchase) => {
+  const verifyResult = await verifyPurchase(rawPurchase);
   dispatch({
     type: REQUEST_PURCHASE_COMMIT,
-    payload: { ...verifyResult, rawPurchase: purchase },
+    payload: { ...verifyResult, rawPurchase },
   });
 };
 
@@ -1388,11 +1417,11 @@ export const checkPurchases = () => async (dispatch, getState) => {
 export const retryVerifyPurchase = () => async (dispatch, getState) => {
   dispatch({ type: REQUEST_PURCHASE });
 
-  const purchase = getState().iap.rawPurchase;
-  const verifyResult = await verifyPurchase(purchase);
+  const rawPurchase = getState().iap.rawPurchase;
+  const verifyResult = await verifyPurchase(rawPurchase);
   dispatch({
     type: REQUEST_PURCHASE_COMMIT,
-    payload: { ...verifyResult, rawPurchase: purchase },
+    payload: { ...verifyResult, rawPurchase },
   });
 };
 
