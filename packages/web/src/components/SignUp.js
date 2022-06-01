@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 import walletApi from '../apis/wallet';
-import { HASH_SUPPORT } from '../types/const';
+import { HASH_TERMS, HASH_PRIVACY, HASH_SUPPORT } from '../types/const';
 import { isString, randomString, copyTextToClipboard } from '../utils';
 
 const VIEW_START = 1;
@@ -248,9 +248,10 @@ const SignUp = (props) => {
         <p className="mt-3 text-sm text-gray-500 leading-6">Once lost, it's lost forever. So save it somewhere you won't forget.</p>
         <div className="pt-6">
           <button onClick={onBackedUpBtnClick} className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600" type="button">I've backed up my Secret Key</button>
-          <button onClick={onAgainBtnClick} className="mt-2 w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-white hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-600" type="button">View Secret Key again</button>
+          <p className="mt-3 text-xs text-gray-400 leading-5 tracking-wide">By clicking the button above, you agree to our <a className="text-gray-500 underline rounded-sm hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" href={domainName + '/' + HASH_TERMS} target="_blank" rel="noreferrer">Terms of Service</a> and <a className="text-gray-500 underline rounded-sm hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-blue-600" href={domainName + '/' + HASH_PRIVACY} target="_blank" rel="noreferrer">Privacy Policy</a>.</p>
+          <button onClick={onAgainBtnClick} className="mt-3 w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-white hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-600" type="button">View Secret Key again</button>
         </div>
-        <ul className="mt-32 mb-8 border-t border-b border-gray-200 divide-y divide-gray-200">
+        <ul className="mt-20 mb-8 border-t border-b border-gray-200 divide-y divide-gray-200">
           {faqs2.map(faq => <ExpListItem key={faq.key} title={faq.title} body={faq.body} />)}
         </ul>
       </React.Fragment>
