@@ -3,7 +3,7 @@ import { REHYDRATE } from 'redux-persist/constants';
 import {
   FETCH_COMMIT, UPDATE_SETTINGS_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
-import { deriveSettings } from '../utils';
+import { deriveSettingsState } from '../utils';
 import { initialSettingsState } from '../types/initialStates';
 
 const initialState = {
@@ -20,7 +20,7 @@ const snapshotReducer = (state = initialState, action) => {
     const { listNames, doFetchSettings, settings } = action.payload;
     if (!doFetchSettings) return state;
 
-    const derivedSettings = deriveSettings(listNames, settings, initialState);
+    const derivedSettings = deriveSettingsState(listNames, settings, initialState);
     const newState = { ...state, settings: { ...derivedSettings } };
     return newState;
   }

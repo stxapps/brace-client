@@ -1052,24 +1052,21 @@ export const isListNameObjsValid = (listNameObjs) => {
   return true;
 };
 
-export const deriveSettings = (listNames, settings, initialState) => {
-  let derivedSettings;
-  if (settings) derivedSettings = { ...initialState, ...settings };
-  else derivedSettings = { ...initialState };
-
-  derivedSettings.listNameMap = copyListNameObjs(derivedSettings.listNameMap);
+export const deriveSettingsState = (listNames, settings, initialState) => {
+  const state = settings ? { ...initialState, ...settings } : { ...initialState };
+  state.listNameMap = copyListNameObjs(state.listNameMap);
 
   let i = 1;
   for (const listName of listNames) {
-    if (!doContainListName(listName, derivedSettings.listNameMap)) {
-      derivedSettings.listNameMap.push(
+    if (!doContainListName(listName, state.listNameMap)) {
+      state.listNameMap.push(
         { listName: listName, displayName: `<missing-name-${i}>` }
       );
       i += 1;
     }
   }
 
-  return derivedSettings;
+  return state;
 };
 
 export const getValidProduct = (products) => {

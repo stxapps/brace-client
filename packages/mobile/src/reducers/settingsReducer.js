@@ -12,7 +12,7 @@ import {
 import { MY_LIST, TRASH, ARCHIVE, SWAP_LEFT, SWAP_RIGHT, VALID } from '../types/const';
 import {
   getListNameObj, doContainListName, copyListNameObjs, swapArrayElements,
-  deriveSettings,
+  deriveSettingsState,
 } from '../utils';
 import {
   initialSettingsState as initialState,
@@ -36,7 +36,7 @@ const settingsReducer = (state = initialState, action) => {
     const { listNames, doFetchSettings, settings } = action.payload;
     if (!doFetchSettings) return state;
 
-    const newState = deriveSettings(listNames, settings, initialState);
+    const newState = deriveSettingsState(listNames, settings, initialState);
 
     if (didChange.doExtractContents) {
       newState.doExtractContents = state.doExtractContents;
