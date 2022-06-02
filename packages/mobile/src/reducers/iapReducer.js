@@ -10,6 +10,7 @@ import {
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import { ALL, SETTINGS_POPUP } from '../types/const';
+import { didChange } from '../vars';
 
 const initialState = {
   publicKey: null,
@@ -66,7 +67,7 @@ const iapReducer = (state = initialState, action) => {
 
   if (action.type === RESTORE_PURCHASES_COMMIT) {
     const { status } = action.payload;
-    return { ...state, restoreStatus: status };
+    return { ...state, restoreStatus: didChange.purchases ? null : status };
   }
 
   if (action.type === RESTORE_PURCHASES_ROLLBACK) {
@@ -78,7 +79,8 @@ const iapReducer = (state = initialState, action) => {
   }
 
   if (action.type === REFRESH_PURCHASES_COMMIT) {
-    return { ...state, refreshStatus: REFRESH_PURCHASES_COMMIT };
+    const status = didChange.purchases ? null : REFRESH_PURCHASES_COMMIT;
+    return { ...state, refreshStatus: status };
   }
 
   if (action.type === REFRESH_PURCHASES_ROLLBACK) {

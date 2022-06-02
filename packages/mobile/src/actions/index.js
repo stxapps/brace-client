@@ -26,9 +26,8 @@ import {
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
-  UPDATE_EXTRACTED_CONTENTS, UPDATE_FETCHED_SETTINGS,
-  UPDATE_LIST_NAME_EDITORS, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME,
-  MOVE_TO_LIST_NAME, DELETE_LIST_NAMES,
+  UPDATE_EXTRACTED_CONTENTS, UPDATE_LIST_NAME_EDITORS, ADD_LIST_NAMES,
+  UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME, DELETE_LIST_NAMES,
   UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME,
   UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
@@ -866,11 +865,6 @@ export const tryUpdateExtractedContents = (payload) => async (dispatch, getState
   });
 };
 
-export const updateFetchedSettings = () => async (dispatch, getState) => {
-  const settings = getState().settings;
-  dispatch({ type: UPDATE_FETCHED_SETTINGS, payload: settings });
-};
-
 export const updateListNameEditors = (listNameEditors) => {
   return { type: UPDATE_LIST_NAME_EDITORS, payload: listNameEditors };
 };
@@ -878,8 +872,7 @@ export const updateListNameEditors = (listNameEditors) => {
 export const updateSettingsPopup = (isShown) => async (dispatch, getState) => {
   /*
     A settings snapshot is made when FETCH_COMMIT and UPDATE_SETTINGS_COMMIT
-    For FETCH_COMMIT, use Redux Loop
-    For UPDATE_SETTINGS_COMMIT, check action type in snapshotReducer
+    For FETCH_COMMIT and UPDATE_SETTINGS_COMMIT, check action type in snapshotReducer
       as need settings that used to upload to the server, not the current in the state
 
     Can't make a snapshot when open the popup because

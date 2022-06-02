@@ -1,7 +1,7 @@
 import { REHYDRATE } from 'redux-persist/constants';
 import { loop, Cmd } from 'redux-loop';
 
-import { updateFetchedSettings, tryUpdateSettings } from '../actions';
+import { tryUpdateSettings, checkPurchases } from '../actions';
 import {
   FETCH_COMMIT, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME,
   DELETE_LIST_NAMES, UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
@@ -12,13 +12,14 @@ import {
 import { MY_LIST, TRASH, ARCHIVE, SWAP_LEFT, SWAP_RIGHT, VALID } from '../types/const';
 import {
   getListNameObj, doContainListName, copyListNameObjs, swapArrayElements,
+  deriveSettings,
 } from '../utils';
 import {
   initialSettingsState as initialState,
   myListListNameObj, trashListNameObj, archiveListNameObj,
 } from '../types/initialStates';
+import { didChange } from '../vars';
 
-let _didJustPurchase = false;
 const settingsReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
@@ -35,20 +36,21 @@ const settingsReducer = (state = initialState, action) => {
     const { listNames, doFetchSettings, settings } = action.payload;
     if (!doFetchSettings) return state;
 
-    const newState = settings ? { ...initialState, ...settings } : { ...initialState };
-    newState.listNameMap = copyListNameObjs(newState.listNameMap);
+    const newState = deriveSettings(listNames, settings, initialState);
 
-    let i = 1;
-    for (const listName of listNames) {
-      if (!doContainListName(listName, newState.listNameMap)) {
-        newState.listNameMap.push(
-          { listName: listName, displayName: `<missing-name-${i}>` }
-        );
-        i += 1;
-      }
+    if (didChange.doExtractContents) {
+      newState.doExtractContents = state.doExtractContents;
     }
-
-    if (_didJustPurchase) {
+    if (didChange.doDeleteOldLinksInTrash) {
+      newState.doDeleteOldLinksInTrash = state.doDeleteOldLinksInTrash;
+    }
+    if (didChange.doDescendingOrder) {
+      newState.doDescendingOrder = state.doDescendingOrder;
+    }
+    if (didChange.listNameMap) {
+      newState.listNameMap = state.listNameMap;
+    }
+    if (didChange.purchases) {
       // It can happen that FETCH_COMMIT is after just purchased
       //  and not close the settings popup yet
       //  i.e. 1. just open the app and go to purchase
@@ -58,17 +60,22 @@ const settingsReducer = (state = initialState, action) => {
       newState.checkPurchasesDT = state.checkPurchasesDT;
     }
 
+    if ([
+      didChange.doExtractContents, didChange.doDeleteOldLinksInTrash,
+      didChange.doDescendingOrder, didChange.listNameMap, didChange.purchases,
+    ].includes(true)) {
+      return newState;
+    }
     return loop(
-      newState,
-      Cmd.run(
-        updateFetchedSettings(),
-        { args: [Cmd.dispatch, Cmd.getState] })
+      newState, Cmd.run(checkPurchases(), { args: [Cmd.dispatch, Cmd.getState] })
     );
   }
 
   if (action.type === ADD_LIST_NAMES) {
     const newState = { ...state };
     newState.listNameMap = [...state.listNameMap, ...action.payload];
+
+    didChange.listNameMap = true;
 
     return newState;
   }
@@ -87,6 +94,8 @@ const settingsReducer = (state = initialState, action) => {
       }
       listNameObj.displayName = newNames[i];
     }
+
+    didChange.listNameMap = true;
 
     return newState;
   }
@@ -137,6 +146,8 @@ const settingsReducer = (state = initialState, action) => {
     if (parent) parentListNameObj.children = newListNameMap;
     else newState.listNameMap = newListNameMap;
 
+    didChange.listNameMap = true;
+
     return newState;
   }
 
@@ -170,6 +181,8 @@ const settingsReducer = (state = initialState, action) => {
     if (!parentListNameObj.children) parentListNameObj.children = [];
     parentListNameObj.children.push(listNameObj);
 
+    didChange.listNameMap = true;
+
     return newState;
   }
 
@@ -189,29 +202,42 @@ const settingsReducer = (state = initialState, action) => {
       newState.listNameMap.push({ ...archiveListNameObj });
     }
 
+    didChange.listNameMap = true;
+
     return newState;
   }
 
   if (action.type === UPDATE_DO_EXTRACT_CONTENTS) {
+    didChange.doExtractContents = true;
     return { ...state, doExtractContents: action.payload };
   }
 
   if (action.type === UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH) {
+    didChange.doDeleteOldLinksInTrash = true;
     return { ...state, doDeleteOldLinksInTrash: action.payload };
   }
 
   if (action.type === UPDATE_DO_DESCENDING_ORDER) {
+    didChange.doDescendingOrder = true;
     return { ...state, doDescendingOrder: action.payload };
   }
 
   if (action.type === UPDATE_SETTINGS_COMMIT) {
-    _didJustPurchase = false;
+    didChange.doExtractContents = false;
+    didChange.doDeleteOldLinksInTrash = false;
+    didChange.doDescendingOrder = false;
+    didChange.listNameMap = false;
+    didChange.purchases = false;
     return state;
   }
 
   if (action.type === CANCEL_DIED_SETTINGS) {
     const { settings } = action.payload;
-    _didJustPurchase = false;
+    didChange.doExtractContents = false;
+    didChange.doDeleteOldLinksInTrash = false;
+    didChange.doDescendingOrder = false;
+    didChange.listNameMap = false;
+    didChange.purchases = false;
     return { ...state, ...settings };
   }
 
@@ -225,7 +251,7 @@ const settingsReducer = (state = initialState, action) => {
       newState.purchases = [...newState.purchases, { ...purchase }];
     } else newState.purchases = [{ ...purchase }];
 
-    _didJustPurchase = true;
+    didChange.purchases = true;
 
     return loop(
       newState, Cmd.run(tryUpdateSettings(), { args: [Cmd.dispatch, Cmd.getState] })
@@ -238,7 +264,7 @@ const settingsReducer = (state = initialState, action) => {
   ) {
     // It can happen that checkPurchases is after just purchased
     //  and replace old purchases with the current newly one.
-    if (_didJustPurchase) return state;
+    if (didChange.purchases) return state;
 
     const { status, purchases } = action.payload;
     if (status !== VALID || !purchases) return state;
@@ -254,7 +280,11 @@ const settingsReducer = (state = initialState, action) => {
   }
 
   if (action.type === DELETE_ALL_DATA || action.type === RESET_STATE) {
-    _didJustPurchase = false;
+    didChange.doExtractContents = false;
+    didChange.doDeleteOldLinksInTrash = false;
+    didChange.doDescendingOrder = false;
+    didChange.listNameMap = false;
+    didChange.purchases = false;
     return { ...initialState };
   }
 

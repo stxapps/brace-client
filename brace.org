@@ -628,7 +628,7 @@ This and CI/CD are very important!
 - follow steps in medium.com/@xijo/create-react-app-with-tailwind-via-postcss-plus-purgecss-5c36b4c33ba7 to config Tailwindcss
 - yarn add redux redux-loop react-redux reselect
 - yarn add https://github.com/bracedotto/redux-offline#a09e3618b9a03204cd30b0d900ebf2ec0c2c5b69
-- yarn add @stacks/auth @stacks/storage @stacks/wallet-sdk @stacks/connect
+- yarn add @stacks/auth @stacks/storage @stacks/wallet-sdk @stacks/connect @stacks/encryption
 - Make sure history works:
   + Address bar i.e. change path, change hash!
   + redirect back i.e. from blockstack or other websites
@@ -864,7 +864,7 @@ This and CI/CD are very important!
 - Get App-Specific Shared Secret in Features: In-App Purchases tab
 - Sandbox Testers
   + Use an email address that has never been used as an Apple ID or used to purchase iTunes or App Store content. Consider creating a dedicated email address for each sandbox tester.
-- Add server url to URL for App Store Server Notifications in General -> App information -> v1
+- Add server url to URL for App Store Server Notifications in General -> App information -> v2
 ** Setup in XCode
 - Add In-App Purchase capability in Xcode
 - When testing in-app purchases in the sandbox environment, make sure you’re running a development-signed build of your app; production-signed builds use the production environment.
