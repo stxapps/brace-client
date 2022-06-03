@@ -190,7 +190,6 @@ const displayReducer = (state = initialState, action) => {
     const newState = {
       ...state,
       status: FETCH_COMMIT,
-      selectedLinkIds: [],
       didFetch: true,
       didFetchSettings: true,
       fetchedListNames: [...state.fetchedListNames, listName],

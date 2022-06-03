@@ -1052,6 +1052,23 @@ export const isListNameObjsValid = (listNameObjs) => {
   return true;
 };
 
+export const deriveSettingsState = (listNames, settings, initialState) => {
+  const state = settings ? { ...initialState, ...settings } : { ...initialState };
+  state.listNameMap = copyListNameObjs(state.listNameMap);
+
+  let i = 1;
+  for (const listName of listNames) {
+    if (!doContainListName(listName, state.listNameMap)) {
+      state.listNameMap.push(
+        { listName: listName, displayName: `<missing-name-${i}>` }
+      );
+      i += 1;
+    }
+  }
+
+  return state;
+};
+
 export const getValidProduct = (products) => {
   if (!Array.isArray(products) || products.length === 0) return null;
   for (const product of products) {

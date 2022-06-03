@@ -26,13 +26,13 @@ import {
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
-  UPDATE_EXTRACTED_CONTENTS, UPDATE_FETCHED_SETTINGS,
-  UPDATE_LIST_NAME_EDITORS, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME,
-  MOVE_TO_LIST_NAME, DELETE_LIST_NAMES,
+  UPDATE_EXTRACTED_CONTENTS, UPDATE_LIST_NAME_EDITORS, ADD_LIST_NAMES,
+  UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME, DELETE_LIST_NAMES,
   UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME,
   UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
   UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_LAYOUT_TYPE,
+  REQUEST_PURCHASE,
   RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
   REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
   UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS, UPDATE_IAP_PURCHASE_STATUS,
@@ -506,13 +506,16 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
     return;
   }
 
-  const pageYOffset = window.pageYOffset;
-  if (
-    (updateAction === 1 && pageYOffset < 64 / 10 * _links.length) ||
-    (updateAction === 2 && pageYOffset === 0 && !isPopupShown(getState()))
-  ) {
-    dispatch(updateFetched(payload, meta));
-    return;
+  const isBulkEditing = getState().display.isBulkEditing;
+  if (!isBulkEditing) {
+    const pageYOffset = window.pageYOffset;
+    if (
+      (updateAction === 1 && pageYOffset < 64 / 10 * _links.length) ||
+      (updateAction === 2 && pageYOffset === 0 && !isPopupShown(getState()))
+    ) {
+      dispatch(updateFetched(payload, meta));
+      return;
+    }
   }
 
   dispatch({
@@ -928,18 +931,14 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
 
 export const tryUpdateExtractedContents = (payload) => async (dispatch, getState) => {
 
+  const isBulkEditing = getState().display.isBulkEditing;
   const pageYOffset = window.pageYOffset;
-  const canRerender = pageYOffset === 0 && !isPopupShown(getState());
+  const canRerender = !isBulkEditing && pageYOffset === 0 && !isPopupShown(getState());
 
   dispatch({
     type: UPDATE_EXTRACTED_CONTENTS,
     payload: { ...payload, canRerender },
   });
-};
-
-export const updateFetchedSettings = () => async (dispatch, getState) => {
-  const settings = getState().settings;
-  dispatch({ type: UPDATE_FETCHED_SETTINGS, payload: settings });
 };
 
 export const updateListNameEditors = (listNameEditors) => {
@@ -949,8 +948,7 @@ export const updateListNameEditors = (listNameEditors) => {
 export const updateSettingsPopup = (isShown) => async (dispatch, getState) => {
   /*
     A settings snapshot is made when FETCH_COMMIT and UPDATE_SETTINGS_COMMIT
-    For FETCH_COMMIT, use Redux Loop
-    For UPDATE_SETTINGS_COMMIT, check action type in snapshotReducer
+    For FETCH_COMMIT and UPDATE_SETTINGS_COMMIT, check action type in snapshotReducer
       as need settings that used to upload to the server, not the current in the state
 
     Can't make a snapshot when open the popup because
@@ -1520,6 +1518,13 @@ const getIapStatus = async (doForce) => {
 const getPurchases = (
   action, commitAction, rollbackAction, doForce, serverOnly
 ) => async (dispatch, getState) => {
+
+  const { purchaseState, restoreStatus, refreshStatus } = getState().iap;
+  if (
+    purchaseState === REQUEST_PURCHASE ||
+    restoreStatus === RESTORE_PURCHASES ||
+    refreshStatus === REFRESH_PURCHASES
+  ) return;
 
   dispatch({ type: action });
 

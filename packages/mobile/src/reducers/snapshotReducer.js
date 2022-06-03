@@ -20,7 +20,9 @@ const snapshotReducer = (state = initialState, action) => {
     const { listNames, doFetchSettings, settings } = action.payload;
     if (!doFetchSettings) return state;
 
-    const derivedSettings = deriveSettingsState(listNames, settings, initialState);
+    const derivedSettings = deriveSettingsState(
+      listNames, settings, initialSettingsState
+    );
     const newState = { ...state, settings: { ...derivedSettings } };
     return newState;
   }

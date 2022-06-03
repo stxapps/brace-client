@@ -1192,9 +1192,7 @@ const getPurchases = (
     purchaseState === REQUEST_PURCHASE ||
     restoreStatus === RESTORE_PURCHASES ||
     refreshStatus === REFRESH_PURCHASES
-  ) {
-    return
-  }
+  ) return;
 
   dispatch({ type: action });
 
