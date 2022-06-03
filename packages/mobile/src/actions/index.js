@@ -432,13 +432,16 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
     return;
   }
 
-  const pageYOffset = getState().window.pageYOffset;
-  if (
-    (updateAction === 1 && pageYOffset < 64 / 10 * _links.length) ||
-    (updateAction === 2 && pageYOffset === 0 && !isPopupShown(getState()))
-  ) {
-    dispatch(updateFetched(payload, meta));
-    return;
+  const isBulkEditing = getState().display.isBulkEditing;
+  if (!isBulkEditing) {
+    const pageYOffset = getState().window.pageYOffset;
+    if (
+      (updateAction === 1 && pageYOffset < 64 / 10 * _links.length) ||
+      (updateAction === 2 && pageYOffset === 0 && !isPopupShown(getState()))
+    ) {
+      dispatch(updateFetched(payload, meta));
+      return;
+    }
   }
 
   dispatch({
@@ -856,8 +859,9 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
 
 export const tryUpdateExtractedContents = (payload) => async (dispatch, getState) => {
 
+  const isBulkEditing = getState().display.isBulkEditing;
   const pageYOffset = getState().window.pageYOffset;
-  const canRerender = pageYOffset === 0 && !isPopupShown(getState());
+  const canRerender = !isBulkEditing && pageYOffset === 0 && !isPopupShown(getState());
 
   dispatch({
     type: UPDATE_EXTRACTED_CONTENTS,
