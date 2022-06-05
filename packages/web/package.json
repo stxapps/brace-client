@@ -18,7 +18,7 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "@redux-offline/redux-offline": "https://github.com/bracedotto/redux-offline#a09e3618b9a03204cd30b0d900ebf2ec0c2c5b69",
+    "@redux-offline/redux-offline": "https://github.com/bracedotto/redux-offline#4969cde61cd97a9f317f158cade8c96374871a6d",
     "@stacks/auth": "^2.0.1",
     "@stacks/connect": "^6.2.0",
     "@stacks/encryption": "2.0.1",

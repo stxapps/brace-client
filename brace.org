@@ -627,7 +627,7 @@ This and CI/CD are very important!
 - follow steps in tailwindcss.com/course/optimizing-for-production
 - follow steps in medium.com/@xijo/create-react-app-with-tailwind-via-postcss-plus-purgecss-5c36b4c33ba7 to config Tailwindcss
 - yarn add redux redux-loop react-redux reselect
-- yarn add https://github.com/bracedotto/redux-offline#a09e3618b9a03204cd30b0d900ebf2ec0c2c5b69
+- yarn add https://github.com/bracedotto/redux-offline#4969cde61cd97a9f317f158cade8c96374871a6d
 - yarn add @stacks/auth @stacks/storage @stacks/wallet-sdk @stacks/connect @stacks/encryption
 - Make sure history works:
   + Address bar i.e. change path, change hash!
@@ -755,7 +755,7 @@ This and CI/CD are very important!
 - npx react-native init Bracedotto
 - yarn add redux react-redux redux-loop reselect
 - yarn add url-parse axios @react-native-community/clipboard
-- yarn add https://github.com/bracedotto/redux-offline#a09e3618b9a03204cd30b0d900ebf2ec0c2c5b69
+- yarn add https://github.com/bracedotto/redux-offline#4969cde61cd97a9f317f158cade8c96374871a6d
 - yarn add @react-native-community/async-storage @react-native-community/netinfo
 - yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?414786075849b51b511ea261ade6f8ccc623d68b'
 - yarn add https://github.com/bracedotto/tailwind-rn#6047a3e3de6607a6cb5b738ab3392d80aa81fd13
