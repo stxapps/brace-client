@@ -70,7 +70,9 @@ const addFPath = (fpaths, fpath) => {
   if (fpath.startsWith('links')) {
     const { listName } = extractLinkFPath(fpath);
     if (!fpaths.linkFPaths[listName]) fpaths.linkFPaths[listName] = [];
-    fpaths.linkFPaths[listName].push(fpath);
+    if (!fpaths.linkFPaths[listName].includes(fpath)) {
+      fpaths.linkFPaths[listName].push(fpath);
+    }
   } else if (fpath === SETTINGS_FNAME) {
     fpaths.settingsFPath = fpath;
   } else {
