@@ -35,10 +35,6 @@ export const POPUP_ANCHOR_POSITION = 'popupAnchorPosition';
 
 export const SETTINGS_FNAME = 'settings.json';
 
-export const PUT_FILE = 'PUT_FILE';
-export const DELETE_FILE = 'DELETE_FILE';
-export const GET_FILE = 'GET_FILE';
-
 export const N_LINKS = 10;
 export const MAX_TRY = 3;
 export const N_DAYS = 45;

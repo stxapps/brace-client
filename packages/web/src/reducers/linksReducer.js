@@ -118,7 +118,7 @@ const linksReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_FETCHED) {
-    const { listName, links, linkFPaths } = action.payload;
+    const { listName, links } = action.payload;
 
     let newState = state;
     if (listName in newState) { // Check here to not add already removed list name back
@@ -139,7 +139,7 @@ const linksReducer = (state = initialState, action) => {
     return loop(
       newState,
       Cmd.run(
-        deleteOldLinksInTrash(doDeleteOldLinksInTrash, doExtractContents, linkFPaths),
+        deleteOldLinksInTrash(doDeleteOldLinksInTrash, doExtractContents),
         { args: [Cmd.dispatch, Cmd.getState] })
     );
   }

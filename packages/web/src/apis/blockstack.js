@@ -1,30 +1,14 @@
 import userSession from '../userSession';
-import {
-  GET_FILE, PUT_FILE, DELETE_FILE,
-  SETTINGS_FNAME,
-  N_LINKS, MAX_TRY, N_DAYS,
-  TRASH,
-} from '../types/const';
+import { SETTINGS_FNAME, N_LINKS, MAX_TRY, N_DAYS, TRASH } from '../types/const';
 import {
   FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS,
   DELETE_OLD_LINKS_IN_TRASH, UPDATE_SETTINGS,
 } from '../types/actionTypes';
+import { cachedFPaths } from '../vars';
 
 export const effect = async (effectObj, _action) => {
 
   const { method, params } = effectObj;
-
-  if (method === GET_FILE) {
-    return userSession.getFile(params.fpath);
-  }
-
-  if (method === PUT_FILE) {
-    return userSession.putFile(params.fpath, JSON.stringify(params.content));
-  }
-
-  if (method === DELETE_FILE) {
-    return userSession.deleteFile(params.fpath);
-  }
 
   if (method === FETCH) {
     return fetch(params);
@@ -43,7 +27,7 @@ export const effect = async (effectObj, _action) => {
   }
 
   if (method === DELETE_OLD_LINKS_IN_TRASH) {
-    return deleteOldLinksInTrash(params);
+    return deleteOldLinksInTrash();
   }
 
   if (method === UPDATE_SETTINGS) {
@@ -74,28 +58,58 @@ const extractLinkFPath = (fpath) => {
   return { listName, fname, ext };
 };
 
-const listFPaths = async () => {
+const copyFPaths = (fpaths) => {
+  const newLinkFPaths = {};
+  for (const listName in fpaths.linkFPaths) {
+    newLinkFPaths[listName] = [...fpaths.linkFPaths[listName]];
+  }
+  return { ...fpaths, linkFPaths: newLinkFPaths };
+};
+
+const addFPath = (fpaths, fpath) => {
+  if (fpath.startsWith('links')) {
+    const { listName } = extractLinkFPath(fpath);
+    if (!fpaths.linkFPaths[listName]) fpaths.linkFPaths[listName] = [];
+    fpaths.linkFPaths[listName].push(fpath);
+  } else if (fpath === SETTINGS_FNAME) {
+    fpaths.settingsFPath = fpath;
+  } else {
+    console.log(`Invalid file path: ${fpath}`);
+  }
+};
+
+const deleteFPath = (fpaths, fpath) => {
+  if (fpath.startsWith('links')) {
+    const { listName } = extractLinkFPath(fpath);
+    if (fpaths.linkFPaths[listName]) {
+      fpaths.linkFPaths[listName] = fpaths.linkFPaths[listName].filter(el => {
+        return el !== fpath;
+      });
+      if (fpaths.linkFPaths[listName].length === 0) delete fpaths.linkFPaths[listName];
+    }
+  } else if (fpath === SETTINGS_FNAME) {
+    fpaths.settingsFPath = null;
+  } else {
+    console.log(`Invalid file path: ${fpath}`);
+  }
+};
+
+const _listFPaths = async () => {
   // List fpaths(keys)
   // Even though aws, az, gc sorts a-z but on Gaia local machine, it's arbitrary
   //   so need to fetch all and sort locally.
-  const linkFPaths = {};
-  let settingsFPath;
-
+  const fpaths = { linkFPaths: {}, settingsFPath: null };
   await userSession.listFiles((fpath) => {
-    if (fpath.startsWith('links')) {
-      const { listName } = extractLinkFPath(fpath);
-      if (!linkFPaths[listName]) linkFPaths[listName] = [];
-      linkFPaths[listName].push(fpath);
-    } else if (fpath === SETTINGS_FNAME) {
-      settingsFPath = fpath;
-    } else {
-      console.log(`Invalid file path: ${fpath}`);
-    }
-
+    addFPath(fpaths, fpath);
     return true;
   });
+  return fpaths;
+};
 
-  return { linkFPaths, settingsFPath };
+const listFPaths = async (doForce = false) => {
+  if (cachedFPaths.fpaths && !doForce) return copyFPaths(cachedFPaths.fpaths);
+  cachedFPaths.fpaths = await _listFPaths();
+  return copyFPaths(cachedFPaths.fpaths);
 };
 
 export const batchGetFileWithRetry = async (
@@ -136,7 +150,7 @@ export const batchGetFileWithRetry = async (
 const fetch = async (params) => {
 
   let { listName, doDescendingOrder, doFetchSettings } = params;
-  const { linkFPaths, settingsFPath } = await listFPaths();
+  const { linkFPaths, settingsFPath } = await listFPaths(doFetchSettings);
 
   let settings;
   if (settingsFPath && doFetchSettings) {
@@ -160,8 +174,7 @@ const fetch = async (params) => {
   const listNames = Object.keys(linkFPaths);
 
   return {
-    listName, doDescendingOrder, links, hasMore, linkFPaths,
-    listNames, doFetchSettings, settings,
+    listName, doDescendingOrder, links, hasMore, listNames, doFetchSettings, settings,
   };
 };
 
@@ -195,7 +208,11 @@ export const batchPutFileWithRetry = async (fpaths, contents, callCount) => {
   const responses = await Promise.all(
     fpaths.map((fpath, i) =>
       userSession.putFile(fpath, contents[i], { dangerouslyIgnoreEtag: true })
-        .then(publicUrl => ({ publicUrl, fpath, success: true }))
+        .then(publicUrl => {
+          addFPath(cachedFPaths.fpaths, fpath);
+          cachedFPaths.fpaths = copyFPaths(cachedFPaths.fpaths);
+          return { publicUrl, fpath, success: true };
+        })
         .catch(error => ({ error, fpath, content: contents[i], success: false }))
     )
   );
@@ -234,7 +251,11 @@ export const batchDeleteFileWithRetry = async (fpaths, callCount) => {
   const responses = await Promise.all(
     fpaths.map((fpath) =>
       userSession.deleteFile(fpath)
-        .then(() => ({ fpath, success: true }))
+        .then(() => {
+          deleteFPath(cachedFPaths.fpaths, fpath);
+          cachedFPaths.fpaths = copyFPaths(cachedFPaths.fpaths);
+          return { fpath, success: true };
+        })
         .catch(error => {
           // BUG ALERT
           // Treat not found error as not an error as local data might be out-dated.
@@ -274,9 +295,9 @@ const deleteLinks = async (params) => {
   return { listName, ids };
 };
 
-const deleteOldLinksInTrash = async (params) => {
+const deleteOldLinksInTrash = async () => {
 
-  const { linkFPaths } = params;
+  const { linkFPaths } = await listFPaths();
 
   const trashLinkFPaths = linkFPaths[TRASH] || [];
   let oldFPaths = trashLinkFPaths.filter(fpath => {
