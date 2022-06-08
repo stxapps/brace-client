@@ -1,9 +1,6 @@
 import defaultQueue from '@redux-offline/redux-offline/lib/defaults/queue';
 
 import {
-  GET_FILE, PUT_FILE, DELETE_FILE,
-} from '../types/const';
-import {
   FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_SETTINGS,
 } from '../types/actionTypes';
@@ -81,7 +78,6 @@ export const effect = async (effectObj, _action) => {
   const { method } = effectObj;
 
   if ([
-    GET_FILE, PUT_FILE, DELETE_FILE,
     FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
     UPDATE_SETTINGS,
   ].includes(method)) {

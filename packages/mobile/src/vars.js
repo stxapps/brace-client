@@ -5,3 +5,7 @@ export const didChange = {
   listNameMap: false,
   purchases: false,
 };
+
+export const cachedFPaths = {
+  fpaths: null,
+};
