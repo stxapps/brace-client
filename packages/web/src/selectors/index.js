@@ -1,15 +1,11 @@
 import { createSelectorCreator, defaultMemoize, createSelector } from 'reselect';
 
-import { extractPinFPath } from '../apis/blockstack';
-import {
-  ID, STATUS,
-  ADDED, MOVED, ADDING, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
-  IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, PINNED,
-} from '../types/const';
+import { IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, PINNED } from '../types/const';
 import { FETCH_MORE } from '../types/actionTypes';
 import {
-  _, isStringIn, excludeWithMainIds, isObject, isArrayEqual, isEqual, isOfflineAction,
+  _, isStringIn, isObject, isArrayEqual, isEqual, isOfflineAction,
   getMainId, getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
+  extractPinFPath, getFilteredLinks, getSortedLinks,
 } from '../utils';
 import { initialListNameEditorState } from '../types/initialStates';
 
@@ -56,83 +52,60 @@ export const getSelectedLinkIdsLength = createSelector(
   }
 );
 
-const doLinksEqual = (prevVal, val) => {
+const createSelectorLinks = createSelectorCreator(
+  defaultMemoize,
+  (prevVal, val) => {
 
-  if (prevVal['settings'].doDescendingOrder !== val['settings'].doDescendingOrder) {
-    return false;
-  }
-
-  if (prevVal['display'].listName !== val['display'].listName) return false;
-  if (prevVal['display'].searchString !== val['display'].searchString) return false;
-
-  if (prevVal['cachedFPaths'].fpaths !== val['cachedFPaths'].fpaths) {
-    if (!prevVal['cachedFPaths'].fpaths || !val['cachedFPaths'].fpaths) return false;
-    if (!isArrayEqual(
-      prevVal['cachedFPaths'].fpaths.pinFPaths,
-      val['cachedFPaths'].fpaths.pinFPaths
-    )) return false;
-  }
-
-  if (prevVal['links'] === val['links']) return true;
-  if (!isArrayEqual(Object.keys(prevVal['links']).sort(), Object.keys(val['links']).sort())) {
-    return false;
-  }
-
-  for (const key in val['links']) {
-
-    if (!prevVal['links'][key] || !val['links'][key]) {
-      if (prevVal['links'][key] !== val['links'][key]) return false;
-      continue;
+    if (prevVal['settings'].doDescendingOrder !== val['settings'].doDescendingOrder) {
+      return false;
     }
 
-    // Deep equal without attributes: popup and popupAnchorPosition.
-    const res = isEqual(
-      _.ignore(prevVal['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]),
-      _.ignore(val['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION])
-    );
-    if (!res) return false;
-  }
+    if (prevVal['display'].listName !== val['display'].listName) return false;
+    if (prevVal['display'].searchString !== val['display'].searchString) return false;
 
-  return true;
-};
-
-const createSelectorLinks = createSelectorCreator(defaultMemoize, doLinksEqual);
-
-export const _getLinks = (state) => {
-  const links = state.links;
-  const listName = state.display.listName;
-
-  if (!links || !links[listName]) return null;
-
-  const selectedLinks = _.select(links[listName], STATUS, [ADDED, MOVED, ADDING, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING]);
-
-  const moving_ids = [];
-  for (const key in links) {
-    if (key === listName || !links[key]) {
-      continue;
+    if (prevVal['cachedFPaths'].fpaths !== val['cachedFPaths'].fpaths) {
+      if (!prevVal['cachedFPaths'].fpaths || !val['cachedFPaths'].fpaths) return false;
+      if (!isArrayEqual(
+        prevVal['cachedFPaths'].fpaths.pinFPaths,
+        val['cachedFPaths'].fpaths.pinFPaths
+      )) return false;
     }
-    moving_ids.push(..._.extract(_.select(links[key], STATUS, [MOVED, MOVING, DIED_MOVING]), ID));
+
+    if (prevVal['links'] === val['links']) return true;
+    if (!isArrayEqual(Object.keys(prevVal['links']).sort(), Object.keys(val['links']).sort())) {
+      return false;
+    }
+
+    for (const key in val['links']) {
+
+      if (!prevVal['links'][key] || !val['links'][key]) {
+        if (prevVal['links'][key] !== val['links'][key]) return false;
+        continue;
+      }
+
+      // Deep equal without attributes: popup and popupAnchorPosition.
+      const res = isEqual(
+        _.ignore(prevVal['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]),
+        _.ignore(val['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION])
+      );
+      if (!res) return false;
+    }
+
+    return true;
   }
-
-  const filteredLinks = excludeWithMainIds(selectedLinks, moving_ids);
-
-  return filteredLinks;
-};
+);
 
 export const getLinks = createSelectorLinks(
   state => state,
   (state) => {
 
+    const links = state.links;
+    const listName = state.display.listName;
     const searchString = state.display.searchString;
     const doDescendingOrder = state.settings.doDescendingOrder;
 
-    const filteredLinks = _getLinks(state);
-    if (!filteredLinks) return null;
-
-    const sortedLinks = Object.values(filteredLinks).sort((a, b) => {
-      return b.addedDT - a.addedDT;
-    });
-    if (!doDescendingOrder) sortedLinks.reverse();
+    const sortedLinks = getSortedLinks(links, listName, doDescendingOrder);
+    if (!sortedLinks) return null;
 
     let pinFPaths = [];
     if (
@@ -143,12 +116,12 @@ export const getLinks = createSelectorLinks(
 
     const pinData = {};
     for (const fpath of pinFPaths) {
-      const { addedDT, rank, fname, ext } = extractPinFPath(fpath);
-      const id = getMainId(fname);
+      const { addedDT, rank, id, ext } = extractPinFPath(fpath);
+      const pinMainId = getMainId(id);
 
       // duplicate id, choose the latest addedDT
-      if (id in pinData && pinData[id].addedDT > addedDT) continue;
-      pinData[id] = { addedDT, rank, ext };
+      if (pinMainId in pinData && pinData[pinMainId].addedDT > addedDT) continue;
+      pinData[pinMainId] = { addedDT, rank, ext };
     }
 
     let processedLinks = [], pinnedLinks = [];
@@ -164,11 +137,12 @@ export const getLinks = createSelectorLinks(
 
     // sort pinnedLinks
     pinnedLinks = pinnedLinks.sort((objA, objB) => {
-      return objA.pinInfo.rank - objB.pinInfo.rank;
+      if (objA.pinInfo.rank < objB.pinInfo.rank) return -1;
+      if (objA.pinInfo.rank > objB.pinInfo.rank) return 1;
+      return 0;
     }).map(obj => obj.link);
 
     processedLinks = [...pinnedLinks, ...processedLinks];
-
 
     if (searchString === '') {
       return processedLinks;
@@ -182,15 +156,50 @@ export const getLinks = createSelectorLinks(
   }
 );
 
-const createSelectorPopupLink = createSelectorCreator(defaultMemoize, doLinksEqual);
+const createSelectorPopupLink = createSelectorCreator(
+  defaultMemoize,
+  (prevVal, val) => {
+
+    // doDescendingOrder shouldn't change which link its popup shown
+
+    if (prevVal['display'].listName !== val['display'].listName) return false;
+    if (prevVal['display'].searchString !== val['display'].searchString) return false;
+
+    // cachedFPaths shouldn't change which link its popup shown
+
+    if (prevVal['links'] === val['links']) return true;
+    if (!isArrayEqual(Object.keys(prevVal['links']).sort(), Object.keys(val['links']).sort())) {
+      return false;
+    }
+
+    for (const key in val['links']) {
+
+      if (!prevVal['links'][key] || !val['links'][key]) {
+        if (prevVal['links'][key] !== val['links'][key]) return false;
+        continue;
+      }
+
+      // Deep equal only attributes: popup and popupAnchorPosition.
+      const res = isEqual(
+        _.choose(prevVal['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]),
+        _.choose(val['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION])
+      );
+      if (!res) return false;
+    }
+
+    return true;
+  }
+);
 
 export const getPopupLink = createSelectorPopupLink(
   state => state,
   (state) => {
 
+    const links = state.links;
+    const listName = state.display.listName;
     const searchString = state.display.searchString;
 
-    const filteredLinks = _getLinks(state);
+    const filteredLinks = getFilteredLinks(links, listName);
     if (!filteredLinks) return null;
 
     const popupLinks = _.select(filteredLinks, IS_POPUP_SHOWN, true);
@@ -286,6 +295,7 @@ export const getValidPurchase = createSelector(
   purchases => _getValidPurchase(purchases),
 );
 
+/** @return {function(any, any): any} */
 export const makeGetPinLinkStatus = () => {
   return createSelector(
     state => state.pinLinkStatus,
@@ -297,18 +307,21 @@ export const makeGetPinLinkStatus = () => {
       }
       return null;
     },
-    (__, props) => props.linkId,
+    (__, link) => {
+      if (link) return link.id;
+      return null;
+    },
     (pinLinkStatus, pinFPaths, linkId) => {
 
+      if (!linkId) return null;
       if (linkId in pinLinkStatus) return pinLinkStatus[linkId];
-
       if (!Array.isArray(pinFPaths)) return null;
 
       const linkMainId = getMainId(linkId);
       for (const fpath of pinFPaths) {
-        const { fname } = extractPinFPath(fpath);
-        const id = getMainId(fname);
-        if (linkMainId === id) return PINNED;
+        const { id } = extractPinFPath(fpath);
+        const pinMainId = getMainId(id);
+        if (linkMainId === pinMainId) return PINNED;
       }
 
       return null;

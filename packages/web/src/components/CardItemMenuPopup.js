@@ -2,14 +2,17 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion";
 
-import { updatePopup, updateSelectingLinkId, moveLinks } from '../actions';
+import {
+  updatePopup, updateSelectingLinkId, moveLinks, pinLinks, unpinLinks, movePinnedLink,
+} from '../actions';
 import {
   MY_LIST, TRASH, ADDING, MOVING,
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
+  PIN, UNPIN, PIN_LEFT, PIN_RIGHT, PIN_UP, PIN_DOWN, PINNED, SWAP_LEFT, SWAP_RIGHT,
   CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP,
-  LG_WIDTH, LAYOUT_LIST,
+  SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
 } from '../types/const';
-import { getListNameMap, getPopupLink } from '../selectors';
+import { getListNameMap, getPopupLink, makeGetPinLinkStatus } from '../selectors';
 import {
   copyTextToClipboard, ensureContainUrlProtocol, getListNameDisplayName, getAllListNames,
   isEqual, throttle, getLastHalfHeight,
@@ -82,7 +85,9 @@ class CardItemMenuPopup extends React.PureComponent {
 
   populateMenu() {
 
-    const { listName, listNameMap, popupLink, layoutType, safeAreaWidth } = this.props;
+    const {
+      listName, listNameMap, popupLink, pinLinkStatus, layoutType, safeAreaWidth,
+    } = this.props;
 
     let menu = null;
     if (listName in CARD_ITEM_POPUP_MENU) {
@@ -102,6 +107,14 @@ class CardItemMenuPopup extends React.PureComponent {
     if (layoutType === LAYOUT_LIST && safeAreaWidth >= LG_WIDTH) {
       menu = menu.filter(text => ![ARCHIVE, REMOVE, RESTORE].includes(text));
     }
+
+    if (pinLinkStatus === PINNED) {
+      if (layoutType === LAYOUT_LIST || safeAreaWidth < SM_WIDTH) {
+        menu = [...menu, PIN_UP, PIN_DOWN, UNPIN];
+      } else {
+        menu = [...menu, PIN_LEFT, PIN_RIGHT, UNPIN];
+      }
+    } else menu = [...menu, PIN];
 
     return { menu };
   }
@@ -137,6 +150,14 @@ class CardItemMenuPopup extends React.PureComponent {
         left: newX, right: popupAnchorPosition.right - 8,
       };
       this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
+    } else if (text === PIN) {
+      this.props.pinLinks([id]);
+    } else if (text === UNPIN) {
+      this.props.unpinLinks([id]);
+    } else if ([PIN_LEFT, PIN_UP].includes(text)) {
+      this.props.movePinnedLink(id, SWAP_LEFT);
+    } else if ([PIN_RIGHT, PIN_DOWN].includes(text)) {
+      this.props.movePinnedLink(id, SWAP_RIGHT);
     } else {
       throw new Error(`Invalid text: ${text}`);
     }
@@ -224,16 +245,25 @@ class CardItemMenuPopup extends React.PureComponent {
 }
 
 const mapStateToProps = (state, props) => {
+
+  const getPinLinkStatus = makeGetPinLinkStatus();
+
+  const popupLink = getPopupLink(state);
+  const pinLinkStatus = getPinLinkStatus(state, popupLink);
+
   return {
     listName: state.display.listName,
     listNameMap: getListNameMap(state),
-    popupLink: getPopupLink(state),
+    popupLink,
+    pinLinkStatus,
     layoutType: state.localSettings.layoutType,
     safeAreaWidth: state.window.width,
     safeAreaHeight: state.window.height,
   }
 };
 
-const mapDispatchToProps = { updatePopup, updateSelectingLinkId, moveLinks };
+const mapDispatchToProps = {
+  updatePopup, updateSelectingLinkId, moveLinks, pinLinks, unpinLinks, movePinnedLink,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardItemMenuPopup);

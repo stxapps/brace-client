@@ -194,4 +194,10 @@ export const PAUSED = 'Paused';
 export const EXPIRED = 'Expired';
 //export const UNKNOWN = 'UNKNOWN';
 
+export const PIN = 'Pin to the top';
+export const UNPIN = 'Unpin';
+export const PIN_LEFT = 'Pin forward';
+export const PIN_RIGHT = 'Pin backward';
+export const PIN_UP = 'Pin up';
+export const PIN_DOWN = 'Pin down';
 export const PINNED = 'PINNED';

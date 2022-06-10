@@ -1,7 +1,7 @@
 import Url from 'url-parse';
 
 import {
-  HTTP, HTTPS, WWW, STATUS,
+  HTTP, HTTPS, WWW, STATUS, ID, ADDED, MOVED, ADDING, MOVING,
   DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   COLOR, PATTERN, IMAGE,
   BG_COLOR_STYLES, PATTERNS,
@@ -1112,4 +1112,89 @@ export const doEnableExtraFeatures = (purchases) => {
   if ([ACTIVE, NO_RENEW, GRACE].includes(purchase.status)) return true;
   if (purchase.status === UNKNOWN) return null;
   return false;
+};
+
+export const createLinkFPath = (listName, id = null) => {
+  // Cannot encode because fpaths in etags are not encoded
+  // When fetch, unencoded fpaths are saved in etags
+  // When update, if encode, fpath will be different to the fpath in etags,
+  //   it'll be treated as a new file and fails in putFile
+  //   as on server, error is thrown: etag is different.
+  //listName = encodeURIComponent(listName);
+  return id === null ? `links/${listName}` : `links/${listName}/${id}.json`;
+};
+
+export const extractLinkFPath = (fpath) => {
+  const [listName, fname] = fpath.split('/').slice(1);
+  //listName = decodeURIComponent(listName);
+
+  const dotIndex = fname.lastIndexOf('.');
+  const ext = fname.substring(dotIndex + 1);
+  const id = fname.substring(0, dotIndex);
+
+  return { listName, id, ext };
+};
+
+export const createPinFPath = (rank, addedDT, id) => {
+  return `pins/${rank}/${addedDT}/${id}.json`;
+};
+
+export const extractPinFPath = (fpath) => {
+  const [rank, addedDTStr, fname] = fpath.split('/').slice(1);
+
+  const addedDT = parseInt(addedDTStr, 10);
+
+  const dotIndex = fname.lastIndexOf('.');
+  const ext = fname.substring(dotIndex + 1);
+  const id = fname.substring(0, dotIndex);
+
+  return { rank, addedDT, id, ext };
+};
+
+export const copyFPaths = (fpaths) => {
+  const newLinkFPaths = {};
+  for (const listName in fpaths.linkFPaths) {
+    newLinkFPaths[listName] = [...fpaths.linkFPaths[listName]];
+  }
+
+  const newPinFPaths = [...fpaths.pinFPaths];
+
+  return { ...fpaths, linkFPaths: newLinkFPaths, pinFPaths: newPinFPaths };
+};
+
+export const getFilteredLinks = (links, listName) => {
+  if (!links || !links[listName]) return null;
+
+  const selectedLinks = _.select(
+    links[listName],
+    STATUS,
+    [
+      ADDED, MOVED, ADDING, MOVING,
+      DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING
+    ]
+  );
+
+  const moving_ids = [];
+  for (const key in links) {
+    if (key === listName || !links[key]) continue;
+
+    moving_ids.push(..._.extract(_.select(
+      links[key], STATUS, [MOVED, MOVING, DIED_MOVING]
+    ), ID));
+  }
+
+  const filteredLinks = excludeWithMainIds(selectedLinks, moving_ids);
+  return filteredLinks;
+};
+
+export const getSortedLinks = (links, listName, doDescendingOrder) => {
+  const filteredLinks = getFilteredLinks(links, listName);
+  if (!filteredLinks) return null;
+
+  const sortedLinks = Object.values(filteredLinks).sort((a, b) => {
+    return b.addedDT - a.addedDT;
+  });
+  if (!doDescendingOrder) sortedLinks.reverse();
+
+  return sortedLinks;
 };

@@ -4,7 +4,10 @@ import {
   FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_SETTINGS, PIN_LINK, UNPIN_LINK,
 } from '../types/actionTypes';
-import { getMainId } from '../utils';
+import {
+  createLinkFPath, extractLinkFPath, createPinFPath, extractPinFPath, copyFPaths,
+  getMainId,
+} from '../utils';
 import { cachedFPaths } from '../vars';
 
 export const effect = async (effectObj, _action) => {
@@ -44,54 +47,6 @@ export const effect = async (effectObj, _action) => {
   }
 
   throw new Error(`${method} is invalid for blockstack effect.`);
-};
-
-export const createLinkFPath = (listName, id = null) => {
-  // Cannot encode because fpaths in etags are not encoded
-  // When fetch, unencoded fpaths are saved in etags
-  // When update, if encode, fpath will be different to the fpath in etags,
-  //   it'll be treated as a new file and fails in putFile
-  //   as on server, error is thrown: etag is different.
-  //listName = encodeURIComponent(listName);
-  return id === null ? `links/${listName}` : `links/${listName}/${id}.json`;
-};
-
-const extractLinkFPath = (fpath) => {
-  let [listName, fname] = fpath.split('/').slice(1);
-  //listName = decodeURIComponent(listName);
-
-  const dotIndex = fname.lastIndexOf('.');
-  const ext = fname.substring(dotIndex + 1);
-  fname = fname.substring(0, dotIndex);
-
-  return { listName, fname, ext };
-};
-
-const createPinFPath = (rank, addedDT, id) => {
-  return `pins/${rank}/${addedDT}/${id}.json`;
-};
-
-export const extractPinFPath = (fpath) => {
-  let [rank, addedDT, fname] = fpath.split('/').slice(1);
-
-  addedDT = parseInt(addedDT, 10);
-
-  const dotIndex = fname.lastIndexOf('.');
-  const ext = fname.substring(dotIndex + 1);
-  fname = fname.substring(0, dotIndex);
-
-  return { rank, addedDT, fname, ext };
-};
-
-const copyFPaths = (fpaths) => {
-  const newLinkFPaths = {};
-  for (const listName in fpaths.linkFPaths) {
-    newLinkFPaths[listName] = [...fpaths.linkFPaths[listName]];
-  }
-
-  const newPinFPaths = [...fpaths.pinFPaths];
-
-  return { ...fpaths, linkFPaths: newLinkFPaths, pinFPaths: newPinFPaths };
 };
 
 const addFPath = (fpaths, fpath) => {
@@ -199,21 +154,21 @@ const fetch = async (params) => {
 
   const pinData = {};
   for (const fpath of pinFPaths) {
-    const { addedDT, rank, fname, ext } = extractPinFPath(fpath);
-    const id = getMainId(fname);
+    const { addedDT, rank, id, ext } = extractPinFPath(fpath);
+    const pinMainId = getMainId(id);
 
     // duplicate id, choose the latest addedDT
-    if (id in pinData && pinData[id].addedDT > addedDT) continue;
-    pinData[id] = { addedDT, rank, ext };
+    if (pinMainId in pinData && pinData[pinMainId].addedDT > addedDT) continue;
+    pinData[pinMainId] = { addedDT, rank, ext };
   }
 
   let selectedLinkFPaths = [], selectedPinFPaths = [];
   for (const fpath of sortedLinkFPaths) {
-    const { fname } = extractLinkFPath(fpath);
-    const id = getMainId(fname);
+    const { id } = extractLinkFPath(fpath);
+    const linkMainId = getMainId(id);
 
-    if (id in pinData) {
-      selectedPinFPaths.push({ fpath, pinInfo: pinData[id] });
+    if (linkMainId in pinData) {
+      selectedPinFPaths.push({ fpath, pinInfo: pinData[linkMainId] });
     } else {
       selectedLinkFPaths.push(fpath);
     }
@@ -221,7 +176,9 @@ const fetch = async (params) => {
 
   // sort selectedPinFPaths
   selectedPinFPaths = selectedPinFPaths.sort((objA, objB) => {
-    return objA.pinInfo.rank - objB.pinInfo.rank;
+    if (objA.pinInfo.rank < objB.pinInfo.rank) return -1;
+    if (objA.pinInfo.rank > objB.pinInfo.rank) return 1;
+    return 0;
   }).map(obj => obj.fpath);
 
   selectedLinkFPaths = [...selectedPinFPaths, ...selectedLinkFPaths];
@@ -254,21 +211,21 @@ const fetchMore = async (params) => {
 
   const pinData = {};
   for (const fpath of pinFPaths) {
-    const { addedDT, rank, fname, ext } = extractPinFPath(fpath);
-    const id = getMainId(fname);
+    const { addedDT, rank, id, ext } = extractPinFPath(fpath);
+    const pinMainId = getMainId(id);
 
     // duplicate id, choose the latest addedDT
-    if (id in pinData && pinData[id].addedDT > addedDT) continue;
-    pinData[id] = { addedDT, rank, ext };
+    if (pinMainId in pinData && pinData[pinMainId].addedDT > addedDT) continue;
+    pinData[pinMainId] = { addedDT, rank, ext };
   }
 
   let selectedLinkFPaths = [], selectedPinFPaths = [];
   for (const fpath of sortedLinkFPaths) {
-    const { fname } = extractLinkFPath(fpath);
-    const id = getMainId(fname);
+    const { id } = extractLinkFPath(fpath);
+    const linkMainId = getMainId(id);
 
-    if (id in pinData) {
-      selectedPinFPaths.push({ fpath, pinInfo: pinData[id] });
+    if (linkMainId in pinData) {
+      selectedPinFPaths.push({ fpath, pinInfo: pinData[linkMainId] });
     } else {
       selectedLinkFPaths.push(fpath);
     }
@@ -276,7 +233,9 @@ const fetchMore = async (params) => {
 
   // sort selectedPinFPaths
   selectedPinFPaths = selectedPinFPaths.sort((objA, objB) => {
-    return objA.pinInfo.rank - objB.pinInfo.rank;
+    if (objA.pinInfo.rank < objB.pinInfo.rank) return -1;
+    if (objA.pinInfo.rank > objB.pinInfo.rank) return 1;
+    return 0;
   }).map(obj => obj.fpath);
 
   selectedLinkFPaths = [...selectedPinFPaths, ...selectedLinkFPaths];
@@ -394,8 +353,8 @@ const deleteOldLinksInTrash = async () => {
 
   const trashLinkFPaths = linkFPaths[TRASH] || [];
   let oldFPaths = trashLinkFPaths.filter(fpath => {
-    const { fname } = extractLinkFPath(fpath);
-    const removedDT = fname.split('-')[3];
+    const { id } = extractLinkFPath(fpath);
+    const removedDT = id.split('-')[3];
     const interval = Date.now() - Number(removedDT);
     const days = interval / 1000 / 60 / 60 / 24;
 
@@ -404,8 +363,8 @@ const deleteOldLinksInTrash = async () => {
 
   oldFPaths = oldFPaths.slice(0, N_LINKS);
   const ids = oldFPaths.map(fpath => {
-    const { fname } = extractLinkFPath(fpath);
-    return fname;
+    const { id } = extractLinkFPath(fpath);
+    return id;
   });
 
   await batchDeleteFileWithRetry(oldFPaths, 0);
