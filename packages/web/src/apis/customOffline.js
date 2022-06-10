@@ -2,7 +2,7 @@ import defaultQueue from '@redux-offline/redux-offline/lib/defaults/queue';
 
 import {
   FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
-  UPDATE_SETTINGS,
+  UPDATE_SETTINGS, PIN_LINK, UNPIN_LINK,
 } from '../types/actionTypes';
 import { effect as blockstackEffect } from './blockstack';
 
@@ -74,7 +74,7 @@ export const effect = async (effectObj, _action) => {
 
   if ([
     FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
-    UPDATE_SETTINGS,
+    UPDATE_SETTINGS, PIN_LINK, UNPIN_LINK,
   ].includes(method)) {
     return await blockstackEffect(effectObj, _action);
   }

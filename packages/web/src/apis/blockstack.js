@@ -1,9 +1,10 @@
 import userSession from '../userSession';
 import { SETTINGS_FNAME, N_LINKS, MAX_TRY, N_DAYS, TRASH } from '../types/const';
 import {
-  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS,
-  DELETE_OLD_LINKS_IN_TRASH, UPDATE_SETTINGS,
+  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
+  UPDATE_SETTINGS, PIN_LINK, UNPIN_LINK,
 } from '../types/actionTypes';
+import { getMainId } from '../utils';
 import { cachedFPaths } from '../vars';
 
 export const effect = async (effectObj, _action) => {
@@ -34,6 +35,14 @@ export const effect = async (effectObj, _action) => {
     return updateSettings(params);
   }
 
+  if (method === PIN_LINK) {
+    return pinLink(params);
+  }
+
+  if (method === UNPIN_LINK) {
+    return unpinLink(params);
+  }
+
   throw new Error(`${method} is invalid for blockstack effect.`);
 };
 
@@ -58,12 +67,31 @@ const extractLinkFPath = (fpath) => {
   return { listName, fname, ext };
 };
 
+const createPinFPath = (rank, addedDT, id) => {
+  return `pins/${rank}/${addedDT}/${id}.json`;
+};
+
+export const extractPinFPath = (fpath) => {
+  let [rank, addedDT, fname] = fpath.split('/').slice(1);
+
+  addedDT = parseInt(addedDT, 10);
+
+  const dotIndex = fname.lastIndexOf('.');
+  const ext = fname.substring(dotIndex + 1);
+  fname = fname.substring(0, dotIndex);
+
+  return { rank, addedDT, fname, ext };
+};
+
 const copyFPaths = (fpaths) => {
   const newLinkFPaths = {};
   for (const listName in fpaths.linkFPaths) {
     newLinkFPaths[listName] = [...fpaths.linkFPaths[listName]];
   }
-  return { ...fpaths, linkFPaths: newLinkFPaths };
+
+  const newPinFPaths = [...fpaths.pinFPaths];
+
+  return { ...fpaths, linkFPaths: newLinkFPaths, pinFPaths: newPinFPaths };
 };
 
 const addFPath = (fpaths, fpath) => {
@@ -75,6 +103,8 @@ const addFPath = (fpaths, fpath) => {
     }
   } else if (fpath === SETTINGS_FNAME) {
     fpaths.settingsFPath = fpath;
+  } else if (fpath.startsWith('pins')) {
+    if (!fpaths.pinFPaths.includes(fpath)) fpaths.pinFPaths.push(fpath);
   } else {
     console.log(`Invalid file path: ${fpath}`);
   }
@@ -91,6 +121,8 @@ const deleteFPath = (fpaths, fpath) => {
     }
   } else if (fpath === SETTINGS_FNAME) {
     fpaths.settingsFPath = null;
+  } else if (fpath.startsWith('pins')) {
+    fpaths.pinFPaths = fpaths.pinFPaths.filter(el => el !== fpath);
   } else {
     console.log(`Invalid file path: ${fpath}`);
   }
@@ -100,7 +132,7 @@ const _listFPaths = async () => {
   // List fpaths(keys)
   // Even though aws, az, gc sorts a-z but on Gaia local machine, it's arbitrary
   //   so need to fetch all and sort locally.
-  const fpaths = { linkFPaths: {}, settingsFPath: null };
+  const fpaths = { linkFPaths: {}, settingsFPath: null, pinFPaths: [] };
   await userSession.listFiles((fpath) => {
     addFPath(fpaths, fpath);
     return true;
@@ -152,7 +184,7 @@ export const batchGetFileWithRetry = async (
 const fetch = async (params) => {
 
   let { listName, doDescendingOrder, doFetchSettings } = params;
-  const { linkFPaths, settingsFPath } = await listFPaths(doFetchSettings);
+  const { linkFPaths, settingsFPath, pinFPaths } = await listFPaths(doFetchSettings);
 
   let settings;
   if (settingsFPath && doFetchSettings) {
@@ -162,9 +194,37 @@ const fetch = async (params) => {
   }
 
   const namedLinkFPaths = linkFPaths[listName] || [];
+  const sortedLinkFPaths = namedLinkFPaths.sort();
+  if (doDescendingOrder) sortedLinkFPaths.reverse();
 
-  let selectedLinkFPaths = namedLinkFPaths.sort();
-  if (doDescendingOrder) selectedLinkFPaths.reverse();
+  const pinData = {};
+  for (const fpath of pinFPaths) {
+    const { addedDT, rank, fname, ext } = extractPinFPath(fpath);
+    const id = getMainId(fname);
+
+    // duplicate id, choose the latest addedDT
+    if (id in pinData && pinData[id].addedDT > addedDT) continue;
+    pinData[id] = { addedDT, rank, ext };
+  }
+
+  let selectedLinkFPaths = [], selectedPinFPaths = [];
+  for (const fpath of sortedLinkFPaths) {
+    const { fname } = extractLinkFPath(fpath);
+    const id = getMainId(fname);
+
+    if (id in pinData) {
+      selectedPinFPaths.push({ fpath, pinInfo: pinData[id] });
+    } else {
+      selectedLinkFPaths.push(fpath);
+    }
+  }
+
+  // sort selectedPinFPaths
+  selectedPinFPaths = selectedPinFPaths.sort((objA, objB) => {
+    return objA.pinInfo.rank - objB.pinInfo.rank;
+  }).map(obj => obj.fpath);
+
+  selectedLinkFPaths = [...selectedPinFPaths, ...selectedLinkFPaths];
   selectedLinkFPaths = selectedLinkFPaths.slice(0, N_LINKS);
 
   const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0, true);
@@ -184,7 +244,7 @@ const fetchMore = async (params) => {
 
   const { listName, ids, doDescendingOrder } = params;
 
-  const { linkFPaths } = await listFPaths();
+  const { linkFPaths, pinFPaths } = await listFPaths();
 
   const namedLinkFPaths = linkFPaths[listName] || [];
 
@@ -192,13 +252,44 @@ const fetchMore = async (params) => {
   const sortedLinkFPaths = namedLinkFPaths.sort();
   if (doDescendingOrder) sortedLinkFPaths.reverse();
 
-  const indexes = ids.map(id => sortedLinkFPaths.indexOf(createLinkFPath(listName, id)));
+  const pinData = {};
+  for (const fpath of pinFPaths) {
+    const { addedDT, rank, fname, ext } = extractPinFPath(fpath);
+    const id = getMainId(fname);
+
+    // duplicate id, choose the latest addedDT
+    if (id in pinData && pinData[id].addedDT > addedDT) continue;
+    pinData[id] = { addedDT, rank, ext };
+  }
+
+  let selectedLinkFPaths = [], selectedPinFPaths = [];
+  for (const fpath of sortedLinkFPaths) {
+    const { fname } = extractLinkFPath(fpath);
+    const id = getMainId(fname);
+
+    if (id in pinData) {
+      selectedPinFPaths.push({ fpath, pinInfo: pinData[id] });
+    } else {
+      selectedLinkFPaths.push(fpath);
+    }
+  }
+
+  // sort selectedPinFPaths
+  selectedPinFPaths = selectedPinFPaths.sort((objA, objB) => {
+    return objA.pinInfo.rank - objB.pinInfo.rank;
+  }).map(obj => obj.fpath);
+
+  selectedLinkFPaths = [...selectedPinFPaths, ...selectedLinkFPaths];
+
+  const indexes = ids.map(id => {
+    return selectedLinkFPaths.indexOf(createLinkFPath(listName, id));
+  });
   const maxIndex = Math.max(...indexes);
 
-  const filteredLinkFPaths = sortedLinkFPaths.slice(maxIndex + 1);
-  const selectedLinkFPaths = filteredLinkFPaths.slice(0, N_LINKS);
+  const filteredLinkFPaths = selectedLinkFPaths.slice(maxIndex + 1);
+  const processedLinkFPaths = filteredLinkFPaths.slice(0, N_LINKS);
 
-  const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0, true);
+  const responses = await batchGetFileWithRetry(processedLinkFPaths, 0, true);
   const links = responses.filter(r => r.success).map(r => JSON.parse(r.content));
   const hasMore = filteredLinkFPaths.length > N_LINKS;
 
@@ -340,4 +431,26 @@ export const canDeleteListNames = async (listNames) => {
   }
 
   return canDeletes;
+};
+
+const pinLink = async (params) => {
+  const { pins } = params;
+
+  const fpaths = [], contents = [];
+  for (const pin of pins) {
+    fpaths.push(createPinFPath(pin.rank, pin.addedDT, pin.id));
+    contents.push(JSON.stringify({}));
+  }
+
+  await batchPutFileWithRetry(fpaths, contents, 0);
+  return { pins };
+};
+
+const unpinLink = async (params) => {
+
+  const { pins } = params;
+  const pinFPaths = pins.map(pin => createPinFPath(pin.rank, pin.addedDT, pin.id));
+  await batchDeleteFileWithRetry(pinFPaths, 0);
+
+  return { pins };
 };

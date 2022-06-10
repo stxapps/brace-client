@@ -15,6 +15,7 @@ import linkEditorReducer from './linkEditorReducer';
 import listNameEditorsReducer from './listNameEditorsReducer';
 import iapReducer from './iapReducer';
 import cachedFPathsReducer from './cachedFPathsReducer';
+import pinLinkStatusReducer from './pinLinkStatusReducer';
 
 export default combineReducers({
   window: windowReducer,
@@ -32,4 +33,5 @@ export default combineReducers({
   listNameEditors: listNameEditorsReducer,
   iap: iapReducer,
   cachedFPaths: cachedFPathsReducer,
+  pinLinkStatus: pinLinkStatusReducer,
 });

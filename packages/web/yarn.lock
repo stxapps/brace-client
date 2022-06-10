@@ -2503,6 +2503,11 @@
   dependencies:
     lodash "^4"
 
+"@wewatch/lexorank@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@wewatch/lexorank/-/lexorank-1.0.3.tgz#7e94eee31ace83edf7f74f97baaf63470233fed6"
+  integrity sha512-+1uvu7HvN/XI3modW3Bm1iG20arIEpnA27Hk9rAWJYYcZLoF2MbA30yCEyqVSdnaOO71c/Wq4E++NkU4aVhqlA==
+
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@xtuc/ieee754/-/ieee754-1.2.0.tgz#eef014a3145ae477a1cbc00cd1e552336dceb790"

@@ -3,10 +3,11 @@ import {
 } from '@redux-offline/redux-offline/lib/constants';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
+import { LexoRank } from "@wewatch/lexorank";
 
 import userSession from '../userSession';
 import {
-  createLinkFPath, batchGetFileWithRetry, batchPutFileWithRetry,
+  createLinkFPath, extractPinFPath, batchGetFileWithRetry, batchPutFileWithRetry,
   batchDeleteFileWithRetry,
 } from '../apis/blockstack';
 import {
@@ -32,11 +33,14 @@ import {
   UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
   UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_LAYOUT_TYPE,
-  REQUEST_PURCHASE,
-  RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
-  REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
-  UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS, UPDATE_IAP_PURCHASE_STATUS,
-  UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
+  REQUEST_PURCHASE, RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT,
+  RESTORE_PURCHASES_ROLLBACK, REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT,
+  REFRESH_PURCHASES_ROLLBACK, UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS,
+  UPDATE_IAP_PURCHASE_STATUS, UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
+  PIN_LINK, PIN_LINK_COMMIT, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_COMMIT,
+  UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
+  MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, MOVE_PINNED_LINK_DELETE_STEP,
+  MOVE_PINNED_LINK_DELETE_STEP_COMMIT, MOVE_PINNED_LINK_DELETE_STEP_ROLLBACK,
   UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
   UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -49,8 +53,9 @@ import {
   ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
   IAP_STATUS_URL, COM_BRACEDOTTO,
-  SIGNED_TEST_STRING, VALID, ACTIVE,
+  SIGNED_TEST_STRING, VALID, ACTIVE, SWAP_LEFT, SWAP_RIGHT,
 } from '../types/const';
+import { _getLinks } from '../selectors';
 import {
   _, isEqual, isString, isObject, isNumber, throttle, sleep, isIPadIPhoneIPod,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
@@ -1619,4 +1624,208 @@ export const updateIapRefreshStatus = (status) => {
     type: UPDATE_IAP_REFRESH_STATUS,
     payload: status,
   };
+};
+
+export const pinLink = (ids) => async (dispatch, getState) => {
+  const state = getState();
+
+  let pinFPaths = [];
+  if (
+    state.cachedFPaths.fpaths && Array.isArray(state.cachedFPaths.fpaths.pinFPaths)
+  ) {
+    pinFPaths = state.cachedFPaths.fpaths.pinFPaths;
+  }
+
+  let lexoRank;
+  if (pinFPaths.length > 0) {
+    const pinFPath = pinFPaths.sort()[pinFPaths.length - 1];
+    const { rank } = extractPinFPath(pinFPath);
+
+    lexoRank = LexoRank.parse(`0|${rank.replace('_', ':')}`).genNext();
+  } else {
+    lexoRank = LexoRank.middle();
+  }
+
+  let now = Date.now();
+  const pins = [];
+  for (const id of ids) {
+    const nextRank = lexoRank.toString().slice(2).replace(':', '_');
+    pins.push({ rank: nextRank, addedDT: now, id });
+
+    lexoRank = lexoRank.genNext();
+    now += 1;
+  }
+
+  const payload = { pins };
+  dispatch({
+    type: PIN_LINK,
+    payload,
+    meta: {
+      offline: {
+        effect: { method: PIN_LINK, params: payload },
+        commit: { type: PIN_LINK_COMMIT, meta: payload },
+        rollback: { type: PIN_LINK_ROLLBACK, meta: payload },
+      },
+    },
+  });
+};
+
+export const unpinLink = (ids) => async (dispatch, getState) => {
+  const state = getState();
+
+  let pinFPaths = [];
+  if (
+    state.cachedFPaths.fpaths && Array.isArray(state.cachedFPaths.fpaths.pinFPaths)
+  ) {
+    pinFPaths = state.cachedFPaths.fpaths.pinFPaths;
+  }
+
+  const pins = [];
+  for (const id of ids) {
+    const linkMainId = getMainId(id);
+
+    // when move, old paths might not be delete, so when unpin,
+    //   need to delete them all, no pinData and no break here.
+    for (const fpath of pinFPaths) {
+      const pin = extractPinFPath(fpath);
+      const pinMainId = getMainId(pin.fname);
+      if (linkMainId === pinMainId) pins.push(pin);
+    }
+  }
+
+  const payload = { pins };
+  dispatch({
+    type: UNPIN_LINK,
+    payload,
+    meta: {
+      offline: {
+        effect: { method: UNPIN_LINK, params: payload },
+        commit: { type: UNPIN_LINK_COMMIT, meta: payload },
+        rollback: { type: UNPIN_LINK_ROLLBACK, meta: payload },
+      },
+    },
+  });
+};
+
+export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
+  const state = getState();
+
+  const filteredLinks = _getLinks(state);
+  if (!filteredLinks) {
+    console.log(`No links found for link id: `, id);
+    return;
+  }
+  const sortedLinks = Object.values(filteredLinks);
+
+  let pinFPaths = [];
+  if (
+    state.cachedFPaths.fpaths && Array.isArray(state.cachedFPaths.fpaths.pinFPaths)
+  ) {
+    pinFPaths = state.cachedFPaths.fpaths.pinFPaths;
+  }
+
+  const pinData = {};
+  for (const fpath of pinFPaths) {
+    const { addedDT, rank, fname, ext } = extractPinFPath(fpath);
+    const id = getMainId(fname);
+
+    // duplicate id, choose the latest addedDT
+    if (id in pinData && pinData[id].addedDT > addedDT) continue;
+    pinData[id] = { addedDT, rank, ext };
+  }
+
+  let pinnedObjs = [];
+  for (const link of sortedLinks) {
+    const id = getMainId(link.id);
+
+    if (id in pinData) {
+      pinnedObjs.push({ link, pinInfo: pinData[id] });
+    }
+  }
+
+  // sort pinnedObjs
+  pinnedObjs = pinnedObjs.sort((objA, objB) => {
+    return objA.pinInfo.rank - objB.pinInfo.rank;
+  });
+
+  const i = pinnedObjs.findIndex(obj => obj.link.id === id);
+  if (i < 0) {
+    console.log(`No pin found for link id: `, id);
+    return;
+  }
+
+  const pinnedObj = pinnedObjs[i];
+
+  let nextRank;
+  if (direction === SWAP_LEFT) {
+    if (i === 0) return;
+    if (i === 1) {
+      const pRank = pinnedObjs[i - 1].pinInfo.rank;
+
+      const lexoRank = LexoRank.parse(`0|${pRank.replace('_', ';')}`)
+
+      nextRank = lexoRank.genPrev().toString();
+    } else {
+      const pRank = pinnedObjs[i - 1].pinInfo.rank;
+      const ppRank = pinnedObjs[i - 2].pinInfo.rank;
+
+      const pLexoRank = LexoRank.parse(`0|${pRank.replace('_', ';')}`)
+      const ppLexoRank = LexoRank.parse(`0|${ppRank.replace('_', ';')}`)
+
+      nextRank = ppLexoRank.between(pLexoRank).toString();
+    }
+  } else if (direction === SWAP_RIGHT) {
+    if (i === pinnedObjs.length - 1) return;
+    if (i === pinnedObjs.length - 2) {
+      const nRank = pinnedObjs[i + 1].pinInfo.rank;
+
+      const lexoRank = LexoRank.parse(`0|${nRank.replace('_', ';')}`)
+
+      nextRank = lexoRank.genNext().toString();
+    } else {
+      const nRank = pinnedObjs[i + 1].pinInfo.rank;
+      const nnRank = pinnedObjs[i + 2].pinInfo.rank;
+
+      const nLexoRank = LexoRank.parse(`0|${nRank.replace('_', ';')}`)
+      const nnLexoRank = LexoRank.parse(`0|${nnRank.replace('_', ';')}`)
+
+      nextRank = nLexoRank.between(nnLexoRank).toString();
+    }
+  } else {
+    throw new Error(`Invalid direction: ${direction}`);
+  }
+  nextRank = nextRank.slice(2).replace(':', '_');
+
+  const { rank, addedDT } = pinnedObj.pinInfo;
+
+  const payload = { rank: nextRank, addedDT, id, fromRank: rank };
+  dispatch({
+    type: MOVE_PINNED_LINK_ADD_STEP,
+    payload,
+    meta: {
+      offline: {
+        effect: { method: PIN_LINK, params: { pins: [payload] } },
+        commit: { type: MOVE_PINNED_LINK_ADD_STEP_COMMIT, meta: payload },
+        rollback: { type: MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, meta: payload },
+      },
+    },
+  });
+};
+
+export const movePinnedLinkDeleteStep = (rank, addedDT, id) => async (
+  dispatch, getState
+) => {
+
+  const payload = { rank, addedDT, id };
+
+  dispatch({
+    type: MOVE_PINNED_LINK_DELETE_STEP,
+    meta: {
+      offline: {
+        effect: { method: UNPIN_LINK, params: { pins: [payload] } },
+        commit: { type: MOVE_PINNED_LINK_DELETE_STEP_COMMIT },
+        rollback: { type: MOVE_PINNED_LINK_DELETE_STEP_ROLLBACK },
+      },
+    },
+  });
 };

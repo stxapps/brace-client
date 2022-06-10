@@ -39,6 +39,7 @@
     "@types/react-redux": "^7.1.18",
     "@types/url-parse": "^1.4.4",
     "@welldone-software/why-did-you-render": "^6.2.1",
+    "@wewatch/lexorank": "^1.0.3",
     "autoprefixer": "^10.3.7",
     "axios": "^0.24.0",
     "file-saver": "^2.0.5",

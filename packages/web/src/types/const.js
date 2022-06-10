@@ -193,3 +193,5 @@ export const ON_HOLD = 'OnHold';
 export const PAUSED = 'Paused';
 export const EXPIRED = 'Expired';
 //export const UNKNOWN = 'UNKNOWN';
+
+export const PINNED = 'PINNED';
