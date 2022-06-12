@@ -3,10 +3,11 @@ import { createSelectorCreator, defaultMemoize, createSelector } from 'reselect'
 import { IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, PINNED } from '../types/const';
 import { FETCH_MORE } from '../types/actionTypes';
 import {
-  _, isStringIn, isObject, isArrayEqual, isEqual, isOfflineAction,
+  isStringIn, isObject, isArrayEqual, isEqual, isOfflineAction,
   getMainId, getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
-  extractPinFPath, getFilteredLinks, getSortedLinks,
+  getFilteredLinks, getSortedLinks, sortWithPins, getPinFPaths, getPins,
 } from '../utils';
+import { _ } from '../utils/obj';
 import { initialListNameEditorState } from '../types/initialStates';
 
 const createSelectorListNameMap = createSelectorCreator(
@@ -104,51 +105,17 @@ export const getLinks = createSelectorLinks(
     const searchString = state.display.searchString;
     const doDescendingOrder = state.settings.doDescendingOrder;
 
-    const sortedLinks = getSortedLinks(links, listName, doDescendingOrder);
+    let sortedLinks = getSortedLinks(links, listName, doDescendingOrder);
     if (!sortedLinks) return null;
 
-    let pinFPaths = [];
-    if (
-      state.cachedFPaths.fpaths && Array.isArray(state.cachedFPaths.fpaths.pinFPaths)
-    ) {
-      pinFPaths = state.cachedFPaths.fpaths.pinFPaths;
-    }
+    const pinFPaths = getPinFPaths(state);
+    sortedLinks = sortWithPins(sortedLinks, pinFPaths, (link) => {
+      return getMainId(link.id);
+    });
 
-    const pinData = {};
-    for (const fpath of pinFPaths) {
-      const { addedDT, rank, id, ext } = extractPinFPath(fpath);
-      const pinMainId = getMainId(id);
+    if (searchString === '') return sortedLinks;
 
-      // duplicate id, choose the latest addedDT
-      if (pinMainId in pinData && pinData[pinMainId].addedDT > addedDT) continue;
-      pinData[pinMainId] = { addedDT, rank, ext };
-    }
-
-    let processedLinks = [], pinnedLinks = [];
-    for (const link of sortedLinks) {
-      const id = getMainId(link.id);
-
-      if (id in pinData) {
-        pinnedLinks.push({ link, pinInfo: pinData[id] });
-      } else {
-        processedLinks.push(link);
-      }
-    }
-
-    // sort pinnedLinks
-    pinnedLinks = pinnedLinks.sort((objA, objB) => {
-      if (objA.pinInfo.rank < objB.pinInfo.rank) return -1;
-      if (objA.pinInfo.rank > objB.pinInfo.rank) return 1;
-      return 0;
-    }).map(obj => obj.link);
-
-    processedLinks = [...pinnedLinks, ...processedLinks];
-
-    if (searchString === '') {
-      return processedLinks;
-    }
-
-    const searchLinks = processedLinks.filter(link => {
+    const searchLinks = sortedLinks.filter(link => {
       return isStringIn(link, searchString);
     });
 
@@ -299,30 +266,16 @@ export const getValidPurchase = createSelector(
 export const makeGetPinLinkStatus = () => {
   return createSelector(
     state => state.pinLinkStatus,
-    state => {
-      if (
-        state.cachedFPaths.fpaths && Array.isArray(state.cachedFPaths.fpaths.pinFPaths)
-      ) {
-        return state.cachedFPaths.fpaths.pinFPaths;
-      }
-      return null;
-    },
-    (__, link) => {
-      if (link) return link.id;
-      return null;
-    },
+    state => getPinFPaths(state),
+    (__, link) => link ? link.id : null,
     (pinLinkStatus, pinFPaths, linkId) => {
 
       if (!linkId) return null;
       if (linkId in pinLinkStatus) return pinLinkStatus[linkId];
-      if (!Array.isArray(pinFPaths)) return null;
 
+      const pins = getPins(pinFPaths);
       const linkMainId = getMainId(linkId);
-      for (const fpath of pinFPaths) {
-        const { id } = extractPinFPath(fpath);
-        const pinMainId = getMainId(id);
-        if (linkMainId === pinMainId) return PINNED;
-      }
+      if (linkMainId in pins) return PINNED;
 
       return null;
     }

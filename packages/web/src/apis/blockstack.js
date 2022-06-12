@@ -5,8 +5,8 @@ import {
   UPDATE_SETTINGS, PIN_LINK, UNPIN_LINK,
 } from '../types/actionTypes';
 import {
-  createLinkFPath, extractLinkFPath, createPinFPath, extractPinFPath, copyFPaths,
-  getMainId,
+  createLinkFPath, extractLinkFPath, createPinFPath, copyFPaths, getMainId,
+  sortWithPins,
 } from '../utils';
 import { cachedFPaths } from '../vars';
 
@@ -149,40 +149,14 @@ const fetch = async (params) => {
   }
 
   const namedLinkFPaths = linkFPaths[listName] || [];
-  const sortedLinkFPaths = namedLinkFPaths.sort();
+  let sortedLinkFPaths = namedLinkFPaths.sort();
   if (doDescendingOrder) sortedLinkFPaths.reverse();
 
-  const pinData = {};
-  for (const fpath of pinFPaths) {
-    const { addedDT, rank, id, ext } = extractPinFPath(fpath);
-    const pinMainId = getMainId(id);
-
-    // duplicate id, choose the latest addedDT
-    if (pinMainId in pinData && pinData[pinMainId].addedDT > addedDT) continue;
-    pinData[pinMainId] = { addedDT, rank, ext };
-  }
-
-  let selectedLinkFPaths = [], selectedPinFPaths = [];
-  for (const fpath of sortedLinkFPaths) {
+  sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, (fpath) => {
     const { id } = extractLinkFPath(fpath);
-    const linkMainId = getMainId(id);
-
-    if (linkMainId in pinData) {
-      selectedPinFPaths.push({ fpath, pinInfo: pinData[linkMainId] });
-    } else {
-      selectedLinkFPaths.push(fpath);
-    }
-  }
-
-  // sort selectedPinFPaths
-  selectedPinFPaths = selectedPinFPaths.sort((objA, objB) => {
-    if (objA.pinInfo.rank < objB.pinInfo.rank) return -1;
-    if (objA.pinInfo.rank > objB.pinInfo.rank) return 1;
-    return 0;
-  }).map(obj => obj.fpath);
-
-  selectedLinkFPaths = [...selectedPinFPaths, ...selectedLinkFPaths];
-  selectedLinkFPaths = selectedLinkFPaths.slice(0, N_LINKS);
+    return getMainId(id);
+  });
+  const selectedLinkFPaths = sortedLinkFPaths.slice(0, N_LINKS);
 
   const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0, true);
   const links = responses.filter(r => r.success).map(r => JSON.parse(r.content));
@@ -206,49 +180,23 @@ const fetchMore = async (params) => {
   const namedLinkFPaths = linkFPaths[listName] || [];
 
   // Fetch further from the current point, not causing scroll jumpy
-  const sortedLinkFPaths = namedLinkFPaths.sort();
+  let sortedLinkFPaths = namedLinkFPaths.sort();
   if (doDescendingOrder) sortedLinkFPaths.reverse();
 
-  const pinData = {};
-  for (const fpath of pinFPaths) {
-    const { addedDT, rank, id, ext } = extractPinFPath(fpath);
-    const pinMainId = getMainId(id);
-
-    // duplicate id, choose the latest addedDT
-    if (pinMainId in pinData && pinData[pinMainId].addedDT > addedDT) continue;
-    pinData[pinMainId] = { addedDT, rank, ext };
-  }
-
-  let selectedLinkFPaths = [], selectedPinFPaths = [];
-  for (const fpath of sortedLinkFPaths) {
+  sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, (fpath) => {
     const { id } = extractLinkFPath(fpath);
-    const linkMainId = getMainId(id);
-
-    if (linkMainId in pinData) {
-      selectedPinFPaths.push({ fpath, pinInfo: pinData[linkMainId] });
-    } else {
-      selectedLinkFPaths.push(fpath);
-    }
-  }
-
-  // sort selectedPinFPaths
-  selectedPinFPaths = selectedPinFPaths.sort((objA, objB) => {
-    if (objA.pinInfo.rank < objB.pinInfo.rank) return -1;
-    if (objA.pinInfo.rank > objB.pinInfo.rank) return 1;
-    return 0;
-  }).map(obj => obj.fpath);
-
-  selectedLinkFPaths = [...selectedPinFPaths, ...selectedLinkFPaths];
+    return getMainId(id);
+  });
 
   const indexes = ids.map(id => {
-    return selectedLinkFPaths.indexOf(createLinkFPath(listName, id));
+    return sortedLinkFPaths.indexOf(createLinkFPath(listName, id));
   });
   const maxIndex = Math.max(...indexes);
 
-  const filteredLinkFPaths = selectedLinkFPaths.slice(maxIndex + 1);
-  const processedLinkFPaths = filteredLinkFPaths.slice(0, N_LINKS);
+  const filteredLinkFPaths = sortedLinkFPaths.slice(maxIndex + 1);
+  const selectedLinkFPaths = filteredLinkFPaths.slice(0, N_LINKS);
 
-  const responses = await batchGetFileWithRetry(processedLinkFPaths, 0, true);
+  const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0, true);
   const links = responses.filter(r => r.success).map(r => JSON.parse(r.content));
   const hasMore = filteredLinkFPaths.length > N_LINKS;
 

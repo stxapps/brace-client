@@ -55,14 +55,15 @@ import {
   SIGNED_TEST_STRING, VALID, ACTIVE, SWAP_LEFT, SWAP_RIGHT,
 } from '../types/const';
 import {
-  _, isEqual, isString, isObject, isNumber, throttle, sleep, isIPadIPhoneIPod,
+  isEqual, isString, isObject, isNumber, throttle, sleep, isIPadIPhoneIPod,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam, extractUrl, getUserImageUrl, randomDecor,
   isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
   isDecorValid, isExtractedResultValid, isListNameObjsValid,
   getLatestPurchase, getValidPurchase, createLinkFPath, extractPinFPath,
-  getSortedLinks,
+  getSortedLinks, getPinFPaths, separatePinnedValues,
 } from '../utils';
+import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
 
 export const init = async (store) => {
@@ -1627,13 +1628,7 @@ export const updateIapRefreshStatus = (status) => {
 
 export const pinLinks = (ids) => async (dispatch, getState) => {
   const state = getState();
-
-  let pinFPaths = [];
-  if (
-    state.cachedFPaths.fpaths && Array.isArray(state.cachedFPaths.fpaths.pinFPaths)
-  ) {
-    pinFPaths = state.cachedFPaths.fpaths.pinFPaths;
-  }
+  const pinFPaths = getPinFPaths(state);
 
   let lexoRank;
   if (pinFPaths.length > 0) {
@@ -1671,20 +1666,14 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
 
 export const unpinLinks = (ids) => async (dispatch, getState) => {
   const state = getState();
-
-  let pinFPaths = [];
-  if (
-    state.cachedFPaths.fpaths && Array.isArray(state.cachedFPaths.fpaths.pinFPaths)
-  ) {
-    pinFPaths = state.cachedFPaths.fpaths.pinFPaths;
-  }
+  const pinFPaths = getPinFPaths(state);
 
   const pins = [];
   for (const id of ids) {
     const linkMainId = getMainId(id);
 
     // when move, old paths might not be delete, so when unpin,
-    //   need to delete them all, no pinData and no break here.
+    //   need to delete them all, can't use getPins and no break here.
     for (const fpath of pinFPaths) {
       const pin = extractPinFPath(fpath);
       const pinMainId = getMainId(pin.id);
@@ -1718,59 +1707,29 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
     return;
   }
 
-  let pinFPaths = [];
-  if (
-    state.cachedFPaths.fpaths && Array.isArray(state.cachedFPaths.fpaths.pinFPaths)
-  ) {
-    pinFPaths = state.cachedFPaths.fpaths.pinFPaths;
-  }
-
-  const pinData = {};
-  for (const fpath of pinFPaths) {
-    const { addedDT, rank, id, ext } = extractPinFPath(fpath);
-    const pinMainId = getMainId(id);
-
-    // duplicate id, choose the latest addedDT
-    if (pinMainId in pinData && pinData[pinMainId].addedDT > addedDT) continue;
-    pinData[pinMainId] = { addedDT, rank, ext };
-  }
-
-  let pinnedObjs = [];
-  for (const link of sortedLinks) {
-    const id = getMainId(link.id);
-
-    if (id in pinData) {
-      pinnedObjs.push({ link, pinInfo: pinData[id] });
-    }
-  }
-
-  // sort pinnedObjs
-  pinnedObjs = pinnedObjs.sort((objA, objB) => {
-    if (objA.pinInfo.rank < objB.pinInfo.rank) return -1;
-    if (objA.pinInfo.rank > objB.pinInfo.rank) return 1;
-    return 0;
+  const pinFPaths = getPinFPaths(state);
+  let [pinnedValues] = separatePinnedValues(sortedLinks, pinFPaths, (link) => {
+    return getMainId(link.id);
   });
 
-  const i = pinnedObjs.findIndex(obj => obj.link.id === id);
+  const i = pinnedValues.findIndex(pinnedValue => pinnedValue.value.id === id);
   if (i < 0) {
     console.log(`No pin found for link id: `, id);
     return;
   }
 
-  const pinnedObj = pinnedObjs[i];
-
   let nextRank;
   if (direction === SWAP_LEFT) {
     if (i === 0) return;
     if (i === 1) {
-      const pRank = pinnedObjs[i - 1].pinInfo.rank;
+      const pRank = pinnedValues[i - 1].pin.rank;
 
       const lexoRank = LexoRank.parse(`0|${pRank.replace('_', ':')}`)
 
       nextRank = lexoRank.genPrev().toString();
     } else {
-      const pRank = pinnedObjs[i - 1].pinInfo.rank;
-      const ppRank = pinnedObjs[i - 2].pinInfo.rank;
+      const pRank = pinnedValues[i - 1].pin.rank;
+      const ppRank = pinnedValues[i - 2].pin.rank;
 
       const pLexoRank = LexoRank.parse(`0|${pRank.replace('_', ':')}`)
       const ppLexoRank = LexoRank.parse(`0|${ppRank.replace('_', ':')}`)
@@ -1778,16 +1737,16 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
       nextRank = ppLexoRank.between(pLexoRank).toString();
     }
   } else if (direction === SWAP_RIGHT) {
-    if (i === pinnedObjs.length - 1) return;
-    if (i === pinnedObjs.length - 2) {
-      const nRank = pinnedObjs[i + 1].pinInfo.rank;
+    if (i === pinnedValues.length - 1) return;
+    if (i === pinnedValues.length - 2) {
+      const nRank = pinnedValues[i + 1].pin.rank;
 
       const lexoRank = LexoRank.parse(`0|${nRank.replace('_', ':')}`)
 
       nextRank = lexoRank.genNext().toString();
     } else {
-      const nRank = pinnedObjs[i + 1].pinInfo.rank;
-      const nnRank = pinnedObjs[i + 2].pinInfo.rank;
+      const nRank = pinnedValues[i + 1].pin.rank;
+      const nnRank = pinnedValues[i + 2].pin.rank;
 
       const nLexoRank = LexoRank.parse(`0|${nRank.replace('_', ':')}`)
       const nnLexoRank = LexoRank.parse(`0|${nnRank.replace('_', ':')}`)
@@ -1799,9 +1758,9 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
   }
   nextRank = nextRank.slice(2).replace(':', '_');
 
-  const { rank, addedDT } = pinnedObj.pinInfo;
+  const { addedDT, rank: fromRank } = pinnedValues[i].pin;
 
-  const payload = { rank: nextRank, addedDT, id, fromRank: rank };
+  const payload = { rank: nextRank, addedDT, id, fromRank };
   dispatch({
     type: MOVE_PINNED_LINK_ADD_STEP,
     payload,

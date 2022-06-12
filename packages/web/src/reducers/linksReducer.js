@@ -20,7 +20,8 @@ import {
   ADDED, MOVED, ADDING, MOVING, REMOVING, DELETING,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
 } from '../types/const';
-import { _, isEqual, getAllListNames } from '../utils';
+import { isEqual, getAllListNames } from '../utils';
+import { _ } from '../utils/obj';
 import {
   tryUpdateFetched, tryUpdateFetchedMore, moveLinksDeleteStep, deleteOldLinksInTrash,
   extractContents, tryUpdateExtractedContents,
