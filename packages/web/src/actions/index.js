@@ -40,7 +40,7 @@ import {
   UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
   MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, MOVE_PINNED_LINK_DELETE_STEP,
   MOVE_PINNED_LINK_DELETE_STEP_COMMIT, MOVE_PINNED_LINK_DELETE_STEP_ROLLBACK,
-  UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
+  CANCEL_DIED_PINS, UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
   UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -61,7 +61,7 @@ import {
   isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
   isDecorValid, isExtractedResultValid, isListNameObjsValid,
   getLatestPurchase, getValidPurchase, createLinkFPath, extractPinFPath,
-  getSortedLinks, getPinFPaths, separatePinnedValues,
+  getSortedLinks, getPinFPaths, getPins, separatePinnedValues,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -414,7 +414,6 @@ export const fetch = (
 ) => async (dispatch, getState) => {
 
   const listName = getState().display.listName;
-
   // Always call deleteOldlinksintrash and extractContents
   //   and check at that time to actually do it or not.
   // So it's real time with updated settings from fetch.
@@ -425,8 +424,9 @@ export const fetch = (
     doExtractContents = getState().settings.doExtractContents;
   }*/
   const doDescendingOrder = getState().settings.doDescendingOrder;
+  const pendingPins = getState().pendingPins;
 
-  const payload = { listName, doDescendingOrder, doFetchSettings };
+  const payload = { listName, doDescendingOrder, doFetchSettings, pendingPins };
 
   // If there is already FETCH with the same list name, no need to dispatch a new one.
   if (!shouldDispatchFetch(getState().offline.outbox, payload)) return;
@@ -553,13 +553,13 @@ export const fetchMore = () => async (dispatch, getState) => {
   const listName = getState().display.listName;
   const ids = Object.keys(getState().links[listName]);
   const doDescendingOrder = getState().settings.doDescendingOrder;
-
   // Always call extractContents
   //   and check at that time to actually do it or not.
   // So it's real time with updated settings from fetch.
   //const doExtractContents = getState().settings.doExtractContents;
+  const pendingPins = getState().pendingPins;
 
-  const payload = { fetchMoreId, listName, ids, doDescendingOrder };
+  const payload = { fetchMoreId, listName, ids, doDescendingOrder, pendingPins };
 
   // If there is already FETCH with the same list name,
   //   this fetch more is invalid. Fetch more need to get ids after FETCH_COMMIT.
@@ -1629,12 +1629,14 @@ export const updateIapRefreshStatus = (status) => {
 export const pinLinks = (ids) => async (dispatch, getState) => {
   const state = getState();
   const pinFPaths = getPinFPaths(state);
+  const pendingPins = state.pendingPins;
+
+  let currentPins = getPins(pinFPaths, pendingPins, true);
+  currentPins = Object.values(currentPins).map(pin => pin.rank).sort();
 
   let lexoRank;
-  if (pinFPaths.length > 0) {
-    const pinFPath = pinFPaths.sort()[pinFPaths.length - 1];
-    const { rank } = extractPinFPath(pinFPath);
-
+  if (currentPins.length > 0) {
+    const rank = currentPins[currentPins.length - 1];
     lexoRank = LexoRank.parse(`0|${rank.replace('_', ':')}`).genNext();
   } else {
     lexoRank = LexoRank.middle();
@@ -1675,9 +1677,9 @@ export const unpinLinks = (ids) => async (dispatch, getState) => {
     // when move, old paths might not be delete, so when unpin,
     //   need to delete them all, can't use getPins and no break here.
     for (const fpath of pinFPaths) {
-      const pin = extractPinFPath(fpath);
-      const pinMainId = getMainId(pin.id);
-      if (linkMainId === pinMainId) pins.push(pin);
+      const { rank, addedDT, id } = extractPinFPath(fpath);
+      const pinMainId = getMainId(id);
+      if (linkMainId === pinMainId) pins.push({ rank, addedDT, id });
     }
   }
 
@@ -1700,6 +1702,8 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
   const links = state.links;
   const listName = state.display.listName;
   const doDescendingOrder = state.settings.doDescendingOrder;
+  const pinFPaths = getPinFPaths(state);
+  const pendingPins = state.pendingPins;
 
   const sortedLinks = getSortedLinks(links, listName, doDescendingOrder);
   if (!sortedLinks) {
@@ -1707,10 +1711,14 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
     return;
   }
 
-  const pinFPaths = getPinFPaths(state);
-  let [pinnedValues] = separatePinnedValues(sortedLinks, pinFPaths, (link) => {
-    return getMainId(link.id);
-  });
+  let [pinnedValues] = separatePinnedValues(
+    sortedLinks,
+    pinFPaths,
+    pendingPins,
+    (link) => {
+      return getMainId(link.id);
+    }
+  );
 
   const i = pinnedValues.findIndex(pinnedValue => pinnedValue.value.id === id);
   if (i < 0) {
@@ -1790,4 +1798,8 @@ export const movePinnedLinkDeleteStep = (rank, addedDT, id) => async (
       },
     },
   });
+};
+
+export const cancelDiedPins = () => {
+  return { type: CANCEL_DIED_PINS };
 };

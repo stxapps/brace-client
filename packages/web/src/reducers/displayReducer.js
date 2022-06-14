@@ -16,8 +16,8 @@ import {
 } from '../types/actionTypes';
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
-  LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
-  MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING,
+  LIST_NAMES_POPUP, PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
+  SETTINGS_LISTS_MENU_POPUP, MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING,
 } from '../types/const';
 import { doContainListName } from '../utils';
 
@@ -31,6 +31,8 @@ const initialState = {
   isProfilePopupShown: false,
   isListNamesPopupShown: false,
   listNamesPopupPosition: null,
+  isPinMenuPopupShown: false,
+  pinMenuPopupPosition: null,
   isConfirmDeletePopupShown: false,
   isSettingsPopupShown: false,
   isSettingsListsMenuPopupShown: false,
@@ -66,6 +68,8 @@ const displayReducer = (state = initialState, action) => {
       isProfilePopupShown: false,
       isListNamesPopupShown: false,
       listNamesPopupPosition: null,
+      isPinMenuPopupShown: false,
+      pinMenuPopupPosition: null,
       isConfirmDeletePopupShown: false,
       isSettingsPopupShown: false,
       isSettingsListsMenuPopupShown: false,
@@ -119,6 +123,8 @@ const displayReducer = (state = initialState, action) => {
       if (!isShown) {
         newState.isListNamesPopupShown = false;
         newState.listNamesPopupPosition = null;
+        newState.isPinMenuPopupShown = false;
+        newState.pinMenuPopupPosition = null;
         newState.isSettingsListsMenuPopupShown = false;
         newState.settingsListsMenuPopupPosition = null;
       }
@@ -150,6 +156,19 @@ const displayReducer = (state = initialState, action) => {
         ...state,
         isListNamesPopupShown: isShown,
         listNamesPopupPosition: anchorPosition,
+      };
+      if (!isShown) {
+        newState.selectingLinkId = null;
+        newState.selectingListName = null;
+      }
+      return newState;
+    }
+
+    if (id === PIN_MENU_POPUP) {
+      const newState = {
+        ...state,
+        isPinMenuPopupShown: isShown,
+        pinMenuPopupPosition: anchorPosition,
       };
       if (!isShown) {
         newState.selectingLinkId = null;

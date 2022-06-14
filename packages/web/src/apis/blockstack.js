@@ -138,7 +138,7 @@ export const batchGetFileWithRetry = async (
 
 const fetch = async (params) => {
 
-  let { listName, doDescendingOrder, doFetchSettings } = params;
+  let { listName, doDescendingOrder, doFetchSettings, pendingPins } = params;
   const { linkFPaths, settingsFPath, pinFPaths } = await listFPaths(doFetchSettings);
 
   let settings;
@@ -152,7 +152,7 @@ const fetch = async (params) => {
   let sortedLinkFPaths = namedLinkFPaths.sort();
   if (doDescendingOrder) sortedLinkFPaths.reverse();
 
-  sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, (fpath) => {
+  sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, pendingPins, (fpath) => {
     const { id } = extractLinkFPath(fpath);
     return getMainId(id);
   });
@@ -173,27 +173,23 @@ const fetch = async (params) => {
 
 const fetchMore = async (params) => {
 
-  const { listName, ids, doDescendingOrder } = params;
-
+  const { listName, ids, doDescendingOrder, pendingPins } = params;
   const { linkFPaths, pinFPaths } = await listFPaths();
 
   const namedLinkFPaths = linkFPaths[listName] || [];
-
-  // Fetch further from the current point, not causing scroll jumpy
   let sortedLinkFPaths = namedLinkFPaths.sort();
   if (doDescendingOrder) sortedLinkFPaths.reverse();
 
-  sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, (fpath) => {
+  sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, pendingPins, (fpath) => {
     const { id } = extractLinkFPath(fpath);
     return getMainId(id);
   });
 
-  const indexes = ids.map(id => {
-    return sortedLinkFPaths.indexOf(createLinkFPath(listName, id));
+  // With pins, can't fetch further from the current point
+  const filteredLinkFPaths = sortedLinkFPaths.filter(fpath => {
+    const { id } = extractLinkFPath(fpath);
+    return !ids.includes(id);
   });
-  const maxIndex = Math.max(...indexes);
-
-  const filteredLinkFPaths = sortedLinkFPaths.slice(maxIndex + 1);
   const selectedLinkFPaths = filteredLinkFPaths.slice(0, N_LINKS);
 
   const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0, true);

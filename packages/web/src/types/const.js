@@ -26,6 +26,7 @@ export const ADD_POPUP = 'ADD_POPUP';
 export const SEARCH_POPUP = 'SEARCH_POPUP';
 export const PROFILE_POPUP = 'PROFILE_POPUP';
 export const LIST_NAMES_POPUP = 'LIST_NAMES_POPUP';
+export const PIN_MENU_POPUP = 'PIN_MENU_POPUP';
 export const CONFIRM_DELETE_POPUP = 'CONFIRM_DELETE_POPUP';
 export const SETTINGS_POPUP = 'SETTINGS_POPUP';
 export const SETTINGS_LISTS_MENU_POPUP = 'SETTINGS_LISTS_MENU_POPUP';
@@ -195,9 +196,11 @@ export const EXPIRED = 'Expired';
 //export const UNKNOWN = 'UNKNOWN';
 
 export const PIN = 'Pin to the top';
+export const MANAGE_PIN = 'Manage pin';
 export const UNPIN = 'Unpin';
-export const PIN_LEFT = 'Pin forward';
-export const PIN_RIGHT = 'Pin backward';
-export const PIN_UP = 'Pin up';
-export const PIN_DOWN = 'Pin down';
+export const PIN_LEFT = 'Move pin forward';
+export const PIN_RIGHT = 'Move pin backward';
+export const PIN_UP = 'Move pin up';
+export const PIN_DOWN = 'Move pin down';
+
 export const PINNED = 'PINNED';

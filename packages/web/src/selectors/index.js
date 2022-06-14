@@ -72,6 +72,8 @@ const createSelectorLinks = createSelectorCreator(
       )) return false;
     }
 
+    if (prevVal['pendingPins'] !== val['pendingPins']) return false;
+
     if (prevVal['links'] === val['links']) return true;
     if (!isArrayEqual(Object.keys(prevVal['links']).sort(), Object.keys(val['links']).sort())) {
       return false;
@@ -104,12 +106,13 @@ export const getLinks = createSelectorLinks(
     const listName = state.display.listName;
     const searchString = state.display.searchString;
     const doDescendingOrder = state.settings.doDescendingOrder;
+    const pinFPaths = getPinFPaths(state);
+    const pendingPins = state.pendingPins;
 
     let sortedLinks = getSortedLinks(links, listName, doDescendingOrder);
     if (!sortedLinks) return null;
 
-    const pinFPaths = getPinFPaths(state);
-    sortedLinks = sortWithPins(sortedLinks, pinFPaths, (link) => {
+    sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
       return getMainId(link.id);
     });
 
@@ -133,6 +136,7 @@ const createSelectorPopupLink = createSelectorCreator(
     if (prevVal['display'].searchString !== val['display'].searchString) return false;
 
     // cachedFPaths shouldn't change which link its popup shown
+    // pendingPins shouldn't change which link its popup shown
 
     if (prevVal['links'] === val['links']) return true;
     if (!isArrayEqual(Object.keys(prevVal['links']).sort(), Object.keys(val['links']).sort())) {
@@ -263,19 +267,21 @@ export const getValidPurchase = createSelector(
 );
 
 /** @return {function(any, any): any} */
-export const makeGetPinLinkStatus = () => {
+export const makeGetPinStatus = () => {
   return createSelector(
-    state => state.pinLinkStatus,
     state => getPinFPaths(state),
+    state => state.pendingPins,
     (__, link) => link ? link.id : null,
-    (pinLinkStatus, pinFPaths, linkId) => {
+    (pinFPaths, pendingPins, linkId) => {
 
       if (!linkId) return null;
-      if (linkId in pinLinkStatus) return pinLinkStatus[linkId];
 
-      const pins = getPins(pinFPaths);
+      const pins = getPins(pinFPaths, pendingPins, false);
       const linkMainId = getMainId(linkId);
-      if (linkMainId in pins) return PINNED;
+      if (linkMainId in pins) {
+        if ('status' in pins[linkMainId]) return pins[linkMainId].status;
+        return PINNED;
+      }
 
       return null;
     }

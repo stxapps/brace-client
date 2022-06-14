@@ -96,9 +96,9 @@ class TopBarBulkEditCommands extends React.Component {
     const _rect = e.currentTarget.getBoundingClientRect();
     // Hacky to make sure the popup overlap all the button
     const rect = {
-      x: _rect.x - 4, y: _rect.y - 8,
+      x: _rect.x - 4, y: _rect.y - 4,
       width: _rect.width + 8, height: _rect.height,
-      top: _rect.top - 8, bottom: _rect.bottom - 8,
+      top: _rect.top - 4, bottom: _rect.bottom - 4,
       left: _rect.left - 4, right: _rect.right + 4,
     };
     this.props.updatePopup(LIST_NAMES_POPUP, true, rect);

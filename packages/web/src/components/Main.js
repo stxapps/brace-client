@@ -17,8 +17,10 @@ import CardPanel from './CardPanel';
 import ListPanel from './ListPanel';
 import FetchedPopup from './FetchedPopup';
 import CardItemMenuPopup from './CardItemMenuPopup';
+import PinMenuPopup from './PinMenuPopup';
 import SettingsPopup from './SettingsPopup';
 import SettingsListsMenuPopup from './SettingsListsMenuPopup';
+import PinErrorPopup from './PinErrorPopup';
 import SettingsErrorPopup from './SettingsErrorPopup';
 import ListNamesPopup from './ListNamesPopup';
 import ConfirmDeletePopup from './ConfirmDeletePopup';
@@ -83,8 +85,10 @@ class Main extends React.PureComponent {
         <TopBar rightPane={topBarRightPane} isListNameShown={true} />
         <FetchedPopup />
         <CardItemMenuPopup />
+        <PinMenuPopup />
         <SettingsPopup />
         <SettingsListsMenuPopup />
+        <PinErrorPopup />
         <SettingsErrorPopup />
         <ListNamesPopup />
         <ConfirmDeletePopup />

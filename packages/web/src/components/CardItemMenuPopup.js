@@ -8,11 +8,11 @@ import {
 import {
   MY_LIST, TRASH, ADDING, MOVING,
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
-  PIN, UNPIN, PIN_LEFT, PIN_RIGHT, PIN_UP, PIN_DOWN, PINNED, SWAP_LEFT, SWAP_RIGHT,
-  CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP,
-  SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
+  PIN, MANAGE_PIN, PINNED,
+  CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP, PIN_MENU_POPUP, CONFIRM_DELETE_POPUP,
+  LG_WIDTH, LAYOUT_LIST,
 } from '../types/const';
-import { getListNameMap, getPopupLink, makeGetPinLinkStatus } from '../selectors';
+import { getListNameMap, getPopupLink, makeGetPinStatus } from '../selectors';
 import {
   copyTextToClipboard, ensureContainUrlProtocol, getListNameDisplayName, getAllListNames,
   isEqual, throttle, getLastHalfHeight,
@@ -86,7 +86,7 @@ class CardItemMenuPopup extends React.PureComponent {
   populateMenu() {
 
     const {
-      listName, listNameMap, popupLink, pinLinkStatus, layoutType, safeAreaWidth,
+      listName, listNameMap, popupLink, pinStatus, layoutType, safeAreaWidth,
     } = this.props;
 
     let menu = null;
@@ -100,21 +100,20 @@ class CardItemMenuPopup extends React.PureComponent {
       menu = menu.slice(0, -1);
     }
 
-    if ([ADDING, MOVING].includes(popupLink.status)) {
+    if (
+      [ADDING, MOVING].includes(popupLink.status) ||
+      ![null, PINNED].includes(pinStatus)
+    ) {
       menu = menu.slice(0, 2);
+    } else if (listName !== TRASH) {
+      // Only when no other pending actions and list name is not TRASH
+      if (pinStatus === PINNED) menu = [...menu, MANAGE_PIN];
+      else if (pinStatus === null) menu = [...menu, PIN];
     }
 
     if (layoutType === LAYOUT_LIST && safeAreaWidth >= LG_WIDTH) {
       menu = menu.filter(text => ![ARCHIVE, REMOVE, RESTORE].includes(text));
     }
-
-    if (pinLinkStatus === PINNED) {
-      if (layoutType === LAYOUT_LIST || safeAreaWidth < SM_WIDTH) {
-        menu = [...menu, PIN_UP, PIN_DOWN, UNPIN];
-      } else {
-        menu = [...menu, PIN_LEFT, PIN_RIGHT, UNPIN];
-      }
-    } else menu = [...menu, PIN];
 
     return { menu };
   }
@@ -140,26 +139,33 @@ class CardItemMenuPopup extends React.PureComponent {
     } else if (text === MOVE_TO) {
       this.props.updateSelectingLinkId(id);
 
-      const newX = popupAnchorPosition.x + 16;
-      const newY = popupAnchorPosition.y + 8;
+      const newX = popupAnchorPosition.x + 8;
+      const newY = popupAnchorPosition.y + 12;
       const rect = {
         x: newX, y: newY,
-        width: popupAnchorPosition.width - 16 - 8,
-        height: popupAnchorPosition.height - 8,
-        top: newY, bottom: popupAnchorPosition.bottom,
-        left: newX, right: popupAnchorPosition.right - 8,
+        width: popupAnchorPosition.width - 8 - 12,
+        height: popupAnchorPosition.height - 12 + 6,
+        top: newY, bottom: popupAnchorPosition.bottom + 6,
+        left: newX, right: popupAnchorPosition.right - 12,
       };
       this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
     } else if (text === PIN) {
       this.props.pinLinks([id]);
-    } else if (text === UNPIN) {
-      this.props.unpinLinks([id]);
-    } else if ([PIN_LEFT, PIN_UP].includes(text)) {
-      this.props.movePinnedLink(id, SWAP_LEFT);
-    } else if ([PIN_RIGHT, PIN_DOWN].includes(text)) {
-      this.props.movePinnedLink(id, SWAP_RIGHT);
+    } else if (text === MANAGE_PIN) {
+      this.props.updateSelectingLinkId(id);
+
+      const newX = popupAnchorPosition.x + 8;
+      const newY = popupAnchorPosition.y + 12;
+      const rect = {
+        x: newX, y: newY,
+        width: popupAnchorPosition.width - 8 - 12,
+        height: popupAnchorPosition.height - 12 + 6,
+        top: newY, bottom: popupAnchorPosition.bottom + 6,
+        left: newX, right: popupAnchorPosition.right - 12,
+      };
+      this.props.updatePopup(PIN_MENU_POPUP, true, rect);
     } else {
-      throw new Error(`Invalid text: ${text}`);
+      console.log(`In CardItemMenuPopup, invalid text: ${text}`);
     }
 
     this.props.updatePopup(id, false);
@@ -244,26 +250,30 @@ class CardItemMenuPopup extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state, props) => {
+const makeMapStateToProps = () => {
 
-  const getPinLinkStatus = makeGetPinLinkStatus();
+  const getPinStatus = makeGetPinStatus();
 
-  const popupLink = getPopupLink(state);
-  const pinLinkStatus = getPinLinkStatus(state, popupLink);
+  const mapStateToProps = (state, props) => {
+    const popupLink = getPopupLink(state);
+    const pinStatus = getPinStatus(state, popupLink);
 
-  return {
-    listName: state.display.listName,
-    listNameMap: getListNameMap(state),
-    popupLink,
-    pinLinkStatus,
-    layoutType: state.localSettings.layoutType,
-    safeAreaWidth: state.window.width,
-    safeAreaHeight: state.window.height,
-  }
+    return {
+      listName: state.display.listName,
+      listNameMap: getListNameMap(state),
+      popupLink,
+      pinStatus,
+      layoutType: state.localSettings.layoutType,
+      safeAreaWidth: state.window.width,
+      safeAreaHeight: state.window.height,
+    };
+  };
+
+  return mapStateToProps;
 };
 
 const mapDispatchToProps = {
   updatePopup, updateSelectingLinkId, moveLinks, pinLinks, unpinLinks, movePinnedLink,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CardItemMenuPopup);
+export default connect(makeMapStateToProps, mapDispatchToProps)(CardItemMenuPopup);

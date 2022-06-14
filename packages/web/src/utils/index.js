@@ -9,7 +9,10 @@ import {
   VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME,
   COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, UNKNOWN,
 } from '../types/const';
-import { FETCH } from '../types/actionTypes';
+import {
+  FETCH, PIN_LINK, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_ROLLBACK,
+  MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
+} from '../types/actionTypes';
 import { IMAGES } from '../types/imagePaths';
 import { _ } from './obj';
 
@@ -965,21 +968,46 @@ export const getPinFPaths = (state) => {
   return [];
 };
 
-export const getPins = (pinFPaths) => {
+export const getPins = (pinFPaths, pendingPins, doExcludeUnpinning) => {
   const pins = {};
   for (const fpath of pinFPaths) {
-    const { addedDT, rank, id, ext } = extractPinFPath(fpath);
+    const { addedDT, rank, id } = extractPinFPath(fpath);
     const pinMainId = getMainId(id);
 
     // duplicate id, choose the latest addedDT
     if (pinMainId in pins && pins[pinMainId].addedDT > addedDT) continue;
-    pins[pinMainId] = { addedDT, rank, ext };
+    pins[pinMainId] = { addedDT, rank, id };
   }
+
+  for (const id in pendingPins) {
+    const { status, addedDT, rank } = pendingPins[id];
+    const pinMainId = getMainId(id);
+
+    if ([PIN_LINK, PIN_LINK_ROLLBACK].includes(status)) {
+      pins[pinMainId] = { status, addedDT, rank, id };
+    } else if ([UNPIN_LINK, UNPIN_LINK_ROLLBACK].includes(status)) {
+      if (doExcludeUnpinning) {
+        delete pins[pinMainId];
+      } else {
+        // Can't delete just yet, need for showing loading.
+        pins[pinMainId] = { status, addedDT, rank, id };
+      }
+    } else if ([
+      MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
+    ].includes(status)) {
+      pins[pinMainId] = { status, addedDT, rank, id };
+    } else {
+      console.log('getPins: unsupport pin status: ', status);
+    }
+  }
+
   return pins;
 };
 
-export const separatePinnedValues = (sortedValues, pinFPaths, getValueMainId) => {
-  const pins = getPins(pinFPaths);
+export const separatePinnedValues = (
+  sortedValues, pinFPaths, pendingPins, getValueMainId
+) => {
+  const pins = getPins(pinFPaths, pendingPins, true);
 
   let values = [], pinnedValues = [];
   for (const value of sortedValues) {
@@ -1001,9 +1029,9 @@ export const separatePinnedValues = (sortedValues, pinFPaths, getValueMainId) =>
   return [pinnedValues, values];
 };
 
-export const sortWithPins = (sortedValues, pinFPaths, getValueMainId) => {
+export const sortWithPins = (sortedValues, pinFPaths, pendingPins, getValueMainId) => {
   let [pinnedValues, values] = separatePinnedValues(
-    sortedValues, pinFPaths, getValueMainId
+    sortedValues, pinFPaths, pendingPins, getValueMainId
   );
   pinnedValues = pinnedValues.map(pinnedValue => pinnedValue.value);
 

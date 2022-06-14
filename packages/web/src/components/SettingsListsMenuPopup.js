@@ -130,7 +130,7 @@ const SettingsListsMenuPopup = () => {
     </div>
   );
 
-  let popupClassNames = 'fixed w-36 mt-1 rounded-md shadow-xl bg-white overflow-auto ring-1 ring-black ring-opacity-5 z-41';
+  let popupClassNames = 'fixed w-36 rounded-md shadow-xl bg-white overflow-auto ring-1 ring-black ring-opacity-5 z-41';
   let panel;
   if (popupSize) {
 
