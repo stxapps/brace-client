@@ -3,8 +3,10 @@ import { connect } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import Url from 'url-parse';
 
-import { signOut, updatePopup, updateSettingsPopup } from '../actions';
-import { HASH_SUPPORT, PROFILE_POPUP } from '../types/const';
+import {
+  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId,
+} from '../actions';
+import { HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT } from '../types/const';
 import { bModalBgFMV, bModalFMV } from '../types/animConfigs';
 
 class BottomBarProfilePopup extends React.PureComponent {
@@ -15,6 +17,8 @@ class BottomBarProfilePopup extends React.PureComponent {
 
   onSettingsBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
+
+    this.props.updateSettingsViewId(SETTINGS_VIEW_ACCOUNT, true);
     this.props.updateSettingsPopup(true);
   }
 
@@ -59,6 +63,8 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { signOut, updatePopup, updateSettingsPopup };
+const mapDispatchToProps = {
+  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(BottomBarProfilePopup);

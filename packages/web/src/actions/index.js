@@ -31,8 +31,8 @@ import {
   UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME,
   UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
-  UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_LAYOUT_TYPE,
-  REQUEST_PURCHASE, RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT,
+  UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_SETTINGS_VIEW_ID,
+  UPDATE_LAYOUT_TYPE, REQUEST_PURCHASE, RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT,
   RESTORE_PURCHASES_ROLLBACK, REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT,
   REFRESH_PURCHASES_ROLLBACK, UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS,
   UPDATE_IAP_PURCHASE_STATUS, UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
@@ -948,10 +948,6 @@ export const tryUpdateExtractedContents = (payload) => async (dispatch, getState
   });
 };
 
-export const updateListNameEditors = (listNameEditors) => {
-  return { type: UPDATE_LIST_NAME_EDITORS, payload: listNameEditors };
-};
-
 export const updateSettingsPopup = (isShown) => async (dispatch, getState) => {
   /*
     A settings snapshot is made when FETCH_COMMIT and UPDATE_SETTINGS_COMMIT
@@ -965,6 +961,22 @@ export const updateSettingsPopup = (isShown) => async (dispatch, getState) => {
   if (!isShown) dispatch(updateSettings());
 
   dispatch(updatePopup(SETTINGS_POPUP, isShown));
+};
+
+export const updateSettingsViewId = (viewId, isSidebarShown) => async (
+  dispatch, getState
+) => {
+  const payload = {};
+  if (viewId) payload.settingsViewId = viewId;
+  if ([true, false].includes(isSidebarShown)) {
+    payload.isSettingsSidebarShown = isSidebarShown;
+  }
+
+  dispatch({ type: UPDATE_SETTINGS_VIEW_ID, payload });
+};
+
+export const updateListNameEditors = (listNameEditors) => {
+  return { type: UPDATE_LIST_NAME_EDITORS, payload: listNameEditors };
 };
 
 export const addListNames = (newNames) => {

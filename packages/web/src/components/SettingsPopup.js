@@ -2,9 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion";
 
-import { updateSettingsPopup } from '../actions';
-import { MD_WIDTH } from '../types/const';
-import { isEqual } from '../utils';
+import { updateSettingsPopup, updateSettingsViewId } from '../actions';
+import {
+  SETTINGS_VIEW_ACCOUNT, SETTINGS_VIEW_IAP, SETTINGS_VIEW_IAP_RESTORE,
+  SETTINGS_VIEW_DATA, SETTINGS_VIEW_DATA_IMPORT, SETTINGS_VIEW_DATA_EXPORT,
+  SETTINGS_VIEW_DATA_DELETE, SETTINGS_VIEW_LISTS, SETTINGS_VIEW_MISC,
+  SETTINGS_VIEW_ABOUT,
+} from '../types/const';
 import { canvasFMV, sideBarOverlayFMV, sideBarFMV } from '../types/animConfigs';
 
 import SettingsPopupAccount from './SettingsPopupAccount';
@@ -17,27 +21,21 @@ import SettingsPopupLists from './SettingsPopupLists';
 import SettingsPopupMisc from './SettingsPopupMisc';
 import SettingsPopupAbout from './SettingsPopupAbout';
 
-const VIEW_ACCOUNT = 1;
-const VIEW_IAP = 9;
-const VIEW_IAP_RESTORE = 10;
-const VIEW_DATA = 2;
-const VIEW_DATA_IMPORT = 7;
-const VIEW_DATA_EXPORT = 3;
-const VIEW_DATA_DELETE = 4;
-const VIEW_LISTS = 5;
-const VIEW_MISC = 6;
-const VIEW_ABOUT = 8;
+const VIEW_ACCOUNT = SETTINGS_VIEW_ACCOUNT;
+const VIEW_IAP = SETTINGS_VIEW_IAP;
+const VIEW_IAP_RESTORE = SETTINGS_VIEW_IAP_RESTORE;
+const VIEW_DATA = SETTINGS_VIEW_DATA;
+const VIEW_DATA_IMPORT = SETTINGS_VIEW_DATA_IMPORT;
+const VIEW_DATA_EXPORT = SETTINGS_VIEW_DATA_EXPORT;
+const VIEW_DATA_DELETE = SETTINGS_VIEW_DATA_DELETE;
+const VIEW_LISTS = SETTINGS_VIEW_LISTS;
+const VIEW_MISC = SETTINGS_VIEW_MISC;
+const VIEW_ABOUT = SETTINGS_VIEW_ABOUT;
 
 class SettingsPopup extends React.PureComponent {
 
   constructor(props) {
     super(props);
-
-    this.initialState = {
-      viewId: VIEW_ACCOUNT,
-      isSidebarShown: props.safeAreaWidth < MD_WIDTH,
-    };
-    this.state = { ...this.initialState };
 
     this.overflowPanel = React.createRef();
   }
@@ -50,9 +48,9 @@ class SettingsPopup extends React.PureComponent {
     }
   }
 
-  componentDidUpdate(_, prevState) {
+  componentDidUpdate(prevProps) {
     if (this.overflowPanel.current) {
-      if (prevState.viewId !== this.state.viewId) {
+      if (prevProps.viewId !== this.props.viewId) {
         this.overflowPanel.current.scrollTo(0, 0);
       }
     }
@@ -64,14 +62,6 @@ class SettingsPopup extends React.PureComponent {
     }
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (!this.props.isSettingsPopupShown && nextProps.isSettingsPopupShown) {
-      if (!isEqual(this.state, this.initialState)) {
-        this.setState({ ...this.initialState })
-      }
-    }
-  }
-
   componentWillUnmount() {
     window.document.body.style.overflowY = '';
   }
@@ -79,13 +69,13 @@ class SettingsPopup extends React.PureComponent {
   isViewSelected = (viewId) => {
     const dataViews = [VIEW_DATA, VIEW_DATA_IMPORT, VIEW_DATA_EXPORT, VIEW_DATA_DELETE];
     if (viewId === VIEW_DATA) {
-      return dataViews.includes(this.state.viewId);
+      return dataViews.includes(this.props.viewId);
     }
 
     const iapViews = [VIEW_IAP, VIEW_IAP_RESTORE];
-    if (viewId === VIEW_IAP) return iapViews.includes(this.state.viewId);
+    if (viewId === VIEW_IAP) return iapViews.includes(this.props.viewId);
 
-    return viewId === this.state.viewId;
+    return viewId === this.props.viewId;
   }
 
   onPopupCloseBtnClick = () => {
@@ -93,91 +83,63 @@ class SettingsPopup extends React.PureComponent {
   }
 
   onSidebarOpenBtnClick = () => {
-    this.setState({
-      isSidebarShown: true,
-    });
+    this.props.updateSettingsViewId(null, true);
   }
 
   onSidebarCloseBtnClick = () => {
-    this.setState({
-      isSidebarShown: false,
-    });
+    this.props.updateSettingsViewId(null, false);
   }
 
   onAccountBtnClick = () => {
-    this.setState({
-      viewId: VIEW_ACCOUNT,
-      isSidebarShown: false,
-    });
+    this.props.updateSettingsViewId(VIEW_ACCOUNT, false);
   }
 
   onIapBtnClick = () => {
-    this.setState({
-      viewId: VIEW_IAP,
-      isSidebarShown: false,
-    });
+    this.props.updateSettingsViewId(VIEW_IAP, false);
   }
 
   onDataBtnClick = () => {
-    this.setState({
-      viewId: VIEW_DATA,
-      isSidebarShown: false,
-    });
+    this.props.updateSettingsViewId(VIEW_DATA, false);
   }
 
   onListsBtnClick = () => {
-    this.setState({
-      viewId: VIEW_LISTS,
-      isSidebarShown: false,
-    });
+    this.props.updateSettingsViewId(VIEW_LISTS, false);
   }
 
   onMiscBtnClick = () => {
-    this.setState({
-      viewId: VIEW_MISC,
-      isSidebarShown: false,
-    });
+    this.props.updateSettingsViewId(VIEW_MISC, false);
   }
 
   onAboutBtnClick = () => {
-    this.setState({
-      viewId: VIEW_ABOUT,
-      isSidebarShown: false,
-    });
+    this.props.updateSettingsViewId(VIEW_ABOUT, false);
   }
 
   onToRestoreIapViewBtnClick = () => {
-    this.setState({ viewId: VIEW_IAP_RESTORE });
+    this.props.updateSettingsViewId(VIEW_IAP_RESTORE, null);
   }
 
   onBackToIapViewBtnClick = () => {
-    this.setState({
-      viewId: VIEW_IAP,
-      isSidebarShown: false,
-    });
+    this.props.updateSettingsViewId(VIEW_IAP, false);
   }
 
   onToImportAllDataViewBtnClick = () => {
-    this.setState({ viewId: VIEW_DATA_IMPORT });
+    this.props.updateSettingsViewId(VIEW_DATA_IMPORT, null);
   }
 
   onToExportAllDataViewBtnClick = () => {
-    this.setState({ viewId: VIEW_DATA_EXPORT });
+    this.props.updateSettingsViewId(VIEW_DATA_EXPORT, null);
   }
 
   onToDeleteAllDataViewBtnClick = () => {
-    this.setState({ viewId: VIEW_DATA_DELETE });
+    this.props.updateSettingsViewId(VIEW_DATA_DELETE, null);
   }
 
   onBackToDataViewBtnClick = () => {
-    this.setState({
-      viewId: VIEW_DATA,
-      isSidebarShown: false,
-    });
+    this.props.updateSettingsViewId(VIEW_DATA, false);
   }
 
   _render(content) {
-    const { isSidebarShown } = this.state;
+    const { isSidebarShown } = this.props;
 
     const animate = isSidebarShown ? 'visible' : 'hidden';
 
@@ -418,12 +380,10 @@ class SettingsPopup extends React.PureComponent {
 
   render() {
 
-    const { isSettingsPopupShown } = this.props;
+    const { isSettingsPopupShown, viewId } = this.props;
     if (!isSettingsPopupShown) return (
       <AnimatePresence key="AnimatePresence_SP" />
     );
-
-    const { viewId } = this.state;
 
     if (viewId === VIEW_ACCOUNT) return this.renderAccountView();
     else if (viewId === VIEW_IAP) return this.renderIapView();
@@ -442,11 +402,13 @@ class SettingsPopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     isSettingsPopupShown: state.display.isSettingsPopupShown,
+    viewId: state.display.settingsViewId,
+    isSidebarShown: state.display.isSettingsSidebarShown,
     safeAreaWidth: state.window.width,
     safeAreaHeight: state.window.height,
   };
 };
 
-const mapDispatchToProps = { updateSettingsPopup };
+const mapDispatchToProps = { updateSettingsPopup, updateSettingsViewId };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsPopup);
