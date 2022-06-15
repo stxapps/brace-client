@@ -121,7 +121,13 @@ export const init = async (store) => {
     const snapshotSettings = store.getState().snapshot.settings;
     if (!isEqual(settings, snapshotSettings)) {
       e.preventDefault();
-      return e.returnValue = 'It looks like your changes to the settings hasn\'t been saved. Do you want to leave this site and discard your changes?';
+      return e.returnValue = 'It looks like your changes to the settings hasn\'t been saved. Do you want to leave immediately and discard your changes?';
+    }
+
+    const { busy, online, outbox, retryScheduled } = store.getState().offline;
+    if ((busy || (online && outbox.length > 0)) && !retryScheduled) {
+      e.preventDefault();
+      return e.returnValue = 'It looks like your changes is being saved to the server. Do you want to leave immediately and save your changes later?';
     }
   }, { capture: true });
 };
@@ -721,7 +727,7 @@ export const moveLinksDeleteStep = (listName, ids, toListName, toIds) => async (
     meta: {
       offline: {
         effect: { method: DELETE_LINKS, params: payload },
-        commit: { type: MOVE_LINKS_DELETE_STEP_COMMIT },
+        commit: { type: MOVE_LINKS_DELETE_STEP_COMMIT, meta: payload },
         rollback: { type: MOVE_LINKS_DELETE_STEP_ROLLBACK, meta: payload },
       },
     },
@@ -1683,6 +1689,13 @@ export const unpinLinks = (ids) => async (dispatch, getState) => {
     }
   }
 
+  if (pins.length === 0) {
+    // As for every move link to ARCHIVE and TRASH, will try to unpin the link too,
+    //  if no pin to unpin, just return.
+    console.log('In unpinLinks, no pin found for ids: ', ids);
+    return;
+  }
+
   const payload = { pins };
   dispatch({
     type: UNPIN_LINK,
@@ -1722,7 +1735,7 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
 
   const i = pinnedValues.findIndex(pinnedValue => pinnedValue.value.id === id);
   if (i < 0) {
-    console.log(`No pin found for link id: `, id);
+    console.log('In movePinnedLink, no pin found for link id: ', id);
     return;
   }
 

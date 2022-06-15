@@ -2,9 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion";
 
-import {
-  updatePopup, updateSelectingLinkId, moveLinks, pinLinks, unpinLinks, movePinnedLink,
-} from '../actions';
+import { updatePopup, updateSelectingLinkId, moveLinks, pinLinks } from '../actions';
 import {
   MY_LIST, TRASH, ADDING, MOVING,
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
@@ -208,7 +206,7 @@ class CardItemMenuPopup extends React.PureComponent {
     if (menuPopupSize) {
 
       const maxHeight = getLastHalfHeight(
-        Math.min(288, safeAreaHeight - 16), 36, 8, 0
+        Math.min(288, safeAreaHeight - 16), 40, 9, 9
       );
 
       const anchorPosition = popupLink.popupAnchorPosition;
@@ -272,8 +270,6 @@ const makeMapStateToProps = () => {
   return mapStateToProps;
 };
 
-const mapDispatchToProps = {
-  updatePopup, updateSelectingLinkId, moveLinks, pinLinks, unpinLinks, movePinnedLink,
-};
+const mapDispatchToProps = { updatePopup, updateSelectingLinkId, moveLinks, pinLinks };
 
 export default connect(makeMapStateToProps, mapDispatchToProps)(CardItemMenuPopup);

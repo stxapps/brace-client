@@ -388,8 +388,10 @@ export const isDiedStatus = (status) => {
 };
 
 export const getLastHalfHeight = (height, textHeight, pt, pb, halfRatio = 0.6) => {
-  const x = Math.floor((height - pt - pb) / textHeight) - 1;
-  return Math.round((textHeight * x + textHeight * halfRatio) + pt + pb);
+  let x = height - pt - pb - (textHeight * halfRatio);
+  x = Math.floor(x / textHeight);
+
+  return Math.round((textHeight * x) + (textHeight * halfRatio) + pt + pb);
 };
 
 export const randInt = (max) => {

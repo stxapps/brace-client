@@ -2,6 +2,10 @@ import { REHYDRATE } from 'redux-persist/constants';
 import { loop, Cmd } from 'redux-loop';
 
 import {
+  tryUpdateFetched, tryUpdateFetchedMore, moveLinksDeleteStep, deleteOldLinksInTrash,
+  extractContents, tryUpdateExtractedContents, unpinLinks,
+} from '../actions';
+import {
   UPDATE_POPUP,
   FETCH_COMMIT, UPDATE_FETCHED, FETCH_MORE_COMMIT, UPDATE_FETCHED_MORE,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
@@ -22,10 +26,6 @@ import {
 } from '../types/const';
 import { isEqual, getAllListNames } from '../utils';
 import { _ } from '../utils/obj';
-import {
-  tryUpdateFetched, tryUpdateFetchedMore, moveLinksDeleteStep, deleteOldLinksInTrash,
-  extractContents, tryUpdateExtractedContents,
-} from '../actions';
 
 const initialState = {
   [MY_LIST]: null,
@@ -273,6 +273,13 @@ const linksReducer = (state = initialState, action) => {
     const newState = { ...state };
     newState[listName] = _.exclude(state[listName], ID, ids);
 
+    const { toListName } = action.meta;
+
+    if ([ARCHIVE, TRASH].includes(toListName)) {
+      return loop(
+        newState, Cmd.run(unpinLinks(ids), { args: [Cmd.dispatch, Cmd.getState] })
+      );
+    }
     return newState;
   }
 
