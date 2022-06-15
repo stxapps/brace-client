@@ -317,10 +317,10 @@ const deleteOldLinksInTrash = async () => {
 };
 
 const updateSettings = async (settings) => {
-  const fPaths = [SETTINGS_FNAME];
+  const fpaths = [SETTINGS_FNAME];
   const contents = [JSON.stringify(settings)];
 
-  await batchPutFileWithRetry(fPaths, contents, 0);
+  await batchPutFileWithRetry(fpaths, contents, 0);
 };
 
 export const canDeleteListNames = async (listNames) => {

@@ -1118,6 +1118,10 @@ const importAllDataLoop = async (dispatch, fpaths, contents) => {
         if (fpath.startsWith('links')) {
           msg += '    • ' + contents[i].url + '\n';
         }
+        if (fpath.startsWith('pins')) {
+          const fname = fpath.split('/').slice(-1);
+          msg += '    • Pin on ' + fname + '\n';
+        }
         if (fpath === SETTINGS_FNAME) {
           msg += '    • Settings\n';
         }
@@ -1143,7 +1147,11 @@ const parseImportedFile = (dispatch, text) => {
         if (
           !obj.path ||
           !isString(obj.path) ||
-          !(obj.path.startsWith('links') || obj.path === SETTINGS_FNAME)
+          !(
+            obj.path.startsWith('links') ||
+            obj.path.startsWith('pins') ||
+            obj.path === SETTINGS_FNAME
+          )
         ) continue;
 
         if (!obj.data || !isObject(obj.data)) continue;
@@ -1184,6 +1192,21 @@ const parseImportedFile = (dispatch, text) => {
               obj.data.extractedResult = null;
             }
           }
+        }
+
+        if (obj.path.startsWith('pins')) {
+          const arr = obj.path.split('/');
+          if (arr.length !== 4) continue;
+          if (arr[0] !== 'pins') continue;
+
+          const addedDT = arr[2], fname = arr[3];
+          if (!(/^\d+$/.test(addedDT))) continue;
+          if (!fname.endsWith('.json')) continue;
+
+          const id = fname.slice(0, -5);
+          const tokens = id.split('-');
+          if (tokens.length !== 3) continue;
+          if (!(/^\d+$/.test(tokens[0]))) continue;
         }
 
         if (obj.path === SETTINGS_FNAME) {
@@ -1345,29 +1368,29 @@ export const updateImportAllDataProgress = (progress) => {
   };
 };
 
-const exportAllDataLoop = async (dispatch, fPaths, doneCount) => {
+const exportAllDataLoop = async (dispatch, fpaths, doneCount) => {
 
-  if (fPaths.length === 0) throw new Error(`Invalid fPaths: ${fPaths}`);
+  if (fpaths.length === 0) throw new Error(`Invalid fpaths: ${fpaths}`);
 
-  const selectedCount = Math.min(fPaths.length - doneCount, N_LINKS);
-  const selectedFPaths = fPaths.slice(doneCount, doneCount + selectedCount);
+  const selectedCount = Math.min(fpaths.length - doneCount, N_LINKS);
+  const selectedFPaths = fpaths.slice(doneCount, doneCount + selectedCount);
   const responses = await batchGetFileWithRetry(selectedFPaths, 0, true);
   const data = responses.filter(r => r.success).map((response) => {
     return { path: response.fpath, data: JSON.parse(response.content) };
   });
 
   doneCount = doneCount + selectedCount;
-  if (doneCount > fPaths.length) {
-    throw new Error(`Invalid doneCount: ${doneCount}, total: ${fPaths.length}`);
+  if (doneCount > fpaths.length) {
+    throw new Error(`Invalid doneCount: ${doneCount}, total: ${fpaths.length}`);
   }
 
   dispatch(updateExportAllDataProgress({
-    total: fPaths.length,
+    total: fpaths.length,
     done: doneCount,
   }));
 
-  if (doneCount < fPaths.length) {
-    const remainingData = await exportAllDataLoop(dispatch, fPaths, doneCount);
+  if (doneCount < fpaths.length) {
+    const remainingData = await exportAllDataLoop(dispatch, fpaths, doneCount);
     data.push(...remainingData);
   }
 
@@ -1381,10 +1404,10 @@ export const exportAllData = () => async (dispatch, getState) => {
     done: 0,
   }));
 
-  const fPaths = [];
+  const fpaths = [];
   try {
     await userSession.listFiles((fpath) => {
-      fPaths.push(fpath);
+      fpaths.push(fpath);
       return true;
     });
   } catch (e) {
@@ -1397,14 +1420,14 @@ export const exportAllData = () => async (dispatch, getState) => {
   }
 
   dispatch(updateExportAllDataProgress({
-    total: fPaths.length,
+    total: fpaths.length,
     done: 0,
   }));
 
-  if (fPaths.length === 0) return;
+  if (fpaths.length === 0) return;
 
   try {
-    const data = await exportAllDataLoop(dispatch, fPaths, 0);
+    const data = await exportAllDataLoop(dispatch, fpaths, 0);
 
     var blob = new Blob([JSON.stringify(data)], { type: 'text/plain;charset=utf-8' });
     saveAs(blob, 'brace-data.txt');
@@ -1425,26 +1448,26 @@ export const updateExportAllDataProgress = (progress) => {
   };
 };
 
-const deleteAllDataLoop = async (dispatch, fPaths, doneCount) => {
+const deleteAllDataLoop = async (dispatch, fpaths, doneCount) => {
 
-  if (fPaths.length === 0) throw new Error(`Invalid fPaths: ${fPaths}`);
+  if (fpaths.length === 0) throw new Error(`Invalid fpaths: ${fpaths}`);
 
-  const selectedCount = Math.min(fPaths.length - doneCount, N_LINKS);
-  const selectedFPaths = fPaths.slice(doneCount, doneCount + selectedCount);
+  const selectedCount = Math.min(fpaths.length - doneCount, N_LINKS);
+  const selectedFPaths = fpaths.slice(doneCount, doneCount + selectedCount);
   const responses = await batchDeleteFileWithRetry(selectedFPaths, 0);
 
   doneCount = doneCount + selectedCount;
-  if (doneCount > fPaths.length) {
-    throw new Error(`Invalid doneCount: ${doneCount}, total: ${fPaths.length}`);
+  if (doneCount > fpaths.length) {
+    throw new Error(`Invalid doneCount: ${doneCount}, total: ${fpaths.length}`);
   }
 
   dispatch(updateDeleteAllDataProgress({
-    total: fPaths.length,
+    total: fpaths.length,
     done: doneCount,
   }));
 
-  if (doneCount < fPaths.length) {
-    const remainingResponses = await deleteAllDataLoop(dispatch, fPaths, doneCount);
+  if (doneCount < fpaths.length) {
+    const remainingResponses = await deleteAllDataLoop(dispatch, fpaths, doneCount);
     responses.push(...remainingResponses);
   }
 
@@ -1461,10 +1484,10 @@ export const deleteAllData = () => async (dispatch, getState) => {
     done: 0,
   }));
 
-  const fPaths = [];
+  const fpaths = [];
   try {
     await userSession.listFiles((fpath) => {
-      fPaths.push(fpath);
+      fpaths.push(fpath);
       return true;
     });
   } catch (e) {
@@ -1477,14 +1500,14 @@ export const deleteAllData = () => async (dispatch, getState) => {
   }
 
   dispatch(updateDeleteAllDataProgress({
-    total: fPaths.length,
+    total: fpaths.length,
     done: 0,
   }));
 
-  if (fPaths.length === 0) return;
+  if (fpaths.length === 0) return;
 
   try {
-    await deleteAllDataLoop(dispatch, fPaths, 0);
+    await deleteAllDataLoop(dispatch, fpaths, 0);
 
     dispatch({
       type: DELETE_ALL_DATA,
