@@ -24,7 +24,11 @@ class ConfirmDeletePopup extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    if (this.props.isConfirmDeletePopupShown !== nextProps.isConfirmDeletePopupShown) {
+    if (
+      this.props.isConfirmDeletePopupShown !== nextProps.isConfirmDeletePopupShown ||
+      this.props.safeAreaWidth !== nextProps.safeAreaWidth ||
+      this.props.safeAreaHeight !== nextProps.safeAreaHeight
+    ) {
       return true;
     }
 
@@ -81,6 +85,12 @@ class ConfirmDeletePopup extends React.Component {
     const spanStyle = {};
     if (safeAreaWidth >= SM_WIDTH) spanStyle.height = safeAreaHeight;
 
+    const cancelBtnStyle = {};
+    if (safeAreaWidth < SM_WIDTH) {
+      cancelBtnStyle.paddingTop = '0.44rem';
+      cancelBtnStyle.paddingBottom = '0.44rem';
+    }
+
     return (
       <AnimatePresence key="AP_CDP">
         <div className="fixed inset-0 overflow-y-auto z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
@@ -99,15 +109,13 @@ class ConfirmDeletePopup extends React.Component {
                 <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                   <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">Confirm delete?</h3>
                   <div className="mt-2">
-                    <p className="text-sm text-gray-500">
-                      Are you sure you want to permanently delete? This action cannot be undone.
-                  </p>
+                    <p className="text-sm text-gray-500">Are you sure you want to permanently delete? This action cannot be undone.</p>
                   </div>
                 </div>
               </div>
               <div className="mt-5 sm:mt-4 sm:ml-10 sm:pl-4 sm:flex">
-                <button onClick={this.onConfirmDeleteOkBtnClick} type="button" className="inline-flex justify-center w-full rounded-md border border-red-600 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring sm:px-3.5 sm:py-1.5 sm:w-auto sm:text-sm sm:rounded-full">Delete</button>
-                <button onClick={this.onConfirmDeleteCancelBtnClick} type="button" className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-400 py-2 bg-white text-base font-normal text-gray-500 hover:text-gray-600 hover:border-gray-500 focus:outline-none focus:ring sm:mt-0 sm:ml-3 sm:px-3 sm:py-1.5 sm:w-auto sm:text-sm sm:rounded-full">Cancel</button>
+                <button onClick={this.onConfirmDeleteOkBtnClick} type="button" className="inline-flex justify-center w-full rounded-full border border-red-600 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring sm:px-3.5 sm:py-1.5 sm:w-auto sm:text-sm">Delete</button>
+                <button onClick={this.onConfirmDeleteCancelBtnClick} type="button" style={cancelBtnStyle} className="mt-3 w-full inline-flex justify-center rounded-full border border-gray-400 bg-white text-base font-normal text-gray-500 hover:text-gray-600 hover:border-gray-500 focus:outline-none focus:ring sm:mt-0 sm:ml-3 sm:px-3 sm:py-1.5 sm:w-auto sm:text-sm">Cancel</button>
               </div>
             </motion.div>
           </div>

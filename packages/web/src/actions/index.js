@@ -46,8 +46,8 @@ import {
 import {
   BACK_DECIDER, BACK_POPUP, ALL, HASH_BACK,
   SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
-  LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
-  ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
+  LIST_NAMES_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
+  SETTINGS_LISTS_MENU_POPUP, ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE, N_LINKS, N_DAYS, SETTINGS_FNAME,
   ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
@@ -60,8 +60,8 @@ import {
   getUrlFirstChar, separateUrlAndParam, extractUrl, getUserImageUrl, randomDecor,
   isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
   isDecorValid, isExtractedResultValid, isListNameObjsValid,
-  getLatestPurchase, getValidPurchase, createLinkFPath, extractPinFPath,
-  getSortedLinks, getPinFPaths, getPins, separatePinnedValues,
+  getLatestPurchase, getValidPurchase, doEnableExtraFeatures, createLinkFPath,
+  extractPinFPath, getSortedLinks, getPinFPaths, getPins, separatePinnedValues,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -1669,6 +1669,13 @@ export const updateIapRefreshStatus = (status) => {
 
 export const pinLinks = (ids) => async (dispatch, getState) => {
   const state = getState();
+  const purchases = getState().settings.purchases;
+
+  if (!doEnableExtraFeatures(purchases)) {
+    dispatch(updatePopup(PAYWALL_POPUP, true));
+    return;
+  }
+
   const pinFPaths = getPinFPaths(state);
   const pendingPins = state.pendingPins;
 

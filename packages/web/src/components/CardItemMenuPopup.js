@@ -10,7 +10,9 @@ import {
   CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP, PIN_MENU_POPUP, CONFIRM_DELETE_POPUP,
   LG_WIDTH, LAYOUT_LIST,
 } from '../types/const';
-import { getListNameMap, getPopupLink, makeGetPinStatus } from '../selectors';
+import {
+  getListNameMap, getPopupLink, getDoEnableExtraFeatures, makeGetPinStatus,
+} from '../selectors';
 import {
   copyTextToClipboard, ensureContainUrlProtocol, getListNameDisplayName, getAllListNames,
   isEqual, throttle, getLastHalfHeight,
@@ -85,6 +87,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
     const {
       listName, listNameMap, popupLink, pinStatus, layoutType, safeAreaWidth,
+      doEnableExtraFeatures,
     } = this.props;
 
     let menu = null;
@@ -106,7 +109,7 @@ class CardItemMenuPopup extends React.PureComponent {
     } else if (listName !== TRASH) {
       // Only when no other pending actions and list name is not TRASH
       if (pinStatus === PINNED) menu = [...menu, MANAGE_PIN];
-      else if (pinStatus === null) menu = [...menu, PIN];
+      else if (doEnableExtraFeatures && pinStatus === null) menu = [...menu, PIN];
     }
 
     if (layoutType === LAYOUT_LIST && safeAreaWidth >= LG_WIDTH) {
@@ -255,6 +258,7 @@ const makeMapStateToProps = () => {
   const mapStateToProps = (state, props) => {
     const popupLink = getPopupLink(state);
     const pinStatus = getPinStatus(state, popupLink);
+    const doEnableExtraFeatures = getDoEnableExtraFeatures(state);
 
     return {
       listName: state.display.listName,
@@ -264,6 +268,7 @@ const makeMapStateToProps = () => {
       layoutType: state.localSettings.layoutType,
       safeAreaWidth: state.window.width,
       safeAreaHeight: state.window.height,
+      doEnableExtraFeatures,
     };
   };
 

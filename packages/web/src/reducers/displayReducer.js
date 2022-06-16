@@ -16,7 +16,7 @@ import {
 } from '../types/actionTypes';
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
-  LIST_NAMES_POPUP, PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
+  LIST_NAMES_POPUP, PIN_MENU_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
   SETTINGS_LISTS_MENU_POPUP, MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING,
   SETTINGS_VIEW_ACCOUNT,
 } from '../types/const';
@@ -34,6 +34,7 @@ const initialState = {
   listNamesPopupPosition: null,
   isPinMenuPopupShown: false,
   pinMenuPopupPosition: null,
+  isPaywallPopupShown: false,
   isConfirmDeletePopupShown: false,
   isSettingsPopupShown: false,
   isSettingsListsMenuPopupShown: false,
@@ -73,6 +74,7 @@ const displayReducer = (state = initialState, action) => {
       listNamesPopupPosition: null,
       isPinMenuPopupShown: false,
       pinMenuPopupPosition: null,
+      isPaywallPopupShown: false,
       isConfirmDeletePopupShown: false,
       isSettingsPopupShown: false,
       isSettingsListsMenuPopupShown: false,
@@ -122,6 +124,7 @@ const displayReducer = (state = initialState, action) => {
         isAddPopupShown: isShown,
         isSearchPopupShown: isShown,
         isProfilePopupShown: isShown,
+        isPaywallPopupShown: isShown,
         isConfirmDeletePopupShown: isShown,
         isSettingsPopupShown: isShown,
       };
@@ -180,6 +183,10 @@ const displayReducer = (state = initialState, action) => {
         newState.selectingListName = null;
       }
       return newState;
+    }
+
+    if (id === PAYWALL_POPUP) {
+      return { ...state, isPaywallPopupShown: isShown };
     }
 
     if (id === CONFIRM_DELETE_POPUP) {

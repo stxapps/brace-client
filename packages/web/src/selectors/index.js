@@ -6,6 +6,7 @@ import {
   isStringIn, isObject, isArrayEqual, isEqual, isOfflineAction,
   getMainId, getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
   getFilteredLinks, getSortedLinks, sortWithPins, getPinFPaths, getPins,
+  doEnableExtraFeatures,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialListNameEditorState } from '../types/initialStates';
@@ -264,6 +265,11 @@ export const getValidProduct = createSelector(
 export const getValidPurchase = createSelector(
   state => state.settings.purchases,
   purchases => _getValidPurchase(purchases),
+);
+
+export const getDoEnableExtraFeatures = createSelector(
+  state => state.settings.purchases,
+  purchases => doEnableExtraFeatures(purchases),
 );
 
 /** @return {function(any, any): any} */
