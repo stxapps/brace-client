@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimateSharedLayout } from "framer-motion";
 
-import { fetchMore } from '../actions';
+import { fetchMore, updateFetchedMore } from '../actions';
 import {
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
   MD_WIDTH, PC_100,
@@ -21,6 +21,9 @@ const ListPanel = (props) => {
   const { width: safeAreaWidth } = useSafeAreaFrame();
   const listName = useSelector(state => state.display.listName);
   const hasMore = useSelector(state => state.hasMoreLinks[listName]);
+  const hasFetchedMore = useSelector(
+    state => state.fetchedMore[listName] ? true : false
+  );
   const isFetchingMore = useSelector(state => getIsFetchingMore(state));
   const listChangedCount = useSelector(state => state.display.listChangedCount);
   const dispatch = useDispatch();
@@ -32,7 +35,7 @@ const ListPanel = (props) => {
   }
 
   const updateScrollY = throttle(() => {
-    if (!hasMore || isFetchingMore) return;
+    if (!hasMore || hasFetchedMore || isFetchingMore) return;
 
     // https://gist.github.com/enqtran/25c6b222a73dc497cc3a64c090fb6700
     const scrollHeight = getWindowScrollHeight()
@@ -44,6 +47,10 @@ const ListPanel = (props) => {
 
   const onFetchMoreBtnClick = () => {
     dispatch(fetchMore());
+  };
+
+  const onUpdateFetchedBtnClick = () => {
+    dispatch(updateFetchedMore());
   };
 
   const renderFetchMoreBtn = () => {
@@ -65,6 +72,16 @@ const ListPanel = (props) => {
           <div className="bg-gray-400"></div>
           <div className="bg-gray-400"></div>
         </div>
+      </div>
+    );
+  };
+
+  const renderUpdateFetchedBtn = () => {
+    return (
+      <div className="my-4 px-4 sm:px-6">
+        <button onClick={onUpdateFetchedBtnClick} className="py-2 block w-full group focus:outline-none">
+          <span className="px-3 py-1 inline-block bg-white text-sm text-gray-500 border border-gray-400 rounded-full group-hover:text-gray-600 group-hover:border-gray-500 group-focus:ring">Show more</span>
+        </button>
       </div>
     );
   };
@@ -97,8 +114,11 @@ const ListPanel = (props) => {
     };
   }, [updateScrollY]);
 
-  const showFetchMoreBtn = hasMore && !isFetchingMore;
-  const showFetchingMore = hasMore && isFetchingMore;
+  let fetchMoreBtn;
+  if (!hasMore) fetchMoreBtn = null;
+  else if (hasFetchedMore) fetchMoreBtn = renderUpdateFetchedBtn();
+  else if (isFetchingMore) fetchMoreBtn = renderFetchingMore();
+  else fetchMoreBtn = renderFetchMoreBtn();
 
   let paddingBottom = '1.5rem';
   if (columnWidth === PC_100) {
@@ -115,8 +135,7 @@ const ListPanel = (props) => {
       <div className="pt-6">
         {links.length === 0 && <EmptyContent />}
         {links.length > 0 && renderItems()}
-        {showFetchMoreBtn && renderFetchMoreBtn()}
-        {showFetchingMore && renderFetchingMore()}
+        {fetchMoreBtn}
       </div>
     </div>
   );

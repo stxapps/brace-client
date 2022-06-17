@@ -16,7 +16,7 @@ import {
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED,
-  FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
+  FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK, CACHE_FETCHED_MORE,
   UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE, CLEAR_FETCHED_LIST_NAMES,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
   UPDATE_LINKS, DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
@@ -62,6 +62,7 @@ import {
   isDecorValid, isExtractedResultValid, isListNameObjsValid,
   getLatestPurchase, getValidPurchase, doEnableExtraFeatures, createLinkFPath,
   extractPinFPath, getSortedLinks, getPinFPaths, getPins, separatePinnedValues,
+  getWindowScrollHeight, getWindowHeight,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -359,7 +360,9 @@ export const changeListName = (listName) => async (dispatch, getState) => {
     payload: listName,
   });
 
-  dispatch(updateFetched(null, null, _listName));
+  // make sure dispatch updateFetched finishes before dispatch updateFetchedMore
+  await updateFetched(null, null, _listName)(dispatch, getState);
+  await updateFetchedMore(null, null, _listName)(dispatch, getState);
 };
 
 export const updateSearchString = (searchString) => {
@@ -567,6 +570,10 @@ export const fetchMore = () => async (dispatch, getState) => {
 
   const payload = { fetchMoreId, listName, ids, doDescendingOrder, pendingPins };
 
+  // If there is already cached fetchedMore with the same list name, just return.
+  const fetchedMore = getState().fetchedMore[listName];
+  if (fetchedMore) return;
+
   // If there is already FETCH with the same list name,
   //   this fetch more is invalid. Fetch more need to get ids after FETCH_COMMIT.
   // If there is already FETCH_MORE with the same payload,
@@ -614,6 +621,44 @@ export const tryUpdateFetchedMore = (payload, meta) => async (dispatch, getState
     });
     return;
   }
+
+  const { hasDisorder } = payload;
+
+  if (listName !== getState().display.listName || !hasDisorder) {
+    dispatch(updateFetchedMore(payload, meta));
+    return;
+  }
+
+  const isBulkEditing = getState().display.isBulkEditing;
+  if (!isBulkEditing) {
+    const scrollHeight = getWindowScrollHeight()
+    const windowHeight = getWindowHeight();
+    const windowBottom = windowHeight + window.pageYOffset;
+
+    if (windowBottom > (scrollHeight * 0.96) && !isPopupShown(getState())) {
+      dispatch(updateFetchedMore(payload, meta));
+      return;
+    }
+  }
+
+  dispatch({
+    type: CACHE_FETCHED_MORE,
+    payload,
+    theMeta: meta,
+  });
+};
+
+export const updateFetchedMore = (payload, meta, listName = null) => async (
+  dispatch, getState
+) => {
+
+  if (!payload) {
+    if (!listName) listName = getState().display.listName;
+
+    const fetchedMore = getState().fetchedMore[listName];
+    if (fetchedMore) ({ payload, meta } = fetchedMore);
+  }
+  if (!payload) return;
 
   dispatch({
     type: UPDATE_FETCHED_MORE,

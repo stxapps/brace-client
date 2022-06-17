@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { motion, AnimateSharedLayout } from "framer-motion";
 
-import { fetchMore } from '../actions';
+import { fetchMore, updateFetchedMore } from '../actions';
 import {
   PC_100, PC_50, PC_33,
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
@@ -42,8 +42,8 @@ class CardPanel extends React.PureComponent {
   updateScrollY = () => {
 
     // if has more, not fetching more, and at the bottom
-    const { hasMoreLinks, isFetchingMore } = this.props;
-    if (!hasMoreLinks || isFetchingMore) {
+    const { hasMoreLinks, hasFetchedMore, isFetchingMore } = this.props;
+    if (!hasMoreLinks || hasFetchedMore || isFetchingMore) {
       return;
     }
 
@@ -59,6 +59,10 @@ class CardPanel extends React.PureComponent {
 
   onFetchMoreBtnClick = () => {
     this.props.fetchMore();
+  }
+
+  onUpdateFetchedBtnClick = () => {
+    this.props.updateFetchedMore();
   }
 
   renderFetchMoreBtn() {
@@ -79,6 +83,14 @@ class CardPanel extends React.PureComponent {
           <div className="bg-gray-400" />
         </div>
       </div>
+    );
+  }
+
+  renderUpdateFetchedBtn() {
+    return (
+      <button onClick={this.onUpdateFetchedBtnClick} className="my-4 py-2 block w-full group focus:outline-none">
+        <span className="px-3 py-1 inline-block bg-white text-sm text-gray-500 border border-gray-400 rounded-full group-hover:text-gray-600 group-hover:border-gray-500 group-focus:ring">Show more</span>
+      </button>
     );
   }
 
@@ -138,11 +150,14 @@ class CardPanel extends React.PureComponent {
   render() {
 
     const {
-      links, hasMoreLinks, isFetchingMore, columnWidth, safeAreaWidth,
+      links, hasMoreLinks, isFetchingMore, hasFetchedMore, columnWidth, safeAreaWidth,
     } = this.props;
 
-    const showFetchMoreBtn = hasMoreLinks && !isFetchingMore;
-    const showFetchingMore = hasMoreLinks && isFetchingMore;
+    let fetchMoreBtn;
+    if (!hasMoreLinks) fetchMoreBtn = null;
+    else if (hasFetchedMore) fetchMoreBtn = this.renderUpdateFetchedBtn();
+    else if (isFetchingMore) fetchMoreBtn = this.renderFetchingMore();
+    else fetchMoreBtn = this.renderFetchMoreBtn();
 
     let paddingBottom = '1.5rem';
     if (columnWidth === PC_100) {
@@ -159,8 +174,7 @@ class CardPanel extends React.PureComponent {
         <div className="pt-6 md:pt-10">
           {links.length === 0 && <EmptyContent />}
           {links.length > 0 && this.renderPanel()}
-          {showFetchMoreBtn && this.renderFetchMoreBtn()}
-          {showFetchingMore && this.renderFetchingMore()}
+          {fetchMoreBtn}
         </div>
       </div>
     );
@@ -184,12 +198,13 @@ const mapStateToProps = (state, props) => {
   return {
     links: links,
     hasMoreLinks: state.hasMoreLinks[listName],
+    hasFetchedMore: state.fetchedMore[listName] ? true : false,
     isFetchingMore: getIsFetchingMore(state),
     listChangedCount: state.display.listChangedCount,
     safeAreaWidth: state.window.width,
   };
 };
 
-const mapDispatchToProps = { fetchMore };
+const mapDispatchToProps = { fetchMore, updateFetchedMore };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardPanel);

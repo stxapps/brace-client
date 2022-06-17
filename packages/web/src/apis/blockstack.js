@@ -186,17 +186,22 @@ const fetchMore = async (params) => {
   });
 
   // With pins, can't fetch further from the current point
-  const filteredLinkFPaths = sortedLinkFPaths.filter(fpath => {
+  let filteredLinkFPaths = [], hasDisorder = false;
+  for (let i = 0; i < sortedLinkFPaths.length; i++) {
+    const fpath = sortedLinkFPaths[i];
     const { id } = extractLinkFPath(fpath);
-    return !ids.includes(id);
-  });
+    if (!ids.includes(id)) {
+      if (i < ids.length) hasDisorder = true;
+      filteredLinkFPaths.push(fpath);
+    }
+  }
   const selectedLinkFPaths = filteredLinkFPaths.slice(0, N_LINKS);
 
   const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0, true);
   const links = responses.filter(r => r.success).map(r => JSON.parse(r.content));
   const hasMore = filteredLinkFPaths.length > N_LINKS;
 
-  return { listName, doDescendingOrder, links, hasMore };
+  return { listName, doDescendingOrder, links, hasMore, hasDisorder };
 };
 
 export const batchPutFileWithRetry = async (fpaths, contents, callCount) => {

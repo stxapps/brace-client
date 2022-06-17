@@ -1,9 +1,8 @@
 import { createSelectorCreator, defaultMemoize, createSelector } from 'reselect';
 
 import { IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, PINNED } from '../types/const';
-import { FETCH_MORE } from '../types/actionTypes';
 import {
-  isStringIn, isObject, isArrayEqual, isEqual, isOfflineAction,
+  isStringIn, isObject, isArrayEqual, isEqual,
   getMainId, getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
   getFilteredLinks, getSortedLinks, sortWithPins, getPinFPaths, getPins,
   doEnableExtraFeatures,
@@ -192,55 +191,12 @@ export const getPopupLink = createSelectorPopupLink(
   }
 );
 
-const createSelectorIsFetchingMore = createSelectorCreator(
-  defaultMemoize,
-  (prevVal, val) => {
-
-    // Return false(different) only if list name changed or FETCH_MORE changed!
-    if (prevVal['display'].listName !== val['display'].listName) return false;
-
-    const listName = val['display'].listName;
-
-    let prevOutbox = prevVal['offline'].outbox;
-    let outbox = val['offline'].outbox;
-
-    if (Array.isArray(prevOutbox)) {
-      prevOutbox = prevOutbox.filter(action => {
-        return isOfflineAction(action, FETCH_MORE, listName);
-      });
-    }
-    if (Array.isArray(outbox)) {
-      outbox = outbox.filter(action => {
-        return isOfflineAction(action, FETCH_MORE, listName);
-      });
-    }
-
-    const x1 = Array.isArray(prevOutbox) && prevOutbox.length > 0 ? 1 : 0;
-    const x2 = Array.isArray(outbox) && outbox.length > 0 ? 1 : 0;
-
-    if (x1 + x2 === 0) return true;
-    if (x1 + x2 === 1) return false;
-    if (prevOutbox.length !== outbox.length) return false;
-
-    for (let i = 0, l = outbox.length; i < l; i++) {
-      if (!isEqual(prevOutbox[i], outbox[i])) return false;
-    }
-    return true;
-  }
-);
-
-export const getIsFetchingMore = createSelectorIsFetchingMore(
-  state => state,
-  (state) => {
-
-    const outbox = state.offline.outbox;
-    if (!outbox || !Array.isArray(outbox)) return false;
-
-    const listName = state.display.listName;
-    for (const action of outbox) {
-      if (isOfflineAction(action, FETCH_MORE, listName)) return true;
-    }
-
+export const getIsFetchingMore = createSelector(
+  state => state.display.listName,
+  state => state.isFetchMoreInterrupted,
+  (listName, isFetchMoreInterrupted) => {
+    const obj = isFetchMoreInterrupted[listName];
+    if (isObject(obj) && !isEqual(obj, {})) return true;
     return false;
   }
 );
