@@ -749,6 +749,21 @@ export const shouldDispatchFetch = (outbox, payload) => {
   return true;
 };
 
+export const doOutboxContainMethods = (outbox, methods) => {
+  if (Array.isArray(outbox)) {
+    for (const action of outbox) {
+      try {
+        const { method } = action.meta.offline.effect;
+        if (methods.includes(method)) return true;
+      } catch (error) {
+        console.log('Invalid action: ', action);
+      }
+    }
+  }
+
+  return false;
+};
+
 export const isIPadIPhoneIPod = () => {
   const ua = navigator.userAgent;
   if (/iPad|iPhone|iPod/.test(ua)) {
@@ -963,7 +978,9 @@ export const copyFPaths = (fpaths) => {
 
 export const getPinFPaths = (state) => {
   if (
-    state.cachedFPaths.fpaths && Array.isArray(state.cachedFPaths.fpaths.pinFPaths)
+    state.cachedFPaths &&
+    state.cachedFPaths.fpaths &&
+    Array.isArray(state.cachedFPaths.fpaths.pinFPaths)
   ) {
     return state.cachedFPaths.fpaths.pinFPaths;
   }

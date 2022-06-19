@@ -63,6 +63,7 @@ import {
   getLatestPurchase, getValidPurchase, doEnableExtraFeatures, createLinkFPath,
   extractPinFPath, getSortedLinks, getPinFPaths, getPins, separatePinnedValues,
   sortLinks, sortWithPins, getWindowScrollHeight, getWindowHeight,
+  doOutboxContainMethods,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -127,8 +128,12 @@ export const init = async (store) => {
 
     const { busy, online, outbox, retryScheduled } = store.getState().offline;
     if ((busy || (online && outbox.length > 0)) && !retryScheduled) {
-      e.preventDefault();
-      return e.returnValue = 'It looks like your changes is being saved to the server. Do you want to leave immediately and save your changes later?';
+      if (doOutboxContainMethods(outbox, [
+        ADD_LINKS, DELETE_LINKS, UPDATE_SETTINGS, PIN_LINK, UNPIN_LINK,
+      ])) {
+        e.preventDefault();
+        return e.returnValue = 'It looks like your changes is being saved to the server. Do you want to leave immediately and save your changes later?';
+      }
     }
   }, { capture: true });
 };
