@@ -24,7 +24,10 @@ import {
   ADDED, MOVED, ADDING, MOVING, REMOVING, DELETING,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
 } from '../types/const';
-import { isEqual, getAllListNames } from '../utils';
+import {
+  isEqual, getAllListNames, getMainId, getPinFPaths, sortFilteredLinks, sortWithPins,
+} from '../utils';
+import { initialSettingsState } from '../types/initialStates';
 import { _ } from '../utils/obj';
 
 const initialState = {
@@ -50,6 +53,14 @@ const toObjAndAddAttrs = (links, status, isPopupShown, popupAnchorPosition) => {
 const linksReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
+
+    let doDescendingOrder = initialSettingsState.doDescendingOrder;
+    if (action.payload.settings && 'doDescendingOrder' in action.payload.settings) {
+      doDescendingOrder = action.payload.settings.doDescendingOrder;
+    }
+    const pinFPaths = getPinFPaths(action.payload);
+    const pendingPins = action.payload.pendingPins;
+
     const newState = { ...state };
     for (const listName in action.payload.links) {
 
@@ -71,18 +82,19 @@ const linksReducer = (state = initialState, action) => {
       // Care only status ADDED.
       // Sort and get just first N based on doDescendingOrder
       //   so be able to compare and do update or not.
-      const ids = Object.keys(fetchedLinks).sort();
-      if (action.payload.settings && action.payload.settings.doDescendingOrder) {
-        ids.reverse();
-      }
+      let sortedLinks = sortFilteredLinks(fetchedLinks, doDescendingOrder);
+      if (!sortedLinks) continue;
 
-      const selectedIds = ids.slice(0, N_LINKS);
-      const selectedLinks = {};
-      for (const k in fetchedLinks) {
-        if (selectedIds.includes(k)) selectedLinks[k] = fetchedLinks[k];
-      }
+      sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
+        return getMainId(link.id);
+      });
 
-      newState[listName] = { ...processingLinks, ...selectedLinks };
+      const selectedLinks = sortedLinks.slice(0, N_LINKS);
+
+      newState[listName] = {
+        ...processingLinks,
+        ...toObjAndAddAttrs(selectedLinks, ADDED, false, null),
+      };
     }
 
     return newState;

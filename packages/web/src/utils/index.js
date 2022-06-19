@@ -1066,14 +1066,23 @@ export const getFilteredLinks = (links, listName) => {
   return filteredLinks;
 };
 
-export const getSortedLinks = (links, listName, doDescendingOrder) => {
-  const filteredLinks = getFilteredLinks(links, listName);
-  if (!filteredLinks) return null;
-
-  const sortedLinks = Object.values(filteredLinks).sort((a, b) => {
+export const sortLinks = (links, doDescendingOrder) => {
+  const sortedLinks = links.sort((a, b) => {
     return b.addedDT - a.addedDT;
   });
   if (!doDescendingOrder) sortedLinks.reverse();
 
+  return sortedLinks;
+};
+
+export const sortFilteredLinks = (filteredLinks, doDescendingOrder) => {
+  return sortLinks(Object.values(filteredLinks), doDescendingOrder);
+};
+
+export const getSortedLinks = (links, listName, doDescendingOrder) => {
+  const filteredLinks = getFilteredLinks(links, listName);
+  if (!filteredLinks) return null;
+
+  const sortedLinks = sortFilteredLinks(filteredLinks, doDescendingOrder);
   return sortedLinks;
 };

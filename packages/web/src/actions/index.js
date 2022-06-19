@@ -62,7 +62,7 @@ import {
   isDecorValid, isExtractedResultValid, isListNameObjsValid,
   getLatestPurchase, getValidPurchase, doEnableExtraFeatures, createLinkFPath,
   extractPinFPath, getSortedLinks, getPinFPaths, getPins, separatePinnedValues,
-  getWindowScrollHeight, getWindowHeight,
+  sortLinks, sortWithPins, getWindowScrollHeight, getWindowHeight,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -492,11 +492,18 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
   let updateAction;
   if (links.length > _links.length) updateAction = 2;
   else {
-    const sortedLinks = links.sort((a, b) => b.addedDT - a.addedDT);
-    if (!doDescendingOrder) sortedLinks.reverse();
+    const pinFPaths = getPinFPaths(getState());
+    const pendingPins = getState().pendingPins;
 
-    const _sortedLinks = _links.sort((a, b) => b.addedDT - a.addedDT);
-    if (!doDescendingOrder) _sortedLinks.reverse();
+    let sortedLinks = sortLinks(links, doDescendingOrder);
+    sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
+      return getMainId(link.id);
+    });
+
+    let _sortedLinks = sortLinks(_links, doDescendingOrder);
+    _sortedLinks = sortWithPins(_sortedLinks, pinFPaths, pendingPins, (link) => {
+      return getMainId(link.id);
+    });
 
     let found = false;
     for (let i = 0; i < sortedLinks.length; i++) {
@@ -916,19 +923,20 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
         return !link.extractedResult || link.extractedResult.status === EXTRACT_INIT;
       })
       .sort((a, b) => b.addedDT - a.addedDT);
-    if (_links.length > 0) links = _links.slice(0, N_LINKS);
-
-    // No unextracted link found, return
-    if (!links) return;
+    if (_links.length > 0) {
+      links = _links.slice(0, N_LINKS);
+    } else {
+      return; // No unextracted link found, return
+    }
   } else if (listName !== null && ids !== null) {
     let _links = _.ignore(
       _.select(getState().links[listName], ID, ids),
       [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]
     );
     _links = Object.values(_links);
-    if (_links.length > 0) links = _links.slice(0, N_LINKS);
-
-    if (!links) {
+    if (_links.length > 0) {
+      links = _links.slice(0, N_LINKS);
+    } else {
       console.log(`Links not found: ${listName}, ${ids}`);
       return;
     }
