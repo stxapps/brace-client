@@ -204,7 +204,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
     const { scrollY, menuPopupSize } = this.state;
 
-    let popupClassNames = 'py-2 fixed min-w-32 max-w-64 bg-white border border-gray-200 rounded-lg shadow-xl overflow-auto z-41';
+    let popupClassNames = 'py-2 fixed min-w-32 max-w-64 bg-white rounded-lg shadow-xl overflow-auto ring-1 ring-black ring-opacity-5 z-41';
     let menuPopup;
     if (menuPopupSize) {
 

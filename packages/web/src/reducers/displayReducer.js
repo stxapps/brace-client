@@ -53,6 +53,8 @@ const initialState = {
   settingsStatus: null,
   settingsViewId: SETTINGS_VIEW_ACCOUNT,
   isSettingsSidebarShown: false,
+  didSettingsCloseAnimEnd: true,
+  didSettingsSidebarAnimEnd: true,
   importAllDataProgress: null,
   exportAllDataProgress: null,
   deleteAllDataProgress: null,
@@ -94,6 +96,8 @@ const displayReducer = (state = initialState, action) => {
       //settingsStatus: null,
       settingsViewId: SETTINGS_VIEW_ACCOUNT,
       isSettingsSidebarShown: false,
+      didSettingsCloseAnimEnd: true,
+      didSettingsSidebarAnimEnd: true,
       importAllDataProgress: null,
       exportAllDataProgress: null,
       deleteAllDataProgress: null,
@@ -197,7 +201,12 @@ const displayReducer = (state = initialState, action) => {
 
     if (id === SETTINGS_POPUP) {
       const newState = { ...state, isSettingsPopupShown: isShown };
-      if (!isShown) newState.selectingListName = null;
+      if (isShown) {
+        newState.didSettingsCloseAnimEnd = false;
+        newState.didSettingsSidebarAnimEnd = true;
+      } else {
+        newState.selectingListName = null;
+      }
       return newState;
     }
 

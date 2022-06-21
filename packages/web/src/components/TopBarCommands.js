@@ -58,7 +58,7 @@ class TopBarCommands extends React.PureComponent {
     return (
       <AnimatePresence key="AnimatePresence_ProfilePopup">
         <motion.button key="ProfilePopup_cancelBtn" onClick={this.onProfileCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black bg-opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
-        <motion.div key="ProfilePopup_menuPopup" className="mt-2 py-2 absolute right-0 w-28 bg-white border border-gray-100 rounded-lg shadow-xl z-41 origin-top-right" variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
+        <motion.div key="ProfilePopup_menuPopup" className="mt-2 py-2 absolute right-0 w-28 bg-white rounded-lg shadow-xl ring-1 ring-black ring-opacity-5 z-41 origin-top-right" variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
           <button onClick={this.onSettingsBtnClick} className="py-2.5 pl-4 block w-full text-sm text-gray-700 text-left rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">Settings</button>
           <button onClick={this.onSupportBtnClick} className="py-2.5 pl-4 block w-full text-sm text-gray-700 text-left rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">Support</button>
           <button onClick={this.onSignOutBtnClick} className="py-2.5 pl-4 block w-full text-sm text-gray-700 text-left rounded-md hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset">Sign out</button>

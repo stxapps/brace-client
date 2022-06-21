@@ -1025,13 +1025,20 @@ export const updateSettingsPopup = (isShown) => async (dispatch, getState) => {
   dispatch(updatePopup(SETTINGS_POPUP, isShown));
 };
 
-export const updateSettingsViewId = (viewId, isSidebarShown) => async (
-  dispatch, getState
-) => {
+export const updateSettingsViewId = (
+  viewId, isSidebarShown, didCloseAnimEnd, didSidebarAnimEnd
+) => async (dispatch, getState) => {
+
   const payload = {};
   if (viewId) payload.settingsViewId = viewId;
   if ([true, false].includes(isSidebarShown)) {
     payload.isSettingsSidebarShown = isSidebarShown;
+  }
+  if ([true, false].includes(didCloseAnimEnd)) {
+    payload.didSettingsCloseAnimEnd = didCloseAnimEnd;
+  }
+  if ([true, false].includes(didSidebarAnimEnd)) {
+    payload.didSettingsSidebarAnimEnd = didSidebarAnimEnd;
   }
 
   dispatch({ type: UPDATE_SETTINGS_VIEW_ID, payload });

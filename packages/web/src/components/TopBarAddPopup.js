@@ -85,7 +85,7 @@ class TopBarAddPopup extends React.PureComponent {
     return (
       <AnimatePresence key="AnimatePresence_TopBarAddPopup">
         <motion.button key="TopBarAddPopup_cancelBtn" onClick={this.onAddCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black bg-opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
-        <motion.div key="TopBarAddPopup_addPopup" style={style} className="mt-2 px-4 pt-6 pb-5 absolute w-96 bg-white border border-gray-100 rounded-lg shadow-xl z-41" variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
+        <motion.div key="TopBarAddPopup_addPopup" style={style} className="mt-2 px-4 pt-6 pb-5 absolute w-96 bg-white rounded-lg shadow-xl ring-1 ring-black ring-opacity-5 z-41" variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
           <div className="flex">
             <span className="inline-flex items-center bg-white text-sm text-gray-600">Url:</span>
             <div className="ml-3 flex-1">
