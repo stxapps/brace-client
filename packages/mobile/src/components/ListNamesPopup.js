@@ -21,7 +21,7 @@ import {
 } from '../types/animConfigs';
 
 import { useSafeAreaFrame, useSafeAreaInsets } from '.';
-import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
+import { computePosition, createLayouts, getOriginTranslate } from './MenuPopupRenderer';
 
 const MODE_CHANGE_LIST_NAME = 'MODE_CHANGE_LIST_NAME';
 const MODE_MOVE_LINKS = 'MODE_MOVE_LINKS';
@@ -389,64 +389,31 @@ const ListNamesPopup = () => {
     const popupPosition = computePosition(layouts, null, 8);
 
     const { top, left, topOrigin, leftOrigin } = popupPosition;
-    const originClassName = getOriginClassName(topOrigin, leftOrigin);
+    const { startX, startY } = getOriginTranslate(
+      topOrigin, leftOrigin, popupWidth, popupHeight
+    );
 
     const popupStyle = {
       top, left,
       width: popupWidth, height: popupHeight,
       opacity: popupAnim, transform: [],
     };
-    if (originClassName === 'origin-top-left') {
-      popupStyle.transform.push({
-        translateX: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [-1 * popupWidth * 0.05 / 2, 0],
-        }),
-      });
-      popupStyle.transform.push({
-        translateY: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [-1 * popupHeight * 0.05 / 2, 0],
-        }),
-      });
-    } else if (originClassName === 'origin-top-right') {
-      popupStyle.transform.push({
-        translateX: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [popupWidth * 0.05 / 2, 0],
-        }),
-      });
-      popupStyle.transform.push({
-        translateY: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [-1 * popupHeight * 0.05 / 2, 0],
-        }),
-      });
-    } else if (originClassName === 'origin-bottom-left') {
-      popupStyle.transform.push({
-        translateX: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [-1 * popupWidth * 0.05 / 2, 0],
-        }),
-      });
-      popupStyle.transform.push({
-        translateY: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [popupHeight * 0.05 / 2, 0],
-        }),
-      });
-    } else if (originClassName === 'origin-bottom-right') {
-      popupStyle.transform.push({
-        translateX: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [popupWidth * 0.05 / 2, 0],
-        }),
-      });
-      popupStyle.transform.push({
-        translateY: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [popupHeight * 0.05 / 2, 0],
-        }),
-      });
-    }
+    popupStyle.transform.push({
+      translateX: popupAnim.interpolate({
+        inputRange: [0, 1], outputRange: [startX, 0],
+      }),
+    });
+    popupStyle.transform.push({
+      translateY: popupAnim.interpolate({
+        inputRange: [0, 1], outputRange: [startY, 0],
+      }),
+    });
     popupStyle.transform.push({
       scale: popupAnim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }),
     });
 
     panel = (
-      <Animated.View style={[tailwind('absolute mt-1 rounded-md bg-white shadow-xl'), popupStyle]}>
+      <Animated.View style={[tailwind('absolute bg-white border border-gray-100 rounded-lg shadow-xl'), popupStyle]}>
         {_render()}
       </Animated.View>
     );

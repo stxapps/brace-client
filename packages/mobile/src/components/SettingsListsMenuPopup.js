@@ -15,7 +15,7 @@ import { tailwind } from '../stylesheets/tailwind';
 import { popupFMV } from '../types/animConfigs';
 
 import { useSafeAreaFrame, useSafeAreaInsets } from '.';
-import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
+import { computePosition, createLayouts, getOriginTranslate } from './MenuPopupRenderer';
 
 const SettingsListsMenuPopup = () => {
 
@@ -186,7 +186,7 @@ const SettingsListsMenuPopup = () => {
     </View>
   );
 
-  let popupClassNames = 'absolute w-36 mt-1 rounded-md bg-white shadow-xl';
+  let popupClassNames = 'absolute w-36 bg-white border border-gray-100 rounded-lg shadow-xl';
   let panel;
   let bgStyle = { opacity: 0 };
   if (popupSize) {
@@ -199,32 +199,21 @@ const SettingsListsMenuPopup = () => {
     const popupPosition = computePosition(layouts, null, 8);
 
     const { top, left, topOrigin, leftOrigin } = popupPosition;
-    const originClassName = getOriginClassName(topOrigin, leftOrigin);
+    const { startX, startY } = getOriginTranslate(
+      topOrigin, leftOrigin, popupSize.width, popupSize.height
+    );
 
     const popupStyle = { top, left, opacity: popupAnim, transform: [] };
-    if (originClassName === 'origin-top-right') {
-      popupStyle.transform.push({
-        translateX: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [popupSize.width * 0.05 / 2, 0],
-        }),
-      });
-      popupStyle.transform.push({
-        translateY: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [-1 * popupSize.height * 0.05 / 2, 0],
-        }),
-      });
-    } else if (originClassName === 'origin-bottom-right') {
-      popupStyle.transform.push({
-        translateX: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [popupSize.width * 0.05 / 2, 0],
-        }),
-      });
-      popupStyle.transform.push({
-        translateY: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [popupSize.height * 0.05 / 2, 0],
-        }),
-      });
-    }
+    popupStyle.transform.push({
+      translateX: popupAnim.interpolate({
+        inputRange: [0, 1], outputRange: [startX, 0],
+      }),
+    });
+    popupStyle.transform.push({
+      translateY: popupAnim.interpolate({
+        inputRange: [0, 1], outputRange: [startY, 0],
+      }),
+    });
     popupStyle.transform.push({
       scale: popupAnim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }),
     });

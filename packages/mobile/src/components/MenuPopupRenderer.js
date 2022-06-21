@@ -80,6 +80,27 @@ export const getOriginClassName = (topOrigin, leftOrigin) => {
   }
 };
 
+export const getOriginTranslate = (topOrigin, leftOrigin, popupWidth, popupHeight) => {
+  let startX, startY;
+  if (topOrigin === AT_TRIGGER && leftOrigin === AT_TRIGGER) {
+    startX = -1 * popupWidth * 0.05 / 2;
+    startY = -1 * popupHeight * 0.05 / 2;
+  } else if (topOrigin === AT_TRIGGER && leftOrigin === EDGE_TRIGGER) {
+    startX = popupWidth * 0.05 / 2;
+    startY = -1 * popupHeight * 0.05 / 2;
+  } else if (topOrigin === EDGE_TRIGGER && leftOrigin === AT_TRIGGER) {
+    startX = -1 * popupWidth * 0.05 / 2;
+    startY = popupHeight * 0.05 / 2;
+  } else if (topOrigin === EDGE_TRIGGER && leftOrigin === EDGE_TRIGGER) {
+    startX = popupWidth * 0.05 / 2;
+    startY = popupHeight * 0.05 / 2;
+  } else {
+    startX = 0;
+    startY = 0;
+  }
+  return { startX, startY };
+};
+
 function fit(pos, len, minPos, maxPos) {
   if (pos === undefined) {
     return undefined;

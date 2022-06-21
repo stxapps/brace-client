@@ -1,32 +1,37 @@
 import { REHYDRATE } from 'redux-persist/constants';
 
 import { RESET_STATE } from '../types/actionTypes';
+import { copyFPaths } from '../utils';
 import { cachedFPaths } from '../vars';
 
 const initialState = {
   fpaths: null,
 };
 
+let fpathsRef = null;
 const cachedFPathsReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
     if (action.payload.cachedFPaths && action.payload.cachedFPaths.fpaths) {
+      cachedFPaths.fpaths = copyFPaths(action.payload.cachedFPaths.fpaths);
       // No new object for fpaths for reference comparison
-      cachedFPaths.fpaths = action.payload.cachedFPaths.fpaths;
-      return { ...initialState, fpaths: cachedFPaths.fpaths };
+      fpathsRef = cachedFPaths.fpaths;
+      return { ...initialState, fpaths: copyFPaths(cachedFPaths.fpaths) };
     }
     return { ...initialState };
   }
 
+  // Only RESET_STATE, no need to reset state for DELETE_ALL_DATA
   if (action.type === RESET_STATE) {
-    // Only RESET_STATE, no need to reset state for DELETE_ALL_DATA
     cachedFPaths.fpaths = null;
+    fpathsRef = cachedFPaths.fpaths;
     return { ...initialState };
   }
 
-  if (state.fpaths !== cachedFPaths.fpaths) {
+  if (fpathsRef !== cachedFPaths.fpaths) {
     // No new object for fpaths for reference comparison
-    return { ...state, fpaths: cachedFPaths.fpaths };
+    fpathsRef = cachedFPaths.fpaths;
+    return { ...state, fpaths: copyFPaths(cachedFPaths.fpaths) };
   }
 
   return state;

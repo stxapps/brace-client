@@ -645,6 +645,7 @@ This and CI/CD are very important!
 - yarn add @welldone-software/why-did-you-render
 - yarn add framer-motion
 - yarn add @types/node @types/react @types/react-dom @types/jest @types/react-redux @types/url-parse @types/file-saver 
+- yarn add @wewatch/lexorank
 ** attribution
 - tailwindcss, postcss, purgecss
 - uirefactoring
@@ -768,6 +769,7 @@ This and CI/CD are very important!
 - yarn add @welldone-software/why-did-you-render --dev
 - yarn add typescript --dev
 - yarn add react-native-fs <-- NOT USING
+- yarn add @wewatch/lexorank
 - change minSdkVersion from 16 to 21 in ./android/build.gradle
 - Allow CORS access on https://brace.to/manifest.json
 - Set up Android deep linking: reactnative.dev/docs/linking and developer.android.com/training/app-links/deep-linking

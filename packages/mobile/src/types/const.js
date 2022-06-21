@@ -26,9 +26,11 @@ export const ADD_POPUP = 'ADD_POPUP';
 export const SEARCH_POPUP = 'SEARCH_POPUP';
 export const PROFILE_POPUP = 'PROFILE_POPUP';
 export const LIST_NAMES_POPUP = 'LIST_NAMES_POPUP';
+export const PIN_MENU_POPUP = 'PIN_MENU_POPUP';
 export const CONFIRM_DELETE_POPUP = 'CONFIRM_DELETE_POPUP';
 export const SETTINGS_POPUP = 'SETTINGS_POPUP';
 export const SETTINGS_LISTS_MENU_POPUP = 'SETTINGS_LISTS_MENU_POPUP';
+export const PAYWALL_POPUP = 'PAYWALL_POPUP';
 
 export const IS_POPUP_SHOWN = 'isPopupShown';
 export const POPUP_ANCHOR_POSITION = 'popupAnchorPosition';
@@ -193,3 +195,24 @@ export const ON_HOLD = 'OnHold';
 export const PAUSED = 'Paused';
 export const EXPIRED = 'Expired';
 //export const UNKNOWN = 'UNKNOWN';
+
+export const PIN = 'Pin to the top';
+export const MANAGE_PIN = 'Manage pin';
+export const UNPIN = 'Unpin';
+export const PIN_LEFT = 'Move pin forward';
+export const PIN_RIGHT = 'Move pin backward';
+export const PIN_UP = 'Move pin up';
+export const PIN_DOWN = 'Move pin down';
+
+export const PINNED = 'PINNED';
+
+export const SETTINGS_VIEW_ACCOUNT = 1;
+export const SETTINGS_VIEW_IAP = 9;
+export const SETTINGS_VIEW_IAP_RESTORE = 10;
+export const SETTINGS_VIEW_DATA = 2;
+export const SETTINGS_VIEW_DATA_IMPORT = 7;
+export const SETTINGS_VIEW_DATA_EXPORT = 3;
+export const SETTINGS_VIEW_DATA_DELETE = 4;
+export const SETTINGS_VIEW_LISTS = 5;
+export const SETTINGS_VIEW_MISC = 6;
+export const SETTINGS_VIEW_ABOUT = 8;

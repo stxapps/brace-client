@@ -3,7 +3,7 @@ import { FlatList, View, Text, TouchableOpacity, Animated } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { Flow } from 'react-native-animated-spinkit';
 
-import { fetchMore, updatePageYOffset } from '../actions';
+import { fetchMore, updateFetchedMore, updateScrollPanel } from '../actions';
 import {
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
   MD_WIDTH, PC_100,
@@ -28,6 +28,9 @@ const ListPanel = (props) => {
   const { width: safeAreaWidth } = useSafeAreaFrame();
   const listName = useSelector(state => state.display.listName);
   const hasMore = useSelector(state => state.hasMoreLinks[listName]);
+  const hasFetchedMore = useSelector(
+    state => state.fetchedMore[listName] ? true : false
+  );
   const isFetchingMore = useSelector(state => getIsFetchingMore(state));
   const listChangedCount = useSelector(state => state.display.listChangedCount);
   const flatList = useRef(null);
@@ -39,22 +42,29 @@ const ListPanel = (props) => {
     links = [];
   }
 
+  const getItemId = useCallback((item) => {
+    return item.id;
+  }, []);
+
   const onScrollEnd = useCallback((e) => {
-    dispatch(updatePageYOffset(e.nativeEvent.contentOffset.y));
+    const contentHeight = e.nativeEvent.contentSize.height;
+    const layoutHeight = e.nativeEvent.layoutMeasurement.height;
+    const pageYOffset = e.nativeEvent.contentOffset.y;
+    dispatch(updateScrollPanel(contentHeight, layoutHeight, pageYOffset));
   }, [dispatch]);
+
+  const onEndReached = useCallback(() => {
+    if (!hasMore || hasFetchedMore || isFetchingMore) return;
+    dispatch(fetchMore());
+  }, [hasMore, isFetchingMore, dispatch]);
 
   const onFetchMoreBtnClick = useCallback(() => {
     dispatch(fetchMore());
   }, [dispatch]);
 
-  const onEndReached = useCallback(() => {
-    if (!hasMore || isFetchingMore) return;
-    dispatch(fetchMore());
-  }, [hasMore, isFetchingMore, dispatch]);
-
-  const getItemId = useCallback((item) => {
-    return item.id;
-  }, []);
+  const onUpdateFetchedBtnClick = useCallback(() => {
+    dispatch(updateFetchedMore());
+  }, [dispatch]);
 
   const renderEmpty = useCallback(() => {
     return <EmptyContent />;
@@ -77,6 +87,16 @@ const ListPanel = (props) => {
       </View>
     );
   }, []);
+
+  const renderUpdateFetchedBtn = useCallback(() => {
+    return (
+      <TouchableOpacity onPress={onUpdateFetchedBtnClick} style={tailwind('my-4 py-2 flex-row justify-center w-full')}>
+        <View style={tailwind('px-3 py-1 bg-white border border-gray-400 rounded-full')}>
+          <Text style={tailwind('text-sm text-gray-500 font-normal')}>Show more</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }, [onFetchMoreBtnClick]);
 
   const renderItem = useCallback(({ item }) => {
     return <ListItem link={item} />;
@@ -103,7 +123,9 @@ const ListPanel = (props) => {
     }
 
     if (item.id === PANEL_FOOTER) {
-      return isFetchingMore ? renderFetchingMore() : renderFetchMoreBtn();
+      if (hasFetchedMore) return renderUpdateFetchedBtn();
+      if (isFetchingMore) return renderFetchingMore();
+      return renderFetchMoreBtn();
     }
 
     if (item.id === PANEL_PADDING_BOTTOM) {

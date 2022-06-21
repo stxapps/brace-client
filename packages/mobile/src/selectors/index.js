@@ -1,15 +1,13 @@
 import { createSelectorCreator, defaultMemoize, createSelector } from 'reselect';
 
+import { IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, PINNED } from '../types/const';
 import {
-  ID, STATUS,
-  ADDED, MOVED, ADDING, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
-  IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
-} from '../types/const';
-import { FETCH_MORE } from '../types/actionTypes';
-import {
-  _, isStringIn, excludeWithMainIds, isObject, isArrayEqual, isEqual, isOfflineAction,
-  getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
+  isStringIn, isObject, isArrayEqual, isEqual,
+  getMainId, getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
+  getFilteredLinks, getSortedLinks, sortWithPins, getPinFPaths, getPins,
+  doEnableExtraFeatures,
 } from '../utils';
+import { _ } from '../utils/obj';
 import { initialListNameEditorState } from '../types/initialStates';
 
 const createSelectorListNameMap = createSelectorCreator(
@@ -66,6 +64,16 @@ const createSelectorLinks = createSelectorCreator(
     if (prevVal['display'].listName !== val['display'].listName) return false;
     if (prevVal['display'].searchString !== val['display'].searchString) return false;
 
+    if (prevVal['cachedFPaths'].fpaths !== val['cachedFPaths'].fpaths) {
+      if (!prevVal['cachedFPaths'].fpaths || !val['cachedFPaths'].fpaths) return false;
+      if (!isArrayEqual(
+        prevVal['cachedFPaths'].fpaths.pinFPaths,
+        val['cachedFPaths'].fpaths.pinFPaths
+      )) return false;
+    }
+
+    if (prevVal['pendingPins'] !== val['pendingPins']) return false;
+
     if (prevVal['links'] === val['links']) return true;
     if (!isArrayEqual(Object.keys(prevVal['links']).sort(), Object.keys(val['links']).sort())) {
       return false;
@@ -98,28 +106,17 @@ export const getLinks = createSelectorLinks(
     const listName = state.display.listName;
     const searchString = state.display.searchString;
     const doDescendingOrder = state.settings.doDescendingOrder;
+    const pinFPaths = getPinFPaths(state);
+    const pendingPins = state.pendingPins;
 
-    if (!links || !links[listName]) return null;
+    let sortedLinks = getSortedLinks(links, listName, doDescendingOrder);
+    if (!sortedLinks) return null;
 
-    const selectedLinks = _.select(links[listName], STATUS, [ADDED, MOVED, ADDING, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING]);
-
-    const moving_ids = [];
-    for (const key in links) {
-      if (key === listName || !links[key]) {
-        continue;
-      }
-      moving_ids.push(..._.extract(_.select(links[key], STATUS, [MOVED, MOVING, DIED_MOVING]), ID));
-    }
-
-    const filteredLinks = excludeWithMainIds(selectedLinks, moving_ids);
-    const sortedLinks = Object.values(filteredLinks).sort((a, b) => {
-      return b.addedDT - a.addedDT;
+    sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
+      return getMainId(link.id);
     });
-    if (!doDescendingOrder) sortedLinks.reverse();
 
-    if (searchString === '') {
-      return sortedLinks;
-    }
+    if (searchString === '') return sortedLinks;
 
     const searchLinks = sortedLinks.filter(link => {
       return isStringIn(link, searchString);
@@ -133,8 +130,13 @@ const createSelectorPopupLink = createSelectorCreator(
   defaultMemoize,
   (prevVal, val) => {
 
+    // doDescendingOrder shouldn't change which link its popup shown
+
     if (prevVal['display'].listName !== val['display'].listName) return false;
     if (prevVal['display'].searchString !== val['display'].searchString) return false;
+
+    // cachedFPaths shouldn't change which link its popup shown
+    // pendingPins shouldn't change which link its popup shown
 
     if (prevVal['links'] === val['links']) return true;
     if (!isArrayEqual(Object.keys(prevVal['links']).sort(), Object.keys(val['links']).sort())) {
@@ -168,19 +170,9 @@ export const getPopupLink = createSelectorPopupLink(
     const listName = state.display.listName;
     const searchString = state.display.searchString;
 
-    if (!links || !links[listName]) return null;
+    const filteredLinks = getFilteredLinks(links, listName);
+    if (!filteredLinks) return null;
 
-    const selectedLinks = _.select(links[listName], STATUS, [ADDED, MOVED, ADDING, MOVING, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING]);
-
-    const moving_ids = [];
-    for (const key in links) {
-      if (key === listName || !links[key]) {
-        continue;
-      }
-      moving_ids.push(..._.extract(_.select(links[key], STATUS, [MOVED, MOVING, DIED_MOVING]), ID));
-    }
-
-    const filteredLinks = excludeWithMainIds(selectedLinks, moving_ids);
     const popupLinks = _.select(filteredLinks, IS_POPUP_SHOWN, true);
 
     let popupLink = null;
@@ -199,55 +191,12 @@ export const getPopupLink = createSelectorPopupLink(
   }
 );
 
-const createSelectorIsFetchingMore = createSelectorCreator(
-  defaultMemoize,
-  (prevVal, val) => {
-
-    // Return false(different) only if list name changed or FETCH_MORE changed!
-    if (prevVal['display'].listName !== val['display'].listName) return false;
-
-    const listName = val['display'].listName;
-
-    let prevOutbox = prevVal['offline'].outbox;
-    let outbox = val['offline'].outbox;
-
-    if (Array.isArray(prevOutbox)) {
-      prevOutbox = prevOutbox.filter(action => {
-        return isOfflineAction(action, FETCH_MORE, listName);
-      });
-    }
-    if (Array.isArray(outbox)) {
-      outbox = outbox.filter(action => {
-        return isOfflineAction(action, FETCH_MORE, listName);
-      });
-    }
-
-    const x1 = Array.isArray(prevOutbox) && prevOutbox.length > 0 ? 1 : 0;
-    const x2 = Array.isArray(outbox) && outbox.length > 0 ? 1 : 0;
-
-    if (x1 + x2 === 0) return true;
-    if (x1 + x2 === 1) return false;
-    if (prevOutbox.length !== outbox.length) return false;
-
-    for (let i = 0, l = outbox.length; i < l; i++) {
-      if (!isEqual(prevOutbox[i], outbox[i])) return false;
-    }
-    return true;
-  }
-);
-
-export const getIsFetchingMore = createSelectorIsFetchingMore(
-  state => state,
-  (state) => {
-
-    const outbox = state.offline.outbox;
-    if (!outbox || !Array.isArray(outbox)) return false;
-
-    const listName = state.display.listName;
-    for (const action of outbox) {
-      if (isOfflineAction(action, FETCH_MORE, listName)) return true;
-    }
-
+export const getIsFetchingMore = createSelector(
+  state => state.display.listName,
+  state => state.isFetchMoreInterrupted,
+  (listName, isFetchMoreInterrupted) => {
+    const obj = isFetchMoreInterrupted[listName];
+    if (isObject(obj) && !isEqual(obj, {})) return true;
     return false;
   }
 );
@@ -273,3 +222,30 @@ export const getValidPurchase = createSelector(
   state => state.settings.purchases,
   purchases => _getValidPurchase(purchases),
 );
+
+export const getDoEnableExtraFeatures = createSelector(
+  state => state.settings.purchases,
+  purchases => doEnableExtraFeatures(purchases),
+);
+
+/** @return {function(any, any): any} */
+export const makeGetPinStatus = () => {
+  return createSelector(
+    state => getPinFPaths(state),
+    state => state.pendingPins,
+    (__, link) => link ? link.id : null,
+    (pinFPaths, pendingPins, linkId) => {
+
+      if (!linkId) return null;
+
+      const pins = getPins(pinFPaths, pendingPins, false);
+      const linkMainId = getMainId(linkId);
+      if (linkMainId in pins) {
+        if ('status' in pins[linkMainId]) return pins[linkMainId].status;
+        return PINNED;
+      }
+
+      return null;
+    }
+  );
+};

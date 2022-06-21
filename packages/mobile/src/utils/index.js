@@ -1,7 +1,7 @@
 import Url from 'url-parse';
 
 import {
-  HTTP, HTTPS, WWW, STATUS,
+  HTTP, HTTPS, WWW, STATUS, ID, ADDED, MOVED, ADDING, MOVING,
   DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   COLOR, PATTERN, IMAGE,
   BG_COLOR_STYLES, PATTERNS,
@@ -9,215 +9,12 @@ import {
   VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME,
   COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, UNKNOWN,
 } from '../types/const';
-import { FETCH } from '../types/actionTypes';
+import {
+  FETCH, PIN_LINK, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_ROLLBACK,
+  MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
+} from '../types/actionTypes';
 import { IMAGES } from '../types/imagePaths';
-
-/**
- * Convert an array of objects to an object of objects.
- **/
-const mapKeys = (arr, key) => {
-  if (!Array.isArray(arr)) throw new Error(`Must be arr: ${arr}`);
-
-  const obj = {};
-  for (const el of arr) {
-    obj[el[key]] = el;
-  }
-  return obj;
-};
-
-/**
- * Select objects that meet the criteria: key and value
- *   returning an object with selected objects.
- **/
-const select = (obj, key, value) => {
-  if (Array.isArray(obj)) throw new Error(`Must be obj, not arr: ${obj}`);
-
-  const newObj = {};
-  for (const id in obj) {
-    if (Array.isArray(value)) {
-      if (value.includes(obj[id][key])) {
-        newObj[id] = obj[id];
-      }
-      continue;
-    }
-
-    if (obj[id][key] === value) {
-      newObj[id] = obj[id];
-    }
-  }
-  return newObj;
-};
-
-const _update = (obj, updKey, updValue) => {
-  const newObj = { ...obj };
-  if (Array.isArray(updKey)) {
-    for (let i = 0; i < updKey.length; i++) {
-      newObj[updKey[i]] = updValue[i];
-    }
-  } else {
-    newObj[updKey] = updValue;
-  }
-  return newObj;
-};
-
-const update = (obj, conKey, conValue, updKey, updValue) => {
-  if (Array.isArray(obj)) throw new Error(`Must be obj, not arr: ${obj}`);
-
-  const newObj = {};
-  for (const id in obj) {
-    if (conKey === null) {
-      newObj[id] = _update(obj[id], updKey, updValue);
-      continue;
-    }
-
-    if (Array.isArray(conValue)) {
-      if (conValue.includes(obj[id][conKey])) {
-        newObj[id] = _update(obj[id], updKey, updValue);
-        continue;
-      }
-
-      newObj[id] = { ...obj[id] };
-      continue;
-    }
-
-    if (obj[id][conKey] === conValue) {
-      newObj[id] = _update(obj[id], updKey, updValue);
-      continue;
-    }
-
-    newObj[id] = { ...obj[id] };
-  }
-  return newObj;
-};
-
-/**
- * Extract an array of values from objects in an object or an array.
- **/
-const extract = (obj, key) => {
-
-  const arr = [];
-  if (Array.isArray(obj)) {
-    for (const el of obj) {
-      arr.push(el[key]);
-    }
-  } else {
-    for (const id in obj) {
-      arr.push(obj[id][key]);
-    }
-  }
-
-  return arr;
-};
-
-/**
- * Exclude objects in an object that meets the criteria.
- **/
-const exclude = (obj, key, value) => {
-  if (Array.isArray(obj)) throw new Error(`Must be obj, not arr: ${obj}`);
-
-  const newObj = {};
-  for (const id in obj) {
-    if (Array.isArray(value)) {
-      if (value.includes(obj[id][key])) {
-        continue;
-      }
-
-      newObj[id] = obj[id];
-      continue;
-    }
-
-    if (obj[id][key] === value) {
-      continue;
-    }
-    newObj[id] = obj[id];
-  }
-  return newObj;
-};
-
-/**
- * Return an object of objects without/ignoring some attributes that meet the criteria.
- **/
-const ignore = (obj, key) => {
-  if (Array.isArray(obj)) throw new Error(`Must be obj, not arr: ${obj}`);
-
-  const newObj = {};
-  for (const id in obj) {
-    const newObjEl = {};
-    for (const keyEl in obj[id]) {
-      if (Array.isArray(key)) {
-        if (key.includes(keyEl)) {
-          continue;
-        }
-
-        newObjEl[keyEl] = obj[id][keyEl];
-        continue;
-      }
-
-      if (key === keyEl) {
-        continue;
-      }
-
-      newObjEl[keyEl] = obj[id][keyEl];
-    }
-    newObj[id] = newObjEl;
-  }
-  return newObj;
-};
-
-const copyAttr = (obj, copiedObj, key) => {
-  if (Array.isArray(obj)) throw new Error(`Must be obj, not arr: ${obj}`);
-
-  if (!obj || !copiedObj) {
-    return obj;
-  }
-
-  const objKeys = Object.keys(obj);
-  const copiedObjKeys = Object.keys(copiedObj);
-
-  const newObj = {};
-
-  for (const objKey of objKeys) {
-    if (copiedObjKeys.includes(objKey)) {
-      newObj[objKey] = { ...obj[objKey] };
-      if (Array.isArray(key)) {
-        for (const k of key) {
-          newObj[objKey][k] = copiedObj[objKey][k];
-        }
-      } else {
-        newObj[objKey][key] = copiedObj[objKey][key];
-      }
-    } else {
-      newObj[objKey] = obj[objKey];
-    }
-  }
-
-  return newObj;
-};
-
-/**
- * Return an object of objects containing/choosing only attributes specified in key.
- */
-const choose = (obj, key) => {
-  if (Array.isArray(obj)) throw new Error(`Must be obj, not arr: ${obj}`);
-
-  const newObj = {};
-  for (const id in obj) {
-    const newObjEl = {};
-    for (const keyEl in obj[id]) {
-      if (Array.isArray(key)) {
-        if (key.includes(keyEl)) newObjEl[keyEl] = obj[id][keyEl];
-        continue;
-      }
-
-      if (key === keyEl) newObjEl[keyEl] = obj[id][keyEl];
-    }
-    newObj[id] = newObjEl;
-  }
-
-  return newObj;
-};
-
-export const _ = { mapKeys, select, update, extract, exclude, ignore, copyAttr, choose };
+import { _ } from './obj';
 
 export const removeTailingSlash = (url) => {
   if (url.slice(-1) === '/') return url.slice(0, -1);
@@ -591,8 +388,10 @@ export const isDiedStatus = (status) => {
 };
 
 export const getLastHalfHeight = (height, textHeight, pt, pb, halfRatio = 0.6) => {
-  const x = Math.floor((height - pt - pb) / textHeight) - 1;
-  return Math.round((textHeight * x + textHeight * halfRatio) + pt + pb);
+  let x = height - pt - pb - (textHeight * halfRatio);
+  x = Math.floor(x / textHeight);
+
+  return Math.round((textHeight * x) + (textHeight * halfRatio) + pt + pb);
 };
 
 export const randInt = (max) => {
@@ -950,6 +749,21 @@ export const shouldDispatchFetch = (outbox, payload) => {
   return true;
 };
 
+export const doOutboxContainMethods = (outbox, methods) => {
+  if (Array.isArray(outbox)) {
+    for (const action of outbox) {
+      try {
+        const { method } = action.meta.offline.effect;
+        if (methods.includes(method)) return true;
+      } catch (error) {
+        console.log('Invalid action: ', action);
+      }
+    }
+  }
+
+  return false;
+};
+
 export const isIPadIPhoneIPod = () => {
   const ua = navigator.userAgent;
   if (/iPad|iPhone|iPod/.test(ua)) {
@@ -1112,4 +926,180 @@ export const doEnableExtraFeatures = (purchases) => {
   if ([ACTIVE, NO_RENEW, GRACE].includes(purchase.status)) return true;
   if (purchase.status === UNKNOWN) return null;
   return false;
+};
+
+export const createLinkFPath = (listName, id = null) => {
+  // Cannot encode because fpaths in etags are not encoded
+  // When fetch, unencoded fpaths are saved in etags
+  // When update, if encode, fpath will be different to the fpath in etags,
+  //   it'll be treated as a new file and fails in putFile
+  //   as on server, error is thrown: etag is different.
+  //listName = encodeURIComponent(listName);
+  return id === null ? `links/${listName}` : `links/${listName}/${id}.json`;
+};
+
+export const extractLinkFPath = (fpath) => {
+  const [listName, fname] = fpath.split('/').slice(1);
+  //listName = decodeURIComponent(listName);
+
+  const dotIndex = fname.lastIndexOf('.');
+  const ext = fname.substring(dotIndex + 1);
+  const id = fname.substring(0, dotIndex);
+
+  return { listName, id, ext };
+};
+
+export const createPinFPath = (rank, addedDT, id) => {
+  return `pins/${rank}/${addedDT}/${id}.json`;
+};
+
+export const extractPinFPath = (fpath) => {
+  const [rank, addedDTStr, fname] = fpath.split('/').slice(1);
+
+  const addedDT = parseInt(addedDTStr, 10);
+
+  const dotIndex = fname.lastIndexOf('.');
+  const ext = fname.substring(dotIndex + 1);
+  const id = fname.substring(0, dotIndex);
+
+  return { rank, addedDT, id, ext };
+};
+
+export const copyFPaths = (fpaths) => {
+  const newLinkFPaths = {};
+  for (const listName in fpaths.linkFPaths) {
+    newLinkFPaths[listName] = [...fpaths.linkFPaths[listName]];
+  }
+
+  const newPinFPaths = [...fpaths.pinFPaths];
+
+  return { ...fpaths, linkFPaths: newLinkFPaths, pinFPaths: newPinFPaths };
+};
+
+export const getPinFPaths = (state) => {
+  if (
+    state.cachedFPaths &&
+    state.cachedFPaths.fpaths &&
+    Array.isArray(state.cachedFPaths.fpaths.pinFPaths)
+  ) {
+    return state.cachedFPaths.fpaths.pinFPaths;
+  }
+  return [];
+};
+
+export const getPins = (pinFPaths, pendingPins, doExcludeUnpinning) => {
+  const pins = {};
+  for (const fpath of pinFPaths) {
+    const { addedDT, rank, id } = extractPinFPath(fpath);
+    const pinMainId = getMainId(id);
+
+    // duplicate id, choose the latest addedDT
+    if (pinMainId in pins && pins[pinMainId].addedDT > addedDT) continue;
+    pins[pinMainId] = { addedDT, rank, id };
+  }
+
+  for (const id in pendingPins) {
+    const { status, addedDT, rank } = pendingPins[id];
+    const pinMainId = getMainId(id);
+
+    if ([PIN_LINK, PIN_LINK_ROLLBACK].includes(status)) {
+      pins[pinMainId] = { status, addedDT, rank, id };
+    } else if ([UNPIN_LINK, UNPIN_LINK_ROLLBACK].includes(status)) {
+      if (doExcludeUnpinning) {
+        delete pins[pinMainId];
+      } else {
+        // Can't delete just yet, need for showing loading.
+        pins[pinMainId] = { status, addedDT, rank, id };
+      }
+    } else if ([
+      MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
+    ].includes(status)) {
+      pins[pinMainId] = { status, addedDT, rank, id };
+    } else {
+      console.log('getPins: unsupport pin status: ', status);
+    }
+  }
+
+  return pins;
+};
+
+export const separatePinnedValues = (
+  sortedValues, pinFPaths, pendingPins, getValueMainId
+) => {
+  const pins = getPins(pinFPaths, pendingPins, true);
+
+  let values = [], pinnedValues = [];
+  for (const value of sortedValues) {
+    const valueMainId = getValueMainId(value);
+
+    if (valueMainId in pins) {
+      pinnedValues.push({ value, pin: pins[valueMainId] });
+    } else {
+      values.push(value);
+    }
+  }
+
+  pinnedValues = pinnedValues.sort((pinnedValueA, pinnedValueB) => {
+    if (pinnedValueA.pin.rank < pinnedValueB.pin.rank) return -1;
+    if (pinnedValueA.pin.rank > pinnedValueB.pin.rank) return 1;
+    return 0;
+  });
+
+  return [pinnedValues, values];
+};
+
+export const sortWithPins = (sortedValues, pinFPaths, pendingPins, getValueMainId) => {
+  let [pinnedValues, values] = separatePinnedValues(
+    sortedValues, pinFPaths, pendingPins, getValueMainId
+  );
+  pinnedValues = pinnedValues.map(pinnedValue => pinnedValue.value);
+
+  const pinnedAndSortedValues = [...pinnedValues, ...values];
+  return pinnedAndSortedValues;
+};
+
+export const getFilteredLinks = (links, listName) => {
+  if (!links || !links[listName]) return null;
+
+  const selectedLinks = _.select(
+    links[listName],
+    STATUS,
+    [
+      ADDED, MOVED, ADDING, MOVING,
+      DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING
+    ]
+  );
+
+  const moving_ids = [];
+  for (const key in links) {
+    if (key === listName || !links[key]) continue;
+
+    moving_ids.push(..._.extract(_.select(
+      links[key], STATUS, [MOVED, MOVING, DIED_MOVING]
+    ), ID));
+  }
+
+  const filteredLinks = excludeWithMainIds(selectedLinks, moving_ids);
+  return filteredLinks;
+};
+
+export const sortLinks = (links, doDescendingOrder) => {
+  const sortedLinks = links.sort((a, b) => {
+    return b.addedDT - a.addedDT;
+  });
+  if (!doDescendingOrder) sortedLinks.reverse();
+
+  return sortedLinks;
+};
+
+export const sortFilteredLinks = (filteredLinks, doDescendingOrder) => {
+  return sortLinks(Object.values(filteredLinks), doDescendingOrder);
+};
+
+export const getSortedLinks = (links, listName, doDescendingOrder) => {
+  const filteredLinks = getFilteredLinks(links, listName);
+  if (!filteredLinks) return null;
+
+  const sortedLinks = sortFilteredLinks(filteredLinks, doDescendingOrder);
+  return sortedLinks;
 };

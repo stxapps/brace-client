@@ -6,14 +6,15 @@ import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-m
 import Svg, { Path } from 'react-native-svg';
 import Clipboard from '@react-native-community/clipboard';
 
-import { updatePopup, updateSelectingLinkId, moveLinks } from '../actions';
+import { updatePopup, updateSelectingLinkId, moveLinks, pinLinks } from '../actions';
 import {
   MY_LIST, TRASH, ADDING, MOVING,
   OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
-  CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP,
+  PIN, MANAGE_PIN, PINNED,
+  CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP, PIN_MENU_POPUP, CONFIRM_DELETE_POPUP,
   LG_WIDTH, LAYOUT_LIST,
 } from '../types/const';
-import { getListNameMap } from '../selectors';
+import { getListNameMap, makeGetPinStatus } from '../selectors';
 import {
   ensureContainUrlProtocol, getListNameDisplayName, getAllListNames, getLastHalfHeight,
 } from '../utils';
@@ -35,7 +36,9 @@ class CardItemMenuPopup extends React.PureComponent {
 
   populateMenu() {
 
-    const { link, listNameMap, listName, layoutType, safeAreaWidth } = this.props;
+    const {
+      listName, listNameMap, link, pinStatus, layoutType, safeAreaWidth,
+    } = this.props;
 
     let menu = null;
     if (listName in CARD_ITEM_POPUP_MENU) {
@@ -48,8 +51,15 @@ class CardItemMenuPopup extends React.PureComponent {
       menu = menu.slice(0, -1);
     }
 
-    if ([ADDING, MOVING].includes(link.status)) {
+    if (
+      [ADDING, MOVING].includes(link.status) ||
+      ![null, PINNED].includes(pinStatus)
+    ) {
       menu = menu.slice(0, 2);
+    } else if (listName !== TRASH) {
+      // Only when no other pending actions and list name is not TRASH
+      if (pinStatus === PINNED) menu = [...menu, MANAGE_PIN];
+      else if (pinStatus === null) menu = [...menu, PIN];
     }
 
     if (layoutType === LAYOUT_LIST && safeAreaWidth >= LG_WIDTH) {
@@ -84,19 +94,29 @@ class CardItemMenuPopup extends React.PureComponent {
     } else if (text === RESTORE) {
       LayoutAnimation.configureNext(animConfig);
       this.props.moveLinks(MY_LIST, [id]);
+    } else if (text === DELETE) {
+      this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
+      return false;
     } else if (text === MOVE_TO) {
+      this.props.updateSelectingLinkId(id);
       this.menuBtn.current.measure((_fx, _fy, width, height, x, y) => {
         const rect = {
           x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
         };
-        this.props.updateSelectingLinkId(id);
         this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
       });
-    } else if (text === DELETE) {
-      this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
-      return false;
+    } else if (text === PIN) {
+      this.props.pinLinks([id]);
+    } else if (text === MANAGE_PIN) {
+      this.props.updateSelectingLinkId(id);
+      this.menuBtn.current.measure((_fx, _fy, width, height, x, y) => {
+        const rect = {
+          x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
+        };
+        this.props.updatePopup(PIN_MENU_POPUP, true, rect);
+      });
     } else {
-      throw new Error(`Invalid text: ${text}`);
+      console.log(`In CardItemMenuPopup, invalid text: ${text}`);
     }
 
     this.props.updatePopup(this.props.link.id, false);
@@ -132,7 +152,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
     const { layoutType, safeAreaHeight } = this.props;
     const popupStyle = {
-      maxHeight: getLastHalfHeight(Math.min(288, safeAreaHeight - 16), 36, 8, 8),
+      maxHeight: getLastHalfHeight(Math.min(288, safeAreaHeight - 16), 40, 9, 9),
     };
 
     let menuTriggerView;
@@ -164,7 +184,7 @@ class CardItemMenuPopup extends React.PureComponent {
         <MenuTrigger>
           {menuTriggerView}
         </MenuTrigger>
-        <MenuOptions customStyles={cache('CIMP_menuOptionsCustomStyles', { optionsContainer: [tailwind('py-2 min-w-32 max-w-64 bg-white border border-gray-200 rounded-lg shadow-xl z-41'), popupStyle] }, safeAreaHeight)}>
+        <MenuOptions customStyles={cache('CIMP_menuOptionsCustomStyles', { optionsContainer: [tailwind('py-2 min-w-32 max-w-64 bg-white border border-gray-100 rounded-lg shadow-xl z-41'), popupStyle] }, safeAreaHeight)}>
           <ScrollView>
             {this.renderMenu()}
           </ScrollView>
@@ -178,14 +198,24 @@ CardItemMenuPopup.propTypes = {
   link: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (state, props) => {
-  return {
-    listName: state.display.listName,
-    listNameMap: getListNameMap(state),
-    layoutType: state.localSettings.layoutType,
+const makeMapStateToProps = () => {
+
+  const getPinStatus = makeGetPinStatus();
+
+  const mapStateToProps = (state, props) => {
+    const pinStatus = getPinStatus(state, props.link);
+
+    return {
+      listName: state.display.listName,
+      listNameMap: getListNameMap(state),
+      pinStatus,
+      layoutType: state.localSettings.layoutType,
+    };
   };
+
+  return mapStateToProps;
 };
 
-const mapDispatchToProps = { updatePopup, updateSelectingLinkId, moveLinks };
+const mapDispatchToProps = { updatePopup, updateSelectingLinkId, moveLinks, pinLinks };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(CardItemMenuPopup));
+export default connect(makeMapStateToProps, mapDispatchToProps)(withSafeAreaContext(CardItemMenuPopup));

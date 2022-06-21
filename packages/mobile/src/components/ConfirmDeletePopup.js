@@ -105,6 +105,12 @@ class ConfirmDeletePopup extends React.Component {
     if (safeAreaWidth < SM_WIDTH) modalClassNames += ' pt-4 px-4 pb-20 justify-end';
     else modalClassNames += ' p-0 justify-center';
 
+    const cancelBtnStyle = {};
+    if (safeAreaWidth < SM_WIDTH) {
+      cancelBtnStyle.paddingTop = 7;
+      cancelBtnStyle.paddingBottom = 7;
+    }
+
     return (
       <Modal isVisible={isConfirmDeletePopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onConfirmDeleteCancelBtnClick} onBackButtonPress={this.onConfirmDeleteCancelBtnClick} style={tailwind(modalClassNames)} supportedOrientations={MODAL_SUPPORTED_ORIENTATIONS} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true}>
         <View style={tailwind('w-full max-w-lg bg-white rounded-lg px-4 pt-5 pb-4 shadow-xl sm:my-8 sm:p-6', safeAreaWidth)}>
@@ -117,17 +123,15 @@ class ConfirmDeletePopup extends React.Component {
             <View style={tailwind('mt-3 flex-grow flex-shrink sm:mt-0 sm:ml-4', safeAreaWidth)}>
               <Text style={tailwind('text-lg leading-6 font-medium text-gray-900 text-center sm:text-left', safeAreaWidth)}>Confirm delete?</Text>
               <View style={tailwind('mt-2')}>
-                <Text style={tailwind('text-sm text-gray-500 font-normal text-center sm:text-left', safeAreaWidth)}>
-                  Are you sure you want to permanently delete? This action cannot be undone.
-                </Text>
+                <Text style={tailwind('text-sm text-gray-500 font-normal text-center sm:text-left', safeAreaWidth)}>Are you sure you want to permanently delete? This action cannot be undone.</Text>
               </View>
             </View>
           </View>
           <View style={tailwind('mt-5 sm:mt-4 sm:ml-10 sm:pl-4 sm:flex-row', safeAreaWidth)}>
-            <TouchableOpacity onPress={this.onConfirmDeleteOkBtnClick} style={tailwind('w-full rounded-md border border-red-600 py-2 bg-red-600 sm:px-3.5 sm:py-1.5 sm:w-auto sm:rounded-full', safeAreaWidth)}>
+            <TouchableOpacity onPress={this.onConfirmDeleteOkBtnClick} style={tailwind('w-full rounded-full border border-red-600 py-2 bg-red-600 sm:px-3.5 sm:py-1.5 sm:w-auto', safeAreaWidth)}>
               <Text style={tailwind('text-base font-medium text-white text-center sm:text-sm sm:rounded-full', safeAreaWidth)}>Delete</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={this.onConfirmDeleteCancelBtnClick} style={tailwind('mt-3 w-full rounded-md border border-gray-400 py-2 bg-white sm:mt-0 sm:ml-3 sm:px-3 sm:py-1.5 sm:w-auto sm:rounded-full', safeAreaWidth)}>
+            <TouchableOpacity onPress={this.onConfirmDeleteCancelBtnClick} style={[tailwind('mt-3 w-full rounded-full border border-gray-400 bg-white sm:mt-0 sm:ml-3 sm:px-3 sm:py-1.5 sm:w-auto', safeAreaWidth), cancelBtnStyle]}>
               <Text style={tailwind('text-base font-normal text-gray-500 text-center sm:text-sm', safeAreaWidth)}>Cancel</Text>
             </TouchableOpacity>
           </View>

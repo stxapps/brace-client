@@ -7,7 +7,8 @@ import {
 import {
   MY_LIST, TRASH, ARCHIVE, STATUS, ADDED, N_LINKS,
 } from '../types/const';
-import { _, getAllListNames } from '../utils';
+import { getAllListNames } from '../utils';
+import { _ } from '../utils/obj';
 
 const initialState = {
   [MY_LIST]: null,

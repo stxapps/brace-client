@@ -18,8 +18,11 @@ import BottomBar from './BottomBar';
 import CardPanel from './CardPanel';
 import ListPanel from './ListPanel';
 import FetchedPopup from './FetchedPopup';
+import PinMenuPopup from './PinMenuPopup';
+import PaywallPopup from './PaywallPopup';
 import SettingsPopup from './SettingsPopup';
 import SettingsListsMenuPopup from './SettingsListsMenuPopup';
+import PinErrorPopup from './PinErrorPopup';
 import SettingsErrorPopup from './SettingsErrorPopup';
 import ListNamesPopup from './ListNamesPopup';
 import ConfirmDeletePopup from './ConfirmDeletePopup';
@@ -85,11 +88,14 @@ class Main extends React.PureComponent {
           <ListPanel columnWidth={columnWidth} scrollYEvent={this.scrollYEvent} /> :
           <CardPanel columnWidth={columnWidth} scrollYEvent={this.scrollYEvent} />
         }
-        <TopBar rightPane={topBarRightPane} isListNameShown={true} scrollY={this.scrollY} />
         {columnWidth === PC_100 && <BottomBar />}
+        <TopBar rightPane={topBarRightPane} isListNameShown={true} scrollY={this.scrollY} />
         <FetchedPopup />
+        <PinMenuPopup />
+        <PaywallPopup />
         <SettingsPopup />
         <SettingsListsMenuPopup />
+        <PinErrorPopup />
         <SettingsErrorPopup />
         <ListNamesPopup />
         <ConfirmDeletePopup />

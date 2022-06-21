@@ -5,18 +5,19 @@ import {
 import axios from 'axios';
 //import RNFS from 'react-native-fs';
 import * as RNIap from 'react-native-iap';
+import { LexoRank } from "@wewatch/lexorank";
 
 import userSession from '../userSession';
 import {
   batchDeleteFileWithRetry,
 } from '../apis/blockstack';
 import {
-  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_PAGE_Y_OFFSET, UPDATE_STACKS_ACCESS,
-  UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING, UPDATE_LINK_EDITOR,
+  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_STACKS_ACCESS, UPDATE_LIST_NAME,
+  UPDATE_POPUP, UPDATE_SEARCH_STRING, UPDATE_LINK_EDITOR, UPDATE_SCROLL_PANEL,
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED,
-  FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
+  FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK, CACHE_FETCHED_MORE,
   UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE, CLEAR_FETCHED_LIST_NAMES,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
   UPDATE_LINKS, DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
@@ -31,35 +32,43 @@ import {
   UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME,
   UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
-  UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_LAYOUT_TYPE,
-  GET_PRODUCTS, GET_PRODUCTS_COMMIT, GET_PRODUCTS_ROLLBACK,
+  UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_SETTINGS_VIEW_ID,
+  UPDATE_LAYOUT_TYPE, GET_PRODUCTS, GET_PRODUCTS_COMMIT, GET_PRODUCTS_ROLLBACK,
   REQUEST_PURCHASE, REQUEST_PURCHASE_COMMIT, REQUEST_PURCHASE_ROLLBACK,
   RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
   REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
   UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS, UPDATE_IAP_PURCHASE_STATUS,
   UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
-  UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
+  PIN_LINK, PIN_LINK_COMMIT, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_COMMIT,
+  UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
+  MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, MOVE_PINNED_LINK_DELETE_STEP,
+  MOVE_PINNED_LINK_DELETE_STEP_COMMIT, MOVE_PINNED_LINK_DELETE_STEP_ROLLBACK,
+  CANCEL_DIED_PINS, UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
   UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   DOMAIN_NAME, APP_URL_SCHEME, APP_DOMAIN_NAME, BLOCKSTACK_AUTH,
   APP_GROUP_SHARE, APP_GROUP_SHARE_UKEY,
   SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
-  LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
-  ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
+  LIST_NAMES_POPUP, PIN_MENU_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
+  SETTINGS_LISTS_MENU_POPUP, ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, N_LINKS, N_DAYS,
   ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
   IAP_VERIFY_URL, IAP_STATUS_URL, APPSTORE, PLAYSTORE, COM_BRACEDOTTO,
   COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, UNKNOWN, ERROR, ACTIVE,
+  SWAP_LEFT, SWAP_RIGHT,
 } from '../types/const';
 import {
-  _, isEqual, sleep,
+  isEqual, sleep,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam, getUserImageUrl, randomDecor,
   isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
-  getLatestPurchase, getValidPurchase,
+  getLatestPurchase, getValidPurchase, doEnableExtraFeatures,
+  extractPinFPath, getSortedLinks, getPinFPaths, getPins, separatePinnedValues,
+  sortLinks, sortWithPins,
 } from '../utils';
+import { _ } from '../utils/obj';
 
 import DefaultPreference from 'react-native-default-preference';
 if (Platform.OS === 'ios') DefaultPreference.setName(APP_GROUP_SHARE);
@@ -170,14 +179,16 @@ const handlePendingSignIn = (url) => async (dispatch, getState) => {
 
 const getPopupShownId = (state) => {
 
-  if (state.display.isSignUpPopupShown) return SIGN_UP_POPUP;
-  if (state.display.isSignInPopupShown) return SIGN_IN_POPUP;
-  if (state.display.isAddPopupShown) return ADD_POPUP;
-  if (state.display.isProfilePopupShown) return PROFILE_POPUP;
   if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
+  if (state.display.isPaywallPopupShown) return PAYWALL_POPUP;
+  if (state.display.isPinMenuPopupShown) return PIN_MENU_POPUP;
   if (state.display.isListNamesPopupShown) return LIST_NAMES_POPUP;
   if (state.display.isSettingsListsMenuPopupShown) return SETTINGS_LISTS_MENU_POPUP;
   if (state.display.isSettingsPopupShown) return SETTINGS_POPUP;
+  if (state.display.isProfilePopupShown) return PROFILE_POPUP;
+  if (state.display.isAddPopupShown) return ADD_POPUP;
+  if (state.display.isSignUpPopupShown) return SIGN_UP_POPUP;
+  if (state.display.isSignInPopupShown) return SIGN_IN_POPUP;
 
   for (const listName in state.links) {
     for (const id in state.links[listName]) {
@@ -244,13 +255,6 @@ export const updateUserData = (data) => async (dispatch, getState) => {
   }
 };
 
-export const updatePageYOffset = (pageYOffset) => {
-  return {
-    type: UPDATE_PAGE_Y_OFFSET,
-    payload: pageYOffset,
-  };
-};
-
 export const updateStacksAccess = (data) => {
   return { type: UPDATE_STACKS_ACCESS, payload: data };
 };
@@ -271,7 +275,9 @@ export const changeListName = (listName) => async (dispatch, getState) => {
     payload: listName,
   });
 
-  dispatch(updateFetched(null, null, _listName));
+  // make sure dispatch updateFetched finishes before dispatch updateFetchedMore
+  await updateFetched(null, null, _listName)(dispatch, getState);
+  await updateFetchedMore(null, null, _listName)(dispatch, getState);
 };
 
 export const updateSearchString = (searchString) => {
@@ -283,6 +289,13 @@ export const updateSearchString = (searchString) => {
 
 export const updateLinkEditor = (values) => {
   return { type: UPDATE_LINK_EDITOR, payload: values };
+};
+
+export const updateScrollPanel = (contentHeight, layoutHeight, pageYOffset) => {
+  return {
+    type: UPDATE_SCROLL_PANEL,
+    payload: { contentHeight, layoutHeight, pageYOffset },
+  };
 };
 
 export const updateStatus = (status) => {
@@ -333,7 +346,6 @@ export const fetch = (
 ) => async (dispatch, getState) => {
 
   const listName = getState().display.listName;
-
   // Always call deleteOldlinksintrash and extractContents
   //   and check at that time to actually do it or not.
   // So it's real time with updated settings from fetch.
@@ -344,8 +356,9 @@ export const fetch = (
     doExtractContents = getState().settings.doExtractContents;
   }*/
   const doDescendingOrder = getState().settings.doDescendingOrder;
+  const pendingPins = getState().pendingPins;
 
-  const payload = { listName, doDescendingOrder, doFetchSettings };
+  const payload = { listName, doDescendingOrder, doFetchSettings, pendingPins };
 
   // If there is already FETCH with the same list name, no need to dispatch a new one.
   if (!shouldDispatchFetch(getState().offline.outbox, payload)) return;
@@ -404,11 +417,18 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
   let updateAction;
   if (links.length > _links.length) updateAction = 2;
   else {
-    const sortedLinks = links.sort((a, b) => b.addedDT - a.addedDT);
-    if (!doDescendingOrder) sortedLinks.reverse();
+    const pinFPaths = getPinFPaths(getState());
+    const pendingPins = getState().pendingPins;
 
-    const _sortedLinks = _links.sort((a, b) => b.addedDT - a.addedDT);
-    if (!doDescendingOrder) _sortedLinks.reverse();
+    let sortedLinks = sortLinks(links, doDescendingOrder);
+    sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
+      return getMainId(link.id);
+    });
+
+    let _sortedLinks = sortLinks(_links, doDescendingOrder);
+    _sortedLinks = sortWithPins(_sortedLinks, pinFPaths, pendingPins, (link) => {
+      return getMainId(link.id);
+    });
 
     let found = false;
     for (let i = 0; i < sortedLinks.length; i++) {
@@ -432,7 +452,7 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
 
   const isBulkEditing = getState().display.isBulkEditing;
   if (!isBulkEditing) {
-    const pageYOffset = getState().window.pageYOffset;
+    const pageYOffset = getState().scrollPanel.pageYOffset;
     if (
       (updateAction === 1 && pageYOffset < 64 / 10 * _links.length) ||
       (updateAction === 2 && pageYOffset === 0 && !isPopupShown(getState()))
@@ -449,7 +469,9 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
   });
 };
 
-export const updateFetched = (payload, meta, listName = null, doChangeListCount = false) => async (dispatch, getState) => {
+export const updateFetched = (
+  payload, meta, listName = null, doChangeListCount = false
+) => async (dispatch, getState) => {
 
   if (!payload) {
     if (!listName) listName = getState().display.listName;
@@ -474,13 +496,17 @@ export const fetchMore = () => async (dispatch, getState) => {
   const listName = getState().display.listName;
   const ids = Object.keys(getState().links[listName]);
   const doDescendingOrder = getState().settings.doDescendingOrder;
-
   // Always call extractContents
   //   and check at that time to actually do it or not.
   // So it's real time with updated settings from fetch.
   //const doExtractContents = getState().settings.doExtractContents;
+  const pendingPins = getState().pendingPins;
 
-  const payload = { fetchMoreId, listName, ids, doDescendingOrder };
+  const payload = { fetchMoreId, listName, ids, doDescendingOrder, pendingPins };
+
+  // If there is already cached fetchedMore with the same list name, just return.
+  const fetchedMore = getState().fetchedMore[listName];
+  if (fetchedMore) return;
 
   // If there is already FETCH with the same list name,
   //   this fetch more is invalid. Fetch more need to get ids after FETCH_COMMIT.
@@ -529,6 +555,44 @@ export const tryUpdateFetchedMore = (payload, meta) => async (dispatch, getState
     });
     return;
   }
+
+  const { hasDisorder } = payload;
+
+  if (listName !== getState().display.listName || !hasDisorder) {
+    dispatch(updateFetchedMore(payload, meta));
+    return;
+  }
+
+  const isBulkEditing = getState().display.isBulkEditing;
+  if (!isBulkEditing) {
+    const scrollHeight = getState().scrollPanel.contentHeight;
+    const windowHeight = getState().scrollPanel.layoutHeight;
+    const windowBottom = windowHeight + getState().scrollPanel.pageYOffset;
+
+    if (windowBottom > (scrollHeight * 0.96) && !isPopupShown(getState())) {
+      dispatch(updateFetchedMore(payload, meta));
+      return;
+    }
+  }
+
+  dispatch({
+    type: CACHE_FETCHED_MORE,
+    payload,
+    theMeta: meta,
+  });
+};
+
+export const updateFetchedMore = (payload, meta, listName = null) => async (
+  dispatch, getState
+) => {
+
+  if (!payload) {
+    if (!listName) listName = getState().display.listName;
+
+    const fetchedMore = getState().fetchedMore[listName];
+    if (fetchedMore) ({ payload, meta } = fetchedMore);
+  }
+  if (!payload) return;
 
   dispatch({
     type: UPDATE_FETCHED_MORE,
@@ -643,7 +707,7 @@ export const moveLinksDeleteStep = (listName, ids, toListName, toIds) => async (
     meta: {
       offline: {
         effect: { method: DELETE_LINKS, params: payload },
-        commit: { type: MOVE_LINKS_DELETE_STEP_COMMIT },
+        commit: { type: MOVE_LINKS_DELETE_STEP_COMMIT, meta: payload },
         rollback: { type: MOVE_LINKS_DELETE_STEP_ROLLBACK, meta: payload },
       },
     },
@@ -787,19 +851,20 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
         return !link.extractedResult || link.extractedResult.status === EXTRACT_INIT;
       })
       .sort((a, b) => b.addedDT - a.addedDT);
-    if (_links.length > 0) links = _links.slice(0, N_LINKS);
-
-    // No unextracted link found, return
-    if (!links) return;
+    if (_links.length > 0) {
+      links = _links.slice(0, N_LINKS);
+    } else {
+      return; // No unextracted link found, return
+    }
   } else if (listName !== null && ids !== null) {
     let _links = _.ignore(
       _.select(getState().links[listName], ID, ids),
       [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]
     );
     _links = Object.values(_links);
-    if (_links.length > 0) links = _links.slice(0, N_LINKS);
-
-    if (!links) {
+    if (_links.length > 0) {
+      links = _links.slice(0, N_LINKS);
+    } else {
       console.log(`Links not found: ${listName}, ${ids}`);
       return;
     }
@@ -856,17 +921,13 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
 export const tryUpdateExtractedContents = (payload) => async (dispatch, getState) => {
 
   const isBulkEditing = getState().display.isBulkEditing;
-  const pageYOffset = getState().window.pageYOffset;
+  const pageYOffset = getState().scrollPanel.pageYOffset;
   const canRerender = !isBulkEditing && pageYOffset === 0 && !isPopupShown(getState());
 
   dispatch({
     type: UPDATE_EXTRACTED_CONTENTS,
     payload: { ...payload, canRerender },
   });
-};
-
-export const updateListNameEditors = (listNameEditors) => {
-  return { type: UPDATE_LIST_NAME_EDITORS, payload: listNameEditors };
 };
 
 export const updateSettingsPopup = (isShown) => async (dispatch, getState) => {
@@ -882,6 +943,29 @@ export const updateSettingsPopup = (isShown) => async (dispatch, getState) => {
   if (!isShown) dispatch(updateSettings());
 
   dispatch(updatePopup(SETTINGS_POPUP, isShown));
+};
+
+export const updateSettingsViewId = (
+  viewId, isSidebarShown, didCloseAnimEnd, didSidebarAnimEnd
+) => async (dispatch, getState) => {
+
+  const payload = {};
+  if (viewId) payload.settingsViewId = viewId;
+  if ([true, false].includes(isSidebarShown)) {
+    payload.isSettingsSidebarShown = isSidebarShown;
+  }
+  if ([true, false].includes(didCloseAnimEnd)) {
+    payload.didSettingsCloseAnimEnd = didCloseAnimEnd;
+  }
+  if ([true, false].includes(didSidebarAnimEnd)) {
+    payload.didSettingsSidebarAnimEnd = didSidebarAnimEnd;
+  }
+
+  dispatch({ type: UPDATE_SETTINGS_VIEW_ID, payload });
+};
+
+export const updateListNameEditors = (listNameEditors) => {
+  return { type: UPDATE_LIST_NAME_EDITORS, payload: listNameEditors };
 };
 
 export const addListNames = (newNames) => {
@@ -1026,26 +1110,26 @@ export const updateExportAllDataProgress = (progress) => {
   };
 };
 
-const deleteAllDataLoop = async (dispatch, fPaths, doneCount) => {
+const deleteAllDataLoop = async (dispatch, fpaths, doneCount) => {
 
-  if (fPaths.length === 0) throw new Error(`Invalid fPaths: ${fPaths}`);
+  if (fpaths.length === 0) throw new Error(`Invalid fpaths: ${fpaths}`);
 
-  const selectedCount = Math.min(fPaths.length - doneCount, N_LINKS);
-  const selectedFPaths = fPaths.slice(doneCount, doneCount + selectedCount);
+  const selectedCount = Math.min(fpaths.length - doneCount, N_LINKS);
+  const selectedFPaths = fpaths.slice(doneCount, doneCount + selectedCount);
   const responses = await batchDeleteFileWithRetry(selectedFPaths, 0);
 
   doneCount = doneCount + selectedCount;
-  if (doneCount > fPaths.length) {
-    throw new Error(`Invalid doneCount: ${doneCount}, total: ${fPaths.length}`);
+  if (doneCount > fpaths.length) {
+    throw new Error(`Invalid doneCount: ${doneCount}, total: ${fpaths.length}`);
   }
 
   dispatch(updateDeleteAllDataProgress({
-    total: fPaths.length,
+    total: fpaths.length,
     done: doneCount,
   }));
 
-  if (doneCount < fPaths.length) {
-    const remainingResponses = await deleteAllDataLoop(dispatch, fPaths, doneCount);
+  if (doneCount < fpaths.length) {
+    const remainingResponses = await deleteAllDataLoop(dispatch, fpaths, doneCount);
     responses.push(...remainingResponses);
   }
 
@@ -1062,10 +1146,10 @@ export const deleteAllData = () => async (dispatch, getState) => {
     done: 0,
   }));
 
-  const fPaths = [];
+  const fpaths = [];
   try {
     await userSession.listFiles((fpath) => {
-      fPaths.push(fpath);
+      fpaths.push(fpath);
       return true;
     });
   } catch (e) {
@@ -1078,14 +1162,14 @@ export const deleteAllData = () => async (dispatch, getState) => {
   }
 
   dispatch(updateDeleteAllDataProgress({
-    total: fPaths.length,
+    total: fpaths.length,
     done: 0,
   }));
 
-  if (fPaths.length === 0) return;
+  if (fpaths.length === 0) return;
 
   try {
-    await deleteAllDataLoop(dispatch, fPaths, 0);
+    await deleteAllDataLoop(dispatch, fpaths, 0);
 
     dispatch({
       type: DELETE_ALL_DATA,
@@ -1447,4 +1531,196 @@ export const updateIapRefreshStatus = (status) => {
     type: UPDATE_IAP_REFRESH_STATUS,
     payload: status,
   };
+};
+
+export const pinLinks = (ids) => async (dispatch, getState) => {
+  const state = getState();
+  const purchases = getState().settings.purchases;
+
+  if (!doEnableExtraFeatures(purchases)) {
+    dispatch(updatePopup(PAYWALL_POPUP, true));
+    return;
+  }
+
+  const pinFPaths = getPinFPaths(state);
+  const pendingPins = state.pendingPins;
+
+  let currentPins = getPins(pinFPaths, pendingPins, true);
+  currentPins = Object.values(currentPins).map(pin => pin.rank).sort();
+
+  let lexoRank;
+  if (currentPins.length > 0) {
+    const rank = currentPins[currentPins.length - 1];
+    lexoRank = LexoRank.parse(`0|${rank.replace('_', ':')}`).genNext();
+  } else {
+    lexoRank = LexoRank.middle();
+  }
+
+  let now = Date.now();
+  const pins = [];
+  for (const id of ids) {
+    const nextRank = lexoRank.toString().slice(2).replace(':', '_');
+    pins.push({ rank: nextRank, addedDT: now, id });
+
+    lexoRank = lexoRank.genNext();
+    now += 1;
+  }
+
+  const payload = { pins };
+  dispatch({
+    type: PIN_LINK,
+    payload,
+    meta: {
+      offline: {
+        effect: { method: PIN_LINK, params: payload },
+        commit: { type: PIN_LINK_COMMIT, meta: payload },
+        rollback: { type: PIN_LINK_ROLLBACK, meta: payload },
+      },
+    },
+  });
+};
+
+export const unpinLinks = (ids) => async (dispatch, getState) => {
+  const state = getState();
+  const pinFPaths = getPinFPaths(state);
+
+  const pins = [];
+  for (const id of ids) {
+    const linkMainId = getMainId(id);
+
+    // when move, old paths might not be delete, so when unpin,
+    //   need to delete them all, can't use getPins and no break here.
+    for (const fpath of pinFPaths) {
+      const { rank, addedDT, id } = extractPinFPath(fpath);
+      const pinMainId = getMainId(id);
+      if (linkMainId === pinMainId) pins.push({ rank, addedDT, id });
+    }
+  }
+
+  if (pins.length === 0) {
+    // As for every move link to ARCHIVE and TRASH, will try to unpin the link too,
+    //  if no pin to unpin, just return.
+    console.log('In unpinLinks, no pin found for ids: ', ids);
+    return;
+  }
+
+  const payload = { pins };
+  dispatch({
+    type: UNPIN_LINK,
+    payload,
+    meta: {
+      offline: {
+        effect: { method: UNPIN_LINK, params: payload },
+        commit: { type: UNPIN_LINK_COMMIT, meta: payload },
+        rollback: { type: UNPIN_LINK_ROLLBACK, meta: payload },
+      },
+    },
+  });
+};
+
+export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
+  const state = getState();
+  const links = state.links;
+  const listName = state.display.listName;
+  const doDescendingOrder = state.settings.doDescendingOrder;
+  const pinFPaths = getPinFPaths(state);
+  const pendingPins = state.pendingPins;
+
+  const sortedLinks = getSortedLinks(links, listName, doDescendingOrder);
+  if (!sortedLinks) {
+    console.log(`No links found for link id: `, id);
+    return;
+  }
+
+  let [pinnedValues] = separatePinnedValues(
+    sortedLinks,
+    pinFPaths,
+    pendingPins,
+    (link) => {
+      return getMainId(link.id);
+    }
+  );
+
+  const i = pinnedValues.findIndex(pinnedValue => pinnedValue.value.id === id);
+  if (i < 0) {
+    console.log('In movePinnedLink, no pin found for link id: ', id);
+    return;
+  }
+
+  let nextRank;
+  if (direction === SWAP_LEFT) {
+    if (i === 0) return;
+    if (i === 1) {
+      const pRank = pinnedValues[i - 1].pin.rank;
+
+      const lexoRank = LexoRank.parse(`0|${pRank.replace('_', ':')}`)
+
+      nextRank = lexoRank.genPrev().toString();
+    } else {
+      const pRank = pinnedValues[i - 1].pin.rank;
+      const ppRank = pinnedValues[i - 2].pin.rank;
+
+      const pLexoRank = LexoRank.parse(`0|${pRank.replace('_', ':')}`)
+      const ppLexoRank = LexoRank.parse(`0|${ppRank.replace('_', ':')}`)
+
+      nextRank = ppLexoRank.between(pLexoRank).toString();
+    }
+  } else if (direction === SWAP_RIGHT) {
+    if (i === pinnedValues.length - 1) return;
+    if (i === pinnedValues.length - 2) {
+      const nRank = pinnedValues[i + 1].pin.rank;
+
+      const lexoRank = LexoRank.parse(`0|${nRank.replace('_', ':')}`)
+
+      nextRank = lexoRank.genNext().toString();
+    } else {
+      const nRank = pinnedValues[i + 1].pin.rank;
+      const nnRank = pinnedValues[i + 2].pin.rank;
+
+      const nLexoRank = LexoRank.parse(`0|${nRank.replace('_', ':')}`)
+      const nnLexoRank = LexoRank.parse(`0|${nnRank.replace('_', ':')}`)
+
+      nextRank = nLexoRank.between(nnLexoRank).toString();
+    }
+  } else {
+    throw new Error(`Invalid direction: ${direction}`);
+  }
+  nextRank = nextRank.slice(2).replace(':', '_');
+
+  const { addedDT, rank: fromRank } = pinnedValues[i].pin;
+
+  const payload = { rank: nextRank, addedDT, id, fromRank };
+  dispatch({
+    type: MOVE_PINNED_LINK_ADD_STEP,
+    payload,
+    meta: {
+      offline: {
+        effect: { method: PIN_LINK, params: { pins: [payload] } },
+        commit: { type: MOVE_PINNED_LINK_ADD_STEP_COMMIT, meta: payload },
+        rollback: { type: MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, meta: payload },
+      },
+    },
+  });
+};
+
+export const movePinnedLinkDeleteStep = (rank, addedDT, id) => async (
+  dispatch, getState
+) => {
+
+  const payload = { rank, addedDT, id };
+
+  dispatch({
+    type: MOVE_PINNED_LINK_DELETE_STEP,
+    meta: {
+      offline: {
+        effect: { method: UNPIN_LINK, params: { pins: [payload] } },
+        commit: { type: MOVE_PINNED_LINK_DELETE_STEP_COMMIT },
+        rollback: { type: MOVE_PINNED_LINK_DELETE_STEP_ROLLBACK },
+      },
+    },
+  });
+};
+
+export const cancelDiedPins = () => {
+  return { type: CANCEL_DIED_PINS };
 };

@@ -2,8 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Text, TouchableOpacity, Linking, Animated, BackHandler } from 'react-native';
 
-import { signOut, updatePopup, updateSettingsPopup } from '../actions';
-import { DOMAIN_NAME, HASH_SUPPORT, PROFILE_POPUP } from '../types/const';
+import {
+  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId,
+} from '../actions';
+import {
+  DOMAIN_NAME, HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT,
+} from '../types/const';
 import { tailwind } from '../stylesheets/tailwind';
 import { bModalFMV } from '../types/animConfigs';
 
@@ -93,6 +97,8 @@ class BottomBarProfilePopup extends React.PureComponent {
 
   onSettingsBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
+
+    this.props.updateSettingsViewId(SETTINGS_VIEW_ACCOUNT, true);
     this.props.updateSettingsPopup(true);
   }
 
@@ -138,6 +144,8 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { signOut, updatePopup, updateSettingsPopup };
+const mapDispatchToProps = {
+  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(BottomBarProfilePopup);

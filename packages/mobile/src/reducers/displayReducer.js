@@ -10,14 +10,15 @@ import {
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
   UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME,
   DELETE_LIST_NAMES, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
-  CANCEL_DIED_SETTINGS, UPDATE_IMPORT_ALL_DATA_PROGRESS,
+  CANCEL_DIED_SETTINGS, UPDATE_SETTINGS_VIEW_ID, UPDATE_IMPORT_ALL_DATA_PROGRESS,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
-  LIST_NAMES_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
-  MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING,
+  LIST_NAMES_POPUP, PIN_MENU_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
+  SETTINGS_LISTS_MENU_POPUP, MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING,
+  SETTINGS_VIEW_ACCOUNT,
 } from '../types/const';
 import { doContainListName } from '../utils';
 
@@ -31,6 +32,9 @@ const initialState = {
   isProfilePopupShown: false,
   isListNamesPopupShown: false,
   listNamesPopupPosition: null,
+  isPinMenuPopupShown: false,
+  pinMenuPopupPosition: null,
+  isPaywallPopupShown: false,
   isConfirmDeletePopupShown: false,
   isSettingsPopupShown: false,
   isSettingsListsMenuPopupShown: false,
@@ -47,6 +51,10 @@ const initialState = {
   fetchedListNames: [],
   listChangedCount: 0,
   settingsStatus: null,
+  settingsViewId: SETTINGS_VIEW_ACCOUNT,
+  isSettingsSidebarShown: false,
+  didSettingsCloseAnimEnd: true,
+  didSettingsSidebarAnimEnd: true,
   importAllDataProgress: null,
   exportAllDataProgress: null,
   deleteAllDataProgress: null,
@@ -66,6 +74,9 @@ const displayReducer = (state = initialState, action) => {
       isProfilePopupShown: false,
       isListNamesPopupShown: false,
       listNamesPopupPosition: null,
+      isPinMenuPopupShown: false,
+      pinMenuPopupPosition: null,
+      isPaywallPopupShown: false,
       isConfirmDeletePopupShown: false,
       isSettingsPopupShown: false,
       isSettingsListsMenuPopupShown: false,
@@ -83,6 +94,10 @@ const displayReducer = (state = initialState, action) => {
       listChangedCount: 0,
       // If in outbox, continue after reload
       //settingsStatus: null,
+      settingsViewId: SETTINGS_VIEW_ACCOUNT,
+      isSettingsSidebarShown: false,
+      didSettingsCloseAnimEnd: true,
+      didSettingsSidebarAnimEnd: true,
       importAllDataProgress: null,
       exportAllDataProgress: null,
       deleteAllDataProgress: null,
@@ -113,12 +128,15 @@ const displayReducer = (state = initialState, action) => {
         isAddPopupShown: isShown,
         isSearchPopupShown: isShown,
         isProfilePopupShown: isShown,
+        isPaywallPopupShown: isShown,
         isConfirmDeletePopupShown: isShown,
         isSettingsPopupShown: isShown,
       };
       if (!isShown) {
         newState.isListNamesPopupShown = false;
         newState.listNamesPopupPosition = null;
+        newState.isPinMenuPopupShown = false;
+        newState.pinMenuPopupPosition = null;
         newState.isSettingsListsMenuPopupShown = false;
         newState.settingsListsMenuPopupPosition = null;
       }
@@ -158,6 +176,23 @@ const displayReducer = (state = initialState, action) => {
       return newState;
     }
 
+    if (id === PIN_MENU_POPUP) {
+      const newState = {
+        ...state,
+        isPinMenuPopupShown: isShown,
+        pinMenuPopupPosition: anchorPosition,
+      };
+      if (!isShown) {
+        newState.selectingLinkId = null;
+        newState.selectingListName = null;
+      }
+      return newState;
+    }
+
+    if (id === PAYWALL_POPUP) {
+      return { ...state, isPaywallPopupShown: isShown };
+    }
+
     if (id === CONFIRM_DELETE_POPUP) {
       const newState = { ...state, isConfirmDeletePopupShown: isShown };
       if (!isShown) newState.deletingListName = null;
@@ -166,7 +201,12 @@ const displayReducer = (state = initialState, action) => {
 
     if (id === SETTINGS_POPUP) {
       const newState = { ...state, isSettingsPopupShown: isShown };
-      if (!isShown) newState.selectingListName = null;
+      if (isShown) {
+        newState.didSettingsCloseAnimEnd = false;
+        newState.didSettingsSidebarAnimEnd = true;
+      } else {
+        newState.selectingListName = null;
+      }
       return newState;
     }
 
@@ -337,6 +377,10 @@ const displayReducer = (state = initialState, action) => {
       status: null,
       settingsStatus: null,
     };
+  }
+
+  if (action.type === UPDATE_SETTINGS_VIEW_ID) {
+    return { ...state, ...action.payload };
   }
 
   if (action.type === UPDATE_IMPORT_ALL_DATA_PROGRESS) {

@@ -4,8 +4,12 @@ import { View, Text, TouchableOpacity, Linking, Platform } from 'react-native';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Svg, { Path } from 'react-native-svg';
 
-import { signOut, updatePopup, updateSettingsPopup, updateBulkEdit } from '../actions';
-import { DOMAIN_NAME, HASH_SUPPORT, PROFILE_POPUP } from '../types/const';
+import {
+  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, updateBulkEdit,
+} from '../actions';
+import {
+  DOMAIN_NAME, HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT,
+} from '../types/const';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
@@ -30,6 +34,8 @@ class TopBarCommands extends React.PureComponent {
 
   onSettingsBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
+
+    this.props.updateSettingsViewId(SETTINGS_VIEW_ACCOUNT, true);
     this.props.updateSettingsPopup(true);
   }
 
@@ -96,6 +102,8 @@ class TopBarCommands extends React.PureComponent {
   }
 }
 
-const mapDispatchToProps = { signOut, updatePopup, updateSettingsPopup, updateBulkEdit };
+const mapDispatchToProps = {
+  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, updateBulkEdit,
+};
 
 export default connect(null, mapDispatchToProps)(TopBarCommands);

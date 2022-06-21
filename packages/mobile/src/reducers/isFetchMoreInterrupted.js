@@ -1,9 +1,8 @@
 import { REHYDRATE } from 'redux-persist/constants';
 
 import {
-  UPDATE_FETCHED,
-  FETCH_MORE, FETCH_MORE_ROLLBACK, UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE,
-  DELETE_ALL_DATA, RESET_STATE,
+  UPDATE_FETCHED, FETCH_MORE, FETCH_MORE_ROLLBACK, CACHE_FETCHED_MORE,
+  UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 
 /* {
@@ -44,9 +43,8 @@ const isFetchMoreInterrupted = (state = initialState, action) => {
     return newState;
   }
 
-  // This action and FETCH_MORE_COMMIT might not be called
-  //   if FETCH_MORE action is filtered out in offline's enqueue.
-  // So the data would leave here until sign out but should be fine.
+  // Do nothing in FETCH_MORE_COMMIT, need data for tryUpdateFetchedMore
+
   if (action.type === FETCH_MORE_ROLLBACK) {
     const { fetchMoreId, listName } = action.meta;
 
@@ -59,9 +57,13 @@ const isFetchMoreInterrupted = (state = initialState, action) => {
     return { ...state, [listName]: newObj };
   }
 
-  // These actions might not be called if tryUpdateFetched doesn't do update.
+  // These actions might not be called if tryUpdateFetchedMore doesn't do update.
   // So the data would leave here until sign out but should be fine.
-  if (action.type === UPDATE_FETCHED_MORE || action.type === CANCEL_FETCHED_MORE) {
+  if (
+    action.type === CACHE_FETCHED_MORE ||
+    action.type === UPDATE_FETCHED_MORE ||
+    action.type === CANCEL_FETCHED_MORE
+  ) {
     const { fetchMoreId, listName } = action.theMeta;
 
     const newObj = {};

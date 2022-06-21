@@ -19,6 +19,7 @@
     "@react-native-community/clipboard": "^1.5.1",
     "@react-native-community/netinfo": "^8.0.0",
     "@redux-offline/redux-offline": "https://github.com/bracedotto/redux-offline#4969cde61cd97a9f317f158cade8c96374871a6d",
+    "@wewatch/lexorank": "^1.0.3",
     "axios": "^0.24.0",
     "react": "17.0.2",
     "react-native": "0.66.1",

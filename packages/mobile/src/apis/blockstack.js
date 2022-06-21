@@ -1,9 +1,13 @@
 import userSession from '../userSession';
 import { SETTINGS_FNAME, N_LINKS, MAX_TRY, N_DAYS, TRASH } from '../types/const';
 import {
-  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS,
-  DELETE_OLD_LINKS_IN_TRASH, UPDATE_SETTINGS,
+  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
+  UPDATE_SETTINGS, PIN_LINK, UNPIN_LINK,
 } from '../types/actionTypes';
+import {
+  createLinkFPath, extractLinkFPath, createPinFPath, copyFPaths, getMainId,
+  sortWithPins,
+} from '../utils';
 import { cachedFPaths } from '../vars';
 
 export const effect = async (effectObj, _action) => {
@@ -34,36 +38,15 @@ export const effect = async (effectObj, _action) => {
     return updateSettings(params);
   }
 
-  throw new Error(`${method} is invalid for blockstack effect.`);
-};
-
-export const createLinkFPath = (listName, id = null) => {
-  // Cannot encode because fpaths in etags are not encoded
-  // When fetch, unencoded fpaths are saved in etags
-  // When update, if encode, fpath will be different to the fpath in etags,
-  //   it'll be treated as a new file and fails in putFile
-  //   as on server, error is thrown: etag is different.
-  //listName = encodeURIComponent(listName);
-  return id === null ? `links/${listName}` : `links/${listName}/${id}.json`;
-};
-
-const extractLinkFPath = (fpath) => {
-  let [listName, fname] = fpath.split('/').slice(1);
-  //listName = decodeURIComponent(listName);
-
-  const dotIndex = fname.lastIndexOf('.');
-  const ext = fname.substring(dotIndex + 1);
-  fname = fname.substring(0, dotIndex);
-
-  return { listName, fname, ext };
-};
-
-const copyFPaths = (fpaths) => {
-  const newLinkFPaths = {};
-  for (const listName in fpaths.linkFPaths) {
-    newLinkFPaths[listName] = [...fpaths.linkFPaths[listName]];
+  if (method === PIN_LINK) {
+    return pinLink(params);
   }
-  return { ...fpaths, linkFPaths: newLinkFPaths };
+
+  if (method === UNPIN_LINK) {
+    return unpinLink(params);
+  }
+
+  throw new Error(`${method} is invalid for blockstack effect.`);
 };
 
 const addFPath = (fpaths, fpath) => {
@@ -75,6 +58,8 @@ const addFPath = (fpaths, fpath) => {
     }
   } else if (fpath === SETTINGS_FNAME) {
     fpaths.settingsFPath = fpath;
+  } else if (fpath.startsWith('pins')) {
+    if (!fpaths.pinFPaths.includes(fpath)) fpaths.pinFPaths.push(fpath);
   } else {
     console.log(`Invalid file path: ${fpath}`);
   }
@@ -91,6 +76,8 @@ const deleteFPath = (fpaths, fpath) => {
     }
   } else if (fpath === SETTINGS_FNAME) {
     fpaths.settingsFPath = null;
+  } else if (fpath.startsWith('pins')) {
+    fpaths.pinFPaths = fpaths.pinFPaths.filter(el => el !== fpath);
   } else {
     console.log(`Invalid file path: ${fpath}`);
   }
@@ -100,7 +87,7 @@ const _listFPaths = async () => {
   // List fpaths(keys)
   // Even though aws, az, gc sorts a-z but on Gaia local machine, it's arbitrary
   //   so need to fetch all and sort locally.
-  const fpaths = { linkFPaths: {}, settingsFPath: null };
+  const fpaths = { linkFPaths: {}, settingsFPath: null, pinFPaths: [] };
   await userSession.listFiles((fpath) => {
     addFPath(fpaths, fpath);
     return true;
@@ -151,8 +138,8 @@ export const batchGetFileWithRetry = async (
 
 const fetch = async (params) => {
 
-  let { listName, doDescendingOrder, doFetchSettings } = params;
-  const { linkFPaths, settingsFPath } = await listFPaths(doFetchSettings);
+  let { listName, doDescendingOrder, doFetchSettings, pendingPins } = params;
+  const { linkFPaths, settingsFPath, pinFPaths } = await listFPaths(doFetchSettings);
 
   let settings;
   if (settingsFPath && doFetchSettings) {
@@ -162,10 +149,14 @@ const fetch = async (params) => {
   }
 
   const namedLinkFPaths = linkFPaths[listName] || [];
+  let sortedLinkFPaths = namedLinkFPaths.sort();
+  if (doDescendingOrder) sortedLinkFPaths.reverse();
 
-  let selectedLinkFPaths = namedLinkFPaths.sort();
-  if (doDescendingOrder) selectedLinkFPaths.reverse();
-  selectedLinkFPaths = selectedLinkFPaths.slice(0, N_LINKS);
+  sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, pendingPins, (fpath) => {
+    const { id } = extractLinkFPath(fpath);
+    return getMainId(id);
+  });
+  const selectedLinkFPaths = sortedLinkFPaths.slice(0, N_LINKS);
 
   const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0, true);
   const links = responses.filter(r => r.success).map(r => JSON.parse(r.content));
@@ -182,27 +173,35 @@ const fetch = async (params) => {
 
 const fetchMore = async (params) => {
 
-  const { listName, ids, doDescendingOrder } = params;
-
-  const { linkFPaths } = await listFPaths();
+  const { listName, ids, doDescendingOrder, pendingPins } = params;
+  const { linkFPaths, pinFPaths } = await listFPaths();
 
   const namedLinkFPaths = linkFPaths[listName] || [];
-
-  // Fetch further from the current point, not causing scroll jumpy
-  const sortedLinkFPaths = namedLinkFPaths.sort();
+  let sortedLinkFPaths = namedLinkFPaths.sort();
   if (doDescendingOrder) sortedLinkFPaths.reverse();
 
-  const indexes = ids.map(id => sortedLinkFPaths.indexOf(createLinkFPath(listName, id)));
-  const maxIndex = Math.max(...indexes);
+  sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, pendingPins, (fpath) => {
+    const { id } = extractLinkFPath(fpath);
+    return getMainId(id);
+  });
 
-  const filteredLinkFPaths = sortedLinkFPaths.slice(maxIndex + 1);
+  // With pins, can't fetch further from the current point
+  let filteredLinkFPaths = [], hasDisorder = false;
+  for (let i = 0; i < sortedLinkFPaths.length; i++) {
+    const fpath = sortedLinkFPaths[i];
+    const { id } = extractLinkFPath(fpath);
+    if (!ids.includes(id)) {
+      if (i < ids.length) hasDisorder = true;
+      filteredLinkFPaths.push(fpath);
+    }
+  }
   const selectedLinkFPaths = filteredLinkFPaths.slice(0, N_LINKS);
 
   const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0, true);
   const links = responses.filter(r => r.success).map(r => JSON.parse(r.content));
   const hasMore = filteredLinkFPaths.length > N_LINKS;
 
-  return { listName, doDescendingOrder, links, hasMore };
+  return { listName, doDescendingOrder, links, hasMore, hasDisorder };
 };
 
 export const batchPutFileWithRetry = async (fpaths, contents, callCount) => {
@@ -303,8 +302,8 @@ const deleteOldLinksInTrash = async () => {
 
   const trashLinkFPaths = linkFPaths[TRASH] || [];
   let oldFPaths = trashLinkFPaths.filter(fpath => {
-    const { fname } = extractLinkFPath(fpath);
-    const removedDT = fname.split('-')[3];
+    const { id } = extractLinkFPath(fpath);
+    const removedDT = id.split('-')[3];
     const interval = Date.now() - Number(removedDT);
     const days = interval / 1000 / 60 / 60 / 24;
 
@@ -313,8 +312,8 @@ const deleteOldLinksInTrash = async () => {
 
   oldFPaths = oldFPaths.slice(0, N_LINKS);
   const ids = oldFPaths.map(fpath => {
-    const { fname } = extractLinkFPath(fpath);
-    return fname;
+    const { id } = extractLinkFPath(fpath);
+    return id;
   });
 
   await batchDeleteFileWithRetry(oldFPaths, 0);
@@ -323,10 +322,10 @@ const deleteOldLinksInTrash = async () => {
 };
 
 const updateSettings = async (settings) => {
-  const fPaths = [SETTINGS_FNAME];
+  const fpaths = [SETTINGS_FNAME];
   const contents = [JSON.stringify(settings)];
 
-  await batchPutFileWithRetry(fPaths, contents, 0);
+  await batchPutFileWithRetry(fpaths, contents, 0);
 };
 
 export const canDeleteListNames = async (listNames) => {
@@ -340,4 +339,26 @@ export const canDeleteListNames = async (listNames) => {
   }
 
   return canDeletes;
+};
+
+const pinLink = async (params) => {
+  const { pins } = params;
+
+  const fpaths = [], contents = [];
+  for (const pin of pins) {
+    fpaths.push(createPinFPath(pin.rank, pin.addedDT, pin.id));
+    contents.push(JSON.stringify({}));
+  }
+
+  await batchPutFileWithRetry(fpaths, contents, 0);
+  return { pins };
+};
+
+const unpinLink = async (params) => {
+
+  const { pins } = params;
+  const pinFPaths = pins.map(pin => createPinFPath(pin.rank, pin.addedDT, pin.id));
+  await batchDeleteFileWithRetry(pinFPaths, 0);
+
+  return { pins };
 };

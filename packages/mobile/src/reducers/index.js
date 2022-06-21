@@ -9,12 +9,15 @@ import settingsReducer from './settingsReducer';
 import localSettingsReducer from './localSettingsReducer';
 import fetchedReducer from './fetchedReducer';
 import isFetchMoreInterrupted from './isFetchMoreInterrupted';
+import fetchedMoreReducer from './fetchedMoreReducer';
 import stacksAccessReducer from './stacksAccessReducer';
 import snapshotReducer from './snapshotReducer';
 import linkEditorReducer from './linkEditorReducer';
 import listNameEditorsReducer from './listNameEditorsReducer';
 import iapReducer from './iapReducer';
 import cachedFPathsReducer from './cachedFPathsReducer';
+import pendingPinsReducer from './pendingPinsReducer';
+import scrollPanelReducer from './scrollPanelReducer';
 
 export default combineReducers({
   window: windowReducer,
@@ -26,10 +29,13 @@ export default combineReducers({
   localSettings: localSettingsReducer,
   fetched: fetchedReducer,
   isFetchMoreInterrupted: isFetchMoreInterrupted,
+  fetchedMore: fetchedMoreReducer,
   stacksAccess: stacksAccessReducer,
   snapshot: snapshotReducer,
   linkEditor: linkEditorReducer,
   listNameEditors: listNameEditorsReducer,
   iap: iapReducer,
   cachedFPaths: cachedFPathsReducer,
+  pendingPins: pendingPinsReducer,
+  scrollPanel: scrollPanelReducer,
 });

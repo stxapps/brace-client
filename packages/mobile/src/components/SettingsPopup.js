@@ -6,8 +6,13 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
-import { updateSettingsPopup } from '../actions';
-import { MD_WIDTH } from '../types/const';
+import { updateSettingsPopup, updateSettingsViewId } from '../actions';
+import {
+  SETTINGS_VIEW_ACCOUNT, SETTINGS_VIEW_IAP, SETTINGS_VIEW_IAP_RESTORE,
+  SETTINGS_VIEW_DATA, SETTINGS_VIEW_DATA_EXPORT,
+  SETTINGS_VIEW_DATA_DELETE, SETTINGS_VIEW_LISTS, SETTINGS_VIEW_MISC,
+  SETTINGS_VIEW_ABOUT,
+} from '../types/const';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 import { dialogFMV, sidebarFMV } from '../types/animConfigs';
@@ -23,15 +28,15 @@ import SettingsPopupLists from './SettingsPopupLists';
 import SettingsPopupMisc from './SettingsPopupMisc';
 import SettingsPopupAbout from './SettingsPopupAbout';
 
-const VIEW_ACCOUNT = 1;
-const VIEW_IAP = 9;
-const VIEW_IAP_RESTORE = 10;
-const VIEW_DATA = 2;
-const VIEW_DATA_EXPORT = 3;
-const VIEW_DATA_DELETE = 4;
-const VIEW_LISTS = 5;
-const VIEW_MISC = 6;
-const VIEW_ABOUT = 8;
+const VIEW_ACCOUNT = SETTINGS_VIEW_ACCOUNT;
+const VIEW_IAP = SETTINGS_VIEW_IAP;
+const VIEW_IAP_RESTORE = SETTINGS_VIEW_IAP_RESTORE;
+const VIEW_DATA = SETTINGS_VIEW_DATA;
+const VIEW_DATA_EXPORT = SETTINGS_VIEW_DATA_EXPORT;
+const VIEW_DATA_DELETE = SETTINGS_VIEW_DATA_DELETE;
+const VIEW_LISTS = SETTINGS_VIEW_LISTS;
+const VIEW_MISC = SETTINGS_VIEW_MISC;
+const VIEW_ABOUT = SETTINGS_VIEW_ABOUT;
 
 // This value comes from max-w-56.
 // If screen width is too narrow, the value might be less than this.
@@ -42,18 +47,11 @@ class SettingsPopup extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = {
-      didCloseAnimEnd: !props.isSettingsPopupShown,
-      viewId: VIEW_ACCOUNT,
-      isSidebarShown: props.safeAreaWidth < MD_WIDTH,
-      didSidebarAnimEnd: true,
-    };
-
     this.panelContent = React.createRef();
 
     this.popupScale = new Animated.Value(0);
     this.sidebarTranslateX = new Animated.Value(
-      this.state.isSidebarShown ? 0 : SIDE_BAR_WIDTH * -1
+      props.isSidebarShown ? 0 : SIDE_BAR_WIDTH * -1
     );
 
     this.settingsPopupBackHandler = null;
@@ -69,9 +67,9 @@ class SettingsPopup extends React.PureComponent {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
 
-    const { isSettingsPopupShown } = this.props;
+    const { isSettingsPopupShown, isSidebarShown, viewId } = this.props;
     if (prevProps.isSettingsPopupShown !== isSettingsPopupShown) {
       this.registerSettingsPopupBackHandler(isSettingsPopupShown);
     }
@@ -86,49 +84,34 @@ class SettingsPopup extends React.PureComponent {
       Animated.timing(
         this.popupScale, { toValue: 0, ...dialogFMV.hidden }
       ).start(() => {
-        this.setState({ didCloseAnimEnd: true });
+        this.props.updateSettingsViewId(null, null, true);
       });
     }
 
-    const { isSidebarShown } = this.state;
-
-    if (!prevState.isSidebarShown && isSidebarShown) {
+    if (!prevProps.isSidebarShown && isSidebarShown) {
       Animated.timing(
         this.sidebarTranslateX, { toValue: 0, ...sidebarFMV.visible }
       ).start(() => {
-        this.setState({ didSidebarAnimEnd: true });
+        this.props.updateSettingsViewId(null, null, null, true);
       });
     }
 
-    if (prevState.isSidebarShown && !isSidebarShown) {
+    if (prevProps.isSidebarShown && !isSidebarShown) {
       Animated.timing(
         this.sidebarTranslateX,
         { toValue: SIDE_BAR_WIDTH * -1, ...sidebarFMV.hidden }
       ).start(() => {
-        this.setState({ didSidebarAnimEnd: true });
+        this.props.updateSettingsViewId(null, null, null, true);
       });
     }
 
-    if (prevState.viewId !== this.state.viewId) {
+    if (prevProps.viewId !== viewId) {
       if (this.panelContent.current) {
         setTimeout(() => {
           if (this.panelContent.current) {
             this.panelContent.current.scrollTo({ x: 0, y: 0, animated: true });
           }
         }, 1);
-      }
-    }
-  }
-
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (!this.props.isSettingsPopupShown && nextProps.isSettingsPopupShown) {
-      if (this.state.didCloseAnimEnd) {
-        this.setState({
-          didCloseAnimEnd: false,
-          viewId: VIEW_ACCOUNT,
-          isSidebarShown: nextProps.safeAreaWidth < MD_WIDTH,
-          didSidebarAnimEnd: true,
-        });
       }
     }
   }
@@ -161,13 +144,13 @@ class SettingsPopup extends React.PureComponent {
   isViewSelected = (viewId) => {
     const dataViews = [VIEW_DATA, VIEW_DATA_EXPORT, VIEW_DATA_DELETE];
     if (viewId === VIEW_DATA) {
-      return dataViews.includes(this.state.viewId);
+      return dataViews.includes(this.props.viewId);
     }
 
     const iapViews = [VIEW_IAP, VIEW_IAP_RESTORE];
-    if (viewId === VIEW_IAP) return iapViews.includes(this.state.viewId);
+    if (viewId === VIEW_IAP) return iapViews.includes(this.props.viewId);
 
-    return viewId === this.state.viewId;
+    return viewId === this.props.viewId;
   }
 
   onPopupCloseBtnClick = () => {
@@ -175,96 +158,60 @@ class SettingsPopup extends React.PureComponent {
   }
 
   onSidebarOpenBtnClick = () => {
-    this.setState({
-      isSidebarShown: true,
-      didSidebarAnimEnd: false,
-    });
+    this.props.updateSettingsViewId(null, true, null, false);
   }
 
   onSidebarCloseBtnClick = () => {
-    this.setState({
-      isSidebarShown: false,
-      didSidebarAnimEnd: false,
-    });
+    this.props.updateSettingsViewId(null, false, null, false);
   }
 
   onAccountBtnClick = () => {
-    this.setState({
-      viewId: VIEW_ACCOUNT,
-      isSidebarShown: false,
-      didSidebarAnimEnd: false,
-    });
+    this.props.updateSettingsViewId(VIEW_ACCOUNT, false, null, false);
   }
 
   onIapBtnClick = () => {
-    this.setState({
-      viewId: VIEW_IAP,
-      isSidebarShown: false,
-    });
+    this.props.updateSettingsViewId(VIEW_IAP, false, null, false);
   }
 
   onDataBtnClick = () => {
-    this.setState({
-      viewId: VIEW_DATA,
-      isSidebarShown: false,
-      didSidebarAnimEnd: false,
-    });
+    this.props.updateSettingsViewId(VIEW_DATA, false, null, false);
   }
 
   onListsBtnClick = () => {
-    this.setState({
-      viewId: VIEW_LISTS,
-      isSidebarShown: false,
-      didSidebarAnimEnd: false,
-    });
+    this.props.updateSettingsViewId(VIEW_LISTS, false, null, false);
   }
 
   onMiscBtnClick = () => {
-    this.setState({
-      viewId: VIEW_MISC,
-      isSidebarShown: false,
-      didSidebarAnimEnd: false,
-    });
+    this.props.updateSettingsViewId(VIEW_MISC, false, null, false);
   }
 
   onAboutBtnClick = () => {
-    this.setState({
-      viewId: VIEW_ABOUT,
-      isSidebarShown: false,
-    });
+    this.props.updateSettingsViewId(VIEW_ABOUT, false, null, false);
   }
 
   onToRestoreIapViewBtnClick = () => {
-    this.setState({ viewId: VIEW_IAP_RESTORE });
+    this.props.updateSettingsViewId(VIEW_IAP_RESTORE);
   }
 
   onBackToIapViewBtnClick = () => {
-    this.setState({
-      viewId: VIEW_IAP,
-      isSidebarShown: false,
-    });
+    this.props.updateSettingsViewId(VIEW_IAP, false, null, true);
   }
 
   onToExportAllDataViewBtnClick = () => {
-    this.setState({ viewId: VIEW_DATA_EXPORT });
+    this.props.updateSettingsViewId(VIEW_DATA_EXPORT);
   }
 
   onToDeleteAllDataViewBtnClick = () => {
-    this.setState({ viewId: VIEW_DATA_DELETE });
+    this.props.updateSettingsViewId(VIEW_DATA_DELETE);
   }
 
   onBackToDataViewBtnClick = () => {
-    this.setState({
-      viewId: VIEW_DATA,
-      isSidebarShown: false,
-      didSidebarAnimEnd: true,
-    });
+    this.props.updateSettingsViewId(VIEW_DATA, false, null, true);
   }
 
   _render(content) {
 
-    const { safeAreaWidth, insets } = this.props;
-    const { isSidebarShown, didSidebarAnimEnd } = this.state;
+    const { isSidebarShown, didSidebarAnimEnd, safeAreaWidth, insets } = this.props;
 
     const sidebarCanvasStyleClasses = !isSidebarShown && didSidebarAnimEnd ? 'hidden relative' : 'absolute inset-0';
     const sidebarStyle = {
@@ -516,10 +463,9 @@ class SettingsPopup extends React.PureComponent {
   }
 
   render() {
+    const { isSettingsPopupShown, viewId, didCloseAnimEnd } = this.props;
 
-    if (!this.props.isSettingsPopupShown && this.state.didCloseAnimEnd) return null;
-
-    const { viewId } = this.state;
+    if (!isSettingsPopupShown && didCloseAnimEnd) return null;
 
     if (viewId === VIEW_ACCOUNT) return this.renderAccountView();
     else if (viewId === VIEW_IAP) return this.renderIapView();
@@ -537,9 +483,13 @@ class SettingsPopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     isSettingsPopupShown: state.display.isSettingsPopupShown,
+    viewId: state.display.settingsViewId,
+    isSidebarShown: state.display.isSettingsSidebarShown,
+    didCloseAnimEnd: state.display.didSettingsCloseAnimEnd,
+    didSidebarAnimEnd: state.display.didSettingsSidebarAnimEnd,
   };
 };
 
-const mapDispatchToProps = { updateSettingsPopup };
+const mapDispatchToProps = { updateSettingsPopup, updateSettingsViewId };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(SettingsPopup));

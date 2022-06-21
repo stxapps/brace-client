@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { FlatList, View, Text, TouchableOpacity, Animated } from 'react-native';
 import { Flow } from 'react-native-animated-spinkit';
 
-import { fetchMore, updatePageYOffset } from '../actions';
+import { fetchMore, updateFetchedMore, updateScrollPanel } from '../actions';
 import {
   PC_100, PC_50, PC_33,
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
@@ -48,18 +48,21 @@ class CardPanel extends React.PureComponent {
     }
   }
 
-  updatePageYOffset = (e) => {
-    this.props.updatePageYOffset(e.nativeEvent.contentOffset.y);
-  }
-
   getItemId = (item) => {
     return item.id;
   }
 
+  onScrollEnd = (e) => {
+    const contentHeight = e.nativeEvent.contentSize.height;
+    const layoutHeight = e.nativeEvent.layoutMeasurement.height;
+    const pageYOffset = e.nativeEvent.contentOffset.y;
+    this.props.updateScrollPanel(contentHeight, layoutHeight, pageYOffset);
+  }
+
   onEndReached = () => {
     // if has more, not fetching more, and at the bottom
-    const { hasMoreLinks, isFetchingMore } = this.props;
-    if (!hasMoreLinks || isFetchingMore) {
+    const { hasMoreLinks, hasFetchedMore, isFetchingMore } = this.props;
+    if (!hasMoreLinks || hasFetchedMore || isFetchingMore) {
       return;
     }
 
@@ -68,6 +71,10 @@ class CardPanel extends React.PureComponent {
 
   onFetchMoreBtnClick = () => {
     this.props.fetchMore();
+  }
+
+  onUpdateFetchedBtnClick = () => {
+    this.props.updateFetchedMore();
   }
 
   renderEmpty = () => {
@@ -89,6 +96,16 @@ class CardPanel extends React.PureComponent {
       <View style={tailwind('my-4 py-2 flex-row justify-center w-full')}>
         <Flow size={48} color="rgb(156, 163, 175)" />
       </View>
+    );
+  }
+
+  renderUpdateFetchedBtn = () => {
+    return (
+      <TouchableOpacity onPress={this.onUpdateFetchedBtnClick} style={tailwind('my-4 py-2 flex-row justify-center w-full')}>
+        <View style={tailwind('px-3 py-1 bg-white border border-gray-400 rounded-full')}>
+          <Text style={tailwind('text-sm text-gray-500 font-normal')}>Show more</Text>
+        </View>
+      </TouchableOpacity>
     );
   }
 
@@ -150,7 +167,7 @@ class CardPanel extends React.PureComponent {
 
   renderPanel = ({ item }) => {
 
-    const { isFetchingMore, safeAreaWidth } = this.props;
+    const { hasFetchedMore, isFetchingMore, safeAreaWidth } = this.props;
 
     if (item.id === PANEL_HEAD) {
       let pt = safeAreaWidth < MD_WIDTH ? toPx(TOP_BAR_HEIGHT) : toPx(TOP_BAR_HEIGHT_MD);
@@ -213,7 +230,9 @@ class CardPanel extends React.PureComponent {
     }
 
     if (item.id === PANEL_FOOTER) {
-      return isFetchingMore ? this.renderFetchingMore() : this.renderFetchMoreBtn();
+      if (hasFetchedMore) return this.renderUpdateFetchedBtn();
+      if (isFetchingMore) return this.renderFetchingMore();
+      return this.renderFetchMoreBtn();
     }
 
     if (item.id === PANEL_PADDING_BOTTOM) {
@@ -246,8 +265,9 @@ class CardPanel extends React.PureComponent {
         removeClippedSubviews={false}
         onScroll={this.props.scrollYEvent}
         scrollEventThrottle={16}
-        onScrollEndDrag={this.updatePageYOffset}
-        onMomentumScrollEnd={this.updatePageYOffset} />
+        onScrollEndDrag={this.onScrollEnd}
+        onMomentumScrollEnd={this.onScrollEnd}
+        overScrollMode="always" />
     );
   }
 }
@@ -270,11 +290,12 @@ const mapStateToProps = (state, props) => {
   return {
     links: links,
     hasMoreLinks: state.hasMoreLinks[listName],
+    hasFetchedMore: state.fetchedMore[listName] ? true : false,
     isFetchingMore: getIsFetchingMore(state),
     listChangedCount: state.display.listChangedCount,
   };
 };
 
-const mapDispatchToProps = { fetchMore, updatePageYOffset };
+const mapDispatchToProps = { fetchMore, updateFetchedMore, updateScrollPanel };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(CardPanel));
