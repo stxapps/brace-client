@@ -208,9 +208,7 @@ class CardItemMenuPopup extends React.PureComponent {
     let menuPopup;
     if (menuPopupSize) {
 
-      const maxHeight = getLastHalfHeight(
-        Math.min(288, safeAreaHeight - 16), 40, 9, 9
-      );
+      const maxHeight = getLastHalfHeight(Math.min(288, safeAreaHeight - 16), 40, 8, 8);
 
       const anchorPosition = popupLink.popupAnchorPosition;
       const layouts = createLayouts(

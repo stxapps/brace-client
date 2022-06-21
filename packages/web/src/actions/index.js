@@ -10,9 +10,9 @@ import {
   batchGetFileWithRetry, batchPutFileWithRetry, batchDeleteFileWithRetry,
 } from '../apis/blockstack';
 import {
-  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW_SIZE, UPDATE_PAGE_Y_OFFSET,
+  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW_SIZE,
   UPDATE_WINDOW, UPDATE_HISTORY_POSITION, UPDATE_STACKS_ACCESS, UPDATE_LIST_NAME,
-  UPDATE_POPUP, UPDATE_SEARCH_STRING, UPDATE_LINK_EDITOR,
+  UPDATE_POPUP, UPDATE_SEARCH_STRING, UPDATE_LINK_EDITOR, UPDATE_SCROLL_PANEL,
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED,
@@ -340,13 +340,6 @@ export const updateUserData = (data) => async (dispatch, getState) => {
   }
 };
 
-export const updatePageYOffset = (pageYOffset) => {
-  return {
-    type: UPDATE_PAGE_Y_OFFSET,
-    payload: pageYOffset,
-  };
-};
-
 export const updateStacksAccess = (data) => {
   return { type: UPDATE_STACKS_ACCESS, payload: data };
 };
@@ -381,6 +374,13 @@ export const updateSearchString = (searchString) => {
 
 export const updateLinkEditor = (values) => {
   return { type: UPDATE_LINK_EDITOR, payload: values };
+};
+
+export const updateScrollPanel = (contentHeight, layoutHeight, pageYOffset) => {
+  return {
+    type: UPDATE_SCROLL_PANEL,
+    payload: { contentHeight, layoutHeight, pageYOffset },
+  };
 };
 
 export const updateStatus = (status) => {
@@ -647,7 +647,7 @@ export const tryUpdateFetchedMore = (payload, meta) => async (dispatch, getState
 
   const isBulkEditing = getState().display.isBulkEditing;
   if (!isBulkEditing) {
-    const scrollHeight = getWindowScrollHeight()
+    const scrollHeight = getWindowScrollHeight();
     const windowHeight = getWindowHeight();
     const windowBottom = windowHeight + window.pageYOffset;
 

@@ -1,7 +1,5 @@
 import {
-  INIT,
-  UPDATE_WINDOW, UPDATE_HREF, UPDATE_HISTORY_POSITION, UPDATE_WINDOW_SIZE,
-  UPDATE_PAGE_Y_OFFSET,
+  INIT, UPDATE_WINDOW, UPDATE_HREF, UPDATE_HISTORY_POSITION, UPDATE_WINDOW_SIZE,
 } from '../types/actionTypes';
 import { REHYDRATE } from 'redux-persist/constants';
 
@@ -10,7 +8,6 @@ const initialState = {
   historyPosition: null,
   width: null,
   height: null,
-  pageYOffset: 0,
 };
 
 const windowReducer = (state = initialState, action) => {
@@ -50,10 +47,6 @@ const windowReducer = (state = initialState, action) => {
       width: action.payload.windowWidth,
       height: action.payload.windowHeight,
     };
-  }
-
-  if (action.type === UPDATE_PAGE_Y_OFFSET) {
-    return { ...state, pageYOffset: action.payload };
   }
 
   return state;
