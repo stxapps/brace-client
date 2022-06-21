@@ -339,7 +339,7 @@ const ListNamesPopup = () => {
     const popupClassNames = getOriginClassName(topOrigin, leftOrigin);
 
     panel = (
-      <motion.div key="LNP_popup" style={popupStyle} className={`fixed rounded-md shadow-xl bg-white overflow-auto ring-1 ring-black ring-opacity-5 z-41 ${popupClassNames}`} variants={popupFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+      <motion.div key="LNP_popup" style={popupStyle} className={`fixed rounded-lg shadow-xl bg-white overflow-auto ring-1 ring-black ring-opacity-5 z-41 ${popupClassNames}`} variants={popupFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
         {_render()}
       </motion.div>
     );

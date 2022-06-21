@@ -40,7 +40,6 @@ class CardPanel extends React.PureComponent {
   }
 
   updateScrollY = () => {
-
     // if has more, not fetching more, and at the bottom
     const { hasMoreLinks, hasFetchedMore, isFetchingMore } = this.props;
     if (!hasMoreLinks || hasFetchedMore || isFetchingMore) {
@@ -150,7 +149,7 @@ class CardPanel extends React.PureComponent {
   render() {
 
     const {
-      links, hasMoreLinks, isFetchingMore, hasFetchedMore, columnWidth, safeAreaWidth,
+      links, hasMoreLinks, hasFetchedMore, isFetchingMore, columnWidth, safeAreaWidth,
     } = this.props;
 
     let fetchMoreBtn;

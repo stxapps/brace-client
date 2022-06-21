@@ -46,13 +46,13 @@ import {
 import {
   BACK_DECIDER, BACK_POPUP, ALL, HASH_BACK,
   SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
-  LIST_NAMES_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
+  LIST_NAMES_POPUP, PIN_MENU_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
   SETTINGS_LISTS_MENU_POPUP, ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
   MY_LIST, TRASH, ARCHIVE, N_LINKS, N_DAYS, SETTINGS_FNAME,
   ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
-  IAP_STATUS_URL, COM_BRACEDOTTO,
-  SIGNED_TEST_STRING, VALID, ACTIVE, SWAP_LEFT, SWAP_RIGHT,
+  IAP_STATUS_URL, COM_BRACEDOTTO, SIGNED_TEST_STRING, VALID, ACTIVE,
+  SWAP_LEFT, SWAP_RIGHT,
 } from '../types/const';
 import {
   isEqual, isString, isObject, isNumber, throttle, sleep, isIPadIPhoneIPod,
@@ -62,8 +62,8 @@ import {
   isDecorValid, isExtractedResultValid, isListNameObjsValid,
   getLatestPurchase, getValidPurchase, doEnableExtraFeatures, createLinkFPath,
   extractPinFPath, getSortedLinks, getPinFPaths, getPins, separatePinnedValues,
-  sortLinks, sortWithPins, getWindowScrollHeight, getWindowHeight,
-  doOutboxContainMethods,
+  sortLinks, sortWithPins,
+  getWindowScrollHeight, getWindowHeight, doOutboxContainMethods,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -183,14 +183,16 @@ const handlePendingSignIn = () => async (dispatch, getState) => {
 
 const getPopupShownId = (state) => {
 
-  if (state.display.isSignUpPopupShown) return SIGN_UP_POPUP;
-  if (state.display.isSignInPopupShown) return SIGN_IN_POPUP;
-  if (state.display.isAddPopupShown) return ADD_POPUP;
-  if (state.display.isProfilePopupShown) return PROFILE_POPUP;
   if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
+  if (state.display.isPaywallPopupShown) return PAYWALL_POPUP;
+  if (state.display.isPinMenuPopupShown) return PIN_MENU_POPUP;
   if (state.display.isListNamesPopupShown) return LIST_NAMES_POPUP;
   if (state.display.isSettingsListsMenuPopupShown) return SETTINGS_LISTS_MENU_POPUP;
   if (state.display.isSettingsPopupShown) return SETTINGS_POPUP;
+  if (state.display.isProfilePopupShown) return PROFILE_POPUP;
+  if (state.display.isAddPopupShown) return ADD_POPUP;
+  if (state.display.isSignUpPopupShown) return SIGN_UP_POPUP;
+  if (state.display.isSignInPopupShown) return SIGN_IN_POPUP;
 
   for (const listName in state.links) {
     for (const id in state.links[listName]) {
@@ -549,7 +551,9 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
   });
 };
 
-export const updateFetched = (payload, meta, listName = null, doChangeListCount = false) => async (dispatch, getState) => {
+export const updateFetched = (
+  payload, meta, listName = null, doChangeListCount = false
+) => async (dispatch, getState) => {
 
   if (!payload) {
     if (!listName) listName = getState().display.listName;
