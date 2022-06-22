@@ -93,13 +93,16 @@ class TopBarBulkEditCommands extends React.Component {
 
   onBulkEditMoveToBtnClick = (e) => {
     if (this.checkNoLinkIdSelected()) return;
-    const _rect = e.currentTarget.getBoundingClientRect();
+
     // Hacky to make sure the popup overlap all the button
+    const _rect = e.currentTarget.getBoundingClientRect();
+    const newX = _rect.x - 4;
+    const newY = _rect.y - 4;
+    const newWidth = _rect.width + 8;
+    const newHeight = _rect.height + 8;
     const rect = {
-      x: _rect.x - 4, y: _rect.y - 4,
-      width: _rect.width + 8, height: _rect.height,
-      top: _rect.top - 4, bottom: _rect.bottom - 4,
-      left: _rect.left - 4, right: _rect.right + 4,
+      x: newX, y: newY, width: newWidth, height: newHeight,
+      top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
     };
     this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
   }

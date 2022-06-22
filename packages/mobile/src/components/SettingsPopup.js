@@ -49,10 +49,8 @@ class SettingsPopup extends React.PureComponent {
 
     this.panelContent = React.createRef();
 
-    this.popupScale = new Animated.Value(0);
-    this.sidebarTranslateX = new Animated.Value(
-      props.isSidebarShown ? 0 : SIDE_BAR_WIDTH * -1
-    );
+    this.popupAnim = new Animated.Value(0);
+    this.sidebarAnim = new Animated.Value(0);
 
     this.settingsPopupBackHandler = null;
   }
@@ -62,7 +60,7 @@ class SettingsPopup extends React.PureComponent {
 
     if (this.props.isSettingsPopupShown) {
       Animated.timing(
-        this.popupScale, { toValue: 1, ...dialogFMV.visible }
+        this.popupAnim, { toValue: 1, ...dialogFMV.visible }
       ).start();
     }
   }
@@ -76,13 +74,13 @@ class SettingsPopup extends React.PureComponent {
 
     if (!prevProps.isSettingsPopupShown && isSettingsPopupShown) {
       Animated.timing(
-        this.popupScale, { toValue: 1, ...dialogFMV.visible }
+        this.popupAnim, { toValue: 1, ...dialogFMV.visible }
       ).start();
     }
 
     if (prevProps.isSettingsPopupShown && !isSettingsPopupShown) {
       Animated.timing(
-        this.popupScale, { toValue: 0, ...dialogFMV.hidden }
+        this.popupAnim, { toValue: 0, ...dialogFMV.hidden }
       ).start(() => {
         this.props.updateSettingsViewId(null, null, true);
       });
@@ -90,7 +88,7 @@ class SettingsPopup extends React.PureComponent {
 
     if (!prevProps.isSidebarShown && isSidebarShown) {
       Animated.timing(
-        this.sidebarTranslateX, { toValue: 0, ...sidebarFMV.visible }
+        this.sidebarAnim, { toValue: 1, ...sidebarFMV.visible }
       ).start(() => {
         this.props.updateSettingsViewId(null, null, null, true);
       });
@@ -98,8 +96,7 @@ class SettingsPopup extends React.PureComponent {
 
     if (prevProps.isSidebarShown && !isSidebarShown) {
       Animated.timing(
-        this.sidebarTranslateX,
-        { toValue: SIDE_BAR_WIDTH * -1, ...sidebarFMV.hidden }
+        this.sidebarAnim, { toValue: 0, ...sidebarFMV.hidden }
       ).start(() => {
         this.props.updateSettingsViewId(null, null, null, true);
       });
@@ -118,6 +115,14 @@ class SettingsPopup extends React.PureComponent {
 
   componentWillUnmount() {
     this.registerSettingsPopupBackHandler(false);
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const { isSettingsPopupShown } = this.props;
+    if (!isSettingsPopupShown && nextProps.isSettingsPopupShown) {
+      if (nextProps.isSidebarShown) this.sidebarAnim.setValue(1);
+      else this.sidebarAnim.setValue(0);
+    }
   }
 
   registerSettingsPopupBackHandler = (isSettingsPopupShown) => {
@@ -215,14 +220,15 @@ class SettingsPopup extends React.PureComponent {
 
     const sidebarCanvasStyleClasses = !isSidebarShown && didSidebarAnimEnd ? 'hidden relative' : 'absolute inset-0';
     const sidebarStyle = {
-      transform: [{ translateX: this.sidebarTranslateX }],
+      transform: [{
+        translateX: this.sidebarAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [SIDE_BAR_WIDTH * -1, 0],
+          extrapolate: 'clamp',
+        })
+      }],
     };
-    const changingSidebarCloseBtnOpacity = this.sidebarTranslateX.interpolate({
-      inputRange: [SIDE_BAR_WIDTH * -1, 0],
-      outputRange: [0, 1],
-      extrapolate: 'clamp',
-    });
-    const sidebarCloseBtnStyle = { opacity: changingSidebarCloseBtnOpacity };
+    const sidebarCloseBtnStyle = { opacity: this.sidebarAnim };
 
     const selectedMenuBtnStyleClasses = 'bg-gray-100';
     const menuBtnStyleClasses = '';

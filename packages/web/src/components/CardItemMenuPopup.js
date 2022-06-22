@@ -142,12 +142,11 @@ class CardItemMenuPopup extends React.PureComponent {
 
       const newX = popupAnchorPosition.x + 8;
       const newY = popupAnchorPosition.y + 12;
+      const newWidth = popupAnchorPosition.width - 8 - 12;
+      const newHeight = popupAnchorPosition.height - 12 - 0;
       const rect = {
-        x: newX, y: newY,
-        width: popupAnchorPosition.width - 8 - 12,
-        height: popupAnchorPosition.height - 12 + 6,
-        top: newY, bottom: popupAnchorPosition.bottom + 6,
-        left: newX, right: popupAnchorPosition.right - 12,
+        x: newX, y: newY, width: newWidth, height: newHeight,
+        top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
       };
       this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
     } else if (text === PIN) {
@@ -157,12 +156,11 @@ class CardItemMenuPopup extends React.PureComponent {
 
       const newX = popupAnchorPosition.x + 8;
       const newY = popupAnchorPosition.y + 12;
+      const newWidth = popupAnchorPosition.width - 8 - 12;
+      const newHeight = popupAnchorPosition.height - 12 - 0;
       const rect = {
-        x: newX, y: newY,
-        width: popupAnchorPosition.width - 8 - 12,
-        height: popupAnchorPosition.height - 12 + 6,
-        top: newY, bottom: popupAnchorPosition.bottom + 6,
-        left: newX, right: popupAnchorPosition.right - 12,
+        x: newX, y: newY, width: newWidth, height: newHeight,
+        top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
       };
       this.props.updatePopup(PIN_MENU_POPUP, true, rect);
     } else {
@@ -219,7 +217,7 @@ class CardItemMenuPopup extends React.PureComponent {
         },
         { width: safeAreaWidth, height: safeAreaHeight },
       );
-      const triggerOffsets = { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 };
+      const triggerOffsets = { x: 8, y: 12, width: -20, height: -12 };
       const popupPosition = computePosition(layouts, triggerOffsets, 8);
 
       const { top, left, topOrigin, leftOrigin } = popupPosition;

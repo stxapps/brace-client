@@ -99,9 +99,15 @@ class CardItemMenuPopup extends React.PureComponent {
       return false;
     } else if (text === MOVE_TO) {
       this.props.updateSelectingLinkId(id);
+
       this.menuBtn.current.measure((_fx, _fy, width, height, x, y) => {
+        const newX = x + 8;
+        const newY = y + 12;
+        const newWidth = width - 8 - 12;
+        const newHeight = height - 12 - 0;
         const rect = {
-          x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
+          x: newX, y: newY, width: newWidth, height: newHeight,
+          top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
         };
         this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
       });
@@ -109,9 +115,15 @@ class CardItemMenuPopup extends React.PureComponent {
       this.props.pinLinks([id]);
     } else if (text === MANAGE_PIN) {
       this.props.updateSelectingLinkId(id);
+
       this.menuBtn.current.measure((_fx, _fy, width, height, x, y) => {
+        const newX = x + 8;
+        const newY = y + 12;
+        const newWidth = width - 8 - 12;
+        const newHeight = height - 12 - 0;
         const rect = {
-          x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
+          x: newX, y: newY, width: newWidth, height: newHeight,
+          top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
         };
         this.props.updatePopup(PIN_MENU_POPUP, true, rect);
       });
@@ -158,29 +170,25 @@ class CardItemMenuPopup extends React.PureComponent {
     let menuTriggerView;
     if (layoutType === LAYOUT_LIST) {
       menuTriggerView = (
-        <View style={tailwind('px-2 py-1')}>
-          <Svg ref={this.menuBtn} style={tailwind('text-gray-400 font-normal rounded-full')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none" collapsable={false}>
+        <View ref={this.menuBtn} style={tailwind('px-2 py-1')} collapsable={false}>
+          <Svg style={tailwind('text-gray-400 font-normal rounded-full')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">
             <Path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </Svg>
         </View>
       );
     } else {
       menuTriggerView = (
-        /* View with paddingBottom is required because there is this space on the web. */
-        <View style={cache('CIMP_menuTriggerViewStyle', { paddingBottom: 6 })}>
-          {/* Change the paddings here, need to change triggerOffsets too */}
-          <View style={tailwind('pt-2 pb-0 pl-4 pr-2 flex-shrink-0 flex-grow-0')}>
-            <Svg ref={this.menuBtn} style={tailwind('text-gray-400 font-normal rounded-full')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none" collapsable={false}>
-              <Path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </Svg>
-          </View>
+        <View ref={this.menuBtn} style={[tailwind('pt-2 pl-4 pr-2 flex-shrink-0 flex-grow-0'), { paddingBottom: 6 }]} collapsable={false}>
+          <Svg style={tailwind('text-gray-400 font-normal rounded-full')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+            <Path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </Svg>
         </View>
       );
     }
 
     return (
       /* value of triggerOffsets needs to be aligned with paddings of the three dots */
-      <Menu renderer={MenuPopupRenderer} rendererProps={cache('CIMP_menuRendererProps', { triggerOffsets: { x: 8, y: (16 - 4), width: -1 * (16 + 8 - 4), height: -6 } })} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
+      <Menu renderer={MenuPopupRenderer} rendererProps={cache('CIMP_menuRendererProps', { triggerOffsets: { x: 8, y: 12, width: -20, height: -12 } })} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
         <MenuTrigger>
           {menuTriggerView}
         </MenuTrigger>

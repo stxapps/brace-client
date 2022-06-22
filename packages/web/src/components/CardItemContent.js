@@ -200,7 +200,7 @@ class CardItemContent extends React.Component {
             </div>
           </div>
           <div className="flex-shrink-0 flex-grow-0">
-            <button onClick={this.onMenuBtnClick} className="pt-2 pb-0 pl-4 pr-2 group focus:outline-none">
+            <button onClick={this.onMenuBtnClick} style={{ paddingBottom: '0.375rem' }} className="block pt-2 pl-4 pr-2 group focus:outline-none">
               <svg className="py-2 w-6 text-gray-400 rounded-full group-hover:text-gray-500 group-focus:ring" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
