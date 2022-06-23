@@ -1058,6 +1058,13 @@ export const sortWithPins = (sortedValues, pinFPaths, pendingPins, getValueMainI
   return pinnedAndSortedValues;
 };
 
+export const isPinningStatus = (pinStatus) => {
+  return [
+    PIN_LINK, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_ROLLBACK,
+    MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
+  ].includes(pinStatus);
+};
+
 export const getFilteredLinks = (links, listName) => {
   if (!links || !links[listName]) return null;
 

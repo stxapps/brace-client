@@ -5,13 +5,11 @@ import { View, Text, TouchableOpacity, Linking, Platform } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
-import {
-  PIN_LINK, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_ROLLBACK,
-  MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
-} from '../types/actionTypes';
 import { ADDING, MOVING, SM_WIDTH, PINNED } from '../types/const';
 import { makeGetPinStatus } from '../selectors';
-import { ensureContainUrlProtocol, isDiedStatus, isEqual } from '../utils';
+import {
+  ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isEqual,
+} from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
 
@@ -157,10 +155,8 @@ class CardItem extends React.Component {
     const { style, link, pinStatus, safeAreaWidth } = this.props;
     const { status } = link;
 
-    const isPinning = [
-      PIN_LINK, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_ROLLBACK,
-      MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
-    ].includes(pinStatus);
+    const isPinning = isPinningStatus(pinStatus);
+    const canSelect = ![ADDING, MOVING].includes(status) && !isPinning;
 
     // Need to do this as React Native doesn't support maxWidth: "none"
     //   even though it's in tailwind-rn.
@@ -176,7 +172,7 @@ class CardItem extends React.Component {
           {[ADDING, MOVING].includes(status) && this.renderBusy()}
           {isPinning && this.renderPinning()}
           {[PINNED].includes(pinStatus) && this.renderPin()}
-          {![ADDING, MOVING].includes(status) && <CardItemSelector linkId={link.id} />}
+          {canSelect && <CardItemSelector linkId={link.id} />}
           {isDiedStatus(status) && this.renderRetry()}
         </View>
       </View>

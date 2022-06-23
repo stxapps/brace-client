@@ -3,13 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
-import {
-  PIN_LINK, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_ROLLBACK,
-  MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
-} from '../types/actionTypes';
 import { ADDING, MOVING, PINNED } from '../types/const';
 import { makeGetPinStatus } from '../selectors';
-import { ensureContainUrlProtocol, isDiedStatus, isEqual } from '../utils';
+import {
+  ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isEqual,
+} from '../utils';
 
 import CardItemContent from './CardItemContent';
 import CardItemSelector from './CardItemSelector';
@@ -115,10 +113,8 @@ class CardItem extends React.Component {
     const { link, pinStatus } = this.props;
     const { status } = link;
 
-    const isPinning = [
-      PIN_LINK, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_ROLLBACK,
-      MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
-    ].includes(pinStatus);
+    const isPinning = isPinningStatus(pinStatus);
+    const canSelect = ![ADDING, MOVING].includes(status) && !isPinning;
 
     return (
       <div className="mx-auto relative max-w-md bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm sm:max-w-none">
@@ -126,7 +122,7 @@ class CardItem extends React.Component {
         {[ADDING, MOVING].includes(status) && this.renderBusy()}
         {isPinning && this.renderPinning()}
         {[PINNED].includes(pinStatus) && this.renderPin()}
-        {![ADDING, MOVING].includes(status) && <CardItemSelector linkId={link.id} />}
+        {canSelect && <CardItemSelector linkId={link.id} />}
         {isDiedStatus(status) && this.renderRetry()}
       </div>
     );

@@ -759,8 +759,15 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
       });
     } else if (status === DIED_MOVING) {
 
+      const payload = { listName, ids };
+      dispatch({
+        type: CANCEL_DIED_LINKS,
+        payload,
+      });
+
       let fromListName = null, fromId = null;
       for (const _listName in getState().links) {
+        if (_listName === listName) continue;
         for (const _id in getState().links[_listName]) {
           if (getMainId(id) === getMainId(_id)) {
             [fromListName, fromId] = [_listName, _id];
@@ -769,13 +776,10 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
         }
         if (fromId !== null) break;
       }
-      if (fromId === null) throw new Error(`Could not find fromId for id: ${id}`);
-
-      const payload = { listName, ids };
-      dispatch({
-        type: CANCEL_DIED_LINKS,
-        payload,
-      });
+      if (fromId === null) {
+        console.log(`In retryDiedLinks, could not find fromId for id: ${id}`);
+        return;
+      }
 
       dispatch(moveLinks(listName, [fromId], fromListName));
 

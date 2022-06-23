@@ -4,13 +4,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
-import {
-  PIN_LINK, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_ROLLBACK,
-  MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
-} from '../types/actionTypes';
 import { ADDING, MOVING, SM_WIDTH, PINNED } from '../types/const';
 import { makeGetPinStatus } from '../selectors';
-import { ensureContainUrlProtocol, isDiedStatus } from '../utils';
+import { ensureContainUrlProtocol, isDiedStatus, isPinningStatus } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 
 import { useSafeAreaFrame } from '.';
@@ -134,10 +130,8 @@ const ListItem = (props) => {
 
   const { status } = link;
 
-  const isPinning = [
-    PIN_LINK, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_ROLLBACK,
-    MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
-  ].includes(pinStatus);
+  const isPinning = isPinningStatus(pinStatus);
+  const canSelect = ![ADDING, MOVING].includes(status) && !isPinning;
 
   return (
     <View style={tailwind('bg-white border-b border-gray-200')}>
@@ -145,7 +139,7 @@ const ListItem = (props) => {
       {[ADDING, MOVING].includes(status) && renderBusy()}
       {isPinning && renderPinning()}
       {[PINNED].includes(pinStatus) && renderPin()}
-      {![ADDING, MOVING].includes(status) && <ListItemSelector linkId={link.id} />}
+      {canSelect && <ListItemSelector linkId={link.id} />}
       {isDiedStatus(status) && renderRetry()}
     </View>
   );
