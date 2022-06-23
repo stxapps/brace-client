@@ -346,7 +346,7 @@ const pinLink = async (params) => {
 
   const fpaths = [], contents = [];
   for (const pin of pins) {
-    fpaths.push(createPinFPath(pin.rank, pin.addedDT, pin.id));
+    fpaths.push(createPinFPath(pin.rank, pin.updatedDT, pin.addedDT, pin.id));
     contents.push(JSON.stringify({}));
   }
 
@@ -357,7 +357,9 @@ const pinLink = async (params) => {
 const unpinLink = async (params) => {
 
   const { pins } = params;
-  const pinFPaths = pins.map(pin => createPinFPath(pin.rank, pin.addedDT, pin.id));
+  const pinFPaths = pins.map(pin => {
+    return createPinFPath(pin.rank, pin.updatedDT, pin.addedDT, pin.id);
+  });
   await batchDeleteFileWithRetry(pinFPaths, 0);
 
   return { pins };

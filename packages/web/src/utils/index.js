@@ -949,20 +949,21 @@ export const extractLinkFPath = (fpath) => {
   return { listName, id, ext };
 };
 
-export const createPinFPath = (rank, addedDT, id) => {
-  return `pins/${rank}/${addedDT}/${id}.json`;
+export const createPinFPath = (rank, updatedDT, addedDT, id) => {
+  return `pins/${rank}/${updatedDT}/${addedDT}/${id}.json`;
 };
 
 export const extractPinFPath = (fpath) => {
-  const [rank, addedDTStr, fname] = fpath.split('/').slice(1);
+  const [rank, updatedDTStr, addedDTStr, fname] = fpath.split('/').slice(1);
 
+  const updatedDT = parseInt(updatedDTStr, 10);
   const addedDT = parseInt(addedDTStr, 10);
 
   const dotIndex = fname.lastIndexOf('.');
   const ext = fname.substring(dotIndex + 1);
   const id = fname.substring(0, dotIndex);
 
-  return { rank, addedDT, id, ext };
+  return { rank, updatedDT, addedDT, id, ext };
 };
 
 export const copyFPaths = (fpaths) => {
@@ -990,31 +991,31 @@ export const getPinFPaths = (state) => {
 export const getPins = (pinFPaths, pendingPins, doExcludeUnpinning) => {
   const pins = {};
   for (const fpath of pinFPaths) {
-    const { addedDT, rank, id } = extractPinFPath(fpath);
+    const { rank, updatedDT, addedDT, id } = extractPinFPath(fpath);
     const pinMainId = getMainId(id);
 
-    // duplicate id, choose the latest addedDT
-    if (pinMainId in pins && pins[pinMainId].addedDT > addedDT) continue;
-    pins[pinMainId] = { addedDT, rank, id };
+    // duplicate id, choose the latest updatedDT
+    if (pinMainId in pins && pins[pinMainId].updatedDT > updatedDT) continue;
+    pins[pinMainId] = { rank, updatedDT, addedDT, id };
   }
 
   for (const id in pendingPins) {
-    const { status, addedDT, rank } = pendingPins[id];
+    const { status, rank, updatedDT, addedDT } = pendingPins[id];
     const pinMainId = getMainId(id);
 
     if ([PIN_LINK, PIN_LINK_ROLLBACK].includes(status)) {
-      pins[pinMainId] = { status, addedDT, rank, id };
+      pins[pinMainId] = { status, rank, updatedDT, addedDT, id };
     } else if ([UNPIN_LINK, UNPIN_LINK_ROLLBACK].includes(status)) {
       if (doExcludeUnpinning) {
         delete pins[pinMainId];
       } else {
         // Can't delete just yet, need for showing loading.
-        pins[pinMainId] = { status, addedDT, rank, id };
+        pins[pinMainId] = { status, rank, updatedDT, addedDT, id };
       }
     } else if ([
       MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
     ].includes(status)) {
-      pins[pinMainId] = { status, addedDT, rank, id };
+      pins[pinMainId] = { status, rank, updatedDT, addedDT, id };
     } else {
       console.log('getPins: unsupport pin status: ', status);
     }

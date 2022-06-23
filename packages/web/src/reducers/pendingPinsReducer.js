@@ -55,7 +55,7 @@ const pendingPinsReducer = (state = initialState, action) => {
   }
 
   if (action.type === MOVE_PINNED_LINK_ADD_STEP_COMMIT) {
-    const { addedDT, id, fromRank } = action.meta;
+    const { updatedDT, id } = action.meta;
 
     const newState = { ...state }
     delete newState[id];
@@ -63,7 +63,7 @@ const pendingPinsReducer = (state = initialState, action) => {
     return loop(
       newState,
       Cmd.run(
-        movePinnedLinkDeleteStep(fromRank, addedDT, id),
+        movePinnedLinkDeleteStep(id, updatedDT),
         { args: [Cmd.dispatch, Cmd.getState] }
       ),
     );

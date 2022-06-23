@@ -1746,7 +1746,7 @@ export const updateIapRefreshStatus = (status) => {
 
 export const pinLinks = (ids) => async (dispatch, getState) => {
   const state = getState();
-  const purchases = getState().settings.purchases;
+  const purchases = state.settings.purchases;
 
   if (!doEnableExtraFeatures(purchases)) {
     dispatch(updatePopup(PAYWALL_POPUP, true));
@@ -1771,7 +1771,7 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
   const pins = [];
   for (const id of ids) {
     const nextRank = lexoRank.toString().slice(2).replace(':', '_');
-    pins.push({ rank: nextRank, addedDT: now, id });
+    pins.push({ rank: nextRank, updatedDT: now, addedDT: now, id });
 
     lexoRank = lexoRank.genNext();
     now += 1;
@@ -1802,9 +1802,9 @@ export const unpinLinks = (ids) => async (dispatch, getState) => {
     // when move, old paths might not be delete, so when unpin,
     //   need to delete them all, can't use getPins and no break here.
     for (const fpath of pinFPaths) {
-      const { rank, addedDT, id } = extractPinFPath(fpath);
+      const { rank, updatedDT, addedDT, id } = extractPinFPath(fpath);
       const pinMainId = getMainId(id);
-      if (linkMainId === pinMainId) pins.push({ rank, addedDT, id });
+      if (pinMainId === linkMainId) pins.push({ rank, updatedDT, addedDT, id });
     }
   }
 
@@ -1898,9 +1898,10 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
   }
   nextRank = nextRank.slice(2).replace(':', '_');
 
-  const { addedDT, rank: fromRank } = pinnedValues[i].pin;
+  const now = Date.now();
+  const { addedDT } = pinnedValues[i].pin;
 
-  const payload = { rank: nextRank, addedDT, id, fromRank };
+  const payload = { rank: nextRank, updatedDT: now, addedDT, id };
   dispatch({
     type: MOVE_PINNED_LINK_ADD_STEP,
     payload,
@@ -1914,17 +1915,32 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
   });
 };
 
-export const movePinnedLinkDeleteStep = (rank, addedDT, id) => async (
+export const movePinnedLinkDeleteStep = (id, currentUpdatedDT) => async (
   dispatch, getState
 ) => {
+  const state = getState();
+  const pinFPaths = getPinFPaths(state);
 
-  const payload = { rank, addedDT, id };
+  const linkMainId = getMainId(id);
 
+  // In case of moving a pinned link, the link id is changed but the pin id is not.
+  // Pin still works because main id is used so when delete, need to use main id too.
+  // Delete the same main id except the current updatedDT.
+  const pins = [];
+  for (const fpath of pinFPaths) {
+    const { rank, updatedDT, addedDT, id } = extractPinFPath(fpath);
+    const pinMainId = getMainId(id);
+    if (pinMainId === linkMainId && updatedDT !== currentUpdatedDT) {
+      pins.push({ rank, updatedDT, addedDT, id });
+    }
+  }
+
+  const payload = { pins };
   dispatch({
     type: MOVE_PINNED_LINK_DELETE_STEP,
     meta: {
       offline: {
-        effect: { method: UNPIN_LINK, params: { pins: [payload] } },
+        effect: { method: UNPIN_LINK, params: payload },
         commit: { type: MOVE_PINNED_LINK_DELETE_STEP_COMMIT },
         rollback: { type: MOVE_PINNED_LINK_DELETE_STEP_ROLLBACK },
       },
