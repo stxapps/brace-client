@@ -817,6 +817,8 @@ This and CI/CD are very important!
   + New list name, edit list name, move list name, delete list name
   + Popups: CardMenu, ConfirmDelete, MoveTo, ListMenu
   + Settings
+  + Purchase
+  + Pin, unpin, move pin
 * brace-server-worker
 ** Creat an instance
 - us-central1-a

@@ -3,9 +3,9 @@ import { REHYDRATE } from 'redux-persist/constants';
 import { UPDATE_SCROLL_PANEL } from '../types/actionTypes';
 
 const initialState = {
-  contentHeight: null,
-  layoutHeight: null,
-  pageYOffset: null,
+  contentHeight: 0,
+  layoutHeight: 0,
+  pageYOffset: 0,
 };
 
 const scrollPanelReducer = (state = initialState, action) => {
