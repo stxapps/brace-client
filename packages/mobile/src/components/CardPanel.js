@@ -53,9 +53,9 @@ class CardPanel extends React.PureComponent {
   }
 
   onScrollEnd = (e) => {
-    const contentHeight = e.nativeEvent.contentSize.height || 0;
-    const layoutHeight = e.nativeEvent.layoutMeasurement.height || 0;
-    const pageYOffset = e.nativeEvent.contentOffset.y || 0;
+    const contentHeight = e.nativeEvent.contentSize.height;
+    const layoutHeight = e.nativeEvent.layoutMeasurement.height;
+    const pageYOffset = e.nativeEvent.contentOffset.y;
     this.props.updateScrollPanel(contentHeight, layoutHeight, pageYOffset);
   }
 

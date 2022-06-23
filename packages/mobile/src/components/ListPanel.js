@@ -47,9 +47,9 @@ const ListPanel = (props) => {
   }, []);
 
   const onScrollEnd = useCallback((e) => {
-    const contentHeight = e.nativeEvent.contentSize.height || 0;
-    const layoutHeight = e.nativeEvent.layoutMeasurement.height || 0;
-    const pageYOffset = e.nativeEvent.contentOffset.y || 0;
+    const contentHeight = e.nativeEvent.contentSize.height;
+    const layoutHeight = e.nativeEvent.layoutMeasurement.height;
+    const pageYOffset = e.nativeEvent.contentOffset.y;
     dispatch(updateScrollPanel(contentHeight, layoutHeight, pageYOffset));
   }, [dispatch]);
 

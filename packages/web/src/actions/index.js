@@ -377,6 +377,10 @@ export const updateLinkEditor = (values) => {
 };
 
 export const updateScrollPanel = (contentHeight, layoutHeight, pageYOffset) => {
+  if (!isNumber(contentHeight)) contentHeight = 0;
+  if (!isNumber(layoutHeight)) layoutHeight = 0;
+  if (!isNumber(pageYOffset)) pageYOffset = 0;
+
   return {
     type: UPDATE_SCROLL_PANEL,
     payload: { contentHeight, layoutHeight, pageYOffset },
