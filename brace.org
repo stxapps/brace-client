@@ -813,11 +813,12 @@ This and CI/CD are very important!
     ~ bottom bar, top bar
   + Bulk edit: move notes, permanently delete notes
   + Search
+    ~ add new link, move/delete link, bulk edit
+    ~ pin, unpin, move pin
   + List list names, change list name
   + New list name, edit list name, move list name, delete list name
-  + Popups: CardMenu, ConfirmDelete, MoveTo, ListMenu
-  + Settings
-  + Purchase
+  + Popups: CardMenu, ConfirmDelete, MoveTo, ListsMenu
+  + Settings: account, subscription, data, lists, misc, about
   + Pin, unpin, move pin
 * brace-server-worker
 ** Creat an instance
