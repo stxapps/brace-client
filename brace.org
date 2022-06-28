@@ -870,6 +870,7 @@ This and CI/CD are very important!
 - Sandbox Testers
   + Use an email address that has never been used as an Apple ID or used to purchase iTunes or App Store content. Consider creating a dedicated email address for each sandbox tester.
 - Add server url to URL for App Store Server Notifications in General -> App information -> v2
+- Add custom Terms of Service (EULA)
 ** Setup in XCode
 - Add In-App Purchase capability in Xcode
 - When testing in-app purchases in the sandbox environment, make sure you’re running a development-signed build of your app; production-signed builds use the production environment.
