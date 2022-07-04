@@ -5,7 +5,7 @@ import {
 import axios from 'axios';
 //import RNFS from 'react-native-fs';
 import * as RNIap from 'react-native-iap';
-import { LexoRank } from "@wewatch/lexorank";
+import { LexoRank } from '@wewatch/lexorank';
 
 import userSession from '../userSession';
 import {
@@ -1593,8 +1593,8 @@ export const unpinLinks = (ids) => async (dispatch, getState) => {
   const pinFPaths = getPinFPaths(state);
 
   const pins = [];
-  for (const id of ids) {
-    const linkMainId = getMainId(id);
+  for (const linkId of ids) {
+    const linkMainId = getMainId(linkId);
 
     // when move, old paths might not be delete, so when unpin,
     //   need to delete them all, can't use getPins and no break here.
@@ -1636,7 +1636,7 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
 
   const sortedLinks = getSortedLinks(links, listName, doDescendingOrder);
   if (!sortedLinks) {
-    console.log(`No links found for link id: `, id);
+    console.log('No links found for link id: ', id);
     return;
   }
 
@@ -1661,15 +1661,15 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
     if (i === 1) {
       const pRank = pinnedValues[i - 1].pin.rank;
 
-      const lexoRank = LexoRank.parse(`0|${pRank.replace('_', ':')}`)
+      const lexoRank = LexoRank.parse(`0|${pRank.replace('_', ':')}`);
 
       nextRank = lexoRank.genPrev().toString();
     } else {
       const pRank = pinnedValues[i - 1].pin.rank;
       const ppRank = pinnedValues[i - 2].pin.rank;
 
-      const pLexoRank = LexoRank.parse(`0|${pRank.replace('_', ':')}`)
-      const ppLexoRank = LexoRank.parse(`0|${ppRank.replace('_', ':')}`)
+      const pLexoRank = LexoRank.parse(`0|${pRank.replace('_', ':')}`);
+      const ppLexoRank = LexoRank.parse(`0|${ppRank.replace('_', ':')}`);
 
       nextRank = ppLexoRank.between(pLexoRank).toString();
     }
@@ -1678,15 +1678,15 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
     if (i === pinnedValues.length - 2) {
       const nRank = pinnedValues[i + 1].pin.rank;
 
-      const lexoRank = LexoRank.parse(`0|${nRank.replace('_', ':')}`)
+      const lexoRank = LexoRank.parse(`0|${nRank.replace('_', ':')}`);
 
       nextRank = lexoRank.genNext().toString();
     } else {
       const nRank = pinnedValues[i + 1].pin.rank;
       const nnRank = pinnedValues[i + 2].pin.rank;
 
-      const nLexoRank = LexoRank.parse(`0|${nRank.replace('_', ':')}`)
-      const nnLexoRank = LexoRank.parse(`0|${nnRank.replace('_', ':')}`)
+      const nLexoRank = LexoRank.parse(`0|${nRank.replace('_', ':')}`);
+      const nnLexoRank = LexoRank.parse(`0|${nnRank.replace('_', ':')}`);
 
       nextRank = nLexoRank.between(nnLexoRank).toString();
     }
@@ -1712,13 +1712,13 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
   });
 };
 
-export const movePinnedLinkDeleteStep = (id, currentUpdatedDT) => async (
+export const movePinnedLinkDeleteStep = (linkId, currentUpdatedDT) => async (
   dispatch, getState
 ) => {
   const state = getState();
   const pinFPaths = getPinFPaths(state);
 
-  const linkMainId = getMainId(id);
+  const linkMainId = getMainId(linkId);
 
   // In case of moving a pinned link, the link id is changed but the pin id is not.
   // Pin still works because main id is used so when delete, need to use main id too.

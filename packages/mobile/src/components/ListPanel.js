@@ -56,7 +56,7 @@ const ListPanel = (props) => {
   const onEndReached = useCallback(() => {
     if (!hasMore || hasFetchedMore || isFetchingMore) return;
     dispatch(fetchMore());
-  }, [hasMore, isFetchingMore, dispatch]);
+  }, [hasMore, hasFetchedMore, isFetchingMore, dispatch]);
 
   const onFetchMoreBtnClick = useCallback(() => {
     dispatch(fetchMore());
@@ -96,7 +96,7 @@ const ListPanel = (props) => {
         </View>
       </TouchableOpacity>
     );
-  }, [onFetchMoreBtnClick]);
+  }, [onUpdateFetchedBtnClick]);
 
   const renderItem = useCallback(({ item }) => {
     return <ListItem link={item} />;
@@ -137,8 +137,8 @@ const ListPanel = (props) => {
 
     throw new Error(`Invalid item.id: ${item.id}`);
   }, [
-    links, isFetchingMore, getItemId, renderItem, renderEmpty, renderFetchMoreBtn,
-    renderFetchingMore, safeAreaWidth,
+    links, hasFetchedMore, isFetchingMore, getItemId, renderItem, renderEmpty,
+    renderFetchMoreBtn, renderFetchingMore, renderUpdateFetchedBtn, safeAreaWidth,
   ]);
 
   useEffect(() => {

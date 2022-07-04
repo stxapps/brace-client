@@ -111,8 +111,8 @@ export const canvasFMV = /** @type {any} */ ({
 });
 
 export const sideBarOverlayFMV = {
-  hidden: { opacity: 0, transition: { ease: 'easeIn', duration: 0.2 }, },
-  visible: { opacity: 1, transition: { ease: 'easeOut', duration: 0.2 }, },
+  hidden: { opacity: 0, transition: { ease: 'easeIn', duration: 0.2 } },
+  visible: { opacity: 1, transition: { ease: 'easeOut', duration: 0.2 } },
 };
 
 export const sideBarFMV = {

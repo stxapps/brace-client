@@ -57,7 +57,7 @@ const pendingPinsReducer = (state = initialState, action) => {
   if (action.type === MOVE_PINNED_LINK_ADD_STEP_COMMIT) {
     const { updatedDT, id } = action.meta;
 
-    const newState = { ...state }
+    const newState = { ...state };
     delete newState[id];
 
     return loop(

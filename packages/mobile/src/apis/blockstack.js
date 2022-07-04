@@ -39,11 +39,11 @@ export const effect = async (effectObj, _action) => {
   }
 
   if (method === PIN_LINK) {
-    return pinLink(params);
+    return putPins(params);
   }
 
   if (method === UNPIN_LINK) {
-    return unpinLink(params);
+    return deletePins(params);
   }
 
   throw new Error(`${method} is invalid for blockstack effect.`);
@@ -341,7 +341,7 @@ export const canDeleteListNames = async (listNames) => {
   return canDeletes;
 };
 
-const pinLink = async (params) => {
+const putPins = async (params) => {
   const { pins } = params;
 
   const fpaths = [], contents = [];
@@ -354,7 +354,7 @@ const pinLink = async (params) => {
   return { pins };
 };
 
-const unpinLink = async (params) => {
+const deletePins = async (params) => {
 
   const { pins } = params;
   const pinFPaths = pins.map(pin => {

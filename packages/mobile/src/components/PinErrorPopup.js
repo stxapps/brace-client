@@ -7,8 +7,8 @@ import { cancelDiedPins } from '../actions';
 import {
   PIN_LINK_ROLLBACK, UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
 } from '../types/actionTypes';
-import { DOMAIN_NAME, HASH_SUPPORT, SM_WIDTH } from '../types/const'
-import { tailwind } from '../stylesheets/tailwind';;
+import { DOMAIN_NAME, HASH_SUPPORT, SM_WIDTH } from '../types/const';
+import { tailwind } from '../stylesheets/tailwind';
 
 import { useSafeAreaFrame } from '.';
 

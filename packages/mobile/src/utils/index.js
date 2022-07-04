@@ -1074,7 +1074,7 @@ export const getFilteredLinks = (links, listName) => {
     STATUS,
     [
       ADDED, MOVED, ADDING, MOVING,
-      DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING
+      DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
     ]
   );
 

@@ -225,7 +225,7 @@ class SettingsPopup extends React.PureComponent {
           inputRange: [0, 1],
           outputRange: [SIDE_BAR_WIDTH * -1, 0],
           extrapolate: 'clamp',
-        })
+        }),
       }],
     };
     const sidebarCloseBtnStyle = { opacity: this.sidebarAnim };
