@@ -1286,10 +1286,11 @@ const parseImportedFile = (dispatch, text) => {
 
         if (obj.path.startsWith('pins')) {
           const arr = obj.path.split('/');
-          if (arr.length !== 4) continue;
+          if (arr.length !== 5) continue;
           if (arr[0] !== 'pins') continue;
 
-          const addedDT = arr[2], fname = arr[3];
+          const updatedDT = arr[2], addedDT = arr[3], fname = arr[4];
+          if (!(/^\d+$/.test(updatedDT))) continue;
           if (!(/^\d+$/.test(addedDT))) continue;
           if (!fname.endsWith('.json')) continue;
 
