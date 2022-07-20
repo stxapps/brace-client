@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimateSharedLayout } from "framer-motion";
 
@@ -8,7 +8,7 @@ import {
   MD_WIDTH, PC_100,
 } from '../types/const';
 import { getLinks, getIsFetchingMore } from '../selectors';
-import { addRem, getWindowHeight, getWindowScrollHeight, throttle } from '../utils';
+import { addRem, getWindowHeight, getWindowScrollHeight, debounce } from '../utils';
 import { cardItemFMV } from '../types/animConfigs';
 import vars from '../vars';
 
@@ -27,7 +27,6 @@ const ListPanel = (props) => {
   );
   const isFetchingMore = useSelector(state => getIsFetchingMore(state));
   const listChangedCount = useSelector(state => state.display.listChangedCount);
-  const doPreventFetchMore = useRef(false);
   const dispatch = useDispatch();
 
   let links = useSelector(getLinks);
@@ -36,7 +35,7 @@ const ListPanel = (props) => {
     links = [];
   }
 
-  const updateScrollY = throttle(() => {
+  const updateScrollY = useCallback(() => {
     // https://gist.github.com/enqtran/25c6b222a73dc497cc3a64c090fb6700
     const scrollHeight = getWindowScrollHeight()
     const windowHeight = getWindowHeight();
@@ -47,14 +46,10 @@ const ListPanel = (props) => {
     vars.scrollPanel.pageYOffset = scrollTop;
 
     if (!hasMore || hasFetchedMore || isFetchingMore) return;
-    if (doPreventFetchMore.current) return;
 
     const windowBottom = windowHeight + scrollTop;
-    if (windowBottom > (scrollHeight * 0.96)) {
-      doPreventFetchMore.current = true;
-      dispatch(fetchMore());
-    }
-  }, 16);
+    if (windowBottom > (scrollHeight * 0.96)) dispatch(fetchMore());
+  }, [hasMore, hasFetchedMore, isFetchingMore, dispatch]);
 
   const onFetchMoreBtnClick = () => {
     dispatch(fetchMore());
@@ -118,16 +113,15 @@ const ListPanel = (props) => {
   }, [listChangedCount]);
 
   useEffect(() => {
-    window.addEventListener('scroll', updateScrollY);
+    // throttle may refer to stale updateScrollY with old isFetchingMore,
+    //   use debounce with immediate = true to prevent duplicate fetchMore.
+    const listener = debounce(updateScrollY, 16, true);
 
+    window.addEventListener('scroll', listener);
     return () => {
-      window.removeEventListener('scroll', updateScrollY);
+      window.removeEventListener('scroll', listener);
     };
   }, [updateScrollY]);
-
-  useEffect(() => {
-    doPreventFetchMore.current = false;
-  });
 
   let fetchMoreBtn;
   if (!hasMore) fetchMoreBtn = null;

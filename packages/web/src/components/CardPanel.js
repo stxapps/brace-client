@@ -23,22 +23,17 @@ class CardPanel extends React.PureComponent {
     super(props);
 
     this.updateScrollY = throttle(this.updateScrollY, 16);
-    this.doPreventFetchMore = false;
   }
 
   componentDidMount() {
     window.scrollTo(0, 0);
     window.addEventListener('scroll', this.updateScrollY);
-
-    this.doPreventFetchMore = false;
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.listChangedCount !== prevProps.listChangedCount) {
       window.scrollTo(0, 0);
     }
-
-    this.doPreventFetchMore = false;
   }
 
   componentWillUnmount() {
@@ -55,16 +50,11 @@ class CardPanel extends React.PureComponent {
     vars.scrollPanel.layoutHeight = windowHeight;
     vars.scrollPanel.pageYOffset = scrollTop;
 
-    // if has more, not fetching more, and at the bottom
     const { hasMoreLinks, hasFetchedMore, isFetchingMore } = this.props;
     if (!hasMoreLinks || hasFetchedMore || isFetchingMore) return;
-    if (this.doPreventFetchMore) return;
 
     const windowBottom = windowHeight + scrollTop;
-    if (windowBottom > (scrollHeight * 0.96)) {
-      this.doPreventFetchMore = true;
-      this.props.fetchMore();
-    }
+    if (windowBottom > (scrollHeight * 0.96)) this.props.fetchMore();
   }
 
   onFetchMoreBtnClick = () => {
