@@ -2,16 +2,18 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { moveListName, updateListNameEditors, updatePopup } from '../actions';
+import {
+  moveListName, updateListNameEditors, updatePopup, updateListNamesMode,
+} from '../actions';
 import {
   SETTINGS_LISTS_MENU_POPUP, LIST_NAMES_POPUP, MY_LIST, TRASH, ARCHIVE, MODE_EDIT,
-  SWAP_LEFT, SWAP_RIGHT,
+  SWAP_LEFT, SWAP_RIGHT, LIST_NAMES_MODE_MOVE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
 import { makeGetListNameEditor } from '../selectors';
 import { popupBgFMV, popupFMV } from '../types/animConfigs';
 
-import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
 import { useSafeAreaFrame } from '.';
+import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
 
 const SettingsListsMenuPopup = () => {
 
@@ -65,6 +67,10 @@ const SettingsListsMenuPopup = () => {
   const onMoveToBtnClick = () => {
     if (didClick.current) return;
     onCancelBtnClick();
+
+    dispatch(updateListNamesMode(
+      LIST_NAMES_MODE_MOVE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP,
+    ));
     dispatch(updatePopup(LIST_NAMES_POPUP, true, anchorPosition));
     didClick.current = true;
   };

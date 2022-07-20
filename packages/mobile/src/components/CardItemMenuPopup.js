@@ -6,13 +6,15 @@ import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-m
 import Svg, { Path } from 'react-native-svg';
 import Clipboard from '@react-native-community/clipboard';
 
-import { updatePopup, updateSelectingLinkId, moveLinks, pinLinks } from '../actions';
 import {
-  MY_LIST, TRASH, ADDING, MOVING,
-  OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
-  PIN, MANAGE_PIN, PINNED,
-  CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP, PIN_MENU_POPUP, CONFIRM_DELETE_POPUP,
-  LG_WIDTH, LAYOUT_LIST,
+  updatePopup, updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction,
+  updateListNamesMode,
+} from '../actions';
+import {
+  MY_LIST, TRASH, ADDING, MOVING, OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
+  MOVE_TO, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP,
+  PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
+  DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
 import { getListNameMap, makeGetPinStatus } from '../selectors';
 import {
@@ -95,12 +97,16 @@ class CardItemMenuPopup extends React.PureComponent {
       LayoutAnimation.configureNext(animConfig);
       this.props.moveLinks(MY_LIST, [id]);
     } else if (text === DELETE) {
+      this.props.updateDeleteAction(DELETE_ACTION_LINK_COMMANDS);
       this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
       return false;
     } else if (text === MOVE_TO) {
-      this.props.updateSelectingLinkId(id);
-
       this.menuBtn.current.measure((_fx, _fy, width, height, x, y) => {
+        this.props.updateSelectingLinkId(id);
+        this.props.updateListNamesMode(
+          LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
+        );
+
         const newX = x + 8;
         const newY = y + 12;
         const newWidth = width - 8 - 12;
@@ -110,13 +116,17 @@ class CardItemMenuPopup extends React.PureComponent {
           top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
         };
         this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
+        this.props.updatePopup(this.props.link.id, false);
       });
+
+      this.didClick = true;
+      return true;
     } else if (text === PIN) {
       this.props.pinLinks([id]);
     } else if (text === MANAGE_PIN) {
-      this.props.updateSelectingLinkId(id);
-
       this.menuBtn.current.measure((_fx, _fy, width, height, x, y) => {
+        this.props.updateSelectingLinkId(id);
+
         const newX = x + 8;
         const newY = y + 12;
         const newWidth = width - 8 - 12;
@@ -126,7 +136,11 @@ class CardItemMenuPopup extends React.PureComponent {
           top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
         };
         this.props.updatePopup(PIN_MENU_POPUP, true, rect);
+        this.props.updatePopup(this.props.link.id, false);
       });
+
+      this.didClick = true;
+      return true;
     } else {
       console.log(`In CardItemMenuPopup, invalid text: ${text}`);
     }
@@ -224,6 +238,9 @@ const makeMapStateToProps = () => {
   return mapStateToProps;
 };
 
-const mapDispatchToProps = { updatePopup, updateSelectingLinkId, moveLinks, pinLinks };
+const mapDispatchToProps = {
+  updatePopup, updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction,
+  updateListNamesMode,
+};
 
 export default connect(makeMapStateToProps, mapDispatchToProps)(withSafeAreaContext(CardItemMenuPopup));

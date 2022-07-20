@@ -9,9 +9,8 @@ import Svg, { Path } from 'react-native-svg';
 import { updateSettingsPopup, updateSettingsViewId } from '../actions';
 import {
   SETTINGS_VIEW_ACCOUNT, SETTINGS_VIEW_IAP, SETTINGS_VIEW_IAP_RESTORE,
-  SETTINGS_VIEW_DATA, SETTINGS_VIEW_DATA_EXPORT,
-  SETTINGS_VIEW_DATA_DELETE, SETTINGS_VIEW_LISTS, SETTINGS_VIEW_MISC,
-  SETTINGS_VIEW_ABOUT,
+  SETTINGS_VIEW_DATA, SETTINGS_VIEW_DATA_DELETE, SETTINGS_VIEW_LISTS,
+  SETTINGS_VIEW_MISC, SETTINGS_VIEW_ABOUT,
 } from '../types/const';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
@@ -21,9 +20,7 @@ import { withSafeAreaContext } from '.';
 
 import SettingsPopupAccount from './SettingsPopupAccount';
 import { SettingsPopupIap, SettingsPopupIapRestore } from './SettingsPopupIap';
-import {
-  SettingsPopupData, SettingsPopupDataExport, SettingsPopupDataDelete,
-} from './SettingsPopupData';
+import { SettingsPopupData, SettingsPopupDataDelete } from './SettingsPopupData';
 import SettingsPopupLists from './SettingsPopupLists';
 import SettingsPopupMisc from './SettingsPopupMisc';
 import SettingsPopupAbout from './SettingsPopupAbout';
@@ -32,7 +29,6 @@ const VIEW_ACCOUNT = SETTINGS_VIEW_ACCOUNT;
 const VIEW_IAP = SETTINGS_VIEW_IAP;
 const VIEW_IAP_RESTORE = SETTINGS_VIEW_IAP_RESTORE;
 const VIEW_DATA = SETTINGS_VIEW_DATA;
-const VIEW_DATA_EXPORT = SETTINGS_VIEW_DATA_EXPORT;
 const VIEW_DATA_DELETE = SETTINGS_VIEW_DATA_DELETE;
 const VIEW_LISTS = SETTINGS_VIEW_LISTS;
 const VIEW_MISC = SETTINGS_VIEW_MISC;
@@ -147,7 +143,7 @@ class SettingsPopup extends React.PureComponent {
   }
 
   isViewSelected = (viewId) => {
-    const dataViews = [VIEW_DATA, VIEW_DATA_EXPORT, VIEW_DATA_DELETE];
+    const dataViews = [VIEW_DATA, VIEW_DATA_DELETE];
     if (viewId === VIEW_DATA) {
       return dataViews.includes(this.props.viewId);
     }
@@ -200,10 +196,6 @@ class SettingsPopup extends React.PureComponent {
 
   onBackToIapViewBtnClick = () => {
     this.props.updateSettingsViewId(VIEW_IAP, false, null, true);
-  }
-
-  onToExportAllDataViewBtnClick = () => {
-    this.props.updateSettingsViewId(VIEW_DATA_EXPORT);
   }
 
   onToDeleteAllDataViewBtnClick = () => {
@@ -424,15 +416,7 @@ class SettingsPopup extends React.PureComponent {
   renderDataView() {
     const content = (
       /* @ts-ignore */
-      <SettingsPopupData onSidebarOpenBtnClick={this.onSidebarOpenBtnClick} onToExportAllDataViewBtnClick={this.onToExportAllDataViewBtnClick} onToDeleteAllDataViewBtnClick={this.onToDeleteAllDataViewBtnClick} />
-    );
-    return this._render(content);
-  }
-
-  renderExportAllDataView() {
-    const content = (
-      /* @ts-ignore */
-      <SettingsPopupDataExport onBackToDataViewBtnClick={this.onBackToDataViewBtnClick} />
+      <SettingsPopupData onSidebarOpenBtnClick={this.onSidebarOpenBtnClick} onToDeleteAllDataViewBtnClick={this.onToDeleteAllDataViewBtnClick} />
     );
     return this._render(content);
   }
@@ -477,7 +461,6 @@ class SettingsPopup extends React.PureComponent {
     else if (viewId === VIEW_IAP) return this.renderIapView();
     else if (viewId === VIEW_IAP_RESTORE) return this.renderRestoreIapView();
     else if (viewId === VIEW_DATA) return this.renderDataView();
-    else if (viewId === VIEW_DATA_EXPORT) return this.renderExportAllDataView();
     else if (viewId === VIEW_DATA_DELETE) return this.renderDeleteAllDataView();
     else if (viewId === VIEW_LISTS) return this.renderListsView();
     else if (viewId === VIEW_MISC) return this.renderMiscView();

@@ -578,7 +578,7 @@ const _SettingsPopupIapRestore = (props) => {
       </View>
       <Text style={tailwind('mt-6 text-base text-gray-500 font-normal leading-6.5')}>It may take several minutes to restore your purchases.</Text>
       {actionPanel}
-    </View >
+    </View>
   );
 };
 

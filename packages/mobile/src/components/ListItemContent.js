@@ -158,11 +158,15 @@ const ListItemContent = (props) => {
         </TouchableOpacity>
       </View>
       <View style={tailwind('flex-1 min-w-0 py-3.5 pl-3 sm:pl-4', safeAreaWidth)}>
-        <Text onPress={() => Linking.openURL(ensureContainUrlProtocol(url))} style={tailwind('text-sm text-gray-800 font-semibold text-left leading-5')} numberOfLines={3} ellipsizeMode="tail">{title}</Text>
+        <TouchableOpacity activeOpacity={1.0} onPress={() => Linking.openURL(ensureContainUrlProtocol(url))} >
+          <Text style={tailwind('text-sm text-gray-800 font-semibold text-left leading-5')} numberOfLines={3} ellipsizeMode="tail">{title}</Text>
+        </TouchableOpacity>
         <View style={tailwind('flex-row justify-start items-center pt-0.5')}>
           {renderFavicon()}
           <View style={tailwind('flex-shrink flex-grow min-w-0')}>
-            <Text onPress={() => Linking.openURL(origin)} style={tailwind('pl-2 text-sm text-gray-500 font-normal text-left')} numberOfLines={1} ellipsizeMode="tail">{host}</Text>
+            <TouchableOpacity activeOpacity={1.0} onPress={() => Linking.openURL(origin)} >
+              <Text style={tailwind('pl-2 text-sm text-gray-500 font-normal text-left')} numberOfLines={1} ellipsizeMode="tail">{host}</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>

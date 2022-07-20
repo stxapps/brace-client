@@ -3,9 +3,11 @@ import { connect } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import {
-  updatePopup, deleteLinks, updateBulkEdit, deleteListNames, updateDeletingListName,
+  updatePopup, deleteLinks, updateBulkEdit, deleteListNames,
 } from '../actions';
-import { CONFIRM_DELETE_POPUP, SM_WIDTH } from '../types/const';
+import {
+  CONFIRM_DELETE_POPUP, DELETE_ACTION_LINK_COMMANDS, DELETE_ACTION_LIST_NAME, SM_WIDTH,
+} from '../types/const';
 import { getPopupLink } from '../selectors';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
@@ -39,42 +41,41 @@ class ConfirmDeletePopup extends React.Component {
     if (this.didClick) return;
     this.didClick = true;
 
-    const { popupLink, selectedLinkIds, deletingListName } = this.props;
+    const { deleteAction, popupLink, selectedLinkIds, deletingListName } = this.props;
 
-    const v1 = popupLink ? 1 : 0;
-    const v2 = selectedLinkIds.length > 0 ? 1 : 0;
-    const v3 = deletingListName ? 1 : 0;
-    if (v1 + v2 + v3 !== 1) {
-      throw new Error(`Invalid popupLink: ${popupLink}, selectedLinkIds: ${selectedLinkIds}, and deletingListName: ${deletingListName}`);
-    }
+    if (deleteAction === DELETE_ACTION_LINK_COMMANDS) {
+      const v1 = popupLink ? 1 : 0;
+      const v2 = selectedLinkIds.length > 0 ? 1 : 0;
+      if (v1 + v2 !== 1) {
+        console.log(`In ConfirmDeletePopup, invalid popupLink: ${popupLink} and selectedLinkIds: ${selectedLinkIds}`);
+        return;
+      }
 
-    if (popupLink) {
-      this.props.deleteLinks([popupLink.id]);
-      this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
-      this.props.updatePopup(popupLink.id, false);
-      return;
-    }
+      if (popupLink) {
+        this.props.deleteLinks([popupLink.id]);
+        this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+        this.props.updatePopup(popupLink.id, false);
+        return;
+      }
 
-    if (selectedLinkIds.length > 0) {
-      this.props.deleteLinks(selectedLinkIds);
-      this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
-      this.props.updateBulkEdit(false);
-      return;
-    }
+      if (selectedLinkIds.length > 0) {
+        this.props.deleteLinks(selectedLinkIds);
+        this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+        this.props.updateBulkEdit(false);
+        return;
+      }
 
-    if (deletingListName) {
+      console.log(`In ConfirmDeletePopup, invalid popupLink: ${popupLink} and selectedLinkIds: ${selectedLinkIds}`);
+    } else if (deleteAction === DELETE_ACTION_LIST_NAME) {
       this.props.deleteListNames([deletingListName]);
       this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
-      this.props.updateDeletingListName(null);
-      return;
+    } else {
+      console.log('In ConfirmDeletePopup, invalid deleteAction: ', deleteAction);
     }
-
-    throw new Error('Must not reach here!');
   }
 
   onConfirmDeleteCancelBtnClick = () => {
     this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
-    this.props.updateDeletingListName(null);
   }
 
   render() {
@@ -128,6 +129,7 @@ class ConfirmDeletePopup extends React.Component {
 const mapStateToProps = (state, props) => {
   return {
     isConfirmDeletePopupShown: state.display.isConfirmDeletePopupShown,
+    deleteAction: state.display.deleteAction,
     popupLink: getPopupLink(state),
     selectedLinkIds: state.display.selectedLinkIds,
     deletingListName: state.display.deletingListName,
@@ -137,7 +139,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
-  updatePopup, deleteLinks, updateBulkEdit, deleteListNames, updateDeletingListName,
+  updatePopup, deleteLinks, updateBulkEdit, deleteListNames
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ConfirmDeletePopup);

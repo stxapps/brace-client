@@ -57,8 +57,7 @@ const isFetchMoreInterrupted = (state = initialState, action) => {
     return { ...state, [listName]: newObj };
   }
 
-  // These actions might not be called if tryUpdateFetchedMore doesn't do update.
-  // So the data would leave here until sign out but should be fine.
+  // Need to clear the value so isFetchingMore in selector return the right value!
   if (
     action.type === CACHE_FETCHED_MORE ||
     action.type === UPDATE_FETCHED_MORE ||

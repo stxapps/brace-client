@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { FlatList, View, Text, TouchableOpacity, Animated } from 'react-native';
 import { Flow } from 'react-native-animated-spinkit';
 
-import { fetchMore, updateFetchedMore, updateScrollPanel } from '../actions';
+import { fetchMore, updateFetchedMore } from '../actions';
 import {
   PC_100, PC_50, PC_33,
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
@@ -14,6 +14,7 @@ import { getLinks, getIsFetchingMore } from '../selectors';
 import { toPx, multiplyPercent } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
+import vars from '../vars';
 
 import { withSafeAreaContext } from '.';
 
@@ -56,7 +57,10 @@ class CardPanel extends React.PureComponent {
     const contentHeight = e.nativeEvent.contentSize.height;
     const layoutHeight = e.nativeEvent.layoutMeasurement.height;
     const pageYOffset = e.nativeEvent.contentOffset.y;
-    this.props.updateScrollPanel(contentHeight, layoutHeight, pageYOffset);
+
+    vars.scrollPanel.contentHeight = contentHeight;
+    vars.scrollPanel.layoutHeight = layoutHeight;
+    vars.scrollPanel.pageYOffset = pageYOffset;
   }
 
   onEndReached = () => {
@@ -296,6 +300,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { fetchMore, updateFetchedMore, updateScrollPanel };
+const mapDispatchToProps = { fetchMore, updateFetchedMore };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(CardPanel));

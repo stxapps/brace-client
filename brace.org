@@ -769,7 +769,7 @@ This and CI/CD are very important!
 - yarn add @welldone-software/why-did-you-render --dev
 - yarn add typescript --dev
 - yarn add react-native-fs <-- NOT USING
-- yarn add @wewatch/lexorank
+- yarn add react-native-iap @wewatch/lexorank
 - change minSdkVersion from 16 to 21 in ./android/build.gradle
 - Allow CORS access on https://brace.to/manifest.json
 - Set up Android deep linking: reactnative.dev/docs/linking and developer.android.com/training/app-links/deep-linking
@@ -829,6 +829,8 @@ This and CI/CD are very important!
 - **Uncheck** Delete boot disk when instance is deleted
 ** Access the instance
 - gcloud compute ssh --zone=us-central1-a brace-server-worker
+- If found WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
+  + exit and run the command explained below the warning i.e. ssh-keygen -f "/home/linux/.ssh/google_compute_known_hosts" -R "compute.8353753600559446613"
 ** Setup the instance
 - sudo apt update, sudo apt upgrade
 - install nvm, nodejs, yarn
@@ -857,6 +859,11 @@ This and CI/CD are very important!
   + Time zone: Indochina Time (ICT)
   + Add the instance to the schedule
 - ref: cloud.google.com/compute/docs/instances/schedule-instance-start-stop
+** Fix disk full
+- df -k
+- likely it's snaps: du -h /var/lib/snapd/snaps
+- remove old snap: sudo bash remove-old-snaps.sh
+- ref: itsfoss.com/free-up-space-ubuntu-linux/
 * Clean up GCloud DataStore
 - Use GCloud console
 - Delete error extracted results
@@ -888,6 +895,8 @@ This and CI/CD are very important!
   + Create new service account, choose Editor for the project access. Allow all permissions for financial data, create new key
 ** Setup in Google Cloud
 - Add pub/sub topic: projects/iap-001/topics/playstore-notifications-bracedotto
+  + Justnote can also use this pub/sub topic and the subscriber!
+  + Should name just playstore-notifications as can reuse with others!
 - Change to push with the server endpoint, Set the subscriber to never expire
 - Add permission to the topic
 - Add the topic in Play Console -> Brace.to app -> Monetization setup

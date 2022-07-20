@@ -5,7 +5,11 @@ import { motion, AnimatePresence, useMotionValue, animate } from 'framer-motion'
 import {
   updatePopup, updateBulkEdit, changeListName, moveLinks, moveToListName,
 } from '../actions';
-import { LIST_NAMES_POPUP, TRASH, SM_WIDTH } from '../types/const';
+import {
+  LIST_NAMES_POPUP, TRASH, LIST_NAMES_MODE_CHANGE_LIST_NAME,
+  LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_MODE_MOVE_LIST_NAME,
+  LIST_NAMES_ANIM_TYPE_BMODAL,
+} from '../types/const';
 import { getListNameMap } from '../selectors';
 import {
   getLastHalfHeight, getListNameObj, getLongestListNameDisplayName,
@@ -21,18 +25,19 @@ import { useSafeAreaFrame } from '.';
 // eslint-disable-next-line
 import { Tween } from 'framer-motion';
 
-const MODE_CHANGE_LIST_NAME = 'MODE_CHANGE_LIST_NAME';
-const MODE_MOVE_LINKS = 'MODE_MOVE_LINKS';
-const MODE_MOVE_LIST_NAME = 'MODE_MOVE_LIST_NAME';
+const MODE_CHANGE_LIST_NAME = LIST_NAMES_MODE_CHANGE_LIST_NAME;
+const MODE_MOVE_LINKS = LIST_NAMES_MODE_MOVE_LINKS;
+const MODE_MOVE_LIST_NAME = LIST_NAMES_MODE_MOVE_LIST_NAME;
 
-const ANIM_TYPE_POPUP = 'ANIM_TYPE_POPUP';
-const ANIM_TYPE_BMODAL = 'ANIM_TYPE_BMODAL';
+const ANIM_TYPE_BMODAL = LIST_NAMES_ANIM_TYPE_BMODAL;
 
 const ListNamesPopup = () => {
 
   const { width: safeAreaWidth, height: safeAreaHeight } = useSafeAreaFrame();
   const isShown = useSelector(state => state.display.isListNamesPopupShown);
   const anchorPosition = useSelector(state => state.display.listNamesPopupPosition);
+  const mode = useSelector(state => state.display.listNamesMode);
+  const animType = useSelector(state => state.display.listNamesAnimType);
   const listName = useSelector(state => state.display.listName);
   const selectingLinkId = useSelector(state => state.display.selectingLinkId);
   const selectedLinkIds = useSelector(state => state.display.selectedLinkIds);
@@ -61,18 +66,6 @@ const ListNamesPopup = () => {
   const didClick = useRef(false);
   const dispatch = useDispatch();
 
-  const mode = useMemo(() => {
-    if (derivedSelectingListName) return MODE_MOVE_LIST_NAME;
-    if (derivedSelectedLinkIds.length > 0) return MODE_MOVE_LINKS;
-    if (derivedSelectingLinkId) return MODE_MOVE_LINKS;
-    return MODE_CHANGE_LIST_NAME;
-  }, [derivedSelectingLinkId, derivedSelectedLinkIds, derivedSelectingListName]);
-  const animType = useMemo(() => {
-    if (derivedSelectedLinkIds.length > 0 && safeAreaWidth < SM_WIDTH) {
-      return ANIM_TYPE_BMODAL;
-    }
-    return ANIM_TYPE_POPUP;
-  }, [derivedSelectedLinkIds, safeAreaWidth]);
   const { listNameObj, parent, children } = useMemo(() => {
     const { listNameObj: obj, parent: p } = getListNameObj(
       currentListName, derivedListNameMap
@@ -171,7 +164,7 @@ const ListNamesPopup = () => {
       setDerivedListNameMap(listNameMap);
       setDerivedUpdates(updates);
 
-      if (selectingListName) {
+      if (mode === MODE_MOVE_LIST_NAME) {
         const { parent: p } = getListNameObj(selectingListName, listNameMap);
         setCurrentListName(p);
       } else {

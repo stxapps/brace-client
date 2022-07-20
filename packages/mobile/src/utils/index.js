@@ -1,11 +1,10 @@
+import { createSelector } from 'reselect';
 import Url from 'url-parse';
 
 import {
-  HTTP, HTTPS, WWW, STATUS, ID, ADDED, MOVED, ADDING, MOVING,
-  DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
-  COLOR, PATTERN, IMAGE,
-  BG_COLOR_STYLES, PATTERNS,
-  VALID_URL, NO_URL, ASK_CONFIRM_URL,
+  HTTP, HTTPS, WWW, STATUS, ID, LINKS, SETTINGS, PINS, DOT_JSON, ADDED, MOVED, ADDING,
+  MOVING, DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
+  COLOR, PATTERN, IMAGE, BG_COLOR_STYLES, PATTERNS, VALID_URL, NO_URL, ASK_CONFIRM_URL,
   VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME,
   COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, UNKNOWN,
 } from '../types/const';
@@ -935,7 +934,7 @@ export const createLinkFPath = (listName, id = null) => {
   //   it'll be treated as a new file and fails in putFile
   //   as on server, error is thrown: etag is different.
   //listName = encodeURIComponent(listName);
-  return id === null ? `links/${listName}` : `links/${listName}/${id}.json`;
+  return id === null ? `${LINKS}/${listName}` : `${LINKS}/${listName}/${id}${DOT_JSON}`;
 };
 
 export const extractLinkFPath = (fpath) => {
@@ -950,7 +949,7 @@ export const extractLinkFPath = (fpath) => {
 };
 
 export const createPinFPath = (rank, updatedDT, addedDT, id) => {
-  return `pins/${rank}/${updatedDT}/${addedDT}/${id}.json`;
+  return `${PINS}/${rank}/${updatedDT}/${addedDT}/${id}${DOT_JSON}`;
 };
 
 export const extractPinFPath = (fpath) => {
@@ -964,6 +963,40 @@ export const extractPinFPath = (fpath) => {
   const id = fname.substring(0, dotIndex);
 
   return { rank, updatedDT, addedDT, id, ext };
+};
+
+export const addFPath = (fpaths, fpath) => {
+  if (fpath.startsWith(LINKS)) {
+    const { listName } = extractLinkFPath(fpath);
+    if (!fpaths.linkFPaths[listName]) fpaths.linkFPaths[listName] = [];
+    if (!fpaths.linkFPaths[listName].includes(fpath)) {
+      fpaths.linkFPaths[listName].push(fpath);
+    }
+  } else if (fpath.startsWith(SETTINGS)) {
+    fpaths.settingsFPath = fpath;
+  } else if (fpath.startsWith(PINS)) {
+    if (!fpaths.pinFPaths.includes(fpath)) fpaths.pinFPaths.push(fpath);
+  } else {
+    console.log(`Invalid file path: ${fpath}`);
+  }
+};
+
+export const deleteFPath = (fpaths, fpath) => {
+  if (fpath.startsWith(LINKS)) {
+    const { listName } = extractLinkFPath(fpath);
+    if (fpaths.linkFPaths[listName]) {
+      fpaths.linkFPaths[listName] = fpaths.linkFPaths[listName].filter(el => {
+        return el !== fpath;
+      });
+      if (fpaths.linkFPaths[listName].length === 0) delete fpaths.linkFPaths[listName];
+    }
+  } else if (fpath.startsWith(SETTINGS)) {
+    if (fpaths.settingsFPath === fpath) fpaths.settingsFPath = null;
+  } else if (fpath.startsWith(PINS)) {
+    fpaths.pinFPaths = fpaths.pinFPaths.filter(el => el !== fpath);
+  } else {
+    console.log(`Invalid file path: ${fpath}`);
+  }
 };
 
 export const copyFPaths = (fpaths) => {
@@ -988,7 +1021,7 @@ export const getPinFPaths = (state) => {
   return [];
 };
 
-export const getPins = (pinFPaths, pendingPins, doExcludeUnpinning) => {
+const _getPins = (pinFPaths, pendingPins, doExcludeUnpinning) => {
   const pins = {};
   for (const fpath of pinFPaths) {
     const { rank, updatedDT, addedDT, id } = extractPinFPath(fpath);
@@ -1023,6 +1056,14 @@ export const getPins = (pinFPaths, pendingPins, doExcludeUnpinning) => {
 
   return pins;
 };
+
+/** @type {function(any, any, any): any} */
+export const getPins = createSelector(
+  (...args) => args[0],
+  (...args) => args[1],
+  (...args) => args[2],
+  _getPins,
+);
 
 export const separatePinnedValues = (
   sortedValues, pinFPaths, pendingPins, getValueMainId

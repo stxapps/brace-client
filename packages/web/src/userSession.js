@@ -2,7 +2,7 @@ import { UserSession, AppConfig } from '@stacks/auth'
 import { Storage } from '@stacks/storage';
 import { signECDSA as _signECDSA } from '@stacks/encryption';
 
-import { DOMAIN_NAME, APP_SCOPES } from './types/const';
+import { DOMAIN_NAME, APP_SCOPES, DOT_JSON } from './types/const';
 
 const _appConfig = new AppConfig(APP_SCOPES, DOMAIN_NAME);
 const _userSession = new UserSession({ appConfig: _appConfig });
@@ -33,14 +33,19 @@ const loadUserData = () => {
   return _userSession.loadUserData();
 };
 
-const putFile = (path, content, options = {}) => {
+const putFile = (path, content, options = { dangerouslyIgnoreEtag: true }) => {
+  if (path.endsWith(DOT_JSON)) content = JSON.stringify(content);
+
   const storage = new Storage({ userSession: _userSession });
   return storage.putFile(path, content, options);
 };
 
-const getFile = (path, options = {}) => {
+const getFile = async (path, options = {}) => {
   const storage = new Storage({ userSession: _userSession });
-  return storage.getFile(path, options);
+  let content = /** @type {any} */(await storage.getFile(path, options));
+
+  if (path.endsWith(DOT_JSON)) content = JSON.parse(content);
+  return content;
 };
 
 const deleteFile = (path, options = {}) => {

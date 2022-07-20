@@ -34,10 +34,11 @@ class BottomBar extends React.PureComponent {
 
 const mapStateToProps = (state, props) => {
 
+  const { isListNamesPopupShown, isPinMenuPopupShown } = state.display;
   const popupLink = getPopupLink(state);
 
   return {
-    isShown: popupLink === null && state.display.selectingLinkId === null,
+    isShown: popupLink === null && !isListNamesPopupShown && !isPinMenuPopupShown,
     isBulkEditing: state.display.isBulkEditing,
   };
 };

@@ -17,7 +17,6 @@ import listNameEditorsReducer from './listNameEditorsReducer';
 import iapReducer from './iapReducer';
 import cachedFPathsReducer from './cachedFPathsReducer';
 import pendingPinsReducer from './pendingPinsReducer';
-import scrollPanelReducer from './scrollPanelReducer';
 
 export default combineReducers({
   window: windowReducer,
@@ -37,5 +36,4 @@ export default combineReducers({
   iap: iapReducer,
   cachedFPaths: cachedFPathsReducer,
   pendingPins: pendingPinsReducer,
-  scrollPanel: scrollPanelReducer,
 });

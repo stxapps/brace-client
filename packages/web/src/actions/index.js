@@ -2,18 +2,18 @@
 import {
   RESET_STATE as OFFLINE_RESET_STATE,
 } from '@redux-offline/redux-offline/lib/constants';
-import axios from 'axios';
 import { saveAs } from 'file-saver';
 import { LexoRank } from '@wewatch/lexorank';
 
 import userSession from '../userSession';
+import axios from '../axiosWrapper';
 import {
   batchGetFileWithRetry, batchPutFileWithRetry, batchDeleteFileWithRetry,
 } from '../apis/blockstack';
 import {
   INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW_SIZE,
   UPDATE_WINDOW, UPDATE_HISTORY_POSITION, UPDATE_STACKS_ACCESS, UPDATE_LIST_NAME,
-  UPDATE_POPUP, UPDATE_SEARCH_STRING, UPDATE_LINK_EDITOR, UPDATE_SCROLL_PANEL,
+  UPDATE_POPUP, UPDATE_SEARCH_STRING, UPDATE_LINK_EDITOR,
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED,
@@ -33,7 +33,8 @@ import {
   UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
   UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_SETTINGS_VIEW_ID,
-  UPDATE_LAYOUT_TYPE, REQUEST_PURCHASE, RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT,
+  UPDATE_LAYOUT_TYPE, UPDATE_DELETE_ACTION, UPDATE_LIST_NAMES_MODE,
+  REQUEST_PURCHASE, RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT,
   RESTORE_PURCHASES_ROLLBACK, REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT,
   REFRESH_PURCHASES_ROLLBACK, UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS,
   UPDATE_IAP_PURCHASE_STATUS, UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
@@ -49,7 +50,7 @@ import {
   SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   LIST_NAMES_POPUP, PIN_MENU_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
   SETTINGS_LISTS_MENU_POPUP, ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
-  MY_LIST, TRASH, ARCHIVE, N_LINKS, N_DAYS, SETTINGS_FNAME,
+  MY_LIST, TRASH, ARCHIVE, N_LINKS, N_DAYS, LINKS, SETTINGS, PINS, DOT_JSON,
   ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
   IAP_STATUS_URL, COM_BRACEDOTTO, SIGNED_TEST_STRING, VALID, ACTIVE,
@@ -60,14 +61,14 @@ import {
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam, extractUrl, getUserImageUrl, randomDecor,
   isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
-  isDecorValid, isExtractedResultValid, isListNameObjsValid,
+  doOutboxContainMethods, isDecorValid, isExtractedResultValid, isListNameObjsValid,
   getLatestPurchase, getValidPurchase, doEnableExtraFeatures, createLinkFPath,
   extractPinFPath, getSortedLinks, getPinFPaths, getPins, separatePinnedValues,
   sortLinks, sortWithPins,
-  getWindowScrollHeight, getWindowHeight, doOutboxContainMethods,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
+import vars from '../vars';
 
 export const init = async (store) => {
 
@@ -120,20 +121,23 @@ export const init = async (store) => {
   }
 
   window.addEventListener('beforeunload', (e) => {
-    const settings = store.getState().settings;
-    const snapshotSettings = store.getState().snapshot.settings;
-    if (!isEqual(settings, snapshotSettings)) {
-      e.preventDefault();
-      return e.returnValue = 'It looks like your changes to the settings hasn\'t been saved. Do you want to leave immediately and discard your changes?';
-    }
+    const isUserSignedIn = userSession.isUserSignedIn();
+    if (isUserSignedIn) {
+      const { busy, online, outbox, retryScheduled } = store.getState().offline;
+      if ((busy || (online && outbox.length > 0)) && !retryScheduled) {
+        if (doOutboxContainMethods(outbox, [
+          ADD_LINKS, DELETE_LINKS, UPDATE_SETTINGS, PIN_LINK, UNPIN_LINK,
+        ])) {
+          e.preventDefault();
+          return e.returnValue = 'It looks like your changes is being saved to the server. Do you want to leave immediately and save your changes later?';
+        }
+      }
 
-    const { busy, online, outbox, retryScheduled } = store.getState().offline;
-    if ((busy || (online && outbox.length > 0)) && !retryScheduled) {
-      if (doOutboxContainMethods(outbox, [
-        ADD_LINKS, DELETE_LINKS, UPDATE_SETTINGS, PIN_LINK, UNPIN_LINK,
-      ])) {
+      const settings = store.getState().settings;
+      const snapshotSettings = store.getState().snapshot.settings;
+      if (!isEqual(settings, snapshotSettings)) {
         e.preventDefault();
-        return e.returnValue = 'It looks like your changes is being saved to the server. Do you want to leave immediately and save your changes later?';
+        return e.returnValue = 'It looks like your changes to the settings hasn\'t been saved. Do you want to leave immediately and discard your changes?';
       }
     }
   }, { capture: true });
@@ -319,6 +323,9 @@ export const signOut = () => async (dispatch, getState) => {
   // redux-offline: Empty outbox
   dispatch({ type: OFFLINE_RESET_STATE });
 
+  // clear cached fpaths
+  vars.cachedFPaths.fpaths = null;
+
   // clear all user data!
   dispatch({
     type: RESET_STATE,
@@ -375,17 +382,6 @@ export const updateSearchString = (searchString) => {
 
 export const updateLinkEditor = (values) => {
   return { type: UPDATE_LINK_EDITOR, payload: values };
-};
-
-export const updateScrollPanel = (contentHeight, layoutHeight, pageYOffset) => {
-  if (!isNumber(contentHeight)) contentHeight = 0;
-  if (!isNumber(layoutHeight)) layoutHeight = 0;
-  if (!isNumber(pageYOffset)) pageYOffset = 0;
-
-  return {
-    type: UPDATE_SCROLL_PANEL,
-    payload: { contentHeight, layoutHeight, pageYOffset },
-  };
 };
 
 export const updateStatus = (status) => {
@@ -539,7 +535,7 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
 
   const isBulkEditing = getState().display.isBulkEditing;
   if (!isBulkEditing) {
-    const pageYOffset = window.pageYOffset;
+    const pageYOffset = vars.scrollPanel.pageYOffset;
     if (
       (updateAction === 1 && pageYOffset < 64 / 10 * _links.length) ||
       (updateAction === 2 && pageYOffset === 0 && !isPopupShown(getState()))
@@ -652,9 +648,9 @@ export const tryUpdateFetchedMore = (payload, meta) => async (dispatch, getState
 
   const isBulkEditing = getState().display.isBulkEditing;
   if (!isBulkEditing) {
-    const scrollHeight = getWindowScrollHeight();
-    const windowHeight = getWindowHeight();
-    const windowBottom = windowHeight + window.pageYOffset;
+    const scrollHeight = vars.scrollPanel.contentHeight;
+    const windowHeight = vars.scrollPanel.layoutHeight;
+    const windowBottom = windowHeight + vars.scrollPanel.pageYOffset;
 
     if (windowBottom > (scrollHeight * 0.96) && !isPopupShown(getState())) {
       dispatch(updateFetchedMore(payload, meta));
@@ -719,10 +715,7 @@ export const addLink = (url, listName, doExtractContents) => async (dispatch, ge
 
   // If doExtractContents is false but from settings is true, send pre-extract to server
   if (doExtractContents === false && getState().settings.doExtractContents === true) {
-    axios.post(
-      BRACE_PRE_EXTRACT_URL,
-      { urls: [url] },
-    )
+    axios.post(BRACE_PRE_EXTRACT_URL, { urls: [url] })
       .then(() => { })
       .catch((error) => {
         console.log('Error when contact Brace server to pre-extract contents with links: ', links, ' Error: ', error);
@@ -964,10 +957,7 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
 
   let res;
   try {
-    res = await axios.post(
-      BRACE_EXTRACT_URL,
-      { urls: links.map(link => link.url) },
-    );
+    res = await axios.post(BRACE_EXTRACT_URL, { urls: links.map(link => link.url) });
   } catch (error) {
     console.log('Error when contact Brace server to extract contents with links: ', links, ' Error: ', error);
     return;
@@ -1010,7 +1000,7 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
 export const tryUpdateExtractedContents = (payload) => async (dispatch, getState) => {
 
   const isBulkEditing = getState().display.isBulkEditing;
-  const pageYOffset = window.pageYOffset;
+  const pageYOffset = vars.scrollPanel.pageYOffset;
   const canRerender = !isBulkEditing && pageYOffset === 0 && !isPopupShown(getState());
 
   dispatch({
@@ -1177,6 +1167,20 @@ export const updateLayoutType = (type) => {
   return { type: UPDATE_LAYOUT_TYPE, payload: type };
 };
 
+export const updateDeleteAction = (deleteAction) => {
+  return {
+    type: UPDATE_DELETE_ACTION,
+    payload: deleteAction,
+  };
+};
+
+export const updateListNamesMode = (mode, animType) => {
+  return {
+    type: UPDATE_LIST_NAMES_MODE,
+    payload: { listNamesMode: mode, listNamesAnimType: animType },
+  };
+};
+
 const importAllDataLoop = async (dispatch, fpaths, contents) => {
   let total = fpaths.length, doneCount = 0;
   dispatch(updateImportAllDataProgress({ total, done: doneCount }));
@@ -1184,9 +1188,7 @@ const importAllDataLoop = async (dispatch, fpaths, contents) => {
   try {
     for (let i = 0; i < fpaths.length; i += N_LINKS) {
       const selectedFPaths = fpaths.slice(i, i + N_LINKS);
-      const selectedContents = contents.slice(i, i + N_LINKS).map(content => {
-        return JSON.stringify(content);
-      });
+      const selectedContents = contents.slice(i, i + N_LINKS);
       await batchPutFileWithRetry(selectedFPaths, selectedContents, 0);
 
       doneCount += selectedFPaths.length;
@@ -1205,14 +1207,14 @@ const importAllDataLoop = async (dispatch, fpaths, contents) => {
       let msg = 'There is an error while importing! Below are contents that have not been imported:\n';
       for (let i = doneCount; i < fpaths.length; i++) {
         const fpath = fpaths[i];
-        if (fpath.startsWith('links')) {
+        if (fpath.startsWith(LINKS)) {
           msg += '    • ' + contents[i].url + '\n';
         }
-        if (fpath.startsWith('pins')) {
+        if (fpath.startsWith(PINS)) {
           const fname = fpath.split('/').slice(-1);
           msg += '    • Pin on ' + fname + '\n';
         }
-        if (fpath === SETTINGS_FNAME) {
+        if (fpath.startsWith(SETTINGS)) {
           msg += '    • Settings\n';
         }
       }
@@ -1238,15 +1240,15 @@ const parseImportedFile = (dispatch, text) => {
           !obj.path ||
           !isString(obj.path) ||
           !(
-            obj.path.startsWith('links') ||
-            obj.path.startsWith('pins') ||
-            obj.path === SETTINGS_FNAME
+            obj.path.startsWith(LINKS) ||
+            obj.path.startsWith(PINS) ||
+            obj.path.startsWith(SETTINGS)
           )
         ) continue;
 
         if (!obj.data || !isObject(obj.data)) continue;
 
-        if (obj.path.startsWith('links')) {
+        if (obj.path.startsWith(LINKS)) {
           if (
             !('id' in obj.data && 'url' in obj.data && 'addedDT' in obj.data)
           ) continue;
@@ -1256,10 +1258,10 @@ const parseImportedFile = (dispatch, text) => {
 
           const arr = obj.path.split('/');
           if (arr.length !== 3) continue;
-          if (arr[0] !== 'links') continue;
+          if (arr[0] !== LINKS) continue;
 
           const listName = arr[1], fname = arr[2];
-          if (!fname.endsWith('.json')) continue;
+          if (!fname.endsWith(DOT_JSON)) continue;
 
           const id = fname.slice(0, -5);
           if (id !== obj.data.id) continue;
@@ -1284,15 +1286,15 @@ const parseImportedFile = (dispatch, text) => {
           }
         }
 
-        if (obj.path.startsWith('pins')) {
+        if (obj.path.startsWith(PINS)) {
           const arr = obj.path.split('/');
           if (arr.length !== 5) continue;
-          if (arr[0] !== 'pins') continue;
+          if (arr[0] !== PINS) continue;
 
           const updatedDT = arr[2], addedDT = arr[3], fname = arr[4];
           if (!(/^\d+$/.test(updatedDT))) continue;
           if (!(/^\d+$/.test(addedDT))) continue;
-          if (!fname.endsWith('.json')) continue;
+          if (!fname.endsWith(DOT_JSON)) continue;
 
           const id = fname.slice(0, -5);
           const tokens = id.split('-');
@@ -1300,7 +1302,7 @@ const parseImportedFile = (dispatch, text) => {
           if (!(/^\d+$/.test(tokens[0]))) continue;
         }
 
-        if (obj.path === SETTINGS_FNAME) {
+        if (obj.path.startsWith(SETTINGS)) {
           const settings = { ...initialSettingsState };
           if ('doExtractContents' in obj.data) {
             settings.doExtractContents = obj.data.doExtractContents;
@@ -1467,7 +1469,7 @@ const exportAllDataLoop = async (dispatch, fpaths, doneCount) => {
   const selectedFPaths = fpaths.slice(doneCount, doneCount + selectedCount);
   const responses = await batchGetFileWithRetry(selectedFPaths, 0, true);
   const data = responses.filter(r => r.success).map((response) => {
-    return { path: response.fpath, data: JSON.parse(response.content) };
+    return { path: response.fpath, data: response.content };
   });
 
   doneCount = doneCount + selectedCount;
@@ -1629,10 +1631,7 @@ const getIapStatus = async (doForce) => {
     doForce: doForce,
   };
 
-  const res = await axios.post(
-    IAP_STATUS_URL,
-    reqBody,
-  );
+  const res = await axios.post(IAP_STATUS_URL, reqBody);
   return res;
 };
 
@@ -1758,12 +1757,12 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
   const pinFPaths = getPinFPaths(state);
   const pendingPins = state.pendingPins;
 
-  let currentPins = getPins(pinFPaths, pendingPins, true);
-  currentPins = Object.values(currentPins).map(pin => pin.rank).sort();
+  const currentPins = getPins(pinFPaths, pendingPins, true);
+  const currentRanks = Object.values(currentPins).map(pin => pin.rank).sort();
 
   let lexoRank;
-  if (currentPins.length > 0) {
-    const rank = currentPins[currentPins.length - 1];
+  if (currentRanks.length > 0) {
+    const rank = currentRanks[currentRanks.length - 1];
     lexoRank = LexoRank.parse(`0|${rank.replace('_', ':')}`).genNext();
   } else {
     lexoRank = LexoRank.middle();

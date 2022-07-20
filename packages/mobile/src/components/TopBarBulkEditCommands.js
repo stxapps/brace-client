@@ -3,9 +3,12 @@ import { connect } from 'react-redux';
 import { View, Text, TouchableOpacity, BackHandler, Animated } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
-import { updatePopup, updateBulkEdit, moveLinks } from '../actions';
+import {
+  updatePopup, updateBulkEdit, moveLinks, updateDeleteAction, updateListNamesMode,
+} from '../actions';
 import {
   CONFIRM_DELETE_POPUP, LIST_NAMES_POPUP, MY_LIST, ARCHIVE, TRASH, TOP_HEADER_HEIGHT,
+  DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
 import { getListNameDisplayName, getAllListNames, toPx } from '../utils';
@@ -134,12 +137,17 @@ class TopBarBulkEditCommands extends React.Component {
 
   onBulkEditDeleteBtnClick = () => {
     if (this.checkNoLinkIdSelected()) return;
+    this.props.updateDeleteAction(DELETE_ACTION_LINK_COMMANDS);
     this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
   }
 
   onBulkEditMoveToBtnClick = () => {
     if (this.checkNoLinkIdSelected()) return;
     this.moveToBtn.current.measure((_fx, _fy, width, height, x, y) => {
+      this.props.updateListNamesMode(
+        LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
+      );
+
       // Hacky to make sure the popup overlap all the button
       const newX = x - 4;
       const newY = y - 4;
@@ -280,6 +288,8 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { updatePopup, updateBulkEdit, moveLinks };
+const mapDispatchToProps = {
+  updatePopup, updateBulkEdit, moveLinks, updateDeleteAction, updateListNamesMode,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(TopBarBulkEditCommands);

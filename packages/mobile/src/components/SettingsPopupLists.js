@@ -10,13 +10,12 @@ import KeyboardManager from 'react-native-keyboard-manager';
 import { canDeleteListNames } from '../apis/blockstack';
 import {
   addListNames, updateListNames, moveListName, updateSelectingListName,
-  updateDeletingListName, updateListNameEditors, updatePopup,
+  updateDeletingListName, updateDeleteAction, updateListNameEditors, updatePopup,
 } from '../actions';
 import {
-  VALID_LIST_NAME, IN_USE_LIST_NAME,
-  NO_LIST_NAME, TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME,
-  SETTINGS_LISTS_MENU_POPUP, CONFIRM_DELETE_POPUP,
-  SWAP_LEFT, SWAP_RIGHT, MODE_VIEW, MODE_EDIT, SM_WIDTH,
+  VALID_LIST_NAME, IN_USE_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME,
+  DUPLICATE_LIST_NAME, SETTINGS_LISTS_MENU_POPUP, CONFIRM_DELETE_POPUP,
+  DELETE_ACTION_LIST_NAME, SWAP_LEFT, SWAP_RIGHT, MODE_VIEW, MODE_EDIT, SM_WIDTH,
 } from '../types/const';
 import { getListNameMap, makeGetListNameEditor } from '../selectors';
 import { validateListNameDisplayName, getAllListNames } from '../utils';
@@ -274,6 +273,7 @@ const _ListNameEditor = (props) => {
           return;
         }
 
+        dispatch(updateDeleteAction(DELETE_ACTION_LIST_NAME));
         dispatch(updateDeletingListName(listNameObj.listName));
         dispatch(updatePopup(CONFIRM_DELETE_POPUP, true));
         dispatch(updateListNameEditors({

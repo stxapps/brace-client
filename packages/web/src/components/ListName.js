@@ -1,8 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { updatePopup } from '../actions';
-import { LIST_NAMES_POPUP, SM_WIDTH, LG_WIDTH } from '../types/const';
+import { updatePopup, updateListNamesMode } from '../actions';
+import {
+  LIST_NAMES_POPUP, SM_WIDTH, LG_WIDTH, LIST_NAMES_MODE_CHANGE_LIST_NAME,
+  LIST_NAMES_ANIM_TYPE_POPUP,
+} from '../types/const';
 import { getListNameMap } from '../selectors';
 import { getListNameDisplayName } from '../utils';
 
@@ -11,8 +14,13 @@ import { getTopBarSizes } from '.';
 class ListName extends React.PureComponent {
 
   onListNameBtnClick = (e) => {
+    this.props.updateListNamesMode(
+      LIST_NAMES_MODE_CHANGE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP,
+    );
+
     const rect = e.currentTarget.getBoundingClientRect();
     this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
+
     if (window.document.activeElement instanceof HTMLElement) {
       window.document.activeElement.blur();
     }
@@ -62,6 +70,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { updatePopup };
+const mapDispatchToProps = { updatePopup, updateListNamesMode };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListName);

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimateSharedLayout } from "framer-motion";
 
@@ -10,6 +10,7 @@ import {
 import { getLinks, getIsFetchingMore } from '../selectors';
 import { addRem, getWindowHeight, getWindowScrollHeight, throttle } from '../utils';
 import { cardItemFMV } from '../types/animConfigs';
+import vars from '../vars';
 
 import { useSafeAreaFrame } from '.';
 import ListItem from './ListItem';
@@ -26,6 +27,7 @@ const ListPanel = (props) => {
   );
   const isFetchingMore = useSelector(state => getIsFetchingMore(state));
   const listChangedCount = useSelector(state => state.display.listChangedCount);
+  const doPreventFetchMore = useRef(false);
   const dispatch = useDispatch();
 
   let links = useSelector(getLinks);
@@ -35,14 +37,23 @@ const ListPanel = (props) => {
   }
 
   const updateScrollY = throttle(() => {
-    if (!hasMore || hasFetchedMore || isFetchingMore) return;
-
     // https://gist.github.com/enqtran/25c6b222a73dc497cc3a64c090fb6700
     const scrollHeight = getWindowScrollHeight()
     const windowHeight = getWindowHeight();
-    const windowBottom = windowHeight + window.pageYOffset;
+    const scrollTop = window.pageYOffset;
 
-    if (windowBottom > (scrollHeight * 0.96)) dispatch(fetchMore());
+    vars.scrollPanel.contentHeight = scrollHeight;
+    vars.scrollPanel.layoutHeight = windowHeight;
+    vars.scrollPanel.pageYOffset = scrollTop;
+
+    if (!hasMore || hasFetchedMore || isFetchingMore) return;
+    if (doPreventFetchMore.current) return;
+
+    const windowBottom = windowHeight + scrollTop;
+    if (windowBottom > (scrollHeight * 0.96)) {
+      doPreventFetchMore.current = true;
+      dispatch(fetchMore());
+    }
   }, 16);
 
   const onFetchMoreBtnClick = () => {
@@ -113,6 +124,10 @@ const ListPanel = (props) => {
       window.removeEventListener('scroll', updateScrollY);
     };
   }, [updateScrollY]);
+
+  useEffect(() => {
+    doPreventFetchMore.current = false;
+  });
 
   let fetchMoreBtn;
   if (!hasMore) fetchMoreBtn = null;

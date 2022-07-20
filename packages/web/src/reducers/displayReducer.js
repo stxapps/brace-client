@@ -8,9 +8,10 @@ import {
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK, EXTRACT_CONTENTS_COMMIT,
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
-  UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME,
-  DELETE_LIST_NAMES, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
-  CANCEL_DIED_SETTINGS, UPDATE_SETTINGS_VIEW_ID, UPDATE_IMPORT_ALL_DATA_PROGRESS,
+  UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME, DELETE_LIST_NAMES,
+  UPDATE_DELETE_ACTION, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
+  UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_SETTINGS_VIEW_ID,
+  UPDATE_LIST_NAMES_MODE, UPDATE_IMPORT_ALL_DATA_PROGRESS,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -18,7 +19,7 @@ import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   LIST_NAMES_POPUP, PIN_MENU_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
   SETTINGS_LISTS_MENU_POPUP, MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING,
-  SETTINGS_VIEW_ACCOUNT,
+  SETTINGS_VIEW_ACCOUNT, DELETE_ACTION_LIST_NAME,
 } from '../types/const';
 import { doContainListName } from '../utils';
 
@@ -50,11 +51,14 @@ const initialState = {
   didFetchSettings: false,
   fetchedListNames: [],
   listChangedCount: 0,
+  deleteAction: null,
   settingsStatus: null,
   settingsViewId: SETTINGS_VIEW_ACCOUNT,
   isSettingsSidebarShown: false,
   didSettingsCloseAnimEnd: true,
   didSettingsSidebarAnimEnd: true,
+  listNamesMode: null,
+  listNamesAnimType: null,
   importAllDataProgress: null,
   exportAllDataProgress: null,
   deleteAllDataProgress: null,
@@ -92,12 +96,15 @@ const displayReducer = (state = initialState, action) => {
       didFetchSettings: false,
       fetchedListNames: [],
       listChangedCount: 0,
+      deleteAction: null,
       // If in outbox, continue after reload
       //settingsStatus: null,
       settingsViewId: SETTINGS_VIEW_ACCOUNT,
       isSettingsSidebarShown: false,
       didSettingsCloseAnimEnd: true,
       didSettingsSidebarAnimEnd: true,
+      listNamesMode: null,
+      listNamesAnimType: null,
       importAllDataProgress: null,
       exportAllDataProgress: null,
       deleteAllDataProgress: null,
@@ -169,10 +176,6 @@ const displayReducer = (state = initialState, action) => {
         isListNamesPopupShown: isShown,
         listNamesPopupPosition: anchorPosition,
       };
-      if (!isShown) {
-        newState.selectingLinkId = null;
-        newState.selectingListName = null;
-      }
       return newState;
     }
 
@@ -182,10 +185,6 @@ const displayReducer = (state = initialState, action) => {
         isPinMenuPopupShown: isShown,
         pinMenuPopupPosition: anchorPosition,
       };
-      if (!isShown) {
-        newState.selectingLinkId = null;
-        newState.selectingListName = null;
-      }
       return newState;
     }
 
@@ -195,7 +194,6 @@ const displayReducer = (state = initialState, action) => {
 
     if (id === CONFIRM_DELETE_POPUP) {
       const newState = { ...state, isConfirmDeletePopupShown: isShown };
-      if (!isShown) newState.deletingListName = null;
       return newState;
     }
 
@@ -204,8 +202,6 @@ const displayReducer = (state = initialState, action) => {
       if (isShown) {
         newState.didSettingsCloseAnimEnd = false;
         newState.didSettingsSidebarAnimEnd = true;
-      } else {
-        newState.selectingListName = null;
       }
       return newState;
     }
@@ -334,13 +330,19 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_DELETING_LIST_NAME) {
-    return { ...state, deletingListName: action.payload };
+    return {
+      ...state, deletingListName: action.payload, deleteAction: DELETE_ACTION_LIST_NAME,
+    };
   }
 
   if (action.type === DELETE_LIST_NAMES) {
     const { listNames } = action.payload;
     if (!listNames.includes(state.listName)) return state;
     return { ...state, listName: MY_LIST };
+  }
+
+  if (action.type === UPDATE_DELETE_ACTION) {
+    return { ...state, deleteAction: action.payload };
   }
 
   if (action.type === UPDATE_SETTINGS) {
@@ -380,6 +382,10 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_SETTINGS_VIEW_ID) {
+    return { ...state, ...action.payload };
+  }
+
+  if (action.type === UPDATE_LIST_NAMES_MODE) {
     return { ...state, ...action.payload };
   }
 

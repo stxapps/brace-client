@@ -81,7 +81,7 @@ class SettingsPopupMisc extends React.PureComponent {
         <View style={tailwind('mt-6 flex-row items-center justify-between md:mt-0', safeAreaWidth)}>
           <View style={tailwind('flex-grow flex-shrink')}>
             <Text style={tailwind('text-base text-gray-800 font-medium leading-4')}>Link Previews</Text>
-            <Text style={tailwind('mt-2.5 text-base text-gray-500 font-normal leading-6.5')}>Allow your saved links to be sent to our server for extracting their representative title and image. No your personal information involved at all so there is no way to know who saves what links. These titles and images are used in our website and app for you to easily find and recognize your saved links. For more information, please visit <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-base text-gray-500 font-normal leading-6.5 underline')}>our privacy policy page</Text></Text>
+            <Text style={tailwind('mt-2.5 text-base text-gray-500 font-normal leading-6.5')}>Allow your saved links to be sent to our server for extracting their representative title and image. No your personal information involved at all so there is no way to know who saves what links. These titles and images are used in our website and app for you to easily find and recognize your saved links. For more information, please visit <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-base text-gray-500 font-normal leading-6.5 underline')}>our privacy policy page</Text>.</Text>
           </View>
           <View style={tailwind('ml-4 flex-grow-0 flex-shrink-0 w-11 h-6')}>
             <Switch onValueChange={this.onDoExtractBtnClick} value={doExtractContents} thumbColor={Platform.OS === 'android' ? doExtractContents ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} />
@@ -90,7 +90,7 @@ class SettingsPopupMisc extends React.PureComponent {
         <View style={tailwind('mt-10 flex-row items-center justify-between')}>
           <View style={tailwind('flex-grow flex-shrink')}>
             <Text style={tailwind('text-base text-gray-800 font-medium leading-4')}>Auto Cleanup</Text>
-            <Text style={tailwind('mt-2.5 text-base text-gray-500 font-normal leading-6.5')}>Allow old removed links in Trash to be automatically deleted after 45 days</Text>
+            <Text style={tailwind('mt-2.5 text-base text-gray-500 font-normal leading-6.5')}>Allow old removed links in Trash to be automatically deleted after 45 days.</Text>
           </View>
           <View style={tailwind('ml-4 flex-grow-0 flex-shrink-0 w-11 h-6')}>
             <Switch onValueChange={this.onDoDeleteBtnClick} value={doDeleteOldLinksInTrash} thumbColor={Platform.OS === 'android' ? doDeleteOldLinksInTrash ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} />
@@ -100,7 +100,7 @@ class SettingsPopupMisc extends React.PureComponent {
           <Text style={tailwind('text-base text-gray-800 font-medium leading-4')}>List Order</Text>
           <View style={tailwind('sm:flex-row sm:items-start sm:justify-between', safeAreaWidth)}>
             <View style={tailwind('mt-2.5 sm:flex-grow sm:flex-shrink', safeAreaWidth)}>
-              <Text style={tailwind('text-base text-gray-500 font-normal leading-6.5')}>Allow old removed links in Trash to be automatically deleted after 45 days</Text>
+              <Text style={tailwind('text-base text-gray-500 font-normal leading-6.5')}>Choose whether your saved links are sorted by saved date in <Text style={tailwind('text-base text-gray-500 font-semibold leading-6.5')}>ascending order</Text> (links you save first appear first) or <Text style={tailwind('text-base text-gray-500 font-semibold leading-6.5')}>descending order</Text> (links you save last appear first) when you browse your saved links.</Text>
             </View>
             <View style={tailwind('mt-2.5 items-center sm:ml-4 sm:flex-grow-0 sm:flex-shrink-0', safeAreaWidth)}>
               <View style={tailwind('w-full max-w-48 bg-white rounded-md shadow-sm sm:w-48', safeAreaWidth)}>

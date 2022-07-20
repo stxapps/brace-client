@@ -212,11 +212,14 @@ class BottomBarSearchPopup extends React.PureComponent {
 
 const mapStateToProps = (state, props) => {
 
+  const { isListNamesPopupShown, isPinMenuPopupShown } = state.display;
   const popupLink = getPopupLink(state);
 
   return {
     searchString: state.display.searchString,
-    isBottomBarShown: popupLink === null && state.display.selectingLinkId === null,
+    isBottomBarShown: (
+      popupLink === null && !isListNamesPopupShown && !isPinMenuPopupShown
+    ),
     isSearchPopupShown: state.display.isSearchPopupShown,
     popupLink: popupLink,
   };

@@ -2,18 +2,18 @@ import { Linking, AppState, Platform } from 'react-native';
 import {
   RESET_STATE as OFFLINE_RESET_STATE,
 } from '@redux-offline/redux-offline/lib/constants';
-import axios from 'axios';
 //import RNFS from 'react-native-fs';
 import * as RNIap from 'react-native-iap';
 import { LexoRank } from '@wewatch/lexorank';
 
 import userSession from '../userSession';
+import axios from '../axiosWrapper';
 import {
   batchDeleteFileWithRetry,
 } from '../apis/blockstack';
 import {
   INIT, UPDATE_USER, UPDATE_HREF, UPDATE_STACKS_ACCESS, UPDATE_LIST_NAME,
-  UPDATE_POPUP, UPDATE_SEARCH_STRING, UPDATE_LINK_EDITOR, UPDATE_SCROLL_PANEL,
+  UPDATE_POPUP, UPDATE_SEARCH_STRING, UPDATE_LINK_EDITOR,
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED,
@@ -33,7 +33,8 @@ import {
   UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
   UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_SETTINGS_VIEW_ID,
-  UPDATE_LAYOUT_TYPE, GET_PRODUCTS, GET_PRODUCTS_COMMIT, GET_PRODUCTS_ROLLBACK,
+  UPDATE_LAYOUT_TYPE, UPDATE_DELETE_ACTION, UPDATE_LIST_NAMES_MODE,
+  GET_PRODUCTS, GET_PRODUCTS_COMMIT, GET_PRODUCTS_ROLLBACK,
   REQUEST_PURCHASE, REQUEST_PURCHASE_COMMIT, REQUEST_PURCHASE_ROLLBACK,
   RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
   REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
@@ -60,7 +61,7 @@ import {
   SWAP_LEFT, SWAP_RIGHT,
 } from '../types/const';
 import {
-  isEqual, isNumber, sleep,
+  isEqual, sleep,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam, getUserImageUrl, randomDecor,
   isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
@@ -69,6 +70,7 @@ import {
   sortLinks, sortWithPins,
 } from '../utils';
 import { _ } from '../utils/obj';
+import vars from '../vars';
 
 import DefaultPreference from 'react-native-default-preference';
 if (Platform.OS === 'ios') DefaultPreference.setName(APP_GROUP_SHARE);
@@ -229,6 +231,9 @@ export const signOut = () => async (dispatch, getState) => {
   // redux-offline: Empty outbox
   dispatch({ type: OFFLINE_RESET_STATE });
 
+  // clear cached fpaths
+  vars.cachedFPaths.fpaths = null;
+
   // clear all user data!
   dispatch({
     type: RESET_STATE,
@@ -289,17 +294,6 @@ export const updateSearchString = (searchString) => {
 
 export const updateLinkEditor = (values) => {
   return { type: UPDATE_LINK_EDITOR, payload: values };
-};
-
-export const updateScrollPanel = (contentHeight, layoutHeight, pageYOffset) => {
-  if (!isNumber(contentHeight)) contentHeight = 0;
-  if (!isNumber(layoutHeight)) layoutHeight = 0;
-  if (!isNumber(pageYOffset)) pageYOffset = 0;
-
-  return {
-    type: UPDATE_SCROLL_PANEL,
-    payload: { contentHeight, layoutHeight, pageYOffset },
-  };
 };
 
 export const updateStatus = (status) => {
@@ -456,7 +450,7 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
 
   const isBulkEditing = getState().display.isBulkEditing;
   if (!isBulkEditing) {
-    const pageYOffset = getState().scrollPanel.pageYOffset;
+    const pageYOffset = vars.scrollPanel.pageYOffset;
     if (
       (updateAction === 1 && pageYOffset < 64 / 10 * _links.length) ||
       (updateAction === 2 && pageYOffset === 0 && !isPopupShown(getState()))
@@ -569,9 +563,9 @@ export const tryUpdateFetchedMore = (payload, meta) => async (dispatch, getState
 
   const isBulkEditing = getState().display.isBulkEditing;
   if (!isBulkEditing) {
-    const scrollHeight = getState().scrollPanel.contentHeight;
-    const windowHeight = getState().scrollPanel.layoutHeight;
-    const windowBottom = windowHeight + getState().scrollPanel.pageYOffset;
+    const scrollHeight = vars.scrollPanel.contentHeight;
+    const windowHeight = vars.scrollPanel.layoutHeight;
+    const windowBottom = windowHeight + vars.scrollPanel.pageYOffset;
 
     if (windowBottom > (scrollHeight * 0.96) && !isPopupShown(getState())) {
       dispatch(updateFetchedMore(payload, meta));
@@ -636,11 +630,7 @@ export const addLink = (url, listName, doExtractContents) => async (dispatch, ge
 
   // If doExtractContents is false but from settings is true, send pre-extract to server
   if (doExtractContents === false && getState().settings.doExtractContents === true) {
-    axios.post(
-      BRACE_PRE_EXTRACT_URL,
-      { urls: [url] },
-      { headers: { Referer: DOMAIN_NAME } }
-    )
+    axios.post(BRACE_PRE_EXTRACT_URL, { urls: [url] })
       .then(() => { })
       .catch((error) => {
         console.log('Error when contact Brace server to pre-extract contents with links: ', links, ' Error: ', error);
@@ -882,11 +872,7 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
 
   let res;
   try {
-    res = await axios.post(
-      BRACE_EXTRACT_URL,
-      { urls: links.map(link => link.url) },
-      { headers: { Referer: DOMAIN_NAME } }
-    );
+    res = await axios.post(BRACE_EXTRACT_URL, { urls: links.map(link => link.url) });
   } catch (error) {
     console.log('Error when contact Brace server to extract contents with links: ', links, ' Error: ', error);
     return;
@@ -929,7 +915,7 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
 export const tryUpdateExtractedContents = (payload) => async (dispatch, getState) => {
 
   const isBulkEditing = getState().display.isBulkEditing;
-  const pageYOffset = getState().scrollPanel.pageYOffset;
+  const pageYOffset = vars.scrollPanel.pageYOffset;
   const canRerender = !isBulkEditing && pageYOffset === 0 && !isPopupShown(getState());
 
   dispatch({
@@ -1096,6 +1082,20 @@ export const updateLayoutType = (type) => {
   return { type: UPDATE_LAYOUT_TYPE, payload: type };
 };
 
+export const updateDeleteAction = (deleteAction) => {
+  return {
+    type: UPDATE_DELETE_ACTION,
+    payload: deleteAction,
+  };
+};
+
+export const updateListNamesMode = (mode, animType) => {
+  return {
+    type: UPDATE_LIST_NAMES_MODE,
+    payload: { listNamesMode: mode, listNamesAnimType: animType },
+  };
+};
+
 export const importAllData = () => async (dispatch, getState) => {
   // Do nothing on mobile. This is for web.
 };
@@ -1232,11 +1232,7 @@ const verifyPurchase = async (rawPurchase) => {
 
   let verifyResult;
   try {
-    const res = await axios.post(
-      IAP_VERIFY_URL,
-      reqBody,
-      { headers: { Referer: DOMAIN_NAME } }
-    );
+    const res = await axios.post(IAP_VERIFY_URL, reqBody);
     verifyResult = res.data;
   } catch (error) {
     console.log(`Error when contact IAP server to verify with reqBody: ${JSON.stringify(reqBody)}, Error: `, error);
@@ -1263,11 +1259,7 @@ const getIapStatus = async (doForce) => {
     doForce: doForce,
   };
 
-  const res = await axios.post(
-    IAP_STATUS_URL,
-    reqBody,
-    { headers: { Referer: DOMAIN_NAME } }
-  );
+  const res = await axios.post(IAP_STATUS_URL, reqBody);
   return res;
 };
 
@@ -1553,12 +1545,12 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
   const pinFPaths = getPinFPaths(state);
   const pendingPins = state.pendingPins;
 
-  let currentPins = getPins(pinFPaths, pendingPins, true);
-  currentPins = Object.values(currentPins).map(pin => pin.rank).sort();
+  const currentPins = getPins(pinFPaths, pendingPins, true);
+  const currentRanks = Object.values(currentPins).map(pin => pin.rank).sort();
 
   let lexoRank;
-  if (currentPins.length > 0) {
-    const rank = currentPins[currentPins.length - 1];
+  if (currentRanks.length > 0) {
+    const rank = currentRanks[currentRanks.length - 1];
     lexoRank = LexoRank.parse(`0|${rank.replace('_', ':')}`).genNext();
   } else {
     lexoRank = LexoRank.middle();

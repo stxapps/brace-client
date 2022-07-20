@@ -35,7 +35,10 @@ export const PAYWALL_POPUP = 'PAYWALL_POPUP';
 export const IS_POPUP_SHOWN = 'isPopupShown';
 export const POPUP_ANCHOR_POSITION = 'popupAnchorPosition';
 
-export const SETTINGS_FNAME = 'settings.json';
+export const LINKS = 'links';
+export const SETTINGS = 'settings';
+export const PINS = 'pins';
+export const DOT_JSON = '.json';
 
 export const N_LINKS = 10;
 export const MAX_TRY = 3;
@@ -164,6 +167,9 @@ export const EDGE = 'EDGE'; // bottom or right of the window
 export const AT_TRIGGER = 'AT_TRIGGER'; // top or left of the trigger
 export const EDGE_TRIGGER = 'EDGE_TRIGGER'; // bottom or right of the trigger
 
+export const DELETE_ACTION_LINK_COMMANDS = 0;
+export const DELETE_ACTION_LIST_NAME = 1;
+
 export const APP_GROUP_SHARE = 'group.bracedotto.share';
 export const APP_GROUP_SHARE_UKEY = 'uKey';
 
@@ -216,3 +222,10 @@ export const SETTINGS_VIEW_DATA_DELETE = 4;
 export const SETTINGS_VIEW_LISTS = 5;
 export const SETTINGS_VIEW_MISC = 6;
 export const SETTINGS_VIEW_ABOUT = 8;
+
+export const LIST_NAMES_MODE_CHANGE_LIST_NAME = 'LIST_NAMES_MODE_CHANGE_LIST_NAME';
+export const LIST_NAMES_MODE_MOVE_LINKS = 'LIST_NAMES_MODE_MOVE_LINKS';
+export const LIST_NAMES_MODE_MOVE_LIST_NAME = 'LIST_NAMES_MODE_MOVE_LIST_NAME';
+
+export const LIST_NAMES_ANIM_TYPE_POPUP = 'LIST_NAMES_ANIM_TYPE_POPUP';
+export const LIST_NAMES_ANIM_TYPE_BMODAL = 'LIST_NAMES_ANIM_TYPE_BMODAL';

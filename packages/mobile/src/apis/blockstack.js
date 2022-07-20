@@ -1,12 +1,12 @@
 import userSession from '../userSession';
-import { SETTINGS_FNAME, N_LINKS, MAX_TRY, N_DAYS, TRASH } from '../types/const';
+import { SETTINGS, DOT_JSON, N_LINKS, MAX_TRY, N_DAYS, TRASH } from '../types/const';
 import {
   FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_SETTINGS, PIN_LINK, UNPIN_LINK,
 } from '../types/actionTypes';
 import {
-  createLinkFPath, extractLinkFPath, createPinFPath, copyFPaths, getMainId,
-  sortWithPins,
+  createLinkFPath, extractLinkFPath, createPinFPath, addFPath, deleteFPath,
+  copyFPaths, getMainId, sortWithPins,
 } from '../utils';
 import { cachedFPaths } from '../vars';
 
@@ -47,40 +47,6 @@ export const effect = async (effectObj, _action) => {
   }
 
   throw new Error(`${method} is invalid for blockstack effect.`);
-};
-
-const addFPath = (fpaths, fpath) => {
-  if (fpath.startsWith('links')) {
-    const { listName } = extractLinkFPath(fpath);
-    if (!fpaths.linkFPaths[listName]) fpaths.linkFPaths[listName] = [];
-    if (!fpaths.linkFPaths[listName].includes(fpath)) {
-      fpaths.linkFPaths[listName].push(fpath);
-    }
-  } else if (fpath === SETTINGS_FNAME) {
-    fpaths.settingsFPath = fpath;
-  } else if (fpath.startsWith('pins')) {
-    if (!fpaths.pinFPaths.includes(fpath)) fpaths.pinFPaths.push(fpath);
-  } else {
-    console.log(`Invalid file path: ${fpath}`);
-  }
-};
-
-const deleteFPath = (fpaths, fpath) => {
-  if (fpath.startsWith('links')) {
-    const { listName } = extractLinkFPath(fpath);
-    if (fpaths.linkFPaths[listName]) {
-      fpaths.linkFPaths[listName] = fpaths.linkFPaths[listName].filter(el => {
-        return el !== fpath;
-      });
-      if (fpaths.linkFPaths[listName].length === 0) delete fpaths.linkFPaths[listName];
-    }
-  } else if (fpath === SETTINGS_FNAME) {
-    fpaths.settingsFPath = null;
-  } else if (fpath.startsWith('pins')) {
-    fpaths.pinFPaths = fpaths.pinFPaths.filter(el => el !== fpath);
-  } else {
-    console.log(`Invalid file path: ${fpath}`);
-  }
 };
 
 const _listFPaths = async () => {
@@ -143,8 +109,7 @@ const fetch = async (params) => {
 
   let settings;
   if (settingsFPath && doFetchSettings) {
-    settings = JSON.parse(/** @type {string} */(await userSession.getFile(settingsFPath)));
-
+    settings = await userSession.getFile(settingsFPath);
     doDescendingOrder = settings.doDescendingOrder;
   }
 
@@ -159,7 +124,7 @@ const fetch = async (params) => {
   const selectedLinkFPaths = sortedLinkFPaths.slice(0, N_LINKS);
 
   const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0, true);
-  const links = responses.filter(r => r.success).map(r => JSON.parse(r.content));
+  const links = responses.filter(r => r.success).map(r => r.content);
   const hasMore = namedLinkFPaths.length > N_LINKS;
 
   // List names should be retrieve from settings
@@ -198,7 +163,7 @@ const fetchMore = async (params) => {
   const selectedLinkFPaths = filteredLinkFPaths.slice(0, N_LINKS);
 
   const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0, true);
-  const links = responses.filter(r => r.success).map(r => JSON.parse(r.content));
+  const links = responses.filter(r => r.success).map(r => r.content);
   const hasMore = filteredLinkFPaths.length > N_LINKS;
 
   return { listName, doDescendingOrder, links, hasMore, hasDisorder };
@@ -240,7 +205,7 @@ const putLinks = async (params) => {
   const fpaths = [], contents = [];
   for (const link of links) {
     fpaths.push(createLinkFPath(listName, link.id));
-    contents.push(JSON.stringify(link));
+    contents.push(link);
   }
 
   await batchPutFileWithRetry(fpaths, contents, 0);
@@ -322,8 +287,8 @@ const deleteOldLinksInTrash = async () => {
 };
 
 const updateSettings = async (settings) => {
-  const fpaths = [SETTINGS_FNAME];
-  const contents = [JSON.stringify(settings)];
+  const fpaths = [`${SETTINGS}${DOT_JSON}`];
+  const contents = [settings];
 
   await batchPutFileWithRetry(fpaths, contents, 0);
 };
@@ -347,7 +312,7 @@ const putPins = async (params) => {
   const fpaths = [], contents = [];
   for (const pin of pins) {
     fpaths.push(createPinFPath(pin.rank, pin.updatedDT, pin.addedDT, pin.id));
-    contents.push(JSON.stringify({}));
+    contents.push({});
   }
 
   await batchPutFileWithRetry(fpaths, contents, 0);

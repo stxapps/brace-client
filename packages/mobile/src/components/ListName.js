@@ -3,8 +3,11 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
-import { updatePopup } from '../actions';
-import { LIST_NAMES_POPUP, SM_WIDTH, LG_WIDTH } from '../types/const';
+import { updatePopup, updateListNamesMode } from '../actions';
+import {
+  LIST_NAMES_POPUP, SM_WIDTH, LG_WIDTH, LIST_NAMES_MODE_CHANGE_LIST_NAME,
+  LIST_NAMES_ANIM_TYPE_POPUP,
+} from '../types/const';
 import { getListNameMap } from '../selectors';
 import { getListNameDisplayName } from '../utils';
 import cache from '../utils/cache';
@@ -22,6 +25,10 @@ class ListName extends React.PureComponent {
 
   onListNameBtnClick = () => {
     this.listNameBtn.current.measure((_fx, _fy, width, height, x, y) => {
+      this.props.updateListNamesMode(
+        LIST_NAMES_MODE_CHANGE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP,
+      );
+
       const rect = {
         x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
       };
@@ -70,6 +77,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { updatePopup };
+const mapDispatchToProps = { updatePopup, updateListNamesMode };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(ListName));

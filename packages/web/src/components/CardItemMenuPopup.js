@@ -2,13 +2,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from "framer-motion";
 
-import { updatePopup, updateSelectingLinkId, moveLinks, pinLinks } from '../actions';
 import {
-  MY_LIST, TRASH, ADDING, MOVING,
-  OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE, MOVE_TO,
-  PIN, MANAGE_PIN, PINNED,
-  CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP, PIN_MENU_POPUP, CONFIRM_DELETE_POPUP,
-  LG_WIDTH, LAYOUT_LIST,
+  updatePopup, updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction,
+  updateListNamesMode,
+} from '../actions';
+import {
+  MY_LIST, TRASH, ADDING, MOVING, OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
+  MOVE_TO, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP,
+  PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
+  DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
 import {
   getListNameMap, getPopupLink, getDoEnableExtraFeatures, makeGetPinStatus,
@@ -135,10 +137,14 @@ class CardItemMenuPopup extends React.PureComponent {
     } else if (text === RESTORE) {
       this.props.moveLinks(MY_LIST, [id]);
     } else if (text === DELETE) {
+      this.props.updateDeleteAction(DELETE_ACTION_LINK_COMMANDS);
       this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
       return;
     } else if (text === MOVE_TO) {
       this.props.updateSelectingLinkId(id);
+      this.props.updateListNamesMode(
+        LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
+      );
 
       const newX = popupAnchorPosition.x + 8;
       const newY = popupAnchorPosition.y + 12;
@@ -271,6 +277,9 @@ const makeMapStateToProps = () => {
   return mapStateToProps;
 };
 
-const mapDispatchToProps = { updatePopup, updateSelectingLinkId, moveLinks, pinLinks };
+const mapDispatchToProps = {
+  updatePopup, updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction,
+  updateListNamesMode,
+};
 
 export default connect(makeMapStateToProps, mapDispatchToProps)(CardItemMenuPopup);

@@ -3,7 +3,7 @@ import { FlatList, View, Text, TouchableOpacity, Animated } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { Flow } from 'react-native-animated-spinkit';
 
-import { fetchMore, updateFetchedMore, updateScrollPanel } from '../actions';
+import { fetchMore, updateFetchedMore } from '../actions';
 import {
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
   MD_WIDTH, PC_100,
@@ -12,6 +12,7 @@ import { getLinks, getIsFetchingMore } from '../selectors';
 import { toPx } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
+import vars from '../vars';
 
 import { useSafeAreaFrame } from '.';
 import ListItem from './ListItem';
@@ -50,8 +51,11 @@ const ListPanel = (props) => {
     const contentHeight = e.nativeEvent.contentSize.height;
     const layoutHeight = e.nativeEvent.layoutMeasurement.height;
     const pageYOffset = e.nativeEvent.contentOffset.y;
-    dispatch(updateScrollPanel(contentHeight, layoutHeight, pageYOffset));
-  }, [dispatch]);
+
+    vars.scrollPanel.contentHeight = contentHeight;
+    vars.scrollPanel.layoutHeight = layoutHeight;
+    vars.scrollPanel.pageYOffset = pageYOffset;
+  }, []);
 
   const onEndReached = useCallback(() => {
     if (!hasMore || hasFetchedMore || isFetchingMore) return;
