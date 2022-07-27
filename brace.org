@@ -758,7 +758,7 @@ This and CI/CD are very important!
 - yarn add url-parse axios @react-native-community/clipboard
 - yarn add https://github.com/bracedotto/redux-offline#4969cde61cd97a9f317f158cade8c96374871a6d
 - yarn add @react-native-community/async-storage @react-native-community/netinfo
-- yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?414786075849b51b511ea261ade6f8ccc623d68b'
+- yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?a2aacea2fe4e384b6dbb51de05e343fe0f4602d6'
 - yarn add https://github.com/bracedotto/tailwind-rn#6047a3e3de6607a6cb5b738ab3392d80aa81fd13
 - yarn add react-native-default-preference react-native-fast-image react-native-keyboard-manager react-native-modal react-native-popup-menu
 - yarn add react-native-safe-area-context
@@ -917,15 +917,15 @@ This and CI/CD are very important!
 - Create supporter.storekit
 - In Edit Scheme... -> Run -> Options, Storekit Configuration: supporter.storekit
 - Choose Build Configuration: Debug, Debug executable, and localhost in Info.plist
-- Test interrupted Purchases by Editor -> Enable Interrupted Purchases
-- Test failed transactions by Editor -> Fail transactions -> SKErrorUnknown
-- Manage Transactions by Debug > StoreKit > Manage Transactions
+- Choose supporter.storekit before
+  + Test interrupted Purchases by Editor -> Enable Interrupted Purchases
+  + Test failed transactions by Editor -> Fail transactions -> SKErrorUnknown
+  + Manage Transactions by Debug > StoreKit > Manage Transactions
 - Don't forget to change Storekit Configuration back to None
 **** Sandbox (help.apple.com/app-store-connect/#/dev7e89e149d)
 - Don't need to sign out, just run the app in *debug mode*, when make a purchase, there will a popup to use test user
 - Sign in with test id: testuser01@brace.to, normal pass + Conf in the popup
 - Manage the test user in Settings -> App Store -> Sandbox account
-- 
 *** Android
 - Join a test program
 - Choose approve purchase, or reject purchase in both purchase popup and in subscription management in Google Play App

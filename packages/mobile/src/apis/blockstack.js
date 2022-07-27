@@ -114,7 +114,7 @@ const fetch = async (params) => {
   }
 
   const namedLinkFPaths = linkFPaths[listName] || [];
-  let sortedLinkFPaths = namedLinkFPaths.sort();
+  let sortedLinkFPaths = [...namedLinkFPaths].sort();
   if (doDescendingOrder) sortedLinkFPaths.reverse();
 
   sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, pendingPins, (fpath) => {
@@ -142,7 +142,7 @@ const fetchMore = async (params) => {
   const { linkFPaths, pinFPaths } = await listFPaths();
 
   const namedLinkFPaths = linkFPaths[listName] || [];
-  let sortedLinkFPaths = namedLinkFPaths.sort();
+  let sortedLinkFPaths = [...namedLinkFPaths].sort();
   if (doDescendingOrder) sortedLinkFPaths.reverse();
 
   sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, pendingPins, (fpath) => {
@@ -227,9 +227,19 @@ export const batchDeleteFileWithRetry = async (fpaths, callCount) => {
           // Treat not found error as not an error as local data might be out-dated.
           //   i.e. user tries to delete a not-existing file, it's ok.
           // Anyway, if the file should be there, this will hide the real error!
-          if (error.message &&
-            (error.message.includes('does_not_exist') ||
-              error.message.includes('file_not_found'))) {
+          if (
+            error.message &&
+            (
+              (
+                error.message.includes('failed to delete') &&
+                error.message.includes('404')
+              ) ||
+              (
+                error.message.includes('deleteFile Error') &&
+                error.message.includes('GaiaError error 5')
+              )
+            )
+          ) {
             return { fpath, success: true };
           }
           return { error, fpath, success: false };

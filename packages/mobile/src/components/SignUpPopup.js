@@ -170,7 +170,7 @@ const SignUpPopup = () => {
       </TouchableWithoutFeedback>
       <Animated.View style={[tailwind('w-full max-w-sm bg-white rounded-lg shadow-xl overflow-hidden'), popupStyle]}>
         <View style={{ height: panelHeight }}>
-          <WebView ref={webView} style={tailwind('flex-1')} source={cache('SUP_webView_source', { baseUrl: '', html: stacksAccessSignUp })} originWhitelist={cache('SUP_webView_originWhitelist', ['*'])} onMessage={onMessage} keyboardDisplayRequiresUserAction={false} textZoom={100} androidLayerType="hardware" onShouldStartLoadWithRequest={onShouldStartLoadWithRequest} onContentProcessDidTerminate={onContentProcessDidTerminate} />
+          <WebView ref={webView} style={tailwind('flex-1')} source={cache('SUP_webView_source', { baseUrl: '', html: stacksAccessSignUp })} originWhitelist={cache('SUP_webView_originWhitelist', ['*'])} onMessage={onMessage} keyboardDisplayRequiresUserAction={false} textZoom={100} androidLayerType="hardware" onShouldStartLoadWithRequest={onShouldStartLoadWithRequest} onContentProcessDidTerminate={onContentProcessDidTerminate} onRenderProcessGone={onContentProcessDidTerminate} />
         </View>
       </Animated.View>
     </View>

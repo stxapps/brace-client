@@ -114,7 +114,7 @@ const fetch = async (params) => {
   }
 
   const namedLinkFPaths = linkFPaths[listName] || [];
-  let sortedLinkFPaths = namedLinkFPaths.sort();
+  let sortedLinkFPaths = [...namedLinkFPaths].sort();
   if (doDescendingOrder) sortedLinkFPaths.reverse();
 
   sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, pendingPins, (fpath) => {
@@ -142,7 +142,7 @@ const fetchMore = async (params) => {
   const { linkFPaths, pinFPaths } = await listFPaths();
 
   const namedLinkFPaths = linkFPaths[listName] || [];
-  let sortedLinkFPaths = namedLinkFPaths.sort();
+  let sortedLinkFPaths = [...namedLinkFPaths].sort();
   if (doDescendingOrder) sortedLinkFPaths.reverse();
 
   sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, pendingPins, (fpath) => {

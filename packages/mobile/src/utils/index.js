@@ -913,7 +913,7 @@ export const getValidProduct = (products) => {
 export const getLatestPurchase = (purchases) => {
   if (!Array.isArray(purchases) || purchases.length === 0) return null;
 
-  const _purchases = purchases.sort((a, b) => {
+  const _purchases = [...purchases].sort((a, b) => {
     return (new Date(b.endDate)).getTime() - (new Date(a.endDate)).getTime();
   });
 
@@ -1153,7 +1153,7 @@ export const getFilteredLinks = (links, listName) => {
 };
 
 export const sortLinks = (links, doDescendingOrder) => {
-  const sortedLinks = links.sort((a, b) => {
+  const sortedLinks = [...links].sort((a, b) => {
     return b.addedDT - a.addedDT;
   });
   if (!doDescendingOrder) sortedLinks.reverse();
