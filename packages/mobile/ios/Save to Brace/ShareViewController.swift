@@ -5,6 +5,7 @@ import NVActivityIndicatorView
 class ShareViewController: UIViewController {
 
   let urlContentType = kUTTypeURL as String
+  let textContentType = kUTTypePlainText as String
   var sharedUrls: [String] = []
   var didRenderAdded = false
   var timer: Timer? = nil
@@ -48,22 +49,26 @@ class ShareViewController: UIViewController {
       return
     }
 
+    // Support only 1 url for now. The callback is async and don't know how to await!
     for (_, attachment) in attachments.enumerated() {
-      if !attachment.hasItemConformingToTypeIdentifier(urlContentType) {
-        self.renderInvalid()
-        return
-      }
-
-      attachment.loadItem(forTypeIdentifier: urlContentType, options: nil) { [unowned self] data, error in
-        guard let url = data as? URL, error == nil else {
-          self.renderInvalid()
-          return
-        }
-
-        self.sharedUrls.append(url.absoluteString)
-        if self.sharedUrls.count == attachments.count {
+      if attachment.hasItemConformingToTypeIdentifier(urlContentType) {
+        attachment.loadItem(forTypeIdentifier: urlContentType, options: nil) { [unowned self] data, error in
+          if let url = data as? URL, error == nil {
+            self.sharedUrls.append(url.absoluteString)
+          }
           self.addLink()
         }
+        return
+      }
+      
+      if attachment.hasItemConformingToTypeIdentifier(textContentType) {
+        attachment.loadItem(forTypeIdentifier: textContentType, options: nil) { [unowned self] data, error in
+          if let text = data as? String, error == nil {
+            self.sharedUrls.append(text)
+          }
+          self.addLink()
+        }
+        return
       }
     }
   }
@@ -79,7 +84,6 @@ class ShareViewController: UIViewController {
       return
     }
 
-    // Support only 1 url for now!
     Blockstack.shared.addLink(url: self.sharedUrls[0]) { publicUrl, error in
       guard let _ = publicUrl, error == nil else {
         print("Died adding with error: ", error.debugDescription)
