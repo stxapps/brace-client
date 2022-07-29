@@ -60,7 +60,7 @@ class ShareViewController: UIViewController {
         }
         return
       }
-      
+
       if attachment.hasItemConformingToTypeIdentifier(textContentType) {
         attachment.loadItem(forTypeIdentifier: textContentType, options: nil) { [unowned self] data, error in
           if let text = data as? String, error == nil {
@@ -71,6 +71,9 @@ class ShareViewController: UIViewController {
         return
       }
     }
+
+    self.renderInvalid()
+    return
   }
 
   private func addLink() {
