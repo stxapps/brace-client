@@ -329,18 +329,18 @@ const _ListNameEditor = (props) => {
             <path fillRule="evenodd" clipRule="evenodd" d="M13.7071 0.29289C14.0976 0.68342 14.0976 1.31658 13.7071 1.70711L5.70711 9.7071C5.31658 10.0976 4.68342 10.0976 4.29289 9.7071L0.29289 5.7071C-0.09763 5.3166 -0.09763 4.68342 0.29289 4.29289C0.68342 3.90237 1.31658 3.90237 1.70711 4.29289L5 7.5858L12.2929 0.29289C12.6834 -0.09763 13.3166 -0.09763 13.7071 0.29289Z" />
           </svg>
         </button>}
-        {(state.mode === MODE_VIEW && listNameObj !== null) && <button onClick={onEditBtnClick} className="flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10 group hidden focus:outline-none sm:flex" disabled={isBusy}>
+        {(state.mode === MODE_VIEW && listNameObj !== null) && <button onClick={onEditBtnClick} className="flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10 group hidden focus:outline-none sm:flex" disabled={isBusy} title="Edit">
           <svg className="w-4 text-gray-500 rounded-sm group-hover:text-gray-600 group-focus:ring group-focus:ring-offset-4" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M10.5859 0.585788C11.3669 -0.195262 12.6333 -0.195262 13.4143 0.585788C14.1954 1.36683 14.1954 2.63316 13.4143 3.41421L12.6214 4.20711L9.79297 1.37868L10.5859 0.585788Z" />
             <path d="M8.3787 2.79289L0 11.1716V14H2.82842L11.2071 5.62132L8.3787 2.79289Z" />
           </svg>
         </button>}
-        {(state.mode === MODE_VIEW && listNameObj !== null) && <button onClick={onMoveUpBtnClick} className="flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10 group hidden focus:outline-none lg:flex" disabled={isBusy}>
+        {(state.mode === MODE_VIEW && listNameObj !== null) && <button onClick={onMoveUpBtnClick} className="flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10 group hidden focus:outline-none lg:flex" disabled={isBusy} title="Move up">
           <svg className="h-4 text-gray-500 rounded-sm group-hover:text-gray-600 group-focus:ring group-focus:ring-offset-4" viewBox="0 0 14 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M0 15C0 14.4477 0.44772 14 1 14H13C13.5523 14 14 14.4477 14 15C14 15.5523 13.5523 16 13 16H1C0.44772 16 0 15.5523 0 15ZM3.29289 4.70711C2.90237 4.31658 2.90237 3.68342 3.29289 3.29289L6.29289 0.29289C6.48043 0.10536 6.73478 0 7 0C7.2652 0 7.5196 0.10536 7.7071 0.29289L10.7071 3.29289C11.0976 3.68342 11.0976 4.31658 10.7071 4.70711C10.3166 5.09763 9.6834 5.09763 9.2929 4.70711L8 3.41421V11C8 11.5523 7.5523 12 7 12C6.44771 12 6 11.5523 6 11V3.41421L4.70711 4.70711C4.31658 5.09763 3.68342 5.09763 3.29289 4.70711Z" />
           </svg>
         </button>}
-        {(state.mode === MODE_VIEW && listNameObj !== null) && <button onClick={onMoveDownBtnClick} className="flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10 group hidden focus:outline-none lg:flex" disabled={isBusy}>
+        {(state.mode === MODE_VIEW && listNameObj !== null) && <button onClick={onMoveDownBtnClick} className="flex-grow-0 flex-shrink-0 justify-center items-center w-10 h-10 group hidden focus:outline-none lg:flex" disabled={isBusy} title="Move down">
           <svg className="h-4 text-gray-500 rounded-sm group-hover:text-gray-600 group-focus:ring group-focus:ring-offset-4" viewBox="0 0 14 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M0 15C0 14.4477 0.44772 14 1 14H13C13.5523 14 14 14.4477 14 15C14 15.5523 13.5523 16 13 16H1C0.44772 16 0 15.5523 0 15ZM3.29289 7.29289C3.68342 6.90237 4.31658 6.90237 4.70711 7.29289L6 8.5858V1C6 0.44772 6.44771 0 7 0C7.5523 0 8 0.44771 8 1V8.5858L9.2929 7.29289C9.6834 6.90237 10.3166 6.90237 10.7071 7.29289C11.0976 7.68342 11.0976 8.3166 10.7071 8.7071L7.7071 11.7071C7.5196 11.8946 7.2652 12 7 12C6.73478 12 6.48043 11.8946 6.29289 11.7071L3.29289 8.7071C2.90237 8.3166 2.90237 7.68342 3.29289 7.29289Z" />
           </svg>

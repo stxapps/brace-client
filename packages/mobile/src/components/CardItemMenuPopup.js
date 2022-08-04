@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { ScrollView, View, Text, Linking, LayoutAnimation } from 'react-native';
+import { ScrollView, View, Text, LayoutAnimation } from 'react-native';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Svg, { Path } from 'react-native-svg';
 import Clipboard from '@react-native-community/clipboard';
@@ -11,14 +11,14 @@ import {
   updateListNamesMode,
 } from '../actions';
 import {
-  MY_LIST, TRASH, ADDING, MOVING, OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
+  MY_LIST, TRASH, ADDING, MOVING, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
   MOVE_TO, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP,
   PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
   DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
 import { getListNameMap, makeGetPinStatus } from '../selectors';
 import {
-  ensureContainUrlProtocol, getListNameDisplayName, getAllListNames, getLastHalfHeight,
+  getListNameDisplayName, getAllListNames, getLastHalfHeight,
 } from '../utils';
 import cache from '../utils/cache';
 import { tailwind } from '../stylesheets/tailwind';
@@ -57,7 +57,7 @@ class CardItemMenuPopup extends React.PureComponent {
       [ADDING, MOVING].includes(link.status) ||
       ![null, PINNED].includes(pinStatus)
     ) {
-      menu = menu.slice(0, 2);
+      menu = menu.slice(0, 1);
     } else if (listName !== TRASH) {
       // Only when no other pending actions and list name is not TRASH
       if (pinStatus === PINNED) menu = [...menu, MANAGE_PIN];
@@ -83,9 +83,7 @@ class CardItemMenuPopup extends React.PureComponent {
     const { safeAreaWidth } = this.props;
     const animConfig = cardItemFMV(safeAreaWidth);
 
-    if (text === OPEN) {
-      Linking.openURL(ensureContainUrlProtocol(url));
-    } else if (text === COPY_LINK) {
+    if (text === COPY_LINK) {
       Clipboard.setString(url);
     } else if (text === ARCHIVE) {
       LayoutAnimation.configureNext(animConfig);

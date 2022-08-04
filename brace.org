@@ -844,7 +844,7 @@ This and CI/CD are very important!
 - use 'sudo -i' to switch to root user and test the script below
 - startup script in Custom metadata, key: startup-script, value:
   #! /bin/bash
-  sudo -u linux bash -c 'cd /home/linux/brace-server-worker; mkdir -p ./logs; NOW=$(date +'%Y%m%d%H%M%S'); /home/linux/.nvm/versions/node/v14.17.4/bin/node index.js > "./logs/log_${NOW}.txt" 2>&1; sudo shutdown -h now'
+  sudo -u linux bash -c 'cd /home/linux/brace-server-worker; mkdir -p ./logs; NOW=$(date +'%Y%m%d%H%M%S'); /home/linux/.nvm/versions/node/v16.16.0/bin/node --experimental-specifier-resolution=node src/index.js > "./logs/log_${NOW}.txt" 2>&1; sudo shutdown -h now'
 - *Check node version as it's hard coded!*
 ** Schedule the instance
 - IAM

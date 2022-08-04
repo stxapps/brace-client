@@ -64,7 +64,6 @@ export const DIED_REMOVING = 'DIED_REMOVING';
 export const DIED_DELETING = 'DIED_DELETING';
 export const DIED_UPDATING = 'DIED_UPDATING';
 
-export const OPEN = 'Open';
 export const COPY_LINK = 'Copy link';
 //export const ARCHIVE = 'Archive';
 export const REMOVE = 'Remove';
@@ -73,9 +72,9 @@ export const DELETE = 'Permanently delete';
 export const MOVE_TO = 'Move to';
 
 export const CARD_ITEM_POPUP_MENU = {
-  [MY_LIST]: [OPEN, COPY_LINK, ARCHIVE, REMOVE, MOVE_TO],
-  [TRASH]: [OPEN, COPY_LINK, RESTORE, DELETE],
-  [ARCHIVE]: [OPEN, COPY_LINK, REMOVE, MOVE_TO],
+  [MY_LIST]: [COPY_LINK, ARCHIVE, REMOVE, MOVE_TO],
+  [TRASH]: [COPY_LINK, RESTORE, DELETE],
+  [ARCHIVE]: [COPY_LINK, REMOVE, MOVE_TO],
 };
 
 export const HTTP = 'http://';

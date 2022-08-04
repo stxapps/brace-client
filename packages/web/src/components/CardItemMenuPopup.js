@@ -7,7 +7,7 @@ import {
   updateListNamesMode,
 } from '../actions';
 import {
-  MY_LIST, TRASH, ADDING, MOVING, OPEN, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
+  MY_LIST, TRASH, ADDING, MOVING, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
   MOVE_TO, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP,
   PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
   DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
@@ -16,7 +16,7 @@ import {
   getListNameMap, getPopupLink, getDoEnableExtraFeatures, makeGetPinStatus,
 } from '../selectors';
 import {
-  copyTextToClipboard, ensureContainUrlProtocol, getListNameDisplayName, getAllListNames,
+  copyTextToClipboard, getListNameDisplayName, getAllListNames,
   isEqual, throttle, getLastHalfHeight,
 } from '../utils';
 import { popupBgFMV, popupFMV } from '../types/animConfigs';
@@ -107,7 +107,7 @@ class CardItemMenuPopup extends React.PureComponent {
       [ADDING, MOVING].includes(popupLink.status) ||
       ![null, PINNED].includes(pinStatus)
     ) {
-      menu = menu.slice(0, 2);
+      menu = menu.slice(0, 1);
     } else if (listName !== TRASH) {
       // Only when no other pending actions and list name is not TRASH
       if (pinStatus === PINNED) menu = [...menu, MANAGE_PIN];
@@ -126,9 +126,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
     const { id, url, popupAnchorPosition } = this.props.popupLink;
 
-    if (text === OPEN) {
-      window.open(ensureContainUrlProtocol(url));
-    } else if (text === COPY_LINK) {
+    if (text === COPY_LINK) {
       copyTextToClipboard(url);
     } else if (text === ARCHIVE) {
       this.props.moveLinks(ARCHIVE, [id]);
