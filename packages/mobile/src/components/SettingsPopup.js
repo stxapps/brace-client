@@ -283,10 +283,10 @@ const SettingsPopup = () => {
     };
 
     const MAX_W_6XL = 1152; // If change max-w-6xl below, need to update this too.
-    const closeBtnStyle = { right: 0 };
-    if (safeAreaWidth >= LG_WIDTH) closeBtnStyle.right = 6;
+    const closeBtnStyle = { top: insets.top, right: insets.right };
+    if (safeAreaWidth >= LG_WIDTH) closeBtnStyle.right += 6;
     if (safeAreaWidth >= MAX_W_6XL) {
-      closeBtnStyle.right = ((safeAreaWidth - MAX_W_6XL) / 2) + 6;
+      closeBtnStyle.right += ((safeAreaWidth - MAX_W_6XL) / 2) + 6;
     }
     const closeBtnSvgWidth = safeAreaWidth < MD_WIDTH ? 20 : 28;
 
