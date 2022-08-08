@@ -75,7 +75,6 @@ const _ListNameEditor = (props) => {
   const prevFocusCount = useRef(state.focusCount);
   const prevDisplayName = useRef(null);
   const input = useRef(null);
-  const menuBtn = useRef(null);
   const didOkBtnJustPress = useRef(false);
   const didCancelBtnJustPress = useRef(false);
   const dispatch = useDispatch();
@@ -229,13 +228,15 @@ const _ListNameEditor = (props) => {
   };
 
   useEffect(() => {
+    // displayName is already derived from listNameMap in Selector,
+    //   still need to update to Editor so when deleting, there's value to be shown.
     if (listNameObj && listNameObj.displayName !== prevDisplayName.current) {
       dispatch(updateListNameEditors({
-        [key]: { value: listNameObj.displayName },
+        [key]: { value: state.value },
       }));
       prevDisplayName.current = listNameObj.displayName;
     }
-  }, [listNameObj, key, dispatch]);
+  }, [state.value, listNameObj, key, dispatch]);
 
   useEffect(() => {
     // state.focusCount can be undefined when the popup is close, so can't use !==
@@ -345,7 +346,7 @@ const _ListNameEditor = (props) => {
             <path fillRule="evenodd" clipRule="evenodd" d="M0 15C0 14.4477 0.44772 14 1 14H13C13.5523 14 14 14.4477 14 15C14 15.5523 13.5523 16 13 16H1C0.44772 16 0 15.5523 0 15ZM3.29289 7.29289C3.68342 6.90237 4.31658 6.90237 4.70711 7.29289L6 8.5858V1C6 0.44772 6.44771 0 7 0C7.5523 0 8 0.44771 8 1V8.5858L9.2929 7.29289C9.6834 6.90237 10.3166 6.90237 10.7071 7.29289C11.0976 7.68342 11.0976 8.3166 10.7071 8.7071L7.7071 11.7071C7.5196 11.8946 7.2652 12 7 12C6.73478 12 6.48043 11.8946 6.29289 11.7071L3.29289 8.7071C2.90237 8.3166 2.90237 7.68342 3.29289 7.29289Z" />
           </svg>
         </button>}
-        {(state.mode === MODE_VIEW && listNameObj !== null) && <button ref={menuBtn} onClick={onMenuBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-center items-center w-10 h-10 group focus:outline-none" disabled={isBusy}>
+        {(state.mode === MODE_VIEW && listNameObj !== null) && <button onClick={onMenuBtnClick} className="flex-grow-0 flex-shrink-0 flex justify-center items-center w-10 h-10 group focus:outline-none" disabled={isBusy}>
           <svg style={{ width: '1.2rem', height: '1.2rem' }} className="text-gray-500 rounded-sm group-hover:text-gray-600 group-focus:ring group-focus:ring-offset-4" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M10 6C9.46957 6 8.96086 5.78929 8.58579 5.41421C8.21071 5.03914 8 4.53043 8 4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2C10.5304 2 11.0391 2.21071 11.4142 2.58579C11.7893 2.96086 12 3.46957 12 4C12 4.53043 11.7893 5.03914 11.4142 5.41421C11.0391 5.78929 10.5304 6 10 6ZM10 12C9.46957 12 8.96086 11.7893 8.58579 11.4142C8.21071 11.0391 8 10.5304 8 10C8 9.46957 8.21071 8.96086 8.58579 8.58579C8.96086 8.21071 9.46957 8 10 8C10.5304 8 11.0391 8.21071 11.4142 8.58579C11.7893 8.96086 12 9.46957 12 10C12 10.5304 11.7893 11.0391 11.4142 11.4142C11.0391 11.7893 10.5304 12 10 12ZM10 18C9.46957 18 8.96086 17.7893 8.58579 17.4142C8.21071 17.0391 8 16.5304 8 16C8 15.4696 8.21071 14.9609 8.58579 14.5858C8.96086 14.2107 9.46957 14 10 14C10.5304 14 11.0391 14.2107 11.4142 14.5858C11.7893 14.9609 12 15.4696 12 16C12 16.5304 11.7893 17.0391 11.4142 17.4142C11.0391 17.7893 10.5304 18 10 18Z" />
           </svg>

@@ -2,7 +2,7 @@ import { createSelectorCreator, defaultMemoize, createSelector } from 'reselect'
 
 import { IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, PINNED } from '../types/const';
 import {
-  isStringIn, isObject, isArrayEqual, isEqual,
+  isStringIn, isObject, isArrayEqual, isEqual, getListNameObj,
   getMainId, getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
   getFilteredLinks, getSortedLinks, sortWithPins, getPinFPaths, getPins,
   doEnableExtraFeatures,
@@ -204,10 +204,16 @@ export const getIsFetchingMore = createSelector(
 /** @return {function(any, any): initialListNameEditorState} */
 export const makeGetListNameEditor = () => {
   return createSelector(
+    state => state.settings.listNameMap,
     state => state.listNameEditors,
     (__, key) => key,
-    (listNameEditors, key) => {
-      return { ...initialListNameEditorState, ...listNameEditors[key] };
+    (listNameMap, listNameEditors, key) => {
+      const state = { ...initialListNameEditorState };
+
+      const { listNameObj } = getListNameObj(key, listNameMap);
+      if (listNameObj) state.value = listNameObj.displayName;
+
+      return { ...state, ...listNameEditors[key] };
     },
     { memoizeOptions: { resultEqualityCheck: isEqual } },
   );

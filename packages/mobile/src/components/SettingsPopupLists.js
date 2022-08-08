@@ -245,13 +245,15 @@ const _ListNameEditor = (props) => {
   };
 
   useEffect(() => {
+    // displayName is already derived from listNameMap in Selector,
+    //   still need to update to Editor so when deleting, there's value to be shown.
     if (listNameObj && listNameObj.displayName !== prevDisplayName.current) {
       dispatch(updateListNameEditors({
-        [key]: { value: listNameObj.displayName },
+        [key]: { value: state.value },
       }));
       prevDisplayName.current = listNameObj.displayName;
     }
-  }, [listNameObj, key, dispatch]);
+  }, [state.value, listNameObj, key, dispatch]);
 
   useEffect(() => {
     // state.focusCount can be undefined when the popup is close, so can't use !==

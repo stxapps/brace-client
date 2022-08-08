@@ -1038,6 +1038,10 @@ export const updateSettingsViewId = (
   }
   if ([true, false].includes(didSidebarAnimEnd)) {
     payload.didSettingsSidebarAnimEnd = didSidebarAnimEnd;
+    if (!didSidebarAnimEnd) {
+      const { updateSettingsViewIdCount } = getState().display;
+      payload.updateSettingsViewIdCount = updateSettingsViewIdCount + 1;
+    }
   }
 
   dispatch({ type: UPDATE_SETTINGS_VIEW_ID, payload });
