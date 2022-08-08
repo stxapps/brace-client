@@ -284,9 +284,9 @@ const SettingsPopup = () => {
 
     const MAX_W_6XL = 1152; // If change max-w-6xl below, need to update this too.
     const closeBtnStyle = { top: insets.top, right: insets.right };
-    if (safeAreaWidth >= LG_WIDTH) closeBtnStyle.right += 6;
+    if (safeAreaWidth >= LG_WIDTH) closeBtnStyle.right = 6 + insets.right;
     if (safeAreaWidth >= MAX_W_6XL) {
-      closeBtnStyle.right += ((safeAreaWidth - MAX_W_6XL) / 2) + 6;
+      closeBtnStyle.right = 6 + ((safeAreaWidth - MAX_W_6XL) / 2) + insets.right;
     }
     const closeBtnSvgWidth = safeAreaWidth < MD_WIDTH ? 20 : 28;
 
@@ -356,7 +356,7 @@ const SettingsPopup = () => {
             </View>
           </View>
         </ScrollView>
-        <View style={[tailwind('absolute top-0'), closeBtnStyle]}>
+        <View style={[tailwind('absolute'), closeBtnStyle]}>
           <TouchableOpacity onPress={onPopupCloseBtnClick} style={tailwind('items-center justify-center h-12 w-12')}>
             <View style={tailwind('bg-white rounded-full')}>
               <Svg style={tailwind('text-gray-300 font-normal')} width={closeBtnSvgWidth} height={closeBtnSvgWidth} stroke="currentColor" fill="none" viewBox="0 0 24 24">

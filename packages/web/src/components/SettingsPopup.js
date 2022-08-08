@@ -148,7 +148,7 @@ const SettingsPopup = () => {
     const closeBtnStyle = { right: 0 };
     if (safeAreaWidth >= LG_WIDTH) closeBtnStyle.right = 6;
     if (safeAreaWidth >= MAX_W_6XL) {
-      closeBtnStyle.right = ((safeAreaWidth - MAX_W_6XL) / 2) + 6;
+      closeBtnStyle.right = 6 + ((safeAreaWidth - MAX_W_6XL) / 2);
     }
 
     return (
