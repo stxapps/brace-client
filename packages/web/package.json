@@ -1,6 +1,6 @@
 {
   "name": "brace-client-web",
-  "version": "0.17.3",
+  "version": "0.17.4",
   "private": true,
   "scripts": {
     "patch-js": "node bin/patch.js",
