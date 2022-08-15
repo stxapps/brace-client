@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { ScrollView, View, Text, LayoutAnimation } from 'react-native';
+import { connect } from 'react-redux';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Svg, { Path } from 'react-native-svg';
 import Clipboard from '@react-native-community/clipboard';
@@ -21,10 +21,9 @@ import {
   getListNameDisplayName, getAllListNames, getLastHalfHeight,
 } from '../utils';
 import cache from '../utils/cache';
-import { tailwind } from '../stylesheets/tailwind';
 import { cardItemFMV } from '../types/animConfigs';
 
-import { withSafeAreaContext } from '.';
+import { withTailwind } from '.';
 import MenuPopupRenderer from './MenuPopupRenderer';
 
 class CardItemMenuPopup extends React.PureComponent {
@@ -153,8 +152,7 @@ class CardItemMenuPopup extends React.PureComponent {
   }
 
   renderMenu() {
-
-    const { listNameMap } = this.props;
+    const { listNameMap, tailwind } = this.props;
     const { menu } = this.populateMenu();
 
     return (
@@ -164,7 +162,7 @@ class CardItemMenuPopup extends React.PureComponent {
           if (text === ARCHIVE) displayText = getListNameDisplayName(text, listNameMap);
           return (
             <MenuOption key={text} onSelect={() => this.onMenuPopupClick(text)} customStyles={cache('CIMP_menuOption', { optionWrapper: { padding: 0 } })}>
-              <Text style={tailwind('py-2.5 pl-4 pr-4 w-full text-sm text-gray-700 font-normal')} numberOfLines={1} ellipsizeMode="tail">{displayText}</Text>
+              <Text style={tailwind('w-full py-2.5 pl-4 pr-4 text-sm font-normal text-gray-700')} numberOfLines={1} ellipsizeMode="tail">{displayText}</Text>
             </MenuOption>
           );
         })}
@@ -173,8 +171,7 @@ class CardItemMenuPopup extends React.PureComponent {
   }
 
   render() {
-
-    const { layoutType, safeAreaHeight } = this.props;
+    const { layoutType, safeAreaHeight, tailwind } = this.props;
     const popupStyle = {
       maxHeight: getLastHalfHeight(Math.min(288, safeAreaHeight - 16), 40, 9, 9),
     };
@@ -183,15 +180,15 @@ class CardItemMenuPopup extends React.PureComponent {
     if (layoutType === LAYOUT_LIST) {
       menuTriggerView = (
         <View ref={this.menuBtn} style={tailwind('px-2 py-1')} collapsable={false}>
-          <Svg style={tailwind('text-gray-400 font-normal rounded-full')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+          <Svg style={tailwind('rounded-full font-normal text-gray-400')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">
             <Path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </Svg>
         </View>
       );
     } else {
       menuTriggerView = (
-        <View ref={this.menuBtn} style={[tailwind('pt-2 pl-4 pr-2 flex-shrink-0 flex-grow-0'), { paddingBottom: 6 }]} collapsable={false}>
-          <Svg style={tailwind('text-gray-400 font-normal rounded-full')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+        <View ref={this.menuBtn} style={[tailwind('flex-shrink-0 flex-grow-0 pt-2 pl-4 pr-2'), { paddingBottom: 6 }]} collapsable={false}>
+          <Svg style={tailwind('rounded-full font-normal text-gray-400')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">
             <Path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </Svg>
         </View>
@@ -204,7 +201,7 @@ class CardItemMenuPopup extends React.PureComponent {
         <MenuTrigger>
           {menuTriggerView}
         </MenuTrigger>
-        <MenuOptions customStyles={cache('CIMP_menuOptionsCustomStyles', { optionsContainer: [tailwind('py-2 min-w-32 max-w-64 bg-white border border-gray-100 rounded-lg shadow-xl z-41'), popupStyle] }, safeAreaHeight)}>
+        <MenuOptions customStyles={cache('CIMP_menuOptionsCustomStyles', { optionsContainer: [tailwind('z-41 min-w-32 max-w-64 rounded-lg border border-gray-100 bg-white py-2 shadow-xl'), popupStyle] }, safeAreaHeight)}>
           <ScrollView>
             {this.renderMenu()}
           </ScrollView>
@@ -241,4 +238,4 @@ const mapDispatchToProps = {
   updateListNamesMode,
 };
 
-export default connect(makeMapStateToProps, mapDispatchToProps)(withSafeAreaContext(CardItemMenuPopup));
+export default connect(makeMapStateToProps, mapDispatchToProps)(withTailwind(CardItemMenuPopup));

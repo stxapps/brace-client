@@ -3,8 +3,8 @@ import { View, Animated } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
 import cache from '../utils/cache';
-import { tailwind } from '../stylesheets/tailwind';
 
+import { withTailwind } from '.';
 import logo from '../images/logo-short.svg';
 
 class Loading extends React.PureComponent {
@@ -46,6 +46,9 @@ class Loading extends React.PureComponent {
   }
 
   render() {
+    // safeAreaWidth is undefined as init is not called yet,
+    //   use tailwind with care!
+    const { tailwind } = this.props;
 
     const rotateX = this.rotateX.interpolate({
       inputRange: [0, 100],
@@ -62,9 +65,9 @@ class Loading extends React.PureComponent {
     };
 
     return (
-      <View style={tailwind('items-center w-full h-full')}>
-        <View style={cache('LO_view', [{ top: '33.3333%', transform: [{ translateY: -24 }] }, tailwind('w-12 h-12')])}>
-          <Animated.View style={[tailwind('justify-center items-center w-full h-full'), style]}>
+      <View style={tailwind('h-full w-full items-center')}>
+        <View style={cache('LO_view', [{ top: '33.3333%', transform: [{ translateY: -24 }] }, tailwind('h-12 w-12')])}>
+          <Animated.View style={[tailwind('h-full w-full items-center justify-center'), style]}>
             <SvgXml width={42} height={48} xml={logo} />
           </Animated.View>
         </View>
@@ -73,4 +76,4 @@ class Loading extends React.PureComponent {
   }
 }
 
-export default Loading;
+export default withTailwind(Loading);

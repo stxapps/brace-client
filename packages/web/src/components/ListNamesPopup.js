@@ -20,7 +20,7 @@ import {
 } from '../types/animConfigs';
 
 import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
-import { useSafeAreaFrame } from '.';
+import { useSafeAreaFrame, useTailwind } from '.';
 
 // eslint-disable-next-line
 import { Tween } from 'framer-motion';
@@ -65,6 +65,7 @@ const ListNamesPopup = () => {
   const cancelBtn = useRef(null);
   const didClick = useRef(false);
   const dispatch = useDispatch();
+  const tailwind = useTailwind();
 
   const { listNameObj, parent, children } = useMemo(() => {
     const { listNameObj: obj, parent: p } = getListNameObj(
@@ -234,7 +235,7 @@ const ListNamesPopup = () => {
     const viewClassNames = animType === ANIM_TYPE_BMODAL ? '-mt-0.5' : '-mt-0.5';
 
     return (
-      <div className={`${viewClassNames}`}>
+      <div className={tailwind(`${viewClassNames}`)}>
         {children.map(obj => {
           let btnClassNames = animType === ANIM_TYPE_BMODAL ? 'py-4' : 'py-3';
           if (!obj.children || obj.children.length === 0) btnClassNames += ' pr-4';
@@ -252,13 +253,13 @@ const ListNamesPopup = () => {
           }
 
           return (
-            <div key={obj.listName} className="w-full flex flex-row justify-start items-center">
-              <button onClick={() => onMoveToItemBtnClick(obj.listName)} className={`flex-grow flex-shrink min-w-0 pl-4 ${btnClassNames} flex flex-row items-center group hover:bg-gray-100 focus:outline-none focus:bg-gray-100`} disabled={disabled}>
-                <p className={`text-sm ${disabled ? 'text-gray-400' : 'text-gray-700 group-hover:text-gray-900 group-focus:text-gray-900'} text-left truncate`}>{obj.displayName}</p>
-                {(mode === MODE_CHANGE_LIST_NAME && obj.listName in derivedUpdates) && <div className="ml-1 flex-grow-0 flex-shrink-0 self-start w-1.5 h-1.5 bg-blue-400 rounded-full"></div>}
+            <div key={obj.listName} className={tailwind('flex w-full flex-row items-center justify-start')}>
+              <button onClick={() => onMoveToItemBtnClick(obj.listName)} className={tailwind(`group flex min-w-0 flex-shrink flex-grow flex-row items-center pl-4 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none ${btnClassNames}`)} disabled={disabled}>
+                <p className={tailwind(`truncate text-left text-sm ${disabled ? 'text-gray-400' : 'text-gray-700 group-hover:text-gray-900 group-focus:text-gray-900'}`)}>{obj.displayName}</p>
+                {(mode === MODE_CHANGE_LIST_NAME && obj.listName in derivedUpdates) && <div className={tailwind('ml-1 h-1.5 w-1.5 flex-shrink-0 flex-grow-0 self-start rounded-full bg-blue-400')}></div>}
               </button>
-              {(obj.children && obj.children.length > 0) && <button onClick={() => onForwardBtnClick(obj.listName)} className="flex-grow-0 flex-shrink-0 w-10 h-10 flex justify-center items-center group focus:outline-none" disabled={forwardDisabled}>
-                <svg className={`w-5 h-5 ${forwardDisabled ? 'text-gray-300' : 'text-gray-500 group-hover:text-gray-700 group-focus:ring'} rounded`} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              {(obj.children && obj.children.length > 0) && <button onClick={() => onForwardBtnClick(obj.listName)} className={tailwind('group flex h-10 w-10 flex-shrink-0 flex-grow-0 items-center justify-center focus:outline-none')} disabled={forwardDisabled}>
+                <svg className={tailwind(`h-5 w-5 rounded ${forwardDisabled ? 'text-gray-300' : 'text-gray-500 group-hover:text-gray-700 group-focus:ring'}`)} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path fillRule="evenodd" clipRule="evenodd" d="M7.29303 14.7069C7.10556 14.5194 7.00024 14.2651 7.00024 13.9999C7.00024 13.7348 7.10556 13.4804 7.29303 13.2929L10.586 9.99992L7.29303 6.70692C7.11087 6.51832 7.01008 6.26571 7.01236 6.00352C7.01463 5.74132 7.1198 5.49051 7.30521 5.3051C7.49062 5.11969 7.74143 5.01452 8.00363 5.01224C8.26583 5.00997 8.51843 5.11076 8.70703 5.29292L12.707 9.29292C12.8945 9.48045 12.9998 9.73475 12.9998 9.99992C12.9998 10.2651 12.8945 10.5194 12.707 10.7069L8.70703 14.7069C8.5195 14.8944 8.26519 14.9997 8.00003 14.9997C7.73487 14.9997 7.48056 14.8944 7.29303 14.7069Z" />
                 </svg>
               </button>}
@@ -288,22 +289,22 @@ const ListNamesPopup = () => {
     const moveHereClassNames = animType === ANIM_TYPE_BMODAL ? 'py-3' : 'py-2.5';
 
     return (
-      <div className="w-full h-full flex flex-col">
-        <div className={`flex-grow-0 flex-shrink-0 flex justify-start items-center w-full ${viewClassNames}`}>
-          {currentListName && <button onClick={() => onBackBtnClick(parent)} className="pl-2.5 pr-1 h-10 flex-grow-0 flex-shrink-0 justify-center items-center group focus:outline-none">
-            <svg className="w-5 h-5 text-gray-500 rounded group-hover:text-gray-700 group-focus:ring" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <div className={tailwind('flex h-full w-full flex-col')}>
+        <div className={tailwind(`flex w-full flex-shrink-0 flex-grow-0 items-center justify-start ${viewClassNames}`)}>
+          {currentListName && <button onClick={() => onBackBtnClick(parent)} className={tailwind('group h-10 flex-shrink-0 flex-grow-0 items-center justify-center pl-2.5 pr-1 focus:outline-none')}>
+            <svg className={tailwind('h-5 w-5 rounded text-gray-500 group-hover:text-gray-700 group-focus:ring')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path fillRule="evenodd" clipRule="evenodd" d="M12.707 5.29303C12.8945 5.48056 12.9998 5.73487 12.9998 6.00003C12.9998 6.26519 12.8945 6.5195 12.707 6.70703L9.41403 10L12.707 13.293C12.8892 13.4816 12.99 13.7342 12.9877 13.9964C12.9854 14.2586 12.8803 14.5094 12.6948 14.6948C12.5094 14.8803 12.2586 14.9854 11.9964 14.9877C11.7342 14.99 11.4816 14.8892 11.293 14.707L7.29303 10.707C7.10556 10.5195 7.00024 10.2652 7.00024 10C7.00024 9.73487 7.10556 9.48056 7.29303 9.29303L11.293 5.29303C11.4806 5.10556 11.7349 5.00024 12 5.00024C12.2652 5.00024 12.5195 5.10556 12.707 5.29303Z" />
             </svg>
           </button>}
-          <p className={`flex-grow flex-shrink text-gray-600 text-sm font-semibold truncate ${currentListName ? 'pr-4' : 'px-4'}`}>{displayName}</p>
+          <p className={tailwind(`flex-shrink flex-grow truncate text-sm font-semibold text-gray-600 ${currentListName ? 'pr-4' : 'px-4'}`)}>{displayName}</p>
         </div>
-        <div className="flex-1 overflow-hidden w-full flex flex-col">
-          <motion.div className="flex-1 overflow-auto" style={contentStyle}>
+        <div className={tailwind('flex w-full flex-1 flex-col overflow-hidden')}>
+          <motion.div className={tailwind('flex-1 overflow-auto')} style={contentStyle}>
             {renderListNameBtns()}
           </motion.div>
         </div>
-        {[MODE_MOVE_LINKS, MODE_MOVE_LIST_NAME].includes(mode) && <div className={`flex-grow-0 flex-shrink-0 w-full px-3 ${moveHereClassNames} border-t border-gray-200 flex flex-row justify-end items-center`}>
-          <button onClick={onMoveHereBtnClick} className={`px-3 py-1.5 bg-white border ${moveHereDisabled ? 'border-gray-300' : 'border-gray-400 hover:border-gray-500'} rounded-full text-xs ${moveHereDisabled ? 'text-gray-400' : 'text-gray-500 hover:text-gray-600'} focus:outline-none focus:ring`} disabled={moveHereDisabled}>
+        {[MODE_MOVE_LINKS, MODE_MOVE_LIST_NAME].includes(mode) && <div className={tailwind(`flex w-full flex-shrink-0 flex-grow-0 flex-row items-center justify-end border-t border-gray-200 px-3 ${moveHereClassNames}`)}>
+          <button onClick={onMoveHereBtnClick} className={tailwind(`rounded-full border bg-white px-3 py-1.5 text-xs focus:outline-none focus:ring ${moveHereDisabled ? 'border-gray-300' : 'border-gray-400 hover:border-gray-500'} ${moveHereDisabled ? 'text-gray-400' : 'text-gray-500 hover:text-gray-600'}`)} disabled={moveHereDisabled}>
             {moveHereDisabled ? 'View only' : 'Move here'}
           </button>
         </div>}
@@ -315,7 +316,7 @@ const ListNamesPopup = () => {
   if (animType === ANIM_TYPE_BMODAL) {
     const popupStyle = { height: popupHeight };
     panel = (
-      <motion.div key="LNP_popup" style={popupStyle} className="fixed inset-x-0 bottom-0 bg-white rounded-t-lg shadow-xl ring-1 ring-black ring-opacity-5 z-41" variants={bModalFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+      <motion.div key="LNP_popup" style={popupStyle} className={tailwind('fixed inset-x-0 bottom-0 z-41 rounded-t-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5')} variants={bModalFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
         {_render()}
       </motion.div>
     );
@@ -332,7 +333,7 @@ const ListNamesPopup = () => {
     const popupClassNames = getOriginClassName(topOrigin, leftOrigin);
 
     panel = (
-      <motion.div key="LNP_popup" style={popupStyle} className={`fixed rounded-lg shadow-xl bg-white overflow-auto ring-1 ring-black ring-opacity-5 z-41 ${popupClassNames}`} variants={popupFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+      <motion.div key="LNP_popup" style={popupStyle} className={tailwind(`fixed z-41 overflow-auto rounded-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 ${popupClassNames}`)} variants={popupFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
         {_render()}
       </motion.div>
     );
@@ -342,7 +343,7 @@ const ListNamesPopup = () => {
 
   return (
     <AnimatePresence key="AP_lnPopup">
-      <motion.button key="LNP_cancelBtn" ref={cancelBtn} onClick={onCancelBtnClick} className="fixed inset-0 w-full h-full bg-black bg-opacity-25 cursor-default z-40 focus:outline-none" variants={bgFMV} initial="hidden" animate="visible" exit="hidden" />
+      <motion.button key="LNP_cancelBtn" ref={cancelBtn} onClick={onCancelBtnClick} className={tailwind('fixed inset-0 z-40 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={bgFMV} initial="hidden" animate="visible" exit="hidden" />
       {panel}
     </AnimatePresence>
   );

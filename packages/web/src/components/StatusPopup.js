@@ -13,6 +13,8 @@ import { SM_WIDTH } from '../types/const';
 import { updateStatus } from '../actions';
 import { statusPopupFMV } from '../types/animConfigs';
 
+import { withTailwind } from '.';
+
 const MSGS = {
   [FETCH]: 'Fetching data from server...',
   [FETCH_COMMIT]: 'Finished fetching data.',
@@ -57,7 +59,7 @@ class StatusPopup extends React.PureComponent {
   }
 
   render() {
-    const { status, safeAreaWidth } = this.props;
+    const { status, safeAreaWidth, tailwind } = this.props;
 
     if (this.timeout) {
       window.clearTimeout(this.timeout);
@@ -81,8 +83,8 @@ class StatusPopup extends React.PureComponent {
     if (window.pageYOffset > 100) animate += 'NoAnim';
 
     return (
-      <div className="w-48 text-right overflow-hidden sm:w-64">
-        <motion.span className="pl-3 inline-block bg-white text-sm text-gray-500 tracking-wide rounded-l-full" variants={statusPopupFMV} initial={false} animate={animate}>{this.msg}</motion.span>
+      <div className={tailwind('w-48 overflow-hidden text-right sm:w-64')}>
+        <motion.span className={tailwind('inline-block rounded-l-full bg-white pl-3 text-sm tracking-wide text-gray-500')} variants={statusPopupFMV} initial={false} animate={animate}>{this.msg}</motion.span>
       </div>
     );
   }
@@ -97,4 +99,4 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = { updateStatus };
 
-export default connect(mapStateToProps, mapDispatchToProps)(StatusPopup);
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(StatusPopup));

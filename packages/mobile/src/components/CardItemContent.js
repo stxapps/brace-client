@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { View, Text, TouchableOpacity, Linking } from 'react-native';
+import { connect } from 'react-redux';
 
 import { updateBulkEdit, addSelectedLinkIds } from '../actions';
 import { DOMAIN_NAME, COLOR, PATTERN, IMAGE } from '../types/const';
@@ -11,9 +11,8 @@ import {
 } from '../utils';
 import cache from '../utils/cache';
 import { PATTERN_MAP } from '../types/patternPaths';
-import { tailwind } from '../stylesheets/tailwind';
 
-import { withSafeAreaContext } from '.';
+import { withTailwind } from '.';
 import GracefulImage from './GracefulImage';
 
 import CardItemMenuPopup from './CardItemMenuPopup';
@@ -57,14 +56,14 @@ class CardItemContent extends React.Component {
   }
 
   renderImage() {
-
+    const { tailwind } = this.props;
     const { decor, extractedResult } = this.props.link;
 
     let image;
     if (extractedResult && extractedResult.image) image = extractedResult.image;
 
     if (image) {
-      return <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full aspect-7/12 bg-white rounded-t-lg shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_image_${image}`, { uri: image }, image)} />;
+      return <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full rounded-t-lg bg-white aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_image_${image}`, { uri: image }, image)} />;
     }
 
     let fg = null;
@@ -72,8 +71,8 @@ class CardItemContent extends React.Component {
       const { text } = decor.image.fg;
       fg = (
         <React.Fragment>
-          <View style={tailwind('items-center justify-center w-20 h-20 bg-white rounded-full')}>
-            <Text style={tailwind('text-5xl text-gray-700 font-medium uppercase')}>{text}</Text>
+          <View style={tailwind('h-20 w-20 items-center justify-center rounded-full bg-white')}>
+            <Text style={tailwind('text-5xl font-medium uppercase text-gray-700')}>{text}</Text>
           </View>
         </React.Fragment>
       );
@@ -83,7 +82,7 @@ class CardItemContent extends React.Component {
     if (decor.image.bg.type === COLOR) {
       return (
         <React.Fragment>
-          <View style={tailwind(`items-center justify-center w-full aspect-7/12 ${decor.image.bg.value} rounded-t-lg shadow-xs`)}>
+          <View style={tailwind(`w-full items-center justify-center rounded-t-lg aspect-7/12 shadow-xs ${decor.image.bg.value}`)}>
             {fg}
           </View>
         </React.Fragment>
@@ -93,8 +92,8 @@ class CardItemContent extends React.Component {
     // Only pattern background or pattern background with a big letter
     if (decor.image.bg.type === PATTERN) {
       return (
-        <View style={tailwind('items-center justify-center w-full aspect-7/12 bg-white rounded-t-lg shadow-xs')}>
-          <GracefulImage key="image-graceful-image-pattern" style={tailwind('absolute inset-0 bg-white rounded-t-lg')} contentStyle={tailwind('rounded-t-lg')} source={PATTERN_MAP[decor.image.bg.value]} />
+        <View style={tailwind('w-full items-center justify-center rounded-t-lg bg-white aspect-7/12 shadow-xs')}>
+          <GracefulImage key="image-graceful-image-pattern" style={tailwind('absolute inset-0 rounded-t-lg bg-white')} contentStyle={tailwind('rounded-t-lg')} source={PATTERN_MAP[decor.image.bg.value]} />
           {fg}
         </View>
       );
@@ -102,22 +101,23 @@ class CardItemContent extends React.Component {
 
     // Random image
     if (decor.image.bg.type === IMAGE) {
-      return <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full aspect-7/12 bg-white rounded-t-lg shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_decorImage_${decor.image.bg.value}`, { uri: prependDomainName(decor.image.bg.value) }, decor.image.bg.value)} />;
+      return <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full rounded-t-lg bg-white aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_decorImage_${decor.image.bg.value}`, { uri: prependDomainName(decor.image.bg.value) }, decor.image.bg.value)} />;
     }
 
     throw new Error(`Invalid decor: ${JSON.stringify(decor)}`);
   }
 
   renderFavicon() {
+    const { tailwind } = this.props;
 
     const placeholder = () => {
       if (decor.favicon.bg.type === COLOR) {
-        return <View style={tailwind(`flex-shrink-0 flex-grow-0 w-4 h-4 ${decor.favicon.bg.value} rounded-full`)} />;
+        return <View style={tailwind(`h-4 w-4 flex-shrink-0 flex-grow-0 rounded-full ${decor.favicon.bg.value}`)} />;
       }
 
       if (decor.favicon.bg.type === PATTERN) {
         return (
-          <GracefulImage key="favicon-graceful-image-pattern" style={tailwind('flex-shrink-0 flex-grow-0 w-4 h-4 rounded-full')} source={PATTERN_MAP[decor.favicon.bg.value]} />
+          <GracefulImage key="favicon-graceful-image-pattern" style={tailwind('h-4 w-4 flex-shrink-0 flex-grow-0 rounded-full')} source={PATTERN_MAP[decor.favicon.bg.value]} />
         );
       }
     };
@@ -131,19 +131,18 @@ class CardItemContent extends React.Component {
     }
 
     if (favicon && !extractedFaviconError) {
-      return <GracefulImage key="favicon-graceful-image-extracted-result" style={tailwind('flex-shrink-0 flex-grow-0 w-4 h-4')} source={cache(`CI_favicon_${favicon}`, { uri: favicon }, favicon)} customPlaceholder={placeholder} onError={this.onExtractedFaviconError} />;
+      return <GracefulImage key="favicon-graceful-image-extracted-result" style={tailwind('h-4 w-4 flex-shrink-0 flex-grow-0')} source={cache(`CI_favicon_${favicon}`, { uri: favicon }, favicon)} customPlaceholder={placeholder} onError={this.onExtractedFaviconError} />;
     }
 
     const { origin } = extractUrl(url);
     favicon = removeTailingSlash(origin) + '/favicon.ico';
     favicon = ensureContainUrlSecureProtocol(favicon);
 
-    return <GracefulImage key="favicon-graceful-image-ico" style={tailwind('flex-shrink-0 flex-grow-0 w-4 h-4')} source={cache(`CI_favicon_${favicon}`, { uri: favicon }, favicon)} customPlaceholder={placeholder} />;
+    return <GracefulImage key="favicon-graceful-image-ico" style={tailwind('h-4 w-4 flex-shrink-0 flex-grow-0')} source={cache(`CI_favicon_${favicon}`, { uri: favicon }, favicon)} customPlaceholder={placeholder} />;
   }
 
   render() {
-
-    const { link, safeAreaWidth } = this.props;
+    const { link, tailwind } = this.props;
     const { url, extractedResult } = link;
 
     let title, classNames = '';
@@ -162,19 +161,19 @@ class CardItemContent extends React.Component {
         <TouchableOpacity activeOpacity={1.0} onLongPress={this.onLongPress}>
           {this.renderImage()}
         </TouchableOpacity>
-        <View style={tailwind('flex-row justify-between items-center w-full')}>
-          <View style={tailwind('pl-4 flex-shrink flex-grow flex-row items-center')}>
+        <View style={tailwind('w-full flex-row items-center justify-between')}>
+          <View style={tailwind('flex-shrink flex-grow flex-row items-center pl-4')}>
             {this.renderFavicon()}
             <View style={tailwind('flex-shrink flex-grow')}>
               <TouchableOpacity onPress={() => Linking.openURL(origin)}>
-                <Text style={tailwind('pl-2 text-base text-gray-500 font-normal')} numberOfLines={1} ellipsizeMode="tail">{host}</Text>
+                <Text style={tailwind('pl-2 text-base font-normal text-gray-500')} numberOfLines={1} ellipsizeMode="tail">{host}</Text>
               </TouchableOpacity>
             </View>
           </View>
           <CardItemMenuPopup link={link} />
         </View>
         <TouchableOpacity onPress={() => Linking.openURL(ensureContainUrlProtocol(url))}>
-          <Text style={tailwind(`mt-0 mb-3 ml-4 mr-3 text-base text-gray-800 font-medium leading-6 ${classNames} lg:mb-4`, safeAreaWidth)}>{title}</Text>
+          <Text style={tailwind(`mt-0 mb-3 ml-4 mr-3 text-base font-medium leading-6 text-gray-800 lg:mb-4 ${classNames}`)}>{title}</Text>
         </TouchableOpacity>
       </React.Fragment>
     );
@@ -187,4 +186,4 @@ CardItemContent.propTypes = {
 
 const mapDispatchToProps = { updateBulkEdit, addSelectedLinkIds };
 
-export default connect(null, mapDispatchToProps)(withSafeAreaContext(CardItemContent));
+export default connect(null, mapDispatchToProps)(withTailwind(CardItemContent));

@@ -1,19 +1,25 @@
+import { REHYDRATE } from 'redux-persist/constants';
+
 import {
   INIT, UPDATE_WINDOW, UPDATE_HREF, UPDATE_HISTORY_POSITION, UPDATE_WINDOW_SIZE,
 } from '../types/actionTypes';
-import { REHYDRATE } from 'redux-persist/constants';
+import { isNumber } from '../utils';
 
 const initialState = {
   href: null,
   historyPosition: null,
-  width: null,
-  height: null,
+  width: (window && isNumber(window.innerWidth)) ? window.innerWidth : null,
+  height: (window && isNumber(window.innerHeight)) ? window.innerHeight : null,
 };
 
 const windowReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
-    return { ...initialState };
+    return {
+      ...initialState,
+      width: (window && isNumber(window.innerWidth)) ? window.innerWidth : null,
+      height: (window && isNumber(window.innerHeight)) ? window.innerHeight : null,
+    };
   }
 
   if (action.type === INIT) {

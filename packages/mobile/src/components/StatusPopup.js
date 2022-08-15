@@ -1,6 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { View, Text, Animated } from 'react-native';
+import { connect } from 'react-redux';
 
 import {
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
@@ -11,10 +11,9 @@ import {
 } from '../types/actionTypes';
 import { SM_WIDTH } from '../types/const';
 import { updateStatus } from '../actions';
-import { tailwind } from '../stylesheets/tailwind';
 import { statusPopupFMV } from '../types/animConfigs';
 
-import { withSafeAreaContext } from '.';
+import { withTailwind } from '.';
 
 const AnimatedText = Animated.createAnimatedComponent(Text);
 
@@ -104,7 +103,7 @@ class StatusPopup extends React.PureComponent {
   }
 
   render() {
-    const { status, safeAreaWidth } = this.props;
+    const { status, safeAreaWidth, tailwind } = this.props;
 
     // Clear timeout only when status changed, not when only safeAreaWidth changed.
     if (this.timeout && this.doClearTimeout) {
@@ -133,9 +132,9 @@ class StatusPopup extends React.PureComponent {
     };
 
     return (
-      <View style={tailwind('w-48 flex-row justify-start items-center overflow-hidden sm:w-64', safeAreaWidth)}>
-        <View style={tailwind('w-full h-full')} />
-        <AnimatedText onLayout={this.onTextLayout} style={[tailwind('pl-3 bg-white text-sm text-gray-500 font-normal tracking-wide rounded-l-full'), textStyle]}>{this.msg}</AnimatedText>
+      <View style={tailwind('w-48 flex-row items-center justify-start overflow-hidden sm:w-64')}>
+        <View style={tailwind('h-full w-full')} />
+        <AnimatedText onLayout={this.onTextLayout} style={[tailwind('rounded-l-full bg-white pl-3 text-sm font-normal tracking-wide text-gray-500'), textStyle]}>{this.msg}</AnimatedText>
       </View>
     );
   }
@@ -149,4 +148,4 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = { updateStatus };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(StatusPopup));
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(StatusPopup));

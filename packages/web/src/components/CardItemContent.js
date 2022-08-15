@@ -10,6 +10,8 @@ import {
   extractUrl, isEqual,
 } from '../utils';
 
+import { withTailwind } from '.';
+
 class CardItemContent extends React.Component {
 
   constructor(props) {
@@ -74,7 +76,7 @@ class CardItemContent extends React.Component {
   }
 
   renderImage() {
-
+    const { tailwind } = this.props;
     const { url, decor, extractedResult } = this.props.link;
 
     let image;
@@ -82,7 +84,7 @@ class CardItemContent extends React.Component {
 
     if (image) {
       // This GracefulImage needs to be different from the one below so that it's not just rerender but recreate a new component with a new src and new retry. React knows by using different keys.
-      return <GracefulImage key="image-graceful-image-extracted-result" className="absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5" src={image} alt={`illustration of ${url}`} />;
+      return <GracefulImage key="image-graceful-image-extracted-result" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5')} src={image} alt={`illustration of ${url}`} />;
     }
 
     let fg = null;
@@ -90,8 +92,8 @@ class CardItemContent extends React.Component {
       const { text } = decor.image.fg;
       fg = (
         <React.Fragment>
-          <div className="absolute top-1/2 left-1/2 w-20 h-20 bg-white rounded-full transform -translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute top-1/2 left-1/2 text-5xl text-gray-700 font-medium leading-none uppercase transform -translate-x-1/2 -translate-y-1/2">{text}</div>
+          <div className={tailwind('absolute top-1/2 left-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 transform rounded-full bg-white')} />
+          <div className={tailwind('absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform text-5xl font-medium uppercase leading-none text-gray-700')}>{text}</div>
         </React.Fragment>
       );
     }
@@ -100,7 +102,7 @@ class CardItemContent extends React.Component {
     if (decor.image.bg.type === COLOR) {
       return (
         <React.Fragment>
-          <div className={`absolute h-full w-full ${decor.image.bg.value}`} />
+          <div className={tailwind(`absolute h-full w-full ${decor.image.bg.value}`)} />
           {fg}
         </React.Fragment>
       );
@@ -111,7 +113,7 @@ class CardItemContent extends React.Component {
       // Require both 'pattern' and [pattern_name] class names
       return (
         <React.Fragment>
-          <div className={`absolute w-full h-full pattern ${decor.image.bg.value}`} />
+          <div className={tailwind(`absolute h-full w-full pattern ${decor.image.bg.value}`)} />
           {fg}
         </React.Fragment>
       );
@@ -119,26 +121,27 @@ class CardItemContent extends React.Component {
 
     // Random image
     if (decor.image.bg.type === IMAGE) {
-      return <GracefulImage key="image-graceful-image-decor" className="absolute h-full w-full object-cover object-center" src={decor.image.bg.value} alt={`illustration of ${url}`} />;
+      return <GracefulImage key="image-graceful-image-decor" className={tailwind('absolute h-full w-full object-cover object-center')} src={decor.image.bg.value} alt={`illustration of ${url}`} />;
     }
 
     throw new Error(`Invalid decor: ${JSON.stringify(decor)}`);
   }
 
   renderFavicon() {
+    const { tailwind } = this.props;
 
     const placeholder = (ref) => {
       if (decor.favicon.bg.type === COLOR) {
-        return <div ref={ref} className={`flex-shrink-0 flex-grow-0 w-4 h-4 ${decor.favicon.bg.value} rounded-full`} />;
+        return <div ref={ref} className={tailwind(`h-4 w-4 flex-shrink-0 flex-grow-0 rounded-full ${decor.favicon.bg.value}`)} />;
       }
 
       if (decor.favicon.bg.type === PATTERN) {
         // Require both 'pattern' and [pattern_name] class names
         // Require under relative class
         return (
-          <div ref={ref} className="flex-shrink-0 flex-grow-0">
-            <div className="relative">
-              <div className={`w-4 h-4 rounded-full pattern ${decor.favicon.bg.value}`} />
+          <div ref={ref} className={tailwind('flex-shrink-0 flex-grow-0')}>
+            <div className={tailwind('relative')}>
+              <div className={tailwind(`h-4 w-4 rounded-full pattern ${decor.favicon.bg.value}`)} />
             </div>
           </div>
         );
@@ -155,18 +158,18 @@ class CardItemContent extends React.Component {
 
     if (favicon && !extractedFaviconError) {
       // This GracefulImage needs to be different from the one below so that it's not just rerender but recreate a new component with a new src and new retry. React knows by using different keys.
-      return <GracefulImage key="favicon-graceful-image-extracted-result" className="flex-shrink-0 flex-grow-0 w-4 h-4 overflow-hidden" src={favicon} alt={`Favicon of ${url}`} customPlaceholder={placeholder} retry={{ count: 2, delay: 3, accumulate: 'multiply' }} onError={this.onExtractedFaviconError} />;
+      return <GracefulImage key="favicon-graceful-image-extracted-result" className={tailwind('h-4 w-4 flex-shrink-0 flex-grow-0 overflow-hidden')} src={favicon} alt={`Favicon of ${url}`} customPlaceholder={placeholder} retry={{ count: 2, delay: 3, accumulate: 'multiply' }} onError={this.onExtractedFaviconError} />;
     }
 
     const { origin } = extractUrl(url);
     favicon = removeTailingSlash(origin) + '/favicon.ico';
     favicon = ensureContainUrlSecureProtocol(favicon);
 
-    return <GracefulImage key="favicon-graceful-image-ico" className="flex-shrink-0 flex-grow-0 w-4 h-4 overflow-hidden" src={favicon} alt={`Favicon of ${url}`} customPlaceholder={placeholder} retry={{ count: 2, delay: 3, accumulate: 'multiply' }} />;
+    return <GracefulImage key="favicon-graceful-image-ico" className={tailwind('h-4 w-4 flex-shrink-0 flex-grow-0 overflow-hidden')} src={favicon} alt={`Favicon of ${url}`} customPlaceholder={placeholder} retry={{ count: 2, delay: 3, accumulate: 'multiply' }} />;
   }
 
   render() {
-
+    const { tailwind } = this.props;
     const { url, extractedResult } = this.props.link;
 
     let title, classNames = '';
@@ -183,32 +186,32 @@ class CardItemContent extends React.Component {
 
     return (
       <React.Fragment>
-        <div onTouchStart={this.onTouchPress} onTouchMove={this.onTouchPressRelease} onTouchEnd={this.onTouchPressRelease} onTouchCancel={this.onTouchPressRelease} onMouseDown={this.onClickPress} onMouseMove={this.onClickPressRelease} onMouseUp={this.onClickPressRelease} onMouseLeave={this.onClickPressRelease} className="relative pb-7/12">
+        <div onTouchStart={this.onTouchPress} onTouchMove={this.onTouchPressRelease} onTouchEnd={this.onTouchPressRelease} onTouchCancel={this.onTouchPressRelease} onMouseDown={this.onClickPress} onMouseMove={this.onClickPressRelease} onMouseUp={this.onClickPressRelease} onMouseLeave={this.onClickPressRelease} className={tailwind('relative pb-7/12')}>
           {this.renderImage()}
         </div>
-        <div className="flex justify-between items-center">
-          <div className="flex-shrink flex-grow min-w-0">
-            <div className="pl-4 flex justify-start items-center">
+        <div className={tailwind('flex items-center justify-between')}>
+          <div className={tailwind('min-w-0 flex-shrink flex-grow')}>
+            <div className={tailwind('flex items-center justify-start pl-4')}>
               {this.renderFavicon()}
-              <div className="flex-shrink flex-grow min-w-0">
-                <p className="pl-2 text-base text-gray-500 truncate hover:text-gray-600">
-                  <a className="rounded-sm focus:outline-none focus:ring" href={origin} target="_blank" rel="noreferrer">
+              <div className={tailwind('min-w-0 flex-shrink flex-grow')}>
+                <p className={tailwind('truncate pl-2 text-base text-gray-500 hover:text-gray-600')}>
+                  <a className={tailwind('rounded-sm focus:outline-none focus:ring')} href={origin} target="_blank" rel="noreferrer">
                     {host}
                   </a>
                 </p>
               </div>
             </div>
           </div>
-          <div className="flex-shrink-0 flex-grow-0">
-            <button onClick={this.onMenuBtnClick} style={{ paddingBottom: '0.375rem' }} className="block pt-2 pl-4 pr-2 group focus:outline-none">
-              <svg className="py-2 w-6 text-gray-400 rounded-full group-hover:text-gray-500 group-focus:ring" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <div className={tailwind('flex-shrink-0 flex-grow-0')}>
+            <button onClick={this.onMenuBtnClick} style={{ paddingBottom: '0.375rem' }} className={tailwind('group block pt-2 pl-4 pr-2 focus:outline-none')}>
+              <svg className={tailwind('w-6 rounded-full py-2 text-gray-400 group-hover:text-gray-500 group-focus:ring')} viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
           </div>
         </div>
-        <a className="group focus:outline-none" href={ensureContainUrlProtocol(url)} target="_blank" rel="noreferrer">
-          <h4 className={`mt-0 mb-3 ml-4 mr-3 text-base text-gray-800 font-medium leading-6 rounded-sm ${classNames} group-hover:text-gray-900 group-focus:ring lg:mb-4`}>
+        <a className={tailwind('group focus:outline-none')} href={ensureContainUrlProtocol(url)} target="_blank" rel="noreferrer">
+          <h4 className={tailwind(`mt-0 mb-3 ml-4 mr-3 rounded-sm text-base font-medium leading-6 text-gray-800 group-hover:text-gray-900 group-focus:ring lg:mb-4 ${classNames}`)}>
             {title}
           </h4>
         </a>
@@ -221,6 +224,12 @@ CardItemContent.propTypes = {
   link: PropTypes.object.isRequired,
 };
 
+const mapStateToProps = (state, props) => {
+  return {
+    safeAreaWidth: state.window.width,
+  };
+};
+
 const mapDispatchToProps = { updatePopup, updateBulkEdit, addSelectedLinkIds };
 
-export default connect(null, mapDispatchToProps)(CardItemContent);
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(CardItemContent));

@@ -6,15 +6,13 @@ import Svg, { Path } from 'react-native-svg';
 import { MAX_SELECTED_LINK_IDS } from '../types/const';
 import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
 import { makeIsLinkIdSelected, getSelectedLinkIdsLength } from '../selectors';
-import { tailwind } from '../stylesheets/tailwind';
 import { popupFMV } from '../types/animConfigs';
 
-import { useSafeAreaFrame } from '.';
+import { useTailwind } from '.';
 
 const ListItemSelector = (props) => {
 
   const { linkId } = props;
-  const { width: safeAreaWidth } = useSafeAreaFrame();
   const getIsLinkIdSelected = useMemo(makeIsLinkIdSelected, []);
   const isBulkEditing = useSelector(state => state.display.isBulkEditing);
   const isSelected = useSelector(state => getIsLinkIdSelected(state, props));
@@ -23,6 +21,7 @@ const ListItemSelector = (props) => {
   const [didMaxErrorCloseAnimEnd, setDidMaxErrorCloseAnimEnd] = useState(true);
   const maxErrorScale = useRef(new Animated.Value(0)).current;
   const dispatch = useDispatch();
+  const tailwind = useTailwind();
 
   const onSelectBtnClick = () => {
     if (!isSelected && selectedLinkIdsLength === MAX_SELECTED_LINK_IDS) {
@@ -48,14 +47,14 @@ const ListItemSelector = (props) => {
     };
 
     return (
-      <Animated.View style={[tailwind('flex-row bg-red-50 rounded-md p-2 shadow'), maxErrorStyle]}>
+      <Animated.View style={[tailwind('flex-row rounded-md bg-red-50 p-2 shadow'), maxErrorStyle]}>
         <View style={tailwind('flex-shrink-0')}>
-          <Svg style={tailwind('text-red-400 font-normal')} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
+          <Svg style={tailwind('font-normal text-red-400')} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
           </Svg>
         </View>
-        <View style={tailwind('flex-shrink ml-3')}>
-          <Text style={tailwind('text-sm text-red-800 font-normal text-left leading-5')}>To prevent network overload, up to {MAX_SELECTED_LINK_IDS} items can be selected.</Text>
+        <View style={tailwind('ml-3 flex-shrink')}>
+          <Text style={tailwind('text-left text-sm font-normal leading-5 text-red-800')}>To prevent network overload, up to {MAX_SELECTED_LINK_IDS} items can be selected.</Text>
         </View>
       </Animated.View>
     );
@@ -84,17 +83,17 @@ const ListItemSelector = (props) => {
 
   return (
     <TouchableOpacity activeOpacity={1.0} onPress={onSelectBtnClick} style={tailwind('absolute inset-0 flex-row items-center bg-transparent')}>
-      <View style={tailwind('flex-grow-0 flex-shrink-0 w-16 h-full bg-white pl-px justify-center items-center')}>
-        <View style={tailwind(`w-10 h-10 border border-gray-200 rounded-full justify-center items-center ${circleClassNames}`)}>
-          <Svg style={tailwind(`${svgClassNames} font-normal`)} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
+      <View style={tailwind('h-full w-16 flex-shrink-0 flex-grow-0 items-center justify-center bg-white pl-px')}>
+        <View style={tailwind(`h-10 w-10 items-center justify-center rounded-full border border-gray-200 ${circleClassNames}`)}>
+          <Svg style={tailwind(`font-normal ${svgClassNames}`)} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M16.7071 5.29289C17.0976 5.68342 17.0976 6.31658 16.7071 6.70711L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071L3.29289 10.7071C2.90237 10.3166 2.90237 9.68342 3.29289 9.29289C3.68342 8.90237 4.31658 8.90237 4.70711 9.29289L8 12.5858L15.2929 5.29289C15.6834 4.90237 16.3166 4.90237 16.7071 5.29289Z" />
           </Svg>
         </View>
       </View>
-      <View style={tailwind('flex-1 min-w-0 h-full pl-3 flex-row items-center sm:pl-4', safeAreaWidth)}>
+      <View style={tailwind('h-full min-w-0 flex-1 flex-row items-center pl-3 sm:pl-4')}>
         {renderMaxError()}
       </View>
-      <View style={tailwind('flex-grow-0 flex-shrink-0 w-3 h-full bg-transparent -mr-3 sm:w-1 sm:-mr-1', safeAreaWidth)} />
+      <View style={tailwind('-mr-3 h-full w-3 flex-shrink-0 flex-grow-0 bg-transparent sm:-mr-1 sm:w-1')} />
     </TouchableOpacity>
   );
 };

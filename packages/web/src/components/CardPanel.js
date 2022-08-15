@@ -14,6 +14,7 @@ import { addRem, getWindowHeight, getWindowScrollHeight, throttle } from '../uti
 import { cardItemFMV } from '../types/animConfigs';
 import vars from '../vars';
 
+import { withTailwind } from '.';
 import CardItem from './CardItem';
 import EmptyContent from './EmptyContent';
 
@@ -66,37 +67,42 @@ class CardPanel extends React.PureComponent {
   }
 
   renderFetchMoreBtn() {
+    const { tailwind } = this.props;
+
     return (
-      <button onClick={this.onFetchMoreBtnClick} className="my-4 py-2 block w-full group focus:outline-none">
-        <span className="px-3 py-1 inline-block bg-white text-sm text-gray-500 border border-gray-400 rounded-full group-hover:text-gray-600 group-hover:border-gray-500 group-focus:ring">More</span>
+      <button onClick={this.onFetchMoreBtnClick} className={tailwind('group my-4 block w-full py-2 focus:outline-none')}>
+        <span className={tailwind('inline-block rounded-full border border-gray-400 bg-white px-3 py-1 text-sm text-gray-500 group-hover:border-gray-500 group-hover:text-gray-600 group-focus:ring')}>More</span>
       </button>
     );
   }
 
   renderFetchingMore() {
+    const { tailwind } = this.props;
+
     return (
-      <div className="flex justify-center items-center">
-        <div className="lds-ellipsis">
-          <div className="bg-gray-400" />
-          <div className="bg-gray-400" />
-          <div className="bg-gray-400" />
-          <div className="bg-gray-400" />
+      <div className={tailwind('flex items-center justify-center')}>
+        <div className={tailwind('lds-ellipsis')}>
+          <div className={tailwind('bg-gray-400')} />
+          <div className={tailwind('bg-gray-400')} />
+          <div className={tailwind('bg-gray-400')} />
+          <div className={tailwind('bg-gray-400')} />
         </div>
       </div>
     );
   }
 
   renderUpdateFetchedBtn() {
+    const { tailwind } = this.props;
+
     return (
-      <button onClick={this.onUpdateFetchedBtnClick} className="my-4 py-2 block w-full group focus:outline-none">
-        <span className="px-3 py-1 inline-block bg-white text-sm text-gray-500 border border-gray-400 rounded-full group-hover:text-gray-600 group-hover:border-gray-500 group-focus:ring">Show more</span>
+      <button onClick={this.onUpdateFetchedBtnClick} className={tailwind('group my-4 block w-full py-2 focus:outline-none')}>
+        <span className={tailwind('inline-block rounded-full border border-gray-400 bg-white px-3 py-1 text-sm text-gray-500 group-hover:border-gray-500 group-hover:text-gray-600 group-focus:ring')}>Show more</span>
       </button>
     );
   }
 
   renderPanel() {
-
-    const { links, columnWidth } = this.props;
+    const { links, columnWidth, tailwind } = this.props;
 
     const colData = [];
     if (links.length > 0) {
@@ -127,11 +133,11 @@ class CardPanel extends React.PureComponent {
     else throw new Error(`Invalid columnWidth: ${columnWidth}`);
 
     return (
-      <div className={`flex justify-evenly items-start ${panelClassNames}`}>
+      <div className={tailwind(`flex items-start justify-evenly ${panelClassNames}`)}>
         <AnimateSharedLayout>
           {colData.map((colItems, i) => {
             return (
-              <div key={`col-${i}`} className={`w-full ${columnClassNames} min-w-0`}>
+              <div key={`col-${i}`} className={tailwind(`w-full min-w-0 ${columnClassNames}`)}>
                 {colItems.map(link => {
                   return (
                     <motion.div key={link.id} layoutId={link.id} variants={cardItemFMV} initial="hidden" animate="visible">
@@ -148,9 +154,9 @@ class CardPanel extends React.PureComponent {
   }
 
   render() {
-
     const {
       links, hasMoreLinks, hasFetchedMore, isFetchingMore, columnWidth, safeAreaWidth,
+      tailwind,
     } = this.props;
 
     let fetchMoreBtn;
@@ -170,8 +176,8 @@ class CardPanel extends React.PureComponent {
     };
 
     return (
-      <div style={style} className="mx-auto px-4 relative max-w-6xl md:px-6 lg:px-8">
-        <div className="pt-6 md:pt-10">
+      <div style={style} className={tailwind('relative mx-auto max-w-6xl px-4 md:px-6 lg:px-8')}>
+        <div className={tailwind('pt-6 md:pt-10')}>
           {links.length === 0 && <EmptyContent />}
           {links.length > 0 && this.renderPanel()}
           {fetchMoreBtn}
@@ -207,4 +213,4 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = { fetchMore, updateFetchedMore };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CardPanel);
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(CardPanel));

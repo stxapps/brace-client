@@ -12,7 +12,7 @@ import {
 import { tailwind } from '../stylesheets/tailwind';
 import { popupFMV } from '../types/animConfigs';
 
-import { useSafeAreaFrame, useSafeAreaInsets } from '.';
+import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 import { computePosition, createLayouts, getOriginTranslate } from './MenuPopupRenderer';
 
 const PinMenuPopup = () => {
@@ -33,6 +33,7 @@ const PinMenuPopup = () => {
   const popupBackHandler = useRef(null);
   const didClick = useRef(false);
   const dispatch = useDispatch();
+  const tailwind = useTailwind();
 
   const onCancelBtnClick = useCallback(() => {
     if (didClick.current) return;
@@ -128,20 +129,20 @@ const PinMenuPopup = () => {
 
   const buttons = (
     <React.Fragment>
-      <View style={tailwind('pl-4 pr-4 pt-1 h-11 flex-row justify-start items-center')}>
-        <Text style={tailwind('text-sm text-gray-600 font-semibold text-left')} numberOfLines={1} ellipsizeMode="tail">Manage pin</Text>
+      <View style={tailwind('h-11 flex-row items-center justify-start pl-4 pr-4 pt-1')}>
+        <Text style={tailwind('text-left text-sm font-semibold text-gray-600')} numberOfLines={1} ellipsizeMode="tail">Manage pin</Text>
       </View>
       {menu.map(text => {
         return (
-          <TouchableOpacity key={text} onPress={() => onMenuPopupClick(text)} style={tailwind('py-2.5 pl-4 pr-4 w-full')}>
-            <Text style={tailwind('text-sm text-gray-700 font-normal text-left')} numberOfLines={1} ellipsizeMode="tail">{text}</Text>
+          <TouchableOpacity key={text} onPress={() => onMenuPopupClick(text)} style={tailwind('w-full py-2.5 pl-4 pr-4')}>
+            <Text style={tailwind('text-left text-sm font-normal text-gray-700')} numberOfLines={1} ellipsizeMode="tail">{text}</Text>
           </TouchableOpacity>
         );
       })}
     </React.Fragment>
   );
 
-  let popupClassNames = 'pb-1 absolute min-w-32 max-w-64 bg-white border border-gray-100 rounded-lg shadow-xl';
+  let popupClassNames = 'absolute min-w-32 max-w-64 rounded-lg border border-gray-100 bg-white pb-1 shadow-xl';
   let panel;
   let bgStyle = { opacity: 0 };
   if (popupSize) {
@@ -189,7 +190,7 @@ const PinMenuPopup = () => {
   }
 
   return (
-    <View style={tailwind('absolute inset-0 bg-transparent shadow-xl z-40')}>
+    <View style={tailwind('absolute inset-0 z-40 bg-transparent shadow-xl')}>
       <TouchableWithoutFeedback onPress={onCancelBtnClick}>
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>

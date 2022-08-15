@@ -1,5 +1,6 @@
 import React from 'react';
 import { Dimensions } from 'react-native';
+import { createSelector } from 'reselect';
 import {
   useSafeAreaFrame as useWindowFrame, useSafeAreaInsets as useScreenInsets,
   SafeAreaFrameContext, SafeAreaInsetsContext,
@@ -12,6 +13,7 @@ import {
   MD_WIDTH, LG_WIDTH,
 } from '../types/const';
 import { toPx } from '../utils';
+import { tailwind } from '../stylesheets/tailwind';
 
 const getSafeAreaInsets = (
   windowX, windowY, windowWidth, windowHeight, screenWidth, screenHeight, screenInsets,
@@ -144,4 +146,28 @@ export const getTopBarSizes = (safeAreaWidth) => {
     listNameArrowSpace,
     commandsWidth,
   };
+};
+
+const getTwWrapper = createSelector(
+  safeAreaWidth => safeAreaWidth,
+  safeAreaWidth => {
+    return (classStr) => {
+      return tailwind(classStr, safeAreaWidth);
+    };
+  },
+);
+
+export const useTailwind = () => {
+  const { width: safeAreaWidth } = useSafeAreaFrame();
+  const twWrapper = getTwWrapper(safeAreaWidth);
+  return twWrapper;
+};
+
+export const withTailwind = (Component) => {
+  return withSafeAreaContext(React.forwardRef((props, ref) => {
+    /* @ts-ignore */
+    const { safeAreaWidth } = props;
+    const twWrapper = getTwWrapper(safeAreaWidth);
+    return <Component {...props} tailwind={twWrapper} ref={ref} />;
+  }));
 };

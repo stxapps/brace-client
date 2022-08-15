@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { FlatList, View, Text, TouchableOpacity, Animated } from 'react-native';
+import { connect } from 'react-redux';
 import { Flow } from 'react-native-animated-spinkit';
 
 import { fetchMore, updateFetchedMore } from '../actions';
@@ -13,10 +13,9 @@ import {
 import { getLinks, getIsFetchingMore } from '../selectors';
 import { toPx, multiplyPercent } from '../utils';
 import cache from '../utils/cache';
-import { tailwind } from '../stylesheets/tailwind';
 import vars from '../vars';
 
-import { withSafeAreaContext } from '.';
+import { withTailwind } from '.';
 
 import CardItem from './CardItem';
 import EmptyContent from './EmptyContent';
@@ -86,35 +85,41 @@ class CardPanel extends React.PureComponent {
   }
 
   renderFetchMoreBtn = () => {
+    const { tailwind } = this.props;
+
     return (
-      <TouchableOpacity onPress={this.onFetchMoreBtnClick} style={tailwind('my-4 py-2 flex-row justify-center w-full')}>
-        <View style={tailwind('px-3 py-1 bg-white border border-gray-400 rounded-full')}>
-          <Text style={tailwind('text-sm text-gray-500 font-normal')}>More</Text>
+      <TouchableOpacity onPress={this.onFetchMoreBtnClick} style={tailwind('my-4 w-full flex-row justify-center py-2')}>
+        <View style={tailwind('rounded-full border border-gray-400 bg-white px-3 py-1')}>
+          <Text style={tailwind('text-sm font-normal text-gray-500')}>More</Text>
         </View>
       </TouchableOpacity>
     );
   }
 
   renderFetchingMore = () => {
+    const { tailwind } = this.props;
+
     return (
-      <View style={tailwind('my-4 py-2 flex-row justify-center w-full')}>
+      <View style={tailwind('my-4 w-full flex-row justify-center py-2')}>
         <Flow size={48} color="rgb(156, 163, 175)" />
       </View>
     );
   }
 
   renderUpdateFetchedBtn = () => {
+    const { tailwind } = this.props;
+
     return (
-      <TouchableOpacity onPress={this.onUpdateFetchedBtnClick} style={tailwind('my-4 py-2 flex-row justify-center w-full')}>
-        <View style={tailwind('px-3 py-1 bg-white border border-gray-400 rounded-full')}>
-          <Text style={tailwind('text-sm text-gray-500 font-normal')}>Show more</Text>
+      <TouchableOpacity onPress={this.onUpdateFetchedBtnClick} style={tailwind('my-4 w-full flex-row justify-center py-2')}>
+        <View style={tailwind('rounded-full border border-gray-400 bg-white px-3 py-1')}>
+          <Text style={tailwind('text-sm font-normal text-gray-500')}>Show more</Text>
         </View>
       </TouchableOpacity>
     );
   }
 
   renderItem = ({ item }) => {
-
+    const { tailwind } = this.props;
     const { columnWidth, columnIndex } = item;
 
     let classNames = '';
@@ -139,7 +144,6 @@ class CardPanel extends React.PureComponent {
   }
 
   renderColumn = ({ item }) => {
-
     const { columnWidth, safeAreaWidth } = this.props;
     const width = Math.floor(multiplyPercent(Math.min(safeAreaWidth, 1152), columnWidth));
 
@@ -170,8 +174,7 @@ class CardPanel extends React.PureComponent {
   }
 
   renderPanel = ({ item }) => {
-
-    const { hasFetchedMore, isFetchingMore, safeAreaWidth } = this.props;
+    const { hasFetchedMore, isFetchingMore, safeAreaWidth, tailwind } = this.props;
 
     if (item.id === PANEL_HEAD) {
       let pt = safeAreaWidth < MD_WIDTH ? toPx(TOP_BAR_HEIGHT) : toPx(TOP_BAR_HEIGHT_MD);
@@ -250,8 +253,7 @@ class CardPanel extends React.PureComponent {
   }
 
   render() {
-
-    const { hasMoreLinks, columnWidth } = this.props;
+    const { hasMoreLinks, columnWidth, tailwind } = this.props;
 
     const panelData = [{ id: PANEL_HEAD }, { id: PANEL_BODY }];
     if (hasMoreLinks) panelData.push({ id: PANEL_FOOTER });
@@ -302,4 +304,4 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = { fetchMore, updateFetchedMore };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(CardPanel));
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(CardPanel));

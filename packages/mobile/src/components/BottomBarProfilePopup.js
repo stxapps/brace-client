@@ -1,6 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Text, TouchableOpacity, Linking, Animated, BackHandler } from 'react-native';
+import { connect } from 'react-redux';
 
 import {
   signOut, updatePopup, updateSettingsPopup, updateSettingsViewId,
@@ -8,8 +8,9 @@ import {
 import {
   DOMAIN_NAME, HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT,
 } from '../types/const';
-import { tailwind } from '../stylesheets/tailwind';
 import { bModalFMV } from '../types/animConfigs';
+
+import { withTailwind } from '.';
 
 // height is 190 from onLayout
 const PROFILE_POPUP_HEIGHT = 190;
@@ -114,23 +115,24 @@ class BottomBarProfilePopup extends React.PureComponent {
   }
 
   render() {
+    const { isProfilePopupShown, tailwind } = this.props;
 
-    if (!this.props.isProfilePopupShown && this.state.didCloseAnimEnd) return null;
+    if (!isProfilePopupShown && this.state.didCloseAnimEnd) return null;
 
     const popupStyle = { transform: [{ translateY: this.profilePopupTranslateY }] };
 
     return (
       <React.Fragment>
-        <TouchableOpacity activeOpacity={1.0} onPress={this.onProfileCancelBtnClick} style={tailwind('absolute inset-0 bg-black bg-opacity-25 z-40')} />
-        <Animated.View style={[tailwind('pt-4 pb-4 absolute inset-x-0 bottom-0 bg-white border border-gray-100 rounded-t-lg shadow-xl z-41'), popupStyle]}>
-          <TouchableOpacity onPress={this.onSettingsBtnClick} style={tailwind('py-4 pl-4 w-full')}>
-            <Text style={tailwind('text-sm text-gray-700 font-normal')}>Settings</Text>
+        <TouchableOpacity activeOpacity={1.0} onPress={this.onProfileCancelBtnClick} style={tailwind('absolute inset-0 z-40 bg-black bg-opacity-25')} />
+        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 z-41 rounded-t-lg border border-gray-100 bg-white pt-4 pb-4 shadow-xl'), popupStyle]}>
+          <TouchableOpacity onPress={this.onSettingsBtnClick} style={tailwind('w-full py-4 pl-4')}>
+            <Text style={tailwind('text-sm font-normal text-gray-700')}>Settings</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={this.onSupportBtnClick} style={tailwind('py-4 pl-4 w-full')}>
-            <Text style={tailwind('text-sm text-gray-700 font-normal')}>Support</Text>
+          <TouchableOpacity onPress={this.onSupportBtnClick} style={tailwind('w-full py-4 pl-4')}>
+            <Text style={tailwind('text-sm font-normal text-gray-700')}>Support</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={this.onSignOutBtnClick} style={tailwind('py-4 pl-4 w-full')}>
-            <Text style={tailwind('text-sm text-gray-700 font-normal')}>Sign out</Text>
+          <TouchableOpacity onPress={this.onSignOutBtnClick} style={tailwind('w-full py-4 pl-4')}>
+            <Text style={tailwind('text-sm font-normal text-gray-700')}>Sign out</Text>
           </TouchableOpacity>
         </Animated.View>
       </React.Fragment>
@@ -148,4 +150,4 @@ const mapDispatchToProps = {
   signOut, updatePopup, updateSettingsPopup, updateSettingsViewId,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(BottomBarProfilePopup);
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(BottomBarProfilePopup));

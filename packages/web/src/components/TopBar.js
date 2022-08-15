@@ -8,7 +8,7 @@ import {
 } from '../types/const';
 import { toPx, throttle } from '../utils';
 
-import { getTopBarSizes } from '.';
+import { getTopBarSizes, withTailwind } from '.';
 
 import TopBarCommands from './TopBarCommands';
 import TopBarBulkEditCommands from './TopBarBulkEditCommands';
@@ -53,15 +53,17 @@ class TopBar extends React.PureComponent {
   }
 
   renderSignInBtn() {
+    const { tailwind } = this.props;
+
     return (
-      <button onClick={this.onSignInBtnClick} className="block h-14 focus:outline-none group">
-        <span className="px-2.5 py-1.5 bg-white text-sm text-gray-500 border border-gray-400 rounded-full group-hover:text-gray-600 group-hover:border-gray-500 group-focus:ring">Sign in</span>
+      <button onClick={this.onSignInBtnClick} className={tailwind('group block h-14 focus:outline-none')}>
+        <span className={tailwind('rounded-full border border-gray-400 bg-white px-2.5 py-1.5 text-sm text-gray-500 group-hover:border-gray-500 group-hover:text-gray-600 group-focus:ring')}>Sign in</span>
       </button>
     );
   }
 
   renderListName() {
-    const { safeAreaWidth } = this.props;
+    const { safeAreaWidth, tailwind } = this.props;
     const { offsetY } = this.state;
     const {
       listNameDistanceX,
@@ -73,14 +75,14 @@ class TopBar extends React.PureComponent {
 
     const listNameStyle = { top, left };
     return (
-      <div style={listNameStyle} className="absolute">
+      <div style={listNameStyle} className={tailwind('absolute')}>
         <ListName />
       </div >
     );
   }
 
   renderStatusPopup() {
-    const { safeAreaWidth } = this.props;
+    const { safeAreaWidth, tailwind } = this.props;
     const { offsetY } = this.state;
     const {
       statusPopupDistanceY,
@@ -95,14 +97,16 @@ class TopBar extends React.PureComponent {
     const statusPopupStyle = { top, right, opacity, visibility };
     return (
       /** @ts-ignore */
-      <div style={statusPopupStyle} className="absolute">
+      <div style={statusPopupStyle} className={tailwind('absolute')}>
         <StatusPopup />
       </div>
     );
   }
 
   render() {
-    const { rightPane: rightPaneProp, isBulkEditing, safeAreaWidth } = this.props;
+    const {
+      rightPane: rightPaneProp, isBulkEditing, safeAreaWidth, tailwind,
+    } = this.props;
 
     let rightPane;
     if (rightPaneProp === SHOW_BLANK) rightPane = null;
@@ -136,11 +140,11 @@ class TopBar extends React.PureComponent {
     }
 
     return (
-      <div style={topBarStyle} className={`mx-auto px-4 max-w-6xl md:px-6 lg:px-8 ${topBarStyleClasses}`}>
-        <div className="relative">
-          <header className="flex justify-between items-center h-14">
-            <div className="relative">
-              <img className="h-8" src={shortLogo} alt="Brace logo" />
+      <div style={topBarStyle} className={tailwind(`mx-auto max-w-6xl px-4 md:px-6 lg:px-8 ${topBarStyleClasses}`)}>
+        <div className={tailwind('relative')}>
+          <header className={tailwind('flex h-14 items-center justify-between')}>
+            <div className={tailwind('relative')}>
+              <img className={tailwind('h-8')} src={shortLogo} alt="Brace logo" />
             </div>
             {rightPane}
           </header>
@@ -170,4 +174,4 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = { updatePopup };
 
-export default connect(mapStateToProps, mapDispatchToProps)(TopBar);
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(TopBar));

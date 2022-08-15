@@ -11,10 +11,9 @@ import {
 import { getLinks, getIsFetchingMore } from '../selectors';
 import { toPx } from '../utils';
 import cache from '../utils/cache';
-import { tailwind } from '../stylesheets/tailwind';
 import vars from '../vars';
 
-import { useSafeAreaFrame } from '.';
+import { useSafeAreaFrame, useTailwind } from '.';
 import ListItem from './ListItem';
 import EmptyContent from './EmptyContent';
 
@@ -36,6 +35,7 @@ const ListPanel = (props) => {
   const listChangedCount = useSelector(state => state.display.listChangedCount);
   const flatList = useRef(null);
   const dispatch = useDispatch();
+  const tailwind = useTailwind();
 
   let links = useSelector(getLinks);
   if (!links) {
@@ -76,9 +76,9 @@ const ListPanel = (props) => {
 
   const renderFetchMoreBtn = useCallback(() => {
     return (
-      <TouchableOpacity onPress={onFetchMoreBtnClick} style={tailwind('my-4 py-2 flex-row justify-center w-full')}>
-        <View style={tailwind('px-3 py-1 bg-white border border-gray-400 rounded-full')}>
-          <Text style={tailwind('text-sm text-gray-500 font-normal')}>More</Text>
+      <TouchableOpacity onPress={onFetchMoreBtnClick} style={tailwind('my-4 w-full flex-row justify-center py-2')}>
+        <View style={tailwind('rounded-full border border-gray-400 bg-white px-3 py-1')}>
+          <Text style={tailwind('text-sm font-normal text-gray-500')}>More</Text>
         </View>
       </TouchableOpacity>
     );
@@ -86,7 +86,7 @@ const ListPanel = (props) => {
 
   const renderFetchingMore = useCallback(() => {
     return (
-      <View style={tailwind('my-6 py-4 flex-row justify-center w-full')}>
+      <View style={tailwind('my-6 w-full flex-row justify-center py-4')}>
         <Flow size={48} color="rgb(156, 163, 175)" />
       </View>
     );
@@ -94,9 +94,9 @@ const ListPanel = (props) => {
 
   const renderUpdateFetchedBtn = useCallback(() => {
     return (
-      <TouchableOpacity onPress={onUpdateFetchedBtnClick} style={tailwind('my-4 py-2 flex-row justify-center w-full')}>
-        <View style={tailwind('px-3 py-1 bg-white border border-gray-400 rounded-full')}>
-          <Text style={tailwind('text-sm text-gray-500 font-normal')}>Show more</Text>
+      <TouchableOpacity onPress={onUpdateFetchedBtnClick} style={tailwind('my-4 w-full flex-row justify-center py-2')}>
+        <View style={tailwind('rounded-full border border-gray-400 bg-white px-3 py-1')}>
+          <Text style={tailwind('text-sm font-normal text-gray-500')}>Show more</Text>
         </View>
       </TouchableOpacity>
     );
@@ -162,7 +162,7 @@ const ListPanel = (props) => {
   return (
     <Animated.FlatList
       ref={flatList}
-      contentContainerStyle={tailwind('w-full max-w-6xl self-center px-4 md:px-6 lg:px-8', safeAreaWidth)}
+      contentContainerStyle={tailwind('w-full max-w-6xl self-center px-4 md:px-6 lg:px-8')}
       data={panelData}
       keyExtractor={getItemId}
       renderItem={renderPanel}

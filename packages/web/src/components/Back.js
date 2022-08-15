@@ -1,19 +1,30 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
+import { withTailwind } from '.';
 
 class Back extends React.PureComponent {
 
   render() {
+    const { tailwind } = this.props;
+
     return (
-      <div className="pt-32">
-        <div className="text-base text-gray-500 text-center">[This Page intentionally Left Blank]</div>
-        <a className="pt-12 pb-2 block text-base text-gray-500 text-center" href="/">
-          Go to <span className="text-gray-900 font-medium underline rounded-sm focus:outline-none focus:ring">your links</span>
+      <div className={tailwind('pt-32')}>
+        <div className={tailwind('text-center text-base text-gray-500')}>[This Page intentionally Left Blank]</div>
+        <a className={tailwind('block pt-12 pb-2 text-center text-base text-gray-500')} href="/">
+          Go to <span className={tailwind('rounded-sm font-medium text-gray-900 underline focus:outline-none focus:ring')}>your links</span>
         </a>
-        <div className="text-base text-gray-500 text-center">or</div>
-        <div className="pt-2 text-base text-gray-500 text-center">Press back to close</div>
+        <div className={tailwind('text-center text-base text-gray-500')}>or</div>
+        <div className={tailwind('pt-2 text-center text-base text-gray-500')}>Press back to close</div>
       </div>
     )
   }
 }
 
-export default Back;
+const mapStateToProps = (state, props) => {
+  return {
+    safeAreaWidth: state.window.width,
+  };
+};
+
+export default connect(mapStateToProps)(withTailwind(Back));

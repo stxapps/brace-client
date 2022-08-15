@@ -7,6 +7,8 @@ import {
 } from '../actions';
 import { HASH_PRIVACY, LAYOUT_CARD, LAYOUT_LIST } from '../types/const';
 
+import { withTailwind } from '.';
+
 class SettingsPopupMisc extends React.PureComponent {
 
   onDoExtractBtnClick = () => {
@@ -20,7 +22,6 @@ class SettingsPopupMisc extends React.PureComponent {
   }
 
   onDoDescendingInputChange = (e) => {
-
     let doDescendingOrder;
 
     const value = e.target.value;
@@ -36,9 +37,9 @@ class SettingsPopupMisc extends React.PureComponent {
   }
 
   render() {
-
     const {
       doExtractContents, doDeleteOldLinksInTrash, doDescendingOrder, layoutType,
+      tailwind,
     } = this.props;
 
     const doExtractBtnClassNames = doExtractContents ? 'bg-blue-500' : 'bg-gray-200';
@@ -60,74 +61,74 @@ class SettingsPopupMisc extends React.PureComponent {
     const layoutListBtnInnerClassNames = layoutType === LAYOUT_LIST ? 'text-blue-800' : 'text-gray-600';
 
     return (
-      <div className="p-4 relative md:p-6">
-        <div className="border-b border-gray-200 md:hidden">
-          <button onClick={this.props.onSidebarOpenBtnClick} className="pb-1 group focus:outline-none">
-            <span className="text-sm text-gray-500 rounded group-focus:ring">{'<'} <span className="group-hover:underline">Settings</span></span>
+      <div className={tailwind('relative p-4 md:p-6')}>
+        <div className={tailwind('border-b border-gray-200 md:hidden')}>
+          <button onClick={this.props.onSidebarOpenBtnClick} className={tailwind('group pb-1 focus:outline-none')}>
+            <span className={tailwind('rounded text-sm text-gray-500 group-focus:ring')}>{'<'} <span className={tailwind('group-hover:underline')}>Settings</span></span>
           </button>
-          <h3 className="pb-2 text-xl text-gray-800 font-medium leading-none">Misc.</h3>
+          <h3 className={tailwind('pb-2 text-xl font-medium leading-none text-gray-800')}>Misc.</h3>
         </div>
-        <div className="mt-6 flex items-center justify-between space-x-4 md:mt-0">
-          <div className="flex flex-col">
-            <h4 id="link-previews-option-label" className="text-base text-gray-800 font-medium leading-none">Link Previews</h4>
-            <p id="link-previews-option-description" className="mt-2.5 text-base text-gray-500 leading-relaxed">Allow your saved links to be sent to our server for extracting their representative title and image. No your personal information involved at all so there is no way to know who saves what links. These titles and images are used in our website and app for you to easily find and recognize your saved links. For more information, please visit <a className="underline rounded hover:text-gray-700 focus:outline-none focus:ring" href={'/' + HASH_PRIVACY} target="_blank" rel="noreferrer">our privacy policy page</a>.</p>
+        <div className={tailwind('mt-6 flex items-center justify-between space-x-4 md:mt-0')}>
+          <div className={tailwind('flex flex-col')}>
+            <h4 id="link-previews-option-label" className={tailwind('text-base font-medium leading-none text-gray-800')}>Link Previews</h4>
+            <p id="link-previews-option-description" className={tailwind('mt-2.5 text-base leading-relaxed text-gray-500')}>Allow your saved links to be sent to our server for extracting their representative title and image. No your personal information involved at all so there is no way to know who saves what links. These titles and images are used in our website and app for you to easily find and recognize your saved links. For more information, please visit <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring')} href={'/' + HASH_PRIVACY} target="_blank" rel="noreferrer">our privacy policy page</a>.</p>
           </div>
-          <span onClick={this.onDoExtractBtnClick} role="checkbox" tabIndex={0} aria-checked="true" aria-labelledby="link-previews-option-label" aria-describedby="link-previews-option-description" className={`${doExtractBtnClassNames} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring`}>
-            <span aria-hidden="true" className={`${doExtractBtnInnerClassNames} inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`} />
+          <span onClick={this.onDoExtractBtnClick} role="checkbox" tabIndex={0} aria-checked="true" aria-labelledby="link-previews-option-label" aria-describedby="link-previews-option-description" className={tailwind(`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring ${doExtractBtnClassNames}`)}>
+            <span aria-hidden="true" className={tailwind(`inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out ${doExtractBtnInnerClassNames}`)} />
           </span>
         </div>
-        <div className="mt-10 flex items-center justify-between space-x-4">
-          <div className="flex flex-col">
-            <h4 id="auto-delete-option-label" className="text-base text-gray-800 font-medium leading-none">Auto Cleanup</h4>
-            <p id="auto-delete-option-description" className="mt-2.5 text-base text-gray-500 leading-relaxed">Allow old removed links in Trash to be automatically deleted after 45 days.</p>
+        <div className={tailwind('mt-10 flex items-center justify-between space-x-4')}>
+          <div className={tailwind('flex flex-col')}>
+            <h4 id="auto-delete-option-label" className={tailwind('text-base font-medium leading-none text-gray-800')}>Auto Cleanup</h4>
+            <p id="auto-delete-option-description" className={tailwind('mt-2.5 text-base leading-relaxed text-gray-500')}>Allow old removed links in Trash to be automatically deleted after 45 days.</p>
           </div>
-          <span onClick={this.onDoDeleteBtnClick} role="checkbox" tabIndex={0} aria-checked="true" aria-labelledby="auto-cleanup-option-label" aria-describedby="auto-cleanup-option-description" className={`${doDeleteBtnClassNames} relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring`}>
-            <span aria-hidden="true" className={`${doDeleteBtnInnerClassNames} inline-block h-5 w-5 rounded-full bg-white shadow transform transition ease-in-out duration-200`} />
+          <span onClick={this.onDoDeleteBtnClick} role="checkbox" tabIndex={0} aria-checked="true" aria-labelledby="auto-cleanup-option-label" aria-describedby="auto-cleanup-option-description" className={tailwind(`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring ${doDeleteBtnClassNames}`)}>
+            <span aria-hidden="true" className={tailwind(`inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out ${doDeleteBtnInnerClassNames}`)} />
           </span>
         </div>
-        <div className="mt-10 mb-4 flex flex-col">
-          <h4 id="list-order-option-label" className="text-base text-gray-800 font-medium leading-none">List Order</h4>
-          <div className="sm:flex sm:items-start sm:justify-between sm:space-x-4">
-            <p id="list-order-option-description" className="mt-2.5 flex-grow flex-shrink text-base text-gray-500 leading-relaxed">Choose whether your saved links are sorted by saved date in <span className="font-semibold">ascending order</span> (links you save first appear first) or <span className="font-semibold">descending order</span> (links you save last appear first) when you browse your saved links.</p>
-            <div className="mx-auto mt-2.5 w-full max-w-48 bg-white rounded-md shadow-sm -space-y-px sm:mt-1 sm:flex-grow-0 sm:flex-shrink-0 sm:w-48 sm:max-w-none">
-              <div className={`${ascendingBtnClassNames} p-4 relative flex border rounded-tl-md rounded-tr-md`}>
-                <div className="flex items-center h-5">
-                  <input onChange={this.onDoDescendingInputChange} id="list-order-option-1" name="list-order-option-1" type="radio" className="h-4 w-4 text-blue-600 transition duration-150 ease-in-out cursor-pointer focus:ring" checked={!doDescendingOrder} value="ascending" />
+        <div className={tailwind('mt-10 mb-4 flex flex-col')}>
+          <h4 id="list-order-option-label" className={tailwind('text-base font-medium leading-none text-gray-800')}>List Order</h4>
+          <div className={tailwind('sm:flex sm:items-start sm:justify-between sm:space-x-4')}>
+            <p id="list-order-option-description" className={tailwind('mt-2.5 flex-shrink flex-grow text-base leading-relaxed text-gray-500')}>Choose whether your saved links are sorted by saved date in <span className={tailwind('font-semibold')}>ascending order</span> (links you save first appear first) or <span className={tailwind('font-semibold')}>descending order</span> (links you save last appear first) when you browse your saved links.</p>
+            <div className={tailwind('mx-auto mt-2.5 w-full max-w-48 -space-y-px rounded-md bg-white shadow-sm sm:mt-1 sm:w-48 sm:max-w-none sm:flex-shrink-0 sm:flex-grow-0')}>
+              <div className={tailwind(`relative flex rounded-tl-md rounded-tr-md border p-4 ${ascendingBtnClassNames}`)}>
+                <div className={tailwind('flex h-5 items-center')}>
+                  <input onChange={this.onDoDescendingInputChange} id="list-order-option-1" name="list-order-option-1" type="radio" className={tailwind('h-4 w-4 cursor-pointer text-blue-600 transition duration-150 ease-in-out focus:ring')} checked={!doDescendingOrder} value="ascending" />
                 </div>
-                <label htmlFor="list-order-option-1" className="ml-3 flex flex-col cursor-pointer">
-                  <span className={`${ascendingBtnInnerClassNames} block text-sm leading-5 font-medium`}>Ascending order</span>
+                <label htmlFor="list-order-option-1" className={tailwind('ml-3 flex cursor-pointer flex-col')}>
+                  <span className={tailwind(`block text-sm font-medium leading-5 ${ascendingBtnInnerClassNames}`)}>Ascending order</span>
                 </label>
               </div>
-              <div className={`${descendingBtnClassNames} p-4 flex relative border rounded-bl-md rounded-br-md`}>
-                <div className="flex items-center h-5">
-                  <input onChange={this.onDoDescendingInputChange} id="list-order-option-2" name="list-order-option-2" type="radio" className="h-4 w-4 text-blue-600 transition duration-150 ease-in-out cursor-pointer focus:ring" checked={doDescendingOrder} value="descending" />
+              <div className={tailwind(`relative flex rounded-bl-md rounded-br-md border p-4 ${descendingBtnClassNames}`)}>
+                <div className={tailwind('flex h-5 items-center')}>
+                  <input onChange={this.onDoDescendingInputChange} id="list-order-option-2" name="list-order-option-2" type="radio" className={tailwind('h-4 w-4 cursor-pointer text-blue-600 transition duration-150 ease-in-out focus:ring')} checked={doDescendingOrder} value="descending" />
                 </div>
-                <label htmlFor="list-order-option-2" className="ml-3 flex flex-col cursor-pointer">
-                  <span className={`${descendingBtnInnerClassNames} block text-sm leading-5 font-medium`}>Descending order</span>
+                <label htmlFor="list-order-option-2" className={tailwind('ml-3 flex cursor-pointer flex-col')}>
+                  <span className={tailwind(`block text-sm font-medium leading-5 ${descendingBtnInnerClassNames}`)}>Descending order</span>
                 </label>
               </div>
             </div>
           </div>
         </div>
-        <div className="mt-10 mb-4 flex flex-col">
-          <h4 id="layout-type-option-label" className="text-base text-gray-800 font-medium leading-none">Layout View</h4>
-          <div className="sm:flex sm:items-start sm:justify-between sm:space-x-4">
-            <p id="layout-type-option-description" className="mt-2.5 flex-grow flex-shrink text-base text-gray-500 leading-relaxed">Choose whether your saved links are displayed in Cards view or in List view. This setting is not synced so you can have a different layout for each of your devices.</p>
-            <div className="mx-auto mt-2.5 w-full max-w-48 bg-white rounded-md shadow-sm -space-y-px sm:mt-1 sm:flex-grow-0 sm:flex-shrink-0 sm:w-48 sm:max-w-none">
-              <div className={`${layoutCardBtnClassNames} p-4 relative flex border rounded-tl-md rounded-tr-md`}>
-                <div className="flex items-center h-5">
-                  <input onChange={this.onLayoutTypeInputChange} id="layout-type-option-1" name="layout-type-option-1" type="radio" className="h-4 w-4 text-blue-600 transition duration-150 ease-in-out cursor-pointer focus:ring" checked={layoutType === LAYOUT_CARD} value={LAYOUT_CARD} />
+        <div className={tailwind('mt-10 mb-4 flex flex-col')}>
+          <h4 id="layout-type-option-label" className={tailwind('text-base font-medium leading-none text-gray-800')}>Layout View</h4>
+          <div className={tailwind('sm:flex sm:items-start sm:justify-between sm:space-x-4')}>
+            <p id="layout-type-option-description" className={tailwind('mt-2.5 flex-shrink flex-grow text-base leading-relaxed text-gray-500')}>Choose whether your saved links are displayed in Cards view or in List view. This setting is not synced so you can have a different layout for each of your devices.</p>
+            <div className={tailwind('mx-auto mt-2.5 w-full max-w-48 -space-y-px rounded-md bg-white shadow-sm sm:mt-1 sm:w-48 sm:max-w-none sm:flex-shrink-0 sm:flex-grow-0')}>
+              <div className={tailwind(`relative flex rounded-tl-md rounded-tr-md border p-4 ${layoutCardBtnClassNames}`)}>
+                <div className={tailwind('flex h-5 items-center')}>
+                  <input onChange={this.onLayoutTypeInputChange} id="layout-type-option-1" name="layout-type-option-1" type="radio" className={tailwind('h-4 w-4 cursor-pointer text-blue-600 transition duration-150 ease-in-out focus:ring')} checked={layoutType === LAYOUT_CARD} value={LAYOUT_CARD} />
                 </div>
-                <label htmlFor="layout-type-option-1" className="ml-3 flex flex-col cursor-pointer">
-                  <span className={`${layoutCardBtnInnerClassNames} block text-sm leading-5 font-medium`}>Cards view</span>
+                <label htmlFor="layout-type-option-1" className={tailwind('ml-3 flex cursor-pointer flex-col')}>
+                  <span className={tailwind(`block text-sm font-medium leading-5 ${layoutCardBtnInnerClassNames}`)}>Cards view</span>
                 </label>
               </div>
-              <div className={`${layoutListBtnClassNames} p-4 flex relative border rounded-bl-md rounded-br-md`}>
-                <div className="flex items-center h-5">
-                  <input onChange={this.onLayoutTypeInputChange} id="layout-type-option-2" name="layout-type-option-2" type="radio" className="h-4 w-4 text-blue-600 transition duration-150 ease-in-out cursor-pointer focus:ring" checked={layoutType === LAYOUT_LIST} value={LAYOUT_LIST} />
+              <div className={tailwind(`relative flex rounded-bl-md rounded-br-md border p-4 ${layoutListBtnClassNames}`)}>
+                <div className={tailwind('flex h-5 items-center')}>
+                  <input onChange={this.onLayoutTypeInputChange} id="layout-type-option-2" name="layout-type-option-2" type="radio" className={tailwind('h-4 w-4 cursor-pointer text-blue-600 transition duration-150 ease-in-out focus:ring')} checked={layoutType === LAYOUT_LIST} value={LAYOUT_LIST} />
                 </div>
-                <label htmlFor="layout-type-option-2" className="ml-3 flex flex-col cursor-pointer">
-                  <span className={`${layoutListBtnInnerClassNames} block text-sm leading-5 font-medium`}>List view</span>
+                <label htmlFor="layout-type-option-2" className={tailwind('ml-3 flex cursor-pointer flex-col')}>
+                  <span className={tailwind(`block text-sm font-medium leading-5 ${layoutListBtnInnerClassNames}`)}>List view</span>
                 </label>
               </div>
             </div>
@@ -144,6 +145,7 @@ const mapStateToProps = (state) => {
     doDeleteOldLinksInTrash: state.settings.doDeleteOldLinksInTrash,
     doDescendingOrder: state.settings.doDescendingOrder,
     layoutType: state.localSettings.layoutType,
+    safeAreaWidth: state.window.width,
   };
 };
 
@@ -152,4 +154,4 @@ const mapDispatchToProps = {
   updateLayoutType,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SettingsPopupMisc);
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(SettingsPopupMisc));

@@ -7,6 +7,8 @@ import { ADD_POPUP, NO_URL, ASK_CONFIRM_URL, URL_MSGS } from '../types/const';
 import { validateUrl } from '../utils';
 import { popupBgFMV, popupFMV } from '../types/animConfigs';
 
+import { withTailwind } from '.';
+
 class TopBarAddPopup extends React.PureComponent {
 
   constructor(props) {
@@ -65,8 +67,7 @@ class TopBarAddPopup extends React.PureComponent {
   }
 
   renderAddPopup() {
-
-    const { isAddPopupShown, safeAreaWidth, safeAreaHeight } = this.props;
+    const { isAddPopupShown, safeAreaWidth, safeAreaHeight, tailwind } = this.props;
     if (!isAddPopupShown) return (
       <AnimatePresence key="AnimatePresence_TopBarAddPopup" />
     );
@@ -84,18 +85,18 @@ class TopBarAddPopup extends React.PureComponent {
 
     return (
       <AnimatePresence key="AnimatePresence_TopBarAddPopup">
-        <motion.button key="TopBarAddPopup_cancelBtn" onClick={this.onAddCancelBtnClick} tabIndex={-1} className="fixed inset-0 w-full h-full bg-black bg-opacity-25 cursor-default z-40 focus:outline-none" variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
-        <motion.div key="TopBarAddPopup_addPopup" style={style} className="mt-2 px-4 pt-6 pb-5 absolute w-96 bg-white rounded-lg shadow-xl ring-1 ring-black ring-opacity-5 z-41" variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
-          <div className="flex">
-            <span className="inline-flex items-center bg-white text-sm text-gray-600">Url:</span>
-            <div className="ml-3 flex-1">
-              <input onChange={this.onAddInputChange} onKeyPress={this.onAddInputKeyPress} className="px-3.5 py-1 w-full bg-white text-base text-gray-700 rounded-full border border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 focus:border-gray-400" type="url" placeholder="https://" value={url} autoCapitalize="none" autoFocus />
+        <motion.button key="TopBarAddPopup_cancelBtn" onClick={this.onAddCancelBtnClick} tabIndex={-1} className={tailwind('fixed inset-0 z-40 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
+        <motion.div key="TopBarAddPopup_addPopup" style={style} className={tailwind('absolute z-41 mt-2 w-96 rounded-lg bg-white px-4 pt-6 pb-5 shadow-xl ring-1 ring-black ring-opacity-5')} variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
+          <div className={tailwind('flex')}>
+            <span className={tailwind('inline-flex items-center bg-white text-sm text-gray-600')}>Url:</span>
+            <div className={tailwind('ml-3 flex-1')}>
+              <input onChange={this.onAddInputChange} onKeyPress={this.onAddInputKeyPress} className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50')} type="url" placeholder="https://" value={url} autoCapitalize="none" autoFocus />
             </div>
           </div>
-          {msg !== '' && <p className="pt-3 text-sm text-red-500">{msg}</p>}
-          <div className={`${msg !== '' ? 'pt-3' : 'pt-5'}`}>
-            <button onClick={this.onAddOkBtnClick} style={{ paddingTop: '0.4375rem', paddingBottom: '0.4375rem' }} className="px-4 bg-gray-800 text-sm text-gray-50 font-medium rounded-full hover:bg-gray-900 focus:outline-none focus:ring">{isAskingConfirm ? 'Sure' : 'Save'}</button>
-            <button onClick={this.onAddCancelBtnClick} className="ml-2 px-2.5 py-1.5 text-sm text-gray-500 rounded-md hover:bg-gray-100 focus:outline-none focus:ring focus:ring-inset">Cancel</button>
+          {msg !== '' && <p className={tailwind('pt-3 text-sm text-red-500')}>{msg}</p>}
+          <div className={tailwind(`${msg !== '' ? 'pt-3' : 'pt-5'}`)}>
+            <button onClick={this.onAddOkBtnClick} style={{ paddingTop: '0.4375rem', paddingBottom: '0.4375rem' }} className={tailwind('rounded-full bg-gray-800 px-4 text-sm font-medium text-gray-50 hover:bg-gray-900 focus:outline-none focus:ring')}>{isAskingConfirm ? 'Sure' : 'Save'}</button>
+            <button onClick={this.onAddCancelBtnClick} className={tailwind('ml-2 rounded-md px-2.5 py-1.5 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring focus:ring-inset')}>Cancel</button>
           </div>
         </motion.div>
       </AnimatePresence>
@@ -103,14 +104,16 @@ class TopBarAddPopup extends React.PureComponent {
   }
 
   render() {
+    const { tailwind } = this.props;
+
     return (
-      <div className="relative">
+      <div className={tailwind('relative')}>
         {/* If want to show the button along with the popup, add relative and z-41 */}
-        <button onClick={this.onAddBtnClick} style={{ height: '2rem', paddingLeft: '0.625rem', paddingRight: '0.75rem' }} className="flex justify-center items-center bg-white border border-gray-400 rounded-full group hover:border-gray-500 focus:outline-none focus:ring">
-          <svg className="w-3 text-gray-500 group-hover:text-gray-600" viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <button onClick={this.onAddBtnClick} style={{ height: '2rem', paddingLeft: '0.625rem', paddingRight: '0.75rem' }} className={tailwind('group flex items-center justify-center rounded-full border border-gray-400 bg-white hover:border-gray-500 focus:outline-none focus:ring')}>
+          <svg className={tailwind('w-3 text-gray-500 group-hover:text-gray-600')} viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <span className="ml-1 text-sm text-gray-500 group-hover:text-gray-600">Add</span>
+          <span className={tailwind('ml-1 text-sm text-gray-500 group-hover:text-gray-600')}>Add</span>
         </button>
         {this.renderAddPopup()}
       </div>
@@ -131,4 +134,4 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = { updatePopup, updateLinkEditor, addLink };
 
-export default connect(mapStateToProps, mapDispatchToProps)(TopBarAddPopup);
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(TopBarAddPopup));

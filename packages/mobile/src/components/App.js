@@ -1,6 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { NativeModules } from 'react-native';
+import { connect } from 'react-redux';
 
 import Loading from './Loading';
 import Landing from './Landing';

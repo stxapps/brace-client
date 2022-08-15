@@ -11,9 +11,8 @@ import {
 import { getListNameMap } from '../selectors';
 import { getListNameDisplayName } from '../utils';
 import cache from '../utils/cache';
-import { tailwind } from '../stylesheets/tailwind';
 
-import { withSafeAreaContext, getTopBarSizes } from '.';
+import { getTopBarSizes, withTailwind } from '.';
 
 class ListName extends React.PureComponent {
 
@@ -37,8 +36,7 @@ class ListName extends React.PureComponent {
   };
 
   render() {
-
-    const { listName, listNameMap, updates, safeAreaWidth } = this.props;
+    const { listName, listNameMap, updates, safeAreaWidth, tailwind } = this.props;
     const displayName = getListNameDisplayName(listName, listNameMap);
 
     let textMaxWidth = 160;
@@ -59,9 +57,9 @@ class ListName extends React.PureComponent {
 
     return (
       <TouchableOpacity ref={this.listNameBtn} onPress={this.onListNameBtnClick} style={tailwind('flex-row items-center')}>
-        <Text style={cache('LN_text', [tailwind('mr-1 text-lg text-gray-900 font-medium leading-7', safeAreaWidth), textStyle], [safeAreaWidth, updates])} numberOfLines={1} ellipsizeMode="tail">{displayName}</Text>
-        {listName in updates && <View style={tailwind('self-start w-1.5 h-1.5 bg-blue-400 rounded-full')} />}
-        <Svg style={tailwind('text-gray-900 font-normal')} width={20} height={20} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+        <Text style={cache('LN_text', [tailwind('mr-1 text-lg font-medium leading-7 text-gray-900'), textStyle], [safeAreaWidth, updates])} numberOfLines={1} ellipsizeMode="tail">{displayName}</Text>
+        {listName in updates && <View style={tailwind('h-1.5 w-1.5 self-start rounded-full bg-blue-400')} />}
+        <Svg style={tailwind('font-normal text-gray-900')} width={20} height={20} viewBox="0 0 24 24" stroke="currentColor" fill="none">
           <Path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </Svg>
       </TouchableOpacity>
@@ -79,4 +77,4 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = { updatePopup, updateListNamesMode };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(ListName));
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(ListName));

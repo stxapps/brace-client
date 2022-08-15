@@ -1,8 +1,8 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import {
   View, Text, TouchableOpacity, TextInput, LayoutAnimation, Platform,
 } from 'react-native';
+import { connect } from 'react-redux';
 import Modal from 'react-native-modal';
 
 import { updatePopup, updateLinkEditor, addLink } from '../actions';
@@ -10,10 +10,9 @@ import {
   ADD_POPUP, NO_URL, ASK_CONFIRM_URL, URL_MSGS, MODAL_SUPPORTED_ORIENTATIONS,
 } from '../types/const';
 import { validateUrl } from '../utils';
-import { tailwind } from '../stylesheets/tailwind';
 import { cardItemFMV } from '../types/animConfigs';
 
-import { withSafeAreaContext } from '.';
+import { withTailwind } from '.';
 
 class BottomBarAddPopup extends React.PureComponent {
 
@@ -80,7 +79,7 @@ class BottomBarAddPopup extends React.PureComponent {
 
     const {
       isAddPopupShown, safeAreaWidth, safeAreaHeight, insets,
-      url, msg, isAskingConfirm,
+      url, msg, isAskingConfirm, tailwind,
     } = this.props;
 
     const windowWidth = safeAreaWidth + insets.left + insets.right;
@@ -89,20 +88,20 @@ class BottomBarAddPopup extends React.PureComponent {
     const inputClassNames = Platform.OS === 'ios' ? 'py-1.5 leading-5' : 'py-0.5';
 
     return (
-      <Modal isVisible={isAddPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={this.onAddPopupShow} onModalWillHide={this.onAddPopupHide} style={tailwind('justify-end m-0')} supportedOrientations={MODAL_SUPPORTED_ORIENTATIONS} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true} avoidKeyboard={Platform.OS === 'ios' ? true : false}>
-        <View style={tailwind('px-4 pt-6 pb-6 w-full bg-white border border-gray-100 rounded-t-lg shadow-xl')}>
-          <View style={tailwind('flex-row justify-start items-center')}>
-            <Text style={tailwind('flex-none text-sm text-gray-600 font-normal')}>Url:</Text>
+      <Modal isVisible={isAddPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={this.onAddPopupShow} onModalWillHide={this.onAddPopupHide} style={tailwind('m-0 justify-end')} supportedOrientations={MODAL_SUPPORTED_ORIENTATIONS} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true} avoidKeyboard={Platform.OS === 'ios' ? true : false}>
+        <View style={tailwind('w-full rounded-t-lg border border-gray-100 bg-white px-4 pt-6 pb-6 shadow-xl')}>
+          <View style={tailwind('flex-row items-center justify-start')}>
+            <Text style={tailwind('flex-none text-sm font-normal text-gray-600')}>Url:</Text>
             {/* onKeyPress event for Enter key only if there is multiline TextInput */}
-            <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind(`ml-3 px-3.5 flex-1 bg-white text-base text-gray-700 font-normal rounded-full border border-gray-400 ${inputClassNames}`)} keyboardType="url" placeholder="https://" value={url} autoCapitalize="none" />
+            <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind(`ml-3 flex-1 rounded-full border border-gray-400 bg-white px-3.5 text-base font-normal text-gray-700 ${inputClassNames}`)} keyboardType="url" placeholder="https://" value={url} autoCapitalize="none" />
           </View>
-          {msg !== '' && <Text style={tailwind('pt-3 text-sm text-red-500 font-normal')}>{msg}</Text>}
-          <View style={tailwind(`${msg !== '' ? 'pt-3' : 'pt-5'} flex-row justify-start items-center`)}>
-            <TouchableOpacity onPress={this.onAddOkBtnClick} style={[tailwind('px-4 justify-center items-center bg-gray-800 rounded-full'), { paddingTop: 7, paddingBottom: 7 }]}>
-              <Text style={tailwind('text-sm text-gray-50 font-medium')}>{isAskingConfirm ? 'Sure' : 'Save'}</Text>
+          {msg !== '' && <Text style={tailwind('pt-3 text-sm font-normal text-red-500')}>{msg}</Text>}
+          <View style={tailwind(`flex-row items-center justify-start ${msg !== '' ? 'pt-3' : 'pt-5'}`)}>
+            <TouchableOpacity onPress={this.onAddOkBtnClick} style={[tailwind('items-center justify-center rounded-full bg-gray-800 px-4'), { paddingTop: 7, paddingBottom: 7 }]}>
+              <Text style={tailwind('text-sm font-medium text-gray-50')}>{isAskingConfirm ? 'Sure' : 'Save'}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={this.onAddCancelBtnClick} style={tailwind('ml-2 px-2.5 py-1.5 rounded-md')}>
-              <Text style={tailwind('text-sm text-gray-500 font-normal')}>Cancel</Text>
+            <TouchableOpacity onPress={this.onAddCancelBtnClick} style={tailwind('ml-2 rounded-md px-2.5 py-1.5')}>
+              <Text style={tailwind('text-sm font-normal text-gray-500')}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -122,4 +121,4 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = { updatePopup, updateLinkEditor, addLink };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(BottomBarAddPopup));
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(BottomBarAddPopup));

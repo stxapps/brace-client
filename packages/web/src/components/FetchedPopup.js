@@ -6,6 +6,8 @@ import { updateFetched } from '../actions';
 import { MD_WIDTH } from '../types/const';
 import { fetchedPopupFMV } from '../types/animConfigs';
 
+import { withTailwind } from '.';
+
 class FetchedPopup extends React.PureComponent {
 
   constructor(props) {
@@ -15,7 +17,7 @@ class FetchedPopup extends React.PureComponent {
     this.state = { ...this.initialState };
   }
 
-  // If use clicks close, don't bother her again, even list changed.
+  // If user clicks close, don't bother her again, even list changed.
   /*UNSAFE_componentWillReceiveProps(nextProps) {
     if (!this.props.fetched && nextProps.fetched) {
       if (!isEqual(this.state, this.initialState)) {
@@ -33,8 +35,7 @@ class FetchedPopup extends React.PureComponent {
   }
 
   render() {
-
-    const { fetched, safeAreaWidth } = this.props;
+    const { fetched, safeAreaWidth, tailwind } = this.props;
     const { isShown } = this.state;
     if (!fetched || !isShown) return (
       <AnimatePresence key="AnimatePresence_FetchedPopup" />
@@ -47,11 +48,11 @@ class FetchedPopup extends React.PureComponent {
 
     return (
       <AnimatePresence key="AnimatePresence_FetchedPopup">
-        <motion.div style={style} className="fixed left-1/2 flex items-center bg-blue-400 rounded-full shadow-lg z-30" variants={fetchedPopupFMV} initial="hidden" animate="visible" exit="hidden">
-          <button style={updateBtnStyle} onClick={this.onUpdateBtnClick} className="text-sm text-white focus:outline-none">There is an update</button>
-          <button style={closeBtnStyle} onClick={this.onCloseBtnClick} className="ml-1 flex-shrink-0 inline-flex items-center justify-center h-4 w-4 text-blue-50 rounded-full hover:bg-blue-100 hover:text-blue-400 focus:outline-none focus:bg-blue-100 focus:text-blue-400">
-            <span className="sr-only">Remove new update option</span>
-            <svg className="h-2 w-2" viewBox="0 0 8 8" stroke="currentColor" fill="none">
+        <motion.div style={style} className={tailwind('fixed left-1/2 z-30 flex items-center rounded-full bg-blue-400 shadow-lg')} variants={fetchedPopupFMV} initial="hidden" animate="visible" exit="hidden">
+          <button style={updateBtnStyle} onClick={this.onUpdateBtnClick} className={tailwind('text-sm text-white focus:outline-none')}>There is an update</button>
+          <button style={closeBtnStyle} onClick={this.onCloseBtnClick} className={tailwind('ml-1 inline-flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full text-blue-50 hover:bg-blue-100 hover:text-blue-400 focus:bg-blue-100 focus:text-blue-400 focus:outline-none')}>
+            <span className={tailwind('sr-only')}>Remove new update option</span>
+            <svg className={tailwind('h-2 w-2')} viewBox="0 0 8 8" stroke="currentColor" fill="none">
               <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
             </svg>
           </button>
@@ -73,4 +74,4 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = { updateFetched };
 
-export default connect(mapStateToProps, mapDispatchToProps)(FetchedPopup);
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(FetchedPopup));

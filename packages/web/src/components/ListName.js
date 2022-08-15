@@ -9,7 +9,7 @@ import {
 import { getListNameMap } from '../selectors';
 import { getListNameDisplayName } from '../utils';
 
-import { getTopBarSizes } from '.';
+import { getTopBarSizes, withTailwind } from '.';
 
 class ListName extends React.PureComponent {
 
@@ -27,8 +27,7 @@ class ListName extends React.PureComponent {
   };
 
   render() {
-
-    const { listName, listNameMap, updates, safeAreaWidth } = this.props;
+    const { listName, listNameMap, updates, safeAreaWidth, tailwind } = this.props;
     const displayName = getListNameDisplayName(listName, listNameMap);
 
     let textMaxWidth = 160;
@@ -48,11 +47,11 @@ class ListName extends React.PureComponent {
     const textStyle = { maxWidth: textMaxWidth };
 
     return (
-      <div className="inline-block relative">
-        <button onClick={this.onListNameBtnClick} className="flex items-center rounded-sm focus:outline-none focus:ring">
-          <h2 style={textStyle} className="mr-1 text-lg text-gray-900 font-medium leading-7 truncate">{displayName}</h2>
-          {listName in updates && <div className="self-start w-1.5 h-1.5 bg-blue-400 rounded-full" />}
-          <svg className="w-5 text-gray-900" viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <div className={tailwind('relative inline-block')}>
+        <button onClick={this.onListNameBtnClick} className={tailwind('flex items-center rounded-sm focus:outline-none focus:ring')}>
+          <h2 style={textStyle} className={tailwind('mr-1 truncate text-lg font-medium leading-7 text-gray-900')}>{displayName}</h2>
+          {listName in updates && <div className={tailwind('h-1.5 w-1.5 self-start rounded-full bg-blue-400')} />}
+          <svg className={tailwind('w-5 text-gray-900')} viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
@@ -72,4 +71,4 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = { updatePopup, updateListNamesMode };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ListName);
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(ListName));

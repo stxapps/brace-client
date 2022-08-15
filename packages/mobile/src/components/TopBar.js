@@ -1,15 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { View, Text, TouchableOpacity, Animated } from 'react-native';
+import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
 
 import { updatePopup } from '../actions';
 import { SIGN_IN_POPUP, SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS } from '../types/const';
 import cache from '../utils/cache';
-import { tailwind } from '../stylesheets/tailwind';
 
-import { withSafeAreaContext, getTopBarSizes } from '.';
+import { getTopBarSizes, withTailwind } from '.';
 
 import TopBarCommands from './TopBarCommands';
 import TopBarBulkEditCommands from './TopBarBulkEditCommands';
@@ -25,17 +24,18 @@ class TopBar extends React.PureComponent {
   }
 
   renderSignInBtn() {
+    const { tailwind } = this.props;
+
     return (
-      <TouchableOpacity onPress={this.onSignInBtnClick} style={tailwind('justify-center items-center h-14')}>
-        <View style={cache('TB_signInBtnView', tailwind('px-2.5 py-1.5 bg-white border border-gray-400 rounded-full shadow-sm'))}>
-          <Text style={tailwind('text-sm text-gray-500 font-normal')}>Sign in</Text>
+      <TouchableOpacity onPress={this.onSignInBtnClick} style={tailwind('h-14 items-center justify-center')}>
+        <View style={cache('TB_signInBtnView', tailwind('rounded-full border border-gray-400 bg-white px-2.5 py-1.5 shadow-sm'))}>
+          <Text style={tailwind('text-sm font-normal text-gray-500')}>Sign in</Text>
         </View>
       </TouchableOpacity>
     );
   }
 
   renderListName() {
-
     const { scrollY, safeAreaWidth } = this.props;
     const {
       topBarHeight, headerHeight, listNameHeight, headerListNameSpace,
@@ -75,7 +75,6 @@ class TopBar extends React.PureComponent {
   }
 
   renderStatusPopup() {
-
     const { scrollY, safeAreaWidth } = this.props;
     const {
       topBarHeight, headerHeight, listNameHeight, statusPopupHeight, headerListNameSpace,
@@ -112,7 +111,6 @@ class TopBar extends React.PureComponent {
   }
 
   renderCommands() {
-
     const { scrollY, safeAreaWidth, isBulkEditing } = this.props;
     const {
       topBarHeight, headerHeight, commandsHeight,
@@ -143,7 +141,7 @@ class TopBar extends React.PureComponent {
   }
 
   render() {
-
+    const { tailwind } = this.props;
     const rightPaneProp = this.props.rightPane;
 
     let rightPane;
@@ -192,10 +190,10 @@ class TopBar extends React.PureComponent {
 
       listNamePane = (
         <React.Fragment>
-          <View style={tailwind('px-4 flex-row justify-end items-center h-7 md:px-6 lg:px-8', safeAreaWidth)}>
+          <View style={tailwind('h-7 flex-row items-center justify-end px-4 md:px-6 lg:px-8')}>
             {this.renderStatusPopup()}
           </View>
-          <View style={[tailwind('px-4 flex-row justify-between items-center md:px-6 lg:px-8', safeAreaWidth), { height: laidListNameCommandsHeight }]}>
+          <View style={[tailwind('flex-row items-center justify-between px-4 md:px-6 lg:px-8'), { height: laidListNameCommandsHeight }]}>
             {this.renderListName()}
             {rightPaneProp === SHOW_COMMANDS && this.renderCommands()}
           </View>
@@ -214,16 +212,16 @@ class TopBar extends React.PureComponent {
     }
 
     return (
-      <Animated.View style={[tailwind(`items-center w-full ${topBarStyleClasses}`), topBarStyle]}>
+      <Animated.View style={[tailwind(`w-full items-center ${topBarStyleClasses}`), topBarStyle]}>
         <View style={tailwind('w-full max-w-6xl')}>
           <Animated.View style={headerStyle}>
-            <View style={tailwind('px-4 flex-row justify-between items-center h-14 md:px-6 lg:px-8', safeAreaWidth)}>
+            <View style={tailwind('h-14 flex-row items-center justify-between px-4 md:px-6 lg:px-8')}>
               <View>
                 <SvgXml width={28.36} height={32} xml={shortLogo} />
               </View>
               {rightPane}
             </View>
-            <Animated.View style={[tailwind('w-full h-px bg-gray-200'), headerBorderStyle]} />
+            <Animated.View style={[tailwind('h-px w-full bg-gray-200'), headerBorderStyle]} />
           </Animated.View>
           {listNamePane}
         </View>
@@ -251,4 +249,4 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = { updatePopup };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(TopBar));
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(TopBar));

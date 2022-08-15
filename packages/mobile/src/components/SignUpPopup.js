@@ -10,11 +10,10 @@ import {
   DOMAIN_NAME, APP_NAME, APP_ICON_NAME, APP_SCOPES, SIGN_UP_POPUP, SIGN_IN_POPUP,
 } from '../types/const';
 import { splitOnFirst, escapeDoubleQuotes } from '../utils';
-import { tailwind } from '../stylesheets/tailwind';
 import cache from '../utils/cache';
 import { dialogFMV } from '../types/animConfigs';
 
-import { useSafeAreaFrame, useSafeAreaInsets } from '.';
+import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
 const stacksAccessSignUp = require('../../stacks-access-sign-up');
 
@@ -37,6 +36,7 @@ const SignUpPopup = () => {
     return DOMAIN_NAME + '/' + APP_ICON_NAME;
   }, []);
   const dispatch = useDispatch();
+  const tailwind = useTailwind();
 
   const onPopupCloseBtnClick = useCallback(() => {
     dispatch(updatePopup(SIGN_UP_POPUP, false));
@@ -168,7 +168,7 @@ const SignUpPopup = () => {
       <TouchableWithoutFeedback onPress={onPopupCloseBtnClick}>
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>
-      <Animated.View style={[tailwind('w-full max-w-sm bg-white rounded-lg shadow-xl overflow-hidden'), popupStyle]}>
+      <Animated.View style={[tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl'), popupStyle]}>
         <View style={{ height: panelHeight }}>
           <WebView ref={webView} style={tailwind('flex-1')} source={cache('SUP_webView_source', { baseUrl: '', html: stacksAccessSignUp })} originWhitelist={cache('SUP_webView_originWhitelist', ['*'])} onMessage={onMessage} keyboardDisplayRequiresUserAction={false} textZoom={100} androidLayerType="hardware" onShouldStartLoadWithRequest={onShouldStartLoadWithRequest} onContentProcessDidTerminate={onContentProcessDidTerminate} onRenderProcessGone={onContentProcessDidTerminate} />
         </View>

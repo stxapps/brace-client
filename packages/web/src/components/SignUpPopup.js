@@ -12,7 +12,7 @@ import {
 import { extractUrl, getUrlPathQueryHash, getUserImageUrl } from '../utils';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
-import { useSafeAreaFrame } from '.';
+import { useSafeAreaFrame, useTailwind } from '.';
 import SignUp from './SignUp';
 
 const SignUpPopup = () => {
@@ -24,6 +24,7 @@ const SignUpPopup = () => {
     return extractUrl(window.location.href).origin + '/' + APP_ICON_NAME;
   }, []);
   const dispatch = useDispatch();
+  const tailwind = useTailwind();
 
   const onPopupCloseBtnClick = () => {
     dispatch(updatePopup(SIGN_UP_POPUP, false));
@@ -72,13 +73,13 @@ const SignUpPopup = () => {
 
   return (
     <AnimatePresence key="AnimatePresence_SUP">
-      <div className="fixed inset-0 overflow-hidden z-30">
-        <div className="p-4 flex items-center justify-center" style={{ minHeight: safeAreaHeight }}>
-          <div className={'fixed inset-0'}>
-            <motion.button ref={cancelBtn} onClick={onPopupCloseBtnClick} className="absolute inset-0 w-full h-full bg-black bg-opacity-25 cursor-default focus:outline-none" variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
+      <div className={tailwind('fixed inset-0 z-30 overflow-hidden')}>
+        <div className={tailwind('flex items-center justify-center p-4')} style={{ minHeight: safeAreaHeight }}>
+          <div className={tailwind('fixed inset-0')}>
+            <motion.button ref={cancelBtn} onClick={onPopupCloseBtnClick} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
           </div>
-          <motion.div className={'w-full max-w-sm bg-white rounded-lg overflow-hidden shadow-xl'} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-            <div className="relative flex flex-col overflow-hidden bg-white rounded-lg" style={{ height: panelHeight }}>
+          <motion.div className={tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+            <div className={tailwind('relative flex flex-col overflow-hidden rounded-lg bg-white')} style={{ height: panelHeight }}>
               <SignUp domainName={DOMAIN_NAME} appName={APP_NAME} appIconUrl={appIconUrl} appScopes={APP_SCOPES} onPopupCloseBtnClick={onPopupCloseBtnClick} onSignUpWithHiroWalletBtnClick={onSignUpWithHiroWalletBtnClick} onSignInBtnClick={onSignInBtnClick} onBackedUpBtnClick={onBackedUpBtnClick} />
             </div>
           </motion.div>

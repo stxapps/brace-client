@@ -1,6 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Animated } from 'react-native';
+import { connect } from 'react-redux';
 
 import { fetch, endIapConnection } from '../actions';
 import {
