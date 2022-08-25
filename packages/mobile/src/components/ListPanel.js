@@ -82,7 +82,7 @@ const ListPanel = (props) => {
         </View>
       </TouchableOpacity>
     );
-  }, [onFetchMoreBtnClick]);
+  }, [onFetchMoreBtnClick, tailwind]);
 
   const renderFetchingMore = useCallback(() => {
     return (
@@ -90,7 +90,7 @@ const ListPanel = (props) => {
         <Flow size={48} color="rgb(156, 163, 175)" />
       </View>
     );
-  }, []);
+  }, [tailwind]);
 
   const renderUpdateFetchedBtn = useCallback(() => {
     return (
@@ -100,7 +100,7 @@ const ListPanel = (props) => {
         </View>
       </TouchableOpacity>
     );
-  }, [onUpdateFetchedBtnClick]);
+  }, [onUpdateFetchedBtnClick, tailwind]);
 
   const renderItem = useCallback(({ item }) => {
     return <ListItem link={item} />;

@@ -9,11 +9,10 @@ import { updatePopup, updateSettingsPopup, updateSettingsViewId } from '../actio
 import { PAYWALL_POPUP, SETTINGS_VIEW_IAP } from '../types/const';
 import { dialogFMV } from '../types/animConfigs';
 
-import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
+import { useSafeAreaInsets, useTailwind } from '.';
 
 const PaywallPopup = () => {
 
-  const { width: safeAreaWidth } = useSafeAreaFrame();
   const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isPaywallPopupShown);
   const [didCloseAnimEnd, setDidCloseAnimEnd] = useState(!isShown);

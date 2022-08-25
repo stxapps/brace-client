@@ -9,7 +9,6 @@ import {
   PIN_MENU_POPUP, PIN_LEFT, PIN_RIGHT, PIN_UP, PIN_DOWN, UNPIN,
   SWAP_LEFT, SWAP_RIGHT, LAYOUT_LIST, SM_WIDTH,
 } from '../types/const';
-import { tailwind } from '../stylesheets/tailwind';
 import { popupFMV } from '../types/animConfigs';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
