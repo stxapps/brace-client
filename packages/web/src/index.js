@@ -1,7 +1,7 @@
 //import './wdyr';
 
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { createStore, compose } from 'redux';
 import { install as installReduxLoop } from 'redux-loop';
@@ -40,13 +40,13 @@ const store = createStore(
   )
 );
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
   <React.StrictMode>
     <Provider store={store}>
       <App />
     </Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 );
 
 // If you want your app to work offline and load faster, you can change

@@ -1,6 +1,6 @@
-import { UserSession, AppConfig } from '@stacks/auth'
-import { Storage } from '@stacks/storage';
-import { signECDSA as _signECDSA } from '@stacks/encryption';
+import { UserSession, AppConfig } from '@stacks/auth/dist/esm'
+import { Storage } from '@stacks/storage/dist/esm';
+import { signECDSA as _signECDSA } from '@stacks/encryption/dist/esm';
 
 import { DOMAIN_NAME, APP_SCOPES, DOT_JSON } from './types/const';
 

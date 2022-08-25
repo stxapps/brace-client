@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { motion, AnimateSharedLayout } from "framer-motion";
+import { motion, AnimateSharedLayout } from 'framer-motion';
 
 import { fetchMore, updateFetchedMore } from '../actions';
 import {

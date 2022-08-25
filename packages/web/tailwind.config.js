@@ -1,8 +1,8 @@
 const defaultTheme = require('tailwindcss/defaultTheme');
-const colors = require('tailwindcss/colors');
+const plugin = require('tailwindcss/plugin');
 
 module.exports = {
-  purge: [
+  content: [
     './public/**/*.html',
     './src/**/*.{js,jsx,ts,tsx}',
   ],
@@ -12,7 +12,6 @@ module.exports = {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
       },
       colors: {
-        green: colors.green,
         'gray-logo': '#1A202C',
         'purple-blockstack': '#211F6D',
       },
@@ -47,20 +46,13 @@ module.exports = {
       },
     },
   },
-  variants: {
-    extend: {
-      textColor: ['group-focus', 'focus-visible'],
-      ringColor: ['group-focus', 'focus-visible'],
-      ringOffsetColor: ['group-focus', 'focus-visible'],
-      ringOffsetWidth: ['group-focus', 'focus-visible'],
-      ringOpacity: ['group-focus', 'focus-visible'],
-      ringWidth: ['group-hover', 'group-focus', 'hover', 'focus-visible'],
-    },
-  },
   plugins: [
     require('@tailwindcss/forms'),
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/typography'),
     require('@tailwindcss/line-clamp'),
+    plugin(function ({ addVariant }) {
+      addVariant('blk', '&');
+    }),
   ],
 };

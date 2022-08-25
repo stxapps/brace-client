@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { motion, AnimateSharedLayout } from "framer-motion";
+import { motion, AnimateSharedLayout } from 'framer-motion';
 
 import { fetchMore, updateFetchedMore } from '../actions';
 import {

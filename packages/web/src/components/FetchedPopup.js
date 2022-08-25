@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { updateFetched } from '../actions';
 import { MD_WIDTH } from '../types/const';

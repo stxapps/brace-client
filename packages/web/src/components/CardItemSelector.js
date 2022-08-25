@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { MAX_SELECTED_LINK_IDS } from '../types/const';
 import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';

@@ -1,22 +1,24 @@
 import { SECP256K1Client } from 'jsontokens';
-import { makeDIDFromAddress } from '@stacks/auth'
+import { makeDIDFromAddress } from '@stacks/auth/dist/esm'
 import {
   generateSecretKey, generateWallet, getRootNode, deriveLegacyConfigPrivateKey,
   fetchWalletConfig, deriveAccount, makeWalletConfig, updateWalletConfigWithApp,
   getAppPrivateKey, getStxAddress,
-} from '@stacks/wallet-sdk/dist';
+} from '@stacks/wallet-sdk/dist/esm';
 import {
   DEFAULT_PROFILE, fetchAccountProfile,
-} from '@stacks/wallet-sdk/dist/models/profile';
+} from '@stacks/wallet-sdk/dist/esm/models/profile';
 import {
   fetchLegacyWalletConfig,
-} from '@stacks/wallet-sdk/dist/models/legacy-wallet-config';
+} from '@stacks/wallet-sdk/dist/esm/models/legacy-wallet-config';
 import {
   getHubInfo, connectToGaiaHubWithConfig, makeGaiaAssociationToken,
-} from '@stacks/wallet-sdk/dist/utils';
-import { TransactionVersion } from '@stacks/transactions';
-import { getPublicKeyFromPrivate, publicKeyToAddress } from '@stacks/encryption';
-import { fetchPrivate } from '@stacks/common';
+} from '@stacks/wallet-sdk/dist/esm/utils';
+import { TransactionVersion } from '@stacks/transactions/dist/esm';
+import {
+  getPublicKeyFromPrivate, publicKeyToAddress,
+} from '@stacks/encryption/dist/esm';
+import { fetchPrivate } from '@stacks/common/dist/esm';
 
 const DEFAULT_PASSWORD = 'password';
 const DEFAULT_GAIA_HUB_URL = 'https://hub.blockstack.org';

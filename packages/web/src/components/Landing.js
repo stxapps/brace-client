@@ -134,7 +134,7 @@ class Landing extends React.PureComponent {
                 <img className={tailwind('ml-4 w-6 rounded-sm group-focus:ring md:w-8')} src={chromeWebStore} alt="Chrome web store" />
               </a>
               <a className={tailwind('group focus:outline-none')} href="https://addons.mozilla.org/en-US/firefox/addon/brace/" target="_blank" rel="noreferrer">
-                <img className={tailwind('ml-4 w-7 rounded-sm -mb-2px group-focus:ring md:w-10')} src={firefoxAddons} alt="Firefox addons" />
+                <img className={tailwind('ml-4 w-7 rounded-sm -mb-0.5 group-focus:ring md:w-10')} src={firefoxAddons} alt="Firefox addons" />
               </a>
             </div>
           </div>

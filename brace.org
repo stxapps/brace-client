@@ -620,12 +620,10 @@ This and CI/CD are very important!
 *** Google app engine
 *** Puppeteer
 ** steps
-- npx create-react-app bracedotto --template cra-template-pwa
-- yarn add tailwindcss postcss postcss-cli autoprefixer
+- yarn create react-app bracedotto --template cra-template-pwa
+- yarn add tailwindcss postcss autoprefixer
 - yarn add @tailwindcss/forms @tailwindcss/typography @tailwindcss/aspect-ratio @tailwindcss/line-clamp
 - no need for dev dependencies as this's not a node app
-- follow steps in tailwindcss.com/course/optimizing-for-production
-- follow steps in medium.com/@xijo/create-react-app-with-tailwind-via-postcss-plus-purgecss-5c36b4c33ba7 to config Tailwindcss
 - yarn add redux redux-loop react-redux reselect
 - yarn add https://github.com/bracedotto/redux-offline#4969cde61cd97a9f317f158cade8c96374871a6d
 - yarn add @stacks/auth @stacks/storage @stacks/wallet-sdk @stacks/connect @stacks/encryption
@@ -646,6 +644,11 @@ This and CI/CD are very important!
 - yarn add framer-motion
 - yarn add @types/node @types/react @types/react-dom @types/jest @types/react-redux @types/url-parse @types/file-saver 
 - yarn add @wewatch/lexorank
+- webpack 5 no longer include polyfills for node.js core modules by default
+  + yarn add react-app-rewired
+  + call react-app-rewired in package's scripts
+  + create a config-overrides.js file in the root directory
+  + install all polyfills: yarn add assert buffer crypto-browserify process stream-browserify util
 ** attribution
 - tailwindcss, postcss, purgecss
 - uirefactoring

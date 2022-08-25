@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { MAX_SELECTED_LINK_IDS } from '../types/const';
 import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
