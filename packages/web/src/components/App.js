@@ -9,13 +9,17 @@ import {
 
 import Loading from './Loading';
 import Landing from './Landing';
-import Main from './Main';
 import Adding from './Adding';
 import About from './About';
 import Terms from './Terms';
 import Privacy from './Privacy';
 import Support from './Support';
 import Back from './Back';
+import ErrorBoundary from './ErrorBoundary';
+
+// @ts-ignore
+const _Main = import('./Main');
+const Main = React.lazy(() => _Main);
 
 class App extends React.PureComponent {
 
@@ -36,7 +40,15 @@ class App extends React.PureComponent {
     if (hrefObj.hash === HASH_SUPPORT) return <Support />;
     if (hrefObj.hash === HASH_BACK) return <Back />;
 
-    if (this.props.isUserSignedIn) return <Main />;
+    if (this.props.isUserSignedIn) {
+      return (
+        <ErrorBoundary>
+          <React.Suspense fallback={<Loading />}>
+            <Main />
+          </React.Suspense>
+        </ErrorBoundary>
+      );
+    }
 
     return <Landing />;
   }
