@@ -13,7 +13,12 @@ import { extractUrl, getUrlPathQueryHash, getUserImageUrl } from '../utils';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
 import { useSafeAreaFrame, useTailwind } from '.';
-import SignIn from './SignIn';
+import Loading from './Loading';
+import ErrorBoundary from './ErrorBoundary';
+
+// @ts-ignore
+const _SignIn = import('./SignIn');
+const SignIn = React.lazy(() => _SignIn);
 
 const SignInPopup = () => {
 
@@ -80,7 +85,11 @@ const SignInPopup = () => {
           </div>
           <motion.div className={tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
             <div className={tailwind('relative flex flex-col overflow-hidden rounded-lg bg-white')} style={{ height: panelHeight }}>
-              <SignIn domainName={DOMAIN_NAME} appName={APP_NAME} appIconUrl={appIconUrl} appScopes={APP_SCOPES} onPopupCloseBtnClick={onPopupCloseBtnClick} onSignInWithHiroWalletBtnClick={onSignInWithHiroWalletBtnClick} onSignUpBtnClick={onSignUpBtnClick} onChooseAccountBtnClick={onChooseAccountBtnClick} />
+              <ErrorBoundary isInPopup={true}>
+                <React.Suspense fallback={<Loading />}>
+                  <SignIn domainName={DOMAIN_NAME} appName={APP_NAME} appIconUrl={appIconUrl} appScopes={APP_SCOPES} onPopupCloseBtnClick={onPopupCloseBtnClick} onSignInWithHiroWalletBtnClick={onSignInWithHiroWalletBtnClick} onSignUpBtnClick={onSignUpBtnClick} onChooseAccountBtnClick={onChooseAccountBtnClick} />
+                </React.Suspense>
+              </ErrorBoundary>
             </div>
           </motion.div>
         </div>
