@@ -642,7 +642,7 @@ This and CI/CD are very important!
 - yarn add file-saver
 - yarn add @welldone-software/why-did-you-render
 - yarn add framer-motion
-- yarn add @types/node @types/react @types/react-dom @types/jest @types/react-redux @types/url-parse @types/file-saver 
+- yarn add @types/node @types/react @types/react-dom @types/jest @types/url-parse @types/file-saver
 - yarn add @wewatch/lexorank
 - webpack 5 no longer include polyfills for node.js core modules by default
   + yarn add react-app-rewired

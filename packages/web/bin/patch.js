@@ -2,7 +2,7 @@ const fs = require('fs');
 
 const replaceMatchedLine = (fpath, actionObjs) => {
   const text = fs.readFileSync(fpath, 'utf-8');
-  const lines = text.split('\n');
+  const lines = text.trim().split('\r\n');
 
   const outs = [];
   for (const line of lines) {
@@ -20,7 +20,7 @@ const replaceMatchedLine = (fpath, actionObjs) => {
     outs.push(line);
   }
 
-  fs.writeFileSync(fpath, outs.join('\n'));
+  fs.writeFileSync(fpath, outs.join('\n') + '\n');
 };
 
 const patchWalletUtils = () => {
@@ -116,6 +116,17 @@ const patchFetchReferer = () => {
   );
 };
 
+const patchTypeUseSelector = () => {
+
+  let match = 'export declare const useSelector: <TState = unknown, Selected = unknown>(selector: (state: TState) => Selected, equalityFn?: EqualityFn<Selected> | undefined) => Selected;';
+  let repmt = 'export declare const useSelector: <TState = any, Selected = any>(selector: (state: TState) => Selected, equalityFn?: EqualityFn<Selected> | undefined) => Selected;';
+  replaceMatchedLine(
+    'node_modules/react-redux/es/hooks/useSelector.d.ts',
+    [{ match, repmt }],
+  );
+};
+
 patchWalletUtils();
 patchSignECDSA();
 patchFetchReferer();
+patchTypeUseSelector();
