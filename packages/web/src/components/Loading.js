@@ -4,8 +4,6 @@ import { useTailwind } from '.';
 import logo from '../images/logo-short.svg';
 
 const Loading = () => {
-  // safeAreaWidth is undefined as init is not called yet,
-  //   use tailwind with care!
   const tailwind = useTailwind();
 
   return (
@@ -14,7 +12,7 @@ const Loading = () => {
         <img src={logo} alt="" />
       </div>
     </div>
-  )
+  );
 };
 
-export default Loading;
+export default React.memo(Loading);
