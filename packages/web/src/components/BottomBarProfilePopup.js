@@ -6,6 +6,7 @@ import Url from 'url-parse';
 import {
   signOut, updatePopup, updateSettingsPopup, updateSettingsViewId,
 } from '../actions';
+import { getThemeMode } from '../selectors';
 import { HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT } from '../types/const';
 import { bModalBgFMV, bModalFMV } from '../types/animConfigs';
 
@@ -62,6 +63,7 @@ class BottomBarProfilePopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     isProfilePopupShown: state.display.isProfilePopupShown,
+    themeMode: getThemeMode(state),
     safeAreaWidth: state.window.width,
   };
 };

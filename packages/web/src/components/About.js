@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { SHOW_BLANK } from '../types/const';
+import { getThemeMode } from '../selectors';
 
 import TopBar from './TopBar';
 import Footer from './Footer';
@@ -86,6 +87,7 @@ class About extends React.PureComponent {
 
 const mapStateToProps = (state, props) => {
   return {
+    themeMode: getThemeMode(state),
     safeAreaWidth: state.window.width,
   };
 };

@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { createSelector } from 'reselect';
 
 import {
   TOP_HEADER_HEIGHT, TOP_LIST_NAME_HEIGHT,
@@ -9,7 +8,7 @@ import {
   MD_WIDTH, LG_WIDTH,
 } from '../types/const';
 import { toPx } from '../utils';
-import { tailwind } from '../stylesheets/tailwind';
+import { getThemeMode, getTailwind } from '../selectors';
 
 export const useSafeAreaFrame = () => {
 
@@ -61,26 +60,18 @@ export const getTopBarSizes = (width) => {
   };
 };
 
-const getTwWrapper = createSelector(
-  safeAreaWidth => safeAreaWidth,
-  safeAreaWidth => {
-    return (classStr) => {
-      return tailwind(classStr, safeAreaWidth);
-    };
-  },
-);
-
 export const useTailwind = () => {
   const { width: safeAreaWidth } = useSafeAreaFrame();
-  const twWrapper = getTwWrapper(safeAreaWidth);
-  return twWrapper;
+  const themeMode = useSelector(state => getThemeMode(state));
+  const tailwind = getTailwind(safeAreaWidth, themeMode);
+  return tailwind;
 };
 
 export const withTailwind = (Component) => {
   return React.forwardRef((props, ref) => {
     /* @ts-ignore */
-    const { safeAreaWidth } = props;
-    const twWrapper = getTwWrapper(safeAreaWidth);
-    return <Component {...props} tailwind={twWrapper} ref={ref} />;
+    const { safeAreaWidth, themeMode } = props;
+    const tailwind = getTailwind(safeAreaWidth, themeMode);
+    return <Component {...props} tailwind={tailwind} ref={ref} />;
   });
 };

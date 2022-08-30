@@ -9,6 +9,7 @@ import {
   VALID_URL, NO_URL, ASK_CONFIRM_URL, URL_MSGS,
 } from '../types/const';
 import { updatePopup, addLink, cancelDiedLinks } from '../actions';
+import { getThemeMode } from '../selectors';
 import {
   getUrlPathQueryHash,
   validateUrl, separateUrlAndParam, ensureContainUrlProtocol,
@@ -361,6 +362,7 @@ const mapStateToProps = (state) => {
     isUserSignedIn: state.user.isUserSignedIn,
     href: state.window.href,
     links: state.links[MY_LIST],
+    themeMode: getThemeMode(state),
     safeAreaWidth: state.window.width,
   }
 };

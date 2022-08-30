@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { updateSearchString } from '../actions';
+import { getThemeMode } from '../selectors';
 
 import { withTailwind } from '.';
 
@@ -41,6 +42,7 @@ class TopBarSearchInput extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     searchString: state.display.searchString,
+    themeMode: getThemeMode(state),
     safeAreaWidth: state.window.width,
   };
 };

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
 import { ADDING, MOVING, PINNED } from '../types/const';
-import { makeGetPinStatus } from '../selectors';
+import { makeGetPinStatus, getThemeMode } from '../selectors';
 import {
   ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isEqual,
 } from '../utils';
@@ -146,6 +146,7 @@ const makeMapStateToProps = () => {
 
     return {
       pinStatus,
+      themeMode: getThemeMode(state),
       safeAreaWidth: state.window.width,
     };
   };

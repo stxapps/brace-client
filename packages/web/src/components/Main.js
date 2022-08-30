@@ -18,13 +18,13 @@ import ListPanel from './ListPanel';
 import FetchedPopup from './FetchedPopup';
 import CardItemMenuPopup from './CardItemMenuPopup';
 import PinMenuPopup from './PinMenuPopup';
-import PaywallPopup from './PaywallPopup';
 import SettingsPopup from './SettingsPopup';
 import SettingsListsMenuPopup from './SettingsListsMenuPopup';
 import PinErrorPopup from './PinErrorPopup';
 import SettingsErrorPopup from './SettingsErrorPopup';
 import ListNamesPopup from './ListNamesPopup';
 import ConfirmDeletePopup from './ConfirmDeletePopup';
+import PaywallPopup from './PaywallPopup';
 
 class Main extends React.PureComponent {
 
@@ -87,13 +87,13 @@ class Main extends React.PureComponent {
         <FetchedPopup />
         <CardItemMenuPopup />
         <PinMenuPopup />
-        <PaywallPopup />
         <SettingsPopup />
         <SettingsListsMenuPopup />
         <PinErrorPopup />
         <SettingsErrorPopup />
         <ListNamesPopup />
         <ConfirmDeletePopup />
+        <PaywallPopup />
       </React.Fragment>
     );
   }

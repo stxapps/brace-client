@@ -6,6 +6,7 @@ import { updatePopup } from '../actions';
 import {
   HASH_LANDING_HOW, HASH_LANDING_MOBILE, SIGN_UP_POPUP, SHOW_BLANK, SHOW_SIGN_IN,
 } from '../types/const';
+import { getThemeMode } from '../selectors';
 import { isNumber, getOffsetTop } from '../utils';
 
 import { withTailwind } from '.';
@@ -431,6 +432,7 @@ const mapStateToProps = (state) => {
   return {
     isUserSignedIn: state.user.isUserSignedIn,
     href: state.window.href,
+    themeMode: getThemeMode(state),
     safeAreaWidth: state.window.width,
   };
 };

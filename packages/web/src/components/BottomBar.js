@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { motion } from 'framer-motion';
 
 import { BOTTOM_BAR_HEIGHT } from '../types/const';
-import { getPopupLink } from '../selectors';
+import { getPopupLink, getThemeMode } from '../selectors';
 import { bbFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -40,6 +40,7 @@ const mapStateToProps = (state, props) => {
   return {
     isShown: popupLink === null && !isListNamesPopupShown && !isPinMenuPopupShown,
     isBulkEditing: state.display.isBulkEditing,
+    themeMode: getThemeMode(state),
     safeAreaWidth: state.window.width,
   };
 };

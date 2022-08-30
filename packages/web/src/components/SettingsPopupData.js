@@ -5,6 +5,7 @@ import {
   importAllData, updateImportAllDataProgress, exportAllData, updateExportAllDataProgress,
   deleteAllData, updateDeleteAllDataProgress,
 } from '../actions';
+import { getThemeMode } from '../selectors';
 import { HASH_SUPPORT, SM_WIDTH } from '../types/const';
 
 import { useSafeAreaFrame, withTailwind, useTailwind } from '.';
@@ -51,6 +52,7 @@ class _SettingsPopupData extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   return {
+    themeMode: getThemeMode(state),
     safeAreaWidth: state.window.width,
   };
 };
@@ -266,6 +268,7 @@ class _SettingsPopupDataExport extends React.PureComponent {
 const mapStateToPropsExport = (state) => {
   return {
     exportAllDataProgress: state.display.exportAllDataProgress,
+    themeMode: getThemeMode(state),
     safeAreaWidth: state.window.width,
   };
 };
@@ -409,6 +412,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
 const mapStateToPropsDelete = (state) => {
   return {
     deleteAllDataProgress: state.display.deleteAllDataProgress,
+    themeMode: getThemeMode(state),
     safeAreaWidth: state.window.width,
   };
 };

@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { MAX_SELECTED_LINK_IDS } from '../types/const';
 import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
-import { makeIsLinkIdSelected, getSelectedLinkIdsLength } from '../selectors';
+import { MAX_SELECTED_LINK_IDS } from '../types/const';
+import {
+  makeIsLinkIdSelected, getSelectedLinkIdsLength, getThemeMode,
+} from '../selectors';
 import { popupBgFMV, popupFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -121,6 +123,7 @@ const makeMapStateToProps = () => {
       isBulkEditing: state.display.isBulkEditing,
       isSelected: isLinkIdSelected(state, props),
       selectedLinkIdsLength: getSelectedLinkIdsLength(state),
+      themeMode: getThemeMode(state),
       safeAreaWidth: state.window.width,
     };
   };

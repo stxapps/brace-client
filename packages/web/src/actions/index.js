@@ -42,7 +42,8 @@ import {
   UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
   MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, MOVE_PINNED_LINK_DELETE_STEP,
   MOVE_PINNED_LINK_DELETE_STEP_COMMIT, MOVE_PINNED_LINK_DELETE_STEP_ROLLBACK,
-  CANCEL_DIED_PINS, UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
+  CANCEL_DIED_PINS, UPDATE_SYSTEM_THEME_MODE, UPDATE_THEME, UPDATE_UPDATING_THEME_MODE,
+  UPDATE_TIME_PICK, UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
   UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -54,7 +55,7 @@ import {
   ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
   IAP_STATUS_URL, COM_BRACEDOTTO, SIGNED_TEST_STRING, VALID, ACTIVE,
-  SWAP_LEFT, SWAP_RIGHT,
+  SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE,
 } from '../types/const';
 import {
   isEqual, isString, isObject, isNumber, throttle, sleep, isIPadIPhoneIPod,
@@ -64,7 +65,7 @@ import {
   doOutboxContainMethods, isDecorValid, isExtractedResultValid, isListNameObjsValid,
   getLatestPurchase, getValidPurchase, doEnableExtraFeatures, createLinkFPath,
   extractPinFPath, getSortedLinks, getPinFPaths, getPins, separatePinnedValues,
-  sortLinks, sortWithPins,
+  sortLinks, sortWithPins, getFormattedTime, get24HFormattedTime,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -81,6 +82,10 @@ export const init = async (store) => {
     username = userData.username;
     userImage = getUserImageUrl(userData);
   }
+
+  const darkMatches = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const is24HFormat = null;
+
   store.dispatch({
     type: INIT,
     payload: {
@@ -90,6 +95,8 @@ export const init = async (store) => {
       href: window.location.href,
       windowWidth: window.innerWidth,
       windowHeight: window.innerHeight,
+      systemThemeMode: darkMatches ? BLK_MODE : WHT_MODE,
+      is24HFormat,
     },
   });
 
@@ -141,6 +148,11 @@ export const init = async (store) => {
       }
     }
   }, { capture: true });
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    const systemThemeMode = e.matches ? BLK_MODE : WHT_MODE;
+    store.dispatch({ type: UPDATE_SYSTEM_THEME_MODE, payload: systemThemeMode });
+  });
 };
 
 const handlePendingSignIn = () => async (dispatch, getState) => {
@@ -1955,4 +1967,68 @@ export const movePinnedLinkDeleteStep = (linkId, currentUpdatedDT) => async (
 
 export const cancelDiedPins = () => {
   return { type: CANCEL_DIED_PINS };
+};
+
+export const updateTheme = (mode, customOptions) => async (dispatch, getState) => {
+  const state = getState();
+  const purchases = state.settings.purchases;
+
+  if (!doEnableExtraFeatures(purchases)) {
+    dispatch(updatePopup(PAYWALL_POPUP, true));
+    return;
+  }
+
+  dispatch({ type: UPDATE_THEME, payload: { mode, customOptions } });
+};
+
+export const updateUpdatingThemeMode = (updatingThemeMode) => async (
+  dispatch, getState
+) => {
+  const state = getState();
+  const customOptions = state.localSettings.themeCustomOptions;
+  const is24HFormat = state.window.is24HFormat;
+
+  let option;
+  for (const opt of customOptions) {
+    if (opt.mode === updatingThemeMode) {
+      option = opt;
+      break;
+    }
+  }
+  if (!option) return;
+
+  const { hour, minute, period } = getFormattedTime(option.startTime, is24HFormat);
+  dispatch({
+    type: UPDATE_UPDATING_THEME_MODE,
+    payload: { updatingThemeMode, hour, minute, period },
+  });
+};
+
+export const updateTimePick = (hour, minute, period) => {
+  const timeObj = {};
+  if (isString(hour) && hour.length > 0) timeObj.hour = hour;
+  if (isString(minute) && minute.length > 0) timeObj.minute = minute;
+  if (['AM', 'PM'].includes(period)) timeObj.period = period;
+
+  return { type: UPDATE_TIME_PICK, payload: timeObj };
+};
+
+export const updateThemeCustomOptions = () => async (dispatch, getState) => {
+  const state = getState();
+  const customOptions = state.localSettings.themeCustomOptions;
+  const { updatingThemeMode, hour, minute, period } = state.timePick;
+
+  const _themeMode = CUSTOM_MODE, _customOptions = [];
+
+  let updatingOption;
+  for (const opt of customOptions) {
+    if (opt.mode === updatingThemeMode) updatingOption = opt;
+    else _customOptions.push({ ...opt });
+  }
+  if (!updatingOption) return;
+
+  const newStartTime = get24HFormattedTime(hour, minute, period);
+  _customOptions.push({ ...updatingOption, startTime: newStartTime });
+
+  dispatch(updateTheme(_themeMode, _customOptions));
 };

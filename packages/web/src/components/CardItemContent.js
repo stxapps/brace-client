@@ -5,6 +5,7 @@ import GracefulImage from 'react-graceful-image';
 
 import { updatePopup, updateBulkEdit, addSelectedLinkIds } from '../actions';
 import { COLOR, PATTERN, IMAGE } from '../types/const';
+import { getThemeMode } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
   extractUrl, isEqual,
@@ -226,6 +227,7 @@ CardItemContent.propTypes = {
 
 const mapStateToProps = (state, props) => {
   return {
+    themeMode: getThemeMode(state),
     safeAreaWidth: state.window.width,
   };
 };
