@@ -291,7 +291,7 @@ const SettingsPopup = () => {
     const closeBtnSvgWidth = safeAreaWidth < MD_WIDTH ? 20 : 28;
 
     return (
-      <View {...viewPanResponder.panHandlers} style={cache('SP_modal', [tailwind('absolute inset-0 z-30 bg-white'), modalStyle], [insets.top, insets.bottom, insets.left, insets.right])}>
+      <View {...viewPanResponder.panHandlers} style={cache('SP_modal', [tailwind('absolute inset-0 z-30 bg-white shadow-lg'), modalStyle], [insets.top, insets.bottom, insets.left, insets.right])}>
         <ScrollView ref={panelContent} style={tailwind('flex-1')} keyboardShouldPersistTaps="handled">
           <View style={tailwind('items-center justify-start')}>
             <View style={tailwind('w-full max-w-6xl items-center justify-start')}>
@@ -366,7 +366,7 @@ const SettingsPopup = () => {
           </TouchableOpacity>
         </View>
         {/* Sidebar for mobile */}
-        <View key="sidebar-for-mobile" style={[tailwind(`z-30 md:relative md:hidden ${sidebarCanvasStyleClasses}`), modalStyle]}>
+        <View key="sidebar-for-mobile" style={[tailwind(`md:relative md:hidden ${sidebarCanvasStyleClasses}`), modalStyle]}>
           <View style={tailwind('flex h-full flex-row')}>
             <TouchableWithoutFeedback onPress={onSidebarCloseBtnClick}>
               <Animated.View style={[tailwind('absolute inset-0 bg-gray-100'), sidebarCloseBtnStyle]} />
