@@ -38,14 +38,14 @@ const SettingsPopupMisc = (props) => {
   };
 
   const onDoDescendingInputChange = (e) => {
-    let doDescendingOrder;
-
     const value = e.target.value;
-    if (value === 'ascending') doDescendingOrder = false;
-    else if (value === 'descending') doDescendingOrder = true;
+
+    let doDescend;
+    if (value === 'ascending') doDescend = false;
+    else if (value === 'descending') doDescend = true;
     else throw new Error(`Invalid value: ${value}`);
 
-    dispatch(updateDoDescendingOrder(doDescendingOrder));
+    dispatch(updateDoDescendingOrder(doDescend));
   };
 
   const onLayoutTypeInputChange = (e) => {

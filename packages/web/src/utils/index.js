@@ -1032,8 +1032,8 @@ export const copyFPaths = (fpaths) => {
 
 export const getPinFPaths = (state) => {
   if (
-    state.cachedFPaths &&
-    state.cachedFPaths.fpaths &&
+    isObject(state.cachedFPaths) &&
+    isObject(state.cachedFPaths.fpaths) &&
     Array.isArray(state.cachedFPaths.fpaths.pinFPaths)
   ) {
     return state.cachedFPaths.fpaths.pinFPaths;

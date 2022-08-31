@@ -40,14 +40,12 @@ const SettingsPopupMisc = (props) => {
   };
 
   const onDoDescendingInputChange = (value) => {
-
-    let doDescendingOrder;
-
-    if (value === 'ascending') doDescendingOrder = false;
-    else if (value === 'descending') doDescendingOrder = true;
+    let doDescend;
+    if (value === 'ascending') doDescend = false;
+    else if (value === 'descending') doDescend = true;
     else throw new Error(`Invalid value: ${value}`);
 
-    dispatch(updateDoDescendingOrder(doDescendingOrder));
+    dispatch(updateDoDescendingOrder(doDescend));
   };
 
   const onLayoutTypeInputChange = (value) => {
@@ -141,9 +139,11 @@ const SettingsPopupMisc = (props) => {
   let systemText = (
     <Text style={tailwind('mt-2.5 text-base font-normal text-gray-500 leading-6.5')}>Choose appearance to be <Text style={tailwind('text-base font-semibold text-gray-500 leading-6.5')}>Light</Text>, <Text style={tailwind('text-base font-semibold text-gray-500 leading-6.5')}>Dark</Text>, <Text style={tailwind('text-base font-semibold text-gray-500 leading-6.5')}>System</Text> (uses your device's setting), or <Text style={tailwind('text-base font-semibold text-gray-500 leading-6.5')}>Custom</Text> (schedule times to change appearance automatically). This setting is not synced so you can have a different appearance for each of your devices.</Text>
   );
-  if (!isSystemShown) systemText = (
-    <Text style={tailwind('mt-2.5 text-base font-normal text-gray-500 leading-6.5')}>Choose appearance to be <Text style={tailwind('text-base font-semibold text-gray-500 leading-6.5')}>Light</Text>, <Text style={tailwind('text-base font-semibold text-gray-500 leading-6.5')}>Dark</Text>, or <Text style={tailwind('text-base font-semibold text-gray-500 leading-6.5')}>Custom</Text> (schedule times to change appearance automatically). This setting is not synced so you can have a different appearance for each of your devices.</Text>
-  );
+  if (!isSystemShown) {
+    systemText = (
+      <Text style={tailwind('mt-2.5 text-base font-normal text-gray-500 leading-6.5')}>Choose appearance to be <Text style={tailwind('text-base font-semibold text-gray-500 leading-6.5')}>Light</Text>, <Text style={tailwind('text-base font-semibold text-gray-500 leading-6.5')}>Dark</Text>, or <Text style={tailwind('text-base font-semibold text-gray-500 leading-6.5')}>Custom</Text> (schedule times to change appearance automatically). This setting is not synced so you can have a different appearance for each of your devices.</Text>
+    );
+  }
 
   return (
     <View style={tailwind('relative p-4 md:p-6')}>

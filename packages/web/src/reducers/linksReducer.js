@@ -25,7 +25,8 @@ import {
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
 } from '../types/const';
 import {
-  isEqual, getAllListNames, getMainId, getPinFPaths, sortFilteredLinks, sortWithPins,
+  isEqual, isObject, getAllListNames, getMainId, getPinFPaths, sortFilteredLinks,
+  sortWithPins,
 } from '../utils';
 import { initialSettingsState } from '../types/initialStates';
 import { _ } from '../utils/obj';
@@ -55,7 +56,10 @@ const linksReducer = (state = initialState, action) => {
   if (action.type === REHYDRATE) {
 
     let doDescendingOrder = initialSettingsState.doDescendingOrder;
-    if (action.payload.settings && 'doDescendingOrder' in action.payload.settings) {
+    if (
+      isObject(action.payload.settings) &&
+      'doDescendingOrder' in action.payload.settings
+    ) {
       doDescendingOrder = action.payload.settings.doDescendingOrder;
     }
     const pinFPaths = getPinFPaths(action.payload);

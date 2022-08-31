@@ -3,7 +3,7 @@ import { REHYDRATE } from 'redux-persist/constants';
 import {
   UPDATE_LAYOUT_TYPE, UPDATE_THEME, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
-import { LAYOUT_CARD, WHT_MODE, BLK_MODE, } from '../types/const';
+import { LAYOUT_CARD, WHT_MODE, BLK_MODE } from '../types/const';
 
 const initialState = {
   layoutType: LAYOUT_CARD,

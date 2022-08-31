@@ -1,7 +1,7 @@
 import { REHYDRATE } from 'redux-persist/constants';
 
 import { RESET_STATE } from '../types/actionTypes';
-import { copyFPaths } from '../utils';
+import { isObject, copyFPaths } from '../utils';
 import { cachedFPaths } from '../vars';
 
 const initialState = {
@@ -12,7 +12,10 @@ let fpathsRef = null;
 const cachedFPathsReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
-    if (action.payload.cachedFPaths && action.payload.cachedFPaths.fpaths) {
+    if (
+      isObject(action.payload.cachedFPaths) &&
+      isObject(action.payload.cachedFPaths.fpaths)
+    ) {
       cachedFPaths.fpaths = copyFPaths(action.payload.cachedFPaths.fpaths);
       // No new object for fpaths for reference comparison
       fpathsRef = cachedFPaths.fpaths;
@@ -31,7 +34,10 @@ const cachedFPathsReducer = (state = initialState, action) => {
   if (fpathsRef !== cachedFPaths.fpaths) {
     // No new object for fpaths for reference comparison
     fpathsRef = cachedFPaths.fpaths;
-    return { ...state, fpaths: copyFPaths(cachedFPaths.fpaths) };
+
+    const newState = { ...state, fpaths: cachedFPaths.fpaths };
+    if (isObject(cachedFPaths.fpaths)) newState.fpaths = copyFPaths(cachedFPaths.fpaths);
+    return newState;
   }
 
   return state;

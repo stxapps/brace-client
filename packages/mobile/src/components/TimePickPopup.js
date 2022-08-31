@@ -38,8 +38,8 @@ const TimePickPopup = () => {
     dispatch(updateThemeCustomOptions());
   }, [dispatch]);
 
-  const onItemBtnClick = useCallback((item) => {
-    dispatch(updateTimePick(null, null, item));
+  const onItemBtnClick = useCallback((value) => {
+    dispatch(updateTimePick(null, null, value));
   }, [dispatch]);
 
   const onPopupLayout = (e) => {
@@ -262,8 +262,8 @@ const _TimePickHourItem = (props) => {
   const dispatch = useDispatch();
   const tailwind = useTailwind();
 
-  const onItemBtnClick = useCallback((item) => {
-    dispatch(updateTimePick(item));
+  const onItemBtnClick = useCallback((value) => {
+    dispatch(updateTimePick(value));
   }, [dispatch]);
 
   // change button style, need to update ITEM_HEIGHT.
@@ -297,7 +297,7 @@ const _TimePickMinute = (props) => {
   }, []);
 
   const renderItem = useCallback(({ item }) => {
-    return <TimePickMinuteItem item={item} />
+    return <TimePickMinuteItem item={item} />;
   }, []);
 
   useEffect(() => {
@@ -346,8 +346,8 @@ const _TimePickMinuteItem = (props) => {
   const dispatch = useDispatch();
   const tailwind = useTailwind();
 
-  const onItemBtnClick = useCallback((item) => {
-    dispatch(updateTimePick(null, item));
+  const onItemBtnClick = useCallback((value) => {
+    dispatch(updateTimePick(null, value));
   }, [dispatch]);
 
   // change button style, need to update ITEM_HEIGHT.
