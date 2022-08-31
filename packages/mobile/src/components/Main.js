@@ -19,13 +19,14 @@ import CardPanel from './CardPanel';
 import ListPanel from './ListPanel';
 import FetchedPopup from './FetchedPopup';
 import PinMenuPopup from './PinMenuPopup';
-import PaywallPopup from './PaywallPopup';
 import SettingsPopup from './SettingsPopup';
 import SettingsListsMenuPopup from './SettingsListsMenuPopup';
+import TimePickPopup from './TimePickPopup';
 import PinErrorPopup from './PinErrorPopup';
 import SettingsErrorPopup from './SettingsErrorPopup';
 import ListNamesPopup from './ListNamesPopup';
 import ConfirmDeletePopup from './ConfirmDeletePopup';
+import PaywallPopup from './PaywallPopup';
 
 class Main extends React.PureComponent {
 
@@ -92,13 +93,14 @@ class Main extends React.PureComponent {
         <TopBar rightPane={topBarRightPane} isListNameShown={true} scrollY={this.scrollY} />
         <FetchedPopup />
         <PinMenuPopup />
-        <PaywallPopup />
         <SettingsPopup />
         <SettingsListsMenuPopup />
+        <TimePickPopup />
         <PinErrorPopup />
         <SettingsErrorPopup />
         <ListNamesPopup />
         <ConfirmDeletePopup />
+        <PaywallPopup />
       </React.Fragment>
     );
   }

@@ -6,7 +6,7 @@ import Svg, { Path } from 'react-native-svg';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
 import { ADDING, MOVING, SM_WIDTH, PINNED } from '../types/const';
-import { makeGetPinStatus } from '../selectors';
+import { makeGetPinStatus, getThemeMode } from '../selectors';
 import {
   ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isEqual,
 } from '../utils';
@@ -196,6 +196,7 @@ const makeMapStateToProps = () => {
 
     return {
       pinStatus,
+      themeMode: getThemeMode(state),
     };
   };
 

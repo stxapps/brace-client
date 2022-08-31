@@ -5,6 +5,7 @@ import Svg, { Path } from 'react-native-svg';
 
 import { updateFetched } from '../actions';
 import { MD_WIDTH } from '../types/const';
+import { getThemeMode } from '../selectors';
 import cache from '../utils/cache';
 import { fetchedPopupFMV } from '../types/animConfigs';
 
@@ -124,6 +125,7 @@ const mapStateToProps = (state, props) => {
 
   return {
     fetched: state.fetched[listName],
+    themeMode: getThemeMode(state),
   };
 };
 

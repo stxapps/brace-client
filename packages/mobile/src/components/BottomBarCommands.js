@@ -7,6 +7,7 @@ import { updatePopup, updateBulkEdit } from '../actions';
 import {
   ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, BOTTOM_BAR_HEIGHT,
 } from '../types/const';
+import { getThemeMode } from '../selectors';
 import { toPx } from '../utils';
 import cache from '../utils/cache';
 
@@ -83,6 +84,12 @@ class BottomBarCommands extends React.PureComponent {
   }
 }
 
+const mapStateToProps = (state, props) => {
+  return {
+    themeMode: getThemeMode(state),
+  };
+};
+
 const mapDispatchToProps = { updatePopup, updateBulkEdit };
 
-export default connect(null, mapDispatchToProps)(withTailwind(BottomBarCommands));
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(BottomBarCommands));

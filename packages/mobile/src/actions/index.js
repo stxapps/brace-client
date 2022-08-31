@@ -1,10 +1,11 @@
-import { Linking, AppState, Platform } from 'react-native';
+import { Linking, AppState, Platform, Appearance } from 'react-native';
 import {
   RESET_STATE as OFFLINE_RESET_STATE,
 } from '@redux-offline/redux-offline/lib/constants';
 //import RNFS from 'react-native-fs';
 import * as RNIap from 'react-native-iap';
 import { LexoRank } from '@wewatch/lexorank';
+import { is24HourFormat } from 'react-native-device-time-format';
 
 import userSession from '../userSession';
 import axios from '../axiosWrapper';
@@ -44,7 +45,8 @@ import {
   UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
   MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, MOVE_PINNED_LINK_DELETE_STEP,
   MOVE_PINNED_LINK_DELETE_STEP_COMMIT, MOVE_PINNED_LINK_DELETE_STEP_ROLLBACK,
-  CANCEL_DIED_PINS, UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
+  CANCEL_DIED_PINS, UPDATE_SYSTEM_THEME_MODE, UPDATE_THEME, UPDATE_UPDATING_THEME_MODE,
+  UPDATE_TIME_PICK, UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
   UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -58,16 +60,16 @@ import {
   BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
   IAP_VERIFY_URL, IAP_STATUS_URL, APPSTORE, PLAYSTORE, COM_BRACEDOTTO,
   COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, UNKNOWN, ERROR, ACTIVE,
-  SWAP_LEFT, SWAP_RIGHT,
+  SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE,
 } from '../types/const';
 import {
-  isEqual, sleep,
+  isEqual, isString, sleep,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam, getUserImageUrl, randomDecor,
   isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
   getLatestPurchase, getValidPurchase, doEnableExtraFeatures,
   extractPinFPath, getSortedLinks, getPinFPaths, getPins, separatePinnedValues,
-  sortLinks, sortWithPins,
+  sortLinks, sortWithPins, getFormattedTime, get24HFormattedTime,
 } from '../utils';
 import { _ } from '../utils/obj';
 import vars from '../vars';
@@ -120,6 +122,10 @@ export const init = async (store) => {
     username = userData.username;
     userImage = getUserImageUrl(userData);
   }
+
+  const darkMatches = Appearance.getColorScheme() === 'dark';
+  const is24HFormat = await is24HourFormat();
+
   const href = DOMAIN_NAME + '/';
   store.dispatch({
     type: INIT,
@@ -130,7 +136,14 @@ export const init = async (store) => {
       href,
       windowWidth: null,
       windowHeight: null,
+      systemThemeMode: darkMatches ? BLK_MODE : WHT_MODE,
+      is24HFormat,
     },
+  });
+
+  Appearance.addChangeListener((e) => {
+    const systemThemeMode = e.colorScheme === 'dark' ? BLK_MODE : WHT_MODE;
+    store.dispatch({ type: UPDATE_SYSTEM_THEME_MODE, payload: systemThemeMode });
   });
 };
 
@@ -1743,4 +1756,68 @@ export const movePinnedLinkDeleteStep = (linkId, currentUpdatedDT) => async (
 
 export const cancelDiedPins = () => {
   return { type: CANCEL_DIED_PINS };
+};
+
+export const updateTheme = (mode, customOptions) => async (dispatch, getState) => {
+  const state = getState();
+  const purchases = state.settings.purchases;
+
+  if (!doEnableExtraFeatures(purchases)) {
+    dispatch(updatePopup(PAYWALL_POPUP, true));
+    return;
+  }
+
+  dispatch({ type: UPDATE_THEME, payload: { mode, customOptions } });
+};
+
+export const updateUpdatingThemeMode = (updatingThemeMode) => async (
+  dispatch, getState
+) => {
+  const state = getState();
+  const customOptions = state.localSettings.themeCustomOptions;
+  const is24HFormat = state.window.is24HFormat;
+
+  let option;
+  for (const opt of customOptions) {
+    if (opt.mode === updatingThemeMode) {
+      option = opt;
+      break;
+    }
+  }
+  if (!option) return;
+
+  const { hour, minute, period } = getFormattedTime(option.startTime, is24HFormat);
+  dispatch({
+    type: UPDATE_UPDATING_THEME_MODE,
+    payload: { updatingThemeMode, hour, minute, period },
+  });
+};
+
+export const updateTimePick = (hour, minute, period) => {
+  const timeObj = {};
+  if (isString(hour) && hour.length > 0) timeObj.hour = hour;
+  if (isString(minute) && minute.length > 0) timeObj.minute = minute;
+  if (['AM', 'PM'].includes(period)) timeObj.period = period;
+
+  return { type: UPDATE_TIME_PICK, payload: timeObj };
+};
+
+export const updateThemeCustomOptions = () => async (dispatch, getState) => {
+  const state = getState();
+  const customOptions = state.localSettings.themeCustomOptions;
+  const { updatingThemeMode, hour, minute, period } = state.timePick;
+
+  const _themeMode = CUSTOM_MODE, _customOptions = [];
+
+  let updatingOption;
+  for (const opt of customOptions) {
+    if (opt.mode === updatingThemeMode) updatingOption = opt;
+    else _customOptions.push({ ...opt });
+  }
+  if (!updatingOption) return;
+
+  const newStartTime = get24HFormattedTime(hour, minute, period);
+  _customOptions.push({ ...updatingOption, startTime: newStartTime });
+
+  dispatch(updateTheme(_themeMode, _customOptions));
 };

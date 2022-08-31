@@ -8,6 +8,7 @@ import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
 import { Flow } from 'react-native-animated-spinkit';
 import Svg, { Path } from 'react-native-svg';
 
+import { addLink, cancelDiedLinks } from '../actions';
 import {
   MY_LIST,
   ADDING, ADDED, DIED_ADDING,
@@ -15,7 +16,7 @@ import {
   SHARE_BORDER_RADIUS,
   HTTP, HTTPS,
 } from '../types/const';
-import { addLink, cancelDiedLinks } from '../actions';
+import { getThemeMode } from '../selectors';
 import { validateUrl, indexesOf } from '../utils';
 import cache from '../utils/cache';
 
@@ -548,6 +549,7 @@ const mapStateToProps = (state) => {
   return {
     isUserSignedIn: state.user.isUserSignedIn,
     links: state.links[MY_LIST],
+    themeMode: getThemeMode(state),
   };
 };
 

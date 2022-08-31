@@ -16,7 +16,7 @@ import {
   PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
   DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
-import { getListNameMap, makeGetPinStatus } from '../selectors';
+import { getListNameMap, makeGetPinStatus, getThemeMode } from '../selectors';
 import {
   getListNameDisplayName, getAllListNames, getLastHalfHeight,
 } from '../utils';
@@ -227,6 +227,7 @@ const makeMapStateToProps = () => {
       listNameMap: getListNameMap(state),
       pinStatus,
       layoutType: state.localSettings.layoutType,
+      themeMode: getThemeMode(state),
     };
   };
 

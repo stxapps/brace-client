@@ -773,6 +773,7 @@ This and CI/CD are very important!
 - yarn add typescript --dev
 - yarn add react-native-fs <-- NOT USING
 - yarn add react-native-iap @wewatch/lexorank
+- yarn add react-native-device-time-format
 - change minSdkVersion from 16 to 21 in ./android/build.gradle
 - Allow CORS access on https://brace.to/manifest.json
 - Set up Android deep linking: reactnative.dev/docs/linking and developer.android.com/training/app-links/deep-linking

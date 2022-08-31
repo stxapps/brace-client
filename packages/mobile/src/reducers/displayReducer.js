@@ -18,8 +18,8 @@ import {
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   LIST_NAMES_POPUP, PIN_MENU_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
-  SETTINGS_LISTS_MENU_POPUP, MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING,
-  SETTINGS_VIEW_ACCOUNT, DELETE_ACTION_LIST_NAME,
+  SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, MY_LIST, TRASH, ARCHIVE, UPDATING,
+  DIED_UPDATING, SETTINGS_VIEW_ACCOUNT, DELETE_ACTION_LIST_NAME,
 } from '../types/const';
 import { doContainListName } from '../utils';
 
@@ -40,6 +40,8 @@ const initialState = {
   isSettingsPopupShown: false,
   isSettingsListsMenuPopupShown: false,
   settingsListsMenuPopupPosition: null,
+  isTimePickPopupShown: false,
+  timePickPopupPosition: null,
   status: null,
   isHandlingSignIn: false,
   isBulkEditing: false,
@@ -86,6 +88,8 @@ const displayReducer = (state = initialState, action) => {
       isSettingsPopupShown: false,
       isSettingsListsMenuPopupShown: false,
       settingsListsMenuPopupPosition: null,
+      isTimePickPopupShown: false,
+      timePickPopupPosition: null,
       status: null,
       isHandlingSignIn: false,
       isBulkEditing: false,
@@ -213,6 +217,14 @@ const displayReducer = (state = initialState, action) => {
         ...state,
         isSettingsListsMenuPopupShown: isShown,
         settingsListsMenuPopupPosition: anchorPosition,
+      };
+    }
+
+    if (id === TIME_PICK_POPUP) {
+      return {
+        ...state,
+        isTimePickPopupShown: isShown,
+        timePickPopupPosition: anchorPosition,
       };
     }
 

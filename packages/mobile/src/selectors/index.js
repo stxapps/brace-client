@@ -1,6 +1,9 @@
 import { createSelectorCreator, defaultMemoize, createSelector } from 'reselect';
 
-import { IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, PINNED } from '../types/const';
+import {
+  IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, PINNED, WHT_MODE, BLK_MODE, SYSTEM_MODE,
+  CUSTOM_MODE,
+} from '../types/const';
 import {
   isStringIn, isObject, isArrayEqual, isEqual, getListNameObj,
   getMainId, getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
@@ -8,6 +11,7 @@ import {
   doEnableExtraFeatures,
 } from '../utils';
 import { _ } from '../utils/obj';
+import { tailwind } from '../stylesheets/tailwind';
 import { initialListNameEditorState } from '../types/initialStates';
 
 const createSelectorListNameMap = createSelectorCreator(
@@ -252,6 +256,112 @@ export const makeGetPinStatus = () => {
       }
 
       return null;
+    }
+  );
+};
+
+let lastCustomOptions, lastCurHH, lastCurMM, lastCurMode;
+export const getThemeMode = createSelector(
+  state => state.user.isUserSignedIn,
+  state => getDoEnableExtraFeatures(state),
+  state => state.window.themeMode,
+  state => {
+    const mode = state.localSettings.themeMode;
+    if (mode !== CUSTOM_MODE) return WHT_MODE;
+
+    const customOptions = state.localSettings.themeCustomOptions;
+
+    const d = new Date();
+    const curHH = d.getHours();
+    const curMM = d.getMinutes();
+
+    if (
+      customOptions === lastCustomOptions &&
+      curHH === lastCurHH && curMM < lastCurMM + 12 && lastCurMode
+    ) {
+      return lastCurMode;
+    }
+
+    [lastCustomOptions, lastCurHH, lastCurMM] = [customOptions, curHH, curMM];
+    for (let i = 0; i < customOptions.length; i++) {
+      const startOption = customOptions[i];
+
+      const j = i + 1 < customOptions.length ? i + 1 : 0;
+      const endOption = customOptions[j];
+
+      const [startHHStr, startMMStr] = startOption.startTime.trim().split(':');
+      const [endHHStr, endMMStr] = endOption.startTime.trim().split(':');
+
+      const startHH = parseInt(startHHStr, 10);
+      const startMM = parseInt(startMMStr, 10);
+      const endHH = parseInt(endHHStr, 10);
+      const endMM = parseInt(endMMStr, 10);
+
+      if (startHH < endHH || (startHH === endHH && startMM < endMM)) {
+        if (curHH > startHH || (curHH === startHH && curMM >= startMM)) {
+          if (curHH < endHH || (curHH === endHH && curMM < endMM)) {
+            lastCurMode = startOption.mode;
+            return lastCurMode;
+          }
+        }
+      } else {
+        if (curHH > startHH || (curHH === startHH && curMM >= startMM)) {
+          lastCurMode = startOption.mode;
+          return lastCurMode;
+        }
+        if (curHH < endHH || (curHH === endHH && curMM < endMM)) {
+          lastCurMode = startOption.mode;
+          return lastCurMode;
+        }
+      }
+    }
+
+    console.log('Could not find startTime and endTime in themeCustomOptions!');
+    [lastCustomOptions, lastCurHH, lastCurMM, lastCurMode] = [null, null, null, null];
+    return WHT_MODE;
+  },
+  state => state.localSettings.themeMode,
+  (isSignedIn, doEnable, systemMode, customMode, mode) => {
+    if (!isSignedIn) return systemMode;
+    if (!doEnable) return WHT_MODE;
+
+    if (mode === SYSTEM_MODE) return systemMode;
+    if (mode === CUSTOM_MODE) return customMode;
+    if ([WHT_MODE, BLK_MODE].includes(mode)) return mode;
+
+    return WHT_MODE;
+  },
+);
+
+/** @type {function(any, any): any} */
+export const getTailwind = createSelector(
+  safeAreaWidth => safeAreaWidth,
+  (__, themeMode) => themeMode,
+  (safeAreaWidth, themeMode) => {
+    return (classStr) => {
+      return tailwind(classStr, safeAreaWidth, themeMode);
+    };
+  },
+);
+
+/** @return {function(any, any): any} */
+export const makeIsTimePickHourItemSelected = () => {
+  return createSelector(
+    state => state.timePick.hour,
+    (__, item) => item,
+    (hour, item) => {
+      return hour === item;
+    }
+  );
+};
+
+/** @return {function(any, any): any} */
+export const makeIsTimePickMinuteItemSelected = () => {
+  return createSelector(
+    state => state.timePick.minute,
+    (__, item) => item,
+    (minute, item) => {
+      return minute === item;
     }
   );
 };

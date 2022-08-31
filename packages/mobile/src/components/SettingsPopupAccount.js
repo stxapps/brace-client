@@ -1,5 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Linking } from 'react-native';
+import { connect } from 'react-redux';
+
+import { getThemeMode } from '../selectors';
 
 import { withTailwind } from '.';
 
@@ -33,4 +36,10 @@ class SettingsPopupAccount extends React.PureComponent {
   }
 }
 
-export default withTailwind(SettingsPopupAccount);
+const mapStateToProps = (state, props) => {
+  return {
+    themeMode: getThemeMode(state),
+  };
+};
+
+export default connect(mapStateToProps)(withTailwind(SettingsPopupAccount));

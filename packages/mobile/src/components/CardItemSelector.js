@@ -6,7 +6,9 @@ import Svg, { Path } from 'react-native-svg';
 
 import { MAX_SELECTED_LINK_IDS } from '../types/const';
 import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
-import { makeIsLinkIdSelected, getSelectedLinkIdsLength } from '../selectors';
+import {
+  makeIsLinkIdSelected, getSelectedLinkIdsLength, getThemeMode,
+} from '../selectors';
 import { popupFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -186,6 +188,7 @@ const makeMapStateToProps = () => {
       isBulkEditing: state.display.isBulkEditing,
       isSelected: isLinkIdSelected(state, props),
       selectedLinkIdsLength: getSelectedLinkIdsLength(state),
+      themeMode: getThemeMode(state),
     };
   };
 

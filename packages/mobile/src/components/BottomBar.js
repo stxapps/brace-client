@@ -3,7 +3,7 @@ import { Animated } from 'react-native';
 import { connect } from 'react-redux';
 
 import { BOTTOM_BAR_HEIGHT } from '../types/const';
-import { getPopupLink } from '../selectors';
+import { getPopupLink, getThemeMode } from '../selectors';
 import { toPx } from '../utils';
 import { bbFMV } from '../types/animConfigs';
 
@@ -65,6 +65,7 @@ const mapStateToProps = (state, props) => {
   return {
     isShown: popupLink === null && !isListNamesPopupShown && !isPinMenuPopupShown,
     isBulkEditing: state.display.isBulkEditing,
+    themeMode: getThemeMode(state),
   };
 };
 

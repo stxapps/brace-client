@@ -9,7 +9,7 @@ import { updatePopup, updateSearchString } from '../actions';
 import {
   SEARCH_POPUP, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
 } from '../types/const';
-import { getPopupLink } from '../selectors';
+import { getPopupLink, getThemeMode } from '../selectors';
 import { toPx } from '../utils';
 import { bbFMV } from '../types/animConfigs';
 
@@ -220,6 +220,7 @@ const mapStateToProps = (state, props) => {
     ),
     isSearchPopupShown: state.display.isSearchPopupShown,
     popupLink: popupLink,
+    themeMode: getThemeMode(state),
   };
 };
 

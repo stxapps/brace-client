@@ -10,6 +10,7 @@ import {
 import {
   DOMAIN_NAME, HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT,
 } from '../types/const';
+import { getThemeMode } from '../selectors';
 import cache from '../utils/cache';
 
 import MenuPopoverRenderers from './MenuPopoverRenderer';
@@ -104,8 +105,14 @@ class TopBarCommands extends React.PureComponent {
   }
 }
 
+const mapStateToProps = (state, props) => {
+  return {
+    themeMode: getThemeMode(state),
+  };
+};
+
 const mapDispatchToProps = {
   signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, updateBulkEdit,
 };
 
-export default connect(null, mapDispatchToProps)(withTailwind(TopBarCommands));
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(TopBarCommands));

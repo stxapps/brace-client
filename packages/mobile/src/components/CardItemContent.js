@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import { updateBulkEdit, addSelectedLinkIds } from '../actions';
 import { DOMAIN_NAME, COLOR, PATTERN, IMAGE } from '../types/const';
+import { getThemeMode } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
   extractUrl, isEqual,
@@ -184,6 +185,12 @@ CardItemContent.propTypes = {
   link: PropTypes.object.isRequired,
 };
 
+const mapStateToProps = (state, props) => {
+  return {
+    themeMode: getThemeMode(state),
+  };
+};
+
 const mapDispatchToProps = { updateBulkEdit, addSelectedLinkIds };
 
-export default connect(null, mapDispatchToProps)(withTailwind(CardItemContent));
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(CardItemContent));

@@ -6,6 +6,7 @@ import { Circle } from 'react-native-animated-spinkit';
 
 import { deleteAllData, updateDeleteAllDataProgress } from '../actions';
 import { DOMAIN_NAME, HASH_SUPPORT, SM_WIDTH } from '../types/const';
+import { getThemeMode } from '../selectors';
 
 import { withTailwind } from '.';
 
@@ -45,7 +46,13 @@ class _SettingsPopupData extends React.PureComponent {
   }
 }
 
-export const SettingsPopupData = withTailwind(_SettingsPopupData);
+const mapStateToProps = (state, props) => {
+  return {
+    themeMode: getThemeMode(state),
+  };
+};
+
+export const SettingsPopupData = connect(mapStateToProps)(withTailwind(_SettingsPopupData));
 
 class _SettingsPopupDataDelete extends React.PureComponent {
 
@@ -188,6 +195,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
 const mapStateToPropsDelete = (state) => {
   return {
     deleteAllDataProgress: state.display.deleteAllDataProgress,
+    themeMode: getThemeMode(state),
   };
 };
 

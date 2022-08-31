@@ -10,7 +10,7 @@ import {
   CONFIRM_DELETE_POPUP, LIST_NAMES_POPUP, MY_LIST, ARCHIVE, TRASH, TOP_HEADER_HEIGHT,
   DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
-import { getListNameMap } from '../selectors';
+import { getListNameMap, getThemeMode } from '../selectors';
 import { getListNameDisplayName, getAllListNames, toPx } from '../utils';
 import cache from '../utils/cache';
 import { popupFMV } from '../types/animConfigs';
@@ -287,6 +287,7 @@ const mapStateToProps = (state, props) => {
     listName: state.display.listName,
     listNameMap: getListNameMap(state),
     selectedLinkIds: state.display.selectedLinkIds,
+    themeMode: getThemeMode(state),
   };
 };
 

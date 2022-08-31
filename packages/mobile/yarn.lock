@@ -5944,6 +5944,11 @@ react-native-default-preference@^1.4.3:
   resolved "https://registry.yarnpkg.com/react-native-default-preference/-/react-native-default-preference-1.4.3.tgz#3c6411d32ea4ebc5286fbf5915546fc57a6014f6"
   integrity sha512-sQDYwGEdxwKwXKP/8Intc81FyH33Rv8ZvOxdmPX4NM75RAIVeBc13pdabEqycAimNZoY5IDvGp4o1cTTa5gNrA==
 
+react-native-device-time-format@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-device-time-format/-/react-native-device-time-format-2.3.0.tgz#87f4c91a90b8a0ca2dc059cf82d3063c823126fc"
+  integrity sha512-al4m6MXD1nT+W8p7UsJpyc4aaNRwh85oLC+sNe+PfCxlxVUDmriBN8dEDLjaDxfnX2yDub3PHLcLmuZqcI6jrw==
+
 react-native-fast-image@^8.5.11:
   version "8.5.11"
   resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-8.5.11.tgz#e3dc969d0e4e8df026646bf18194465aa55cbc2b"

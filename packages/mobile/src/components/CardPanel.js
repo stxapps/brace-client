@@ -10,7 +10,7 @@ import {
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
   MD_WIDTH,
 } from '../types/const';
-import { getLinks, getIsFetchingMore } from '../selectors';
+import { getLinks, getIsFetchingMore, getThemeMode } from '../selectors';
 import { toPx, multiplyPercent } from '../utils';
 import cache from '../utils/cache';
 import vars from '../vars';
@@ -299,6 +299,7 @@ const mapStateToProps = (state, props) => {
     hasFetchedMore: state.fetchedMore[listName] ? true : false,
     isFetchingMore: getIsFetchingMore(state),
     listChangedCount: state.display.listChangedCount,
+    themeMode: getThemeMode(state),
   };
 };
 

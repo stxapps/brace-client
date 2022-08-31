@@ -1032,8 +1032,8 @@ export const copyFPaths = (fpaths) => {
 
 export const getPinFPaths = (state) => {
   if (
-    state.cachedFPaths &&
-    state.cachedFPaths.fpaths &&
+    isObject(state.cachedFPaths) &&
+    isObject(state.cachedFPaths.fpaths) &&
     Array.isArray(state.cachedFPaths.fpaths.pinFPaths)
   ) {
     return state.cachedFPaths.fpaths.pinFPaths;
@@ -1171,4 +1171,31 @@ export const getSortedLinks = (links, listName, doDescendingOrder) => {
 
   const sortedLinks = sortFilteredLinks(filteredLinks, doDescendingOrder);
   return sortedLinks;
+};
+
+export const getFormattedTime = (timeStr, is24HFormat) => {
+  const [hStr, mStr] = timeStr.trim().split(':');
+  if (is24HFormat) return { time: timeStr, hour: hStr, minute: mStr, period: null };
+
+  const hNum = parseInt(hStr, 10);
+  const period = hNum < 12 ? 'AM' : 'PM';
+
+  const newHNum = (hNum % 12) || 12;
+  const newHStr = String(newHNum).padStart(2, '0');
+  const newTimeStr = `${newHStr}:${mStr} ${period}`;
+
+  return { time: newTimeStr, hour: newHStr, minute: mStr, period };
+};
+
+export const get24HFormattedTime = (hStr, mStr, period) => {
+  let newHStr = hStr;
+  if (['AM', 'PM'].includes(period)) {
+    let hNum = parseInt(hStr, 10);
+    if (period === 'PM' && hNum < 12) hNum += 12;
+    else if (period === 'AM' && hNum === 12) hNum -= 12;
+
+    newHStr = String(hNum).padStart(2, '0');
+  }
+
+  return `${newHStr}:${mStr}`;
 };

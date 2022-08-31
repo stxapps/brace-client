@@ -5,7 +5,7 @@ import {
   UPDATE_SETTINGS, PIN_LINK, UNPIN_LINK,
 } from '../types/actionTypes';
 import {
-  createLinkFPath, extractLinkFPath, createPinFPath, addFPath, deleteFPath,
+  isObject, createLinkFPath, extractLinkFPath, createPinFPath, addFPath, deleteFPath,
   copyFPaths, getMainId, sortWithPins,
 } from '../utils';
 import { cachedFPaths } from '../vars';
@@ -62,7 +62,7 @@ const _listFPaths = async () => {
 };
 
 const listFPaths = async (doForce = false) => {
-  if (cachedFPaths.fpaths && !doForce) return copyFPaths(cachedFPaths.fpaths);
+  if (isObject(cachedFPaths.fpaths) && !doForce) return copyFPaths(cachedFPaths.fpaths);
   cachedFPaths.fpaths = await _listFPaths();
   return copyFPaths(cachedFPaths.fpaths);
 };

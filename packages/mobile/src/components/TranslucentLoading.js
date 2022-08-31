@@ -1,8 +1,10 @@
 import React from 'react';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
 
 import { SHARE_BORDER_RADIUS } from '../types/const';
+import { getThemeMode } from '../selectors';
 import cache from '../utils/cache';
 
 import { withTailwind } from '.';
@@ -25,4 +27,10 @@ class TranslucentLoading extends React.PureComponent {
   }
 }
 
-export default withTailwind(TranslucentLoading);
+const mapStateToProps = (state, props) => {
+  return {
+    themeMode: getThemeMode(state),
+  };
+};
+
+export default connect(mapStateToProps)(withTailwind(TranslucentLoading));

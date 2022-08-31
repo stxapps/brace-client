@@ -6,6 +6,7 @@ import { SvgXml } from 'react-native-svg';
 
 import { updatePopup } from '../actions';
 import { SIGN_IN_POPUP, SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS } from '../types/const';
+import { getThemeMode } from '../selectors';
 import cache from '../utils/cache';
 
 import { getTopBarSizes, withTailwind } from '.';
@@ -244,6 +245,7 @@ TopBar.defaultProps = {
 const mapStateToProps = (state, props) => {
   return {
     isBulkEditing: state.display.isBulkEditing,
+    themeMode: getThemeMode(state),
   };
 };
 

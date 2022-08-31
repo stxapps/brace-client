@@ -1,10 +1,13 @@
 import React from 'react';
 import { View, Animated } from 'react-native';
+import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
 
+import { getThemeMode } from '../selectors';
 import cache from '../utils/cache';
 
 import { withTailwind } from '.';
+
 import logo from '../images/logo-short.svg';
 
 class Loading extends React.PureComponent {
@@ -76,4 +79,10 @@ class Loading extends React.PureComponent {
   }
 }
 
-export default withTailwind(Loading);
+const mapStateToProps = (state, props) => {
+  return {
+    themeMode: getThemeMode(state),
+  };
+};
+
+export default connect(mapStateToProps)(withTailwind(Loading));

@@ -8,6 +8,7 @@ import {
 import {
   DOMAIN_NAME, HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT,
 } from '../types/const';
+import { getThemeMode } from '../selectors';
 import { bModalFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -143,6 +144,7 @@ class BottomBarProfilePopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     isProfilePopupShown: state.display.isProfilePopupShown,
+    themeMode: getThemeMode(state),
   };
 };
 

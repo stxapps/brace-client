@@ -8,6 +8,7 @@ import { updatePopup } from '../actions';
 import {
   SIGN_UP_POPUP, SHOW_SIGN_IN, SM_WIDTH, MD_WIDTH, LG_WIDTH,
 } from '../types/const';
+import { getThemeMode } from '../selectors';
 import cache from '../utils/cache';
 
 import { withTailwind } from '.';
@@ -248,6 +249,12 @@ class Landing extends React.PureComponent {
   }
 }
 
+const mapStateToProps = (state, props) => {
+  return {
+    themeMode: getThemeMode(state),
+  };
+};
+
 const mapDispatchToProps = { updatePopup };
 
-export default connect(null, mapDispatchToProps)(withTailwind(Landing));
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(Landing));
