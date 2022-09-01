@@ -6,6 +6,7 @@ import Svg, { Path } from 'react-native-svg';
 
 import {
   signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, updateBulkEdit,
+  refreshFetched,
 } from '../actions';
 import {
   DOMAIN_NAME, HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT,
@@ -33,6 +34,11 @@ class TopBarCommands extends React.PureComponent {
     this.props.updatePopup(PROFILE_POPUP, false);
   }
 
+  onRefreshBtnClick = () => {
+    this.props.updatePopup(PROFILE_POPUP, false);
+    this.props.refreshFetched();
+  }
+
   onSettingsBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
 
@@ -56,6 +62,9 @@ class TopBarCommands extends React.PureComponent {
 
     return (
       <React.Fragment>
+        <MenuOption onSelect={this.onRefreshBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
+          <Text style={tailwind('py-2.5 pl-4 text-sm font-normal text-gray-700')}>Refresh</Text>
+        </MenuOption>
         <MenuOption onSelect={this.onSettingsBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
           <Text style={tailwind('py-2.5 pl-4 text-sm font-normal text-gray-700')}>Settings</Text>
         </MenuOption>
@@ -113,6 +122,7 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = {
   signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, updateBulkEdit,
+  refreshFetched,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(TopBarCommands));

@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, Linking, Animated, BackHandler } from 'react-na
 import { connect } from 'react-redux';
 
 import {
-  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId,
+  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, refreshFetched,
 } from '../actions';
 import {
   DOMAIN_NAME, HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT,
@@ -97,6 +97,11 @@ class BottomBarProfilePopup extends React.PureComponent {
     this.props.updatePopup(PROFILE_POPUP, false);
   }
 
+  onRefreshBtnClick = () => {
+    this.props.updatePopup(PROFILE_POPUP, false);
+    this.props.refreshFetched();
+  }
+
   onSettingsBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
 
@@ -126,6 +131,9 @@ class BottomBarProfilePopup extends React.PureComponent {
       <React.Fragment>
         <TouchableOpacity activeOpacity={1.0} onPress={this.onProfileCancelBtnClick} style={tailwind('absolute inset-0 z-40 bg-black bg-opacity-25')} />
         <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 z-41 rounded-t-lg border border-gray-100 bg-white pt-4 pb-4 shadow-xl'), popupStyle]}>
+          <TouchableOpacity onPress={this.onRefreshBtnClick} style={tailwind('w-full py-4 pl-4')}>
+            <Text style={tailwind('text-sm font-normal text-gray-700')}>Refresh</Text>
+          </TouchableOpacity>
           <TouchableOpacity onPress={this.onSettingsBtnClick} style={tailwind('w-full py-4 pl-4')}>
             <Text style={tailwind('text-sm font-normal text-gray-700')}>Settings</Text>
           </TouchableOpacity>
@@ -149,7 +157,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
-  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId,
+  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, refreshFetched,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(BottomBarProfilePopup));

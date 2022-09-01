@@ -3,7 +3,7 @@ import { REHYDRATE } from 'redux-persist/constants';
 import {
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK, UPDATE_FETCHED, CLEAR_FETCHED_LIST_NAMES,
-  DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
+  REFRESH_FETCHED, DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK, EXTRACT_CONTENTS_COMMIT,
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
@@ -279,6 +279,18 @@ const displayReducer = (state = initialState, action) => {
 
   if (action.type === CLEAR_FETCHED_LIST_NAMES) {
     return { ...state, didFetchSettings: false, fetchedListNames: [] };
+  }
+
+  if (action.type === REFRESH_FETCHED) {
+    const { shouldDispatchFetch } = action.payload;
+
+    const newState = { ...state, listChangedCount: state.listChangedCount + 1 };
+    if (shouldDispatchFetch) {
+      newState.didFetchSettings = false;
+      newState.fetchedListNames = [];
+    }
+
+    return newState;
   }
 
   if (action.type === DELETE_OLD_LINKS_IN_TRASH) {

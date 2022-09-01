@@ -19,7 +19,7 @@ import {
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED,
   FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK, CACHE_FETCHED_MORE,
-  UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE, CLEAR_FETCHED_LIST_NAMES,
+  UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE, CLEAR_FETCHED_LIST_NAMES, REFRESH_FETCHED,
   ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
   UPDATE_LINKS, DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
   MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
@@ -107,8 +107,8 @@ export const init = async (store) => {
         if (purchaseStatus === REQUEST_PURCHASE) return;
 
         const interval = (Date.now() - _lastFetchDT) / 1000 / 60 / 60;
-        //if (interval < 0.1) return;
-        if (isPopupShown(store.getState()) && interval < 0.2) return;
+        if (interval < 0.6) return;
+        if (isPopupShown(store.getState()) && interval < 0.9) return;
 
         store.dispatch(clearFetchedListNames());
       }
@@ -400,6 +400,11 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
     return;
   }
 
+  if (listName in getState().refreshFetched) {
+    dispatch(updateFetched(payload, meta));
+    return;
+  }
+
   // If the links in state is undefined, null, or an empty object,
   //   just update the state as no scrolling or popup shown.
   let _links = getState().links[listName];
@@ -614,6 +619,21 @@ export const updateFetchedMore = (payload, meta, listName = null) => async (
 
 export const clearFetchedListNames = () => {
   return { type: CLEAR_FETCHED_LIST_NAMES };
+};
+
+export const refreshFetched = () => async (dispatch, getState) => {
+  const listName = getState().display.listName;
+  const doDescendingOrder = getState().settings.doDescendingOrder;
+  const payload = {
+    listName, doDescendingOrder, doFetchSettings: true, shouldDispatchFetch: true,
+  };
+
+  // If there is already FETCH with the same list name, no need to dispatch a new one.
+  if (!shouldDispatchFetch(getState().offline.outbox, payload)) {
+    payload.shouldDispatchFetch = false;
+  }
+
+  dispatch({ type: REFRESH_FETCHED, payload });
 };
 
 export const addLink = (url, listName, doExtractContents) => async (dispatch, getState) => {
