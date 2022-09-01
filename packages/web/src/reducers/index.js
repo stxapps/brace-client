@@ -10,6 +10,7 @@ import localSettingsReducer from './localSettingsReducer';
 import fetchedReducer from './fetchedReducer';
 import isFetchMoreInterrupted from './isFetchMoreInterrupted';
 import fetchedMoreReducer from './fetchedMoreReducer';
+import refreshFetchedReducer from './refreshFetchedReducer';
 import stacksAccessReducer from './stacksAccessReducer';
 import snapshotReducer from './snapshotReducer';
 import linkEditorReducer from './linkEditorReducer';
@@ -30,6 +31,7 @@ export default combineReducers({
   fetched: fetchedReducer,
   isFetchMoreInterrupted: isFetchMoreInterrupted,
   fetchedMore: fetchedMoreReducer,
+  refreshFetched: refreshFetchedReducer,
   stacksAccess: stacksAccessReducer,
   snapshot: snapshotReducer,
   linkEditor: linkEditorReducer,

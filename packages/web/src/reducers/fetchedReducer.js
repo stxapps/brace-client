@@ -1,7 +1,7 @@
 import { REHYDRATE } from 'redux-persist/constants';
 
 import {
-  CACHE_FETCHED, UPDATE_FETCHED,
+  CACHE_FETCHED, UPDATE_FETCHED, REFRESH_FETCHED,
   ADD_LINKS_COMMIT, DELETE_LINKS_COMMIT, MOVE_LINKS_DELETE_STEP_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT,
   DELETE_ALL_DATA, RESET_STATE,
@@ -20,7 +20,7 @@ const fetchedReducer = (state = initialState, action) => {
     return { ...state, [payload.listName]: { payload, meta } };
   }
 
-  if (action.type === UPDATE_FETCHED) {
+  if (action.type === UPDATE_FETCHED || action.type === REFRESH_FETCHED) {
     const { listName } = action.payload;
 
     const newState = {};
