@@ -42,7 +42,7 @@ const initialState = {
   settingsListsMenuPopupPosition: null,
   isTimePickPopupShown: false,
   timePickPopupPosition: null,
-  status: null,
+  statuses: [],
   isHandlingSignIn: false,
   isBulkEditing: false,
   selectedLinkIds: [],
@@ -90,7 +90,7 @@ const displayReducer = (state = initialState, action) => {
       settingsListsMenuPopupPosition: null,
       isTimePickPopupShown: false,
       timePickPopupPosition: null,
-      status: null,
+      statuses: [],
       isHandlingSignIn: false,
       isBulkEditing: false,
       selectedLinkIds: [],
@@ -232,14 +232,14 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === FETCH) {
-    return { ...state, status: FETCH };
+    return { ...state, statuses: [...state.statuses, FETCH] };
   }
 
   if (action.type === FETCH_COMMIT) {
     const { listName } = action.payload;
     const newState = {
       ...state,
-      status: FETCH_COMMIT,
+      statuses: [...state.statuses, FETCH_COMMIT],
       didFetch: true,
       didFetchSettings: true,
       fetchedListNames: [...state.fetchedListNames, listName],
@@ -266,7 +266,7 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === FETCH_ROLLBACK) {
-    return { ...state, status: FETCH_ROLLBACK };
+    return { ...state, statuses: [...state.statuses, FETCH_ROLLBACK] };
   }
 
   if (action.type === UPDATE_FETCHED) {
@@ -294,31 +294,33 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === DELETE_OLD_LINKS_IN_TRASH) {
-    return { ...state, status: DELETE_OLD_LINKS_IN_TRASH };
+    return { ...state, statuses: [...state.statuses, DELETE_OLD_LINKS_IN_TRASH] };
   }
 
   if (action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT) {
-    return { ...state, status: DELETE_OLD_LINKS_IN_TRASH_COMMIT };
+    return { ...state, statuses: [...state.statuses, DELETE_OLD_LINKS_IN_TRASH_COMMIT] };
   }
 
   if (action.type === DELETE_OLD_LINKS_IN_TRASH_ROLLBACK) {
-    return { ...state, status: DELETE_OLD_LINKS_IN_TRASH_ROLLBACK };
+    return {
+      ...state, statuses: [...state.statuses, DELETE_OLD_LINKS_IN_TRASH_ROLLBACK],
+    };
   }
 
   if (action.type === EXTRACT_CONTENTS) {
-    return { ...state, status: EXTRACT_CONTENTS };
+    return { ...state, statuses: [...state.statuses, EXTRACT_CONTENTS] };
   }
 
   if (action.type === EXTRACT_CONTENTS_COMMIT) {
-    return { ...state, status: EXTRACT_CONTENTS_COMMIT };
+    return { ...state, statuses: [...state.statuses, EXTRACT_CONTENTS_COMMIT] };
   }
 
   if (action.type === EXTRACT_CONTENTS_ROLLBACK) {
-    return { ...state, status: EXTRACT_CONTENTS_ROLLBACK };
+    return { ...state, statuses: [...state.statuses, EXTRACT_CONTENTS_ROLLBACK] };
   }
 
   if (action.type === UPDATE_STATUS) {
-    return { ...state, status: action.payload };
+    return { ...state, statuses: [...state.statuses, action.payload] };
   }
 
   if (action.type === UPDATE_HANDLING_SIGN_IN) {
@@ -378,7 +380,7 @@ const displayReducer = (state = initialState, action) => {
     return {
       ...state,
       listName: doContain ? state.listName : MY_LIST,
-      status: UPDATE_SETTINGS,
+      statuses: [...state.statuses, UPDATE_SETTINGS],
       settingsStatus: UPDATING,
     };
   }
@@ -386,13 +388,21 @@ const displayReducer = (state = initialState, action) => {
   if (action.type === UPDATE_SETTINGS_COMMIT) {
     const { doFetch } = action.meta;
 
-    const newState = { ...state, status: UPDATE_SETTINGS_COMMIT, settingsStatus: null };
+    const newState = {
+      ...state,
+      statuses: [...state.statuses, UPDATE_SETTINGS_COMMIT],
+      settingsStatus: null,
+    };
     if (doFetch) newState.fetchedListNames = [];
     return newState;
   }
 
   if (action.type === UPDATE_SETTINGS_ROLLBACK) {
-    return { ...state, status: UPDATE_SETTINGS_ROLLBACK, settingsStatus: DIED_UPDATING };
+    return {
+      ...state,
+      statuses: [...state.statuses, UPDATE_SETTINGS_ROLLBACK],
+      settingsStatus: DIED_UPDATING,
+    };
   }
 
   if (action.type === CANCEL_DIED_SETTINGS) {
@@ -402,7 +412,7 @@ const displayReducer = (state = initialState, action) => {
     return {
       ...state,
       listName: doContain ? state.listName : MY_LIST,
-      status: null,
+      statuses: [],
       settingsStatus: null,
     };
   }

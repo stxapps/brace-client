@@ -21,7 +21,7 @@ const initialState = {};
 const isFetchMoreInterrupted = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
-    return { ...initialState, ...action.payload.isFetchMoreInterrupted };
+    return { ...initialState };
   }
 
   if (action.type === UPDATE_FETCHED) {

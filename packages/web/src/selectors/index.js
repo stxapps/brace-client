@@ -1,6 +1,12 @@
 import { createSelectorCreator, defaultMemoize, createSelector } from 'reselect';
 
 import {
+  FETCH, FETCH_COMMIT, FETCH_ROLLBACK, DELETE_OLD_LINKS_IN_TRASH,
+  DELETE_OLD_LINKS_IN_TRASH_COMMIT, DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
+  EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
+  UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
+} from '../types/actionTypes';
+import {
   IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, PINNED, WHT_MODE, BLK_MODE, SYSTEM_MODE,
   CUSTOM_MODE,
 } from '../types/const';
@@ -54,6 +60,60 @@ export const getSelectedLinkIdsLength = createSelector(
   state => state.display.selectedLinkIds,
   selectedLinkIds => {
     return selectedLinkIds.length;
+  }
+);
+
+export const getStatus = createSelector(
+  state => state.display.statuses,
+  statuses => {
+    if (statuses.length === 0) return null;
+
+    const lastStatus = statuses[statuses.length - 1];
+    if (![
+      FETCH_COMMIT, DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT,
+      UPDATE_SETTINGS_COMMIT,
+    ].includes(lastStatus)) {
+      return lastStatus;
+    }
+
+    const results = [
+      { count: 0, index: -1, value: FETCH },
+      { count: 0, index: -1, value: DELETE_OLD_LINKS_IN_TRASH },
+      { count: 0, index: -1, value: EXTRACT_CONTENTS },
+      { count: 0, index: -1, value: UPDATE_SETTINGS },
+    ];
+    const ops = {
+      [FETCH]: { value: 1, index: 0 },
+      [FETCH_COMMIT]: { value: -1, index: 0 },
+      [FETCH_ROLLBACK]: { value: -1, index: 0 },
+      [DELETE_OLD_LINKS_IN_TRASH]: { value: 1, index: 1 },
+      [DELETE_OLD_LINKS_IN_TRASH_COMMIT]: { value: -1, index: 1 },
+      [DELETE_OLD_LINKS_IN_TRASH_ROLLBACK]: { value: -1, index: 1 },
+      [EXTRACT_CONTENTS]: { value: 1, index: 2 },
+      [EXTRACT_CONTENTS_COMMIT]: { value: -1, index: 2 },
+      [EXTRACT_CONTENTS_ROLLBACK]: { value: -1, index: 2 },
+      [UPDATE_SETTINGS]: { value: 1, index: 3 },
+      [UPDATE_SETTINGS_COMMIT]: { value: -1, index: 3 },
+      [UPDATE_SETTINGS_ROLLBACK]: { value: -1, index: 3 },
+    };
+
+    for (let i = 0; i < statuses.length; i++) {
+      const status = statuses[i];
+      if (!(status in ops)) continue;
+
+      const op = ops[status];
+      results[op.index].count += op.value;
+      results[op.index].index = i;
+    }
+
+    let finalResult = { count: 0, index: -1, value: lastStatus };
+    for (const result of results) {
+      if (result.count > 0 && result.index > finalResult.index) {
+        finalResult = result;
+      }
+    }
+
+    return finalResult.value;
   }
 );
 

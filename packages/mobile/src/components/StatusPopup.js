@@ -4,14 +4,13 @@ import { connect } from 'react-redux';
 
 import { updateStatus } from '../actions';
 import {
-  FETCH, FETCH_COMMIT, FETCH_ROLLBACK,
-  DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
-  DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
+  FETCH, FETCH_COMMIT, FETCH_ROLLBACK, DELETE_OLD_LINKS_IN_TRASH,
+  DELETE_OLD_LINKS_IN_TRASH_COMMIT, DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
   UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
 } from '../types/actionTypes';
 import { SM_WIDTH } from '../types/const';
-import { getThemeMode } from '../selectors';
+import { getStatus, getThemeMode } from '../selectors';
 import { statusPopupFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -143,7 +142,7 @@ class StatusPopup extends React.PureComponent {
 
 const mapStateToProps = (state, props) => {
   return {
-    status: state.display.status,
+    status: getStatus(state),
     themeMode: getThemeMode(state),
   };
 };
