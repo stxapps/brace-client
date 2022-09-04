@@ -2,16 +2,20 @@ import { createSelector } from 'reselect';
 import Url from 'url-parse';
 
 import {
+  FETCH, FETCH_COMMIT, FETCH_ROLLBACK, DELETE_OLD_LINKS_IN_TRASH,
+  DELETE_OLD_LINKS_IN_TRASH_COMMIT, DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
+  EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
+  UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
+  PIN_LINK, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_ROLLBACK,
+  MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
+} from '../types/actionTypes';
+import {
   HTTP, HTTPS, WWW, STATUS, ID, LINKS, SETTINGS, PINS, DOT_JSON, ADDED, MOVED, ADDING,
   MOVING, DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   COLOR, PATTERN, IMAGE, BG_COLOR_STYLES, PATTERNS, VALID_URL, NO_URL, ASK_CONFIRM_URL,
   VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME,
   COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, UNKNOWN,
 } from '../types/const';
-import {
-  FETCH, PIN_LINK, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_ROLLBACK,
-  MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
-} from '../types/actionTypes';
 import { IMAGES } from '../types/imagePaths';
 import { _ } from './obj';
 
@@ -404,6 +408,40 @@ export const isDiedStatus = (status) => {
   return [
     DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   ].includes(status);
+};
+
+export const getStatusCounts = (statuses) => {
+  const results = [
+    { count: 0, index: -1, value: FETCH },
+    { count: 0, index: -1, value: DELETE_OLD_LINKS_IN_TRASH },
+    { count: 0, index: -1, value: EXTRACT_CONTENTS },
+    { count: 0, index: -1, value: UPDATE_SETTINGS },
+  ];
+  const ops = {
+    [FETCH]: { value: 1, index: 0 },
+    [FETCH_COMMIT]: { value: -1, index: 0 },
+    [FETCH_ROLLBACK]: { value: -1, index: 0 },
+    [DELETE_OLD_LINKS_IN_TRASH]: { value: 1, index: 1 },
+    [DELETE_OLD_LINKS_IN_TRASH_COMMIT]: { value: -1, index: 1 },
+    [DELETE_OLD_LINKS_IN_TRASH_ROLLBACK]: { value: -1, index: 1 },
+    [EXTRACT_CONTENTS]: { value: 1, index: 2 },
+    [EXTRACT_CONTENTS_COMMIT]: { value: -1, index: 2 },
+    [EXTRACT_CONTENTS_ROLLBACK]: { value: -1, index: 2 },
+    [UPDATE_SETTINGS]: { value: 1, index: 3 },
+    [UPDATE_SETTINGS_COMMIT]: { value: -1, index: 3 },
+    [UPDATE_SETTINGS_ROLLBACK]: { value: -1, index: 3 },
+  };
+
+  for (let i = 0; i < statuses.length; i++) {
+    const status = statuses[i];
+    if (!(status in ops)) continue;
+
+    const op = ops[status];
+    results[op.index].count += op.value;
+    results[op.index].index = i;
+  }
+
+  return results;
 };
 
 export const getLastHalfHeight = (height, textHeight, pt, pb, halfRatio = 0.6) => {

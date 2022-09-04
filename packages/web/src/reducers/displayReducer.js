@@ -21,7 +21,7 @@ import {
   SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, MY_LIST, TRASH, ARCHIVE, UPDATING,
   DIED_UPDATING, SETTINGS_VIEW_ACCOUNT, DELETE_ACTION_LIST_NAME,
 } from '../types/const';
-import { doContainListName } from '../utils';
+import { doContainListName, getStatusCounts } from '../utils';
 
 const initialState = {
   listName: MY_LIST,
@@ -320,6 +320,15 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_STATUS) {
+    if (action.payload === null) {
+      const statusCounts = getStatusCounts(state.statuses);
+
+      let isActive = false;
+      for (const statusCount of statusCounts) {
+        if (statusCount.count > 0) isActive = true;
+      }
+      if (!isActive) return { ...state, statuses: [] };
+    }
     return { ...state, statuses: [...state.statuses, action.payload] };
   }
 
@@ -409,10 +418,15 @@ const displayReducer = (state = initialState, action) => {
     const { settings } = action.payload;
     const doContain = doContainListName(state.listName, settings.listNameMap);
 
+    let isActive = false;
+    for (const statusCount of getStatusCounts(state.statuses)) {
+      if (statusCount.count > 0) isActive = true;
+    }
+
     return {
       ...state,
       listName: doContain ? state.listName : MY_LIST,
-      statuses: [],
+      statuses: isActive ? [...state.statuses, null] : [],
       settingsStatus: null,
     };
   }
