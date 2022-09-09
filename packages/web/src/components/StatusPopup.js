@@ -84,7 +84,7 @@ class StatusPopup extends React.PureComponent {
 
     return (
       <div className={tailwind('w-48 overflow-hidden text-right sm:w-64')}>
-        <motion.span className={tailwind('inline-block rounded-l-full bg-white pl-3 text-sm tracking-wide text-gray-500')} variants={statusPopupFMV} initial={false} animate={animate}>{this.msg}</motion.span>
+        <motion.span className={tailwind('inline-block rounded-l-full bg-white pl-3 text-sm tracking-wide text-gray-500 blk:bg-gray-900 blk:text-gray-400')} variants={statusPopupFMV} initial={false} animate={animate}>{this.msg}</motion.span>
       </div>
     );
   }

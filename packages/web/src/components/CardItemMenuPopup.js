@@ -191,7 +191,7 @@ class CardItemMenuPopup extends React.PureComponent {
         {menu.map(text => {
           let displayText = text;
           if (text === ARCHIVE) displayText = getListNameDisplayName(text, listNameMap);
-          return <button key={text} onClick={() => this.onMenuPopupClick(text)} className={tailwind('block w-full truncate rounded-md py-2.5 pl-4 pr-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset')}>{displayText}</button>;
+          return <button key={text} onClick={() => this.onMenuPopupClick(text)} className={tailwind('block w-full truncate rounded-md py-2.5 pl-4 pr-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')}>{displayText}</button>;
         })}
       </React.Fragment>
     );
@@ -205,7 +205,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
     const { scrollY, menuPopupSize } = this.state;
 
-    let popupClassNames = 'fixed z-41 min-w-32 max-w-64 overflow-auto rounded-lg bg-white py-2 shadow-xl ring-1 ring-black ring-opacity-5';
+    let popupClassNames = 'fixed z-41 min-w-32 max-w-64 overflow-auto rounded-lg bg-white py-2 shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25';
     let menuPopup;
     if (menuPopupSize) {
 

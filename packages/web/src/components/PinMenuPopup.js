@@ -75,15 +75,15 @@ const PinMenuPopup = () => {
   const buttons = (
     <React.Fragment>
       <div className={tailwind('flex h-11 items-center justify-start pl-4 pr-4 pt-1')}>
-        <p className={tailwind('truncate text-left text-sm font-semibold text-gray-600')}>Manage pin</p>
+        <p className={tailwind('truncate text-left text-sm font-semibold text-gray-600 blk:text-gray-200')}>Manage pin</p>
       </div>
       {menu.map(text => {
-        return <button key={text} onClick={() => onMenuPopupClick(text)} className={tailwind('block w-full truncate rounded-md py-2.5 pl-4 pr-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset')} role="menuitem">{text}</button>
+        return <button key={text} onClick={() => onMenuPopupClick(text)} className={tailwind('block w-full truncate rounded-md py-2.5 pl-4 pr-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')} role="menuitem">{text}</button>
       })}
     </React.Fragment>
   );
 
-  let popupClassNames = 'fixed z-41 min-w-32 max-w-64 overflow-auto rounded-lg bg-white pb-1 shadow-xl ring-1 ring-black ring-opacity-5';
+  let popupClassNames = 'fixed z-41 min-w-32 max-w-64 overflow-auto rounded-lg bg-white pb-1 shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25';
   let panel;
   if (popupSize) {
 

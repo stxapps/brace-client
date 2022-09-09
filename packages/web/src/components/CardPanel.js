@@ -71,7 +71,7 @@ class CardPanel extends React.PureComponent {
 
     return (
       <button onClick={this.onFetchMoreBtnClick} className={tailwind('group my-4 block w-full py-2 focus:outline-none')}>
-        <span className={tailwind('inline-block rounded-full border border-gray-400 bg-white px-3 py-1 text-sm text-gray-500 group-hover:border-gray-500 group-hover:text-gray-600 group-focus:ring')}>More</span>
+        <span className={tailwind('inline-block rounded-full border border-gray-400 bg-white px-3 py-1 text-sm text-gray-500 group-hover:border-gray-500 group-hover:text-gray-600 group-focus:ring blk:border-gray-400 blk:bg-gray-900 blk:text-gray-300 blk:group-hover:border-gray-300 blk:group-hover:text-gray-200')}>More</span>
       </button>
     );
   }
@@ -82,10 +82,10 @@ class CardPanel extends React.PureComponent {
     return (
       <div className={tailwind('flex items-center justify-center')}>
         <div className={tailwind('lds-ellipsis')}>
-          <div className={tailwind('bg-gray-400')} />
-          <div className={tailwind('bg-gray-400')} />
-          <div className={tailwind('bg-gray-400')} />
-          <div className={tailwind('bg-gray-400')} />
+          <div className={tailwind('bg-gray-400 blk:bg-gray-400')} />
+          <div className={tailwind('bg-gray-400 blk:bg-gray-400')} />
+          <div className={tailwind('bg-gray-400 blk:bg-gray-400')} />
+          <div className={tailwind('bg-gray-400 blk:bg-gray-400')} />
         </div>
       </div>
     );
@@ -96,7 +96,7 @@ class CardPanel extends React.PureComponent {
 
     return (
       <button onClick={this.onUpdateFetchedBtnClick} className={tailwind('group my-4 block w-full py-2 focus:outline-none')}>
-        <span className={tailwind('inline-block rounded-full border border-gray-400 bg-white px-3 py-1 text-sm text-gray-500 group-hover:border-gray-500 group-hover:text-gray-600 group-focus:ring')}>Show more</span>
+        <span className={tailwind('inline-block rounded-full border border-gray-400 bg-white px-3 py-1 text-sm text-gray-500 group-hover:border-gray-500 group-hover:text-gray-600 group-focus:ring blk:border-gray-400 blk:bg-gray-900 blk:text-gray-300 blk:group-hover:border-gray-300 blk:group-hover:text-gray-200')}>Show more</span>
       </button>
     );
   }

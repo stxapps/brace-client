@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { updatePopup } from '../actions';
 import {
-  SIGN_IN_POPUP, SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS, MD_WIDTH,
+  SIGN_IN_POPUP, SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS, MD_WIDTH, BLK_MODE,
 } from '../types/const';
 import { getThemeMode } from '../selectors';
 import { toPx, throttle } from '../utils';
@@ -17,6 +17,7 @@ import ListName from './ListName';
 import StatusPopup from './StatusPopup';
 
 import shortLogo from '../images/logo-short.svg';
+import shortLogoBlk from '../images/logo-short-blk.svg';
 
 class TopBar extends React.PureComponent {
 
@@ -106,7 +107,7 @@ class TopBar extends React.PureComponent {
 
   render() {
     const {
-      rightPane: rightPaneProp, isBulkEditing, safeAreaWidth, tailwind,
+      rightPane: rightPaneProp, isBulkEditing, themeMode, safeAreaWidth, tailwind,
     } = this.props;
 
     let rightPane;
@@ -116,9 +117,9 @@ class TopBar extends React.PureComponent {
       rightPane = isBulkEditing ? <TopBarBulkEditCommands /> : <TopBarCommands />;
     } else throw new Error(`Invalid rightPane: ${rightPaneProp}`);
 
-    const { isListNameShown } = this.props;
+    const { isListNameShown, doSupportTheme } = this.props;
 
-    let topBarStyle, topBarStyleClasses;
+    let topBarStyle, topBarStyleClasses = 'bg-white';
     if (isListNameShown) {
 
       const { offsetY } = this.state;
@@ -130,22 +131,23 @@ class TopBar extends React.PureComponent {
       const height = topBarHeight + (offsetY * (headerHeight - topBarHeight) / listNameDistanceY);
 
       topBarStyle = { height };
-      topBarStyleClasses = 'fixed inset-x-0 top-0 bg-white z-30';
+      topBarStyleClasses += ' fixed inset-x-0 top-0 z-30';
       if (height === headerHeight) {
         topBarStyleClasses += ' border-b border-gray-200';
+        if (doSupportTheme) topBarStyleClasses += ' blk:border-gray-600';
       }
     } else {
       const { headerHeight } = getTopBarSizes(safeAreaWidth);
       topBarStyle = { height: headerHeight };
-      topBarStyleClasses = '';
     }
+    if (doSupportTheme) topBarStyleClasses += ' blk:bg-gray-900';
 
     return (
       <div style={topBarStyle} className={tailwind(`mx-auto max-w-6xl px-4 md:px-6 lg:px-8 ${topBarStyleClasses}`)}>
         <div className={tailwind('relative')}>
           <header className={tailwind('flex h-14 items-center justify-between')}>
             <div className={tailwind('relative')}>
-              <img className={tailwind('h-8')} src={shortLogo} alt="Brace logo" />
+              <img className={tailwind('h-8')} src={doSupportTheme && themeMode === BLK_MODE ? shortLogoBlk : shortLogo} alt="Brace logo" />
             </div>
             {rightPane}
           </header>
@@ -160,6 +162,7 @@ class TopBar extends React.PureComponent {
 TopBar.propTypes = {
   rightPane: PropTypes.string.isRequired,
   isListNameShown: PropTypes.bool,
+  doSupportTheme: PropTypes.bool,
 };
 
 TopBar.defaultProps = {

@@ -352,8 +352,7 @@ export const getThemeMode = createSelector(
   },
   state => state.localSettings.themeMode,
   (isSignedIn, doEnable, systemMode, customMode, mode) => {
-    if (!isSignedIn) return systemMode;
-    if (!doEnable) return WHT_MODE;
+    if (!isSignedIn || !doEnable) return WHT_MODE;
 
     if (mode === SYSTEM_MODE) return systemMode;
     if (mode === CUSTOM_MODE) return customMode;

@@ -50,10 +50,10 @@ class BottomBarProfilePopup extends React.PureComponent {
     return (
       <AnimatePresence key="AnimatePresence_BB_ProfilePopup">
         <motion.button key="BB_ProfilePopup_cancelBtn" onClick={this.onProfileCancelBtnClick} tabIndex={-1} className={tailwind('fixed inset-0 z-40 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={bModalBgFMV} initial="hidden" animate="visible" exit="hidden" />
-        <motion.div key="BB_ProfilePopup_menuPopup" className={tailwind('fixed inset-x-0 bottom-0 z-41 rounded-t-lg bg-white pt-4 pb-4 shadow-xl ring-1 ring-black ring-opacity-5')} variants={bModalFMV} initial="hidden" animate="visible" exit="hidden">
-          <button onClick={this.onSettingsBtnClick} className={tailwind('block w-full rounded-md py-4 pl-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset')}>Settings</button>
-          <button onClick={this.onSupportBtnClick} className={tailwind('block w-full rounded-md py-4 pl-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset')}>Support</button>
-          <button onClick={this.onSignOutBtnClick} className={tailwind('block w-full rounded-md py-4 pl-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset')}>Sign out</button>
+        <motion.div key="BB_ProfilePopup_menuPopup" className={tailwind('fixed inset-x-0 bottom-0 z-41 rounded-t-lg bg-white pt-4 pb-4 shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25')} variants={bModalFMV} initial="hidden" animate="visible" exit="hidden">
+          <button onClick={this.onSettingsBtnClick} className={tailwind('block w-full rounded-md py-4 pl-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')}>Settings</button>
+          <button onClick={this.onSupportBtnClick} className={tailwind('block w-full rounded-md py-4 pl-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')}>Support</button>
+          <button onClick={this.onSignOutBtnClick} className={tailwind('block w-full rounded-md py-4 pl-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')}>Sign out</button>
         </motion.div>
       </AnimatePresence>
     );

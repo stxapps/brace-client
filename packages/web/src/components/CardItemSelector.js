@@ -33,6 +33,7 @@ class CardItemSelector extends React.Component {
     if (
       this.props.isBulkEditing !== nextProps.isBulkEditing ||
       this.props.isSelected !== nextProps.isSelected ||
+      this.props.tailwind !== nextProps.tailwind ||
       this.state.isMaxErrorShown !== nextState.isMaxErrorShown
     ) {
       return true;
@@ -89,7 +90,7 @@ class CardItemSelector extends React.Component {
       <AnimatePresence key={`AnimatePresence_CardItemSelector_${linkId}`} />
     );
 
-    const circleStyleClasses = isSelected ? 'bg-gray-800' : 'bg-white opacity-50';
+    const circleStyleClasses = isSelected ? 'bg-gray-800 blk:border blk:border-gray-700' : 'bg-white opacity-50';
     const svgStyleClasses = isSelected ? 'text-gray-50' : 'text-gray-400';
 
     return (

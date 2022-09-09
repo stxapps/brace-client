@@ -8,8 +8,9 @@ import {
   SHOW_BLANK, SHOW_COMMANDS,
   SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
 } from '../types/const';
-import { getLinks } from '../selectors';
+import { getLinks, getThemeMode } from '../selectors';
 
+import { withTailwind } from '.';
 import Loading from './Loading';
 import TopBar from './TopBar';
 import BottomBar from './BottomBar';
@@ -65,8 +66,7 @@ class Main extends React.PureComponent {
   }
 
   render() {
-
-    const { links, layoutType, safeAreaWidth } = this.props;
+    const { links, layoutType, safeAreaWidth, tailwind } = this.props;
     const columnWidth = this.getColumnWidth(safeAreaWidth);
 
     if (links === null) {
@@ -76,14 +76,14 @@ class Main extends React.PureComponent {
     const topBarRightPane = [PC_50, PC_33].includes(columnWidth) ? SHOW_COMMANDS : SHOW_BLANK;
 
     return (
-      <React.Fragment>
+      <div className={tailwind('min-h-screen bg-white blk:bg-gray-900')}>
         {layoutType === LAYOUT_LIST ?
           <ListPanel columnWidth={columnWidth} /> :
           <CardPanel columnWidth={columnWidth} />
         }
         {/* BottomBar before TopBar so listNamePopup's bg in TopBar's above BottomBar */}
         {columnWidth === PC_100 && <BottomBar />}
-        <TopBar rightPane={topBarRightPane} isListNameShown={true} />
+        <TopBar rightPane={topBarRightPane} isListNameShown={true} doSupportTheme={true} />
         <FetchedPopup />
         <CardItemMenuPopup />
         <PinMenuPopup />
@@ -94,7 +94,7 @@ class Main extends React.PureComponent {
         <ListNamesPopup />
         <ConfirmDeletePopup />
         <PaywallPopup />
-      </React.Fragment>
+      </div>
     );
   }
 }
@@ -107,10 +107,11 @@ const mapStateToProps = (state, props) => {
     didFetchSettings: state.display.didFetchSettings,
     fetchedListNames: state.display.fetchedListNames,
     layoutType: state.localSettings.layoutType,
+    themeMode: getThemeMode(state),
     safeAreaWidth: state.window.width,
   };
 };
 
 const mapDispatchToProps = { updateHistoryPosition, fetch };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Main);
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(Main));

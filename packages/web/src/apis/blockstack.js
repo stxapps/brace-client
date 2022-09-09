@@ -175,8 +175,14 @@ export const batchPutFileWithRetry = async (fpaths, contents, callCount) => {
     fpaths.map((fpath, i) =>
       userSession.putFile(fpath, contents[i])
         .then(publicUrl => {
-          addFPath(cachedFPaths.fpaths, fpath);
-          cachedFPaths.fpaths = copyFPaths(cachedFPaths.fpaths);
+          if (!cachedFPaths.fpaths) {
+            // Possible if in Adding.js and just sign in to add a link,
+            //  so fetch is never called and also nothing to rehydrate in redux-offline.
+            console.log('In batchPutFileWithRetry, cachedFPaths.fpaths is null.');
+          } else {
+            addFPath(cachedFPaths.fpaths, fpath);
+            cachedFPaths.fpaths = copyFPaths(cachedFPaths.fpaths);
+          }
           return { publicUrl, fpath, success: true };
         })
         .catch(error => ({ error, fpath, content: contents[i], success: false }))

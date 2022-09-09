@@ -11,13 +11,15 @@ class Back extends React.PureComponent {
     const { tailwind } = this.props;
 
     return (
-      <div className={tailwind('pt-32')}>
-        <div className={tailwind('text-center text-base text-gray-500')}>[This Page intentionally Left Blank]</div>
-        <a className={tailwind('block pt-12 pb-2 text-center text-base text-gray-500')} href="/">
-          Go to <span className={tailwind('rounded-sm font-medium text-gray-900 underline focus:outline-none focus:ring')}>your links</span>
-        </a>
-        <div className={tailwind('text-center text-base text-gray-500')}>or</div>
-        <div className={tailwind('pt-2 text-center text-base text-gray-500')}>Press back to close</div>
+      <div className={tailwind('min-h-screen bg-white blk:bg-gray-900')}>
+        <div className={tailwind('pt-32')}>
+          <div className={tailwind('text-center text-base text-gray-500 blk:text-gray-400')}>[This Page intentionally Left Blank]</div>
+          <a className={tailwind('block pt-12 pb-2 text-center text-base text-gray-500 blk:text-gray-400')} href="/">
+            Go to <span className={tailwind('rounded-sm font-medium text-gray-900 underline focus:outline-none focus:ring blk:text-gray-50')}>your links</span>
+          </a>
+          <div className={tailwind('text-center text-base text-gray-500 blk:text-gray-400')}>or</div>
+          <div className={tailwind('pt-2 text-center text-base text-gray-500 blk:text-gray-400')}>Press back to close</div>
+        </div>
       </div>
     )
   }

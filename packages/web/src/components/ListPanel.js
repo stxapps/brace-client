@@ -64,7 +64,7 @@ const ListPanel = (props) => {
     return (
       <div className={tailwind('my-4 px-4 sm:px-6')}>
         <button onClick={onFetchMoreBtnClick} className={tailwind('group block w-full py-2 focus:outline-none')}>
-          <span className={tailwind('inline-block rounded-full border border-gray-400 bg-white px-3 py-1 text-sm text-gray-500 group-hover:border-gray-500 group-hover:text-gray-600 group-focus:ring')}>More</span>
+          <span className={tailwind('inline-block rounded-full border border-gray-400 bg-white px-3 py-1 text-sm text-gray-500 group-hover:border-gray-500 group-hover:text-gray-600 group-focus:ring blk:border-gray-400 blk:bg-gray-900 blk:text-gray-300 blk:group-hover:border-gray-300 blk:group-hover:text-gray-200')}>More</span>
         </button>
       </div>
     );
@@ -74,10 +74,10 @@ const ListPanel = (props) => {
     return (
       <div className={tailwind('my-6 flex items-center justify-center')}>
         <div className={tailwind('lds-ellipsis')}>
-          <div className={tailwind('bg-gray-400')}></div>
-          <div className={tailwind('bg-gray-400')}></div>
-          <div className={tailwind('bg-gray-400')}></div>
-          <div className={tailwind('bg-gray-400')}></div>
+          <div className={tailwind('bg-gray-400 blk:bg-gray-400')}></div>
+          <div className={tailwind('bg-gray-400 blk:bg-gray-400')}></div>
+          <div className={tailwind('bg-gray-400 blk:bg-gray-400')}></div>
+          <div className={tailwind('bg-gray-400 blk:bg-gray-400')}></div>
         </div>
       </div>
     );
@@ -87,7 +87,7 @@ const ListPanel = (props) => {
     return (
       <div className={tailwind('my-4 px-4 sm:px-6')}>
         <button onClick={onUpdateFetchedBtnClick} className={tailwind('group block w-full py-2 focus:outline-none')}>
-          <span className={tailwind('inline-block rounded-full border border-gray-400 bg-white px-3 py-1 text-sm text-gray-500 group-hover:border-gray-500 group-hover:text-gray-600 group-focus:ring')}>Show more</span>
+          <span className={tailwind('inline-block rounded-full border border-gray-400 bg-white px-3 py-1 text-sm text-gray-500 group-hover:border-gray-500 group-hover:text-gray-600 group-focus:ring blk:border-gray-400 blk:bg-gray-900 blk:text-gray-300 blk:group-hover:border-gray-300 blk:group-hover:text-gray-200')}>Show more</span>
         </button>
       </div>
     );
@@ -95,7 +95,7 @@ const ListPanel = (props) => {
 
   const renderItems = () => {
     return (
-      <ul className={tailwind('divide-y divide-gray-200')}>
+      <ul className={tailwind('divide-y divide-gray-200 blk:divide-gray-700')}>
         <AnimateSharedLayout>
           {links.map(link => {
             return (

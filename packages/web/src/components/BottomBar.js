@@ -21,7 +21,7 @@ class BottomBar extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <motion.div style={style} className={tailwind('fixed inset-x-0 bottom-0 z-30 border-t border-gray-200 bg-white')} variants={bbFMV} initial={false} animate={isShown ? 'visible' : 'hidden'}>
+        <motion.div style={style} className={tailwind('fixed inset-x-0 bottom-0 z-30 border-t border-gray-200 bg-white blk:border-gray-700 blk:bg-gray-800')} variants={bbFMV} initial={false} animate={isShown ? 'visible' : 'hidden'}>
           {isBulkEditing ? <BottomBarBulkEditCommands /> : <BottomBarCommands />}
         </motion.div>
         <BottomBarAddPopup />

@@ -34,6 +34,7 @@ class CardItemContent extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (
       !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
+      this.props.tailwind !== nextProps.tailwind ||
       this.state.extractedFaviconError !== nextState.extractedFaviconError
     ) {
       return true;
@@ -85,7 +86,7 @@ class CardItemContent extends React.Component {
 
     if (image) {
       // This GracefulImage needs to be different from the one below so that it's not just rerender but recreate a new component with a new src and new retry. React knows by using different keys.
-      return <GracefulImage key="image-graceful-image-extracted-result" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5')} src={image} alt={`illustration of ${url}`} />;
+      return <GracefulImage key="image-graceful-image-extracted-result" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={image} alt={`illustration of ${url}`} />;
     }
 
     let fg = null;
@@ -101,9 +102,11 @@ class CardItemContent extends React.Component {
 
     // Only plain color background or plain color background with a letter
     if (decor.image.bg.type === COLOR) {
+      let blkClassNames = 'blk:ring-1 blk:ring-white blk:ring-opacity-10';
+      if (decor.image.bg.value !== 'bg-gray-800') blkClassNames = '';
       return (
         <React.Fragment>
-          <div className={tailwind(`absolute h-full w-full ${decor.image.bg.value}`)} />
+          <div className={tailwind(`absolute h-full w-full ${decor.image.bg.value} ${blkClassNames}`)} />
           {fg}
         </React.Fragment>
       );
@@ -195,7 +198,7 @@ class CardItemContent extends React.Component {
             <div className={tailwind('flex items-center justify-start pl-4')}>
               {this.renderFavicon()}
               <div className={tailwind('min-w-0 flex-shrink flex-grow')}>
-                <p className={tailwind('truncate pl-2 text-base text-gray-500 hover:text-gray-600')}>
+                <p className={tailwind('truncate pl-2 text-base text-gray-500 hover:text-gray-600 blk:text-gray-300 blk:hover:text-gray-200')}>
                   <a className={tailwind('rounded-sm focus:outline-none focus:ring')} href={origin} target="_blank" rel="noreferrer">
                     {host}
                   </a>
@@ -205,14 +208,14 @@ class CardItemContent extends React.Component {
           </div>
           <div className={tailwind('flex-shrink-0 flex-grow-0')}>
             <button onClick={this.onMenuBtnClick} style={{ paddingBottom: '0.375rem' }} className={tailwind('group block pt-2 pl-4 pr-2 focus:outline-none')}>
-              <svg className={tailwind('w-6 rounded-full py-2 text-gray-400 group-hover:text-gray-500 group-focus:ring')} viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg className={tailwind('w-6 rounded-full py-2 text-gray-400 group-hover:text-gray-500 group-focus:ring blk:text-gray-400 blk:group-hover:text-gray-300')} viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
           </div>
         </div>
         <a className={tailwind('group focus:outline-none')} href={ensureContainUrlProtocol(url)} target="_blank" rel="noreferrer">
-          <h4 className={tailwind(`mt-0 mb-3 ml-4 mr-3 rounded-sm text-base font-medium leading-6 text-gray-800 group-hover:text-gray-900 group-focus:ring lg:mb-4 ${classNames}`)}>
+          <h4 className={tailwind(`mt-0 mb-3 ml-4 mr-3 rounded-sm text-base font-medium leading-6 text-gray-800 group-hover:text-gray-900 group-focus:ring blk:text-gray-100 blk:group-hover:text-white lg:mb-4 ${classNames}`)}>
             {title}
           </h4>
         </a>
