@@ -191,8 +191,8 @@ const ListItemContent = (props) => {
         <div className={tailwind('flex items-center justify-start pt-0.5')}>
           {renderFavicon()}
           <div className={tailwind('min-w-0 flex-shrink flex-grow')}>
-            <p className={tailwind('truncate pl-2 text-left text-sm text-gray-500 hover:text-gray-600 blk:text-gray-400 blk:hover:text-gray-300')}>
-              <a className={tailwind('rounded-sm focus:outline-none focus:ring')} href={origin} target="_blank" rel="noreferrer">
+            <p className={tailwind('truncate pl-2 text-left text-sm text-gray-500 blk:text-gray-400')}>
+              <a className={tailwind('rounded-sm hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-300')} href={origin} target="_blank" rel="noreferrer">
                 {host}
               </a>
             </p>

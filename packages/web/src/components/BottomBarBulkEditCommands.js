@@ -191,7 +191,7 @@ class BottomBarBulkEditCommands extends React.Component {
           {isDeleteBtnShown && <div className={tailwind('h-full w-full min-w-0 p-1')}>
             <button onClick={this.onBulkEditDeleteBtnClick} className={tailwind('group flex h-full w-full flex-col items-center justify-center rounded focus:outline-none focus:ring')}>
               <div className={tailwind('flex h-6 w-6 items-center justify-center')}>
-                <svg className={tailwind('h-6 w-6 text-red-600 group-hover:text-red-700 blk:text-gray-400 blk:group-hover:text-gray-300')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <svg className={tailwind('h-6 w-6 text-red-600 group-hover:text-red-700 blk:text-red-500 blk:group-hover:text-red-600')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path fillRule="evenodd" clipRule="evenodd" d="M9 2C8.62123 2 8.27497 2.214 8.10557 2.55279L7.38197 4H4C3.44772 4 3 4.44772 3 5C3 5.55228 3.44772 6 4 6V16C4 17.1046 4.89543 18 6 18H14C15.1046 18 16 17.1046 16 16V6C16.5523 6 17 5.55228 17 5C17 4.44772 16.5523 4 16 4H12.618L11.8944 2.55279C11.725 2.214 11.3788 2 11 2H9ZM7 8C7 7.44772 7.44772 7 8 7C8.55228 7 9 7.44772 9 8V14C9 14.5523 8.55228 15 8 15C7.44772 15 7 14.5523 7 14V8ZM12 7C11.4477 7 11 7.44772 11 8V14C11 14.5523 11.4477 15 12 15C12.5523 15 13 14.5523 13 14V8C13 7.44772 12.5523 7 12 7Z" />
                 </svg>
               </div>

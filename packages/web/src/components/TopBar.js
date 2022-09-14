@@ -134,7 +134,7 @@ class TopBar extends React.PureComponent {
       topBarStyleClasses += ' fixed inset-x-0 top-0 z-30';
       if (height === headerHeight) {
         topBarStyleClasses += ' border-b border-gray-200';
-        if (doSupportTheme) topBarStyleClasses += ' blk:border-gray-600';
+        if (doSupportTheme) topBarStyleClasses += ' blk:border-gray-700';
       }
     } else {
       const { headerHeight } = getTopBarSizes(safeAreaWidth);
@@ -167,6 +167,7 @@ TopBar.propTypes = {
 
 TopBar.defaultProps = {
   isListNameShown: false,
+  doSupportTheme: false,
 };
 
 const mapStateToProps = (state, props) => {

@@ -84,7 +84,7 @@ class BottomBarAddPopup extends React.PureComponent {
           {msg !== '' && <p className={tailwind('pt-3 text-sm text-red-500')}>{msg}</p>}
           <div className={tailwind(`${msg !== '' ? 'pt-3' : 'pt-5'}`)}>
             <button onClick={this.onAddOkBtnClick} style={{ paddingTop: '0.4375rem', paddingBottom: '0.4375rem' }} className={tailwind('rounded-full bg-gray-800 px-4 text-sm font-medium text-gray-50 hover:bg-gray-900 focus:outline-none focus:ring blk:bg-gray-100 blk:text-gray-800 blk:hover:bg-white')}>{isAskingConfirm ? 'Sure' : 'Save'}</button>
-            <button onClick={this.onAddCancelBtnClick} className={tailwind('ml-2 rounded-md px-2.5 py-1.5 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700')}>Cancel</button>
+            <button onClick={this.onAddCancelBtnClick} className={tailwind('ml-2 rounded-md px-2.5 py-1.5 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring focus:ring-inset blk:text-gray-300 blk:hover:bg-gray-700')}>Cancel</button>
           </div>
         </div>
       </React.Fragment>

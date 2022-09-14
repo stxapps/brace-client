@@ -90,12 +90,12 @@ class CardItemSelector extends React.Component {
       <AnimatePresence key={`AnimatePresence_CardItemSelector_${linkId}`} />
     );
 
-    const circleStyleClasses = isSelected ? 'bg-gray-800 blk:border blk:border-gray-700' : 'bg-white opacity-50';
-    const svgStyleClasses = isSelected ? 'text-gray-50' : 'text-gray-400';
+    const circleStyleClasses = isSelected ? 'bg-gray-800 blk:border blk:border-gray-700' : 'bg-white opacity-70';
+    const svgStyleClasses = isSelected ? 'text-gray-50' : 'text-gray-500';
 
     return (
       <AnimatePresence key={`AnimatePresence_CardItemSelector_${linkId}`}>
-        <motion.div key={`CardItemSelector_shade_${linkId}`} className={tailwind('absolute inset-0 bg-black bg-opacity-20')} variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
+        <motion.div key={`CardItemSelector_shade_${linkId}`} className={tailwind('absolute inset-0 bg-black bg-opacity-40')} variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
         <motion.button key={`CardItemSelector_selectBtn_${linkId}`} onClick={this.onSelectBtnClick} className={tailwind('group absolute inset-0 flex h-full w-full items-center justify-center bg-transparent focus:outline-none')} variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
           <div className={tailwind('rounded-full group-hover:ring group-focus:ring')}>
             <div className={tailwind(`flex h-32 w-32 items-center justify-center rounded-full ${circleStyleClasses}`)}>
