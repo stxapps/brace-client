@@ -162,7 +162,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
       actionPanel = (
         <View style={tailwind('mt-6 mb-4')}>
           <View style={tailwind('flex-row items-center')}>
-            <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156 163 175)' : 'rgb(107, 114, 128)'} />
+            <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} />
             <Text style={tailwind('ml-1 text-base font-normal text-gray-500 blk:text-gray-400')}>Deleting...</Text>
           </View>
           <Text style={tailwind('text-base font-normal text-gray-500 blk:text-gray-400')}>{deleteAllDataProgress.done} / {deleteAllDataProgress.total}</Text>

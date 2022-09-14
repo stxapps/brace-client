@@ -292,7 +292,7 @@ const _ListNameEditor = (props) => {
   if (isBusy) {
     expandBtn = (
       <View style={tailwind('h-10 w-8 flex-shrink-0 flex-grow-0 flex-row items-center justify-start')}>
-        <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156 163 175)' : 'rgb(107, 114, 128)'} />
+        <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} />
       </View>
     );
   } else {

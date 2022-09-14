@@ -108,7 +108,7 @@ const IapHome = (props) => {
 
   let publicKeyText = (
     <View style={tailwind('flex-shrink flex-grow pt-1 sm:pl-3')}>
-      <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156 163 175)' : 'rgb(107, 114, 128)'} />
+      <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} />
     </View>
   );
   if (publicKey) {
@@ -137,7 +137,7 @@ const IapHome = (props) => {
     } else if (purchaseStatus === REQUEST_PURCHASE) {
       actionPanel = (
         <View style={tailwind('mt-6 flex-row items-start justify-start border border-transparent py-1')}>
-          <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156 163 175)' : 'rgb(107, 114, 128)'} />
+          <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} />
           <Text style={tailwind('ml-1 text-base font-normal text-gray-500 blk:text-gray-400')}>Subscribing...</Text>
         </View>
       );
@@ -239,7 +239,7 @@ const IapHome = (props) => {
     } else {
       actionPanel = (
         <View style={tailwind('mt-6 flex-row items-start justify-start border border-transparent py-1')}>
-          <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156 163 175)' : 'rgb(107, 114, 128)'} />
+          <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} />
           <Text style={tailwind('ml-1 text-base font-normal text-gray-500 blk:text-gray-400')}>Loading...</Text>
         </View>
       );
@@ -315,7 +315,7 @@ const IapPurchased = (props) => {
 
   let publicKeyText = (
     <View style={tailwind('flex-shrink flex-grow pt-1 sm:pl-3')}>
-      <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156 163 175)' : 'rgb(107, 114, 128)'} />
+      <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} />
     </View>
   );
   if (publicKey) {
@@ -405,7 +405,7 @@ const IapPurchased = (props) => {
     refreshPanel = (
       <View style={tailwind('mt-6')}>
         <View style={tailwind('flex-row items-center')}>
-          <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156 163 175)' : 'rgb(107, 114, 128)'} />
+          <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} />
           <Text style={tailwind('ml-1 text-base font-normal text-gray-500 blk:text-gray-400')}>Refresh...</Text>
         </View>
       </View>
@@ -513,7 +513,7 @@ const _SettingsPopupIapRestore = (props) => {
     actionPanel = (
       <View style={tailwind('mt-7 mb-4')}>
         <View style={tailwind('flex-row items-center')}>
-          <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156 163 175)' : 'rgb(107, 114, 128)'} />
+          <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} />
           <Text style={tailwind('ml-1 text-base font-normal text-gray-500 blk:text-gray-400')}>Restoring...</Text>
         </View>
       </View>
@@ -521,7 +521,7 @@ const _SettingsPopupIapRestore = (props) => {
   } else if (restoreStatus === VALID) {
     let publicKeyText = (
       <View style={tailwind('flex-shrink flex-grow pt-1 sm:pl-3')}>
-        <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156 163 175)' : 'rgb(107, 114, 128)'} />
+        <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} />
       </View>
     );
     if (publicKey) {
