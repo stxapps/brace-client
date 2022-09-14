@@ -90,7 +90,7 @@ class Main extends React.PureComponent {
           <CardPanel columnWidth={columnWidth} scrollYEvent={this.scrollYEvent} />
         }
         {columnWidth === PC_100 && <BottomBar />}
-        <TopBar rightPane={topBarRightPane} isListNameShown={true} scrollY={this.scrollY} />
+        <TopBar rightPane={topBarRightPane} isListNameShown={true} doSupportTheme={true} scrollY={this.scrollY} />
         <FetchedPopup />
         <PinMenuPopup />
         <SettingsPopup />

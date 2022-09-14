@@ -6,9 +6,8 @@ import { Flow } from 'react-native-animated-spinkit';
 
 import { fetchMore, updateFetchedMore } from '../actions';
 import {
-  PC_100, PC_50, PC_33,
-  TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
-  MD_WIDTH,
+  PC_100, PC_50, PC_33, TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT,
+  SEARCH_POPUP_HEIGHT, MD_WIDTH,
 } from '../types/const';
 import { getLinks, getIsFetchingMore, getThemeMode } from '../selectors';
 import { toPx, multiplyPercent } from '../utils';
@@ -89,8 +88,8 @@ class CardPanel extends React.PureComponent {
 
     return (
       <TouchableOpacity onPress={this.onFetchMoreBtnClick} style={tailwind('my-4 w-full flex-row justify-center py-2')}>
-        <View style={tailwind('rounded-full border border-gray-400 bg-white px-3 py-1')}>
-          <Text style={tailwind('text-sm font-normal text-gray-500')}>More</Text>
+        <View style={tailwind('rounded-full border border-gray-400 bg-white px-3 py-1 blk:border-gray-400 blk:bg-gray-900')}>
+          <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-300')}>More</Text>
         </View>
       </TouchableOpacity>
     );
@@ -111,8 +110,8 @@ class CardPanel extends React.PureComponent {
 
     return (
       <TouchableOpacity onPress={this.onUpdateFetchedBtnClick} style={tailwind('my-4 w-full flex-row justify-center py-2')}>
-        <View style={tailwind('rounded-full border border-gray-400 bg-white px-3 py-1')}>
-          <Text style={tailwind('text-sm font-normal text-gray-500')}>Show more</Text>
+        <View style={tailwind('rounded-full border border-gray-400 bg-white px-3 py-1 blk:border-gray-400 blk:bg-gray-900')}>
+          <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-300')}>Show more</Text>
         </View>
       </TouchableOpacity>
     );
@@ -163,7 +162,7 @@ class CardPanel extends React.PureComponent {
       // There is a bug if removeClippedSubviews is true
       //   as on the doc page, it's said use at your own risk.
       <FlatList
-        style={cache('CP_flatListColumn', { width }, safeAreaWidth)}
+        style={cache('CP_flatListColumn', { width }, [safeAreaWidth])}
         data={item.data}
         keyExtractor={this.getItemId}
         renderItem={this.renderItem}
@@ -180,7 +179,7 @@ class CardPanel extends React.PureComponent {
       let pt = safeAreaWidth < MD_WIDTH ? toPx(TOP_BAR_HEIGHT) : toPx(TOP_BAR_HEIGHT_MD);
       pt += safeAreaWidth < MD_WIDTH ? toPx('1.5rem') : toPx('2.5rem');
       return (
-        <View style={cache('CP_panelHead', { paddingTop: pt }, safeAreaWidth)} />
+        <View style={cache('CP_panelHead', { paddingTop: pt }, [safeAreaWidth])} />
       );
     }
 

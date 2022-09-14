@@ -46,7 +46,7 @@ class BottomBar extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 z-30 border-t border-gray-200 bg-white'), style]}>
+        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 z-30 border-t border-gray-200 bg-white blk:border-gray-700 blk:bg-gray-800'), style]}>
           {isBulkEditing ? <BottomBarBulkEditCommands /> : <BottomBarCommands />}
         </Animated.View>
         <BottomBarAddPopup />

@@ -31,6 +31,10 @@ module.exports = {
         '41': '41',
         '51': '51',
       },
+      lineHeight: {
+        '5.5': '1.375rem',
+        '6.5': '1.625rem',
+      },
     },
   },
   variants: {

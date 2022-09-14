@@ -129,19 +129,19 @@ const PinMenuPopup = () => {
   const buttons = (
     <React.Fragment>
       <View style={tailwind('h-11 flex-row items-center justify-start pl-4 pr-4 pt-1')}>
-        <Text style={tailwind('text-left text-sm font-semibold text-gray-600')} numberOfLines={1} ellipsizeMode="tail">Manage pin</Text>
+        <Text style={tailwind('text-left text-sm font-semibold text-gray-600 blk:text-gray-200')} numberOfLines={1} ellipsizeMode="tail">Manage pin</Text>
       </View>
       {menu.map(text => {
         return (
           <TouchableOpacity key={text} onPress={() => onMenuPopupClick(text)} style={tailwind('w-full py-2.5 pl-4 pr-4')}>
-            <Text style={tailwind('text-left text-sm font-normal text-gray-700')} numberOfLines={1} ellipsizeMode="tail">{text}</Text>
+            <Text style={tailwind('text-left text-sm font-normal text-gray-700 blk:text-gray-200')} numberOfLines={1} ellipsizeMode="tail">{text}</Text>
           </TouchableOpacity>
         );
       })}
     </React.Fragment>
   );
 
-  let popupClassNames = 'absolute min-w-32 max-w-64 rounded-lg border border-gray-100 bg-white pb-1 shadow-xl';
+  let popupClassNames = 'absolute min-w-32 max-w-64 rounded-lg border border-gray-100 bg-white pb-1 shadow-xl blk:border-gray-700 blk:bg-gray-800';
   let panel;
   let bgStyle = { opacity: 0 };
   if (popupSize) {

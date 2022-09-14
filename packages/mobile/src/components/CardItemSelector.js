@@ -89,6 +89,7 @@ class CardItemSelector extends React.Component {
     if (
       this.props.isBulkEditing !== nextProps.isBulkEditing ||
       this.props.isSelected !== nextProps.isSelected ||
+      this.props.tailwind !== nextProps.tailwind ||
       this.state.didCloseAnimEnd !== nextState.didCloseAnimEnd ||
       this.state.isMaxErrorShown !== nextState.isMaxErrorShown ||
       this.state.didMaxErrorCloseAnimEnd !== nextState.didMaxErrorCloseAnimEnd
@@ -148,8 +149,8 @@ class CardItemSelector extends React.Component {
 
     const { isSelected, tailwind } = this.props;
 
-    const circleStyleClasses = isSelected ? 'bg-gray-800' : 'bg-white opacity-50';
-    const svgStyleClasses = isSelected ? 'text-gray-50' : 'text-gray-400';
+    const circleStyleClasses = isSelected ? 'bg-gray-800 blk:border blk:border-gray-700' : 'bg-white opacity-70';
+    const svgStyleClasses = isSelected ? 'text-gray-50' : 'text-gray-500';
 
     const circleStyle = {
       transform: [{
@@ -161,7 +162,7 @@ class CardItemSelector extends React.Component {
 
     return (
       <React.Fragment>
-        <View style={tailwind('absolute inset-0 rounded-lg bg-black bg-opacity-20')} />
+        <View style={tailwind('absolute inset-0 rounded-lg bg-black bg-opacity-40')} />
         <TouchableOpacity activeOpacity={1.0} onPress={this.onSelectBtnClick} style={tailwind('absolute inset-0 items-center justify-center bg-transparent')}>
           <Animated.View style={[tailwind(`h-32 w-32 items-center justify-center rounded-full ${circleStyleClasses}`), circleStyle]}>
             <Svg style={tailwind(`font-normal ${svgStyleClasses}`)} width={80} height={80} viewBox="0 0 20 20" fill="currentColor">

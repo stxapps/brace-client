@@ -39,6 +39,7 @@ class CardItemContent extends React.Component {
       this.props.link.status !== nextProps.link.status ||
       !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
       this.props.safeAreaWidth !== nextProps.safeAreaWidth ||
+      this.props.tailwind !== nextProps.tailwind ||
       this.state.extractedFaviconError !== nextState.extractedFaviconError
     ) {
       return true;
@@ -64,7 +65,7 @@ class CardItemContent extends React.Component {
     if (extractedResult && extractedResult.image) image = extractedResult.image;
 
     if (image) {
-      return <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full rounded-t-lg bg-white aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_image_${image}`, { uri: image }, image)} />;
+      return <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full rounded-t-lg bg-white aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
     }
 
     let fg = null;
@@ -81,9 +82,11 @@ class CardItemContent extends React.Component {
 
     // Only plain color background or plain color background with a letter
     if (decor.image.bg.type === COLOR) {
+      let blkClassNames = 'blk:border-b blk:border-gray-700';
+      if (decor.image.bg.value !== 'bg-gray-800') blkClassNames = '';
       return (
         <React.Fragment>
-          <View style={tailwind(`w-full items-center justify-center rounded-t-lg aspect-7/12 shadow-xs ${decor.image.bg.value}`)}>
+          <View style={tailwind(`w-full items-center justify-center rounded-t-lg aspect-7/12 shadow-xs ${decor.image.bg.value} ${blkClassNames}`)}>
             {fg}
           </View>
         </React.Fragment>
@@ -102,7 +105,7 @@ class CardItemContent extends React.Component {
 
     // Random image
     if (decor.image.bg.type === IMAGE) {
-      return <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full rounded-t-lg bg-white aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_decorImage_${decor.image.bg.value}`, { uri: prependDomainName(decor.image.bg.value) }, decor.image.bg.value)} />;
+      return <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full rounded-t-lg bg-white aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_decorImage_${decor.image.bg.value}`, { uri: prependDomainName(decor.image.bg.value) }, [decor.image.bg.value])} />;
     }
 
     throw new Error(`Invalid decor: ${JSON.stringify(decor)}`);
@@ -132,14 +135,14 @@ class CardItemContent extends React.Component {
     }
 
     if (favicon && !extractedFaviconError) {
-      return <GracefulImage key="favicon-graceful-image-extracted-result" style={tailwind('h-4 w-4 flex-shrink-0 flex-grow-0')} source={cache(`CI_favicon_${favicon}`, { uri: favicon }, favicon)} customPlaceholder={placeholder} onError={this.onExtractedFaviconError} />;
+      return <GracefulImage key="favicon-graceful-image-extracted-result" style={tailwind('h-4 w-4 flex-shrink-0 flex-grow-0')} source={cache(`CI_favicon_${favicon}`, { uri: favicon }, [favicon])} customPlaceholder={placeholder} onError={this.onExtractedFaviconError} />;
     }
 
     const { origin } = extractUrl(url);
     favicon = removeTailingSlash(origin) + '/favicon.ico';
     favicon = ensureContainUrlSecureProtocol(favicon);
 
-    return <GracefulImage key="favicon-graceful-image-ico" style={tailwind('h-4 w-4 flex-shrink-0 flex-grow-0')} source={cache(`CI_favicon_${favicon}`, { uri: favicon }, favicon)} customPlaceholder={placeholder} />;
+    return <GracefulImage key="favicon-graceful-image-ico" style={tailwind('h-4 w-4 flex-shrink-0 flex-grow-0')} source={cache(`CI_favicon_${favicon}`, { uri: favicon }, [favicon])} customPlaceholder={placeholder} />;
   }
 
   render() {
@@ -167,14 +170,14 @@ class CardItemContent extends React.Component {
             {this.renderFavicon()}
             <View style={tailwind('flex-shrink flex-grow')}>
               <TouchableOpacity onPress={() => Linking.openURL(origin)}>
-                <Text style={tailwind('pl-2 text-base font-normal text-gray-500')} numberOfLines={1} ellipsizeMode="tail">{host}</Text>
+                <Text style={tailwind('pl-2 text-base font-normal text-gray-500 blk:text-gray-300')} numberOfLines={1} ellipsizeMode="tail">{host}</Text>
               </TouchableOpacity>
             </View>
           </View>
           <CardItemMenuPopup link={link} />
         </View>
         <TouchableOpacity onPress={() => Linking.openURL(ensureContainUrlProtocol(url))}>
-          <Text style={tailwind(`mt-0 mb-3 ml-4 mr-3 text-base font-medium leading-6 text-gray-800 lg:mb-4 ${classNames}`)}>{title}</Text>
+          <Text style={tailwind(`mt-0 mb-3 ml-4 mr-3 text-base font-medium leading-6 text-gray-800 blk:text-gray-100 lg:mb-4 ${classNames}`)}>{title}</Text>
         </TouchableOpacity>
       </React.Fragment>
     );

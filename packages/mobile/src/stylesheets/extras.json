@@ -109,12 +109,6 @@
   "elevation-xs": {
     "elevation": 1
   },
-  "leading-5.5": {
-    "lineHeight": 22
-  },
-  "leading-6.5": {
-    "lineHeight": 26
-  },
   "w-auto": {
     "width": "auto"
   },

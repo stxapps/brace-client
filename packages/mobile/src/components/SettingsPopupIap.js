@@ -15,9 +15,9 @@ import {
 } from '../types/actionTypes';
 import {
   DOMAIN_NAME, HASH_TERMS, HASH_PRIVACY, HASH_SUPPORT, VALID, INVALID, UNKNOWN, ERROR,
-  ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, APPSTORE, PLAYSTORE, SM_WIDTH,
+  ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, APPSTORE, PLAYSTORE, SM_WIDTH, BLK_MODE,
 } from '../types/const';
-import { getValidProduct, getValidPurchase } from '../selectors';
+import { getValidProduct, getValidPurchase, getThemeMode } from '../selectors';
 import { getFormattedDate } from '../utils';
 
 import { useSafeAreaFrame, useTailwind } from '.';
@@ -30,11 +30,11 @@ const _SettingsPopupIap = (props) => {
 
   return (
     <View style={tailwind('p-4 md:p-6')}>
-      <View style={tailwind('border-b border-gray-200 md:hidden')}>
+      <View style={tailwind('border-b border-gray-200 blk:border-gray-700 md:hidden')}>
         <TouchableOpacity onPress={onSidebarOpenBtnClick} style={tailwind('pb-1')}>
-          <Text style={tailwind('text-sm font-normal text-gray-500')}>{'<'} <Text style={tailwind('text-sm font-normal text-gray-500')}>Settings</Text></Text>
+          <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>{'<'} <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>Settings</Text></Text>
         </TouchableOpacity>
-        <Text style={tailwind('pb-2 text-xl font-medium leading-6 text-gray-800')}>Subscription</Text>
+        <Text style={tailwind('pb-2 text-xl font-medium leading-6 text-gray-800 blk:text-gray-100')}>Subscription</Text>
       </View>
       {purchase ? <IapPurchased purchase={purchase} /> : <IapHome onToRestoreIapViewBtnClick={onToRestoreIapViewBtnClick} />}
     </View >
@@ -48,6 +48,7 @@ const IapHome = (props) => {
   const canMakePayments = useSelector(state => state.iap.canMakePayments);
   const product = useSelector(state => getValidProduct(state));
   const purchaseStatus = useSelector(state => state.iap.purchaseStatus);
+  const themeMode = useSelector(state => getThemeMode(state));
   const didClick = useRef(false);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
@@ -107,13 +108,13 @@ const IapHome = (props) => {
 
   let publicKeyText = (
     <View style={tailwind('flex-shrink flex-grow pt-1 sm:pl-3')}>
-      <Circle size={20} color="rgba(107, 114, 128, 1)" />
+      <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156 163 175)' : 'rgb(107, 114, 128)'} />
     </View>
   );
   if (publicKey) {
     publicKeyText = (
       <View style={tailwind('flex-shrink flex-grow pt-1 sm:pt-0 sm:pl-3')}>
-        <Text style={tailwind('text-base font-normal text-gray-500')}>{publicKey}</Text>
+        <Text style={tailwind('text-base font-normal text-gray-500 blk:text-gray-400')}>{publicKey}</Text>
       </View>
     );
   }
@@ -128,16 +129,16 @@ const IapHome = (props) => {
 
       actionPanel = (
         <View style={tailwind('mt-6 items-start justify-start')}>
-          <TouchableOpacity onPress={onRequestBtnClick} style={tailwind('rounded-full border border-gray-400 bg-white px-3.5 py-1.5 shadow-sm')}>
-            <Text style={tailwind('text-sm font-normal text-gray-500')}>Subscribe for {product.localizedPrice} / year</Text>
+          <TouchableOpacity onPress={onRequestBtnClick} style={tailwind('rounded-full border border-gray-400 bg-white px-3.5 py-1.5 shadow-sm blk:border-gray-400 blk:bg-gray-900')}>
+            <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-300')}>Subscribe for {product.localizedPrice} / year</Text>
           </TouchableOpacity>
         </View>
       );
     } else if (purchaseStatus === REQUEST_PURCHASE) {
       actionPanel = (
         <View style={tailwind('mt-6 flex-row items-start justify-start border border-transparent py-1')}>
-          <Circle size={20} color="rgba(107, 114, 128, 1)" />
-          <Text style={tailwind('ml-1 text-base font-normal text-gray-500')}>Subscribing...</Text>
+          <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156 163 175)' : 'rgb(107, 114, 128)'} />
+          <Text style={tailwind('ml-1 text-base font-normal text-gray-500 blk:text-gray-400')}>Subscribing...</Text>
         </View>
       );
     } else if (purchaseStatus === INVALID) {
@@ -145,19 +146,19 @@ const IapHome = (props) => {
       actionPanel = (
         <View style={tailwind('mt-6')}>
           <View style={tailwind('flex-row items-center')}>
-            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
             </Svg>
-            <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600')}>Unable to verify the purchase</Text>
+            <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 blk:text-red-500')}>Unable to verify the purchase</Text>
           </View>
-          <Text style={tailwind('mt-6 text-base font-normal text-gray-500 leading-6.5')}>Please check with the App Store that the purchase has been processed successfully. If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal text-gray-500 underline leading-6.5')}>contact us</Text>
-            <Svg style={tailwind('mb-2 font-normal text-gray-500')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
+          <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Please check with the App Store that the purchase has been processed successfully. If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text>
+            <Svg style={tailwind('mb-2 font-normal text-gray-500 blk:text-gray-400')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
               <Path d="M11 3C10.4477 3 10 3.44772 10 4C10 4.55228 10.4477 5 11 5H13.5858L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L15 6.41421V9C15 9.55228 15.4477 10 16 10C16.5523 10 17 9.55228 17 9V4C17 3.44772 16.5523 3 16 3H11Z" />
               <Path d="M5 5C3.89543 5 3 5.89543 3 7V15C3 16.1046 3.89543 17 5 17H13C14.1046 17 15 16.1046 15 15V12C15 11.4477 14.5523 11 14 11C13.4477 11 13 11.4477 13 12V15H5V7H8C8.55228 7 9 6.55228 9 6C9 5.44772 8.55228 5 8 5H5Z" />
             </Svg> with your app public key below and order ID in your order confirmation email.
           </Text>
           <View style={tailwind('mt-6 sm:flex-row')}>
-            <Text style={tailwind('flex-shrink-0 flex-grow-0 text-base font-normal text-gray-500')}>App public key:</Text>
+            <Text style={tailwind('flex-shrink-0 flex-grow-0 text-base font-normal text-gray-500 blk:text-gray-400')}>App public key:</Text>
             {publicKeyText}
           </View>
         </View>
@@ -167,20 +168,20 @@ const IapHome = (props) => {
       actionPanel = (
         <View style={tailwind('mt-6')}>
           <View style={tailwind('flex-row items-center')}>
-            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
             </Svg>
-            <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600')}>Oops..., something went wrong!</Text>
+            <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 blk:text-red-500')}>Oops..., something went wrong!</Text>
           </View>
-          <Text style={tailwind('mt-6 text-base font-normal text-gray-500 leading-6.5')}>Please wait a moment and <Text onPress={onRetryVerifyPurchaseBtnClick} style={tailwind('text-base font-normal text-gray-500 underline leading-6.5')}>try again</Text>.</Text>
-          <Text style={tailwind('mt-6 text-base font-normal text-gray-500 leading-6.5')}>If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal text-gray-500 underline leading-6.5')}>contact us</Text>
-            <Svg style={tailwind('mb-2 font-normal text-gray-500')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
+          <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Please wait a moment and <Text onPress={onRetryVerifyPurchaseBtnClick} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>try again</Text>.</Text>
+          <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text>
+            <Svg style={tailwind('mb-2 font-normal text-gray-500 blk:text-gray-400')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
               <Path d="M11 3C10.4477 3 10 3.44772 10 4C10 4.55228 10.4477 5 11 5H13.5858L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L15 6.41421V9C15 9.55228 15.4477 10 16 10C16.5523 10 17 9.55228 17 9V4C17 3.44772 16.5523 3 16 3H11Z" />
               <Path d="M5 5C3.89543 5 3 5.89543 3 7V15C3 16.1046 3.89543 17 5 17H13C14.1046 17 15 16.1046 15 15V12C15 11.4477 14.5523 11 14 11C13.4477 11 13 11.4477 13 12V15H5V7H8C8.55228 7 9 6.55228 9 6C9 5.44772 8.55228 5 8 5H5Z" />
             </Svg> with your app public key below and order ID in your order confirmation email.
           </Text>
           <View style={tailwind('mt-6 sm:flex-row')}>
-            <Text style={tailwind('flex-shrink-0 flex-grow-0 text-base font-normal text-gray-500')}>App public key:</Text>
+            <Text style={tailwind('flex-shrink-0 flex-grow-0 text-base font-normal text-gray-500 blk:text-gray-400')}>App public key:</Text>
             {publicKeyText}
           </View>
         </View>
@@ -190,14 +191,14 @@ const IapHome = (props) => {
       actionPanel = (
         <View style={tailwind('mt-6')}>
           <View style={tailwind('flex-row items-center')}>
-            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
             </Svg>
-            <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600')}>Oops..., something went wrong!</Text>
+            <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 blk:text-red-500')}>Oops..., something went wrong!</Text>
           </View>
-          <Text style={tailwind('mt-6 text-base font-normal text-gray-500 leading-6.5')}>Please wait a moment and <Text onPress={onRetryRequestPurchaseBtnClick} style={tailwind('text-base font-normal text-gray-500 underline leading-6.5')}>try again</Text>.</Text>
-          <Text style={tailwind('mt-6 text-base font-normal text-gray-500 leading-6.5')}>If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal text-gray-500 underline leading-6.5')}>contact us</Text>
-            <Svg style={tailwind('mb-2 font-normal text-gray-500')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
+          <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Please wait a moment and <Text onPress={onRetryRequestPurchaseBtnClick} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>try again</Text>.</Text>
+          <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text>
+            <Svg style={tailwind('mb-2 font-normal text-gray-500 blk:text-gray-400')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
               <Path d="M11 3C10.4477 3 10 3.44772 10 4C10 4.55228 10.4477 5 11 5H13.5858L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L15 6.41421V9C15 9.55228 15.4477 10 16 10C16.5523 10 17 9.55228 17 9V4C17 3.44772 16.5523 3 16 3H11Z" />
               <Path d="M5 5C3.89543 5 3 5.89543 3 7V15C3 16.1046 3.89543 17 5 17H13C14.1046 17 15 16.1046 15 15V12C15 11.4477 14.5523 11 14 11C13.4477 11 13 11.4477 13 12V15H5V7H8C8.55228 7 9 6.55228 9 6C9 5.44772 8.55228 5 8 5H5Z" />
             </Svg>.
@@ -209,10 +210,10 @@ const IapHome = (props) => {
     actionPanel = (
       <View style={tailwind('mt-6')}>
         <View style={tailwind('flex-row items-center')}>
-          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-gray-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-gray-400 blk:text-gray-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 6C11 6.55228 10.5523 7 10 7C9.44772 7 9 6.55228 9 6C9 5.44772 9.44772 5 10 5C10.5523 5 11 5.44772 11 6ZM9 9C8.44772 9 8 9.44772 8 10C8 10.5523 8.44772 11 9 11V14C9 14.5523 9.44772 15 10 15H11C11.5523 15 12 14.5523 12 14C12 13.4477 11.5523 13 11 13V10C11 9.44772 10.5523 9 10 9H9Z" />
           </Svg>
-          <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-gray-500')}>Cannot subscribe with the current setup of the App Store</Text>
+          <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-gray-500 blk:text-gray-400')}>Cannot subscribe with the current setup of the App Store</Text>
         </View>
       </View>
     );
@@ -221,14 +222,14 @@ const IapHome = (props) => {
       actionPanel = (
         <View style={tailwind('mt-6')}>
           <View style={tailwind('flex-row items-center')}>
-            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
             </Svg>
-            <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600')}>Oops..., unable to connect to the App Store</Text>
+            <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 blk:text-red-500')}>Oops..., unable to connect to the App Store</Text>
           </View>
-          <Text style={tailwind('mt-6 text-base font-normal text-gray-500 leading-6.5')}>Please wait a moment and <Text onPress={onRetryGetProductsBtnClick} style={tailwind('text-base font-normal text-gray-500 underline leading-6.5')}>try again</Text>.</Text>
-          <Text style={tailwind('mt-6 text-base font-normal text-gray-500 leading-6.5')}>If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal text-gray-500 underline leading-6.5')}>contact us</Text>
-            <Svg style={tailwind('mb-2 font-normal text-gray-500')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
+          <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Please wait a moment and <Text onPress={onRetryGetProductsBtnClick} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>try again</Text>.</Text>
+          <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text>
+            <Svg style={tailwind('mb-2 font-normal text-gray-500 blk:text-gray-400')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
               <Path d="M11 3C10.4477 3 10 3.44772 10 4C10 4.55228 10.4477 5 11 5H13.5858L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L15 6.41421V9C15 9.55228 15.4477 10 16 10C16.5523 10 17 9.55228 17 9V4C17 3.44772 16.5523 3 16 3H11Z" />
               <Path d="M5 5C3.89543 5 3 5.89543 3 7V15C3 16.1046 3.89543 17 5 17H13C14.1046 17 15 16.1046 15 15V12C15 11.4477 14.5523 11 14 11C13.4477 11 13 11.4477 13 12V15H5V7H8C8.55228 7 9 6.55228 9 6C9 5.44772 8.55228 5 8 5H5Z" />
             </Svg>.
@@ -238,8 +239,8 @@ const IapHome = (props) => {
     } else {
       actionPanel = (
         <View style={tailwind('mt-6 flex-row items-start justify-start border border-transparent py-1')}>
-          <Circle size={20} color="rgba(107, 114, 128, 1)" />
-          <Text style={tailwind('ml-1 text-base font-normal text-gray-500')}>Loading...</Text>
+          <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156 163 175)' : 'rgb(107, 114, 128)'} />
+          <Text style={tailwind('ml-1 text-base font-normal text-gray-500 blk:text-gray-400')}>Loading...</Text>
         </View>
       );
     }
@@ -247,13 +248,13 @@ const IapHome = (props) => {
 
   return (
     <View style={tailwind('mt-6 mb-4 md:mt-0')}>
-      <Text style={tailwind('text-base font-medium leading-4 text-gray-800')}>Purchase subscription</Text>
-      <Text style={tailwind('mt-4 text-base font-normal text-gray-500 leading-6.5')}>Brace.to is free and we offer a paid subscription for use of extra feature(s). It's our intention to never show advertisments and we don't rent, sell or share your information with other companies. Our optional paid subscription is the only way we make money.</Text>
-      <Text style={tailwind('mt-4 text-base font-normal text-gray-500 leading-6.5')}>Support us and unlock extra feature: pin to the top.</Text>
-      <Text style={tailwind('mt-4 text-base font-normal text-gray-500 leading-6.5')}>Start with a 14 day free trial.</Text>
+      <Text style={tailwind('text-base font-medium leading-4 text-gray-800 blk:text-gray-100')}>Purchase subscription</Text>
+      <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Brace.to is free and we offer a paid subscription for use of extra feature(s). It's our intention to never show advertisments and we don't rent, sell or share your information with other companies. Our optional paid subscription is the only way we make money.</Text>
+      <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Support us and unlock extra feature: pin to the top.</Text>
+      <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Start with a 14 day free trial.</Text>
       {actionPanel}
-      <Text style={tailwind('mt-6 text-sm font-normal text-gray-400 leading-6.5')}>By subscribing, you agree to our <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_TERMS)} style={tailwind('text-sm font-normal text-gray-500 underline leading-6.5')}>Terms of Service</Text> and <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-sm font-normal text-gray-500 underline leading-6.5')}>Privacy Policy</Text>. Only one free trial per user, the App Store Terms and Conditions apply.</Text>
-      <Text style={tailwind('mt-4 text-base font-normal text-gray-500 leading-6.5')}>If you've already purchased the subscription, try <Text onPress={onToRestoreIapViewBtnClick} style={tailwind('text-base font-normal text-gray-500 underline leading-6.5')}>Restore purchases</Text></Text>
+      <Text style={tailwind('mt-6 text-sm font-normal leading-6.5 text-gray-400 blk:text-gray-500')}>By subscribing, you agree to our <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_TERMS)} style={tailwind('text-sm font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Terms of Service</Text> and <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-sm font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Privacy Policy</Text>. Only one free trial per user, the App Store Terms and Conditions apply.</Text>
+      <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>If you've already purchased the subscription, try <Text onPress={onToRestoreIapViewBtnClick} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Restore purchases</Text></Text>
     </View>
   );
 };
@@ -263,6 +264,7 @@ const IapPurchased = (props) => {
   const { purchase } = props;
   const publicKey = useSelector(state => state.iap.publicKey);
   const refreshStatus = useSelector(state => state.iap.refreshStatus);
+  const themeMode = useSelector(state => getThemeMode(state));
   const didClick = useRef(false);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
@@ -299,27 +301,27 @@ const IapPurchased = (props) => {
   }, []);
 
   let appStoreLink = (
-    <Text style={tailwind('text-base font-normal text-gray-500 underline leading-6.5')}>N/A</Text>
+    <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>N/A</Text>
   );
   if (purchase.source === APPSTORE) {
     appStoreLink = (
-      <Text onPress={() => Linking.openURL('https://apps.apple.com/account/subscriptions')} style={tailwind('text-base font-normal text-gray-500 underline leading-6.5')}>App Store</Text>
+      <Text onPress={() => Linking.openURL('https://apps.apple.com/account/subscriptions')} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>App Store</Text>
     );
   } else if (purchase.source === PLAYSTORE) {
     appStoreLink = (
-      <Text onPress={() => Linking.openURL('https://play.google.com/store/account/subscriptions?sku=com.bracedotto.supporter&package=com.bracedotto')} style={tailwind('text-base font-normal text-gray-500 underline leading-6.5')}>Google Play</Text>
+      <Text onPress={() => Linking.openURL('https://play.google.com/store/account/subscriptions?sku=com.bracedotto.supporter&package=com.bracedotto')} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Google Play</Text>
     );
   }
 
   let publicKeyText = (
     <View style={tailwind('flex-shrink flex-grow pt-1 sm:pl-3')}>
-      <Circle size={20} color="rgb(107, 114, 128)" />
+      <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156 163 175)' : 'rgb(107, 114, 128)'} />
     </View>
   );
   if (publicKey) {
     publicKeyText = (
       <View style={tailwind('flex-shrink flex-grow pt-1 sm:pt-0 sm:pl-3')}>
-        <Text style={tailwind('text-base font-normal text-gray-500')}>{publicKey}</Text>
+        <Text style={tailwind('text-base font-normal text-gray-500 blk:text-gray-400')}>{publicKey}</Text>
       </View>
     );
   }
@@ -329,31 +331,31 @@ const IapPurchased = (props) => {
     infoText = (
       <React.Fragment>
         <View style={tailwind('mt-4')}>
-          <Text style={tailwind('text-base font-normal text-gray-500 leading-6.5')}>     <Text style={tailwind('text-base font-normal text-green-600 leading-6.5')}>Thank you very much for supporting us.</Text> You've unlocked extra feature: pin to the top.</Text>
+          <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>     <Text style={tailwind('text-base font-normal leading-6.5 text-green-600 blk:text-green-500')}>Thank you very much for supporting us.</Text> You've unlocked extra feature: pin to the top.</Text>
           <View style={[tailwind('absolute'), { top: 3, left: 0 }]}>
-            <Svg style={tailwind('font-normal text-green-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('font-normal text-green-500 blk:text-green-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.7071 8.70711C14.0976 8.31658 14.0976 7.68342 13.7071 7.29289C13.3166 6.90237 12.6834 6.90237 12.2929 7.29289L9 10.5858L7.70711 9.29289C7.31658 8.90237 6.68342 8.90237 6.29289 9.29289C5.90237 9.68342 5.90237 10.3166 6.29289 10.7071L8.29289 12.7071C8.68342 13.0976 9.31658 13.0976 9.70711 12.7071L13.7071 8.70711Z" />
             </Svg>
           </View>
         </View>
-        <Text style={tailwind('mt-4 text-base font-normal text-gray-500 leading-6.5')}>Your subscription will be expired on {getFormattedDate(new Date(purchase.expiryDate))} and it'll be automatically renewed. You can manage your subscription at {appStoreLink}.</Text>
+        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Your subscription will be expired on {getFormattedDate(new Date(purchase.expiryDate))} and it'll be automatically renewed. You can manage your subscription at {appStoreLink}.</Text>
       </React.Fragment>
     );
   } else if (purchase.status === NO_RENEW) {
     infoText = (
       <React.Fragment>
-        <Text style={tailwind('mt-4 text-base font-normal text-gray-500 leading-6.5')}>Thank you very much for supporting us. You've unlocked extra feature: pin to the top.</Text>
-        <Text style={tailwind('mt-4 text-base font-normal text-gray-500 leading-6.5')}>Your subscription will be expired on {getFormattedDate(new Date(purchase.expiryDate))} and it won't be automatically renewed. If you want to enable automatically renewal, please go to {appStoreLink} to manage your subscription.</Text>
+        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra feature: pin to the top.</Text>
+        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Your subscription will be expired on {getFormattedDate(new Date(purchase.expiryDate))} and it won't be automatically renewed. If you want to enable automatically renewal, please go to {appStoreLink} to manage your subscription.</Text>
       </React.Fragment>
     );
   } else if (purchase.status === GRACE) {
     infoText = (
       <React.Fragment>
-        <Text style={tailwind('mt-4 text-base font-normal text-gray-500 leading-6.5')}>Thank you very much for supporting us. You've unlocked extra feature: pin to the top.</Text>
+        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra feature: pin to the top.</Text>
         <View style={tailwind('mt-4')}>
-          <Text style={tailwind('text-base font-normal text-gray-500 leading-6.5')}>     <Text style={tailwind('text-base font-normal text-red-600 leading-6.5')}>Your subscription has been expired</Text> and you won't be able to use extra feature(s) soon. Please go to {appStoreLink} now to renew your subscription to continue supporting us and using extra feature(s).</Text>
+          <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>     <Text style={tailwind('text-base font-normal leading-6.5 text-red-600 blk:text-red-600')}>Your subscription has been expired</Text> and you won't be able to use extra feature(s) soon. Please go to {appStoreLink} now to renew your subscription to continue supporting us and using extra feature(s).</Text>
           <View style={[tailwind('absolute'), { top: 3, left: 0 }]}>
-            <Svg style={tailwind('font-normal text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
             </Svg>
           </View>
@@ -363,12 +365,12 @@ const IapPurchased = (props) => {
   } else if (purchase.status === ON_HOLD) {
     infoText = (
       <React.Fragment>
-        <Text style={tailwind('mt-4 text-base font-normal text-gray-500 leading-6.5')}>Thank you very much for supporting us.</Text>
+        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us.</Text>
         <View style={tailwind('mt-4')}>
-          <Text style={tailwind('text-base font-normal text-gray-500 leading-6.5')}>     <Text style={tailwind('text-base font-normal text-red-600 leading-6.5')}>Your subscription has been expired.</Text> Please go to {appStoreLink} now to renew your subscription to continue supporting us and using extra feature(s).
+          <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>     <Text style={tailwind('text-base font-normal leading-6.5 text-red-600 blk:text-red-500')}>Your subscription has been expired.</Text> Please go to {appStoreLink} now to renew your subscription to continue supporting us and using extra feature(s).
           </Text>
           <View style={[tailwind('absolute'), { top: 3, left: 0 }]}>
-            <Svg style={tailwind('font-normal text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
             </Svg>
           </View>
@@ -378,18 +380,18 @@ const IapPurchased = (props) => {
   } else if (purchase.status === PAUSED) {
     infoText = (
       <React.Fragment>
-        <Text style={tailwind('mt-4 text-base font-normal text-gray-500 leading-6.5')}>Thank you very much for supporting us.</Text>
-        <Text style={tailwind('mt-4 text-base font-normal text-gray-500 leading-6.5')}>Your subscription is paused. If you want to resume, please go to {appStoreLink} to manage your subscription.</Text>
+        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us.</Text>
+        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Your subscription is paused. If you want to resume, please go to {appStoreLink} to manage your subscription.</Text>
       </React.Fragment>
     );
   } else {
     infoText = (
       <React.Fragment>
         <View style={tailwind('mt-6 flex-row items-center')}>
-          <Svg style={tailwind('mt-0.5 flex-shrink-0 flex-grow-0 font-normal text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+          <Svg style={tailwind('mt-0.5 flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
           </Svg>
-          <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 leading-6.5')}>We cannot determine your subscription's status.</Text>
+          <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal leading-6.5 text-red-600 blk:text-red-500')}>We cannot determine your subscription's status.</Text>
         </View>
       </React.Fragment>
     );
@@ -397,14 +399,14 @@ const IapPurchased = (props) => {
   }
 
   let refreshPanel = (
-    <Text style={tailwind('mt-6 text-base font-normal text-gray-500 leading-6.5')}>{isUnknown ? 'Please wait a moment and try' : 'If your subscription is not up to date, try'} <Text onPress={onRefreshBtnClick} style={tailwind('text-base font-normal text-gray-500 underline leading-6.5')}>Refresh purchases</Text>.</Text>
+    <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>{isUnknown ? 'Please wait a moment and try' : 'If your subscription is not up to date, try'} <Text onPress={onRefreshBtnClick} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Refresh purchases</Text>.</Text>
   );
   if (refreshStatus === REFRESH_PURCHASES) {
     refreshPanel = (
       <View style={tailwind('mt-6')}>
         <View style={tailwind('flex-row items-center')}>
-          <Circle size={20} color="rgb(107, 114, 128)" />
-          <Text style={tailwind('ml-1 text-base font-normal text-gray-500')}>Refresh...</Text>
+          <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156 163 175)' : 'rgb(107, 114, 128)'} />
+          <Text style={tailwind('ml-1 text-base font-normal text-gray-500 blk:text-gray-400')}>Refresh...</Text>
         </View>
       </View>
     );
@@ -412,10 +414,10 @@ const IapPurchased = (props) => {
     refreshPanel = (
       <View style={tailwind('mt-6')}>
         <View style={tailwind('flex-row items-center')}>
-          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-green-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-green-500 blk:text-green-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.7071 8.70711C14.0976 8.31658 14.0976 7.68342 13.7071 7.29289C13.3166 6.90237 12.6834 6.90237 12.2929 7.29289L9 10.5858L7.70711 9.29289C7.31658 8.90237 6.68342 8.90237 6.29289 9.29289C5.90237 9.68342 5.90237 10.3166 6.29289 10.7071L8.29289 12.7071C8.68342 13.0976 9.31658 13.0976 9.70711 12.7071L13.7071 8.70711Z" />
           </Svg>
-          <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-gray-500')}>Your subscription is up to date.</Text>
+          <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-gray-500 blk:text-gray-400')}>Your subscription is up to date.</Text>
         </View>
       </View>
     );
@@ -423,10 +425,10 @@ const IapPurchased = (props) => {
     refreshPanel = (
       <View style={tailwind('mt-6')}>
         <View style={tailwind('flex-row items-center')}>
-          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
           </Svg>
-          <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600')}>Oops..., something went wrong!</Text>
+          <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 blk:text-red-500')}>Oops..., something went wrong!</Text>
         </View>
       </View>
     );
@@ -434,17 +436,17 @@ const IapPurchased = (props) => {
 
   return (
     <View style={tailwind('mt-6 mb-4 md:mt-0')}>
-      <Text style={tailwind('text-base font-medium leading-4 text-gray-800')}>Your subscription</Text>
+      <Text style={tailwind('text-base font-medium leading-4 text-gray-800 blk:text-gray-100')}>Your subscription</Text>
       {infoText}
       {refreshPanel}
-      <Text style={tailwind('mt-6 text-base font-normal text-gray-500 leading-6.5')}>{isUnknown ? 'If the problem persists' : 'If you have any question'}, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal text-gray-500 underline leading-6.5')}>contact us</Text>
-        <Svg style={tailwind('mb-2 font-normal text-gray-500')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
+      <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>{isUnknown ? 'If the problem persists' : 'If you have any question'}, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text>
+        <Svg style={tailwind('mb-2 font-normal text-gray-500 blk:text-gray-400')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
           <Path d="M11 3C10.4477 3 10 3.44772 10 4C10 4.55228 10.4477 5 11 5H13.5858L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L15 6.41421V9C15 9.55228 15.4477 10 16 10C16.5523 10 17 9.55228 17 9V4C17 3.44772 16.5523 3 16 3H11Z" />
           <Path d="M5 5C3.89543 5 3 5.89543 3 7V15C3 16.1046 3.89543 17 5 17H13C14.1046 17 15 16.1046 15 15V12C15 11.4477 14.5523 11 14 11C13.4477 11 13 11.4477 13 12V15H5V7H8C8.55228 7 9 6.55228 9 6C9 5.44772 8.55228 5 8 5H5Z" />
         </Svg> with your app public key below and order ID in your order confirmation email.
       </Text>
       <View style={tailwind('mt-6 sm:flex-row')}>
-        <Text style={tailwind('flex-shrink-0 flex-grow-0 text-base font-normal text-gray-500')}>App public key:</Text>
+        <Text style={tailwind('flex-shrink-0 flex-grow-0 text-base font-normal text-gray-500 blk:text-gray-400')}>App public key:</Text>
         {publicKeyText}
       </View>
     </View>
@@ -458,6 +460,7 @@ const _SettingsPopupIapRestore = (props) => {
   const purchase = useSelector(state => getValidPurchase(state));
   const publicKey = useSelector(state => state.iap.publicKey);
   const restoreStatus = useSelector(state => state.iap.restoreStatus);
+  const themeMode = useSelector(state => getThemeMode(state));
   const didClick = useRef(false);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
@@ -501,8 +504,8 @@ const _SettingsPopupIapRestore = (props) => {
   if (restoreStatus === null) {
     actionPanel = (
       <View style={tailwind('mt-7 mb-4 items-start justify-start')}>
-        <TouchableOpacity onPress={onRestoreBtnClick} style={tailwind('rounded-full border border-gray-400 bg-white px-3.5 py-1.5 shadow-sm')}>
-          <Text style={tailwind('text-sm font-normal text-gray-500')}>Restore my purchases</Text>
+        <TouchableOpacity onPress={onRestoreBtnClick} style={tailwind('rounded-full border border-gray-400 bg-white px-3.5 py-1.5 shadow-sm blk:border-gray-400 blk:bg-gray-900')}>
+          <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-300')}>Restore my purchases</Text>
         </TouchableOpacity>
       </View>
     );
@@ -510,21 +513,21 @@ const _SettingsPopupIapRestore = (props) => {
     actionPanel = (
       <View style={tailwind('mt-7 mb-4')}>
         <View style={tailwind('flex-row items-center')}>
-          <Circle size={20} color="rgba(107, 114, 128, 1)" />
-          <Text style={tailwind('ml-1 text-base font-normal text-gray-500')}>Restoring...</Text>
+          <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156 163 175)' : 'rgb(107, 114, 128)'} />
+          <Text style={tailwind('ml-1 text-base font-normal text-gray-500 blk:text-gray-400')}>Restoring...</Text>
         </View>
       </View>
     );
   } else if (restoreStatus === VALID) {
     let publicKeyText = (
       <View style={tailwind('flex-shrink flex-grow pt-1 sm:pl-3')}>
-        <Circle size={20} color="rgba(107, 114, 128, 1)" />
+        <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156 163 175)' : 'rgb(107, 114, 128)'} />
       </View>
     );
     if (publicKey) {
       publicKeyText = (
         <View style={tailwind('flex-shrink flex-grow pt-1 sm:pt-0 sm:pl-3')}>
-          <Text style={tailwind('text-base font-normal text-gray-500')}>{publicKey}</Text>
+          <Text style={tailwind('text-base font-normal text-gray-500 blk:text-gray-400')}>{publicKey}</Text>
         </View>
       );
     }
@@ -532,19 +535,19 @@ const _SettingsPopupIapRestore = (props) => {
     actionPanel = (
       <View style={tailwind('mt-6 mb-4')}>
         <View style={tailwind('flex-row items-center')}>
-          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-gray-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-gray-400 blk:text-gray-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 6C11 6.55228 10.5523 7 10 7C9.44772 7 9 6.55228 9 6C9 5.44772 9.44772 5 10 5C10.5523 5 11 5.44772 11 6ZM9 9C8.44772 9 8 9.44772 8 10C8 10.5523 8.44772 11 9 11V14C9 14.5523 9.44772 15 10 15H11C11.5523 15 12 14.5523 12 14C12 13.4477 11.5523 13 11 13V10C11 9.44772 10.5523 9 10 9H9Z" />
           </Svg>
-          <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-gray-500')}>No purchase found.</Text>
+          <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-gray-500 blk:text-gray-400')}>No purchase found.</Text>
         </View>
-        <Text style={tailwind('mt-6 text-base font-normal text-gray-500 leading-6.5')}>If there should be a purchase, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal text-gray-500 underline leading-6.5')}>contact us</Text>
-          <Svg style={tailwind('mb-2 font-normal text-gray-500')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
+        <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>If there should be a purchase, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text>
+          <Svg style={tailwind('mb-2 font-normal text-gray-500 blk:text-gray-400')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
             <Path d="M11 3C10.4477 3 10 3.44772 10 4C10 4.55228 10.4477 5 11 5H13.5858L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L15 6.41421V9C15 9.55228 15.4477 10 16 10C16.5523 10 17 9.55228 17 9V4C17 3.44772 16.5523 3 16 3H11Z" />
             <Path d="M5 5C3.89543 5 3 5.89543 3 7V15C3 16.1046 3.89543 17 5 17H13C14.1046 17 15 16.1046 15 15V12C15 11.4477 14.5523 11 14 11C13.4477 11 13 11.4477 13 12V15H5V7H8C8.55228 7 9 6.55228 9 6C9 5.44772 8.55228 5 8 5H5Z" />
           </Svg> with your app public key below and order ID in your order confirmation email.
         </Text>
         <View style={tailwind('mt-6 mb-4 sm:flex-row')}>
-          <Text style={tailwind('flex-shrink-0 flex-grow-0 text-base font-normal text-gray-500')}>App public key:</Text>
+          <Text style={tailwind('flex-shrink-0 flex-grow-0 text-base font-normal text-gray-500 blk:text-gray-400')}>App public key:</Text>
           {publicKeyText}
         </View>
       </View>
@@ -553,13 +556,13 @@ const _SettingsPopupIapRestore = (props) => {
     actionPanel = (
       <View style={tailwind('mt-6 mb-4')}>
         <View style={tailwind('flex-row items-center')}>
-          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
           </Svg>
-          <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600')}>Oops..., something went wrong!</Text>
+          <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 blk:text-red-500')}>Oops..., something went wrong!</Text>
         </View>
-        <Text style={tailwind('mt-6 text-base font-normal text-gray-500 leading-6.5')}>Please wait a moment and try again. If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal text-gray-500 underline leading-6.5')}>contact us</Text>
-          <Svg style={tailwind('mb-2 font-normal text-gray-500')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
+        <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Please wait a moment and try again. If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text>
+          <Svg style={tailwind('mb-2 font-normal text-gray-500 blk:text-gray-400')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
             <Path d="M11 3C10.4477 3 10 3.44772 10 4C10 4.55228 10.4477 5 11 5H13.5858L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L15 6.41421V9C15 9.55228 15.4477 10 16 10C16.5523 10 17 9.55228 17 9V4C17 3.44772 16.5523 3 16 3H11Z" />
             <Path d="M5 5C3.89543 5 3 5.89543 3 7V15C3 16.1046 3.89543 17 5 17H13C14.1046 17 15 16.1046 15 15V12C15 11.4477 14.5523 11 14 11C13.4477 11 13 11.4477 13 12V15H5V7H8C8.55228 7 9 6.55228 9 6C9 5.44772 8.55228 5 8 5H5Z" />
           </Svg>.
@@ -570,13 +573,13 @@ const _SettingsPopupIapRestore = (props) => {
 
   return (
     <View style={tailwind('p-4 md:p-6 md:pt-4')}>
-      <View style={tailwind('border-b border-gray-200 md:border-b-0')}>
+      <View style={tailwind('border-b border-gray-200 blk:border-gray-700 md:border-b-0')}>
         <TouchableOpacity onPress={onBackToIapViewBtnClick} style={tailwind('pb-1 md:pb-0')}>
-          <Text style={tailwind('text-sm font-normal text-gray-500')}>{'<'} {safeAreaWidth < SM_WIDTH ? 'Settings / ' : ''}Subscription</Text>
+          <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>{'<'} {safeAreaWidth < SM_WIDTH ? 'Settings / ' : ''}Subscription</Text>
         </TouchableOpacity>
-        <Text style={tailwind('pb-2 text-xl font-medium leading-6 text-gray-800 md:pb-0')}>Restore Purchases</Text>
+        <Text style={tailwind('pb-2 text-xl font-medium leading-6 text-gray-800 blk:text-gray-100 md:pb-0')}>Restore Purchases</Text>
       </View>
-      <Text style={tailwind('mt-6 text-base font-normal text-gray-500 leading-6.5')}>It may take several minutes to restore your purchases.</Text>
+      <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>It may take several minutes to restore your purchases.</Text>
       {actionPanel}
     </View>
   );

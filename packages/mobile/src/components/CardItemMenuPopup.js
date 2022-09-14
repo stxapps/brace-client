@@ -162,7 +162,7 @@ class CardItemMenuPopup extends React.PureComponent {
           if (text === ARCHIVE) displayText = getListNameDisplayName(text, listNameMap);
           return (
             <MenuOption key={text} onSelect={() => this.onMenuPopupClick(text)} customStyles={cache('CIMP_menuOption', { optionWrapper: { padding: 0 } })}>
-              <Text style={tailwind('w-full py-2.5 pl-4 pr-4 text-sm font-normal text-gray-700')} numberOfLines={1} ellipsizeMode="tail">{displayText}</Text>
+              <Text style={tailwind('w-full py-2.5 pl-4 pr-4 text-sm font-normal text-gray-700 blk:text-gray-200')} numberOfLines={1} ellipsizeMode="tail">{displayText}</Text>
             </MenuOption>
           );
         })}
@@ -180,7 +180,7 @@ class CardItemMenuPopup extends React.PureComponent {
     if (layoutType === LAYOUT_LIST) {
       menuTriggerView = (
         <View ref={this.menuBtn} style={tailwind('px-2 py-1')} collapsable={false}>
-          <Svg style={tailwind('rounded-full font-normal text-gray-400')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+          <Svg style={tailwind('rounded-full font-normal text-gray-400 blk:text-gray-400')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">
             <Path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </Svg>
         </View>
@@ -188,7 +188,7 @@ class CardItemMenuPopup extends React.PureComponent {
     } else {
       menuTriggerView = (
         <View ref={this.menuBtn} style={[tailwind('flex-shrink-0 flex-grow-0 pt-2 pl-4 pr-2'), { paddingBottom: 6 }]} collapsable={false}>
-          <Svg style={tailwind('rounded-full font-normal text-gray-400')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+          <Svg style={tailwind('rounded-full font-normal text-gray-400 blk:text-gray-400')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">
             <Path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </Svg>
         </View>
@@ -201,7 +201,7 @@ class CardItemMenuPopup extends React.PureComponent {
         <MenuTrigger>
           {menuTriggerView}
         </MenuTrigger>
-        <MenuOptions customStyles={cache('CIMP_menuOptionsCustomStyles', { optionsContainer: [tailwind('z-41 min-w-32 max-w-64 rounded-lg border border-gray-100 bg-white py-2 shadow-xl'), popupStyle] }, safeAreaHeight)}>
+        <MenuOptions customStyles={cache('CIMP_menuOptionsCustomStyles', { optionsContainer: [tailwind('z-41 min-w-32 max-w-64 rounded-lg border border-gray-100 bg-white py-2 shadow-xl blk:border-gray-700 blk:bg-gray-800'), popupStyle] }, [safeAreaHeight, tailwind])}>
           <ScrollView>
             {this.renderMenu()}
           </ScrollView>

@@ -1,8 +1,8 @@
 //import './wdyr';
 
-import React from 'react';
-import { Text, TextInput, Platform } from 'react-native';
-import { Provider } from 'react-redux';
+import React, { useEffect } from 'react';
+import { Text, TextInput, Platform, StatusBar } from 'react-native';
+import { Provider, useSelector } from 'react-redux';
 import { createStore, compose } from 'redux';
 import { install as installReduxLoop } from 'redux-loop';
 import { offline } from '@redux-offline/redux-offline';
@@ -16,6 +16,8 @@ import KeyboardManager from 'react-native-keyboard-manager';
 import reducers from './reducers';
 import { init, updateMenuPopupAsBackPressed } from './actions';
 import { queue, discard, effect } from './apis/customOffline';
+import { BLK_MODE } from './types/const';
+import { getThemeMode } from './selectors';
 import cache from './utils/cache';
 
 import App from './components/App';
@@ -54,14 +56,28 @@ if (Platform.OS === 'ios') {
   KeyboardManager.setEnableAutoToolbar(false);
 }
 
+const _Root = () => {
+  const themeMode = useSelector(state => getThemeMode(state));
+  const backgroundColor = themeMode === BLK_MODE ? 'rgb(17, 24, 39)' : 'white';
+
+  useEffect(() => {
+    StatusBar.setBarStyle(themeMode === BLK_MODE ? 'light-content' : 'dark-content');
+    StatusBar.setBackgroundColor(backgroundColor);
+  }, [themeMode, backgroundColor]);
+
+  return (
+    <SafeAreaView style={cache('SI_safeAreaView', { flex: 1, backgroundColor }, [themeMode])}>
+      <App />
+    </SafeAreaView>
+  );
+};
+
 const Root = () => {
   return (
     <Provider store={store}>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <MenuProvider customStyles={cache('SI_menuProvider', { backdrop: { backgroundColor: 'black', opacity: 0.25 } })} backHandler={backHandler}>
-          <SafeAreaView style={cache('SI_safeAreaView', { flex: 1, backgroundColor: 'white' })}>
-            <App />
-          </SafeAreaView>
+          <_Root />
         </MenuProvider>
       </SafeAreaProvider>
     </Provider>

@@ -77,8 +77,8 @@ const ListPanel = (props) => {
   const renderFetchMoreBtn = useCallback(() => {
     return (
       <TouchableOpacity onPress={onFetchMoreBtnClick} style={tailwind('my-4 w-full flex-row justify-center py-2')}>
-        <View style={tailwind('rounded-full border border-gray-400 bg-white px-3 py-1')}>
-          <Text style={tailwind('text-sm font-normal text-gray-500')}>More</Text>
+        <View style={tailwind('rounded-full border border-gray-400 bg-white px-3 py-1 blk:border-gray-400 blk:bg-gray-900')}>
+          <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-300')}>More</Text>
         </View>
       </TouchableOpacity>
     );
@@ -95,8 +95,8 @@ const ListPanel = (props) => {
   const renderUpdateFetchedBtn = useCallback(() => {
     return (
       <TouchableOpacity onPress={onUpdateFetchedBtnClick} style={tailwind('my-4 w-full flex-row justify-center py-2')}>
-        <View style={tailwind('rounded-full border border-gray-400 bg-white px-3 py-1')}>
-          <Text style={tailwind('text-sm font-normal text-gray-500')}>Show more</Text>
+        <View style={tailwind('rounded-full border border-gray-400 bg-white px-3 py-1 blk:border-gray-400 blk:bg-gray-900')}>
+          <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-300')}>Show more</Text>
         </View>
       </TouchableOpacity>
     );
@@ -111,7 +111,7 @@ const ListPanel = (props) => {
       let pt = safeAreaWidth < MD_WIDTH ? toPx(TOP_BAR_HEIGHT) : toPx(TOP_BAR_HEIGHT_MD);
       pt += toPx('1.5rem');
       return (
-        <View style={cache('LP_panelHead', { paddingTop: pt }, safeAreaWidth)} />
+        <View style={cache('LP_panelHead', { paddingTop: pt }, [safeAreaWidth])} />
       );
     }
 

@@ -5,9 +5,10 @@ import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
 
 import { updatePopup } from '../actions';
-import { SIGN_IN_POPUP, SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS } from '../types/const';
+import {
+  SIGN_IN_POPUP, SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS, BLK_MODE,
+} from '../types/const';
 import { getThemeMode } from '../selectors';
-import cache from '../utils/cache';
 
 import { getTopBarSizes, withTailwind } from '.';
 
@@ -17,6 +18,7 @@ import ListName from './ListName';
 import StatusPopup from './StatusPopup';
 
 import shortLogo from '../images/logo-short.svg';
+import shortLogoBlk from '../images/logo-short-blk.svg';
 
 class TopBar extends React.PureComponent {
 
@@ -29,7 +31,7 @@ class TopBar extends React.PureComponent {
 
     return (
       <TouchableOpacity onPress={this.onSignInBtnClick} style={tailwind('h-14 items-center justify-center')}>
-        <View style={cache('TB_signInBtnView', tailwind('rounded-full border border-gray-400 bg-white px-2.5 py-1.5 shadow-sm'))}>
+        <View style={tailwind('rounded-full border border-gray-400 bg-white px-2.5 py-1.5 shadow-sm')}>
           <Text style={tailwind('text-sm font-normal text-gray-500')}>Sign in</Text>
         </View>
       </TouchableOpacity>
@@ -142,8 +144,9 @@ class TopBar extends React.PureComponent {
   }
 
   render() {
-    const { tailwind } = this.props;
-    const rightPaneProp = this.props.rightPane;
+    const {
+      rightPane: rightPaneProp, themeMode, safeAreaWidth, insets, tailwind,
+    } = this.props;
 
     let rightPane;
     if (rightPaneProp === SHOW_BLANK) rightPane = null;
@@ -151,9 +154,10 @@ class TopBar extends React.PureComponent {
     else if (rightPaneProp === SHOW_COMMANDS) rightPane = null;
     else throw new Error(`Invalid rightPane: ${rightPaneProp}`);
 
-    const { isListNameShown, scrollY, safeAreaWidth, insets } = this.props;
+    const { isListNameShown, doSupportTheme, scrollY } = this.props;
 
-    let topBarStyleClasses, topBarStyle, headerStyle, headerBorderStyle, listNamePane;
+    let topBarStyle, topBarStyleClasses = 'bg-white';
+    let headerStyle, headerBorderStyle, listNamePane;
     if (isListNameShown) {
 
       const {
@@ -184,7 +188,7 @@ class TopBar extends React.PureComponent {
         extrapolate: 'clamp',
       });
 
-      topBarStyleClasses = 'absolute inset-x-0 top-0 bg-white z-30';
+      topBarStyleClasses += ' absolute inset-x-0 top-0 z-30';
       topBarStyle = { transform: [{ translateY: changingTopBarTranslateY }] };
       headerStyle = { transform: [{ translateY: changingHeaderTranslateY }] };
       headerBorderStyle = { opacity: changingHeaderBorderOpacity };
@@ -205,12 +209,12 @@ class TopBar extends React.PureComponent {
       topBarStyle['marginRight'] = insets.right;
       headerStyle['marginTop'] = insets.top;
     } else {
-      topBarStyleClasses = '';
       topBarStyle = {};
       headerStyle = {};
       headerBorderStyle = { opacity: 0 };
       listNamePane = null;
     }
+    if (doSupportTheme) topBarStyleClasses += ' blk:bg-gray-900';
 
     return (
       <Animated.View style={[tailwind(`w-full items-center ${topBarStyleClasses}`), topBarStyle]}>
@@ -218,11 +222,11 @@ class TopBar extends React.PureComponent {
           <Animated.View style={headerStyle}>
             <View style={tailwind('h-14 flex-row items-center justify-between px-4 md:px-6 lg:px-8')}>
               <View>
-                <SvgXml width={28.36} height={32} xml={shortLogo} />
+                <SvgXml width={28.36} height={32} xml={doSupportTheme && themeMode === BLK_MODE ? shortLogoBlk : shortLogo} />
               </View>
               {rightPane}
             </View>
-            <Animated.View style={[tailwind('h-px w-full bg-gray-200'), headerBorderStyle]} />
+            <Animated.View style={[tailwind('h-px w-full bg-gray-200 blk:bg-gray-700'), headerBorderStyle]} />
           </Animated.View>
           {listNamePane}
         </View>
@@ -234,11 +238,13 @@ class TopBar extends React.PureComponent {
 TopBar.propTypes = {
   rightPane: PropTypes.string.isRequired,
   isListNameShown: PropTypes.bool,
+  doSupportTheme: PropTypes.bool,
   scrollY: PropTypes.object,
 };
 
 TopBar.defaultProps = {
   isListNameShown: false,
+  doSupportTheme: false,
   scrollY: null,
 };
 

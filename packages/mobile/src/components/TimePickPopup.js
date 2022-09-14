@@ -114,17 +114,17 @@ const TimePickPopup = () => {
       <TimePickHour contentHeight={contentHeight} />
       <TimePickMinute contentHeight={contentHeight} />
       {period && <View style={tailwind('pr-1')}>
-        <TouchableOpacity onPress={() => onItemBtnClick('AM')} style={tailwind(`px-5 py-3.5 ${period === 'AM' ? 'bg-gray-100' : ''}`)}>
-          <Text style={tailwind('text-sm font-normal text-gray-700')}>AM</Text>
+        <TouchableOpacity onPress={() => onItemBtnClick('AM')} style={tailwind(`px-5 py-3.5 ${period === 'AM' ? 'bg-gray-100 blk:bg-gray-700' : ''}`)}>
+          <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>AM</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => onItemBtnClick('PM')} style={tailwind(`px-5 py-3.5 ${period === 'PM' ? 'bg-gray-100' : ''}`)}>
-          <Text style={tailwind('text-sm font-normal text-gray-700')}>PM</Text>
+        <TouchableOpacity onPress={() => onItemBtnClick('PM')} style={tailwind(`px-5 py-3.5 ${period === 'PM' ? 'bg-gray-100 blk:bg-gray-700' : ''}`)}>
+          <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>PM</Text>
         </TouchableOpacity>
       </View>}
     </View>
   );
 
-  let popupClassNames = 'absolute rounded-lg border border-gray-100 bg-white shadow-xl';
+  let popupClassNames = 'absolute rounded-lg border border-gray-100 bg-white shadow-xl blk:border-gray-700 blk:bg-gray-800';
   let panel;
   let bgStyle = { opacity: 0 };
   if (popupSize) {
@@ -268,8 +268,8 @@ const _TimePickHourItem = (props) => {
 
   // change button style, need to update ITEM_HEIGHT.
   return (
-    <TouchableOpacity onPress={() => onItemBtnClick(item)} style={tailwind(`px-5 py-3.5 ${isSelected ? 'bg-gray-100' : ''}`)}>
-      <Text style={tailwind('text-sm font-normal text-gray-700')}>{item}</Text>
+    <TouchableOpacity onPress={() => onItemBtnClick(item)} style={tailwind(`px-5 py-3.5 ${isSelected ? 'bg-gray-100 blk:bg-gray-700' : ''}`)}>
+      <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>{item}</Text>
     </TouchableOpacity>
   );
 };
@@ -352,8 +352,8 @@ const _TimePickMinuteItem = (props) => {
 
   // change button style, need to update ITEM_HEIGHT.
   return (
-    <TouchableOpacity onPress={() => onItemBtnClick(item)} style={tailwind(`px-5 py-3.5 ${isSelected ? 'bg-gray-100' : ''}`)}>
-      <Text style={tailwind('text-sm font-normal text-gray-700')}>{item}</Text>
+    <TouchableOpacity onPress={() => onItemBtnClick(item)} style={tailwind(`px-5 py-3.5 ${isSelected ? 'bg-gray-100 blk:bg-gray-700' : ''}`)}>
+      <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>{item}</Text>
     </TouchableOpacity>
   );
 };

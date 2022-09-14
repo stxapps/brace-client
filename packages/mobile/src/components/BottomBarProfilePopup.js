@@ -130,18 +130,18 @@ class BottomBarProfilePopup extends React.PureComponent {
     return (
       <React.Fragment>
         <TouchableOpacity activeOpacity={1.0} onPress={this.onProfileCancelBtnClick} style={tailwind('absolute inset-0 z-40 bg-black bg-opacity-25')} />
-        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 z-41 rounded-t-lg border border-gray-100 bg-white pt-4 pb-4 shadow-xl'), popupStyle]}>
+        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 z-41 rounded-t-lg border border-gray-100 bg-white pt-4 pb-4 shadow-xl blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
           <TouchableOpacity onPress={this.onRefreshBtnClick} style={tailwind('w-full py-4 pl-4')}>
-            <Text style={tailwind('text-sm font-normal text-gray-700')}>Refresh</Text>
+            <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>Refresh</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.onSettingsBtnClick} style={tailwind('w-full py-4 pl-4')}>
-            <Text style={tailwind('text-sm font-normal text-gray-700')}>Settings</Text>
+            <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>Settings</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.onSupportBtnClick} style={tailwind('w-full py-4 pl-4')}>
-            <Text style={tailwind('text-sm font-normal text-gray-700')}>Support</Text>
+            <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>Support</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.onSignOutBtnClick} style={tailwind('w-full py-4 pl-4')}>
-            <Text style={tailwind('text-sm font-normal text-gray-700')}>Sign out</Text>
+            <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>Sign out</Text>
           </TouchableOpacity>
         </Animated.View>
       </React.Fragment>

@@ -3,12 +3,14 @@ import { View, Animated } from 'react-native';
 import { connect } from 'react-redux';
 import { SvgXml } from 'react-native-svg';
 
+import { BLK_MODE } from '../types/const';
 import { getThemeMode } from '../selectors';
 import cache from '../utils/cache';
 
 import { withTailwind } from '.';
 
 import logo from '../images/logo-short.svg';
+import logoBlk from '../images/logo-short-blk.svg';
 
 class Loading extends React.PureComponent {
 
@@ -51,7 +53,7 @@ class Loading extends React.PureComponent {
   render() {
     // safeAreaWidth is undefined as init is not called yet,
     //   use tailwind with care!
-    const { tailwind } = this.props;
+    const { themeMode, tailwind } = this.props;
 
     const rotateX = this.rotateX.interpolate({
       inputRange: [0, 100],
@@ -68,10 +70,10 @@ class Loading extends React.PureComponent {
     };
 
     return (
-      <View style={tailwind('h-full w-full items-center')}>
-        <View style={cache('LO_view', [{ top: '33.3333%', transform: [{ translateY: -24 }] }, tailwind('h-12 w-12')])}>
+      <View style={tailwind('h-full w-full items-center bg-white blk:bg-gray-900')}>
+        <View style={cache('LO_view', [{ top: '33.3333%', transform: [{ translateY: -24 }] }, tailwind('h-12 w-12')], [tailwind])}>
           <Animated.View style={[tailwind('h-full w-full items-center justify-center'), style]}>
-            <SvgXml width={42} height={48} xml={logo} />
+            <SvgXml width={42} height={48} xml={themeMode === BLK_MODE ? logoBlk : logo} />
           </Animated.View>
         </View>
       </View>
