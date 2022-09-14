@@ -6003,9 +6003,9 @@ react-native-popup-menu@^0.15.11:
   resolved "https://registry.yarnpkg.com/react-native-popup-menu/-/react-native-popup-menu-0.15.11.tgz#df96b1a909ecbba84487821061ce6e29e7c7bb20"
   integrity sha512-f5q2GoDN99bkA24wHiwasaErcdQEgyqYZ8IYuZPOrZNFr66E4rg6f4LElSVBA3EZJTSq5OddVeaOcU340bSTEg==
 
-"react-native-receive-sharing-intent@https://github.com/bracedotto/react-native-receive-sharing-intent#be4d3410fc96ba8e266a2a27535b3d531e56ef57":
+"react-native-receive-sharing-intent@https://github.com/bracedotto/react-native-receive-sharing-intent#4306f9ee6a94c849c3b1a3ec4e4217054fb999c6":
   version "1.0.4"
-  resolved "https://github.com/bracedotto/react-native-receive-sharing-intent#be4d3410fc96ba8e266a2a27535b3d531e56ef57"
+  resolved "https://github.com/bracedotto/react-native-receive-sharing-intent#4306f9ee6a94c849c3b1a3ec4e4217054fb999c6"
 
 react-native-safe-area-context@^3.4.1:
   version "3.4.1"

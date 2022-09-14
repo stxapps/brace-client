@@ -766,7 +766,7 @@ This and CI/CD are very important!
 - yarn add react-native-default-preference react-native-fast-image react-native-keyboard-manager react-native-modal react-native-popup-menu
 - yarn add react-native-safe-area-context
 - yarn add react-native-svg react-native-animated-spinkit react-native-swiper
-- yarn add https://github.com/bracedotto/react-native-receive-sharing-intent#be4d3410fc96ba8e266a2a27535b3d531e56ef57
+- yarn add https://github.com/bracedotto/react-native-receive-sharing-intent#4306f9ee6a94c849c3b1a3ec4e4217054fb999c6
 - yarn add react-native-webview
 - yarn add babel-plugin-inline-import --dev
 - yarn add @welldone-software/why-did-you-render --dev

@@ -48,12 +48,12 @@ class TranslucentAdding extends React.PureComponent {
       askedConfirmResults: null,
     };
 
-    this.removeListerner = null;
+    this.removeListener = null;
     this.timeoutId = null;
   }
 
   componentDidMount() {
-    this.removeListerner = ReceiveSharingIntent.getReceivedFiles(
+    this.removeListener = ReceiveSharingIntent.getReceivedFiles(
       this.onReceivedFiles,
       this.onErrorReceivedFiles
     );
@@ -79,9 +79,9 @@ class TranslucentAdding extends React.PureComponent {
   componentWillUnmount() {
     // Not clear here as there might be a new sharing during this
     // ReceiveSharingIntent.clearReceivedFiles();
-    if (this.removeListerner) {
-      this.removeListerner();
-      this.removeListerner = null;
+    if (this.removeListener) {
+      this.removeListener();
+      this.removeListener = null;
     }
 
     if (this.timeoutId) {
@@ -138,9 +138,9 @@ class TranslucentAdding extends React.PureComponent {
     }, () => this.processLinks());
 
     ReceiveSharingIntent.clearReceivedFiles();
-    if (this.removeListerner) {
-      this.removeListerner();
-      this.removeListerner = null;
+    if (this.removeListener) {
+      this.removeListener();
+      this.removeListener = null;
     }
   }
 
@@ -333,7 +333,7 @@ class TranslucentAdding extends React.PureComponent {
     const { tailwind } = this.props;
 
     return (
-      <View style={tailwind('flex-1 items-center justify-end')}>
+      <View style={tailwind('flex-1 items-center justify-end sm:justify-center')}>
         <TouchableWithoutFeedback onPress={this.onBackgroundBtnClick}>
           <View style={tailwind('absolute inset-0 bg-black bg-opacity-50')} />
         </TouchableWithoutFeedback>
@@ -346,7 +346,7 @@ class TranslucentAdding extends React.PureComponent {
     const { tailwind } = this.props;
 
     const content = (
-      <View style={cache('TA_addingView', [tailwind('mb-8 w-48 items-center bg-white p-4 shadow-sm'), SHARE_BORDER_RADIUS])}>
+      <View style={cache('TA_addingView', [tailwind('mb-8 w-48 items-center bg-white p-4 shadow-sm'), SHARE_BORDER_RADIUS], [tailwind])}>
         <View style={tailwind('h-24 w-full items-center justify-center')}>
           <Flow size={56} color="rgb(156, 163, 175)" />
         </View>
@@ -361,7 +361,7 @@ class TranslucentAdding extends React.PureComponent {
     const { tailwind } = this.props;
 
     const content = (
-      <View style={cache('TA_addedView', [tailwind('mb-8 w-48 items-center bg-white p-4 shadow-sm'), SHARE_BORDER_RADIUS])}>
+      <View style={cache('TA_addedView', [tailwind('mb-8 w-48 items-center bg-white p-4 shadow-sm'), SHARE_BORDER_RADIUS], [tailwind])}>
         <View style={tailwind('h-24 w-full items-center justify-center')}>
           <Svg width={64} height={64} viewBox="0 0 96 96" fill="none">
             <Path fillRule="evenodd" clipRule="evenodd" d="M48 96C74.5098 96 96 74.5098 96 48C96 21.4903 74.5098 0 48 0C21.4903 0 0 21.4903 0 48C0 74.5098 21.4903 96 48 96ZM70.2426 40.2427C72.5856 37.8995 72.5856 34.1005 70.2426 31.7573C67.8996 29.4142 64.1004 29.4142 61.7574 31.7573L42 51.5148L34.2427 43.7573C31.8995 41.4142 28.1005 41.4142 25.7573 43.7573C23.4142 46.1005 23.4142 49.8996 25.7573 52.2426L37.7573 64.2426C40.1005 66.5856 43.8995 66.5856 46.2427 64.2426L70.2426 40.2427Z" fill="rgb(74, 222, 128)" />
@@ -383,7 +383,7 @@ class TranslucentAdding extends React.PureComponent {
     };
 
     const content = (
-      <View style={cache('TA_diedAdding', [tailwind('mb-8 bg-white shadow-sm'), style, SHARE_BORDER_RADIUS], safeAreaHeight)}>
+      <View style={cache('TA_diedAdding', [tailwind('mb-8 bg-white shadow-sm'), style, SHARE_BORDER_RADIUS], [safeAreaHeight, tailwind])}>
         <ScrollView contentContainerStyle={tailwind('w-72 items-center p-4')}>
           <View style={tailwind('h-24 w-full items-center justify-center')}>
             <Svg style={tailwind('font-normal text-red-500')} width={64} height={64} viewBox="0 0 20 20" fill="currentColor">
@@ -443,7 +443,7 @@ class TranslucentAdding extends React.PureComponent {
     };
 
     const content = (
-      <View style={cache('TA_askingConfirm', [tailwind('mb-8 bg-white shadow-sm'), style, SHARE_BORDER_RADIUS], safeAreaHeight)}>
+      <View style={cache('TA_askingConfirm', [tailwind('mb-8 bg-white shadow-sm'), style, SHARE_BORDER_RADIUS], [safeAreaHeight, tailwind])}>
         <ScrollView contentContainerStyle={tailwind('w-72 items-center p-4')}>
           <View style={tailwind('h-24 w-full items-center justify-center')}>
             <Svg style={tailwind('font-normal text-yellow-400')} width={64} height={64} viewBox="0 0 20 20" fill="currentColor">
@@ -452,8 +452,8 @@ class TranslucentAdding extends React.PureComponent {
           </View>
           <Text style={tailwind('mt-2 w-full text-center text-base font-normal text-gray-500')} numberOfLines={1} ellipsizeMode="tail">{addingUrl}</Text>
           <Text style={tailwind('mt-2 w-full text-center text-lg font-semibold text-gray-800')}>looks like an invalid link.{'\n'}Are you sure?</Text>
-          <TouchableOpacity onPress={() => this.onAskingConfirmOkBtnClick(addingUrl)} style={tailwind('h-14 items-center justify-center')}>
-            <View style={tailwind('mt-6 items-center justify-center rounded-full border border-gray-400 bg-white px-3 py-2')}>
+          <TouchableOpacity onPress={() => this.onAskingConfirmOkBtnClick(addingUrl)} style={tailwind('items-center justify-center')}>
+            <View style={tailwind('mt-6 items-center justify-center rounded-full border border-gray-400 bg-white px-3.5 py-2')}>
               <Text style={tailwind('text-sm font-normal text-gray-500')}>Yes, I'm sure</Text>
             </View>
           </TouchableOpacity>
@@ -471,7 +471,7 @@ class TranslucentAdding extends React.PureComponent {
     const { tailwind } = this.props;
 
     const content = (
-      <View style={cache('TA_invalid', [tailwind('mb-8 w-72 items-center bg-white p-4 shadow-sm'), SHARE_BORDER_RADIUS])}>
+      <View style={cache('TA_invalid', [tailwind('mb-8 w-72 items-center bg-white p-4 shadow-sm'), SHARE_BORDER_RADIUS], [tailwind])}>
         <View style={tailwind('h-24 w-full items-center justify-center')}>
           <Svg style={tailwind('font-normal text-red-500')} width={64} height={64} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M8.25706 3.09882C9.02167 1.73952 10.9788 1.73952 11.7434 3.09882L17.3237 13.0194C18.0736 14.3526 17.1102 15.9999 15.5805 15.9999H4.4199C2.89025 15.9999 1.92682 14.3526 2.67675 13.0194L8.25706 3.09882ZM11.0001 13C11.0001 13.5523 10.5524 14 10.0001 14C9.44784 14 9.00012 13.5523 9.00012 13C9.00012 12.4477 9.44784 12 10.0001 12C10.5524 12 11.0001 12.4477 11.0001 13ZM10.0001 5C9.44784 5 9.00012 5.44772 9.00012 6V9C9.00012 9.55228 9.44784 10 10.0001 10C10.5524 10 11.0001 9.55228 11.0001 9V6C11.0001 5.44772 10.5524 5 10.0001 5Z" />
@@ -491,7 +491,7 @@ class TranslucentAdding extends React.PureComponent {
     const { tailwind } = this.props;
 
     const content = (
-      <View style={cache('TA_notSignedIn', [tailwind('mb-8 w-64 items-center bg-white p-4 shadow-sm'), SHARE_BORDER_RADIUS])}>
+      <View style={cache('TA_notSignedIn', [tailwind('mb-8 w-64 items-center bg-white p-4 shadow-sm'), SHARE_BORDER_RADIUS], [tailwind])}>
         <View style={tailwind('h-24 w-full items-center justify-center')}>
           <Svg style={tailwind('font-normal text-yellow-400')} width={64} height={64} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M8.25706 3.09882C9.02167 1.73952 10.9788 1.73952 11.7434 3.09882L17.3237 13.0194C18.0736 14.3526 17.1102 15.9999 15.5805 15.9999H4.4199C2.89025 15.9999 1.92682 14.3526 2.67675 13.0194L8.25706 3.09882ZM11.0001 13C11.0001 13.5523 10.5524 14 10.0001 14C9.44784 14 9.00012 13.5523 9.00012 13C9.00012 12.4477 9.44784 12 10.0001 12C10.5524 12 11.0001 12.4477 11.0001 13ZM10.0001 5C9.44784 5 9.00012 5.44772 9.00012 6V9C9.00012 9.55228 9.44784 10 10.0001 10C10.5524 10 11.0001 9.55228 11.0001 9V6C11.0001 5.44772 10.5524 5 10.0001 5Z" />
@@ -516,7 +516,7 @@ class TranslucentAdding extends React.PureComponent {
     const { tailwind } = this.props;
 
     const content = (
-      <View style={cache('TA_inOtherProcessingView', [tailwind('mb-8 w-48 items-center bg-white p-4 shadow-sm'), SHARE_BORDER_RADIUS])}>
+      <View style={cache('TA_inOtherProcessingView', [tailwind('mb-8 w-48 items-center bg-white p-4 shadow-sm'), SHARE_BORDER_RADIUS], [tailwind])}>
         <View style={tailwind('h-24 w-full items-center justify-center')}>
           <Svg width={64} height={64} viewBox="0 0 96 96" fill="none">
             <Path fillRule="evenodd" clipRule="evenodd" d="M48 96C74.5098 96 96 74.5098 96 48C96 21.4903 74.5098 0 48 0C21.4903 0 0 21.4903 0 48C0 74.5098 21.4903 96 48 96ZM70.2426 40.2427C72.5856 37.8995 72.5856 34.1005 70.2426 31.7573C67.8996 29.4142 64.1004 29.4142 61.7574 31.7573L42 51.5148L34.2427 43.7573C31.8995 41.4142 28.1005 41.4142 25.7573 43.7573C23.4142 46.1005 23.4142 49.8996 25.7573 52.2426L37.7573 64.2426C40.1005 66.5856 43.8995 66.5856 46.2427 64.2426L70.2426 40.2427Z" fill="rgb(74, 222, 128)" />
