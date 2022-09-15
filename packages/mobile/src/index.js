@@ -62,7 +62,7 @@ const _Root = () => {
 
   useEffect(() => {
     StatusBar.setBarStyle(themeMode === BLK_MODE ? 'light-content' : 'dark-content');
-    StatusBar.setBackgroundColor(backgroundColor);
+    if (Platform.OS === 'android') StatusBar.setBackgroundColor(backgroundColor);
   }, [themeMode, backgroundColor]);
 
   return (

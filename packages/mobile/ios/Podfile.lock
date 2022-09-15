@@ -397,6 +397,8 @@ PODS:
     - React-Core
   - RNDefaultPreference (1.4.3):
     - React
+  - RNDeviceTimeFormat (2.0.0):
+    - React
   - RNFastImage (8.5.11):
     - React-Core
     - SDWebImage (~> 5.11.1)
@@ -485,6 +487,7 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-community/clipboard`)"
   - RNDefaultPreference (from `../node_modules/react-native-default-preference`)
+  - RNDeviceTimeFormat (from `../node_modules/react-native-device-time-format/ios`)
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - RNIap (from `../node_modules/react-native-iap`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -599,6 +602,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/clipboard"
   RNDefaultPreference:
     :path: "../node_modules/react-native-default-preference"
+  RNDeviceTimeFormat:
+    :path: "../node_modules/react-native-device-time-format/ios"
   RNFastImage:
     :path: "../node_modules/react-native-fast-image"
   RNIap:
@@ -674,6 +679,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: b49b4e38a1548d03b74b30e558a1d18465b94be7
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
   RNDefaultPreference: 2f8d6d54230edbd78708ada8d63bb275e5a8415b
+  RNDeviceTimeFormat: 02dcc604950b95af261902398d80288684dc5ad4
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
   RNIap: bb56165cc68bfa269e2effd407d6ec0af63e796f
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
