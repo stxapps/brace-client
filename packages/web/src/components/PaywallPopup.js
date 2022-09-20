@@ -3,8 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { updatePopup, updateSettingsPopup, updateSettingsViewId } from '../actions';
-import { PAYWALL_POPUP, SM_WIDTH, SETTINGS_VIEW_IAP } from '../types/const';
+import {
+  PAYWALL_POPUP, SM_WIDTH, SETTINGS_VIEW_IAP, FEATURE_PIN, FEATURE_APPEARANCE,
+} from '../types/const';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
+import { paywallFeature } from '../vars';
 
 import { useSafeAreaFrame, useTailwind } from '.';
 
@@ -41,6 +44,10 @@ const PaywallPopup = () => {
 
   if (!isShown) return <AnimatePresence key="AP_PWP" />;
 
+  let feature = 'This';
+  if (paywallFeature.feature === FEATURE_PIN) feature = 'Pin to the top';
+  if (paywallFeature.feature === FEATURE_APPEARANCE) feature = 'Dark appearance';
+
   const spanStyle = {};
   if (safeAreaWidth >= SM_WIDTH) spanStyle.height = safeAreaHeight;
 
@@ -64,7 +71,7 @@ const PaywallPopup = () => {
               <div className={tailwind('mt-3 text-center sm:mt-5')}>
                 <h3 className={tailwind('text-lg font-medium leading-6 text-gray-900')} id="modal-title">Purchase a subscription</h3>
                 <div className={tailwind('mt-2')}>
-                  <p className={tailwind('text-sm text-gray-500')}>Pin to the top is an extra feature. Please purchase a subscription to support us and unlock extra feature(s).</p>
+                  <p className={tailwind('text-sm text-gray-500')}>{feature} is an extra feature. Please purchase a subscription to support us and unlock extra features.</p>
                 </div>
               </div>
             </div>

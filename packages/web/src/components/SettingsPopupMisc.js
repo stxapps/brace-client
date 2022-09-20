@@ -8,6 +8,7 @@ import {
 import {
   HASH_PRIVACY, LAYOUT_CARD, LAYOUT_LIST, WHT_MODE, BLK_MODE, SYSTEM_MODE, CUSTOM_MODE,
 } from '../types/const';
+import { getDoEnableExtraFeatures } from '../selectors';
 
 import { useTailwind } from '.';
 
@@ -24,6 +25,7 @@ const SettingsPopupMisc = (props) => {
   const customOptions = useSelector(
     state => state.localSettings.themeCustomOptions
   );
+  const doEnableExtraFeatures = useSelector(state => getDoEnableExtraFeatures(state));
   const whtTimeInput = useRef(null);
   const blkTimeInput = useRef(null);
   const dispatch = useDispatch();
@@ -146,7 +148,7 @@ const SettingsPopupMisc = (props) => {
         </button>
         <h3 className={tailwind('pb-2 text-xl font-medium leading-none text-gray-800 blk:text-gray-100')}>Misc.</h3>
       </div>
-      <div className={tailwind('mt-6 flex flex-col md:mt-0')}>
+      {doEnableExtraFeatures && <div className={tailwind('mt-6 flex flex-col md:mt-0')}>
         <h4 className={tailwind('text-base font-medium leading-none text-gray-800 blk:text-gray-100')}>Appearance</h4>
         <p className={tailwind('mt-2.5 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Choose appearance to be <span className={tailwind('font-semibold blk:text-gray-300')}>Light</span>, <span className={tailwind('font-semibold blk:text-gray-300')}>Dark</span>, <span className={tailwind('font-semibold blk:text-gray-300')}>System</span> (uses your device's setting), or <span className={tailwind('font-semibold blk:text-gray-300')}>Custom</span> (schedule times to change appearance automatically). This setting is not synced so you can have a different appearance for each of your devices.</p>
         <div className={tailwind('mx-auto mt-2.5 w-full max-w-sm -space-y-px rounded-md bg-white shadow-sm blk:bg-gray-900')}>
@@ -193,8 +195,8 @@ const SettingsPopupMisc = (props) => {
             </label>
           </div>
         </div>
-      </div>
-      <div className={tailwind('mt-10 flex flex-col')}>
+      </div>}
+      <div className={tailwind(`flex flex-col ${doEnableExtraFeatures ? 'mt-10' : 'mt-6 md:mt-0'}`)}>
         <h4 id="layout-type-option-label" className={tailwind('text-base font-medium leading-none text-gray-800 blk:text-gray-100')}>Layout View</h4>
         <div className={tailwind('sm:flex sm:items-start sm:justify-between sm:space-x-4')}>
           <p id="layout-type-option-description" className={tailwind('mt-2.5 flex-shrink flex-grow text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Choose whether your saved links are displayed in Cards view or in List view. This setting is not synced so you can have a different layout for each of your devices.</p>

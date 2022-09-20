@@ -16,5 +16,9 @@ const scrollPanel = {
   pageYOffset: 0,
 };
 
-const vars = { cachedFPaths, scrollPanel };
+export const paywallFeature = {
+  feature: null,
+};
+
+const vars = { cachedFPaths, scrollPanel, paywallFeature };
 export default vars;

@@ -61,6 +61,7 @@ import {
   IAP_VERIFY_URL, IAP_STATUS_URL, APPSTORE, PLAYSTORE, COM_BRACEDOTTO,
   COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, UNKNOWN, ERROR, ACTIVE,
   SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE,
+  FEATURE_PIN, FEATURE_APPEARANCE,
 } from '../types/const';
 import {
   isEqual, isString, sleep,
@@ -1575,6 +1576,7 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
   const purchases = state.settings.purchases;
 
   if (!doEnableExtraFeatures(purchases)) {
+    vars.paywallFeature.feature = FEATURE_PIN;
     dispatch(updatePopup(PAYWALL_POPUP, true));
     return;
   }
@@ -1783,6 +1785,7 @@ export const updateTheme = (mode, customOptions) => async (dispatch, getState) =
   const purchases = state.settings.purchases;
 
   if (!doEnableExtraFeatures(purchases)) {
+    vars.paywallFeature.feature = FEATURE_APPEARANCE;
     dispatch(updatePopup(PAYWALL_POPUP, true));
     return;
   }

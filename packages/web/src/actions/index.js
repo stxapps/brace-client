@@ -56,6 +56,7 @@ import {
   BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
   IAP_STATUS_URL, COM_BRACEDOTTO, SIGNED_TEST_STRING, VALID, ACTIVE,
   SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE,
+  FEATURE_PIN, FEATURE_APPEARANCE,
 } from '../types/const';
 import {
   isEqual, isString, isObject, isNumber, throttle, sleep, isIPadIPhoneIPod,
@@ -1786,6 +1787,7 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
   const purchases = state.settings.purchases;
 
   if (!doEnableExtraFeatures(purchases)) {
+    vars.paywallFeature.feature = FEATURE_PIN;
     dispatch(updatePopup(PAYWALL_POPUP, true));
     return;
   }
@@ -1994,6 +1996,7 @@ export const updateTheme = (mode, customOptions) => async (dispatch, getState) =
   const purchases = state.settings.purchases;
 
   if (!doEnableExtraFeatures(purchases)) {
+    vars.paywallFeature.feature = FEATURE_APPEARANCE;
     dispatch(updatePopup(PAYWALL_POPUP, true));
     return;
   }

@@ -234,3 +234,6 @@ export const WHT_MODE = 0;
 export const BLK_MODE = 1;
 export const SYSTEM_MODE = 2;
 export const CUSTOM_MODE = 3;
+
+export const FEATURE_PIN = 'FEATURE_PIN';
+export const FEATURE_APPEARANCE = 'FEATURE_APPEARANCE';

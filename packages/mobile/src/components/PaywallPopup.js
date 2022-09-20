@@ -6,8 +6,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
 import { updatePopup, updateSettingsPopup, updateSettingsViewId } from '../actions';
-import { PAYWALL_POPUP, SETTINGS_VIEW_IAP } from '../types/const';
+import {
+  PAYWALL_POPUP, SETTINGS_VIEW_IAP, FEATURE_PIN, FEATURE_APPEARANCE,
+} from '../types/const';
 import { dialogFMV } from '../types/animConfigs';
+import { paywallFeature } from '../vars';
 
 import { useSafeAreaInsets, useTailwind } from '.';
 
@@ -82,6 +85,10 @@ const PaywallPopup = () => {
 
   if (!isShown && didCloseAnimEnd) return null;
 
+  let feature = 'This';
+  if (paywallFeature.feature === FEATURE_PIN) feature = 'Pin to the top';
+  if (paywallFeature.feature === FEATURE_APPEARANCE) feature = 'Dark appearance';
+
   const canvasStyle = { paddingLeft: 16 + insets.left, paddingRight: 16 + insets.right };
   const popupStyle = {
     opacity: popupAnim,
@@ -108,7 +115,7 @@ const PaywallPopup = () => {
           <View style={tailwind('mt-3 sm:mt-5')}>
             <Text style={tailwind('text-center text-lg font-medium leading-6 text-gray-900')}>Purchase a subscription</Text>
             <View style={tailwind('mt-2')}>
-              <Text style={tailwind('text-center text-sm font-normal text-gray-500')}>Pin to the top is an extra feature. Please purchase a subscription to support us and unlock extra feature(s).</Text>
+              <Text style={tailwind('text-center text-sm font-normal text-gray-500')}>{feature} is an extra feature. Please purchase a subscription to support us and unlock extra features.</Text>
             </View>
           </View>
         </View>
