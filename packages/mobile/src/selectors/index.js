@@ -290,14 +290,17 @@ export const makeGetPinStatus = () => {
   );
 };
 
-let lastCustomOptions, lastCurHH, lastCurMM, lastCurMode;
+let lastCustomOptions = null, lastCurHH = null, lastCurMM = null, lastCurMode = null;
 export const getThemeMode = createSelector(
   state => state.user.isUserSignedIn,
   state => getDoEnableExtraFeatures(state),
   state => state.window.themeMode,
   state => {
     const mode = state.localSettings.themeMode;
-    if (mode !== CUSTOM_MODE) return WHT_MODE;
+    if (mode !== CUSTOM_MODE) {
+      [lastCustomOptions, lastCurHH, lastCurMM, lastCurMode] = [null, null, null, null];
+      return WHT_MODE;
+    }
 
     const customOptions = state.localSettings.themeCustomOptions;
 
@@ -307,7 +310,7 @@ export const getThemeMode = createSelector(
 
     if (
       customOptions === lastCustomOptions &&
-      curHH === lastCurHH && curMM < lastCurMM + 12 && lastCurMode
+      curHH === lastCurHH && curMM < lastCurMM + 12 && lastCurMode !== null
     ) {
       return lastCurMode;
     }
