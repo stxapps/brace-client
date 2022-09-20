@@ -100,13 +100,13 @@ const PinMenuPopup = () => {
     popupClassNames += ' ' + getOriginClassName(topOrigin, leftOrigin);
 
     panel = (
-      <motion.div key="PMP_popup" ref={popup} style={popupStyle} className={popupClassNames} variants={popupFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+      <motion.div key="PMP_popup" ref={popup} style={popupStyle} className={tailwind(popupClassNames)} variants={popupFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
         {buttons}
       </motion.div>
     );
   } else {
     panel = (
-      <div key="PMP_popup" ref={popup} style={{ top: safeAreaHeight, left: safeAreaWidth }} className={popupClassNames} role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+      <div key="PMP_popup" ref={popup} style={{ top: safeAreaHeight, left: safeAreaWidth }} className={tailwind(popupClassNames)} role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
         {buttons}
       </div>
     );
