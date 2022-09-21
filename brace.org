@@ -824,6 +824,7 @@ This and CI/CD are very important!
   + Popups: CardMenu, ConfirmDelete, MoveTo, ListsMenu
   + Settings: account, subscription, data, lists, misc, about
   + Pin, unpin, move pin
+  + WHT_MODE, BLK_MODE
 * brace-server-worker
 ** Creat an instance
 - us-central1-a
