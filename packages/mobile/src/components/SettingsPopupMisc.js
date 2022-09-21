@@ -290,7 +290,7 @@ const SettingsPopupMisc = (props) => {
           </View>
         </View>
       </View>
-      <View style={tailwind('mt-10 flex-row items-center justify-between md:mt-0')}>
+      <View style={tailwind('mt-10 flex-row items-center justify-between')}>
         <View style={tailwind('flex-shrink flex-grow')}>
           <Text style={tailwind('text-base font-medium leading-4 text-gray-800 blk:text-gray-100')}>Link Previews</Text>
           <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Allow your saved links to be sent to our server for extracting their representative title and image. No your personal information involved at all so there is no way to know who saves what links. These titles and images are used in our website and app for you to easily find and recognize your saved links. For more information, please visit <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>our privacy policy page</Text>.</Text>

@@ -201,7 +201,7 @@ class CardItemMenuPopup extends React.PureComponent {
         <MenuTrigger>
           {menuTriggerView}
         </MenuTrigger>
-        <MenuOptions customStyles={cache('CIMP_menuOptionsCustomStyles', { optionsContainer: [tailwind('z-41 min-w-32 max-w-64 rounded-lg border border-gray-100 bg-white py-2 shadow-xl blk:border-gray-700 blk:bg-gray-800'), popupStyle] }, [safeAreaHeight, tailwind])}>
+        <MenuOptions customStyles={cache('CIMP_menuOptionsCustomStyles', { optionsContainer: [tailwind('z-41 min-w-32 max-w-64 rounded-lg bg-white py-2 shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle] }, [safeAreaHeight, tailwind])}>
           <ScrollView>
             {this.renderMenu()}
           </ScrollView>

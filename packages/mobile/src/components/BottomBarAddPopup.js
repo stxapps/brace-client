@@ -90,7 +90,7 @@ class BottomBarAddPopup extends React.PureComponent {
 
     return (
       <Modal isVisible={isAddPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={this.onAddPopupShow} onModalWillHide={this.onAddPopupHide} style={tailwind('m-0 justify-end')} supportedOrientations={MODAL_SUPPORTED_ORIENTATIONS} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true} avoidKeyboard={Platform.OS === 'ios' ? true : false}>
-        <View style={tailwind('w-full rounded-t-lg border border-gray-100 bg-white px-4 pt-6 pb-6 shadow-xl blk:border-gray-700 blk:bg-gray-800')}>
+        <View style={tailwind('w-full rounded-t-lg bg-white px-4 pt-6 pb-6 shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800')}>
           <View style={tailwind('flex-row items-center justify-start')}>
             <Text style={tailwind('flex-none text-sm font-normal text-gray-600 blk:text-gray-200')}>Url:</Text>
             {/* onKeyPress event for Enter key only if there is multiline TextInput */}

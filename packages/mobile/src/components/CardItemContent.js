@@ -65,7 +65,7 @@ class CardItemContent extends React.Component {
     if (extractedResult && extractedResult.image) image = extractedResult.image;
 
     if (image) {
-      return <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full rounded-t-lg bg-white aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
+      return <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full rounded-t-lg bg-white aspect-7/12 shadow-xs blk:bg-gray-900')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
     }
 
     let fg = null;
@@ -96,8 +96,8 @@ class CardItemContent extends React.Component {
     // Only pattern background or pattern background with a big letter
     if (decor.image.bg.type === PATTERN) {
       return (
-        <View style={tailwind('w-full items-center justify-center rounded-t-lg bg-white aspect-7/12 shadow-xs')}>
-          <GracefulImage key="image-graceful-image-pattern" style={tailwind('absolute inset-0 rounded-t-lg bg-white')} contentStyle={tailwind('rounded-t-lg')} source={PATTERN_MAP[decor.image.bg.value]} />
+        <View style={tailwind('w-full items-center justify-center rounded-t-lg bg-white aspect-7/12 shadow-xs blk:bg-gray-900')}>
+          <GracefulImage key="image-graceful-image-pattern" style={tailwind('absolute inset-0 rounded-t-lg bg-white blk:bg-gray-900')} contentStyle={tailwind('rounded-t-lg')} source={PATTERN_MAP[decor.image.bg.value]} />
           {fg}
         </View>
       );
@@ -105,7 +105,7 @@ class CardItemContent extends React.Component {
 
     // Random image
     if (decor.image.bg.type === IMAGE) {
-      return <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full rounded-t-lg bg-white aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_decorImage_${decor.image.bg.value}`, { uri: prependDomainName(decor.image.bg.value) }, [decor.image.bg.value])} />;
+      return <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full rounded-t-lg bg-white aspect-7/12 shadow-xs blk:bg-gray-900')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_decorImage_${decor.image.bg.value}`, { uri: prependDomainName(decor.image.bg.value) }, [decor.image.bg.value])} />;
     }
 
     throw new Error(`Invalid decor: ${JSON.stringify(decor)}`);

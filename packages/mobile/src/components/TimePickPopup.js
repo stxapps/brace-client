@@ -124,7 +124,7 @@ const TimePickPopup = () => {
     </View>
   );
 
-  let popupClassNames = 'absolute rounded-lg border border-gray-100 bg-white shadow-xl blk:border-gray-700 blk:bg-gray-800';
+  let popupClassNames = 'absolute rounded-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800';
   let panel;
   let bgStyle = { opacity: 0 };
   if (popupSize) {

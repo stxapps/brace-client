@@ -141,7 +141,7 @@ const PinMenuPopup = () => {
     </React.Fragment>
   );
 
-  let popupClassNames = 'absolute min-w-32 max-w-64 rounded-lg border border-gray-100 bg-white pb-1 shadow-xl blk:border-gray-700 blk:bg-gray-800';
+  let popupClassNames = 'absolute min-w-32 max-w-64 rounded-lg bg-white pb-1 shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800';
   let panel;
   let bgStyle = { opacity: 0 };
   if (popupSize) {

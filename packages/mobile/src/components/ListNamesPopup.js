@@ -369,7 +369,7 @@ const ListNamesPopup = () => {
     };
 
     panel = (
-      <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 rounded-t-lg border border-gray-100 bg-white shadow-xl blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
+      <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 rounded-t-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
         {_render()}
       </Animated.View>
     );
@@ -406,7 +406,7 @@ const ListNamesPopup = () => {
     });
 
     panel = (
-      <Animated.View style={[tailwind('absolute rounded-lg border border-gray-100 bg-white shadow-xl blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
+      <Animated.View style={[tailwind('absolute rounded-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
         {_render()}
       </Animated.View>
     );

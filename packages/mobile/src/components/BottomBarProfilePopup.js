@@ -130,7 +130,7 @@ class BottomBarProfilePopup extends React.PureComponent {
     return (
       <React.Fragment>
         <TouchableOpacity activeOpacity={1.0} onPress={this.onProfileCancelBtnClick} style={tailwind('absolute inset-0 z-40 bg-black bg-opacity-25')} />
-        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 z-41 rounded-t-lg border border-gray-100 bg-white pt-4 pb-4 shadow-xl blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
+        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 z-41 rounded-t-lg bg-white pt-4 pb-4 shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
           <TouchableOpacity onPress={this.onRefreshBtnClick} style={tailwind('w-full py-4 pl-4')}>
             <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>Refresh</Text>
           </TouchableOpacity>
