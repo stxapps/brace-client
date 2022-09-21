@@ -74,7 +74,7 @@ class CardItemContent extends React.Component {
       fg = (
         <React.Fragment>
           <View style={tailwind('h-20 w-20 items-center justify-center rounded-full bg-white')}>
-            <Text style={tailwind('text-5xl font-medium uppercase text-gray-700')}>{text}</Text>
+            <Text style={[tailwind('text-5xl font-medium uppercase text-gray-700'), { lineHeight: 58 }]}>{text}</Text>
           </View>
         </React.Fragment>
       );
