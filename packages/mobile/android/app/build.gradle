@@ -134,8 +134,8 @@ android {
         applicationId "com.bracedotto"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 30
-        versionName "0.11.2"
+        versionCode 31
+        versionName "0.12.0"
 
         // react-native-iap: only use the Google Play flavor
         missingDimensionStrategy 'store', 'play'
