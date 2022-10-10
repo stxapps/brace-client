@@ -1,7 +1,7 @@
 //import './wdyr';
 
-import React, { useEffect } from 'react';
-import { Text, TextInput, Platform, StatusBar } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Text, TextInput, Platform, StatusBar, Keyboard } from 'react-native';
 import { Provider, useSelector } from 'react-redux';
 import { createStore, compose } from 'redux';
 import { install as installReduxLoop } from 'redux-loop';
@@ -60,10 +60,29 @@ const _Root = () => {
   const themeMode = useSelector(state => getThemeMode(state));
   const backgroundColor = themeMode === BLK_MODE ? 'rgb(17, 24, 39)' : 'white';
 
+  const themeModeRef = useRef(themeMode);
+  const backgroundColorRef = useRef(backgroundColor);
+
+  const updateStatusBar = () => {
+    StatusBar.setBarStyle(themeModeRef.current === BLK_MODE ? 'light-content' : 'dark-content');
+    if (Platform.OS === 'android') StatusBar.setBackgroundColor(backgroundColorRef.current);
+  };
+
   useEffect(() => {
-    StatusBar.setBarStyle(themeMode === BLK_MODE ? 'light-content' : 'dark-content');
-    if (Platform.OS === 'android') StatusBar.setBackgroundColor(backgroundColor);
+    themeModeRef.current = themeMode;
+    backgroundColorRef.current = backgroundColor;
+    updateStatusBar();
   }, [themeMode, backgroundColor]);
+
+  useEffect(() => {
+    const willShowSub = Keyboard.addListener('keyboardWillShow', updateStatusBar);
+    const didHideSub = Keyboard.addListener('keyboardDidHide', updateStatusBar);
+
+    return () => {
+      willShowSub.remove();
+      didHideSub.remove();
+    };
+  }, []);
 
   return (
     <SafeAreaView style={cache('SI_safeAreaView', { flex: 1, backgroundColor }, [themeMode])}>

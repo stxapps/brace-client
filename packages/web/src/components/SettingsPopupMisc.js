@@ -132,7 +132,7 @@ const SettingsPopupMisc = (props) => {
   const customRadioClassNames = themeMode === CUSTOM_MODE ? 'focus:ring-offset-blue-100 blk:focus:ring-gray-800 blk:focus:ring-offset-blue-600' : 'blk:focus:ring-offset-gray-900';
 
   const customTextClassNames = themeMode === CUSTOM_MODE ? 'text-blue-700 blk:text-blue-200' : 'text-gray-500 blk:text-gray-500';
-  const customInputClassNames = themeMode === CUSTOM_MODE ? 'text-gray-600 blk:border-blue-200 blk:bg-blue-600 blk:text-blue-100 blk:focus:ring-blue-200' : 'text-gray-400 blk:border-gray-600 blk:bg-gray-900 blk:text-gray-500';
+  const customInputClassNames = themeMode === CUSTOM_MODE ? 'border-gray-300 bg-white text-gray-600 blk:border-blue-200 blk:bg-blue-600 blk:text-blue-100 blk:focus:ring-blue-200' : 'border-gray-300 bg-white text-gray-400 blk:border-gray-600 blk:bg-gray-900 blk:text-gray-500';
 
   let whtTime, blkTime;
   for (const option of customOptions) {
@@ -154,7 +154,7 @@ const SettingsPopupMisc = (props) => {
         <div className={tailwind('mx-auto mt-2.5 w-full max-w-sm -space-y-px rounded-md bg-white shadow-sm blk:bg-gray-900')}>
           <div className={tailwind(`relative flex rounded-tl-md rounded-tr-md border p-4 ${whtBtnClassNames}`)}>
             <div className={tailwind('flex h-5 items-center')}>
-              <input onChange={onThemeInputChange} id="theme-mode-option-1" name="theme-mode-option-1" type="radio" className={tailwind(`h-4 w-4 cursor-pointer text-blue-600 transition duration-150 ease-in-out blk:bg-gray-900 blk:text-blue-400 ${whtRadioClassNames}`)} checked={themeMode === WHT_MODE} value={WHT_MODE} />
+              <input onChange={onThemeInputChange} id="theme-mode-option-1" name="theme-mode-option-1" type="radio" className={tailwind(`h-4 w-4 cursor-pointer bg-white text-blue-600 transition duration-150 ease-in-out blk:bg-gray-900 blk:text-blue-400 ${whtRadioClassNames}`)} checked={themeMode === WHT_MODE} value={WHT_MODE} />
             </div>
             <label htmlFor="theme-mode-option-1" className={tailwind('ml-3 flex cursor-pointer flex-col')}>
               <span className={tailwind(`block text-sm font-medium leading-5 ${whtBtnInnerClassNames}`)}>Light</span>
@@ -162,7 +162,7 @@ const SettingsPopupMisc = (props) => {
           </div>
           <div className={tailwind(`relative flex border p-4 ${blkBtnClassNames}`)}>
             <div className={tailwind('flex h-5 items-center')}>
-              <input onChange={onThemeInputChange} id="theme-mode-option-2" name="theme-mode-option-2" type="radio" className={tailwind(`h-4 w-4 cursor-pointer text-blue-600 transition duration-150 ease-in-out blk:bg-gray-900 blk:text-blue-400 ${blkRadioClassNames}`)} checked={themeMode === BLK_MODE} value={BLK_MODE} />
+              <input onChange={onThemeInputChange} id="theme-mode-option-2" name="theme-mode-option-2" type="radio" className={tailwind(`h-4 w-4 cursor-pointer bg-white text-blue-600 transition duration-150 ease-in-out blk:bg-gray-900 blk:text-blue-400 ${blkRadioClassNames}`)} checked={themeMode === BLK_MODE} value={BLK_MODE} />
             </div>
             <label htmlFor="theme-mode-option-2" className={tailwind('ml-3 flex cursor-pointer flex-col')}>
               <span className={tailwind(`block text-sm font-medium leading-5 ${blkBtnInnerClassNames}`)}>Dark</span>
@@ -170,7 +170,7 @@ const SettingsPopupMisc = (props) => {
           </div>
           <div className={tailwind(`relative flex border p-4 ${systemBtnClassNames}`)}>
             <div className={tailwind('flex h-5 items-center')}>
-              <input onChange={onThemeInputChange} id="theme-mode-option-3" name="theme-mode-option-3" type="radio" className={tailwind(`h-4 w-4 cursor-pointer text-blue-600 transition duration-150 ease-in-out blk:bg-gray-900 blk:text-blue-400 ${systemRadioClassNames}`)} checked={themeMode === SYSTEM_MODE} value={SYSTEM_MODE} />
+              <input onChange={onThemeInputChange} id="theme-mode-option-3" name="theme-mode-option-3" type="radio" className={tailwind(`h-4 w-4 cursor-pointer bg-white text-blue-600 transition duration-150 ease-in-out blk:bg-gray-900 blk:text-blue-400 ${systemRadioClassNames}`)} checked={themeMode === SYSTEM_MODE} value={SYSTEM_MODE} />
             </div>
             <label htmlFor="theme-mode-option-3" className={tailwind('ml-3 flex cursor-pointer flex-col')}>
               <span className={tailwind(`block text-sm font-medium leading-5 ${systemBtnInnerClassNames}`)}>System</span>
@@ -178,18 +178,18 @@ const SettingsPopupMisc = (props) => {
           </div>
           <div className={tailwind(`relative flex rounded-bl-md rounded-br-md border p-4 ${customBtnClassNames}`)}>
             <div className={tailwind('flex h-5 items-center')}>
-              <input onChange={onThemeInputChange} id="theme-mode-option-4" name="theme-mode-option-4" type="radio" className={tailwind(`h-4 w-4 cursor-pointer text-blue-600 transition duration-150 ease-in-out blk:bg-gray-900 blk:text-blue-400 ${customRadioClassNames}`)} checked={themeMode === CUSTOM_MODE} value={CUSTOM_MODE} />
+              <input onChange={onThemeInputChange} id="theme-mode-option-4" name="theme-mode-option-4" type="radio" className={tailwind(`h-4 w-4 cursor-pointer bg-white text-blue-600 transition duration-150 ease-in-out blk:bg-gray-900 blk:text-blue-400 ${customRadioClassNames}`)} checked={themeMode === CUSTOM_MODE} value={CUSTOM_MODE} />
             </div>
             <label htmlFor="theme-mode-option-4" className={tailwind('ml-3 flex cursor-pointer flex-col')}>
               <span className={tailwind(`block text-sm font-medium leading-5 ${customBtnInnerClassNames}`)}>Custom</span>
               <div className={tailwind('mt-1.5 sm:flex sm:items-center sm:justify-start')}>
                 <div className={tailwind('flex items-center justify-start')}>
                   <span className={tailwind(`block w-10 text-sm ${customTextClassNames}`)}>Light:</span>
-                  <input ref={whtTimeInput} onChange={onTimeInputChange} onBlur={onWhtTimeInputBlur} type="time" className={tailwind(`ml-1 rounded-md border border-gray-300 py-1 pl-1 pr-0.5 text-sm leading-5 ${customInputClassNames}`)} placeholder="HH:mm" value={whtTime} disabled={themeMode !== CUSTOM_MODE} pattern="[0-9]{2}:[0-9]{2}" />
+                  <input ref={whtTimeInput} onChange={onTimeInputChange} onBlur={onWhtTimeInputBlur} type="time" className={tailwind(`ml-1 rounded-md border py-1 pl-1 pr-0.5 text-sm leading-5 ${customInputClassNames}`)} placeholder="HH:mm" value={whtTime} disabled={themeMode !== CUSTOM_MODE} pattern="[0-9]{2}:[0-9]{2}" />
                 </div>
                 <div className={tailwind('mt-2 flex items-center justify-start sm:ml-4 sm:mt-0')}>
                   <span className={tailwind(`block w-10 text-sm ${customTextClassNames}`)}>Dark:</span>
-                  <input ref={blkTimeInput} onChange={onTimeInputChange} onBlur={onBlkTimeInputBlur} type="time" className={tailwind(`ml-1 rounded-md border border-gray-300 py-1 pl-1 pr-0.5 text-sm leading-5 ${customInputClassNames}`)} placeholder="HH:mm" value={blkTime} disabled={themeMode !== CUSTOM_MODE} pattern="[0-9]{2}:[0-9]{2}" />
+                  <input ref={blkTimeInput} onChange={onTimeInputChange} onBlur={onBlkTimeInputBlur} type="time" className={tailwind(`ml-1 rounded-md border py-1 pl-1 pr-0.5 text-sm leading-5 ${customInputClassNames}`)} placeholder="HH:mm" value={blkTime} disabled={themeMode !== CUSTOM_MODE} pattern="[0-9]{2}:[0-9]{2}" />
                 </div>
               </div>
             </label>
@@ -203,7 +203,7 @@ const SettingsPopupMisc = (props) => {
           <div className={tailwind('mx-auto mt-2.5 w-full max-w-48 -space-y-px rounded-md bg-white shadow-sm blk:bg-gray-900 sm:mt-1 sm:w-48 sm:max-w-none sm:flex-shrink-0 sm:flex-grow-0')}>
             <div className={tailwind(`relative flex rounded-tl-md rounded-tr-md border p-4 ${layoutCardBtnClassNames}`)}>
               <div className={tailwind('flex h-5 items-center')}>
-                <input onChange={onLayoutTypeInputChange} id="layout-type-option-1" name="layout-type-option-1" type="radio" className={tailwind(`h-4 w-4 cursor-pointer text-blue-600 transition duration-150 ease-in-out blk:bg-gray-900 blk:text-blue-400 ${layoutCardRadioClassNames}`)} checked={layoutType === LAYOUT_CARD} value={LAYOUT_CARD} />
+                <input onChange={onLayoutTypeInputChange} id="layout-type-option-1" name="layout-type-option-1" type="radio" className={tailwind(`h-4 w-4 cursor-pointer bg-white text-blue-600 transition duration-150 ease-in-out blk:bg-gray-900 blk:text-blue-400 ${layoutCardRadioClassNames}`)} checked={layoutType === LAYOUT_CARD} value={LAYOUT_CARD} />
               </div>
               <label htmlFor="layout-type-option-1" className={tailwind('ml-3 flex cursor-pointer flex-col')}>
                 <span className={tailwind(`block text-sm font-medium leading-5 ${layoutCardBtnInnerClassNames}`)}>Cards view</span>
@@ -211,7 +211,7 @@ const SettingsPopupMisc = (props) => {
             </div>
             <div className={tailwind(`relative flex rounded-bl-md rounded-br-md border p-4 ${layoutListBtnClassNames}`)}>
               <div className={tailwind('flex h-5 items-center')}>
-                <input onChange={onLayoutTypeInputChange} id="layout-type-option-2" name="layout-type-option-2" type="radio" className={tailwind(`h-4 w-4 cursor-pointer text-blue-600 transition duration-150 ease-in-out blk:bg-gray-900 blk:text-blue-400 ${layoutListRadioClassNames}`)} checked={layoutType === LAYOUT_LIST} value={LAYOUT_LIST} />
+                <input onChange={onLayoutTypeInputChange} id="layout-type-option-2" name="layout-type-option-2" type="radio" className={tailwind(`h-4 w-4 cursor-pointer bg-white text-blue-600 transition duration-150 ease-in-out blk:bg-gray-900 blk:text-blue-400 ${layoutListRadioClassNames}`)} checked={layoutType === LAYOUT_LIST} value={LAYOUT_LIST} />
               </div>
               <label htmlFor="layout-type-option-2" className={tailwind('ml-3 flex cursor-pointer flex-col')}>
                 <span className={tailwind(`block text-sm font-medium leading-5 ${layoutListBtnInnerClassNames}`)}>List view</span>
@@ -227,7 +227,7 @@ const SettingsPopupMisc = (props) => {
           <div className={tailwind('mx-auto mt-2.5 w-full max-w-48 -space-y-px rounded-md bg-white shadow-sm blk:bg-gray-900 sm:mt-1 sm:w-48 sm:max-w-none sm:flex-shrink-0 sm:flex-grow-0')}>
             <div className={tailwind(`relative flex rounded-tl-md rounded-tr-md border p-4 ${ascendingBtnClassNames}`)}>
               <div className={tailwind('flex h-5 items-center')}>
-                <input onChange={onDoDescendingInputChange} id="list-order-option-1" name="list-order-option-1" type="radio" className={tailwind(`h-4 w-4 cursor-pointer text-blue-600 transition duration-150 ease-in-out blk:bg-gray-900 blk:text-blue-400 ${ascendingRadioClassNames}`)} checked={!doDescendingOrder} value="ascending" />
+                <input onChange={onDoDescendingInputChange} id="list-order-option-1" name="list-order-option-1" type="radio" className={tailwind(`h-4 w-4 cursor-pointer bg-white text-blue-600 transition duration-150 ease-in-out blk:bg-gray-900 blk:text-blue-400 ${ascendingRadioClassNames}`)} checked={!doDescendingOrder} value="ascending" />
               </div>
               <label htmlFor="list-order-option-1" className={tailwind('ml-3 flex cursor-pointer flex-col')}>
                 <span className={tailwind(`block text-sm font-medium leading-5 ${ascendingBtnInnerClassNames}`)}>Ascending order</span>
@@ -235,7 +235,7 @@ const SettingsPopupMisc = (props) => {
             </div>
             <div className={tailwind(`relative flex rounded-bl-md rounded-br-md border p-4 ${descendingBtnClassNames}`)}>
               <div className={tailwind('flex h-5 items-center')}>
-                <input onChange={onDoDescendingInputChange} id="list-order-option-2" name="list-order-option-2" type="radio" className={tailwind(`h-4 w-4 cursor-pointer text-blue-600 transition duration-150 ease-in-out blk:bg-gray-900 blk:text-blue-400 ${descendingRadioClassNames}`)} checked={doDescendingOrder} value="descending" />
+                <input onChange={onDoDescendingInputChange} id="list-order-option-2" name="list-order-option-2" type="radio" className={tailwind(`h-4 w-4 cursor-pointer bg-white text-blue-600 transition duration-150 ease-in-out blk:bg-gray-900 blk:text-blue-400 ${descendingRadioClassNames}`)} checked={doDescendingOrder} value="descending" />
               </div>
               <label htmlFor="list-order-option-2" className={tailwind('ml-3 flex cursor-pointer flex-col')}>
                 <span className={tailwind(`block text-sm font-medium leading-5 ${descendingBtnInnerClassNames}`)}>Descending order</span>

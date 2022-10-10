@@ -120,7 +120,7 @@ class ConfirmDeletePopup extends React.Component {
                 </div>
               </div>
               <div className={tailwind('mt-5 sm:mt-4 sm:ml-10 sm:flex sm:pl-4')}>
-                <button onClick={this.onConfirmDeleteOkBtnClick} type="button" className={tailwind('inline-flex w-full justify-center rounded-full border border-red-600 bg-red-600 py-2 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring blk:border-red-500 blk:bg-red-500 blk:hover:bg-red-400 sm:w-auto sm:px-3.5 sm:py-1.5 sm:text-sm')}>Delete</button>
+                <button onClick={this.onConfirmDeleteOkBtnClick} type="button" className={tailwind('inline-flex w-full justify-center rounded-full border border-red-600 bg-red-600 py-2 text-base font-medium text-white hover:bg-red-500 focus:outline-none focus:ring blk:border-red-500 blk:bg-red-500 blk:hover:bg-red-600 sm:w-auto sm:px-3.5 sm:py-1.5 sm:text-sm')}>Delete</button>
                 <button onClick={this.onConfirmDeleteCancelBtnClick} type="button" style={cancelBtnStyle} className={tailwind('mt-3 inline-flex w-full justify-center rounded-full border border-gray-400 bg-white text-base font-normal text-gray-500 hover:border-gray-500 hover:text-gray-600 focus:outline-none focus:ring blk:border-gray-400 blk:bg-gray-800 blk:text-gray-300 blk:hover:border-gray-300 blk:hover:text-gray-200 sm:mt-0 sm:ml-3 sm:w-auto sm:px-3 sm:py-1.5 sm:text-sm')}>Cancel</button>
               </div>
             </motion.div>

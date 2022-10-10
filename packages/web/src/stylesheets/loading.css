@@ -126,7 +126,7 @@
   height: 20px;
   background: 0 0!important;
   border-radius: 100%;
-  border: 1px solid rgb(156 163 175);
+  border: 1px solid rgb(156, 163, 175);
   border-bottom-color: transparent;
   animation: ball-clip-rotate .75s 0s linear infinite;
 }

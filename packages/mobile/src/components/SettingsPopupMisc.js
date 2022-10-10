@@ -10,6 +10,7 @@ import {
   DOMAIN_NAME, HASH_PRIVACY, LAYOUT_CARD, LAYOUT_LIST, WHT_MODE, BLK_MODE, SYSTEM_MODE,
   CUSTOM_MODE, TIME_PICK_POPUP,
 } from '../types/const';
+import { getThemeMode } from '../selectors';
 import { getFormattedTime } from '../utils';
 
 import { useTailwind } from '.';
@@ -26,6 +27,7 @@ const SettingsPopupMisc = (props) => {
   const themeMode = useSelector(state => state.localSettings.themeMode);
   const customOptions = useSelector(state => state.localSettings.themeCustomOptions);
   const is24HFormat = useSelector(state => state.window.is24HFormat);
+  const derivedThemeMode = useSelector(state => getThemeMode(state));
   const whtTimeBtn = useRef(null);
   const blkTimeBtn = useRef(null);
   const dispatch = useDispatch();
@@ -88,6 +90,7 @@ const SettingsPopupMisc = (props) => {
   const switchThumbColorOff = 'rgb(229, 231, 235)';
   const switchTrackColorOn = Platform.OS === 'android' ? 'rgb(191, 219, 254)' : 'rgb(59, 130, 246)';
   const switchTrackColorOff = 'rgb(156, 163, 175)';
+  const switchIosTrackColorOff = derivedThemeMode === BLK_MODE ? 'rgb(55, 65, 81)' : 'rgb(243, 244, 246)';
 
   const ascendingBtnClassNames = !doDescendingOrder ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
   const ascendingBtnInnerClassNames = !doDescendingOrder ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
@@ -126,7 +129,7 @@ const SettingsPopupMisc = (props) => {
   const customRBtnClassNames = themeMode === CUSTOM_MODE ? 'border-blue-600 blk:border-blue-300' : 'border-gray-300 blk:border-gray-600';
   const customRBtnInnerClassNames = themeMode === CUSTOM_MODE ? 'bg-blue-600 blk:bg-blue-300' : 'bg-gray-300 blk:bg-gray-900';
   const customTextClassNames = themeMode === CUSTOM_MODE ? 'text-blue-700 blk:text-blue-200' : 'text-gray-500 blk:text-gray-400';
-  const customInputClassNames = themeMode === CUSTOM_MODE ? 'border-gray-300 bg-white blk:border-blue-300 blk:bg-blue-600 ' : 'border-gray-300 bg-white blk:border-gray-600 blk:bg-gray-900 ';
+  const customInputClassNames = themeMode === CUSTOM_MODE ? 'border-gray-300 bg-white blk:border-blue-300 blk:bg-blue-600' : 'border-gray-300 bg-white blk:border-gray-600 blk:bg-gray-900';
   const customInputInnerClassNames = themeMode === CUSTOM_MODE ? 'text-gray-600 blk:text-blue-200' : 'text-gray-400 blk:text-gray-500';
 
   let whtTime, blkTime;
@@ -296,7 +299,7 @@ const SettingsPopupMisc = (props) => {
           <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Allow your saved links to be sent to our server for extracting their representative title and image. No your personal information involved at all so there is no way to know who saves what links. These titles and images are used in our website and app for you to easily find and recognize your saved links. For more information, please visit <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>our privacy policy page</Text>.</Text>
         </View>
         <View style={tailwind('ml-4 h-6 w-11 flex-shrink-0 flex-grow-0')}>
-          <Switch onValueChange={onDoExtractBtnClick} value={doExtractContents} thumbColor={Platform.OS === 'android' ? doExtractContents ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} />
+          <Switch onValueChange={onDoExtractBtnClick} value={doExtractContents} thumbColor={Platform.OS === 'android' ? doExtractContents ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} ios_backgroundColor={switchIosTrackColorOff} />
         </View>
       </View>
       <View style={tailwind('mt-10 mb-4 flex-row items-center justify-between')}>
@@ -305,7 +308,7 @@ const SettingsPopupMisc = (props) => {
           <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Allow old removed links in Trash to be automatically deleted after 45 days.</Text>
         </View>
         <View style={tailwind('ml-4 h-6 w-11 flex-shrink-0 flex-grow-0')}>
-          <Switch onValueChange={onDoDeleteBtnClick} value={doDeleteOldLinksInTrash} thumbColor={Platform.OS === 'android' ? doDeleteOldLinksInTrash ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} />
+          <Switch onValueChange={onDoDeleteBtnClick} value={doDeleteOldLinksInTrash} thumbColor={Platform.OS === 'android' ? doDeleteOldLinksInTrash ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} ios_backgroundColor={switchIosTrackColorOff} />
         </View>
       </View>
     </View>

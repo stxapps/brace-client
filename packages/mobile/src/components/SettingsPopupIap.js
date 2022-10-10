@@ -146,7 +146,7 @@ const IapHome = (props) => {
       actionPanel = (
         <View style={tailwind('mt-6')}>
           <View style={tailwind('flex-row items-center')}>
-            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
             </Svg>
             <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 blk:text-red-500')}>Unable to verify the purchase</Text>
@@ -168,7 +168,7 @@ const IapHome = (props) => {
       actionPanel = (
         <View style={tailwind('mt-6')}>
           <View style={tailwind('flex-row items-center')}>
-            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
             </Svg>
             <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 blk:text-red-500')}>Oops..., something went wrong!</Text>
@@ -191,7 +191,7 @@ const IapHome = (props) => {
       actionPanel = (
         <View style={tailwind('mt-6')}>
           <View style={tailwind('flex-row items-center')}>
-            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
             </Svg>
             <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 blk:text-red-500')}>Oops..., something went wrong!</Text>
@@ -222,7 +222,7 @@ const IapHome = (props) => {
       actionPanel = (
         <View style={tailwind('mt-6')}>
           <View style={tailwind('flex-row items-center')}>
-            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
             </Svg>
             <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 blk:text-red-500')}>Oops..., unable to connect to the App Store</Text>
@@ -353,9 +353,9 @@ const IapPurchased = (props) => {
       <React.Fragment>
         <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra features: pin to the top and dark appearance.</Text>
         <View style={tailwind('mt-4')}>
-          <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>     <Text style={tailwind('text-base font-normal leading-6.5 text-red-600 blk:text-red-600')}>Your subscription has been expired</Text> and you won't be able to use extra features soon. Please go to {appStoreLink} now to renew your subscription to continue supporting us and using extra features.</Text>
+          <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>     <Text style={tailwind('text-base font-normal leading-6.5 text-red-600 blk:text-red-500')}>Your subscription has been expired</Text> and you won't be able to use extra features soon. Please go to {appStoreLink} now to renew your subscription to continue supporting us and using extra features.</Text>
           <View style={[tailwind('absolute'), { top: 3, left: 0 }]}>
-            <Svg style={tailwind('font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('font-normal text-red-500 blk:text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
             </Svg>
           </View>
@@ -370,7 +370,7 @@ const IapPurchased = (props) => {
           <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>     <Text style={tailwind('text-base font-normal leading-6.5 text-red-600 blk:text-red-500')}>Your subscription has been expired.</Text> Please go to {appStoreLink} now to renew your subscription to continue supporting us and using extra features.
           </Text>
           <View style={[tailwind('absolute'), { top: 3, left: 0 }]}>
-            <Svg style={tailwind('font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('font-normal text-red-500 blk:text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
             </Svg>
           </View>
@@ -388,7 +388,7 @@ const IapPurchased = (props) => {
     infoText = (
       <React.Fragment>
         <View style={tailwind('mt-6 flex-row items-center')}>
-          <Svg style={tailwind('mt-0.5 flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+          <Svg style={tailwind('mt-0.5 flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
           </Svg>
           <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal leading-6.5 text-red-600 blk:text-red-500')}>We cannot determine your subscription's status.</Text>
@@ -425,7 +425,7 @@ const IapPurchased = (props) => {
     refreshPanel = (
       <View style={tailwind('mt-6')}>
         <View style={tailwind('flex-row items-center')}>
-          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
           </Svg>
           <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 blk:text-red-500')}>Oops..., something went wrong!</Text>
@@ -556,7 +556,7 @@ const _SettingsPopupIapRestore = (props) => {
     actionPanel = (
       <View style={tailwind('mt-6 mb-4')}>
         <View style={tailwind('flex-row items-center')}>
-          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
           </Svg>
           <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 blk:text-red-500')}>Oops..., something went wrong!</Text>

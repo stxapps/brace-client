@@ -103,6 +103,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
     const switchThumbColorOff = 'rgb(229, 231, 235)';
     const switchTrackColorOn = Platform.OS === 'android' ? 'rgb(191, 219, 254)' : 'rgb(59, 130, 246)';
     const switchTrackColorOff = 'rgb(156, 163, 175)';
+    const switchIosTrackColorOff = themeMode === BLK_MODE ? 'rgb(55, 65, 81)' : 'rgb(243, 244, 246)';
 
     let actionPanel;
     if (!deleteAllDataProgress) {
@@ -120,7 +121,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
       actionPanel = (
         <View style={tailwind('mt-6 mb-4')}>
           <View style={tailwind('flex-row items-center')}>
-            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
             </Svg>
             <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 blk:text-red-500')}>Oops..., something went wrong!</Text>
@@ -150,7 +151,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
       actionPanel = (
         <View style={tailwind('mt-6 mb-4')}>
           <View style={tailwind('flex-row items-center')}>
-            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-green-500 blk:text-green-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-green-500 blk:text-green-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.7071 8.70711C14.0976 8.31658 14.0976 7.68342 13.7071 7.29289C13.3166 6.90237 12.6834 6.90237 12.2929 7.29289L9 10.5858L7.70711 9.29289C7.31658 8.90237 6.68342 8.90237 6.29289 9.29289C5.90237 9.68342 5.90237 10.3166 6.29289 10.7071L8.29289 12.7071C8.68342 13.0976 9.31658 13.0976 9.70711 12.7071L13.7071 8.70711Z" />
             </Svg>
             <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-gray-500 blk:text-gray-400')}>Done</Text>
@@ -183,7 +184,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
         <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>It may take several minutes to delete all your data.</Text>
         <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-red-600 blk:text-red-500')}>This action CANNOT be undone.</Text>
         <View style={tailwind('mt-6 flex-row items-center')}>
-          <Switch onValueChange={this.onConfirmInputChange} value={this.state.didCheckConfirm} thumbColor={Platform.OS === 'android' ? this.state.didCheckConfirm ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} />
+          <Switch onValueChange={this.onConfirmInputChange} value={this.state.didCheckConfirm} thumbColor={Platform.OS === 'android' ? this.state.didCheckConfirm ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} ios_backgroundColor={switchIosTrackColorOff} />
           <Text style={tailwind('ml-2 flex-1 text-base font-normal text-gray-500 blk:text-gray-400')}>Yes, I’m absolutely sure I want to delete all my data.</Text>
         </View>
         {actionPanel}
