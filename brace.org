@@ -760,7 +760,7 @@ This and CI/CD are very important!
 - yarn add redux react-redux redux-loop reselect
 - yarn add url-parse axios @react-native-community/clipboard
 - yarn add https://github.com/bracedotto/redux-offline#4969cde61cd97a9f317f158cade8c96374871a6d
-- yarn add @react-native-community/async-storage @react-native-community/netinfo
+- yarn add @react-native-async-storage/async-storage @react-native-community/netinfo
 - yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?a2aacea2fe4e384b6dbb51de05e343fe0f4602d6'
 - yarn add https://github.com/bracedotto/tailwind-rn#96848a8d2c2370e4f5e57a773ace172c4073157d
 - yarn add react-native-default-preference react-native-fast-image react-native-keyboard-manager react-native-modal react-native-popup-menu
@@ -777,7 +777,7 @@ This and CI/CD are very important!
 - change minSdkVersion from 16 to 21 in ./android/build.gradle
 - Allow CORS access on https://brace.to/manifest.json
 - Set up Android deep linking: reactnative.dev/docs/linking and developer.android.com/training/app-links/deep-linking
-- npx react-native link to link assets i.e. fonts
+- npx react-native-asset to link assets i.e. fonts
   + medium.com/@mehrankhandev/ultimate-guide-to-use-custom-fonts-in-react-native-77fcdf859cf4
 - ios
   + Edit PodFile: ios target 12.0, pod 'Blockstack'
