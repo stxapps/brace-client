@@ -625,7 +625,7 @@ This and CI/CD are very important!
 - yarn add @tailwindcss/forms @tailwindcss/typography @tailwindcss/aspect-ratio @tailwindcss/line-clamp
 - no need for dev dependencies as this's not a node app
 - yarn add redux redux-loop react-redux reselect
-- yarn add https://github.com/bracedotto/redux-offline#4969cde61cd97a9f317f158cade8c96374871a6d
+- yarn add https://github.com/stxapps/redux-offline#4969cde61cd97a9f317f158cade8c96374871a6d
 - yarn add @stacks/auth @stacks/storage @stacks/wallet-sdk @stacks/connect @stacks/encryption
 - Make sure history works:
   + Address bar i.e. change path, change hash!
@@ -759,21 +759,21 @@ This and CI/CD are very important!
 - npx react-native init Bracedotto
 - yarn add redux react-redux redux-loop reselect
 - yarn add url-parse axios @react-native-community/clipboard
-- yarn add https://github.com/bracedotto/redux-offline#4969cde61cd97a9f317f158cade8c96374871a6d
+- yarn add https://github.com/stxapps/redux-offline#4969cde61cd97a9f317f158cade8c96374871a6d
 - yarn add @react-native-async-storage/async-storage @react-native-community/netinfo
 - yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?a2aacea2fe4e384b6dbb51de05e343fe0f4602d6'
-- yarn add https://github.com/bracedotto/tailwind-rn#96848a8d2c2370e4f5e57a773ace172c4073157d
+- yarn add https://github.com/stxapps/tailwind-rn#96848a8d2c2370e4f5e57a773ace172c4073157d
 - yarn add react-native-default-preference react-native-fast-image react-native-keyboard-manager react-native-modal react-native-popup-menu
 - yarn add react-native-safe-area-context
 - yarn add react-native-svg react-native-animated-spinkit react-native-swiper
-- yarn add https://github.com/bracedotto/react-native-receive-sharing-intent#4306f9ee6a94c849c3b1a3ec4e4217054fb999c6
+- yarn add https://github.com/stxapps/react-native-receive-sharing-intent#4306f9ee6a94c849c3b1a3ec4e4217054fb999c6
 - yarn add react-native-webview
 - yarn add babel-plugin-inline-import --dev
 - yarn add @welldone-software/why-did-you-render --dev
 - yarn add typescript --dev
 - yarn add react-native-fs <-- NOT USING
 - yarn add react-native-iap @wewatch/lexorank
-- yarn add react-native-device-time-format
+- yarn add https://github.com/stxapps/react-native-device-time-format#63f4a9158a91c391d67317a489ccfe8ec28a7c84
 - change minSdkVersion from 16 to 21 in ./android/build.gradle
 - Allow CORS access on https://brace.to/manifest.json
 - Set up Android deep linking: reactnative.dev/docs/linking and developer.android.com/training/app-links/deep-linking
@@ -803,6 +803,11 @@ This and CI/CD are very important!
   + Xcode's rightbar -> Target Membership, select Save to Brace
   + Save to Brace -> Info.plist, add Fonts provided by application
 - Targets -> Bracedotto -> Build Settings -> Packaging -> Product Name: Brace
+* Debug
+** Flipper
+*** iOS
+- stackoverflow.com/a/74030603
+- show hidden files: press the “Command” + “Shift” + “.” (period) keys
 * test cases
 - web, mobile
 - PC, laptop, tablet, phone
@@ -839,7 +844,7 @@ This and CI/CD are very important!
 ** Setup the instance
 - sudo apt update, sudo apt upgrade
 - install nvm, nodejs, yarn
-- git clone https://github.com/bracedotto/brace-server-worker.git
+- git clone https://github.com/stxapps/brace-server-worker.git
 - cd brace-server-worker
 - git pull
 - yarn
