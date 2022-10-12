@@ -758,10 +758,10 @@ This and CI/CD are very important!
 ** steps
 - npx react-native init Bracedotto
 - yarn add redux react-redux redux-loop reselect
-- yarn add url-parse axios @react-native-community/clipboard
+- yarn add url-parse axios@0.27.2 @react-native-community/clipboard
 - yarn add https://github.com/stxapps/redux-offline#4969cde61cd97a9f317f158cade8c96374871a6d
 - yarn add @react-native-async-storage/async-storage @react-native-community/netinfo
-- yarn add 'https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?a2aacea2fe4e384b6dbb51de05e343fe0f4602d6'
+- yarn add 'https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?a2aacea2fe4e384b6dbb51de05e343fe0f4602d6'
 - yarn add https://github.com/stxapps/tailwind-rn#96848a8d2c2370e4f5e57a773ace172c4073157d
 - yarn add react-native-default-preference react-native-fast-image react-native-keyboard-manager react-native-modal react-native-popup-menu
 - yarn add react-native-safe-area-context
@@ -770,9 +770,9 @@ This and CI/CD are very important!
 - yarn add react-native-webview
 - yarn add babel-plugin-inline-import --dev
 - yarn add @welldone-software/why-did-you-render --dev
-- yarn add typescript --dev
+- yarn add typescript@4.0.8 --dev
 - yarn add react-native-fs <-- NOT USING
-- yarn add react-native-iap @wewatch/lexorank
+- yarn add react-native-iap@8.0.8 @wewatch/lexorank
 - yarn add https://github.com/stxapps/react-native-device-time-format#63f4a9158a91c391d67317a489ccfe8ec28a7c84
 - change minSdkVersion from 16 to 21 in ./android/build.gradle
 - Allow CORS access on https://brace.to/manifest.json
@@ -785,6 +785,7 @@ This and CI/CD are very important!
   + In AppDelegate.m, moduleName:@"Brace"
   + Select Bracedotto in left pane, new -> swift file and generate header binding
   + Add image assets, update storyboard
+  + Targets -> Bracedotto -> Build Settings -> Build Options -> Always embed Swift standard libraries: $(inherited)
 - ios share extension
   + Target Bracedotto -> Info -> URL Types -> URL Schemes: bracedotto
   + Add RCTLinkingManager in AppDelegate.m
