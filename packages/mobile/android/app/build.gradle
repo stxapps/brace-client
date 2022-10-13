@@ -261,10 +261,6 @@ android {
     packagingOptions {
         pickFirst 'META-INF/core.kotlin_module'
     }
-
-    dexOptions {
-        javaMaxHeapSize "3g"
-    }
 }
 
 dependencies {

@@ -6117,9 +6117,9 @@ react-native-animated-spinkit@^1.5.2:
   resolved "https://registry.yarnpkg.com/react-native-animated-spinkit/-/react-native-animated-spinkit-1.5.2.tgz#b1c00ecbadf48634273e6a843f8dfbcb7c006186"
   integrity sha512-YCQGR3HzEQvyaAnepiyf/hv88Sta3UIZ2CFZPtFqwu+VbFJfMgjJZniOx4157TuR5AAYajEJP9Fgy+JLIU3jzQ==
 
-"react-native-blockstack@https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?a2aacea2fe4e384b6dbb51de05e343fe0f4602d6":
+"react-native-blockstack@https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?75854753bb20b72c0da94e16bb4b5e56a385578f":
   version "0.4.6"
-  resolved "https://gitpkg.now.sh/bracedotto/blockstack-react-native/BlockstackSDK?a2aacea2fe4e384b6dbb51de05e343fe0f4602d6#bf10fec41ad563ce99832f9234abdf75c7b19a04"
+  resolved "https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?75854753bb20b72c0da94e16bb4b5e56a385578f#5523994f6ae751a4695622768238585ef7f88f35"
 
 react-native-codegen@^0.70.5:
   version "0.70.5"
@@ -6175,9 +6175,9 @@ react-native-popup-menu@^0.16.1:
   resolved "https://registry.yarnpkg.com/react-native-popup-menu/-/react-native-popup-menu-0.16.1.tgz#b1bb56be5c0838bbc2f532af7b1f554b7ceef566"
   integrity sha512-xRS7mRh0exwu7Iw8PPVHdM11d13A/KzYjy0/fZx3zVtxISxPkNaDGayau6oa7HqO3Nj0oS9ulFCYjcQfG6vahA==
 
-"react-native-receive-sharing-intent@https://github.com/bracedotto/react-native-receive-sharing-intent#4306f9ee6a94c849c3b1a3ec4e4217054fb999c6":
+"react-native-receive-sharing-intent@https://github.com/stxapps/react-native-receive-sharing-intent#c3acb5afdae0087aef58ad806e8208ef2f280f7e":
   version "1.0.4"
-  resolved "https://github.com/bracedotto/react-native-receive-sharing-intent#4306f9ee6a94c849c3b1a3ec4e4217054fb999c6"
+  resolved "https://github.com/stxapps/react-native-receive-sharing-intent#c3acb5afdae0087aef58ad806e8208ef2f280f7e"
 
 react-native-safe-area-context@^4.4.1:
   version "4.4.1"

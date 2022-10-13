@@ -761,12 +761,12 @@ This and CI/CD are very important!
 - yarn add url-parse axios@0.27.2 @react-native-community/clipboard
 - yarn add https://github.com/stxapps/redux-offline#4969cde61cd97a9f317f158cade8c96374871a6d
 - yarn add @react-native-async-storage/async-storage @react-native-community/netinfo
-- yarn add 'https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?a2aacea2fe4e384b6dbb51de05e343fe0f4602d6'
+- yarn add 'https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?75854753bb20b72c0da94e16bb4b5e56a385578f'
 - yarn add https://github.com/stxapps/tailwind-rn#96848a8d2c2370e4f5e57a773ace172c4073157d
 - yarn add react-native-default-preference react-native-fast-image react-native-keyboard-manager react-native-modal react-native-popup-menu
 - yarn add react-native-safe-area-context
 - yarn add react-native-svg react-native-animated-spinkit react-native-swiper
-- yarn add https://github.com/stxapps/react-native-receive-sharing-intent#4306f9ee6a94c849c3b1a3ec4e4217054fb999c6
+- yarn add https://github.com/stxapps/react-native-receive-sharing-intent#c3acb5afdae0087aef58ad806e8208ef2f280f7e
 - yarn add react-native-webview
 - yarn add babel-plugin-inline-import --dev
 - yarn add @welldone-software/why-did-you-render --dev
