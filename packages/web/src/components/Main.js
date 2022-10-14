@@ -26,6 +26,7 @@ import SettingsErrorPopup from './SettingsErrorPopup';
 import ListNamesPopup from './ListNamesPopup';
 import ConfirmDeletePopup from './ConfirmDeletePopup';
 import PaywallPopup from './PaywallPopup';
+import AccessErrorPopup from './AccessErrorPopup';
 
 class Main extends React.PureComponent {
 
@@ -94,6 +95,7 @@ class Main extends React.PureComponent {
         <ListNamesPopup />
         <ConfirmDeletePopup />
         <PaywallPopup />
+        <AccessErrorPopup />
       </div>
     );
   }

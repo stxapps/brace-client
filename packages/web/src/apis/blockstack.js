@@ -5,8 +5,8 @@ import {
   UPDATE_SETTINGS, PIN_LINK, UNPIN_LINK,
 } from '../types/actionTypes';
 import {
-  isObject, createLinkFPath, extractLinkFPath, createPinFPath, addFPath, deleteFPath,
-  copyFPaths, getMainId, sortWithPins,
+  isObject, isString, createLinkFPath, extractLinkFPath, createPinFPath, addFPath,
+  deleteFPath, copyFPaths, getMainId, sortWithPins,
 } from '../utils';
 import { cachedFPaths } from '../vars';
 
@@ -233,9 +233,21 @@ export const batchDeleteFileWithRetry = async (fpaths, callCount) => {
           // Treat not found error as not an error as local data might be out-dated.
           //   i.e. user tries to delete a not-existing file, it's ok.
           // Anyway, if the file should be there, this will hide the real error!
-          if (error.message &&
-            (error.message.includes('does_not_exist') ||
-              error.message.includes('file_not_found'))) {
+          if (
+            isString(error.message) &&
+            (
+              (
+                error.message.includes('failed to delete') &&
+                error.message.includes('404')
+              ) ||
+              (
+                error.message.includes('deleteFile Error') &&
+                error.message.includes('GaiaError error 5')
+              ) ||
+              error.message.includes('does_not_exist') ||
+              error.message.includes('file_not_found')
+            )
+          ) {
             return { fpath, success: true };
           }
           return { error, fpath, success: false };

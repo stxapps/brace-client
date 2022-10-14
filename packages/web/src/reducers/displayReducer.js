@@ -18,10 +18,10 @@ import {
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   LIST_NAMES_POPUP, PIN_MENU_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
-  SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, MY_LIST, TRASH, ARCHIVE, UPDATING,
-  DIED_UPDATING, SETTINGS_VIEW_ACCOUNT, DELETE_ACTION_LIST_NAME,
+  SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, ACCESS_ERROR_POPUP, MY_LIST, TRASH,
+  ARCHIVE, UPDATING, DIED_UPDATING, SETTINGS_VIEW_ACCOUNT, DELETE_ACTION_LIST_NAME,
 } from '../types/const';
-import { doContainListName, getStatusCounts } from '../utils';
+import { doContainListName, getStatusCounts, isObject, isString } from '../utils';
 
 const initialState = {
   listName: MY_LIST,
@@ -42,6 +42,7 @@ const initialState = {
   settingsListsMenuPopupPosition: null,
   isTimePickPopupShown: false,
   timePickPopupPosition: null,
+  isAccessErrorPopupShown: false,
   statuses: [],
   isHandlingSignIn: false,
   isBulkEditing: false,
@@ -90,6 +91,7 @@ const displayReducer = (state = initialState, action) => {
       settingsListsMenuPopupPosition: null,
       isTimePickPopupShown: false,
       timePickPopupPosition: null,
+      isAccessErrorPopupShown: false,
       statuses: [],
       isHandlingSignIn: false,
       isBulkEditing: false,
@@ -144,6 +146,7 @@ const displayReducer = (state = initialState, action) => {
         isPaywallPopupShown: isShown,
         isConfirmDeletePopupShown: isShown,
         isSettingsPopupShown: isShown,
+        //isAccessErrorPopupShown: isShown, // ErrorPopup should still be shown
       };
       if (!isShown) {
         newState.isListNamesPopupShown = false;
@@ -152,6 +155,8 @@ const displayReducer = (state = initialState, action) => {
         newState.pinMenuPopupPosition = null;
         newState.isSettingsListsMenuPopupShown = false;
         newState.settingsListsMenuPopupPosition = null;
+        newState.isTimePickPopupShown = false;
+        newState.timePickPopupPosition = null;
       }
       return newState;
     }
@@ -228,6 +233,11 @@ const displayReducer = (state = initialState, action) => {
       };
     }
 
+    if (id === ACCESS_ERROR_POPUP) {
+      const newState = { ...state, isAccessErrorPopupShown: isShown };
+      return newState;
+    }
+
     return state;
   }
 
@@ -239,6 +249,7 @@ const displayReducer = (state = initialState, action) => {
     const { listName } = action.payload;
     const newState = {
       ...state,
+      isAccessErrorPopupShown: false,
       statuses: [...state.statuses, FETCH_COMMIT],
       didFetch: true,
       didFetchSettings: true,
@@ -266,7 +277,22 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === FETCH_ROLLBACK) {
-    return { ...state, statuses: [...state.statuses, FETCH_ROLLBACK] };
+    const newState = { ...state, statuses: [...state.statuses, FETCH_ROLLBACK] };
+    if (
+      (
+        isObject(action.payload) &&
+        isString(action.payload.message) &&
+        action.payload.message.includes('401')
+      ) ||
+      (
+        isObject(action.payload) &&
+        isObject(action.payload.hubError) &&
+        action.payload.hubError.statusCode === 401
+      )
+    ) {
+      newState.isAccessErrorPopupShown = true;
+    }
+    return newState;
   }
 
   if (action.type === UPDATE_FETCHED) {

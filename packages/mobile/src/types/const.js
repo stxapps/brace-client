@@ -32,6 +32,7 @@ export const SETTINGS_POPUP = 'SETTINGS_POPUP';
 export const SETTINGS_LISTS_MENU_POPUP = 'SETTINGS_LISTS_MENU_POPUP';
 export const TIME_PICK_POPUP = 'TIME_PICK_POPUP';
 export const PAYWALL_POPUP = 'PAYWALL_POPUP';
+export const ACCESS_ERROR_POPUP = 'ACCESS_ERROR_POPUP';
 
 export const IS_POPUP_SHOWN = 'isPopupShown';
 export const POPUP_ANCHOR_POSITION = 'popupAnchorPosition';

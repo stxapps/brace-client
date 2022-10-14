@@ -771,6 +771,7 @@ This and CI/CD are very important!
 - yarn add babel-plugin-inline-import --dev
 - yarn add @welldone-software/why-did-you-render --dev
 - yarn add typescript@4.0.8 --dev
+- yarn add @types/react-native --dev
 - yarn add react-native-fs <-- NOT USING
 - yarn add react-native-iap@8.0.8 @wewatch/lexorank
 - yarn add https://github.com/stxapps/react-native-device-time-format#63f4a9158a91c391d67317a489ccfe8ec28a7c84

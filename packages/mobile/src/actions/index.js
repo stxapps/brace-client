@@ -54,8 +54,8 @@ import {
   APP_GROUP_SHARE, APP_GROUP_SHARE_UKEY,
   SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   LIST_NAMES_POPUP, PIN_MENU_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
-  SETTINGS_LISTS_MENU_POPUP, ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
-  MY_LIST, TRASH, N_LINKS, N_DAYS,
+  SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, ID, STATUS, IS_POPUP_SHOWN,
+  POPUP_ANCHOR_POSITION, MY_LIST, TRASH, N_LINKS, N_DAYS,
   ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
   IAP_VERIFY_URL, IAP_STATUS_URL, APPSTORE, PLAYSTORE, COM_BRACEDOTTO,
@@ -195,6 +195,10 @@ const handlePendingSignIn = (url) => async (dispatch, getState) => {
 
 const getPopupShownId = (state) => {
 
+  // No SettingsErrorPopup and PinErrorPopup in displayReducer
+  //   so no AccessErrorPopup here too.
+  //if (state.display.isAccessErrorPopupShown) return ACCESS_ERROR_POPUP;
+  if (state.display.isTimePickPopupShown) return TIME_PICK_POPUP;
   if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
   if (state.display.isPaywallPopupShown) return PAYWALL_POPUP;
   if (state.display.isPinMenuPopupShown) return PIN_MENU_POPUP;
