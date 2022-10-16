@@ -282,7 +282,10 @@ const displayReducer = (state = initialState, action) => {
       (
         isObject(action.payload) &&
         isString(action.payload.message) &&
-        action.payload.message.includes('401')
+        (
+          action.payload.message.includes('401') ||
+          action.payload.message.includes('GaiaError error 7')
+        )
       ) ||
       (
         isObject(action.payload) &&
