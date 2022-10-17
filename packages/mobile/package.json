@@ -23,7 +23,7 @@
     "@wewatch/lexorank": "^1.0.3",
     "axios": "0.27.2",
     "react": "18.1.0",
-    "react-native": "0.70.2",
+    "react-native": "0.70.3",
     "react-native-animated-spinkit": "^1.5.2",
     "react-native-blockstack": "https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?75854753bb20b72c0da94e16bb4b5e56a385578f",
     "react-native-default-preference": "^1.4.4",
