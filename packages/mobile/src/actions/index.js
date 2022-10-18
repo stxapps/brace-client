@@ -107,16 +107,18 @@ export const init = async (store) => {
       if (isUserSignedIn) {
         const { purchaseStatus } = store.getState().iap;
         if (purchaseStatus === REQUEST_PURCHASE) return;
+      }
 
+      const is24HFormat = await is24HourFormat();
+      store.dispatch(updateIs24HFormat(is24HFormat));
+
+      if (isUserSignedIn) {
         const interval = (Date.now() - _lastFetchDT) / 1000 / 60 / 60;
         if (interval < 0.6) return;
         if (isPopupShown(store.getState()) && interval < 0.9) return;
 
         store.dispatch(clearFetchedListNames());
       }
-
-      const is24HFormat = await is24HourFormat();
-      store.dispatch(updateIs24HFormat(is24HFormat));
     }
   });
 
