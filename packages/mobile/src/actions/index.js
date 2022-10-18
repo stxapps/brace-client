@@ -46,8 +46,9 @@ import {
   MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, MOVE_PINNED_LINK_DELETE_STEP,
   MOVE_PINNED_LINK_DELETE_STEP_COMMIT, MOVE_PINNED_LINK_DELETE_STEP_ROLLBACK,
   CANCEL_DIED_PINS, UPDATE_SYSTEM_THEME_MODE, UPDATE_THEME, UPDATE_UPDATING_THEME_MODE,
-  UPDATE_TIME_PICK, UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
-  UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
+  UPDATE_TIME_PICK, UPDATE_IS_24H_FORMAT, UPDATE_IMPORT_ALL_DATA_PROGRESS,
+  UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA,
+  RESET_STATE,
 } from '../types/actionTypes';
 import {
   DOMAIN_NAME, APP_URL_SCHEME, APP_DOMAIN_NAME, BLOCKSTACK_AUTH,
@@ -113,6 +114,9 @@ export const init = async (store) => {
 
         store.dispatch(clearFetchedListNames());
       }
+
+      const is24HFormat = await is24HourFormat();
+      store.dispatch(updateIs24HFormat(is24HFormat));
     }
   });
 
@@ -1847,4 +1851,8 @@ export const updateThemeCustomOptions = () => async (dispatch, getState) => {
   _customOptions.push({ ...updatingOption, startTime: newStartTime });
 
   dispatch(updateTheme(_themeMode, _customOptions));
+};
+
+export const updateIs24HFormat = (is24HFormat) => {
+  return { type: UPDATE_IS_24H_FORMAT, payload: is24HFormat };
 };

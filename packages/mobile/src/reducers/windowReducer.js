@@ -2,7 +2,7 @@ import { REHYDRATE } from 'redux-persist/constants';
 
 import {
   INIT, UPDATE_WINDOW, UPDATE_HREF, UPDATE_HISTORY_POSITION, UPDATE_WINDOW_SIZE,
-  UPDATE_SYSTEM_THEME_MODE,
+  UPDATE_SYSTEM_THEME_MODE, UPDATE_IS_24H_FORMAT,
 } from '../types/actionTypes';
 import { WHT_MODE } from '../types/const';
 import { isNumber, isObject } from '../utils';
@@ -70,6 +70,10 @@ const windowReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_SYSTEM_THEME_MODE) {
     return { ...state, themeMode: action.payload };
+  }
+
+  if (action.type === UPDATE_IS_24H_FORMAT) {
+    return { ...state, is24HFormat: action.payload };
   }
 
   return state;
