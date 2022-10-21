@@ -10,6 +10,7 @@ import axios from '../axiosWrapper';
 import {
   batchGetFileWithRetry, batchPutFileWithRetry, batchDeleteFileWithRetry,
 } from '../apis/blockstack';
+import fileApi from '../apis/file';
 import {
   INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW_SIZE,
   UPDATE_WINDOW, UPDATE_HISTORY_POSITION, UPDATE_STACKS_ACCESS, UPDATE_LIST_NAME,
@@ -43,9 +44,10 @@ import {
   MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, MOVE_PINNED_LINK_DELETE_STEP,
   MOVE_PINNED_LINK_DELETE_STEP_COMMIT, MOVE_PINNED_LINK_DELETE_STEP_ROLLBACK,
   CANCEL_DIED_PINS, UPDATE_SYSTEM_THEME_MODE, UPDATE_THEME, UPDATE_UPDATING_THEME_MODE,
-  UPDATE_TIME_PICK, UPDATE_IS_24H_FORMAT, UPDATE_IMPORT_ALL_DATA_PROGRESS,
-  UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA,
-  RESET_STATE,
+  UPDATE_TIME_PICK, UPDATE_IS_24H_FORMAT, UPDATE_CUSTOM_EDITOR, UPDATE_CUSTOM_DATA,
+  UPDATE_CUSTOM_DATA_COMMIT, UPDATE_CUSTOM_DATA_ROLLBACK,
+  UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
+  UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   BACK_DECIDER, BACK_POPUP, ALL, HASH_BACK,
@@ -340,6 +342,9 @@ export const signOut = () => async (dispatch, getState) => {
 
   // redux-offline: Empty outbox
   dispatch({ type: OFFLINE_RESET_STATE });
+
+  // clear file storage
+  await fileApi.deleteAllFiles();
 
   // clear cached fpaths
   vars.cachedFPaths.fpaths = null;
@@ -2063,4 +2068,94 @@ export const updateThemeCustomOptions = () => async (dispatch, getState) => {
 
 export const updateIs24HFormat = (is24HFormat) => {
   return { type: UPDATE_IS_24H_FORMAT, payload: is24HFormat };
+};
+
+export const updateCustomEditor = (
+  title, image, rotate, translateX, translateY, zoom, doClearImage,
+) => {
+  const payload = {};
+  if (isString(title)) {
+    payload.title = title;
+    payload.didTitleEdit = true;
+  }
+
+  // image can be null, need to be able to clear the image.
+  if (isObject(image)) {
+    payload.image = image;
+    payload.didImageEdit = true;
+  }
+  if (doClearImage) {
+    payload.image = null;
+    payload.didImageEdit = true;
+  }
+
+  if (isNumber(rotate)) {
+    payload.rotate = rotate;
+    payload.didImageEdit = true;
+  }
+  if (isNumber(translateX)) {
+    payload.translateX = translateX;
+    payload.didImageEdit = true;
+  }
+  if (isNumber(translateY)) {
+    payload.translateY = translateY;
+    payload.didImageEdit = true;
+  }
+  if (isNumber(zoom)) {
+    payload.zoom = zoom;
+    payload.didImageEdit = true;
+  }
+
+  return { type: UPDATE_CUSTOM_EDITOR, payload };
+};
+
+export const updateCustomData = (title, image, imageFileName, imageFileType) => async (
+  dispatch, getState
+) => {
+  const state = getState();
+  const links = state.links;
+  const listName = state.display.listName;
+  const selectingLinkId = state.display.selectingLinkId;
+
+  if (!isObject(links[listName]) || !isObject(links[listName][selectingLinkId])) {
+    console.log('UpdateCustomData: No link found with selectingLinkId: ', selectingLinkId);
+    return;
+  }
+
+  const link = links[listName][selectingLinkId];
+
+  if ('custom' in link) {
+
+    // [WIP] if the same just return!!!
+
+    return;
+  }
+
+  const customLink = {};
+  for (const attr in link) {
+    if (attr === 'custom') continue;
+    customLink[attr] = link[attr];
+  }
+
+  if (isString(title) && title.length > 0) {
+    if (!('custom' in customLink)) customLink.custom = {};
+    customLink.custom.title = title;
+  }
+
+  if (isString(image)) {
+
+  }
+
+  const payload = { listName: listName, links: [link] };
+  dispatch({
+    type: UPDATE_CUSTOM_DATA,
+    payload,
+    meta: {
+      offline: {
+        effect: { method: UPDATE_CUSTOM_DATA, params: payload },
+        commit: { type: UPDATE_CUSTOM_DATA_COMMIT },
+        rollback: { type: UPDATE_CUSTOM_DATA_ROLLBACK, meta: payload },
+      },
+    },
+  });
 };

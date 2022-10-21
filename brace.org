@@ -649,6 +649,7 @@ This and CI/CD are very important!
   + call react-app-rewired in package's scripts
   + create a config-overrides.js file in the root directory
   + install all polyfills: yarn add assert buffer crypto-browserify process stream-browserify util
+- yarn add blueimp-load-image
 ** attribution
 - tailwindcss, postcss, purgecss
 - uirefactoring

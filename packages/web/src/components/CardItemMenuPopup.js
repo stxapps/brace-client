@@ -8,8 +8,8 @@ import {
 } from '../actions';
 import {
   MY_LIST, TRASH, ADDING, MOVING, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
-  MOVE_TO, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP,
-  PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
+  MOVE_TO, EDIT, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP,
+  PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
   DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
 import {
@@ -113,6 +113,8 @@ class CardItemMenuPopup extends React.PureComponent {
       // Only when no other pending actions and list name is not TRASH
       if (pinStatus === PINNED) menu = [...menu, MANAGE_PIN];
       else if (doEnableExtraFeatures && pinStatus === null) menu = [...menu, PIN];
+
+      menu = [...menu, EDIT];
     }
 
     if (layoutType === LAYOUT_LIST && safeAreaWidth >= LG_WIDTH) {
@@ -168,6 +170,9 @@ class CardItemMenuPopup extends React.PureComponent {
         top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
       };
       this.props.updatePopup(PIN_MENU_POPUP, true, rect);
+    } else if (text === EDIT) {
+      this.props.updateSelectingLinkId(id);
+      this.props.updatePopup(CUSTOM_EDITOR_POPUP, true);
     } else {
       console.log(`In CardItemMenuPopup, invalid text: ${text}`);
     }

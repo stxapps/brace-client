@@ -15,6 +15,7 @@ import {
   COLOR, PATTERN, IMAGE, BG_COLOR_STYLES, PATTERNS, VALID_URL, NO_URL, ASK_CONFIRM_URL,
   VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME,
   COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, UNKNOWN,
+  CD_ROOT,
 } from '../types/const';
 import { IMAGES } from '../types/imagePaths';
 import { _ } from './obj';
@@ -1236,4 +1237,10 @@ export const get24HFormattedTime = (hStr, mStr, period) => {
   }
 
   return `${newHStr}:${mStr}`;
+};
+
+export const getStaticFPath = (fpath) => {
+  fpath = fpath.slice(fpath.indexOf(CD_ROOT + '/'));
+  fpath = fpath.slice((CD_ROOT + '/').length);
+  return fpath;
 };

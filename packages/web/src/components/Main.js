@@ -19,6 +19,7 @@ import ListPanel from './ListPanel';
 import FetchedPopup from './FetchedPopup';
 import CardItemMenuPopup from './CardItemMenuPopup';
 import PinMenuPopup from './PinMenuPopup';
+import CustomEditorPopup from './CustomEditorPopup';
 import SettingsPopup from './SettingsPopup';
 import SettingsListsMenuPopup from './SettingsListsMenuPopup';
 import PinErrorPopup from './PinErrorPopup';
@@ -88,6 +89,7 @@ class Main extends React.PureComponent {
         <FetchedPopup />
         <CardItemMenuPopup />
         <PinMenuPopup />
+        <CustomEditorPopup />
         <SettingsPopup />
         <SettingsListsMenuPopup />
         <PinErrorPopup />

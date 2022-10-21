@@ -19,6 +19,7 @@ import iapReducer from './iapReducer';
 import cachedFPathsReducer from './cachedFPathsReducer';
 import pendingPinsReducer from './pendingPinsReducer';
 import timePickReducer from './timePickReducer';
+import customEditorReducer from './customEditorReducer';
 
 export default combineReducers({
   window: windowReducer,
@@ -40,4 +41,5 @@ export default combineReducers({
   cachedFPaths: cachedFPathsReducer,
   pendingPins: pendingPinsReducer,
   timePick: timePickReducer,
+  customEditor: customEditorReducer,
 });

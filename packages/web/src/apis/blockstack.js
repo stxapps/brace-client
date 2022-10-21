@@ -1,12 +1,15 @@
 import userSession from '../userSession';
-import { SETTINGS, DOT_JSON, N_LINKS, MAX_TRY, N_DAYS, TRASH } from '../types/const';
+import fileApi from './file';
+import {
+  SETTINGS, DOT_JSON, N_LINKS, MAX_TRY, N_DAYS, TRASH, CD_ROOT,
+} from '../types/const';
 import {
   FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
-  UPDATE_SETTINGS, PIN_LINK, UNPIN_LINK,
+  UPDATE_SETTINGS, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA,
 } from '../types/actionTypes';
 import {
   isObject, isString, createLinkFPath, extractLinkFPath, createPinFPath, addFPath,
-  deleteFPath, copyFPaths, getMainId, sortWithPins,
+  deleteFPath, copyFPaths, getMainId, sortWithPins, getStaticFPath,
 } from '../utils';
 import { cachedFPaths } from '../vars';
 
@@ -44,6 +47,10 @@ export const effect = async (effectObj, _action) => {
 
   if (method === UNPIN_LINK) {
     return deletePins(params);
+  }
+
+  if (method === UPDATE_CUSTOM_DATA) {
+    return updateCustomData(params);
   }
 
   throw new Error(`${method} is invalid for blockstack effect.`);
@@ -102,6 +109,29 @@ export const batchGetFileWithRetry = async (
   return responses;
 };
 
+const fetchStaticFiles = async (links) => {
+
+
+  // [WIP]
+
+
+  const _fpaths = [];
+  for (const link of links) {
+    if (isObject(link.custom)) {
+      const { image } = link.custom;
+      if (isString(image) && image.startsWidth(CD_ROOT + '/')) {
+        _fpaths.push(getStaticFPath(image));
+      }
+    }
+  }
+
+  const responses = await batchGetFileWithRetry(_fpaths, 0, true);
+  const data = responses.filter(r => r.success);
+  const fpaths = data.map(d => d.fpath);
+  const contents = data.map(d => d.content);
+  await fileApi.putFiles(fpaths, contents);
+};
+
 const fetch = async (params) => {
 
   let { listName, doDescendingOrder, doFetchSettings, pendingPins } = params;
@@ -126,6 +156,11 @@ const fetch = async (params) => {
   const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0, true);
   const links = responses.filter(r => r.success).map(r => r.content);
   const hasMore = namedLinkFPaths.length > N_LINKS;
+
+
+  // [WIP]
+  await fetchStaticFiles(links);
+
 
   // List names should be retrieve from settings
   //   but also retrive from file paths in case the settings is gone.
@@ -346,4 +381,14 @@ const deletePins = async (params) => {
   await batchDeleteFileWithRetry(pinFPaths, 0);
 
   return { pins };
+};
+
+const updateCustomData = async (params) => {
+
+  // [WIP]
+  // save static file
+
+
+  // save link
+
 };

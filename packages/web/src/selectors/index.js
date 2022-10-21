@@ -9,7 +9,7 @@ import {
   CUSTOM_MODE,
 } from '../types/const';
 import {
-  isStringIn, isObject, isArrayEqual, isEqual, getListNameObj, getStatusCounts,
+  isStringIn, isObject, isString, isArrayEqual, isEqual, getListNameObj, getStatusCounts,
   getMainId, getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
   getFilteredLinks, getSortedLinks, sortWithPins, getPinFPaths, getPins,
   doEnableExtraFeatures,
@@ -397,3 +397,28 @@ export const makeIsTimePickMinuteItemSelected = () => {
     }
   );
 };
+
+export const getCustomEditor = createSelector(
+  state => state.links,
+  state => state.display.listName,
+  state => state.display.selectingLinkId,
+  state => state.customEditor,
+  (links, listName, selectingLinkId, customEditor) => {
+    const editor = { ...customEditor };
+
+    if (isObject(links[listName]) && isObject(links[listName][selectingLinkId])) {
+      const link = links[listName][selectingLinkId];
+      if (isObject(link.custom)) {
+        if (!editor.didTitleEdit && isString(link.custom.title)) {
+          editor.title = link.custom.title;
+        }
+        if (!editor.didImageEdit && isString(link.custom.image)) {
+          editor.image = link.custom.image;
+        }
+      }
+    }
+
+    return editor;
+  },
+  { memoizeOptions: { resultEqualityCheck: isEqual } },
+);
