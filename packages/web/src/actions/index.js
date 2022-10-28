@@ -7,9 +7,7 @@ import { LexoRank } from '@wewatch/lexorank';
 
 import userSession from '../userSession';
 import axios from '../axiosWrapper';
-import {
-  batchGetFileWithRetry, batchPutFileWithRetry, batchDeleteFileWithRetry,
-} from '../apis/blockstack';
+import dataApi from '../apis/blockstack';
 import fileApi from '../apis/file';
 import {
   INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW_SIZE,
@@ -57,11 +55,11 @@ import {
   LIST_NAMES_POPUP, PIN_MENU_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
   SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, ID, STATUS, IS_POPUP_SHOWN,
   POPUP_ANCHOR_POSITION, FROM_LINK, MY_LIST, TRASH, ARCHIVE, N_LINKS, N_DAYS, CD_ROOT,
-  LINKS, SETTINGS, PINS, DOT_JSON, ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING,
-  DIED_DELETING, DIED_UPDATING, BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT,
-  EXTRACT_EXCEEDING_N_URLS, IAP_STATUS_URL, COM_BRACEDOTTO, SIGNED_TEST_STRING, VALID,
-  ACTIVE, SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE,
-  FEATURE_PIN, FEATURE_APPEARANCE,
+  LINKS, IMAGES, SETTINGS, PINS, DOT_JSON, BASE64, ADDED, DIED_ADDING, DIED_MOVING,
+  DIED_REMOVING, DIED_DELETING, DIED_UPDATING, BRACE_EXTRACT_URL,
+  BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, IAP_STATUS_URL,
+  COM_BRACEDOTTO, SIGNED_TEST_STRING, VALID, ACTIVE, SWAP_LEFT, SWAP_RIGHT, WHT_MODE,
+  BLK_MODE, CUSTOM_MODE, FEATURE_PIN, FEATURE_APPEARANCE,
 } from '../types/const';
 import {
   isEqual, isString, isObject, isNumber, throttle, sleep, isIPadIPhoneIPod,
@@ -72,9 +70,10 @@ import {
   getLatestPurchase, getValidPurchase, doEnableExtraFeatures, createLinkFPath,
   extractPinFPath, getSortedLinks, getPinFPaths, getPins, separatePinnedValues,
   sortLinks, sortWithPins, getFormattedTime, get24HFormattedTime, extractLinkFPath,
-  extractFPath,
+  extractFPath, convertBlobToDataUrl, convertDataUrlToBlob,
 } from '../utils';
 import { _ } from '../utils/obj';
+import { isUint8Array, isBlob } from '../utils/index-web';
 import { initialSettingsState } from '../types/initialStates';
 import vars from '../vars';
 
@@ -1277,7 +1276,7 @@ const importAllDataLoop = async (dispatch, fpaths, contents) => {
     for (let i = 0; i < fpaths.length; i += N_LINKS) {
       const selectedFPaths = fpaths.slice(i, i + N_LINKS);
       const selectedContents = contents.slice(i, i + N_LINKS);
-      await batchPutFileWithRetry(selectedFPaths, selectedContents, 0);
+      await dataApi.batchPutFileWithRetry(selectedFPaths, selectedContents, 0);
 
       doneCount += selectedFPaths.length;
       dispatch(updateImportAllDataProgress({ total, done: doneCount }));
@@ -1295,11 +1294,14 @@ const importAllDataLoop = async (dispatch, fpaths, contents) => {
       let msg = 'There is an error while importing! Below are contents that have not been imported:\n';
       for (let i = doneCount; i < fpaths.length; i++) {
         const fpath = fpaths[i];
+        const [fname] = fpath.split('/').slice(-1);
         if (fpath.startsWith(LINKS)) {
           msg += '    • ' + contents[i].url + '\n';
         }
+        if (fpath.startsWith(IMAGES)) {
+          msg += '    • Image of ' + fname + '\n';
+        }
         if (fpath.startsWith(PINS)) {
-          const [fname] = fpath.split('/').slice(-1);
           msg += '    • Pin on ' + fname + '\n';
         }
         if (fpath.startsWith(SETTINGS)) {
@@ -1311,7 +1313,7 @@ const importAllDataLoop = async (dispatch, fpaths, contents) => {
   }
 };
 
-const parseImportedFile = (dispatch, text) => {
+const parseImportedFile = async (dispatch, text) => {
 
   dispatch(updateImportAllDataProgress({
     total: 'calculating...',
@@ -1329,12 +1331,18 @@ const parseImportedFile = (dispatch, text) => {
           !isString(obj.path) ||
           !(
             obj.path.startsWith(LINKS) ||
+            obj.path.startsWith(IMAGES) ||
             obj.path.startsWith(PINS) ||
             obj.path.startsWith(SETTINGS)
           )
         ) continue;
 
-        if (!obj.data || !isObject(obj.data)) continue;
+        if (!obj.data) continue;
+        if (obj.path.startsWith(IMAGES)) {
+          if (!isString(obj.data)) continue;
+        } else {
+          if (!isObject(obj.data)) continue;
+        }
 
         if (obj.path.startsWith(LINKS)) {
           if (
@@ -1372,6 +1380,19 @@ const parseImportedFile = (dispatch, text) => {
               obj.data.extractedResult = null;
             }
           }
+        }
+
+        if (obj.path.startsWith(IMAGES)) {
+          const arr = obj.path.split('/');
+          if (arr.length !== 2) continue;
+
+          if (!obj.data.startsWith('data:')) continue;
+
+          const i = obj.data.indexOf(',');
+          if (i === -1) continue;
+          if (!obj.data.slice(0, i).includes(BASE64)) continue;
+
+          obj.data = await convertDataUrlToBlob(obj.data);
         }
 
         if (obj.path.startsWith(PINS)) {
@@ -1555,7 +1576,7 @@ const exportAllDataLoop = async (dispatch, fpaths, doneCount) => {
 
   const selectedCount = Math.min(fpaths.length - doneCount, N_LINKS);
   const selectedFPaths = fpaths.slice(doneCount, doneCount + selectedCount);
-  const responses = await batchGetFileWithRetry(selectedFPaths, 0, true);
+  const responses = await dataApi.batchGetFileWithRetry(selectedFPaths, 0, true);
   const data = responses.filter(r => r.success).map((response) => {
     return { path: response.fpath, data: response.content };
   });
@@ -1610,6 +1631,13 @@ export const exportAllData = () => async (dispatch, getState) => {
   try {
     const data = await exportAllDataLoop(dispatch, fpaths, 0);
 
+    for (const item of data) {
+      if (isUint8Array(item.data)) item.data = new Blob([item.data]);
+      if (isBlob(item.data)) {
+        item.data = await convertBlobToDataUrl(item.data);
+      }
+    }
+
     var blob = new Blob([JSON.stringify(data)], { type: 'text/plain;charset=utf-8' });
     saveAs(blob, 'brace-data.txt');
   } catch (e) {
@@ -1635,7 +1663,7 @@ const deleteAllDataLoop = async (dispatch, fpaths, doneCount) => {
 
   const selectedCount = Math.min(fpaths.length - doneCount, N_LINKS);
   const selectedFPaths = fpaths.slice(doneCount, doneCount + selectedCount);
-  const responses = await batchDeleteFileWithRetry(selectedFPaths, 0);
+  const responses = await dataApi.batchDeleteFileWithRetry(selectedFPaths, 0);
 
   doneCount = doneCount + selectedCount;
   if (doneCount > fpaths.length) {
@@ -2258,7 +2286,7 @@ const _cleanUpStaticFiles = async (fpaths) => {
   }
   unusedFPaths = unusedFPaths.slice(0, N_LINKS);
 
-  await batchDeleteFileWithRetry(unusedFPaths, 0);
+  await dataApi.batchDeleteFileWithRetry(unusedFPaths, 0);
   await fileApi.deleteFiles(unusedFPaths);
 
   // Delete unused static files in local

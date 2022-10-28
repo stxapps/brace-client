@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimateSharedLayout, AnimatePresence } from 'framer-motion';
 
-import { canDeleteListNames } from '../apis/blockstack';
+import dataApi from '../apis/blockstack';
 import {
   addListNames, updateListNames, moveListName, updateSelectingListName,
   updateDeletingListName, updateListNameEditors, updatePopup,
@@ -252,7 +252,7 @@ const _ListNameEditor = (props) => {
         const listNames = [listNameObj.listName];
         listNames.push(...getAllListNames(listNameObj.children));
 
-        const canDeletes = await canDeleteListNames(listNames);
+        const canDeletes = await dataApi.canDeleteListNames(listNames);
         if (!canDeletes.every(canDelete => canDelete === true)) {
           dispatch(updateListNameEditors({
             [key]: { msg: LIST_NAME_MSGS[IN_USE_LIST_NAME], isCheckingCanDelete: false },

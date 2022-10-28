@@ -77,7 +77,7 @@ const listFPaths = async (doForce = false) => {
   return copyFPaths(cachedFPaths.fpaths);
 };
 
-export const batchGetFileWithRetry = async (
+const batchGetFileWithRetry = async (
   fpaths, callCount, dangerouslyIgnoreError = false
 ) => {
 
@@ -225,7 +225,7 @@ const fetchMore = async (params) => {
   return { listName, doDescendingOrder, links, hasMore, hasDisorder, images };
 };
 
-export const batchPutFileWithRetry = async (fpaths, contents, callCount) => {
+const batchPutFileWithRetry = async (fpaths, contents, callCount) => {
 
   const responses = await Promise.all(
     fpaths.map((fpath, i) =>
@@ -274,7 +274,7 @@ const putLinks = async (params) => {
   return { listName, links };
 };
 
-export const batchDeleteFileWithRetry = async (fpaths, callCount) => {
+const batchDeleteFileWithRetry = async (fpaths, callCount) => {
 
   const responses = await Promise.all(
     fpaths.map((fpath) =>
@@ -389,7 +389,7 @@ const updateSettings = async (settings) => {
   await batchPutFileWithRetry(fpaths, contents, 0);
 };
 
-export const canDeleteListNames = async (listNames) => {
+const canDeleteListNames = async (listNames) => {
 
   const { linkFPaths } = await listFPaths();
   const inUseListNames = Object.keys(linkFPaths);
@@ -449,3 +449,10 @@ const updateCustomData = async (params) => {
 
   return { listName, fromLink, toLink };
 };
+
+const blockstack = {
+  batchGetFileWithRetry, batchPutFileWithRetry, batchDeleteFileWithRetry,
+  canDeleteListNames,
+};
+
+export default blockstack;
