@@ -419,9 +419,7 @@ export const getCustomEditor = createSelector(
         }
         if (!editor.didImageEdit && isString(link.custom.image)) {
           editor.image = link.custom.image;
-          if (isString(images[link.custom.image])) {
-            editor.image = images[link.custom.image];
-          }
+          editor.imageUrl = images[link.custom.image];
         }
       }
     }

@@ -78,7 +78,7 @@ export const REMOVE = 'Remove';
 export const RESTORE = 'Restore';
 export const DELETE = 'Permanently delete';
 export const MOVE_TO = 'Move to';
-export const EDIT = 'Edit';
+export const CHANGE = 'Change';
 
 export const CARD_ITEM_POPUP_MENU = {
   [MY_LIST]: [COPY_LINK, ARCHIVE, REMOVE, MOVE_TO],

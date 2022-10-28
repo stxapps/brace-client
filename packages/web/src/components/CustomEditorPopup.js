@@ -435,7 +435,7 @@ const CustomEditorPopup = () => {
                   <div className={tailwind('flex items-center justify-center')}>
                     {isString(customEditor.image) && <div className={tailwind('w-full aspect-w-12 aspect-h-7')}>
                       <div>
-                        <img className={tailwind('w-full h-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={customEditor.image} alt="Custom link's illustration" />
+                        <img className={tailwind('w-full h-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={customEditor.imageUrl} alt="Custom link's illustration" />
                       </div>
                     </div>}
                     {isObject(customEditor.image) && <canvas ref={imageCanvas} onTouchStart={onCanvasMouseDown} onMouseDown={onCanvasMouseDown} onDragStart={onCanvasDragStart} className={tailwind('h-full w-full cursor-grab')}></canvas>}

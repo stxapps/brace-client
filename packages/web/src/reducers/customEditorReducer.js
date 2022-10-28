@@ -8,6 +8,7 @@ import { ALL, CUSTOM_EDITOR_POPUP } from '../types/const';
 const initialState = {
   title: '',
   image: null,
+  imageUrl: null,
   rotate: 0,
   translateX: 0,
   translateY: 0,

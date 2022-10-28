@@ -2152,10 +2152,12 @@ export const updateCustomEditor = (
   // image can be null, need to be able to clear the image.
   if (isObject(image)) {
     payload.image = image;
+    payload.imageUrl = null;
     payload.didImageEdit = true;
   }
   if (doClearImage) {
     payload.image = null;
+    payload.imageUrl = null;
     payload.didImageEdit = true;
   }
 

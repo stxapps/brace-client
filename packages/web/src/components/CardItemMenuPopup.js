@@ -8,7 +8,7 @@ import {
 } from '../actions';
 import {
   MY_LIST, TRASH, ADDING, MOVING, UPDATING, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
-  MOVE_TO, EDIT, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP,
+  MOVE_TO, CHANGE, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP,
   PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
   DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
@@ -114,7 +114,7 @@ class CardItemMenuPopup extends React.PureComponent {
       if (pinStatus === PINNED) menu = [...menu, MANAGE_PIN];
       else if (doEnableExtraFeatures && pinStatus === null) menu = [...menu, PIN];
 
-      if (doEnableExtraFeatures) menu = [...menu, EDIT];
+      if (doEnableExtraFeatures) menu = [...menu, CHANGE];
     }
 
     if (layoutType === LAYOUT_LIST && safeAreaWidth >= LG_WIDTH) {
@@ -170,7 +170,7 @@ class CardItemMenuPopup extends React.PureComponent {
         top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
       };
       this.props.updatePopup(PIN_MENU_POPUP, true, rect);
-    } else if (text === EDIT) {
+    } else if (text === CHANGE) {
       this.props.updateSelectingLinkId(id);
       this.props.updatePopup(CUSTOM_EDITOR_POPUP, true);
     } else {
