@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
-import { ADDING, MOVING, SM_WIDTH, PINNED } from '../types/const';
+import { ADDING, MOVING, UPDATING, SM_WIDTH, PINNED } from '../types/const';
 import { makeGetPinStatus } from '../selectors';
 import { ensureContainUrlProtocol, isDiedStatus, isPinningStatus } from '../utils';
 
@@ -109,12 +109,12 @@ const ListItem = (props) => {
   const { status } = link;
 
   const isPinning = isPinningStatus(pinStatus);
-  const canSelect = ![ADDING, MOVING].includes(status) && !isPinning;
+  const canSelect = ![ADDING, MOVING, UPDATING].includes(status) && !isPinning;
 
   return (
     <li className={tailwind('relative bg-white blk:bg-gray-900')}>
       <ListItemContent link={link} />
-      {[ADDING, MOVING].includes(status) && renderBusy()}
+      {[ADDING, MOVING, UPDATING].includes(status) && renderBusy()}
       {isPinning && renderPinning()}
       {[PINNED].includes(pinStatus) && renderPin()}
       {canSelect && <ListItemSelector linkId={link.id} />}

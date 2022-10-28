@@ -5,7 +5,7 @@ import GracefulImage from 'react-graceful-image';
 
 import { updatePopup, updateBulkEdit, addSelectedLinkIds } from '../actions';
 import { COLOR, PATTERN, IMAGE } from '../types/const';
-import { getThemeMode } from '../selectors';
+import { makeGetCustomImage, getThemeMode } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
   extractUrl, isEqual,
@@ -34,6 +34,8 @@ class CardItemContent extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (
       !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
+      !isEqual(this.props.link.custom, nextProps.link.custom) ||
+      this.props.customImage !== nextProps.customImage ||
       this.props.tailwind !== nextProps.tailwind ||
       this.state.extractedFaviconError !== nextState.extractedFaviconError
     ) {
@@ -78,12 +80,17 @@ class CardItemContent extends React.Component {
   }
 
   renderImage() {
-    const { tailwind } = this.props;
     const { url, decor, extractedResult } = this.props.link;
+    const { customImage, tailwind } = this.props;
 
     let image;
-    if (extractedResult && extractedResult.image) image = extractedResult.image;
 
+    if (customImage) image = customImage;
+    if (image) {
+      return <img key="img-image-custom" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={image} alt={`illustration of ${url}`} />;
+    }
+
+    if (extractedResult && extractedResult.image) image = extractedResult.image;
     if (image) {
       // This GracefulImage needs to be different from the one below so that it's not just rerender but recreate a new component with a new src and new retry. React knows by using different keys.
       return <GracefulImage key="image-graceful-image-extracted-result" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={image} alt={`illustration of ${url}`} />;
@@ -174,10 +181,13 @@ class CardItemContent extends React.Component {
 
   render() {
     const { tailwind } = this.props;
-    const { url, extractedResult } = this.props.link;
+    const { url, extractedResult, custom } = this.props.link;
 
     let title, classNames = '';
-    if (extractedResult && extractedResult.title) {
+    if (custom && custom.title) {
+      title = custom.title;
+      classNames = 'text-justify hyphens-auto';
+    } else if (extractedResult && extractedResult.title) {
       title = extractedResult.title;
       classNames = 'text-justify hyphens-auto';
     }
@@ -228,13 +238,23 @@ CardItemContent.propTypes = {
   link: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (state, props) => {
-  return {
-    themeMode: getThemeMode(state),
-    safeAreaWidth: state.window.width,
+const makeMapStateToProps = () => {
+
+  const getCustomImage = makeGetCustomImage();
+
+  const mapStateToProps = (state, props) => {
+    const customImage = getCustomImage(state, props.link);
+
+    return {
+      customImage,
+      themeMode: getThemeMode(state),
+      safeAreaWidth: state.window.width,
+    };
   };
+
+  return mapStateToProps;
 };
 
 const mapDispatchToProps = { updatePopup, updateBulkEdit, addSelectedLinkIds };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(CardItemContent));
+export default connect(makeMapStateToProps, mapDispatchToProps)(withTailwind(CardItemContent));

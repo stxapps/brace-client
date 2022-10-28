@@ -4,10 +4,10 @@ import GracefulImage from 'react-graceful-image';
 
 import { updatePopup, updateBulkEdit, addSelectedLinkIds, moveLinks } from '../actions';
 import {
-  COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING, LG_WIDTH,
+  COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING, UPDATING, LG_WIDTH,
   REMOVE, RESTORE,
 } from '../types/const';
-import { makeGetPinStatus } from '../selectors';
+import { makeGetPinStatus, makeGetCustomImage } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
   extractUrl, isPinningStatus,
@@ -20,8 +20,10 @@ const ListItemContent = (props) => {
   const { link } = props;
   const { width: safeAreaWidth } = useSafeAreaFrame();
   const getPinStatus = useMemo(makeGetPinStatus, []);
+  const getCustomImage = useMemo(makeGetCustomImage, []);
   const listName = useSelector(state => state.display.listName);
   const pinStatus = useSelector(state => getPinStatus(state, link));
+  const customImage = useSelector(state => getCustomImage(state, link));
   const [extractedFaviconError, setExtractedFaviconError] = useState(false);
   const clickPressTimer = useRef(null);
   const touchPressTimer = useRef(null);
@@ -92,13 +94,18 @@ const ListItemContent = (props) => {
     didClick.current = false;
   }, [link.status]);
 
-  const { url, decor, extractedResult } = link;
+  const { url, decor, extractedResult, custom } = link;
   const { host, origin } = extractUrl(url);
 
   const renderImage = () => {
     let image;
-    if (extractedResult && extractedResult.image) image = extractedResult.image;
 
+    if (customImage) image = customImage;
+    if (image) {
+      return <img key="img-image-custom" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5')} src={image} alt={`illustration of ${url}`} />;
+    }
+
+    if (extractedResult && extractedResult.image) image = extractedResult.image;
     if (image) {
       // This GracefulImage needs to be different from the one below so that it's not just rerender but recreate a new component with a new src and new retry. React knows by using different keys.
       return <GracefulImage key="image-graceful-image-extracted-result" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5')} src={image} alt={`illustration of ${url}`} />;
@@ -160,7 +167,9 @@ const ListItemContent = (props) => {
   };
 
   let title, classNames = '';
-  if (extractedResult && extractedResult.title) {
+  if (custom && custom.title) {
+    title = custom.title;
+  } else if (extractedResult && extractedResult.title) {
     title = extractedResult.title;
   }
   if (!title) {
@@ -170,7 +179,9 @@ const ListItemContent = (props) => {
 
   const isPinning = isPinningStatus(pinStatus);
   const canSelect = (
-    safeAreaWidth >= LG_WIDTH && ![ADDING, MOVING].includes(link.status) && !isPinning
+    safeAreaWidth >= LG_WIDTH &&
+    ![ADDING, MOVING, UPDATING].includes(link.status) &&
+    !isPinning
   );
 
   const canArchive = canSelect && ![ARCHIVE, TRASH].includes(listName);

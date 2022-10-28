@@ -7,7 +7,7 @@ import {
   updateListNamesMode,
 } from '../actions';
 import {
-  MY_LIST, TRASH, ADDING, MOVING, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
+  MY_LIST, TRASH, ADDING, MOVING, UPDATING, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
   MOVE_TO, EDIT, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP,
   PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
   DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
@@ -105,7 +105,7 @@ class CardItemMenuPopup extends React.PureComponent {
     }
 
     if (
-      [ADDING, MOVING].includes(popupLink.status) ||
+      [ADDING, MOVING, UPDATING].includes(popupLink.status) ||
       ![null, PINNED].includes(pinStatus)
     ) {
       menu = menu.slice(0, 1);
@@ -114,7 +114,7 @@ class CardItemMenuPopup extends React.PureComponent {
       if (pinStatus === PINNED) menu = [...menu, MANAGE_PIN];
       else if (doEnableExtraFeatures && pinStatus === null) menu = [...menu, PIN];
 
-      menu = [...menu, EDIT];
+      if (doEnableExtraFeatures) menu = [...menu, EDIT];
     }
 
     if (layoutType === LAYOUT_LIST && safeAreaWidth >= LG_WIDTH) {

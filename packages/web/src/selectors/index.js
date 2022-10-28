@@ -6,7 +6,7 @@ import {
 } from '../types/actionTypes';
 import {
   IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, PINNED, WHT_MODE, BLK_MODE, SYSTEM_MODE,
-  CUSTOM_MODE,
+  CUSTOM_MODE, FROM_LINK,
 } from '../types/const';
 import {
   isStringIn, isObject, isString, isArrayEqual, isEqual, getListNameObj, getStatusCounts,
@@ -122,8 +122,12 @@ const createSelectorLinks = createSelectorCreator(
 
       // Deep equal without attributes: popup and popupAnchorPosition.
       const res = isEqual(
-        _.ignore(prevVal['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]),
-        _.ignore(val['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION])
+        _.ignore(
+          prevVal['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
+        ),
+        _.ignore(
+          val['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
+        )
       );
       if (!res) return false;
     }
@@ -402,8 +406,9 @@ export const getCustomEditor = createSelector(
   state => state.links,
   state => state.display.listName,
   state => state.display.selectingLinkId,
+  state => state.images,
   state => state.customEditor,
-  (links, listName, selectingLinkId, customEditor) => {
+  (links, listName, selectingLinkId, images, customEditor) => {
     const editor = { ...customEditor };
 
     if (isObject(links[listName]) && isObject(links[listName][selectingLinkId])) {
@@ -414,6 +419,9 @@ export const getCustomEditor = createSelector(
         }
         if (!editor.didImageEdit && isString(link.custom.image)) {
           editor.image = link.custom.image;
+          if (isString(images[link.custom.image])) {
+            editor.image = images[link.custom.image];
+          }
         }
       }
     }
@@ -422,3 +430,17 @@ export const getCustomEditor = createSelector(
   },
   { memoizeOptions: { resultEqualityCheck: isEqual } },
 );
+
+/** @return {function(any, any): any} */
+export const makeGetCustomImage = () => {
+  return createSelector(
+    state => state.images,
+    (__, link) => link,
+    (images, link) => {
+      if (!isObject(link.custom) || !isString(link.custom.image)) return null;
+
+      if (isString(images[link.custom.image])) return images[link.custom.image];
+      return null;
+    }
+  );
+};

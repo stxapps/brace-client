@@ -45,6 +45,7 @@
     "crypto-browserify": "^3.12.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^7.2.1",
+    "idb-keyval": "^6.2.0",
     "postcss": "^8.4.16",
     "process": "^0.11.10",
     "react": "^18.2.0",

@@ -14,6 +14,7 @@ const initialState = {
   zoom: 0,
   didTitleEdit: false,
   didImageEdit: false,
+  msg: '',
 };
 
 const customEditorReducer = (state = initialState, action) => {

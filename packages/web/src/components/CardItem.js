@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
-import { ADDING, MOVING, PINNED } from '../types/const';
+import { ADDING, MOVING, UPDATING, PINNED } from '../types/const';
 import { makeGetPinStatus, getThemeMode } from '../selectors';
 import {
   ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isEqual,
@@ -119,12 +119,12 @@ class CardItem extends React.Component {
     const { status } = link;
 
     const isPinning = isPinningStatus(pinStatus);
-    const canSelect = ![ADDING, MOVING].includes(status) && !isPinning;
+    const canSelect = ![ADDING, MOVING, UPDATING].includes(status) && !isPinning;
 
     return (
       <div className={tailwind('relative mx-auto max-w-md overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm blk:border-gray-700 blk:bg-gray-800 sm:max-w-none')}>
         <CardItemContent link={link} />
-        {[ADDING, MOVING].includes(status) && this.renderBusy()}
+        {[ADDING, MOVING, UPDATING].includes(status) && this.renderBusy()}
         {isPinning && this.renderPinning()}
         {[PINNED].includes(pinStatus) && this.renderPin()}
         {canSelect && <CardItemSelector linkId={link.id} />}

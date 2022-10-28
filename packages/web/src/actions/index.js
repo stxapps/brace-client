@@ -44,21 +44,23 @@ import {
   MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, MOVE_PINNED_LINK_DELETE_STEP,
   MOVE_PINNED_LINK_DELETE_STEP_COMMIT, MOVE_PINNED_LINK_DELETE_STEP_ROLLBACK,
   CANCEL_DIED_PINS, UPDATE_SYSTEM_THEME_MODE, UPDATE_THEME, UPDATE_UPDATING_THEME_MODE,
-  UPDATE_TIME_PICK, UPDATE_IS_24H_FORMAT, UPDATE_CUSTOM_EDITOR, UPDATE_CUSTOM_DATA,
-  UPDATE_CUSTOM_DATA_COMMIT, UPDATE_CUSTOM_DATA_ROLLBACK,
-  UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
-  UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
+  UPDATE_TIME_PICK, UPDATE_IS_24H_FORMAT, UPDATE_CUSTOM_EDITOR, UPDATE_IMAGES,
+  UPDATE_CUSTOM_DATA, UPDATE_CUSTOM_DATA_COMMIT, UPDATE_CUSTOM_DATA_ROLLBACK,
+  REHYDRATE_STATIC_FILES, CLEAN_UP_STATIC_FILES, CLEAN_UP_STATIC_FILES_COMMIT,
+  CLEAN_UP_STATIC_FILES_ROLLBACK, UPDATE_IMPORT_ALL_DATA_PROGRESS,
+  UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
+  DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   BACK_DECIDER, BACK_POPUP, ALL, HASH_BACK,
   SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   LIST_NAMES_POPUP, PIN_MENU_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
   SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, ID, STATUS, IS_POPUP_SHOWN,
-  POPUP_ANCHOR_POSITION, MY_LIST, TRASH, ARCHIVE, N_LINKS, N_DAYS, LINKS, SETTINGS,
-  PINS, DOT_JSON, ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
-  BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
-  IAP_STATUS_URL, COM_BRACEDOTTO, SIGNED_TEST_STRING, VALID, ACTIVE,
-  SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE,
+  POPUP_ANCHOR_POSITION, FROM_LINK, MY_LIST, TRASH, ARCHIVE, N_LINKS, N_DAYS, CD_ROOT,
+  LINKS, SETTINGS, PINS, DOT_JSON, ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING,
+  DIED_DELETING, DIED_UPDATING, BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT,
+  EXTRACT_EXCEEDING_N_URLS, IAP_STATUS_URL, COM_BRACEDOTTO, SIGNED_TEST_STRING, VALID,
+  ACTIVE, SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE,
   FEATURE_PIN, FEATURE_APPEARANCE,
 } from '../types/const';
 import {
@@ -69,7 +71,8 @@ import {
   doOutboxContainMethods, isDecorValid, isExtractedResultValid, isListNameObjsValid,
   getLatestPurchase, getValidPurchase, doEnableExtraFeatures, createLinkFPath,
   extractPinFPath, getSortedLinks, getPinFPaths, getPins, separatePinnedValues,
-  sortLinks, sortWithPins, getFormattedTime, get24HFormattedTime,
+  sortLinks, sortWithPins, getFormattedTime, get24HFormattedTime, extractLinkFPath,
+  extractFPath,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -784,7 +787,7 @@ export const moveLinks = (toListName, ids, fromListName = null) => async (dispat
 
   let links = _.ignore(
     _.select(getState().links[fromListName], ID, ids),
-    [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]
+    [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
   );
   links = Object.values(links);
 
@@ -836,10 +839,14 @@ export const moveLinksDeleteStep = (listName, ids, toListName, toIds) => async (
   });
 };
 
-export const deleteLinks = (ids) => async (dispatch, getState) => {
-
+export const deleteLinks = (ids, doDeleteStaticFiles = false) => async (
+  dispatch, getState
+) => {
+  // Require doDeleteStaticFiles
+  //   as maybe moving and calling this method for the delete step
+  //   or retry died removing which can't delete static files.
   const listName = getState().display.listName;
-  const payload = { listName, ids };
+  const payload = { listName, ids, doDeleteStaticFiles };
 
   dispatch({
     type: DELETE_LINKS,
@@ -862,10 +869,19 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
     // DIED_MOVING -> try move this link again
     // DIED_REMOVING -> try delete this link again
     // DIED_DELETING  -> try delete this link again
+    // DIED_UPDAING -> try update this link again
     const link = getState().links[listName][id];
+
     const { status } = link;
     if (status === DIED_ADDING) {
-      const links = [link];
+      const _link = {};
+      for (const attr in link) {
+        if ([
+          STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK,
+        ].includes(attr)) continue;
+        _link[attr] = link[attr];
+      }
+      const links = [_link];
       const payload = { listName, links };
 
       dispatch({
@@ -905,8 +921,31 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
 
       dispatch(moveLinks(listName, [fromId], fromListName));
 
-    } else if (status === DIED_REMOVING || status === DIED_DELETING) {
+    } else if (status === DIED_REMOVING) {
       dispatch(deleteLinks([id]));
+    } else if (status === DIED_DELETING) {
+      dispatch(deleteLinks([id], true));
+    } else if (status === DIED_UPDATING) {
+      const toLink = {};
+      for (const attr in link) {
+        if ([
+          STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK,
+        ].includes(attr)) continue;
+        toLink[attr] = link[attr];
+      }
+      const payload = { listName, fromLink: link.fromLink, toLink };
+
+      dispatch({
+        type: UPDATE_CUSTOM_DATA,
+        payload,
+        meta: {
+          offline: {
+            effect: { method: UPDATE_CUSTOM_DATA, params: payload },
+            commit: { type: UPDATE_CUSTOM_DATA_COMMIT },
+            rollback: { type: UPDATE_CUSTOM_DATA_ROLLBACK, meta: payload },
+          },
+        },
+      });
     } else {
       throw new Error(`Invalid status: ${status} of id: ${id}`);
     }
@@ -971,7 +1010,9 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
     const obj = getState().links[listName];
     if (!obj) return;
 
-    let _links = _.ignore(obj, [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]);
+    let _links = _.ignore(
+      obj, [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
+    );
     _links = Object.values(_links)
       .filter(link => {
         return !link.extractedResult || link.extractedResult.status === EXTRACT_INIT;
@@ -985,7 +1026,7 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
   } else if (listName !== null && ids !== null) {
     let _links = _.ignore(
       _.select(getState().links[listName], ID, ids),
-      [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]
+      [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
     );
     _links = Object.values(_links);
     if (_links.length > 0) {
@@ -1258,7 +1299,7 @@ const importAllDataLoop = async (dispatch, fpaths, contents) => {
           msg += '    • ' + contents[i].url + '\n';
         }
         if (fpath.startsWith(PINS)) {
-          const fname = fpath.split('/').slice(-1);
+          const [fname] = fpath.split('/').slice(-1);
           msg += '    • Pin on ' + fname + '\n';
         }
         if (fpath.startsWith(SETTINGS)) {
@@ -1648,6 +1689,7 @@ export const deleteAllData = () => async (dispatch, getState) => {
 
   try {
     await deleteAllDataLoop(dispatch, fpaths, 0);
+    await fileApi.deleteAllFiles();
 
     dispatch({
       type: DELETE_ALL_DATA,
@@ -2071,7 +2113,7 @@ export const updateIs24HFormat = (is24HFormat) => {
 };
 
 export const updateCustomEditor = (
-  title, image, rotate, translateX, translateY, zoom, doClearImage,
+  title, image, rotate, translateX, translateY, zoom, doClearImage, msg,
 ) => {
   const payload = {};
   if (isString(title)) {
@@ -2106,10 +2148,17 @@ export const updateCustomEditor = (
     payload.didImageEdit = true;
   }
 
+  if (isString(msg)) payload.msg = msg;
+  else payload.msg = '';
+
   return { type: UPDATE_CUSTOM_EDITOR, payload };
 };
 
-export const updateCustomData = (title, image, imageFileName, imageFileType) => async (
+export const updateImages = (name, content) => {
+  return { type: UPDATE_IMAGES, payload: { [name]: content } };
+};
+
+export const updateCustomData = (title, image) => async (
   dispatch, getState
 ) => {
   const state = getState();
@@ -2122,31 +2171,30 @@ export const updateCustomData = (title, image, imageFileName, imageFileType) => 
     return;
   }
 
-  const link = links[listName][selectingLinkId];
+  const _links = _.ignore(
+    _.select(links[listName], ID, [selectingLinkId]),
+    [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
+  );
+  const link = _links[selectingLinkId];
 
-  if ('custom' in link) {
-
-    // [WIP] if the same just return!!!
-
-    return;
-  }
-
-  const customLink = {};
+  const toLink = {};
   for (const attr in link) {
     if (attr === 'custom') continue;
-    customLink[attr] = link[attr];
+    toLink[attr] = link[attr];
   }
 
   if (isString(title) && title.length > 0) {
-    if (!('custom' in customLink)) customLink.custom = {};
-    customLink.custom.title = title;
+    if (!('custom' in toLink)) toLink.custom = {};
+    toLink.custom.title = title;
+  }
+  if (isString(image) && image.length > 0) {
+    if (!('custom' in toLink)) toLink.custom = {};
+    toLink.custom.image = image;
   }
 
-  if (isString(image)) {
+  if (isEqual(link, toLink)) return;
 
-  }
-
-  const payload = { listName: listName, links: [link] };
+  const payload = { listName: listName, fromLink: link, toLink };
   dispatch({
     type: UPDATE_CUSTOM_DATA,
     payload,
@@ -2158,4 +2206,101 @@ export const updateCustomData = (title, image, imageFileName, imageFileType) => 
       },
     },
   });
+};
+
+export const rehydrateStaticFiles = () => async (dispatch, getState) => {
+  const state = getState();
+  const listName = state.display.listName;
+  const links = state.links;
+
+  let fpaths = [];
+  for (const id in links[listName]) {
+    const link = links[listName][id];
+    if (isObject(link.custom)) {
+      const { image } = link.custom;
+      if (isString(image) && image.startsWith(CD_ROOT + '/')) {
+        if (!fpaths.includes(image)) fpaths.push(image);
+      }
+    }
+  }
+
+  const files = await fileApi.getFiles(fpaths);
+
+  const images = {};
+  for (let i = 0; i < files.fpaths.length; i++) {
+    images[files.fpaths[i]] = files.contentUrls[i];
+  }
+
+  dispatch({
+    type: REHYDRATE_STATIC_FILES, payload: { listName, images },
+  });
+};
+
+const _cleanUpStaticFiles = async (fpaths) => {
+  // Delete unused static files in server
+  const { linkFPaths, staticFPaths } = fpaths;
+
+  const mainIds = [], unusedIds = [];
+  for (const listName in linkFPaths) {
+    for (const fpath of linkFPaths[listName]) {
+      const { id } = extractLinkFPath(fpath);
+      mainIds.push(getMainId(id));
+    }
+  }
+
+  let unusedFPaths = [];
+  for (const fpath of staticFPaths) {
+    const { id } = extractFPath(fpath);
+    if (!mainIds.includes(getMainId(id))) {
+      unusedIds.push(id);
+      unusedFPaths.push(fpath);
+    }
+  }
+  unusedFPaths = unusedFPaths.slice(0, N_LINKS);
+
+  await batchDeleteFileWithRetry(unusedFPaths, 0);
+  await fileApi.deleteFiles(unusedFPaths);
+
+  // Delete unused static files in local
+  let localFPaths = await fileApi.listKeys();
+
+  unusedFPaths = [];
+  for (const fpath of localFPaths) {
+    const { id } = extractFPath(fpath);
+    if (!mainIds.includes(getMainId(id))) {
+      unusedIds.push(id);
+      unusedFPaths.push(fpath);
+    }
+  }
+
+  await fileApi.deleteFiles(unusedFPaths);
+
+  // If too many static files locally, delete some of them.
+  // If 1 image is around 500 KB, with 500 MB limitation, we can store 1000 images,
+  //   so might not need to do this.
+
+  return unusedIds;
+};
+
+export const cleanUpStaticFiles = () => async (dispatch, getState) => {
+  const state = getState();
+  const { fpaths } = state.cachedFPaths;
+  const { cleanUpStaticFilesDT } = state.localSettings;
+  if (!cleanUpStaticFilesDT) return;
+
+  const now = Date.now();
+  let p = 1.0 / (N_DAYS * 24 * 60 * 60 * 1000) * Math.abs(now - cleanUpStaticFilesDT);
+  p = Math.max(0.01, Math.min(p, 0.99));
+  const doCheck = p > Math.random();
+
+  if (!doCheck) return;
+
+  // Don't need offline, if no network or get killed, can do it later.
+  dispatch({ type: CLEAN_UP_STATIC_FILES });
+  try {
+    const ids = await _cleanUpStaticFiles(fpaths);
+    dispatch({ type: CLEAN_UP_STATIC_FILES_COMMIT, payload: { ids } });
+  } catch (e) {
+    dispatch({ type: CLEAN_UP_STATIC_FILES_ROLLBACK });
+  }
 };

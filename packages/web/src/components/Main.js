@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { updateHistoryPosition, fetch } from '../actions';
+import { updateHistoryPosition, fetch, rehydrateStaticFiles } from '../actions';
 import {
   BACK_DECIDER, BACK_POPUP,
   PC_100, PC_50, PC_33,
@@ -45,6 +45,7 @@ class Main extends React.PureComponent {
   componentDidUpdate(prevProps) {
     if (
       prevProps.listName !== this.props.listName ||
+      prevProps.rehydratedListNames !== this.props.rehydratedListNames ||
       prevProps.didFetch !== this.props.didFetch ||
       prevProps.didFetchSettings !== this.props.didFetchSettings ||
       prevProps.fetchedListNames !== this.props.fetchedListNames
@@ -60,7 +61,14 @@ class Main extends React.PureComponent {
   }
 
   fetch = () => {
-    const { listName, didFetch, didFetchSettings, fetchedListNames } = this.props;
+    const {
+      listName, rehydratedListNames, didFetch, didFetchSettings, fetchedListNames,
+    } = this.props;
+
+    if (!rehydratedListNames.includes(listName)) {
+      this.props.rehydrateStaticFiles();
+      return;
+    }
 
     if (!fetchedListNames.includes(listName)) {
       this.props.fetch(didFetch ? false : null, null, !didFetchSettings);
@@ -68,10 +76,12 @@ class Main extends React.PureComponent {
   }
 
   render() {
-    const { links, layoutType, safeAreaWidth, tailwind } = this.props;
+    const {
+      listName, links, rehydratedListNames, layoutType, safeAreaWidth, tailwind,
+    } = this.props;
     const columnWidth = this.getColumnWidth(safeAreaWidth);
 
-    if (links === null) {
+    if (links === null || !rehydratedListNames.includes(listName)) {
       return <Loading />;
     }
 
@@ -107,6 +117,7 @@ const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
     links: getLinks(state),
+    rehydratedListNames: state.display.rehydratedListNames,
     didFetch: state.display.didFetch,
     didFetchSettings: state.display.didFetchSettings,
     fetchedListNames: state.display.fetchedListNames,
@@ -116,6 +127,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { updateHistoryPosition, fetch };
+const mapDispatchToProps = { updateHistoryPosition, fetch, rehydrateStaticFiles };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(Main));

@@ -11,7 +11,7 @@ import {
   UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME, DELETE_LIST_NAMES,
   UPDATE_DELETE_ACTION, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
   UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_SETTINGS_VIEW_ID,
-  UPDATE_LIST_NAMES_MODE, UPDATE_IMPORT_ALL_DATA_PROGRESS,
+  UPDATE_LIST_NAMES_MODE, REHYDRATE_STATIC_FILES, UPDATE_IMPORT_ALL_DATA_PROGRESS,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -52,6 +52,7 @@ const initialState = {
   selectingLinkId: null,
   selectingListName: null,
   deletingListName: null,
+  rehydratedListNames: [],
   didFetch: false,
   didFetchSettings: false,
   fetchedListNames: [],
@@ -102,6 +103,7 @@ const displayReducer = (state = initialState, action) => {
       selectingLinkId: null,
       selectingListName: null,
       deletingListName: null,
+      rehydratedListNames: [],
       didFetch: false,
       didFetchSettings: false,
       fetchedListNames: [],
@@ -476,6 +478,14 @@ const displayReducer = (state = initialState, action) => {
     return { ...state, ...action.payload };
   }
 
+  if (action.type === REHYDRATE_STATIC_FILES) {
+    const { listName } = action.payload;
+    return {
+      ...state,
+      rehydratedListNames: [...state.rehydratedListNames, listName],
+    };
+  }
+
   if (action.type === UPDATE_IMPORT_ALL_DATA_PROGRESS) {
     const newState = { ...state, importAllDataProgress: action.payload };
     if (action.payload && action.payload.total && action.payload.done) {
@@ -498,6 +508,7 @@ const displayReducer = (state = initialState, action) => {
   if (action.type === DELETE_ALL_DATA) {
     return {
       ...initialState,
+      rehydratedListNames: [MY_LIST],
       didFetch: true, didFetchSettings: true, fetchedListNames: [MY_LIST],
     };
   }

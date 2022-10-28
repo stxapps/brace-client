@@ -55,14 +55,14 @@ class ConfirmDeletePopup extends React.Component {
       }
 
       if (popupLink) {
-        this.props.deleteLinks([popupLink.id]);
+        this.props.deleteLinks([popupLink.id], true);
         this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
         this.props.updatePopup(popupLink.id, false);
         return;
       }
 
       if (selectedLinkIds.length > 0) {
-        this.props.deleteLinks(selectedLinkIds);
+        this.props.deleteLinks(selectedLinkIds, true);
         this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
         this.props.updateBulkEdit(false);
         return;

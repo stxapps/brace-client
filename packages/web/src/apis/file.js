@@ -1,5 +1,12 @@
-import { Dirs, FileSystem } from '../fileSystem';
+import idb from '../idbWrapper';
 import { CD_ROOT } from '../types/const';
+import { isUint8Array, isBlob } from '../utils/index-web';
+
+const Dirs = { DocumentDir: 'DocumentDir' };
+
+// createObjectURL already holds files in memory so cache them doesn't require more.
+// Also, need to call revokeObjectURL where appropriate.
+let cachedContents = {};
 
 const deriveFPath = (fpath, dir) => {
   if (fpath.includes(CD_ROOT + '/')) {
@@ -13,43 +20,63 @@ const deriveFPath = (fpath, dir) => {
 
 const getFile = async (fpath, dir = Dirs.DocumentDir) => {
   fpath = deriveFPath(fpath, dir);
+  if (fpath in cachedContents) return cachedContents[fpath];
 
-  const content = await FileSystem.readFile(fpath);
-  return content;
+  let content = await idb.get(fpath);
+  if (isUint8Array(content)) content = new Blob([content]);
+
+  const cachedContent = { content };
+  if (isBlob(content)) cachedContent.contentUrl = URL.createObjectURL(content);
+
+  cachedContents[fpath] = cachedContent;
+  return cachedContent;
 };
 
 const getFiles = async (fpaths, dir = Dirs.DocumentDir) => {
-  const contents = [];
+  const contents = [], contentUrls = [];
   for (let fpath of fpaths) {
-    const content = await getFile(fpath, dir);
+    const { content, contentUrl } = await getFile(fpath, dir);
     contents.push(content);
+    contentUrls.push(contentUrl);
   }
-  return { fpaths, contents };
+  return { fpaths, contents, contentUrls };
 };
 
 const putFile = async (fpath, content, dir = Dirs.DocumentDir) => {
   fpath = deriveFPath(fpath, dir);
-  await FileSystem.writeFile(fpath, content);
+
+  if (isUint8Array(content)) content = new Blob([content]);
+  await idb.set(fpath, content);
+
+  if (fpath in cachedContents && 'contentUrl' in cachedContents[fpath]) {
+    URL.revokeObjectURL(cachedContents[fpath].contentUrl);
+  }
+
+  const cachedContent = { content };
+  if (isBlob(content)) cachedContent.contentUrl = URL.createObjectURL(content);
+
+  cachedContents[fpath] = cachedContent;
+  return cachedContent;
 };
 
-const putFiles = async (fpaths, contents, dir = Dirs.DocumentDir) => {
+const putFiles = async (fpaths, _contents, dir = Dirs.DocumentDir) => {
+  const contents = [], contentUrls = [];
   for (let i = 0; i < fpaths.length; i++) {
-    await putFile(fpaths[i], contents[i], dir);
+    const { content, contentUrl } = await putFile(fpaths[i], _contents[i], dir);
+    contents.push(content);
+    contentUrls.push(contentUrl);
   }
+  return { fpaths, contents, contentUrls };
 };
 
 const deleteFile = async (fpath, dir = Dirs.DocumentDir) => {
   fpath = deriveFPath(fpath, dir);
+  await idb.del(fpath);
 
-  try {
-    await FileSystem.unlink(fpath);
-  } catch (error) {
-    // BUG ALERT
-    // Treat not found error as not an error as local data might be out-dated.
-    //   i.e. user tries to delete a not-existing file, it's ok.
-    // Anyway, if the file should be there, this will hide the real error!
-    console.log('fileApi.deleteFile error: ', error);
+  if (fpath in cachedContents && 'contentUrl' in cachedContents[fpath]) {
+    URL.revokeObjectURL(cachedContents[fpath].contentUrl);
   }
+  delete cachedContents[fpath];
 };
 
 const deleteFiles = async (fpaths, dir = Dirs.DocumentDir) => {
@@ -59,11 +86,23 @@ const deleteFiles = async (fpaths, dir = Dirs.DocumentDir) => {
 };
 
 const deleteAllFiles = async () => {
-  await FileSystem.unlinkAll();
+  await idb.clear();
+
+  for (const fpath in cachedContents) {
+    if ('contentUrl' in cachedContents[fpath]) {
+      URL.revokeObjectURL(cachedContents[fpath].contentUrl);
+    }
+  }
+  cachedContents = {};
+};
+
+const listKeys = () => {
+  return idb.keys();
 };
 
 const file = {
   getFile, getFiles, putFile, putFiles, deleteFile, deleteFiles, deleteAllFiles,
+  listKeys,
 };
 
 export default file;

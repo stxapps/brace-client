@@ -3,7 +3,7 @@ import { loop, Cmd } from 'redux-loop';
 
 import {
   tryUpdateFetched, tryUpdateFetchedMore, moveLinksDeleteStep, deleteOldLinksInTrash,
-  extractContents, tryUpdateExtractedContents, unpinLinks,
+  extractContents, tryUpdateExtractedContents, unpinLinks, cleanUpStaticFiles,
 } from '../actions';
 import {
   UPDATE_POPUP,
@@ -13,16 +13,14 @@ import {
   MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK,
   DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
   CANCEL_DIED_LINKS, DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT,
-  UPDATE_EXTRACTED_CONTENTS, UPDATE_SETTINGS, CANCEL_DIED_SETTINGS,
-  DELETE_ALL_DATA, RESET_STATE,
+  UPDATE_EXTRACTED_CONTENTS, UPDATE_SETTINGS, CANCEL_DIED_SETTINGS, UPDATE_CUSTOM_DATA,
+  UPDATE_CUSTOM_DATA_COMMIT, UPDATE_CUSTOM_DATA_ROLLBACK, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
-  ALL, ADD_POPUP, PROFILE_POPUP, LIST_NAMES_POPUP,
-  IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
-  MY_LIST, TRASH, ARCHIVE,
-  ID, STATUS, N_LINKS,
-  ADDED, MOVED, ADDING, MOVING, REMOVING, DELETING,
-  DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
+  ALL, ADD_POPUP, PROFILE_POPUP, LIST_NAMES_POPUP, IS_POPUP_SHOWN,
+  POPUP_ANCHOR_POSITION, MY_LIST, TRASH, ARCHIVE, ID, STATUS, N_LINKS,
+  ADDED, MOVED, ADDING, MOVING, REMOVING, DELETING, UPDATING,
+  DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING,
 } from '../types/const';
 import {
   isEqual, isObject, getAllListNames, getMainId, getPinFPaths, sortFilteredLinks,
@@ -352,11 +350,19 @@ const linksReducer = (state = initialState, action) => {
       // DIED_MOVING -> remove this link
       // DIED_REMOVING -> just set status to ADDED
       // DIED_DELETING -> just set status to ADDED
+      // DIED_UPDATING -> replace with fromLink
       const status = state[listName][id].status;
       if ([DIED_ADDING, DIED_MOVING].includes(status)) {
         continue;
       } else if ([DIED_REMOVING, DIED_DELETING].includes(status)) {
         newState[listName][id] = { ...state[listName][id], status: ADDED };
+      } else if ([DIED_UPDATING]) {
+        newState[listName][id] = {
+          ...state[listName][id].fromLink,
+          [STATUS]: ADDED,
+          [IS_POPUP_SHOWN]: false,
+          [POPUP_ANCHOR_POSITION]: null,
+        };
       } else {
         throw new Error(`Invalid status: ${status} of link id: ${id}`);
       }
@@ -472,6 +478,44 @@ const linksReducer = (state = initialState, action) => {
     for (const k of listNames) {
       if (newState[k] === undefined) newState[k] = null;
     }
+
+    return newState;
+  }
+
+  if (action.type === UPDATE_CUSTOM_DATA) {
+    const { listName, fromLink, toLink } = action.payload;
+
+    const newState = { ...state };
+    newState[listName] = {
+      ...state[listName],
+      ...toObjAndAddAttrs([{ ...toLink, fromLink }], UPDATING, false, null),
+    };
+
+    return newState;
+  }
+
+  if (action.type === UPDATE_CUSTOM_DATA_COMMIT) {
+    const { listName, toLink } = action.payload;
+
+    // Doesn't remove fromLink here
+    //   so need to exclude this attr elsewhere if not needed.
+    const newState = { ...state };
+    newState[listName] = _.update(
+      state[listName], ID, _.extract([toLink], ID), STATUS, ADDED
+    );
+
+    return loop(
+      newState, Cmd.run(cleanUpStaticFiles(), { args: [Cmd.dispatch, Cmd.getState] })
+    );
+  }
+
+  if (action.type === UPDATE_CUSTOM_DATA_ROLLBACK) {
+    const { listName, toLink } = action.meta;
+
+    const newState = { ...state };
+    newState[listName] = _.update(
+      state[listName], ID, _.extract([toLink], ID), STATUS, DIED_UPDATING
+    );
 
     return newState;
   }

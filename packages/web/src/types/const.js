@@ -37,9 +37,11 @@ export const ACCESS_ERROR_POPUP = 'ACCESS_ERROR_POPUP';
 
 export const IS_POPUP_SHOWN = 'isPopupShown';
 export const POPUP_ANCHOR_POSITION = 'popupAnchorPosition';
+export const FROM_LINK = 'fromLink';
 
 export const CD_ROOT = 'cdroot';
 export const LINKS = 'links';
+export const IMAGES = 'images';
 export const SETTINGS = 'settings';
 export const PINS = 'pins';
 export const DOT_JSON = '.json';
