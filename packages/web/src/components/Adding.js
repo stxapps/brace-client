@@ -217,12 +217,7 @@ class Adding extends React.PureComponent {
           <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
         </svg>
         <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-center text-lg font-semibold text-gray-800 blk:text-gray-100')}>Oops..., something went wrong!</p>
-        <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-left text-base leading-relaxed text-gray-500 blk:text-gray-400 sm:text-center')}>Please wait a moment and try again. If the problem persists, please <a className={tailwind('rounded underline hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-300')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us
-          <svg className={tailwind('mb-2 inline-block w-4')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path d="M11 3C10.4477 3 10 3.44772 10 4C10 4.55228 10.4477 5 11 5H13.5858L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L15 6.41421V9C15 9.55228 15.4477 10 16 10C16.5523 10 17 9.55228 17 9V4C17 3.44772 16.5523 3 16 3H11Z" />
-            <path d="M5 5C3.89543 5 3 5.89543 3 7V15C3 16.1046 3.89543 17 5 17H13C14.1046 17 15 16.1046 15 15V12C15 11.4477 14.5523 11 14 11C13.4477 11 13 11.4477 13 12V15H5V7H8C8.55228 7 9 6.55228 9 6C9 5.44772 8.55228 5 8 5H5Z" />
-          </svg></a>.
-        </p>
+        <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-left text-base leading-relaxed text-gray-500 blk:text-gray-400 sm:text-center')}>Please wait a moment and try again. If the problem persists, please <a className={tailwind('rounded underline hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-300')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a>.</p>
         <button onClick={() => this.addLink(true)} className={tailwind('group mx-auto mt-5 mb-px block h-14 focus:outline-none')}>
           <span className={tailwind('rounded-full border border-gray-400 bg-white px-3 py-2 text-sm text-gray-500 group-hover:border-gray-500 group-hover:text-gray-600 group-focus:ring blk:border-gray-400 blk:bg-gray-900 blk:text-gray-300 blk:group-hover:border-gray-300 blk:group-hover:text-gray-200')}>Try again</span>
         </button>

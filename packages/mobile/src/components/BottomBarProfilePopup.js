@@ -23,7 +23,9 @@ class BottomBarProfilePopup extends React.PureComponent {
 
     this.state = { didCloseAnimEnd: !props.isProfilePopupShown };
 
-    this.profilePopupTranslateY = new Animated.Value(PROFILE_POPUP_HEIGHT);
+    this.profilePopupTranslateY = new Animated.Value(
+      PROFILE_POPUP_HEIGHT - 16 + Math.max(props.insets.bottom, 16)
+    );
     this.profilePopupBackHandler = null;
   }
 
@@ -39,7 +41,7 @@ class BottomBarProfilePopup extends React.PureComponent {
 
   componentDidUpdate(prevProps, prevState) {
 
-    const { isProfilePopupShown } = this.props;
+    const { isProfilePopupShown, insets } = this.props;
     if (prevProps.isProfilePopupShown !== isProfilePopupShown) {
       this.registerProfilePopupBackHandler(isProfilePopupShown);
     }
@@ -53,7 +55,10 @@ class BottomBarProfilePopup extends React.PureComponent {
     if (prevProps.isProfilePopupShown && !isProfilePopupShown) {
       Animated.timing(
         this.profilePopupTranslateY,
-        { toValue: PROFILE_POPUP_HEIGHT, ...bModalFMV.hidden }
+        {
+          toValue: PROFILE_POPUP_HEIGHT - 16 + Math.max(insets.bottom, 16),
+          ...bModalFMV.hidden,
+        }
       ).start(() => {
         this.setState({ didCloseAnimEnd: true });
       });
@@ -121,16 +126,19 @@ class BottomBarProfilePopup extends React.PureComponent {
   }
 
   render() {
-    const { isProfilePopupShown, tailwind } = this.props;
+    const { isProfilePopupShown, insets, tailwind } = this.props;
 
     if (!isProfilePopupShown && this.state.didCloseAnimEnd) return null;
 
-    const popupStyle = { transform: [{ translateY: this.profilePopupTranslateY }] };
+    const popupStyle = {
+      paddingBottom: Math.max(insets.bottom, 16),
+      transform: [{ translateY: this.profilePopupTranslateY }],
+    };
 
     return (
       <React.Fragment>
         <TouchableOpacity activeOpacity={1.0} onPress={this.onProfileCancelBtnClick} style={tailwind('absolute inset-0 z-40 bg-black bg-opacity-25')} />
-        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 z-41 rounded-t-lg bg-white pt-4 pb-4 shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
+        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 z-41 rounded-t-lg bg-white pt-4 shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
           <TouchableOpacity onPress={this.onRefreshBtnClick} style={tailwind('w-full py-4 pl-4')}>
             <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>Refresh</Text>
           </TouchableOpacity>
