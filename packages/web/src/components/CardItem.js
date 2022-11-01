@@ -29,8 +29,12 @@ class CardItem extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (
+      this.props.link.id !== nextProps.link.id ||
+      this.props.link.url !== nextProps.link.url ||
       this.props.link.status !== nextProps.link.status ||
+      !isEqual(this.props.link.decor, nextProps.link.decor) ||
       !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
+      !isEqual(this.props.link.custom, nextProps.link.custom) ||
       this.props.pinStatus !== nextProps.pinStatus ||
       this.props.tailwind !== nextProps.tailwind
     ) {

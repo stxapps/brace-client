@@ -31,6 +31,7 @@ class CardItemSelector extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (
+      this.props.linkId !== nextProps.linkId ||
       this.props.isBulkEditing !== nextProps.isBulkEditing ||
       this.props.isSelected !== nextProps.isSelected ||
       this.props.tailwind !== nextProps.tailwind ||

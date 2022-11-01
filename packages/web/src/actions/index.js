@@ -66,11 +66,11 @@ import {
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
   getUrlFirstChar, separateUrlAndParam, extractUrl, getUserImageUrl, randomDecor,
   isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
-  doOutboxContainMethods, isDecorValid, isExtractedResultValid, isListNameObjsValid,
-  getLatestPurchase, getValidPurchase, doEnableExtraFeatures, createLinkFPath,
-  extractPinFPath, getSortedLinks, getPinFPaths, getPins, separatePinnedValues,
-  sortLinks, sortWithPins, getFormattedTime, get24HFormattedTime, extractLinkFPath,
-  extractFPath, convertBlobToDataUrl, convertDataUrlToBlob,
+  doOutboxContainMethods, isDecorValid, isExtractedResultValid, isCustomValid,
+  isListNameObjsValid, getLatestPurchase, getValidPurchase, doEnableExtraFeatures,
+  createLinkFPath, extractPinFPath, getSortedLinks, getPinFPaths, getPins,
+  separatePinnedValues, sortLinks, sortWithPins, getFormattedTime, get24HFormattedTime,
+  extractLinkFPath, extractFPath, convertBlobToDataUrl, convertDataUrlToBlob,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { isUint8Array, isBlob } from '../utils/index-web';
@@ -547,7 +547,9 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
     for (let i = 0; i < sortedLinks.length; i++) {
       const [link, _link] = [sortedLinks[i], _sortedLinks[i]];
       if (
-        link.id !== _link.id || !isEqual(link.extractedResult, _link.extractedResult)
+        link.id !== _link.id ||
+        !isEqual(link.extractedResult, _link.extractedResult) ||
+        !isEqual(link.custom, _link.custom)
       ) {
         found = true;
         break;
@@ -1377,7 +1379,15 @@ const parseImportedFile = async (dispatch, text) => {
 
           if ('extractedResult' in obj.data) {
             if (!isExtractedResultValid(obj.data)) {
-              obj.data.extractedResult = null;
+              obj.data = { ...obj.data };
+              delete obj.data.extractedResult;
+            }
+          }
+
+          if ('custom' in obj.data) {
+            if (!isCustomValid(obj.data)) {
+              obj.data = { ...obj.data };
+              delete obj.data.custom;
             }
           }
         }

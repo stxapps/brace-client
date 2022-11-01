@@ -845,13 +845,10 @@ export const escapeDoubleQuotes = (s) => {
 };
 
 export const isDecorValid = (data) => {
-  if (!('decor' in data)) return false;
-  if (!('image' in data.decor && 'favicon' in data.decor)) return false;
-  if (!('bg' in data.decor.image && 'bg' in data.decor.favicon)) return false;
-  if (!(isObject(data.decor.image.bg) && isObject(data.decor.favicon.bg))) return false;
-
-  if (!('type' in data.decor.image.bg && 'value' in data.decor.image.bg)) return false;
-  if (!(isString(data.decor.image.bg.type) && isString(data.decor.image.bg.value))) {
+  if (!isObject(data.decor)) return false;
+  if (!isObject(data.decor.image) || !isObject(data.decor.favicon)) return false;
+  if (!isObject(data.decor.image.bg) || !isObject(data.decor.favicon.bg)) return false;
+  if (!isString(data.decor.image.bg.type) || !isString(data.decor.image.bg.value)) {
     return false;
   }
 
@@ -859,21 +856,12 @@ export const isDecorValid = (data) => {
     if (!(
       data.decor.image.fg === null ||
       (
-        isObject(data.decor.image.fg) &&
-        'text' in data.decor.image.fg &&
-        isString(data.decor.image.fg.text)
+        isObject(data.decor.image.fg) && isString(data.decor.image.fg.text)
       )
     )) return false;
   }
 
-
-  if (!('type' in data.decor.favicon.bg && 'value' in data.decor.favicon.bg)) {
-    return false;
-  }
-  if (!(
-    isString(data.decor.favicon.bg.type) &&
-    isString(data.decor.favicon.bg.value))
-  ) {
+  if (!isString(data.decor.favicon.bg.type) || !isString(data.decor.favicon.bg.value)) {
     return false;
   }
 
@@ -881,12 +869,7 @@ export const isDecorValid = (data) => {
 };
 
 export const isExtractedResultValid = (data) => {
-  if (!('extractedResult' in data)) return false;
-  if (!(
-    'url' in data.extractedResult &&
-    'extractedDT' in data.extractedResult &&
-    'status' in data.extractedResult
-  )) return false;
+  if (!isObject(data.extractedResult)) return false;
 
   if (!(
     isString(data.extractedResult.url) &&
@@ -902,6 +885,23 @@ export const isExtractedResultValid = (data) => {
   }
   if ('favicon' in data.extractedResult) {
     if (!isString(data.extractedResult.favicon)) return false;
+  }
+
+  return true;
+};
+
+export const isCustomValid = (data) => {
+  if (!isObject(data.custom)) return false;
+
+  const isTitle = 'title' in data.custom;
+  const isImage = 'image' in data.custom;
+  if (!isTitle && !isImage) return false;
+
+  if (isTitle) {
+    if (!isString(data.custom.title)) return false;
+  }
+  if (isImage) {
+    if (!isString(data.custom.image)) return false;
   }
 
   return true;

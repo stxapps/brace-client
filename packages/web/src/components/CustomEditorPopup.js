@@ -7,8 +7,8 @@ import fileApi from '../apis/file';
 import {
   updatePopup, updateCustomEditor, updateImages, updateCustomData,
 } from '../actions';
-import { CUSTOM_EDITOR_POPUP, IMAGES, CD_ROOT } from '../types/const';
-import { getCustomEditor } from '../selectors';
+import { CUSTOM_EDITOR_POPUP, IMAGES, CD_ROOT, BLK_MODE } from '../types/const';
+import { getCustomEditor, getThemeMode } from '../selectors';
 import {
   isObject, isString, isNumber, throttle, rerandomRandomTerm, getFileExt,
 } from '../utils';
@@ -22,6 +22,7 @@ const CustomEditorPopup = () => {
   const isShown = useSelector(state => state.display.isCustomEditorPopupShown);
   const selectingLinkId = useSelector(state => state.display.selectingLinkId);
   const customEditor = useSelector(state => getCustomEditor(state));
+  const themeMode = useSelector(state => getThemeMode(state));
   const cancelBtn = useRef(null);
   const uploadImageInput = useRef(null);
   const imageCanvas = useRef(null);
@@ -402,7 +403,8 @@ const CustomEditorPopup = () => {
 
     ctx.drawImage(rotatedImage, sX, sY, sWidth, sHeight, dX, dY, dWidth, dHeight);
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+    if (themeMode === BLK_MODE) ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+    else ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
     ctx.fillRect(0, 0, width, cY);
     ctx.fillRect(0, cY + cHeight, width, height - (cY + cHeight));
     ctx.fillRect(0, cY, cX, cHeight);
@@ -419,69 +421,90 @@ const CustomEditorPopup = () => {
 
   if (!isShown) return <AnimatePresence key="AnimatePresence_LEP" />;
 
+  const zoomRangeStyle = { backgroundSize: `${customEditor.zoom}% 100%` };
+
   return (
     <AnimatePresence key="AnimatePresence_LEP">
-      <div className={tailwind('fixed inset-0 z-30 overflow-hidden touch-none')}>
+      <div className={tailwind('fixed inset-0 z-30 touch-none overflow-hidden')}>
         <div onTouchMove={onTouchMove} onTouchEnd={onMouseUp} onTouchCancel={onMouseLeave} onMouseMove={onMouseMove} onMouseUp={onMouseUp} onMouseLeave={onMouseLeave} className={tailwind('flex items-center justify-center p-4')} style={{ minHeight: safeAreaHeight }}>
           <div className={tailwind('fixed inset-0')}>
             {/* No cancel on background of CustomEditorPopup */}
             <motion.button ref={cancelBtn} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
           </div>
-          <motion.div className={tailwind('w-full max-w-md overflow-hidden rounded-lg bg-white shadow-xl')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-            <div style={{ maxHeight: safeAreaHeight - 16 - 16 }} className={tailwind('relative flex flex-col overflow-x-hidden overflow-y-auto rounded-lg bg-white')}>
-              <div className={tailwind('')}>
-                <div className={tailwind('w-full aspect-w-12 aspect-h-8 bg-gray-200')}>
+          <motion.div className={tailwind('w-full max-w-sm overflow-hidden rounded-lg shadow-xl ring-1 ring-black ring-opacity-5 blk:ring-white blk:ring-opacity-25')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+            <div style={{ maxHeight: safeAreaHeight - 16 - 16 }} className={tailwind('relative flex flex-col overflow-y-auto overflow-x-hidden rounded-lg bg-white blk:bg-gray-800')}>
+              {isString(customEditor.image) && <div className={tailwind('aspect-w-12 aspect-h-7 w-full')}>
+                <div>
+                  <img className={tailwind('h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={customEditor.imageUrl} alt="Custom link's illustration" />
+                  <button onClick={onClearImageBtnClick} className={tailwind('group absolute bottom-1 right-1 flex h-10 w-10 items-center justify-center focus:outline-none')} type="button" title="Remove">
+                    <div className={tailwind('flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 group-focus:ring blk:bg-gray-700')}>
+                      <svg className={tailwind('h-4 w-4 text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-200')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fillRule="evenodd" clipRule="evenodd" d="M9 2C8.62123 2 8.27497 2.214 8.10557 2.55279L7.38197 4H4C3.44772 4 3 4.44772 3 5C3 5.55228 3.44772 6 4 6V16C4 17.1046 4.89543 18 6 18H14C15.1046 18 16 17.1046 16 16V6C16.5523 6 17 5.55228 17 5C17 4.44772 16.5523 4 16 4H12.618L11.8944 2.55279C11.725 2.214 11.3788 2 11 2H9ZM7 8C7 7.44772 7.44772 7 8 7C8.55228 7 9 7.44772 9 8V14C9 14.5523 8.55228 15 8 15C7.44772 15 7 14.5523 7 14V8ZM12 7C11.4477 7 11 7.44772 11 8V14C11 14.5523 11.4477 15 12 15C12.5523 15 13 14.5523 13 14V8C13 7.44772 12.5523 7 12 7Z" />
+                      </svg>
+                    </div>
+                  </button>
+                </div>
+              </div>}
+              {!customEditor.image && <div className={tailwind('aspect-w-12 aspect-h-7 w-full')}>
+                {/* aspect-ratio is padding-bottom underneath and this div is absolute inset-0 */}
+                <div className={tailwind('flex items-center justify-center bg-white ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-1 blk:ring-white blk:ring-opacity-10')}>
+                  <button onClick={onUploadImageBtnClick} className={tailwind('group mt-4 flex flex-col items-center justify-center rounded-lg p-2 focus:outline-none focus:ring')} type="button" title="Upload">
+                    <svg className={tailwind('h-9 w-9 text-gray-400 group-hover:text-gray-500 blk:text-gray-400 blk:group-hover:text-gray-300')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path fillRule="evenodd" clipRule="evenodd" d="M4 3C3.46957 3 2.96086 3.21071 2.58579 3.58579C2.21071 3.96086 2 4.46957 2 5V15C2 15.5304 2.21071 16.0391 2.58579 16.4142C2.96086 16.7893 3.46957 17 4 17H16C16.5304 17 17.0391 16.7893 17.4142 16.4142C17.7893 16.0391 18 15.5304 18 15V5C18 4.46957 17.7893 3.96086 17.4142 3.58579C17.0391 3.21071 16.5304 3 16 3H4ZM16 15H4L8 7L11 13L13 9L16 15Z" />
+                    </svg>
+                    <span className={tailwind('mt-1 text-sm text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-200')}>Upload an image</span>
+                  </button>
+                  <input ref={uploadImageInput} onChange={onUploadImageInputChange} className={tailwind('absolute top-full left-full')} tabIndex={-1} type="file" accept="image/*" />
+                </div>
+              </div>}
+              {isObject(customEditor.image) && <React.Fragment>
+                <div className={tailwind('aspect-w-12 aspect-h-8 w-full bg-gray-100 blk:bg-gray-700')}>
                   {/* aspect-ratio is padding-bottom underneath and this div is absolute inset-0 */}
                   <div className={tailwind('flex items-center justify-center')}>
-                    {isString(customEditor.image) && <div className={tailwind('w-full aspect-w-12 aspect-h-7')}>
-                      <div>
-                        <img className={tailwind('w-full h-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={customEditor.imageUrl} alt="Custom link's illustration" />
-                      </div>
-                    </div>}
-                    {isObject(customEditor.image) && <canvas ref={imageCanvas} onTouchStart={onCanvasMouseDown} onMouseDown={onCanvasMouseDown} onDragStart={onCanvasDragStart} className={tailwind('h-full w-full cursor-grab')}></canvas>}
-                    {!customEditor.image && <React.Fragment>
-                      <button onClick={onUploadImageBtnClick} type="button" className={tailwind('absolute top-1/2 left-1/2')}>
-                        <svg className={tailwind('h-5 w-5 text-gray-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path fillRule="evenodd" clipRule="evenodd" d="M4 3C3.46957 3 2.96086 3.21071 2.58579 3.58579C2.21071 3.96086 2 4.46957 2 5V15C2 15.5304 2.21071 16.0391 2.58579 16.4142C2.96086 16.7893 3.46957 17 4 17H16C16.5304 17 17.0391 16.7893 17.4142 16.4142C17.7893 16.0391 18 15.5304 18 15V5C18 4.46957 17.7893 3.96086 17.4142 3.58579C17.0391 3.21071 16.5304 3 16 3H4ZM16 15H4L8 7L11 13L13 9L16 15Z" />
-                        </svg>
-                        <span>Upload an image</span>
-                      </button>
-                      <input ref={uploadImageInput} onChange={onUploadImageInputChange} type="file" accept="image/*" className={tailwind('absolute top-full left-full')} />
-                    </React.Fragment>}
-                    {customEditor.image && <button onClick={onClearImageBtnClick} type="button" className={tailwind('absolute top-0 right-0 h-8 w-8')}>
-                      <svg className={tailwind('h-5 w-5 text-gray-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path fillRule="evenodd" clipRule="evenodd" d="M4.29303 4.293C4.48056 4.10553 4.73487 4.00021 5.00003 4.00021C5.26519 4.00021 5.5195 4.10553 5.70703 4.293L10 8.586L14.293 4.293C14.3853 4.19749 14.4956 4.12131 14.6176 4.0689C14.7396 4.01649 14.8709 3.9889 15.0036 3.98775C15.1364 3.9866 15.2681 4.0119 15.391 4.06218C15.5139 4.11246 15.6255 4.18671 15.7194 4.28061C15.8133 4.3745 15.8876 4.48615 15.9379 4.60905C15.9881 4.73194 16.0134 4.86362 16.0123 4.9964C16.0111 5.12918 15.9835 5.2604 15.9311 5.38241C15.8787 5.50441 15.8025 5.61475 15.707 5.707L11.414 10L15.707 14.293C15.8892 14.4816 15.99 14.7342 15.9877 14.9964C15.9854 15.2586 15.8803 15.5094 15.6948 15.6948C15.5094 15.8802 15.2586 15.9854 14.9964 15.9877C14.7342 15.99 14.4816 15.8892 14.293 15.707L10 11.414L5.70703 15.707C5.51843 15.8892 5.26583 15.99 5.00363 15.9877C4.74143 15.9854 4.49062 15.8802 4.30521 15.6948C4.1198 15.5094 4.01463 15.2586 4.01236 14.9964C4.01008 14.7342 4.11087 14.4816 4.29303 14.293L8.58603 10L4.29303 5.707C4.10556 5.51947 4.00024 5.26517 4.00024 5C4.00024 4.73484 4.10556 4.48053 4.29303 4.293Z" />
-                      </svg>
-                    </button>}
+                    <canvas ref={imageCanvas} onTouchStart={onCanvasMouseDown} onMouseDown={onCanvasMouseDown} onDragStart={onCanvasDragStart} className={tailwind('h-full w-full cursor-grab')}></canvas>
                   </div>
                 </div>
-                {isObject(customEditor.image) && <div className={tailwind('flex')}>
-                  <button onClick={onRotateRightBtnClick} type="button" className={tailwind('flex items-center justify-center')}>
-                    <svg className={tailwind('h-5 w-5 text-gray-500')} viewBox="0 0 512 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg" >
-                      <path d="M496 48V192c0 17.69-14.31 32-32 32H320c-17.69 0-32-14.31-32-32s14.31-32 32-32h63.39c-29.97-39.7-77.25-63.78-127.6-63.78C167.7 96.22 96 167.9 96 256s71.69 159.8 159.8 159.8c34.88 0 68.03-11.03 95.88-31.94c14.22-10.53 34.22-7.75 44.81 6.375c10.59 14.16 7.75 34.22-6.375 44.81c-39.03 29.28-85.36 44.86-134.2 44.86C132.5 479.9 32 379.4 32 256s100.5-223.9 223.9-223.9c69.15 0 134 32.47 176.1 86.12V48c0-17.69 14.31-32 32-32S496 30.31 496 48z" />
-                    </svg>
+                <div className={tailwind('flex items-center justify-end px-1')}>
+                  <button onClick={onRotateRightBtnClick} className={tailwind('group flex h-10 w-10 items-center justify-center focus:outline-none')} type="button" title="Rotate">
+                    <div className={tailwind('rounded p-1 group-focus:ring')}>
+                      <svg className={tailwind('h-5 w-5 text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-200')} viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16.9146 18.2881C15.5158 19.3742 13.7961 19.9655 12.0251 19.9693C10.2541 19.9731 8.53188 19.3893 7.12834 18.3092C5.72481 17.2291 4.71929 15.7139 4.26936 14.001C3.81942 12.2882 3.95051 10.4744 4.64208 8.844M19.9993 3.98956V8.98956H19.4183M19.4183 8.98956C18.7535 7.34866 17.5634 5.97452 16.0342 5.08227C14.505 4.19002 12.7231 3.83004 10.9674 4.05869C9.21179 4.28733 7.58153 5.09169 6.33186 6.34584C5.0822 7.59998 4.28369 9.23312 4.06133 10.9896M19.4183 8.98956H14.9993" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
                   </button>
-                  <button onClick={onZoomOutBtnClick} type="button" className={tailwind('flex items-center justify-center')}>
-                    <svg className={tailwind('h-5 w-5 text-gray-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path fillRule="evenodd" clipRule="evenodd" d="M8 4C6.93913 4 5.92172 4.42143 5.17157 5.17157C4.42143 5.92172 4 6.93913 4 8C4 9.06087 4.42143 10.0783 5.17157 10.8284C5.92172 11.5786 6.93913 12 8 12C9.06087 12 10.0783 11.5786 10.8284 10.8284C11.5786 10.0783 12 9.06087 12 8C12 6.93913 11.5786 5.92172 10.8284 5.17157C10.0783 4.42143 9.06087 4 8 4ZM2 8C1.99988 7.0557 2.22264 6.12471 2.65017 5.28274C3.0777 4.44077 3.69792 3.7116 4.4604 3.15453C5.22287 2.59745 6.10606 2.22821 7.03815 2.07683C7.97023 1.92545 8.92488 1.99621 9.82446 2.28335C10.724 2.57049 11.5432 3.0659 12.2152 3.7293C12.8872 4.39269 13.3931 5.20533 13.6919 6.10113C13.9906 6.99693 14.0737 7.95059 13.9343 8.88455C13.795 9.81851 13.4372 10.7064 12.89 11.476L17.707 16.293C17.8892 16.4816 17.99 16.7342 17.9877 16.9964C17.9854 17.2586 17.8802 17.5094 17.6948 17.6948C17.5094 17.8802 17.2586 17.9854 16.9964 17.9877C16.7342 17.99 16.4816 17.8892 16.293 17.707L11.477 12.891C10.5794 13.5293 9.52335 13.9082 8.42468 13.9861C7.326 14.0641 6.22707 13.8381 5.2483 13.333C4.26953 12.8278 3.44869 12.063 2.87572 11.1224C2.30276 10.1817 1.99979 9.10143 2 8Z" />
-                      <path fillRule="evenodd" clipRule="evenodd" d="M5 8C5 7.73478 5.10536 7.48043 5.29289 7.29289C5.48043 7.10536 5.73478 7 6 7H10C10.2652 7 10.5196 7.10536 10.7071 7.29289C10.8946 7.48043 11 7.73478 11 8C11 8.26522 10.8946 8.51957 10.7071 8.70711C10.5196 8.89464 10.2652 9 10 9H6C5.73478 9 5.48043 8.89464 5.29289 8.70711C5.10536 8.51957 5 8.26522 5 8Z" />
-                    </svg>
+                  <button onClick={onZoomOutBtnClick} className={tailwind('group flex h-10 w-10 items-center justify-center focus:outline-none')} type="button" title="Zoom out">
+                    <div className={tailwind('rounded p-1 group-focus:ring')}>
+                      <svg className={tailwind('h-5 w-5 text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-200')} viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13 10H7M21 21L15 15L21 21ZM17 10C17 10.9193 16.8189 11.8295 16.4672 12.6788C16.1154 13.5281 15.5998 14.2997 14.9497 14.9497C14.2997 15.5998 13.5281 16.1154 12.6788 16.4672C11.8295 16.8189 10.9193 17 10 17C9.08075 17 8.1705 16.8189 7.32122 16.4672C6.47194 16.1154 5.70026 15.5998 5.05025 14.9497C4.40024 14.2997 3.88463 13.5281 3.53284 12.6788C3.18106 11.8295 3 10.9193 3 10C3 8.14348 3.7375 6.36301 5.05025 5.05025C6.36301 3.7375 8.14348 3 10 3C11.8565 3 13.637 3.7375 14.9497 5.05025C16.2625 6.36301 17 8.14348 17 10Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
                   </button>
-                  <input ref={zoomInput} onChange={onZoomInputChange} type="range" value={customEditor.zoom} min={0} max={100} />
-                  <button onClick={onZoomInBtnClick} type="button" className={tailwind('flex items-center justify-center')}>
-                    <svg className={tailwind('h-5 w-5 text-gray-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M5 8C5 7.73478 5.10536 7.48043 5.29289 7.29289C5.48043 7.10536 5.73478 7 6 7H7V6C7 5.73478 7.10536 5.48043 7.29289 5.29289C7.48043 5.10536 7.73478 5 8 5C8.26522 5 8.51957 5.10536 8.70711 5.29289C8.89464 5.48043 9 5.73478 9 6V7H10C10.2652 7 10.5196 7.10536 10.7071 7.29289C10.8946 7.48043 11 7.73478 11 8C11 8.26522 10.8946 8.51957 10.7071 8.70711C10.5196 8.89464 10.2652 9 10 9H9V10C9 10.2652 8.89464 10.5196 8.70711 10.7071C8.51957 10.8946 8.26522 11 8 11C7.73478 11 7.48043 10.8946 7.29289 10.7071C7.10536 10.5196 7 10.2652 7 10V9H6C5.73478 9 5.48043 8.89464 5.29289 8.70711C5.10536 8.51957 5 8.26522 5 8Z" />
-                      <path fillRule="evenodd" clipRule="evenodd" d="M2 8C1.99988 7.0557 2.22264 6.12471 2.65017 5.28274C3.0777 4.44077 3.69792 3.7116 4.4604 3.15453C5.22287 2.59745 6.10606 2.22821 7.03815 2.07683C7.97023 1.92545 8.92488 1.99621 9.82446 2.28335C10.724 2.57049 11.5432 3.0659 12.2152 3.7293C12.8872 4.39269 13.3931 5.20533 13.6919 6.10113C13.9906 6.99693 14.0737 7.95059 13.9343 8.88455C13.795 9.81851 13.4372 10.7064 12.89 11.476L17.707 16.293C17.8892 16.4816 17.99 16.7342 17.9877 16.9964C17.9854 17.2586 17.8802 17.5094 17.6948 17.6948C17.5094 17.8802 17.2586 17.9854 16.9964 17.9877C16.7342 17.99 16.4816 17.8892 16.293 17.707L11.477 12.891C10.5794 13.5293 9.52335 13.9082 8.42468 13.9861C7.326 14.0641 6.22707 13.8381 5.2483 13.333C4.26953 12.8278 3.44869 12.063 2.87572 11.1224C2.30276 10.1817 1.99979 9.10143 2 8ZM8 4C6.93913 4 5.92172 4.42143 5.17157 5.17157C4.42143 5.92172 4 6.93913 4 8C4 9.06087 4.42143 10.0783 5.17157 10.8284C5.92172 11.5786 6.93913 12 8 12C9.06087 12 10.0783 11.5786 10.8284 10.8284C11.5786 10.0783 12 9.06087 12 8C12 6.93913 11.5786 5.92172 10.8284 5.17157C10.0783 4.42143 9.06087 4 8 4Z" />
-                    </svg>
+                  <input ref={zoomInput} onChange={onZoomInputChange} style={zoomRangeStyle} className={tailwind('zoom-range blk:zoom-range-blk')} type="range" value={customEditor.zoom} min={0} max={100} />
+                  <button onClick={onZoomInBtnClick} className={tailwind('group flex h-10 w-10 items-center justify-center focus:outline-none')} type="button" title="Zoom in">
+                    <div className={tailwind('rounded p-1 group-focus:ring')}>
+                      <svg className={tailwind('h-5 w-5 text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-200')} viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 10H7M21 21L15 15L21 21ZM17 10C17 10.9193 16.8189 11.8295 16.4672 12.6788C16.1154 13.5281 15.5998 14.2997 14.9497 14.9497C14.2997 15.5998 13.5281 16.1154 12.6788 16.4672C11.8295 16.8189 10.9193 17 10 17C9.08075 17 8.1705 16.8189 7.32122 16.4672C6.47194 16.1154 5.70026 15.5998 5.05025 14.9497C4.40024 14.2997 3.88463 13.5281 3.53284 12.6788C3.18106 11.8295 3 10.9193 3 10C3 8.14348 3.7375 6.36301 5.05025 5.05025C6.36301 3.7375 8.14348 3 10 3C11.8565 3 13.637 3.7375 14.9497 5.05025C16.2625 6.36301 17 8.14348 17 10ZM10 7V10V7ZM10 10V13V10ZM10 10H13H10Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
                   </button>
-                </div>}
+                  <button onClick={onClearImageBtnClick} className={tailwind('group flex h-10 w-10 items-center justify-center focus:outline-none')} type="button" title="Remove">
+                    <div className={tailwind('rounded p-1 group-focus:ring')}>
+                      <svg className={tailwind('h-5 w-5 text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-200')} viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 11V17M14 11V17M4 7H20M19 7L18.133 19.142C18.0971 19.6466 17.8713 20.1188 17.5011 20.4636C17.1309 20.8083 16.6439 21 16.138 21H7.862C7.35614 21 6.86907 20.8083 6.49889 20.4636C6.1287 20.1188 5.90292 19.6466 5.867 19.142L5 7H19ZM15 7V4C15 3.73478 14.8946 3.48043 14.7071 3.29289C14.5196 3.10536 14.2652 3 14 3H10C9.73478 3 9.48043 3.10536 9.29289 3.29289C9.10536 3.48043 9 3.73478 9 4V7H15Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                  </button>
+                </div>
+              </React.Fragment>}
+              <div className={tailwind(`flex px-4 ${isObject(customEditor.image) ? 'pt-2' : 'pt-4'}`)}>
+                <span className={tailwind('inline-flex items-center text-sm text-gray-500 blk:text-gray-300')}>Title:</span>
+                <div className={tailwind('ml-3 flex-1')}>
+                  <input onChange={onTitleInputChange} onKeyPress={onTitleInputKeyPress} className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent')} type="text" placeholder="Title" value={customEditor.title} />
+                </div>
               </div>
-              <div className={tailwind('')}>
-                <input onChange={onTitleInputChange} onKeyPress={onTitleInputKeyPress} className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent')} type="text" placeholder="Title" value={customEditor.title} autoCapitalize="none" autoFocus />
-              </div>
-              <div>
-                <button onClick={onSaveBtnClick} type="button" className={tailwind('')}>Save</button>
-                <button onClick={onPopupCloseBtnClick} type="button" className={tailwind('')}>Cancel</button>
+              <div className={tailwind('px-4 pt-3 pb-4')}>
+                <button onClick={onSaveBtnClick} style={{ paddingTop: '0.4375rem', paddingBottom: '0.4375rem' }} className={tailwind('rounded-full bg-gray-800 px-4 text-sm font-medium text-gray-50 hover:bg-gray-900 focus:outline-none focus:ring blk:bg-gray-100 blk:text-gray-800 blk:hover:bg-white')} type="button">Save</button>
+                <button onClick={onPopupCloseBtnClick} className={tailwind('ml-2 rounded-md px-2.5 py-1.5 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring focus:ring-inset blk:text-gray-300 blk:hover:bg-gray-700')} type="button">Cancel</button>
               </div>
               {customEditor.msg.length > 0 && <div className={tailwind('absolute inset-x-0 top-0 flex items-start justify-center')}>
                 <div className={tailwind('m-4 rounded-md bg-red-50 p-4 shadow')}>
@@ -492,7 +515,7 @@ const CustomEditorPopup = () => {
                       </svg>
                     </div>
                     <div className={tailwind('ml-3 mt-0.5')}>
-                      <h3 className={tailwind('text-left text-sm leading-5 text-red-800 line-clamp-3')}>{customEditor.msg}</h3>
+                      <h3 className={tailwind('text-left text-sm leading-5 text-red-800 line-clamp-2')}>{customEditor.msg}</h3>
                     </div>
                   </div>
                 </div>

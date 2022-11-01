@@ -33,6 +33,8 @@ class CardItemContent extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (
+      this.props.link.url !== nextProps.link.url ||
+      !isEqual(this.props.link.decor, nextProps.link.decor) ||
       !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
       !isEqual(this.props.link.custom, nextProps.link.custom) ||
       this.props.customImage !== nextProps.customImage ||
