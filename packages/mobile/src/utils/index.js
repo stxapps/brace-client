@@ -1081,11 +1081,19 @@ export const deleteFPath = (fpaths, fpath) => {
 
 export const copyFPaths = (fpaths) => {
   const newLinkFPaths = {};
-  for (const listName in fpaths.linkFPaths) {
-    newLinkFPaths[listName] = [...fpaths.linkFPaths[listName]];
+  if (isObject(fpaths.linkFPaths)) {
+    for (const listName in fpaths.linkFPaths) {
+      if (Array.isArray(fpaths.linkFPaths[listName])) {
+        newLinkFPaths[listName] = [...fpaths.linkFPaths[listName]];
+      }
+    }
   }
-  const newStaticFPaths = [...fpaths.staticFPaths];
-  const newPinFPaths = [...fpaths.pinFPaths];
+
+  let newStaticFPaths = [];
+  if (Array.isArray(fpaths.staticFPaths)) newStaticFPaths = [...fpaths.staticFPaths];
+
+  let newPinFPaths = [];
+  if (Array.isArray(fpaths.pinFPaths)) newPinFPaths = [...fpaths.pinFPaths];
 
   return {
     ...fpaths,

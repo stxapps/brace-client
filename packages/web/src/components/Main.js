@@ -3,9 +3,7 @@ import { connect } from 'react-redux';
 
 import { updateHistoryPosition, fetch, rehydrateStaticFiles } from '../actions';
 import {
-  BACK_DECIDER, BACK_POPUP,
-  PC_100, PC_50, PC_33,
-  SHOW_BLANK, SHOW_COMMANDS,
+  BACK_DECIDER, BACK_POPUP, PC_100, PC_50, PC_33, SHOW_BLANK, SHOW_COMMANDS,
   SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
 } from '../types/const';
 import { getLinks, getThemeMode } from '../selectors';

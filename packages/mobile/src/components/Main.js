@@ -2,11 +2,11 @@ import React from 'react';
 import { Animated } from 'react-native';
 import { connect } from 'react-redux';
 
+import fileApi from '../apis/file';
 import { fetch, rehydrateStaticFiles, endIapConnection } from '../actions';
 import {
-  PC_100, PC_50, PC_33,
-  SHOW_BLANK, SHOW_COMMANDS,
-  SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
+  PC_100, PC_50, PC_33, SHOW_BLANK, SHOW_COMMANDS, SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
+  IMAGES,
 } from '../types/const';
 import { getLinks } from '../selectors';
 
@@ -42,7 +42,7 @@ class Main extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.fetch();
+    this.mkDirAndFetch();
   }
 
   componentDidUpdate(prevProps) {
@@ -80,6 +80,17 @@ class Main extends React.PureComponent {
     if (!fetchedListNames.includes(listName)) {
       this.props.fetch(didFetch ? false : null, null, !didFetchSettings);
     }
+  }
+
+  mkDirAndFetch = async () => {
+    try {
+      const doExist = await fileApi.exists(IMAGES);
+      if (!doExist) await fileApi.mkdir(IMAGES);
+    } catch (e) {
+      console.log('Can\'t make images dir with error: ', e);
+    }
+
+    this.fetch();
   }
 
   render() {

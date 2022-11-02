@@ -98,6 +98,11 @@ const listKeys = async (dpath, dir = Dirs.DocumentDir) => {
   return fnames;
 };
 
+const exists = async (fpath, dir = Dirs.DocumentDir) => {
+  fpath = deriveFPath(fpath, dir);
+  return await FileSystem.exists(fpath);
+};
+
 const mkdir = async (fpath, dir = Dirs.DocumentDir) => {
   fpath = deriveFPath(fpath, dir);
   await FileSystem.mkdir(fpath);
@@ -105,7 +110,7 @@ const mkdir = async (fpath, dir = Dirs.DocumentDir) => {
 
 const file = {
   getFile, getFiles, putFile, putFiles, deleteFile, deleteFiles, deleteAllFiles,
-  listKeys, mkdir,
+  listKeys, exists, mkdir,
 };
 
 export default file;

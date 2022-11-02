@@ -1,3 +1,5 @@
+import { REHYDRATE } from 'redux-persist/constants';
+
 import {
   REHYDRATE_STATIC_FILES, FETCH_COMMIT, FETCH_MORE_COMMIT, UPDATE_IMAGES,
   DELETE_LINKS_COMMIT, DELETE_OLD_LINKS_IN_TRASH_COMMIT, CLEAN_UP_STATIC_FILES_COMMIT,
@@ -8,6 +10,10 @@ import { getMainId, extractFPath } from '../utils';
 const initialState = {};
 
 const imagesReducer = (state = initialState, action) => {
+
+  if (action.type === REHYDRATE) {
+    return { ...initialState };
+  }
 
   if (
     action.type === REHYDRATE_STATIC_FILES ||

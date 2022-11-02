@@ -1,3 +1,5 @@
+import { REHYDRATE } from 'redux-persist/constants';
+
 import {
   UPDATE_UPDATING_THEME_MODE, UPDATE_TIME_PICK, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -10,6 +12,10 @@ const initialState = {
 };
 
 const timePickReducer = (state = initialState, action) => {
+
+  if (action.type === REHYDRATE) {
+    return { ...initialState };
+  }
 
   if (action.type === UPDATE_UPDATING_THEME_MODE) {
     return { ...state, ...action.payload };

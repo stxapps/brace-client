@@ -1,6 +1,6 @@
 // @ts-ignore
 import RNBlockstackSdk from 'react-native-blockstack';
-
+import { Dirs } from 'react-native-file-access';
 import { DOT_JSON } from './types/const';
 
 /* Need this sync function to check if session is available in ReduxOffline peek  */
@@ -47,13 +47,15 @@ const loadUserData = async () => {
   return userData;
 };
 
-const putFile = async (path, content, options = { encrypt: true }) => {
+const putFileOptions = { encrypt: true, dir: Dirs.DocumentDir };
+const putFile = async (path, content, options = putFileOptions) => {
   if (path.endsWith(DOT_JSON)) content = JSON.stringify(content);
   const { fileUrl } = await RNBlockstackSdk.putFile(path, content, options);
   return fileUrl;
 };
 
-const getFile = async (path, options = { decrypt: true }) => {
+const getFileOptions = { decrypt: true, dir: Dirs.DocumentDir };
+const getFile = async (path, options = getFileOptions) => {
   const result = await RNBlockstackSdk.getFile(path, options);
 
   let content;
