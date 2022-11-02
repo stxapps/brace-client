@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
-import { ADDING, MOVING, SM_WIDTH, PINNED } from '../types/const';
+import { ADDING, MOVING, UPDATING, SM_WIDTH, PINNED } from '../types/const';
 import { makeGetPinStatus, getThemeMode } from '../selectors';
 import {
   ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isEqual,
@@ -34,8 +34,12 @@ class CardItem extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (
       this.props.style !== nextProps.style ||
+      this.props.link.id !== nextProps.link.id ||
+      this.props.link.url !== nextProps.link.url ||
       this.props.link.status !== nextProps.link.status ||
+      !isEqual(this.props.link.decor, nextProps.link.decor) ||
       !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
+      !isEqual(this.props.link.custom, nextProps.link.custom) ||
       this.props.pinStatus !== nextProps.pinStatus ||
       this.props.safeAreaWidth !== nextProps.safeAreaWidth ||
       this.props.tailwind !== nextProps.tailwind
@@ -159,7 +163,7 @@ class CardItem extends React.Component {
     const { status } = link;
 
     const isPinning = isPinningStatus(pinStatus);
-    const canSelect = ![ADDING, MOVING].includes(status) && !isPinning;
+    const canSelect = ![ADDING, MOVING, UPDATING].includes(status) && !isPinning;
 
     // Need to do this as React Native doesn't support maxWidth: "none"
     //   even though it's in tailwind-rn.
@@ -172,7 +176,7 @@ class CardItem extends React.Component {
       <View style={style}>
         <View style={tailwind(`self-center rounded-lg bg-white blk:border-gray-700 blk:bg-gray-800 ${viewStyle}`)}>
           <CardItemContent link={link} />
-          {[ADDING, MOVING].includes(status) && this.renderBusy()}
+          {[ADDING, MOVING, UPDATING].includes(status) && this.renderBusy()}
           {isPinning && this.renderPinning()}
           {[PINNED].includes(pinStatus) && this.renderPin()}
           {canSelect && <CardItemSelector linkId={link.id} />}

@@ -8,11 +8,11 @@ import Clipboard from '@react-native-community/clipboard';
 
 import {
   updatePopup, updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction,
-  updateListNamesMode,
+  updateListNamesMode, updateCustomEditorPopup,
 } from '../actions';
 import {
-  MY_LIST, TRASH, ADDING, MOVING, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
-  MOVE_TO, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP,
+  MY_LIST, TRASH, ADDING, MOVING, UPDATING, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
+  MOVE_TO, CHANGE, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP,
   PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
   DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
@@ -53,7 +53,7 @@ class CardItemMenuPopup extends React.PureComponent {
     }
 
     if (
-      [ADDING, MOVING].includes(link.status) ||
+      [ADDING, MOVING, UPDATING].includes(link.status) ||
       ![null, PINNED].includes(pinStatus)
     ) {
       menu = menu.slice(0, 1);
@@ -61,6 +61,8 @@ class CardItemMenuPopup extends React.PureComponent {
       // Only when no other pending actions and list name is not TRASH
       if (pinStatus === PINNED) menu = [...menu, MANAGE_PIN];
       else if (pinStatus === null) menu = [...menu, PIN];
+
+      menu = [...menu, CHANGE];
     }
 
     if (layoutType === LAYOUT_LIST && safeAreaWidth >= LG_WIDTH) {
@@ -138,6 +140,8 @@ class CardItemMenuPopup extends React.PureComponent {
 
       this.didClick = true;
       return true;
+    } else if (text === CHANGE) {
+      this.props.updateCustomEditorPopup(true, id);
     } else {
       console.log(`In CardItemMenuPopup, invalid text: ${text}`);
     }
@@ -236,7 +240,7 @@ const makeMapStateToProps = () => {
 
 const mapDispatchToProps = {
   updatePopup, updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction,
-  updateListNamesMode,
+  updateListNamesMode, updateCustomEditorPopup,
 };
 
 export default connect(makeMapStateToProps, mapDispatchToProps)(withTailwind(CardItemMenuPopup));

@@ -245,3 +245,4 @@ export const CUSTOM_MODE = 3;
 
 export const FEATURE_PIN = 'FEATURE_PIN';
 export const FEATURE_APPEARANCE = 'FEATURE_APPEARANCE';
+export const FEATURE_CUSTOM = 'FEATURE_CUSTOM';

@@ -1,0 +1,111 @@
+import { Dirs, FileSystem } from 'react-native-file-access';
+
+import { CD_ROOT } from '../types/const';
+
+// getFile and putFile here just check if the file exists
+//   and return the file url!!!
+// The names are for consistency with web.
+
+const deriveFPath = (fpath, dir) => {
+  if (fpath.includes(CD_ROOT + '/')) {
+    fpath = fpath.slice(fpath.indexOf(CD_ROOT + '/'));
+    fpath = fpath.replace(CD_ROOT + '/', dir + '/');
+  } else {
+    fpath = dir + '/' + fpath;
+  }
+  return fpath;
+};
+
+const getFile = async (fpath, dir = Dirs.DocumentDir) => {
+  fpath = deriveFPath(fpath, dir);
+
+  const doExist = await FileSystem.exists(fpath);
+
+  const cachedContent = { content: null };
+  if (doExist) {
+    cachedContent.content = `file://${fpath}`;
+    cachedContent.contentUrl = cachedContent.content;
+  }
+
+  return cachedContent;
+};
+
+const getFiles = async (fpaths, dir = Dirs.DocumentDir) => {
+  const contents = [], contentUrls = [];
+  for (let fpath of fpaths) {
+    const { content, contentUrl } = await getFile(fpath, dir);
+    contents.push(content);
+    contentUrls.push(contentUrl);
+  }
+  return { fpaths, contents, contentUrls };
+};
+
+const putFile = async (fpath, content, dir = Dirs.DocumentDir) => {
+  fpath = deriveFPath(fpath, dir);
+
+  const doExist = await FileSystem.exists(fpath);
+
+  const cachedContent = { content: null };
+  if (doExist) {
+    cachedContent.content = `file://${fpath}`;
+    cachedContent.contentUrl = cachedContent.content;
+  }
+
+  return cachedContent;
+};
+
+const putFiles = async (fpaths, _contents, dir = Dirs.DocumentDir) => {
+  const contents = [], contentUrls = [];
+  for (let i = 0; i < fpaths.length; i++) {
+    const { content, contentUrl } = await putFile(fpaths[i], _contents[i], dir);
+    contents.push(content);
+    contentUrls.push(contentUrl);
+  }
+  return { fpaths, contents, contentUrls };
+};
+
+const deleteFile = async (fpath, dir = Dirs.DocumentDir) => {
+  fpath = deriveFPath(fpath, dir);
+
+  try {
+    await FileSystem.unlink(fpath);
+  } catch (error) {
+    // BUG ALERT
+    // Treat not found error as not an error as local data might be out-dated.
+    //   i.e. user tries to delete a not-existing file, it's ok.
+    // Anyway, if the file should be there, this will hide the real error!
+    console.log('fileApi.deleteFile error: ', error);
+  }
+};
+
+const deleteFiles = async (fpaths, dir = Dirs.DocumentDir) => {
+  for (let fpath of fpaths) {
+    await deleteFile(fpath, dir);
+  }
+};
+
+const deleteAllFiles = async (dpath, dir = Dirs.DocumentDir) => {
+  dpath = deriveFPath(dpath, dir);
+
+  const fnames = await FileSystem.ls(dpath);
+  for (const fname of fnames) await FileSystem.unlink(dpath + '/' + fname);
+};
+
+const listKeys = async (dpath, dir = Dirs.DocumentDir) => {
+  dpath = deriveFPath(dpath, dir);
+
+  const fnames = await FileSystem.ls(dpath);
+  return fnames;
+};
+
+const mkdir = async (fpath, dir = Dirs.DocumentDir) => {
+  fpath = deriveFPath(fpath, dir);
+  await FileSystem.mkdir(fpath);
+};
+
+const file = {
+  getFile, getFiles, putFile, putFiles, deleteFile, deleteFiles, deleteAllFiles,
+  listKeys, mkdir,
+};
+
+export default file;

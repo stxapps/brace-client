@@ -4,12 +4,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import {
   updatePopup, updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction,
-  updateListNamesMode,
+  updateListNamesMode, updateCustomEditorPopup,
 } from '../actions';
 import {
   MY_LIST, TRASH, ADDING, MOVING, UPDATING, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
   MOVE_TO, CHANGE, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP,
-  PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
+  PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
   DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
 import {
@@ -171,8 +171,7 @@ class CardItemMenuPopup extends React.PureComponent {
       };
       this.props.updatePopup(PIN_MENU_POPUP, true, rect);
     } else if (text === CHANGE) {
-      this.props.updateSelectingLinkId(id);
-      this.props.updatePopup(CUSTOM_EDITOR_POPUP, true);
+      this.props.updateCustomEditorPopup(true, id);
     } else {
       console.log(`In CardItemMenuPopup, invalid text: ${text}`);
     }
@@ -282,7 +281,7 @@ const makeMapStateToProps = () => {
 
 const mapDispatchToProps = {
   updatePopup, updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction,
-  updateListNamesMode,
+  updateListNamesMode, updateCustomEditorPopup,
 };
 
 export default connect(makeMapStateToProps, mapDispatchToProps)(withTailwind(CardItemMenuPopup));

@@ -430,7 +430,7 @@ const updateCustomData = async (params) => {
   const { listName, fromLink, toLink } = params;
 
   const {
-    usedFPaths, serverUnusedFPaths, localUnusedFPaths
+    usedFPaths, serverUnusedFPaths, localUnusedFPaths,
   } = deriveFPaths(fromLink.custom, toLink.custom);
 
   const usedFiles = await fileApi.getFiles(usedFPaths);

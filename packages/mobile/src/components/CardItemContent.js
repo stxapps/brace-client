@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, Linking, Image } from 'react-native';
 import { connect } from 'react-redux';
 
 import { updateBulkEdit, addSelectedLinkIds } from '../actions';
 import { DOMAIN_NAME, COLOR, PATTERN, IMAGE } from '../types/const';
-import { getThemeMode } from '../selectors';
+import { makeGetCustomImage, getThemeMode } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
   extractUrl, isEqual,
@@ -36,9 +36,12 @@ class CardItemContent extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (
       // Status changed needs to re-render CardItemMenuPopup
+      this.props.link.url !== nextProps.link.url ||
       this.props.link.status !== nextProps.link.status ||
+      !isEqual(this.props.link.decor, nextProps.link.decor) ||
       !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
-      this.props.safeAreaWidth !== nextProps.safeAreaWidth ||
+      !isEqual(this.props.link.custom, nextProps.link.custom) ||
+      this.props.customImage !== nextProps.customImage ||
       this.props.tailwind !== nextProps.tailwind ||
       this.state.extractedFaviconError !== nextState.extractedFaviconError
     ) {
@@ -58,12 +61,17 @@ class CardItemContent extends React.Component {
   }
 
   renderImage() {
-    const { tailwind } = this.props;
     const { decor, extractedResult } = this.props.link;
+    const { customImage, tailwind } = this.props;
 
     let image;
-    if (extractedResult && extractedResult.image) image = extractedResult.image;
 
+    if (customImage) image = customImage;
+    if (image) {
+      return <Image key="img-image-custom" style={tailwind('w-full rounded-t-lg bg-white aspect-7/12 shadow-xs blk:bg-gray-900')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
+    }
+
+    if (extractedResult && extractedResult.image) image = extractedResult.image;
     if (image) {
       return <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full rounded-t-lg bg-white aspect-7/12 shadow-xs blk:bg-gray-900')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
     }
@@ -147,10 +155,13 @@ class CardItemContent extends React.Component {
 
   render() {
     const { link, tailwind } = this.props;
-    const { url, extractedResult } = link;
+    const { url, extractedResult, custom } = link;
 
     let title, classNames = '';
-    if (extractedResult && extractedResult.title) {
+    if (custom && custom.title) {
+      title = custom.title;
+      classNames = 'text-justify';
+    } else if (extractedResult && extractedResult.title) {
       title = extractedResult.title;
       classNames = 'text-justify';
     }
@@ -188,12 +199,22 @@ CardItemContent.propTypes = {
   link: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (state, props) => {
-  return {
-    themeMode: getThemeMode(state),
+const makeMapStateToProps = () => {
+
+  const getCustomImage = makeGetCustomImage();
+
+  const mapStateToProps = (state, props) => {
+    const customImage = getCustomImage(state, props.link);
+
+    return {
+      customImage,
+      themeMode: getThemeMode(state),
+    };
   };
+
+  return mapStateToProps;
 };
 
 const mapDispatchToProps = { updateBulkEdit, addSelectedLinkIds };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(CardItemContent));
+export default connect(makeMapStateToProps, mapDispatchToProps)(withTailwind(CardItemContent));

@@ -92,7 +92,7 @@ class BottomBarAddPopup extends React.PureComponent {
       <Modal isVisible={isAddPopupShown} deviceWidth={windowWidth} deviceHeight={windowHeight} onBackdropPress={this.onAddCancelBtnClick} onBackButtonPress={this.onAddCancelBtnClick} onModalShow={this.onAddPopupShow} onModalWillHide={this.onAddPopupHide} style={tailwind('m-0 justify-end')} supportedOrientations={MODAL_SUPPORTED_ORIENTATIONS} backdropOpacity={0.25} animationIn="fadeIn" animationInTiming={1} animationOut="fadeOut" animationOutTiming={1} useNativeDriver={true} avoidKeyboard={Platform.OS === 'ios' ? true : false}>
         <View style={tailwind('w-full rounded-t-lg bg-white px-4 pt-6 pb-6 shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800')}>
           <View style={tailwind('flex-row items-center justify-start')}>
-            <Text style={tailwind('flex-none text-sm font-normal text-gray-600 blk:text-gray-200')}>Url:</Text>
+            <Text style={tailwind('flex-none text-sm font-normal text-gray-500 blk:text-gray-300')}>Url:</Text>
             {/* onKeyPress event for Enter key only if there is multiline TextInput */}
             <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind(`ml-3 flex-1 rounded-full border border-gray-400 bg-white px-3.5 text-base font-normal text-gray-700 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 ${inputClassNames}`)} keyboardType="url" placeholder="https://" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={url} autoCapitalize="none" />
           </View>

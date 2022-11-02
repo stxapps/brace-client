@@ -123,10 +123,10 @@ const createSelectorLinks = createSelectorCreator(
       // Deep equal without attributes: popup and popupAnchorPosition.
       const res = isEqual(
         _.ignore(
-          prevVal['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
+          prevVal['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK],
         ),
         _.ignore(
-          val['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
+          val['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK],
         )
       );
       if (!res) return false;

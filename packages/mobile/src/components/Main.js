@@ -2,7 +2,7 @@ import React from 'react';
 import { Animated } from 'react-native';
 import { connect } from 'react-redux';
 
-import { fetch, endIapConnection } from '../actions';
+import { fetch, rehydrateStaticFiles, endIapConnection } from '../actions';
 import {
   PC_100, PC_50, PC_33,
   SHOW_BLANK, SHOW_COMMANDS,
@@ -19,6 +19,7 @@ import CardPanel from './CardPanel';
 import ListPanel from './ListPanel';
 import FetchedPopup from './FetchedPopup';
 import PinMenuPopup from './PinMenuPopup';
+import CustomEditorPopup from './CustomEditorPopup';
 import SettingsPopup from './SettingsPopup';
 import SettingsListsMenuPopup from './SettingsListsMenuPopup';
 import TimePickPopup from './TimePickPopup';
@@ -47,6 +48,7 @@ class Main extends React.PureComponent {
   componentDidUpdate(prevProps) {
     if (
       prevProps.listName !== this.props.listName ||
+      prevProps.rehydratedListNames !== this.props.rehydratedListNames ||
       prevProps.didFetch !== this.props.didFetch ||
       prevProps.didFetchSettings !== this.props.didFetchSettings ||
       prevProps.fetchedListNames !== this.props.fetchedListNames
@@ -66,7 +68,14 @@ class Main extends React.PureComponent {
   }
 
   fetch = () => {
-    const { listName, didFetch, didFetchSettings, fetchedListNames } = this.props;
+    const {
+      listName, rehydratedListNames, didFetch, didFetchSettings, fetchedListNames,
+    } = this.props;
+
+    if (!rehydratedListNames.includes(listName)) {
+      this.props.rehydrateStaticFiles();
+      return;
+    }
 
     if (!fetchedListNames.includes(listName)) {
       this.props.fetch(didFetch ? false : null, null, !didFetchSettings);
@@ -74,11 +83,12 @@ class Main extends React.PureComponent {
   }
 
   render() {
-
-    const { links, layoutType, safeAreaWidth } = this.props;
+    const {
+      listName, links, rehydratedListNames, layoutType, safeAreaWidth,
+    } = this.props;
     const columnWidth = this.getColumnWidth(safeAreaWidth);
 
-    if (links === null) {
+    if (links === null || !rehydratedListNames.includes(listName)) {
       return <Loading />;
     }
 
@@ -94,6 +104,7 @@ class Main extends React.PureComponent {
         <TopBar rightPane={topBarRightPane} isListNameShown={true} doSupportTheme={true} scrollY={this.scrollY} />
         <FetchedPopup />
         <PinMenuPopup />
+        <CustomEditorPopup />
         <SettingsPopup />
         <SettingsListsMenuPopup />
         <TimePickPopup />
@@ -112,6 +123,7 @@ const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
     links: getLinks(state),
+    rehydratedListNames: state.display.rehydratedListNames,
     didFetch: state.display.didFetch,
     didFetchSettings: state.display.didFetchSettings,
     fetchedListNames: state.display.fetchedListNames,
@@ -119,6 +131,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { fetch, endIapConnection };
+const mapDispatchToProps = { fetch, rehydrateStaticFiles, endIapConnection };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(Main));

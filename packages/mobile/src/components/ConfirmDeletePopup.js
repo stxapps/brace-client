@@ -64,7 +64,7 @@ class ConfirmDeletePopup extends React.Component {
         const animConfig = cardItemFMV(safeAreaWidth);
 
         LayoutAnimation.configureNext(animConfig);
-        this.props.deleteLinks([popupLink.id]);
+        this.props.deleteLinks([popupLink.id], true);
         this.props.ctx.menuActions.closeMenu();
         this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
         this.props.updatePopup(popupLink.id, false);
@@ -72,7 +72,7 @@ class ConfirmDeletePopup extends React.Component {
       }
 
       if (selectedLinkIds.length > 0) {
-        this.props.deleteLinks(selectedLinkIds);
+        this.props.deleteLinks(selectedLinkIds, true);
         this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
         this.props.updateBulkEdit(false);
         return;

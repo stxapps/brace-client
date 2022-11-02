@@ -11,15 +11,16 @@ import {
   UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME, DELETE_LIST_NAMES,
   UPDATE_DELETE_ACTION, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
   UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_SETTINGS_VIEW_ID,
-  UPDATE_LIST_NAMES_MODE, UPDATE_IMPORT_ALL_DATA_PROGRESS,
+  UPDATE_LIST_NAMES_MODE, REHYDRATE_STATIC_FILES, UPDATE_IMPORT_ALL_DATA_PROGRESS,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
-  LIST_NAMES_POPUP, PIN_MENU_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
-  SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, ACCESS_ERROR_POPUP, MY_LIST, TRASH,
-  ARCHIVE, UPDATING, DIED_UPDATING, SETTINGS_VIEW_ACCOUNT, DELETE_ACTION_LIST_NAME,
+  LIST_NAMES_POPUP, PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP, PAYWALL_POPUP,
+  CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP,
+  ACCESS_ERROR_POPUP, MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING,
+  SETTINGS_VIEW_ACCOUNT, DELETE_ACTION_LIST_NAME,
 } from '../types/const';
 import { doContainListName, getStatusCounts, isObject, isString } from '../utils';
 
@@ -35,6 +36,7 @@ const initialState = {
   listNamesPopupPosition: null,
   isPinMenuPopupShown: false,
   pinMenuPopupPosition: null,
+  isCustomEditorPopupShown: false,
   isPaywallPopupShown: false,
   isConfirmDeletePopupShown: false,
   isSettingsPopupShown: false,
@@ -50,6 +52,7 @@ const initialState = {
   selectingLinkId: null,
   selectingListName: null,
   deletingListName: null,
+  rehydratedListNames: [],
   didFetch: false,
   didFetchSettings: false,
   fetchedListNames: [],
@@ -84,6 +87,7 @@ const displayReducer = (state = initialState, action) => {
       listNamesPopupPosition: null,
       isPinMenuPopupShown: false,
       pinMenuPopupPosition: null,
+      isCustomEditorPopupShown: false,
       isPaywallPopupShown: false,
       isConfirmDeletePopupShown: false,
       isSettingsPopupShown: false,
@@ -99,6 +103,7 @@ const displayReducer = (state = initialState, action) => {
       selectingLinkId: null,
       selectingListName: null,
       deletingListName: null,
+      rehydratedListNames: [],
       didFetch: false,
       didFetchSettings: false,
       fetchedListNames: [],
@@ -143,6 +148,7 @@ const displayReducer = (state = initialState, action) => {
         isAddPopupShown: isShown,
         isSearchPopupShown: isShown,
         isProfilePopupShown: isShown,
+        isCustomEditorPopupShown: isShown,
         isPaywallPopupShown: isShown,
         isConfirmDeletePopupShown: isShown,
         isSettingsPopupShown: isShown,
@@ -197,6 +203,10 @@ const displayReducer = (state = initialState, action) => {
         pinMenuPopupPosition: anchorPosition,
       };
       return newState;
+    }
+
+    if (id === CUSTOM_EDITOR_POPUP) {
+      return { ...state, isCustomEditorPopupShown: isShown };
     }
 
     if (id === PAYWALL_POPUP) {
@@ -468,6 +478,14 @@ const displayReducer = (state = initialState, action) => {
     return { ...state, ...action.payload };
   }
 
+  if (action.type === REHYDRATE_STATIC_FILES) {
+    const { listName } = action.payload;
+    return {
+      ...state,
+      rehydratedListNames: [...state.rehydratedListNames, listName],
+    };
+  }
+
   if (action.type === UPDATE_IMPORT_ALL_DATA_PROGRESS) {
     const newState = { ...state, importAllDataProgress: action.payload };
     if (action.payload && action.payload.total && action.payload.done) {
@@ -490,6 +508,7 @@ const displayReducer = (state = initialState, action) => {
   if (action.type === DELETE_ALL_DATA) {
     return {
       ...initialState,
+      rehydratedListNames: [MY_LIST],
       didFetch: true, didFetchSettings: true, fetchedListNames: [MY_LIST],
     };
   }

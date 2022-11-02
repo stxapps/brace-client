@@ -52,14 +52,15 @@ import {
 import {
   BACK_DECIDER, BACK_POPUP, ALL, HASH_BACK,
   SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
-  LIST_NAMES_POPUP, PIN_MENU_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, SETTINGS_POPUP,
-  SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, ID, STATUS, IS_POPUP_SHOWN,
-  POPUP_ANCHOR_POSITION, FROM_LINK, MY_LIST, TRASH, ARCHIVE, N_LINKS, N_DAYS, CD_ROOT,
-  LINKS, IMAGES, SETTINGS, PINS, DOT_JSON, BASE64, ADDED, DIED_ADDING, DIED_MOVING,
-  DIED_REMOVING, DIED_DELETING, DIED_UPDATING, BRACE_EXTRACT_URL,
-  BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, IAP_STATUS_URL,
-  COM_BRACEDOTTO, SIGNED_TEST_STRING, VALID, ACTIVE, SWAP_LEFT, SWAP_RIGHT, WHT_MODE,
-  BLK_MODE, CUSTOM_MODE, FEATURE_PIN, FEATURE_APPEARANCE,
+  LIST_NAMES_POPUP, PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP, PAYWALL_POPUP,
+  CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, ID,
+  STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK, MY_LIST, TRASH, ARCHIVE,
+  N_LINKS, N_DAYS, CD_ROOT, LINKS, IMAGES, SETTINGS, PINS, DOT_JSON, BASE64, ADDED,
+  DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING,
+  BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
+  IAP_STATUS_URL, COM_BRACEDOTTO, SIGNED_TEST_STRING, VALID, ACTIVE,
+  SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE, FEATURE_PIN,
+  FEATURE_APPEARANCE, FEATURE_CUSTOM,
 } from '../types/const';
 import {
   isEqual, isString, isObject, isNumber, throttle, sleep, isIPadIPhoneIPod,
@@ -70,10 +71,12 @@ import {
   isListNameObjsValid, getLatestPurchase, getValidPurchase, doEnableExtraFeatures,
   createLinkFPath, extractPinFPath, getSortedLinks, getPinFPaths, getPins,
   separatePinnedValues, sortLinks, sortWithPins, getFormattedTime, get24HFormattedTime,
-  extractLinkFPath, extractFPath, convertBlobToDataUrl, convertDataUrlToBlob,
+  extractLinkFPath, extractFPath,
 } from '../utils';
 import { _ } from '../utils/obj';
-import { isUint8Array, isBlob } from '../utils/index-web';
+import {
+  isUint8Array, isBlob, convertBlobToDataUrl, convertDataUrlToBlob,
+} from '../utils/index-web';
 import { initialSettingsState } from '../types/initialStates';
 import vars from '../vars';
 
@@ -212,6 +215,7 @@ const getPopupShownId = (state) => {
   if (state.display.isTimePickPopupShown) return TIME_PICK_POPUP;
   if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
   if (state.display.isPaywallPopupShown) return PAYWALL_POPUP;
+  if (state.display.isCustomEditorPopupShown) return CUSTOM_EDITOR_POPUP;
   if (state.display.isPinMenuPopupShown) return PIN_MENU_POPUP;
   if (state.display.isListNamesPopupShown) return LIST_NAMES_POPUP;
   if (state.display.isSettingsListsMenuPopupShown) return SETTINGS_LISTS_MENU_POPUP;
@@ -2148,6 +2152,23 @@ export const updateThemeCustomOptions = () => async (dispatch, getState) => {
 
 export const updateIs24HFormat = (is24HFormat) => {
   return { type: UPDATE_IS_24H_FORMAT, payload: is24HFormat };
+};
+
+export const updateCustomEditorPopup = (isShown, id) => async (dispatch, getState) => {
+  if (isShown) {
+    const state = getState();
+    const purchases = state.settings.purchases;
+
+    if (!doEnableExtraFeatures(purchases)) {
+      vars.paywallFeature.feature = FEATURE_CUSTOM;
+      dispatch(updatePopup(PAYWALL_POPUP, true));
+      return;
+    }
+
+    dispatch(updateSelectingLinkId(id));
+  }
+
+  dispatch(updatePopup(CUSTOM_EDITOR_POPUP, isShown));
 };
 
 export const updateCustomEditor = (

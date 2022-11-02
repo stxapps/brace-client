@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { View, Text, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, Linking, Image } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
 import { updateBulkEdit, addSelectedLinkIds, moveLinks } from '../actions';
 import {
-  DOMAIN_NAME, COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING, LG_WIDTH,
+  DOMAIN_NAME, COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING, UPDATING,
+  LG_WIDTH,
 } from '../types/const';
-import { makeGetPinStatus } from '../selectors';
+import { makeGetPinStatus, makeGetCustomImage } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
   extractUrl, isPinningStatus,
@@ -29,8 +30,10 @@ const ListItemContent = (props) => {
   const { link } = props;
   const { width: safeAreaWidth } = useSafeAreaFrame();
   const getPinStatus = useMemo(makeGetPinStatus, []);
+  const getCustomImage = useMemo(makeGetCustomImage, []);
   const listName = useSelector(state => state.display.listName);
   const pinStatus = useSelector(state => getPinStatus(state, link));
+  const customImage = useSelector(state => getCustomImage(state, link));
   const [extractedFaviconError, setExtractedFaviconError] = useState(false);
   const didClick = useRef(false);
   const dispatch = useDispatch();
@@ -67,13 +70,18 @@ const ListItemContent = (props) => {
     didClick.current = false;
   }, [link.status]);
 
-  const { url, decor, extractedResult } = link;
+  const { url, decor, extractedResult, custom } = link;
   const { host, origin } = extractUrl(url);
 
   const renderImage = () => {
     let image;
-    if (extractedResult && extractedResult.image) image = extractedResult.image;
 
+    if (customImage) image = customImage;
+    if (image) {
+      return <Image key="img-image-custom" style={tailwind('w-full rounded bg-white aspect-7/12 shadow-xs blk:bg-gray-900')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
+    }
+
+    if (extractedResult && extractedResult.image) image = extractedResult.image;
     if (image) {
       return <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full rounded bg-white aspect-7/12 shadow-xs blk:bg-gray-900')} contentStyle={tailwind('rounded')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
     }
@@ -134,7 +142,9 @@ const ListItemContent = (props) => {
   };
 
   let title;
-  if (extractedResult && extractedResult.title) {
+  if (custom && custom.title) {
+    title = custom.title;
+  } else if (extractedResult && extractedResult.title) {
     title = extractedResult.title;
   }
   if (!title) {
@@ -143,7 +153,9 @@ const ListItemContent = (props) => {
 
   const isPinning = isPinningStatus(pinStatus);
   const canSelect = (
-    safeAreaWidth >= LG_WIDTH && ![ADDING, MOVING].includes(link.status) && !isPinning
+    safeAreaWidth >= LG_WIDTH &&
+    ![ADDING, MOVING, UPDATING].includes(link.status) &&
+    !isPinning
   );
 
   const canArchive = canSelect && ![ARCHIVE, TRASH].includes(listName);

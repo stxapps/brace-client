@@ -36,4 +36,4 @@ const image35 = '/static/media/white-notepad-between-color-pens.ec035ea6.jpg';
 const image36 = '/static/media/black-ballpoint-pen-on-graphing-notebook.f3d0ba4d.jpg';
 const image37 = '/static/media/silver-framed-eyeglasses-beside-white-click-pen-and-white-notebook.43cbd30b.jpg';
 
-export const IMAGES = [image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, image11, image12, image13, image14, image15, image16, image17, image18, image19, image20, image21, image22, image23, image24, image25, image26, image27, image28, image29, image30, image31, image32, image33, image34, image35, image36, image37];
+export const IMAGE_PATHS = [image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, image11, image12, image13, image14, image15, image16, image17, image18, image19, image20, image21, image22, image23, image24, image25, image26, image27, image28, image29, image30, image31, image32, image33, image34, image35, image36, image37];

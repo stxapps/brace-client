@@ -10,13 +10,14 @@ import {
   MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
 } from '../types/actionTypes';
 import {
-  HTTP, HTTPS, WWW, STATUS, ID, LINKS, SETTINGS, PINS, DOT_JSON, ADDED, MOVED, ADDING,
-  MOVING, DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
-  COLOR, PATTERN, IMAGE, BG_COLOR_STYLES, PATTERNS, VALID_URL, NO_URL, ASK_CONFIRM_URL,
-  VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME,
-  COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, UNKNOWN,
+  HTTP, HTTPS, WWW, STATUS, ID, LINKS, IMAGES, SETTINGS, PINS, DOT_JSON, ADDED, MOVED,
+  ADDING, MOVING, UPDATING, DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING,
+  DIED_DELETING, COLOR, PATTERN, IMAGE, BG_COLOR_STYLES, PATTERNS, VALID_URL, NO_URL,
+  ASK_CONFIRM_URL, VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME,
+  DUPLICATE_LIST_NAME, COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD,
+  PAUSED, UNKNOWN, CD_ROOT,
 } from '../types/const';
-import { IMAGES } from '../types/imagePaths';
+import { IMAGE_PATHS } from '../types/imagePaths';
 import { _ } from './obj';
 
 export const removeTailingSlash = (url) => {
@@ -550,7 +551,7 @@ export const randomDecor = (text) => {
     decor.image.bg.value = sample(PATTERNS);
   } else {
     decor.image.bg.type = IMAGE;
-    decor.image.bg.value = sample(IMAGES);
+    decor.image.bg.value = sample(IMAGE_PATHS);
   }
 
   // image foreground
@@ -844,13 +845,10 @@ export const escapeDoubleQuotes = (s) => {
 };
 
 export const isDecorValid = (data) => {
-  if (!('decor' in data)) return false;
-  if (!('image' in data.decor && 'favicon' in data.decor)) return false;
-  if (!('bg' in data.decor.image && 'bg' in data.decor.favicon)) return false;
-  if (!(isObject(data.decor.image.bg) && isObject(data.decor.favicon.bg))) return false;
-
-  if (!('type' in data.decor.image.bg && 'value' in data.decor.image.bg)) return false;
-  if (!(isString(data.decor.image.bg.type) && isString(data.decor.image.bg.value))) {
+  if (!isObject(data.decor)) return false;
+  if (!isObject(data.decor.image) || !isObject(data.decor.favicon)) return false;
+  if (!isObject(data.decor.image.bg) || !isObject(data.decor.favicon.bg)) return false;
+  if (!isString(data.decor.image.bg.type) || !isString(data.decor.image.bg.value)) {
     return false;
   }
 
@@ -858,21 +856,12 @@ export const isDecorValid = (data) => {
     if (!(
       data.decor.image.fg === null ||
       (
-        isObject(data.decor.image.fg) &&
-        'text' in data.decor.image.fg &&
-        isString(data.decor.image.fg.text)
+        isObject(data.decor.image.fg) && isString(data.decor.image.fg.text)
       )
     )) return false;
   }
 
-
-  if (!('type' in data.decor.favicon.bg && 'value' in data.decor.favicon.bg)) {
-    return false;
-  }
-  if (!(
-    isString(data.decor.favicon.bg.type) &&
-    isString(data.decor.favicon.bg.value))
-  ) {
+  if (!isString(data.decor.favicon.bg.type) || !isString(data.decor.favicon.bg.value)) {
     return false;
   }
 
@@ -880,12 +869,7 @@ export const isDecorValid = (data) => {
 };
 
 export const isExtractedResultValid = (data) => {
-  if (!('extractedResult' in data)) return false;
-  if (!(
-    'url' in data.extractedResult &&
-    'extractedDT' in data.extractedResult &&
-    'status' in data.extractedResult
-  )) return false;
+  if (!isObject(data.extractedResult)) return false;
 
   if (!(
     isString(data.extractedResult.url) &&
@@ -901,6 +885,23 @@ export const isExtractedResultValid = (data) => {
   }
   if ('favicon' in data.extractedResult) {
     if (!isString(data.extractedResult.favicon)) return false;
+  }
+
+  return true;
+};
+
+export const isCustomValid = (data) => {
+  if (!isObject(data.custom)) return false;
+
+  const isTitle = 'title' in data.custom;
+  const isImage = 'image' in data.custom;
+  if (!isTitle && !isImage) return false;
+
+  if (isTitle) {
+    if (!isString(data.custom.title)) return false;
+  }
+  if (isImage) {
+    if (!isString(data.custom.image)) return false;
   }
 
   return true;
@@ -1006,6 +1007,21 @@ export const extractLinkFPath = (fpath) => {
   return { listName, id, ext };
 };
 
+export const extractFPath = (fpath) => {
+  const [fname] = fpath.split('/').slice(-1);
+  const dotIndex = fname.lastIndexOf('.');
+
+  let id, ext;
+  if (dotIndex === -1) {
+    id = fname;
+  } else {
+    id = fname.substring(0, dotIndex);
+    ext = fname.substring(dotIndex + 1);
+  }
+
+  return { id, ext };
+};
+
 export const createPinFPath = (rank, updatedDT, addedDT, id) => {
   return `${PINS}/${rank}/${updatedDT}/${addedDT}/${id}${DOT_JSON}`;
 };
@@ -1030,10 +1046,14 @@ export const addFPath = (fpaths, fpath) => {
     if (!fpaths.linkFPaths[listName].includes(fpath)) {
       fpaths.linkFPaths[listName].push(fpath);
     }
+  } else if (fpath.startsWith(IMAGES)) {
+    if (!fpaths.staticFPaths.includes(fpath)) fpaths.staticFPaths.push(fpath);
   } else if (fpath.startsWith(SETTINGS)) {
     fpaths.settingsFPath = fpath;
   } else if (fpath.startsWith(PINS)) {
     if (!fpaths.pinFPaths.includes(fpath)) fpaths.pinFPaths.push(fpath);
+  } else if (fpath.startsWith('file://')) {
+    // Just ignore, for mobile downloads a static file and save to storage.
   } else {
     console.log(`Invalid file path: ${fpath}`);
   }
@@ -1048,6 +1068,8 @@ export const deleteFPath = (fpaths, fpath) => {
       });
       if (fpaths.linkFPaths[listName].length === 0) delete fpaths.linkFPaths[listName];
     }
+  } else if (fpath.startsWith(IMAGES)) {
+    fpaths.staticFPaths = fpaths.staticFPaths.filter(el => el !== fpath);
   } else if (fpath.startsWith(SETTINGS)) {
     if (fpaths.settingsFPath === fpath) fpaths.settingsFPath = null;
   } else if (fpath.startsWith(PINS)) {
@@ -1062,10 +1084,15 @@ export const copyFPaths = (fpaths) => {
   for (const listName in fpaths.linkFPaths) {
     newLinkFPaths[listName] = [...fpaths.linkFPaths[listName]];
   }
-
+  const newStaticFPaths = [...fpaths.staticFPaths];
   const newPinFPaths = [...fpaths.pinFPaths];
 
-  return { ...fpaths, linkFPaths: newLinkFPaths, pinFPaths: newPinFPaths };
+  return {
+    ...fpaths,
+    linkFPaths: newLinkFPaths,
+    staticFPaths: newStaticFPaths,
+    pinFPaths: newPinFPaths,
+  };
 };
 
 export const getPinFPaths = (state) => {
@@ -1172,8 +1199,8 @@ export const getFilteredLinks = (links, listName) => {
     links[listName],
     STATUS,
     [
-      ADDED, MOVED, ADDING, MOVING,
-      DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
+      ADDED, MOVED, ADDING, MOVING, UPDATING,
+      DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING,
     ]
   );
 
@@ -1236,4 +1263,46 @@ export const get24HFormattedTime = (hStr, mStr, period) => {
   }
 
   return `${newHStr}:${mStr}`;
+};
+
+export const getFileExt = (fname) => {
+  if (fname.includes('.')) {
+    const ext = fname.split('.').pop();
+    if (ext.length <= 5) return ext.toLowerCase();
+  }
+  return null;
+};
+
+export const getStaticFPath = (fpath) => {
+  fpath = fpath.slice(fpath.indexOf(CD_ROOT + '/'));
+  fpath = fpath.slice((CD_ROOT + '/').length);
+  return fpath;
+};
+
+export const deriveFPaths = (custom, toCustom, savingFPaths) => {
+  // Should name as newFPaths instead of usedFpaths
+  //   as it doesn't include existing, not changed usedFpaths.
+  // Keep consistency with Justnote.
+  const usedFPaths = [], serverUnusedFPaths = [], localUnusedFPaths = [];
+
+  let image = null, toImage = null;
+  if (isObject(custom) && isString(custom.image)) image = custom.image;
+  if (isObject(toCustom) && isString(toCustom.image)) toImage = toCustom.image;
+
+  if (image !== toImage) {
+    if (toImage) usedFPaths.push(getStaticFPath(toImage));
+    if (image) {
+      serverUnusedFPaths.push(getStaticFPath(image));
+      localUnusedFPaths.push(getStaticFPath(image));
+    }
+  }
+
+  if (savingFPaths) {
+    for (const fpath of savingFPaths) {
+      if (fpath === toImage) continue;
+      localUnusedFPaths.push(getStaticFPath(fpath));
+    }
+  }
+
+  return { usedFPaths, serverUnusedFPaths, localUnusedFPaths };
 };

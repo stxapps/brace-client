@@ -29,6 +29,7 @@
     "react-native-default-preference": "^1.4.4",
     "react-native-device-time-format": "https://github.com/stxapps/react-native-device-time-format#63f4a9158a91c391d67317a489ccfe8ec28a7c84",
     "react-native-fast-image": "^8.6.1",
+    "react-native-file-access": "^2.5.0",
     "react-native-iap": "8.0.8",
     "react-native-keyboard-manager": "^6.5.4-4",
     "react-native-modal": "^13.0.1",
@@ -50,6 +51,7 @@
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^2.0.0",
     "@types/react-native": "^0.70.4",
+    "@types/url-parse": "^1.4.8",
     "@welldone-software/why-did-you-render": "^7.0.1",
     "babel-jest": "^26.6.3",
     "babel-plugin-inline-import": "^3.0.0",
@@ -57,7 +59,7 @@
     "jest": "^26.6.3",
     "metro-react-native-babel-preset": "0.72.3",
     "react-test-renderer": "18.1.0",
-    "typescript": "4.0.8"
+    "typescript": "^4.8.4"
   },
   "jest": {
     "preset": "react-native"

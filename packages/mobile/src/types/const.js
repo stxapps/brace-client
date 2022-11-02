@@ -27,6 +27,7 @@ export const SEARCH_POPUP = 'SEARCH_POPUP';
 export const PROFILE_POPUP = 'PROFILE_POPUP';
 export const LIST_NAMES_POPUP = 'LIST_NAMES_POPUP';
 export const PIN_MENU_POPUP = 'PIN_MENU_POPUP';
+export const CUSTOM_EDITOR_POPUP = 'CUSTOM_EDITOR_POPUP';
 export const CONFIRM_DELETE_POPUP = 'CONFIRM_DELETE_POPUP';
 export const SETTINGS_POPUP = 'SETTINGS_POPUP';
 export const SETTINGS_LISTS_MENU_POPUP = 'SETTINGS_LISTS_MENU_POPUP';
@@ -36,11 +37,16 @@ export const ACCESS_ERROR_POPUP = 'ACCESS_ERROR_POPUP';
 
 export const IS_POPUP_SHOWN = 'isPopupShown';
 export const POPUP_ANCHOR_POSITION = 'popupAnchorPosition';
+export const FROM_LINK = 'fromLink';
 
+export const CD_ROOT = 'cdroot';
 export const LINKS = 'links';
+export const IMAGES = 'images';
 export const SETTINGS = 'settings';
 export const PINS = 'pins';
 export const DOT_JSON = '.json';
+export const BASE64 = 'base64';
+export const UTF8 = 'utf8';
 
 export const N_LINKS = 10;
 export const MAX_TRY = 3;
@@ -72,6 +78,7 @@ export const REMOVE = 'Remove';
 export const RESTORE = 'Restore';
 export const DELETE = 'Permanently delete';
 export const MOVE_TO = 'Move to';
+export const CHANGE = 'Change';
 
 export const CARD_ITEM_POPUP_MENU = {
   [MY_LIST]: [COPY_LINK, ARCHIVE, REMOVE, MOVE_TO],
@@ -238,3 +245,4 @@ export const CUSTOM_MODE = 3;
 
 export const FEATURE_PIN = 'FEATURE_PIN';
 export const FEATURE_APPEARANCE = 'FEATURE_APPEARANCE';
+export const FEATURE_CUSTOM = 'FEATURE_CUSTOM';
