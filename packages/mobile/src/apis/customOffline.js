@@ -1,10 +1,12 @@
 import defaultQueue from '@redux-offline/redux-offline/lib/defaults/queue';
 
+import userSession from '../userSession';
 import {
   FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_SETTINGS, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA,
 } from '../types/actionTypes';
-import userSession from '../userSession';
+import { isObject, isString, isNumber } from '../utils';
+
 import { effect as blockstackEffect } from './blockstack';
 
 export const queue = {
@@ -52,19 +54,31 @@ export const discard = (error, action, _retries) => {
 
   console.log(`redux-offline's discard called with error: ${error}!`);
 
-  if (error && error.message && error.message.includes('Should be unreachable')) {
+  if (
+    isObject(error) &&
+    isString(error.message) &&
+    error.message.includes('Should be unreachable')
+  ) {
     return false;
   }
-  if (error && error.code && error.code.includes('remote_service_error')) {
+  if (
+    isObject(error) &&
+    isString(error.code) &&
+    error.code.includes('remote_service_error')
+  ) {
     return false;
   }
-  if (error && error.hubError && error.hubError.statusCode && Number.isInteger(error.hubError.statusCode)) {
+  if (
+    isObject(error) &&
+    isObject(error.hubError) &&
+    isNumber(error.hubError.statusCode)
+  ) {
     const statusCode = error.hubError.statusCode;
 
     // discard http 4xx errors
     return statusCode >= 400 && statusCode < 500;
   }
-  if (error && error.status && Number.isInteger(error.status)) {
+  if (isObject(error) && isNumber(error.status)) {
     // discard http 4xx errors
     return error.status >= 400 && error.status < 500;
   }

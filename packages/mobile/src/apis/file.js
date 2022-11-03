@@ -21,7 +21,7 @@ const getFile = async (fpath, dir = Dirs.DocumentDir) => {
 
   const doExist = await FileSystem.exists(fpath);
 
-  const cachedContent = { content: null };
+  const cachedContent = { content: undefined }; // Use undefined the same as in web.
   if (doExist) {
     cachedContent.content = `file://${fpath}`;
     cachedContent.contentUrl = cachedContent.content;
@@ -45,7 +45,7 @@ const putFile = async (fpath, content, dir = Dirs.DocumentDir) => {
 
   const doExist = await FileSystem.exists(fpath);
 
-  const cachedContent = { content: null };
+  const cachedContent = { content: undefined };
   if (doExist) {
     cachedContent.content = `file://${fpath}`;
     cachedContent.contentUrl = cachedContent.content;

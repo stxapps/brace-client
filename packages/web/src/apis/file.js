@@ -1,4 +1,5 @@
-import idb from '../idbWrapper';
+import * as idb from 'idb-keyval';
+
 import { CD_ROOT } from '../types/const';
 import { isUint8Array, isBlob } from '../utils/index-web';
 
@@ -22,11 +23,20 @@ const getFile = async (fpath, dir = Dirs.DocumentDir) => {
   fpath = deriveFPath(fpath, dir);
   if (fpath in cachedContents) return cachedContents[fpath];
 
-  let content = await idb.get(fpath);
-  if (isUint8Array(content)) content = new Blob([content]);
+  const cachedContent = { content: undefined }; // If no key, val will be undefined.
+  try {
+    cachedContent.content = await idb.get(fpath);
+  } catch (e) {
+    console.log('In file.getFile, IndexedDB error:', e);
+    return cachedContent;
+  }
 
-  const cachedContent = { content };
-  if (isBlob(content)) cachedContent.contentUrl = URL.createObjectURL(content);
+  if (isUint8Array(cachedContent.content)) {
+    cachedContent.content = new Blob([cachedContent.content]);
+  }
+  if (isBlob(cachedContent.content)) {
+    cachedContent.contentUrl = URL.createObjectURL(cachedContent.content);
+  }
 
   cachedContents[fpath] = cachedContent;
   return cachedContent;
@@ -44,9 +54,13 @@ const getFiles = async (fpaths, dir = Dirs.DocumentDir) => {
 
 const putFile = async (fpath, content, dir = Dirs.DocumentDir) => {
   fpath = deriveFPath(fpath, dir);
-
   if (isUint8Array(content)) content = new Blob([content]);
-  await idb.set(fpath, content);
+
+  try {
+    await idb.set(fpath, content);
+  } catch (e) {
+    console.log('In file.putFile, IndexedDB error:', e);
+  }
 
   if (fpath in cachedContents && 'contentUrl' in cachedContents[fpath]) {
     URL.revokeObjectURL(cachedContents[fpath].contentUrl);
@@ -71,7 +85,12 @@ const putFiles = async (fpaths, _contents, dir = Dirs.DocumentDir) => {
 
 const deleteFile = async (fpath, dir = Dirs.DocumentDir) => {
   fpath = deriveFPath(fpath, dir);
-  await idb.del(fpath);
+
+  try {
+    await idb.del(fpath);
+  } catch (e) {
+    console.log('In file.deleteFile, IndexedDB error:', e);
+  }
 
   if (fpath in cachedContents && 'contentUrl' in cachedContents[fpath]) {
     URL.revokeObjectURL(cachedContents[fpath].contentUrl);
@@ -86,7 +105,11 @@ const deleteFiles = async (fpaths, dir = Dirs.DocumentDir) => {
 };
 
 const deleteAllFiles = async () => {
-  await idb.clear();
+  try {
+    await idb.clear();
+  } catch (e) {
+    console.log('In file.deleteAllFiles, IndexedDB error:', e);
+  }
 
   for (const fpath in cachedContents) {
     if ('contentUrl' in cachedContents[fpath]) {
@@ -96,8 +119,14 @@ const deleteAllFiles = async () => {
   cachedContents = {};
 };
 
-const listKeys = () => {
-  return idb.keys();
+const listKeys = async () => {
+  let keys = [];
+  try {
+    keys = await idb.keys();
+  } catch (e) {
+    console.log('In file.listKeys, IndexedDB error:', e);
+  }
+  return keys;
 };
 
 const file = {
