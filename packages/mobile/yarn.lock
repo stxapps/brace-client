@@ -6174,6 +6174,11 @@ react-native-iap@8.0.8:
   dependencies:
     dooboolab-welcome "1.3.2"
 
+react-native-image-crop-picker@^0.38.1:
+  version "0.38.1"
+  resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.38.1.tgz#5973b4a8b55835b987e6be2064de411e849ac005"
+  integrity sha512-cF5UQnWplzHCeiCO+aiGS/0VomWaLmFf3nSsgTMPfY+8+99h8N/eHQvVdSF7RsGw50B8394wGeGyqHjjp8YRWw==
+
 react-native-keyboard-manager@^6.5.4-4:
   version "6.5.4-4"
   resolved "https://registry.yarnpkg.com/react-native-keyboard-manager/-/react-native-keyboard-manager-6.5.4-4.tgz#fab84e8bc1a98799d718813a903c21c932e64623"

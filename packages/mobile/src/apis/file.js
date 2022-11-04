@@ -108,9 +108,19 @@ const mkdir = async (fpath, dir = Dirs.DocumentDir) => {
   await FileSystem.mkdir(fpath);
 };
 
+const cp = async (source, fpath, dir = Dirs.DocumentDir) => {
+  fpath = deriveFPath(fpath, dir);
+  await FileSystem.cp(source, fpath);
+
+  const cachedContent = { content: `file://${fpath}` };
+  cachedContent.contentUrl = cachedContent.content;
+
+  return cachedContent;
+};
+
 const file = {
   getFile, getFiles, putFile, putFiles, deleteFile, deleteFiles, deleteAllFiles,
-  listKeys, exists, mkdir,
+  listKeys, exists, mkdir, cp,
 };
 
 export default file;

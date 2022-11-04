@@ -31,6 +31,7 @@
     "react-native-fast-image": "^8.6.1",
     "react-native-file-access": "^2.5.0",
     "react-native-iap": "8.0.8",
+    "react-native-image-crop-picker": "^0.38.1",
     "react-native-keyboard-manager": "^6.5.4-4",
     "react-native-modal": "^13.0.1",
     "react-native-popup-menu": "^0.16.1",

@@ -92,23 +92,25 @@ const CustomEditorPopup = () => {
       const { contentUrl } = await fileApi.putFile(fpart, blob);
       dispatch(updateImages(cfpart, contentUrl));
 
+      dispatch(updatePopup(CUSTOM_EDITOR_POPUP, false));
       dispatch(updateCustomData(title, cfpart));
     } catch (e) {
       console.log('CustomEditorPopup: onCanvasToBlob error: ', e);
       dispatch(updateCustomEditor(
         null, null, null, null, null, null, null, `Image Save Failed: ${e}`,
       ));
+      didClick.current = false;
     }
   };
 
   const onSaveBtnClick = () => {
     if (didClick.current) return;
-    onPopupCloseBtnClick();
     didClick.current = true;
 
     const { title, image, rotate, translateX, translateY, zoom } = customEditor;
 
     if (!isObject(image)) {
+      dispatch(updatePopup(CUSTOM_EDITOR_POPUP, false));
       dispatch(updateCustomData(title, image));
       return;
     }

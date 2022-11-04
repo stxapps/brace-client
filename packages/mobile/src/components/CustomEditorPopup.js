@@ -5,15 +5,15 @@ import {
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
+import ImagePicker from 'react-native-image-crop-picker';
 
+import fileApi from '../apis/file';
 import {
   updatePopup, updateCustomEditor, updateImages, updateCustomData,
 } from '../actions';
 import { CUSTOM_EDITOR_POPUP, IMAGES, CD_ROOT, BLK_MODE } from '../types/const';
 import { getCustomEditor, getThemeMode } from '../selectors';
-import {
-  isObject, isString, isNumber, rerandomRandomTerm, getFileExt,
-} from '../utils';
+import { isObject, isString, rerandomRandomTerm, getFileExt } from '../utils';
 import { dialogFMV } from '../types/animConfigs';
 import cache from '../utils/cache';
 
@@ -41,18 +41,36 @@ const CustomEditorPopup = () => {
     didClick.current = true;
   }, [dispatch]);
 
-  const onSaveBtnClick = () => {
+  const onSaveBtnClick = async () => {
     if (didClick.current) return;
-    onPopupCloseBtnClick();
+    didClick.current = true;
 
-    const { title, image, rotate, translateX, translateY, zoom } = customEditor;
+    const { title, image } = customEditor;
 
     if (!isObject(image)) {
+      dispatch(updatePopup(CUSTOM_EDITOR_POPUP, false));
       dispatch(updateCustomData(title, image));
       return;
     }
 
-    didClick.current = true;
+    let fpart = IMAGES + '/' + rerandomRandomTerm(selectingLinkId);
+    const ext = getFileExt(image.path);
+    if (ext) fpart += `.${ext}`;
+
+    const cfpart = CD_ROOT + '/' + fpart;
+    try {
+      const { contentUrl } = await fileApi.cp(image.path, fpart);
+      dispatch(updateImages(cfpart, contentUrl));
+
+      dispatch(updatePopup(CUSTOM_EDITOR_POPUP, false));
+      dispatch(updateCustomData(title, cfpart));
+    } catch (e) {
+      console.log('CustomEditorPopup: onCanvasToBlob error: ', e);
+      dispatch(updateCustomEditor(
+        null, null, null, null, null, null, null, `Image Save Failed: ${e}`,
+      ));
+      didClick.current = false;
+    }
   };
 
   const onTitleInputChange = (e) => {
@@ -63,12 +81,37 @@ const CustomEditorPopup = () => {
     onSaveBtnClick();
   };
 
-  const onUploadImageBtnClick = () => {
+  const onUploadImageBtnClick = async () => {
+    try {
+      const data = await ImagePicker.openPicker({
+        mediaType: 'photo',
+        cropping: true,
+        width: 1024,
+        height: 597,
+        compressImageMaxWidth: 1024,
+        compressImageMaxHeight: 597,
+        showCropGuidelines: false,
+        enableRotationGesture: false,
+        cropperActiveWidgetColor: '#FF6300', // github.com/Yalantis/uCrop/blob/develop/
+        cropperStatusBarColor: '#20242F', // ucrop/src/main/res/values/colors.xml
+        cropperToolbarColor: '#20242F',
+        cropperToolbarWidgetColor: '#F3F4F6',
+      });
 
-  };
-
-  const onUploadImageInputChange = async () => {
-
+      dispatch(updateCustomEditor(null, { ...data }, 0, 0, 0, 0));
+    } catch (e) {
+      console.log('In CustomEditorPopup, ImagePicker error:', e);
+      if (
+        isObject(e) &&
+        isString(e.message) &&
+        e.message.includes('User cancelled image selection')
+      ) {
+        return;
+      }
+      dispatch(updateCustomEditor(
+        null, null, null, null, null, null, null, `Image Upload Failed: ${e}`,
+      ));
+    }
   };
 
   const onClearImageBtnClick = () => {
@@ -130,26 +173,35 @@ const CustomEditorPopup = () => {
 
   const inputClassNames = Platform.OS === 'ios' ? 'py-1.5 leading-5' : 'py-0.5';
 
+  let imageUrl;
+  if (isString(customEditor.image)) imageUrl = customEditor.imageUrl;
+  else if (isObject(customEditor.image)) imageUrl = customEditor.image.path;
+
   return (
-    <View style={[tailwind('absolute inset-0 z-40 items-center justify-end px-4 pt-4 pb-20 shadow-xl sm:justify-center sm:p-0'), canvasStyle]}>
+    <View style={[tailwind('absolute inset-0 z-30 items-center justify-center'), canvasStyle]}>
       {/* No cancel on background of CustomEditorPopup */}
       <TouchableWithoutFeedback>
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>
-      <Animated.View style={[tailwind('w-full max-w-lg rounded-lg bg-white px-4 pt-5 pb-4 shadow-xl sm:my-8 sm:p-6'), popupStyle]}>
+      <Animated.View style={[tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
         <ScrollView style={{ maxHeight: safeAreaHeight - 16 - 16 }}>
-          {isString(customEditor.image) && <View style={tailwind('aspect-7/12 w-full')}>
-            <Image style={tailwind('h-full w-full')} source={cache(`CEP_image_${customEditor.image}`, { uri: customEditor.image }, [customEditor.image])} />
+          {imageUrl && <View style={tailwind('w-full rounded-t-lg bg-white blk:border-b blk:border-gray-700 blk:bg-gray-800 aspect-7/12 shadow-xs')}>
+            <Image style={tailwind('h-full w-full')} source={cache(`CEP_image_${imageUrl}`, { uri: imageUrl }, [imageUrl])} />
             <TouchableOpacity onPress={onClearImageBtnClick} style={tailwind('absolute bottom-1 right-1 flex h-10 w-10 items-center justify-center')}>
               <View style={tailwind('flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 blk:bg-gray-700')}>
-                <Svg style={tailwind('h-4 w-4 text-gray-500 blk:text-gray-300')} viewBox="0 0 20 20" fill="currentColor">
+                <Svg width={16} height={16} style={tailwind('font-normal text-gray-500 blk:text-gray-300')} viewBox="0 0 20 20" fill="currentColor">
                   <Path fillRule="evenodd" clipRule="evenodd" d="M9 2C8.62123 2 8.27497 2.214 8.10557 2.55279L7.38197 4H4C3.44772 4 3 4.44772 3 5C3 5.55228 3.44772 6 4 6V16C4 17.1046 4.89543 18 6 18H14C15.1046 18 16 17.1046 16 16V6C16.5523 6 17 5.55228 17 5C17 4.44772 16.5523 4 16 4H12.618L11.8944 2.55279C11.725 2.214 11.3788 2 11 2H9ZM7 8C7 7.44772 7.44772 7 8 7C8.55228 7 9 7.44772 9 8V14C9 14.5523 8.55228 15 8 15C7.44772 15 7 14.5523 7 14V8ZM12 7C11.4477 7 11 7.44772 11 8V14C11 14.5523 11.4477 15 12 15C12.5523 15 13 14.5523 13 14V8C13 7.44772 12.5523 7 12 7Z" />
                 </Svg>
               </View>
             </TouchableOpacity>
           </View>}
-          {!customEditor.image && <View style={tailwind('aspect-7/12 w-full')}>
-
+          {!imageUrl && <View style={tailwind('w-full items-center justify-center rounded-t-lg bg-white blk:border-b blk:border-gray-700 blk:bg-gray-800 aspect-7/12 shadow-xs')}>
+            <TouchableOpacity onPress={onUploadImageBtnClick} style={tailwind('mt-4 items-center justify-center rounded-lg p-2')}>
+              <Svg width={36} height={36} style={tailwind('font-normal text-gray-400 blk:text-gray-400')} viewBox="0 0 20 20" fill="currentColor">
+                <Path fillRule="evenodd" clipRule="evenodd" d="M4 3C3.46957 3 2.96086 3.21071 2.58579 3.58579C2.21071 3.96086 2 4.46957 2 5V15C2 15.5304 2.21071 16.0391 2.58579 16.4142C2.96086 16.7893 3.46957 17 4 17H16C16.5304 17 17.0391 16.7893 17.4142 16.4142C17.7893 16.0391 18 15.5304 18 15V5C18 4.46957 17.7893 3.96086 17.4142 3.58579C17.0391 3.21071 16.5304 3 16 3H4ZM16 15H4L8 7L11 13L13 9L16 15Z" />
+              </Svg>
+              <Text style={tailwind('mt-1 text-sm font-normal text-gray-500 blk:text-gray-300')}>Upload an image</Text>
+            </TouchableOpacity>
           </View>}
           <View style={tailwind('flex-row items-center justify-start px-4 pt-4')}>
             <Text style={tailwind('flex-none text-sm font-normal text-gray-500 blk:text-gray-300')}>Title:</Text>
