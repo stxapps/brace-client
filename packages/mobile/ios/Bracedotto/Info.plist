@@ -42,8 +42,12 @@
 		<key>NSExceptionDomains</key>
 		<dict/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Take a picture for use as a link's image</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Select a picture for use as a link's image</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Inter-Black.otf</string>

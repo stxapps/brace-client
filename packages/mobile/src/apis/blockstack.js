@@ -434,9 +434,10 @@ const updateCustomData = async (params) => {
   } = deriveFPaths(fromLink.custom, toLink.custom);
 
   const usedFiles = await fileApi.getFiles(usedFPaths);
+  const fileFPaths = usedFiles.fpaths.map(fpath => 'file://' + fpath);
 
   // Make sure save static files successfully first
-  await batchPutFileWithRetry(usedFiles.fpaths, usedFiles.contents, 0);
+  await batchPutFileWithRetry(fileFPaths, usedFiles.contents, 0);
   await batchPutFileWithRetry([createLinkFPath(listName, toLink.id)], [toLink], 0);
 
   try {

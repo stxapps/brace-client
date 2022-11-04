@@ -326,6 +326,9 @@ PODS:
   - react-native-blockstack (0.4.6):
     - Blockstack
     - React
+  - react-native-file-access (2.5.0):
+    - React-Core
+    - ZIPFoundation (= 0.9.11)
   - react-native-netinfo (9.3.4):
     - React-Core
   - react-native-receive-sharing-intent (1.0.4):
@@ -422,6 +425,15 @@ PODS:
     - SDWebImageWebPCoder (~> 0.8.4)
   - RNIap (8.0.8):
     - React-Core
+  - RNImageCropPicker (0.38.1):
+    - React-Core
+    - React-RCTImage
+    - RNImageCropPicker/QBImagePickerController (= 0.38.1)
+    - TOCropViewController
+  - RNImageCropPicker/QBImagePickerController (0.38.1):
+    - React-Core
+    - React-RCTImage
+    - TOCropViewController
   - RNSVG (13.4.0):
     - React-Core
   - SDWebImage (5.11.1):
@@ -432,9 +444,11 @@ PODS:
     - SDWebImage/Core (~> 5.10)
   - SocketRocket (0.6.0)
   - STRegex (2.1.1)
+  - TOCropViewController (2.6.1)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
+  - ZIPFoundation (0.9.11)
 
 DEPENDENCIES:
   - Blockstack (from `https://github.com/bracedotto/blockstack-ios.git`, commit `2d6b4af`)
@@ -488,6 +502,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-blockstack (from `../node_modules/react-native-blockstack`)
+  - react-native-file-access (from `../node_modules/react-native-file-access`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-receive-sharing-intent (from `../node_modules/react-native-receive-sharing-intent`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -511,6 +526,7 @@ DEPENDENCIES:
   - RNDeviceTimeFormat (from `../node_modules/react-native-device-time-format`)
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - RNIap (from `../node_modules/react-native-iap`)
+  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -539,7 +555,9 @@ SPEC REPOS:
     - SDWebImageWebPCoder
     - SocketRocket
     - STRegex
+    - TOCropViewController
     - YogaKit
+    - ZIPFoundation
 
 EXTERNAL SOURCES:
   Blockstack:
@@ -589,6 +607,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-blockstack:
     :path: "../node_modules/react-native-blockstack"
+  react-native-file-access:
+    :path: "../node_modules/react-native-file-access"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-receive-sharing-intent:
@@ -635,6 +655,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fast-image"
   RNIap:
     :path: "../node_modules/react-native-iap"
+  RNImageCropPicker:
+    :path: "../node_modules/react-native-image-crop-picker"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   Yoga:
@@ -688,6 +710,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 0553c9fe7218e1f127be070bd5a4d2fc19fb8190
   React-logger: cffcc09e8aba8a3014be8d18da7f922802e9f19e
   react-native-blockstack: a54aed35a241b7be1e735a334f9c644f6d9237fe
+  react-native-file-access: 204693d308701ba232dcf91facef05498fcde9a2
   react-native-netinfo: 6ac9bcc7c88dc51717bda3484eb99093acb755e0
   react-native-receive-sharing-intent: feba0a332a07977549a85aa58b496eb44368366a
   react-native-safe-area-context: 99b24a0c5acd0d5dcac2b1a7f18c49ea317be99a
@@ -711,13 +734,16 @@ SPEC CHECKSUMS:
   RNDeviceTimeFormat: 9c3020c6fbfac054dfbadb017755ea2ae519e689
   RNFastImage: 3207b9eb17c2425d574ca40db35185db6e324f4e
   RNIap: bb56165cc68bfa269e2effd407d6ec0af63e796f
+  RNImageCropPicker: 648356d68fbf9911a1016b3e3723885d28373eda
   RNSVG: 07dbd870b0dcdecc99b3a202fa37c8ca163caec2
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   STRegex: d49e88d0fe58538d3175fdd989bc1243b9be2a07
+  TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   Yoga: 2ed968a4f060a92834227c036279f2736de0fce3
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
+  ZIPFoundation: b1f0de4eed33e74a676f76e12559ab6b75990197
 
 PODFILE CHECKSUM: 6ecee1bc492ac0ca5169d15af4e56153475288b6
 
