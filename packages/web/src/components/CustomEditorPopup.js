@@ -94,10 +94,10 @@ const CustomEditorPopup = () => {
 
       dispatch(updatePopup(CUSTOM_EDITOR_POPUP, false));
       dispatch(updateCustomData(title, cfpart));
-    } catch (e) {
-      console.log('CustomEditorPopup: onCanvasToBlob error: ', e);
+    } catch (error) {
+      console.log('CustomEditorPopup: onCanvasToBlob error: ', error);
       dispatch(updateCustomEditor(
-        null, null, null, null, null, null, null, `Image Save Failed: ${e}`,
+        null, null, null, null, null, null, null, `Image Save Failed: ${error}`,
       ));
       didClick.current = false;
     }
@@ -186,10 +186,10 @@ const CustomEditorPopup = () => {
         dispatch(updateCustomEditor(
           null, { ...data, fileName: file.name, fileType: file.type }, 0, 0, 0, 0,
         ));
-      } catch (e) {
-        console.log('CustomEditorPopup: onUploadImageInputChange error: ', e);
+      } catch (error) {
+        console.log('CustomEditorPopup: onUploadImageInputChange error: ', error);
         dispatch(updateCustomEditor(
-          null, null, null, null, null, null, null, `Image Upload Failed: ${e}`,
+          null, null, null, null, null, null, null, `Image Upload Failed: ${error}`,
         ));
       }
     }

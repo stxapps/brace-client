@@ -177,8 +177,8 @@ const handlePendingSignIn = () => async (dispatch, getState) => {
 
   try {
     await userSession.handlePendingSignIn();
-  } catch (e) {
-    console.log(`Catched an error thrown by handlePendingSignIn: ${e.message}`);
+  } catch (error) {
+    console.log('Catched an error thrown by handlePendingSignIn', error);
     // All errors thrown by handlePendingSignIn have the same next steps
     //   - Invalid token
     //   - Already signed in with the same account
@@ -1289,11 +1289,11 @@ const importAllDataLoop = async (dispatch, fpaths, contents) => {
 
       await sleep(1000); // Make it slow to not overwhelm the server
     }
-  } catch (e) {
+  } catch (error) {
     dispatch(updateImportAllDataProgress({
       total: -1,
       done: -1,
-      error: e.name + ': ' + e.message,
+      error: `${error}`,
     }));
 
     if (doneCount < total) {
@@ -1446,8 +1446,8 @@ const parseImportedFile = async (dispatch, text) => {
         contents.push(obj.data);
       }
     }
-  } catch (e) {
-    console.log('parseImportedFile: JSON.parse error: ', e);
+  } catch (error) {
+    console.log('parseImportedFile: JSON.parse error: ', error);
 
     let listName = MY_LIST;
     let now = Date.now();
@@ -1626,11 +1626,11 @@ export const exportAllData = () => async (dispatch, getState) => {
       fpaths.push(fpath);
       return true;
     });
-  } catch (e) {
+  } catch (error) {
     dispatch(updateExportAllDataProgress({
       total: -1,
       done: -1,
-      error: e.name + ': ' + e.message,
+      error: `${error}`,
     }));
     return;
   }
@@ -1654,11 +1654,11 @@ export const exportAllData = () => async (dispatch, getState) => {
 
     var blob = new Blob([JSON.stringify(data)], { type: 'text/plain;charset=utf-8' });
     saveAs(blob, 'brace-data.txt');
-  } catch (e) {
+  } catch (error) {
     dispatch(updateExportAllDataProgress({
       total: -1,
       done: -1,
-      error: e.name + ': ' + e.message,
+      error: `${error}`,
     }));
     return;
   }
@@ -1713,11 +1713,11 @@ export const deleteAllData = () => async (dispatch, getState) => {
       fpaths.push(fpath);
       return true;
     });
-  } catch (e) {
+  } catch (error) {
     dispatch(updateDeleteAllDataProgress({
       total: -1,
       done: -1,
-      error: e.name + ': ' + e.message,
+      error: `${error}`,
     }));
     return;
   }
@@ -1736,11 +1736,11 @@ export const deleteAllData = () => async (dispatch, getState) => {
     dispatch({
       type: DELETE_ALL_DATA,
     });
-  } catch (e) {
+  } catch (error) {
     dispatch(updateDeleteAllDataProgress({
       total: -1,
       done: -1,
-      error: e.name + ': ' + e.message,
+      error: `${error}`,
     }));
     return;
   }
@@ -2361,7 +2361,8 @@ export const cleanUpStaticFiles = () => async (dispatch, getState) => {
   try {
     const ids = await _cleanUpStaticFiles(fpaths);
     dispatch({ type: CLEAN_UP_STATIC_FILES_COMMIT, payload: { ids } });
-  } catch (e) {
+  } catch (error) {
+    console.log('Error when clean up static files: ', error);
     dispatch({ type: CLEAN_UP_STATIC_FILES_ROLLBACK });
   }
 };

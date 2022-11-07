@@ -34,8 +34,8 @@ const SignUp = (props) => {
 
         walletData.current = data;
         setViewId(VIEW_YOUR);
-      }).catch((e) => {
-        console.log('onGetSecretKeyBtnClick error: ', e);
+      }).catch((error) => {
+        console.log('onGetSecretKeyBtnClick error: ', error);
         didClick.current = false;
         setLoadingShown(false);
         setErrorShown(true);
@@ -67,8 +67,8 @@ const SignUp = (props) => {
         didClick.current = false;
         setLoadingShown(false);
         props.onBackedUpBtnClick(data);
-      }).catch((e) => {
-        console.log('onBackedUpBtnClick error: ', e);
+      }).catch((error) => {
+        console.log('onBackedUpBtnClick error: ', error);
         didClick.current = false;
         setLoadingShown(false);
         setErrorShown(true);

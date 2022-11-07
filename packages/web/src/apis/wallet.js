@@ -160,7 +160,8 @@ const restoreAccount = async (secretKey) => {
   let wallet;
   try {
     wallet = await generateWallet({ secretKey, password: DEFAULT_PASSWORD });
-  } catch (e) {
+  } catch (error) {
+    console.log('Error when restore account: ', error);
     return { errMsg: 'Your Secret Key is invaid. Please check and try again.' };
   }
 
@@ -189,7 +190,7 @@ const doUseBefore = (walletConfig, appDomain, accountIndex = null) => {
         }
       }
     }
-  } catch (e) { console.log('doUseBefore error: ', e); }
+  } catch (error) { console.log('doUseBefore error: ', error); }
 
   return false;
 };

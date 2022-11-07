@@ -52,8 +52,8 @@ const SignIn = (props) => {
         }
 
         setViewId(VIEW_CHOOSE);
-      }).catch((e) => {
-        console.log('onContinueBtnClick error: ', e);
+      }).catch((error) => {
+        console.log('onContinueBtnClick error: ', error);
         didClick.current = false;
         setLoadingShown(false);
         setErrorShown(true);
@@ -73,8 +73,8 @@ const SignIn = (props) => {
         didClick.current = false;
         setLoadingShown(false);
         props.onChooseAccountBtnClick(data);
-      }).catch((e) => {
-        console.log('onChooseAccount error: ', e);
+      }).catch((error) => {
+        console.log('onChooseAccount error: ', error);
         didClick.current = false;
         setLoadingShown(false);
         setErrorShown(true);

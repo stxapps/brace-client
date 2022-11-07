@@ -614,8 +614,8 @@ const fallbackCopyTextToClipboard = (text) => {
     var successful = document.execCommand('copy');
     var msg = successful ? 'successful' : 'unsuccessful';
     console.log('Fallback: Copying text command was ' + msg);
-  } catch (err) {
-    console.error('Fallback: Oops, unable to copy', err);
+  } catch (error) {
+    console.error('Fallback: Oops, unable to copy', error);
   }
 
   document.body.removeChild(textArea);
@@ -761,7 +761,7 @@ export const isOfflineAction = (action, actionType, listName = null) => {
       else return params && params.listName === listName;
     }
   } catch (error) {
-    console.log('Invalid offline action: ', action);
+    console.log('Invalid offline action: ', action, ' error: ', error);
   }
 
   return false;
@@ -775,7 +775,7 @@ export const isOfflineActionWithPayload = (action, actionType, payload = null) =
       else return isEqual(payload, params);
     }
   } catch (error) {
-    console.log('Invalid offline action: ', action);
+    console.log('Invalid offline action: ', action, ' error: ', error);
   }
 
   return false;
@@ -799,7 +799,7 @@ export const shouldDispatchFetch = (outbox, payload) => {
           }
         }
       } catch (error) {
-        console.log('Invalid action or payload: ', action, payload);
+        console.log('Invalid action or payload: ', action, payload, ' error: ', error);
       }
     }
   }
@@ -814,7 +814,7 @@ export const doOutboxContainMethods = (outbox, methods) => {
         const { method } = action.meta.offline.effect;
         if (methods.includes(method)) return true;
       } catch (error) {
-        console.log('Invalid action: ', action);
+        console.log('Invalid action: ', action, ' error: ', error);
       }
     }
   }

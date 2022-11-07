@@ -171,8 +171,8 @@ const handlePendingSignIn = (url) => async (dispatch, getState) => {
   const { param: { authResponse } } = separateUrlAndParam(url, 'authResponse');
   try {
     await userSession.handlePendingSignIn(authResponse);
-  } catch (e) {
-    console.log(`Catched an error thrown by handlePendingSignIn: ${e.message}`);
+  } catch (error) {
+    console.log('Catched an error thrown by handlePendingSignIn', error);
     // All errors thrown by handlePendingSignIn have the same next steps
     //   - Invalid token
     //   - Already signed in with the same account
@@ -1255,11 +1255,11 @@ export const deleteAllData = () => async (dispatch, getState) => {
       fpaths.push(fpath);
       return true;
     });
-  } catch (e) {
+  } catch (error) {
     dispatch(updateDeleteAllDataProgress({
       total: -1,
       done: -1,
-      error: e.name + ': ' + e.message,
+      error: `${error}`,
     }));
     return;
   }
@@ -1278,11 +1278,11 @@ export const deleteAllData = () => async (dispatch, getState) => {
     dispatch({
       type: DELETE_ALL_DATA,
     });
-  } catch (e) {
+  } catch (error) {
     dispatch(updateDeleteAllDataProgress({
       total: -1,
       done: -1,
-      error: e.name + ': ' + e.message,
+      error: `${error}`,
     }));
     return;
   }
@@ -1496,8 +1496,8 @@ export const endIapConnection = (isInit = false) => async (dispatch, getState) =
   registerIapListeners(false, dispatch, getState);
   try {
     await RNIap.endConnection();
-  } catch (e) {
-    console.log('Error when end IAP connection: ', e);
+  } catch (error) {
+    console.log('Error when end IAP connection: ', error);
   }
 
   if (!isInit) {
@@ -1528,7 +1528,8 @@ export const initIapConnectionAndGetProducts = (doForce) => async (
       type: GET_PRODUCTS_COMMIT,
       payload: { canMakePayments, products },
     });
-  } catch (e) {
+  } catch (error) {
+    console.log('Error when init iap and get products: ', error);
     dispatch({ type: GET_PRODUCTS_ROLLBACK });
   }
 };
@@ -1907,7 +1908,6 @@ export const updateIs24HFormat = (is24HFormat) => {
   return { type: UPDATE_IS_24H_FORMAT, payload: is24HFormat };
 };
 
-
 export const updateCustomEditorPopup = (isShown, id) => async (dispatch, getState) => {
   if (isShown) {
     const state = getState();
@@ -2115,7 +2115,8 @@ export const cleanUpStaticFiles = () => async (dispatch, getState) => {
   try {
     const ids = await _cleanUpStaticFiles(fpaths);
     dispatch({ type: CLEAN_UP_STATIC_FILES_COMMIT, payload: { ids } });
-  } catch (e) {
+  } catch (error) {
+    console.log('Error when clean up static files: ', error);
     dispatch({ type: CLEAN_UP_STATIC_FILES_ROLLBACK });
   }
 };

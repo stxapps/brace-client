@@ -86,8 +86,8 @@ class Main extends React.PureComponent {
     try {
       const doExist = await fileApi.exists(IMAGES);
       if (!doExist) await fileApi.mkdir(IMAGES);
-    } catch (e) {
-      console.log('Can\'t make images dir with error: ', e);
+    } catch (error) {
+      console.log('Can\'t make images dir with error: ', error);
     }
 
     this.fetch();

@@ -26,8 +26,8 @@ const getFile = async (fpath, dir = Dirs.DocumentDir) => {
   const cachedContent = { content: undefined }; // If no key, val will be undefined.
   try {
     cachedContent.content = await idb.get(fpath);
-  } catch (e) {
-    console.log('In file.getFile, IndexedDB error:', e);
+  } catch (error) {
+    console.log('In file.getFile, IndexedDB error:', error);
     return cachedContent;
   }
 
@@ -58,8 +58,8 @@ const putFile = async (fpath, content, dir = Dirs.DocumentDir) => {
 
   try {
     await idb.set(fpath, content);
-  } catch (e) {
-    console.log('In file.putFile, IndexedDB error:', e);
+  } catch (error) {
+    console.log('In file.putFile, IndexedDB error:', error);
   }
 
   if (fpath in cachedContents && 'contentUrl' in cachedContents[fpath]) {
@@ -88,8 +88,8 @@ const deleteFile = async (fpath, dir = Dirs.DocumentDir) => {
 
   try {
     await idb.del(fpath);
-  } catch (e) {
-    console.log('In file.deleteFile, IndexedDB error:', e);
+  } catch (error) {
+    console.log('In file.deleteFile, IndexedDB error:', error);
   }
 
   if (fpath in cachedContents && 'contentUrl' in cachedContents[fpath]) {
@@ -107,8 +107,8 @@ const deleteFiles = async (fpaths, dir = Dirs.DocumentDir) => {
 const deleteAllFiles = async () => {
   try {
     await idb.clear();
-  } catch (e) {
-    console.log('In file.deleteAllFiles, IndexedDB error:', e);
+  } catch (error) {
+    console.log('In file.deleteAllFiles, IndexedDB error:', error);
   }
 
   for (const fpath in cachedContents) {
@@ -123,8 +123,8 @@ const listKeys = async () => {
   let keys = [];
   try {
     keys = await idb.keys();
-  } catch (e) {
-    console.log('In file.listKeys, IndexedDB error:', e);
+  } catch (error) {
+    console.log('In file.listKeys, IndexedDB error:', error);
   }
   return keys;
 };
