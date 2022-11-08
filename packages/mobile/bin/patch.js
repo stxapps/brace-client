@@ -2,7 +2,7 @@ const fs = require('fs');
 
 const replaceMatchedLine = (fpath, actionObjs) => {
   const text = fs.readFileSync(fpath, 'utf-8');
-  const lines = text.trim().split('\r\n');
+  const lines = text.trim().split(/\r?\n/);
 
   const outs = [];
   for (const line of lines) {

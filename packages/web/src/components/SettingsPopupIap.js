@@ -45,7 +45,7 @@ const IapHome = (props) => {
     <div className={tailwind('mt-6 mb-4 md:mt-0')}>
       <h4 className={tailwind('text-base font-medium leading-none text-gray-800 blk:text-gray-100')}>Purchase subscription</h4>
       <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Brace.to is free and we offer a paid subscription for use of extra features. It's our intention to never show advertisments and we don't rent, sell or share your information with other companies. Our optional paid subscription is the only way we make money.</p>
-      <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Support us and unlock extra features: pin to the top and dark appearance. It's around $4.99 per year (may vary between countries depending on taxes and exchange rates). You can purchase a subscription in our <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_LANDING_MOBILE} target="_blank" rel="noreferrer">Mobile apps</a>.</p>
+      <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Support us and unlock extra features: pin to the top, dark appearance, and change title & image. It's around $4.99 per year (may vary between countries depending on taxes and exchange rates). You can purchase a subscription in our <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_LANDING_MOBILE} target="_blank" rel="noreferrer">Mobile apps</a>.</p>
       <p className={tailwind('mt-5 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>If you've already purchased the subscription, try <button onClick={onToRestoreIapViewBtnClick} className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')}>Restore purchases</button>.</p>
     </div>
   );
@@ -123,7 +123,7 @@ const IapPurchased = (props) => {
           <svg className={tailwind('mb-1 mr-1 inline-block w-5 text-green-500 blk:text-green-400')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.7071 8.70711C14.0976 8.31658 14.0976 7.68342 13.7071 7.29289C13.3166 6.90237 12.6834 6.90237 12.2929 7.29289L9 10.5858L7.70711 9.29289C7.31658 8.90237 6.68342 8.90237 6.29289 9.29289C5.90237 9.68342 5.90237 10.3166 6.29289 10.7071L8.29289 12.7071C8.68342 13.0976 9.31658 13.0976 9.70711 12.7071L13.7071 8.70711Z" />
           </svg>
-          <span className={tailwind('text-green-600 blk:text-green-500')}>Thank you very much for supporting us.</span> You've unlocked extra features: pin to the top and dark appearance.
+          <span className={tailwind('text-green-600 blk:text-green-500')}>Thank you very much for supporting us.</span> You've unlocked extra features: pin to the top, dark appearance, and change title & image.
         </p>
         <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Your subscription will be expired on {getFormattedDate(new Date(purchase.expiryDate))} and it'll be automatically renewed. You can manage your subscription at {appStoreLink}.</p>
       </React.Fragment>
@@ -131,14 +131,14 @@ const IapPurchased = (props) => {
   } else if (purchase.status === NO_RENEW) {
     infoText = (
       <React.Fragment>
-        <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra features: pin to the top and dark appearance.</p>
+        <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra features: pin to the top, dark appearance, and change title & image.</p>
         <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Your subscription will be expired on {getFormattedDate(new Date(purchase.expiryDate))} and it won't be automatically renewed. If you want to enable automatically renewal, please go to {appStoreLink} to manage your subscription.</p>
       </React.Fragment>
     );
   } else if (purchase.status === GRACE) {
     infoText = (
       <React.Fragment>
-        <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra features: pin to the top and dark appearance.</p>
+        <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra features: pin to the top, dark appearance, and change title & image.</p>
         <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>
           <svg className={tailwind('mb-1 mr-1 inline-block w-5 text-red-500 blk:text-red-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
