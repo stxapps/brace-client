@@ -1,6 +1,6 @@
 import { Dirs, FileSystem } from 'react-native-file-access';
 
-import { CD_ROOT } from '../types/const';
+import { CD_ROOT, IMAGES } from '../types/const';
 
 // getFile and putFile here just check if the file exists
 //   and return the file url!!!
@@ -84,18 +84,34 @@ const deleteFiles = async (fpaths, dir = Dirs.DocumentDir) => {
   }
 };
 
-const deleteAllFiles = async (dpath, dir = Dirs.DocumentDir) => {
-  dpath = deriveFPath(dpath, dir);
+const deleteAllFiles = async (dir = Dirs.DocumentDir) => {
+  // Different from web as there might be some other files too,
+  //   can't just delete all files but need to specify dirs.
+  const dpaths = [IMAGES];
 
-  const fnames = await FileSystem.ls(dpath);
-  for (const fname of fnames) await FileSystem.unlink(dpath + '/' + fname);
+  for (const dpath of dpaths) {
+    const ddpath = deriveFPath(dpath, dir);
+
+    const fnames = await FileSystem.ls(ddpath);
+    for (const fname of fnames) await FileSystem.unlink(ddpath + '/' + fname);
+  }
 };
 
-const listKeys = async (dpath, dir = Dirs.DocumentDir) => {
-  dpath = deriveFPath(dpath, dir);
+const listKeys = async (dir = Dirs.DocumentDir) => {
+  // Different from web as there might be some other files too,
+  //   can't just list all files but need to specify dirs.
+  const dpaths = [IMAGES];
 
-  const fnames = await FileSystem.ls(dpath);
-  return fnames;
+  const keys = [];
+  for (const dpath of dpaths) {
+    const ddpath = deriveFPath(dpath, dir);
+
+    const fnames = await FileSystem.ls(ddpath);
+    const fpaths = fnames.map(fname => dpath + '/' + fname);
+    keys.push(...fpaths);
+  }
+
+  return keys;
 };
 
 const exists = async (fpath, dir = Dirs.DocumentDir) => {

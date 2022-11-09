@@ -417,7 +417,11 @@ export const getCustomEditor = createSelector(
         if (!editor.didTitleEdit && isString(link.custom.title)) {
           editor.title = link.custom.title;
         }
-        if (!editor.didImageEdit && isString(link.custom.image)) {
+        if (
+          !editor.didImageEdit &&
+          isString(link.custom.image) &&
+          isString(images[link.custom.image])
+        ) {
           editor.image = link.custom.image;
           editor.imageUrl = images[link.custom.image];
         }

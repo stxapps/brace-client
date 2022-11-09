@@ -69,9 +69,10 @@ import {
   isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
   doOutboxContainMethods, isDecorValid, isExtractedResultValid, isCustomValid,
   isListNameObjsValid, getLatestPurchase, getValidPurchase, doEnableExtraFeatures,
-  createLinkFPath, extractPinFPath, getSortedLinks, getPinFPaths, getPins,
-  separatePinnedValues, sortLinks, sortWithPins, getFormattedTime, get24HFormattedTime,
-  extractLinkFPath, extractFPath,
+  createLinkFPath,
+  getLinkFPaths, getStaticFPaths, extractPinFPath, getSortedLinks, getPinFPaths,
+  getPins, separatePinnedValues, sortLinks, sortWithPins, getFormattedTime,
+  get24HFormattedTime, extractLinkFPath, extractFPath,
 } from '../utils';
 import { _ } from '../utils/obj';
 import {
@@ -2297,10 +2298,8 @@ export const rehydrateStaticFiles = () => async (dispatch, getState) => {
   });
 };
 
-const _cleanUpStaticFiles = async (fpaths) => {
+const _cleanUpStaticFiles = async (linkFPaths, staticFPaths) => {
   // Delete unused static files in server
-  const { linkFPaths, staticFPaths } = fpaths;
-
   const mainIds = [], unusedIds = [];
   for (const listName in linkFPaths) {
     for (const fpath of linkFPaths[listName]) {
@@ -2345,9 +2344,12 @@ const _cleanUpStaticFiles = async (fpaths) => {
 
 export const cleanUpStaticFiles = () => async (dispatch, getState) => {
   const state = getState();
-  const { fpaths } = state.cachedFPaths;
+
   const { cleanUpStaticFilesDT } = state.localSettings;
   if (!cleanUpStaticFilesDT) return;
+
+  const linkFPaths = getLinkFPaths(state);
+  const staticFPaths = getStaticFPaths(state);
 
   const now = Date.now();
   let p = 1.0 / (N_DAYS * 24 * 60 * 60 * 1000) * Math.abs(now - cleanUpStaticFilesDT);
@@ -2359,7 +2361,7 @@ export const cleanUpStaticFiles = () => async (dispatch, getState) => {
   // Don't need offline, if no network or get killed, can do it later.
   dispatch({ type: CLEAN_UP_STATIC_FILES });
   try {
-    const ids = await _cleanUpStaticFiles(fpaths);
+    const ids = await _cleanUpStaticFiles(linkFPaths, staticFPaths);
     dispatch({ type: CLEAN_UP_STATIC_FILES_COMMIT, payload: { ids } });
   } catch (error) {
     console.log('Error when clean up static files: ', error);

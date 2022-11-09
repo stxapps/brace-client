@@ -59,7 +59,7 @@ import {
   LIST_NAMES_POPUP, PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP, PAYWALL_POPUP,
   CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, ID,
   STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK, MY_LIST, TRASH,
-  N_LINKS, N_DAYS, CD_ROOT, IMAGES, ADDED,
+  N_LINKS, N_DAYS, CD_ROOT, ADDED,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING,
   BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
   IAP_VERIFY_URL, IAP_STATUS_URL, APPSTORE, PLAYSTORE, COM_BRACEDOTTO,
@@ -73,9 +73,9 @@ import {
   getUrlFirstChar, separateUrlAndParam, getUserImageUrl, randomDecor,
   isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
   getLatestPurchase, getValidPurchase, doEnableExtraFeatures,
-  extractPinFPath, getSortedLinks, getPinFPaths, getPins, separatePinnedValues,
-  sortLinks, sortWithPins, getFormattedTime, get24HFormattedTime,
-  extractLinkFPath, extractFPath,
+  getLinkFPaths, getStaticFPaths, extractPinFPath, getSortedLinks, getPinFPaths,
+  getPins, separatePinnedValues, sortLinks, sortWithPins, getFormattedTime,
+  get24HFormattedTime, extractLinkFPath, extractFPath,
 } from '../utils';
 import { _ } from '../utils/obj';
 import vars from '../vars';
@@ -260,7 +260,7 @@ export const signOut = () => async (dispatch, getState) => {
   dispatch({ type: OFFLINE_RESET_STATE });
 
   // clear file storage
-  await fileApi.deleteAllFiles(IMAGES);
+  await fileApi.deleteAllFiles();
 
   // clear cached fpaths
   vars.cachedFPaths.fpaths = null;
@@ -2051,10 +2051,8 @@ export const rehydrateStaticFiles = () => async (dispatch, getState) => {
   });
 };
 
-const _cleanUpStaticFiles = async (fpaths) => {
+const _cleanUpStaticFiles = async (linkFPaths, staticFPaths) => {
   // Delete unused static files in server
-  const { linkFPaths, staticFPaths } = fpaths;
-
   const mainIds = [], unusedIds = [];
   for (const listName in linkFPaths) {
     for (const fpath of linkFPaths[listName]) {
@@ -2099,9 +2097,12 @@ const _cleanUpStaticFiles = async (fpaths) => {
 
 export const cleanUpStaticFiles = () => async (dispatch, getState) => {
   const state = getState();
-  const { fpaths } = state.cachedFPaths;
+
   const { cleanUpStaticFilesDT } = state.localSettings;
   if (!cleanUpStaticFilesDT) return;
+
+  const linkFPaths = getLinkFPaths(state);
+  const staticFPaths = getStaticFPaths(state);
 
   const now = Date.now();
   let p = 1.0 / (N_DAYS * 24 * 60 * 60 * 1000) * Math.abs(now - cleanUpStaticFilesDT);
@@ -2113,7 +2114,7 @@ export const cleanUpStaticFiles = () => async (dispatch, getState) => {
   // Don't need offline, if no network or get killed, can do it later.
   dispatch({ type: CLEAN_UP_STATIC_FILES });
   try {
-    const ids = await _cleanUpStaticFiles(fpaths);
+    const ids = await _cleanUpStaticFiles(linkFPaths, staticFPaths);
     dispatch({ type: CLEAN_UP_STATIC_FILES_COMMIT, payload: { ids } });
   } catch (error) {
     console.log('Error when clean up static files: ', error);

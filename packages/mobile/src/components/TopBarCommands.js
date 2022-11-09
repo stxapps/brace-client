@@ -80,7 +80,6 @@ class TopBarCommands extends React.PureComponent {
 
   render() {
     const { tailwind } = this.props;
-    const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' });
 
     return (
       <View style={tailwind('flex-row items-center justify-end')}>
@@ -95,7 +94,7 @@ class TopBarCommands extends React.PureComponent {
             <Text style={tailwind('ml-1 text-sm font-normal text-gray-500 blk:text-gray-300')}>Select</Text>
           </View>
         </TouchableOpacity>
-        <Menu renderer={MenuPopoverRenderers} rendererProps={cache('TBC_profileCommandMenuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(`blk:bg-transparent ${anchorClasses}`) }, [tailwind])} onOpen={this.onProfileBtnClick} onClose={this.onProfileCancelBtnClick}>
+        <Menu renderer={MenuPopoverRenderers} rendererProps={cache('TBC_profileCommandMenuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind('bg-transparent') }, [tailwind])} onOpen={this.onProfileBtnClick} onClose={this.onProfileCancelBtnClick}>
           <MenuTrigger>
             <View style={tailwind('ml-4')}>
               <View style={tailwind('h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-white blk:bg-gray-900')}>

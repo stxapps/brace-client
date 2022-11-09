@@ -123,10 +123,9 @@ class TopBarAddPopup extends React.PureComponent {
 
   render() {
     const { tailwind } = this.props;
-    const anchorClasses = Platform.select({ ios: 'z-10', android: 'shadow-xl' });
 
     return (
-      <Menu name={ADD_POPUP_MENU_NAME} renderer={MenuPopoverRenderers} rendererProps={cache('TBAP_menuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind(`blk:bg-transparent ${anchorClasses}`) }, [tailwind])} onBackdropPress={this.onAddPopupClosed}>
+      <Menu name={ADD_POPUP_MENU_NAME} renderer={MenuPopoverRenderers} rendererProps={cache('TBAP_menuRendererProps', { preferredPlacement: 'bottom', anchorStyle: tailwind('bg-transparent') }, [tailwind])} onBackdropPress={this.onAddPopupClosed}>
         <MenuTrigger onPress={this.onAddBtnClick}>
           <View style={cache('TBAP_menuTriggerViewStyle', [tailwind('flex-row items-center justify-center rounded-full border border-gray-400 bg-white blk:border-gray-400 blk:bg-gray-900'), { height: 32, paddingLeft: 10, paddingRight: 12 }], [tailwind])}>
             <Svg style={tailwind('font-normal text-gray-500 blk:text-gray-300')} width={12} height={11} viewBox="0 0 16 14" stroke="currentColor" fill="none">

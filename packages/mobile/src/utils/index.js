@@ -1040,6 +1040,8 @@ export const extractPinFPath = (fpath) => {
 };
 
 export const addFPath = (fpaths, fpath) => {
+  if (fpath.startsWith('file://')) fpath = fpath.slice('file://'.length);
+
   if (fpath.startsWith(LINKS)) {
     const { listName } = extractLinkFPath(fpath);
     if (!fpaths.linkFPaths[listName]) fpaths.linkFPaths[listName] = [];
@@ -1052,8 +1054,6 @@ export const addFPath = (fpaths, fpath) => {
     fpaths.settingsFPath = fpath;
   } else if (fpath.startsWith(PINS)) {
     if (!fpaths.pinFPaths.includes(fpath)) fpaths.pinFPaths.push(fpath);
-  } else if (fpath.startsWith('file://')) {
-    // Just ignore, for mobile downloads a static file and save to storage.
   } else {
     console.log(`Invalid file path: ${fpath}`);
   }
@@ -1101,6 +1101,28 @@ export const copyFPaths = (fpaths) => {
     staticFPaths: newStaticFPaths,
     pinFPaths: newPinFPaths,
   };
+};
+
+export const getLinkFPaths = (state) => {
+  if (
+    isObject(state.cachedFPaths) &&
+    isObject(state.cachedFPaths.fpaths) &&
+    isObject(state.cachedFPaths.fpaths.linkFPaths)
+  ) {
+    return state.cachedFPaths.fpaths.linkFPaths;
+  }
+  return {};
+};
+
+export const getStaticFPaths = (state) => {
+  if (
+    isObject(state.cachedFPaths) &&
+    isObject(state.cachedFPaths.fpaths) &&
+    Array.isArray(state.cachedFPaths.fpaths.staticFPaths)
+  ) {
+    return state.cachedFPaths.fpaths.staticFPaths;
+  }
+  return [];
 };
 
 export const getPinFPaths = (state) => {
