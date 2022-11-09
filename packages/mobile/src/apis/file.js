@@ -32,7 +32,7 @@ const getFile = async (fpath, dir = Dirs.DocumentDir) => {
 
 const getFiles = async (fpaths, dir = Dirs.DocumentDir) => {
   const contents = [], contentUrls = [];
-  for (let fpath of fpaths) {
+  for (const fpath of fpaths) {
     const { content, contentUrl } = await getFile(fpath, dir);
     contents.push(content);
     contentUrls.push(contentUrl);
@@ -79,7 +79,7 @@ const deleteFile = async (fpath, dir = Dirs.DocumentDir) => {
 };
 
 const deleteFiles = async (fpaths, dir = Dirs.DocumentDir) => {
-  for (let fpath of fpaths) {
+  for (const fpath of fpaths) {
     await deleteFile(fpath, dir);
   }
 };

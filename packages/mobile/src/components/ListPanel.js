@@ -133,9 +133,13 @@ const ListPanel = (props) => {
     }
 
     if (item.id === PANEL_PADDING_BOTTOM) {
-      const pb = toPx(BOTTOM_BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT);
+      let pb = toPx('1.5rem');
+      if (columnWidth === PC_100) {
+        pb += toPx(BOTTOM_BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT);
+      }
+
       return (
-        <View style={cache('LP_panelPB', { paddingBottom: pb })} />
+        <View style={cache('LP_panelPB', { paddingBottom: pb }, [columnWidth])} />
       );
     }
 
@@ -157,7 +161,7 @@ const ListPanel = (props) => {
 
   const panelData = [{ id: PANEL_HEAD }, { id: PANEL_BODY }];
   if (hasMore) panelData.push({ id: PANEL_FOOTER });
-  if (columnWidth === PC_100) panelData.push({ id: PANEL_PADDING_BOTTOM });
+  panelData.push({ id: PANEL_PADDING_BOTTOM });
 
   return (
     <Animated.FlatList
