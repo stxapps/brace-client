@@ -27,7 +27,7 @@ class BottomBarAddPopup extends React.PureComponent {
   onAddPopupShow = () => {
     setTimeout(() => {
       if (this.addInput.current) this.addInput.current.focus();
-    }, 1);
+    }, 100);
     this.didClick = false;
   }
 

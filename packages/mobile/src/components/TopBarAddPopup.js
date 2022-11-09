@@ -3,7 +3,9 @@ import {
   View, Text, TouchableOpacity, TextInput, LayoutAnimation, Platform,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { Menu, MenuOptions, MenuTrigger, withMenuContext } from 'react-native-popup-menu';
+import {
+  Menu, MenuOptions, MenuTrigger, withMenuContext,
+} from 'react-native-popup-menu';
 import Svg, { Path } from 'react-native-svg';
 
 import { updatePopup, updateLinkEditor, addLink } from '../actions';
@@ -23,22 +25,28 @@ class TopBarAddPopup extends React.PureComponent {
   constructor(props) {
     super(props);
 
+    this.addInput = React.createRef();
     this.didClick = false;
   }
 
   componentDidMount() {
     if (this.props.isAddPopupShown) {
-      if (!this.props.ctx.menuActions.isMenuOpen()) {
-        this.props.ctx.menuActions.openMenu(ADD_POPUP_MENU_NAME);
-      }
+      this.showAddPopup();
     }
   }
 
   componentDidUpdate(prevProps) {
     if (!prevProps.isAddPopupShown && this.props.isAddPopupShown) {
-      if (!this.props.ctx.menuActions.isMenuOpen()) {
-        this.props.ctx.menuActions.openMenu(ADD_POPUP_MENU_NAME);
-      }
+      this.showAddPopup();
+    }
+  }
+
+  showAddPopup = () => {
+    if (!this.props.ctx.menuActions.isMenuOpen()) {
+      this.props.ctx.menuActions.openMenu(ADD_POPUP_MENU_NAME);
+      setTimeout(() => {
+        if (this.addInput.current) this.addInput.current.focus();
+      }, 100);
     }
   }
 
@@ -106,7 +114,7 @@ class TopBarAddPopup extends React.PureComponent {
         <View style={tailwind('flex-row items-center justify-start')}>
           <Text style={tailwind('flex-none text-sm font-normal text-gray-500 blk:text-gray-300')}>Url:</Text>
           {/* onKeyPress event for Enter key only if there is multiline TextInput */}
-          <TextInput onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind(`ml-3 flex-1 rounded-full border border-gray-400 bg-white px-3.5 text-base font-normal text-gray-700 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 ${inputClassNames}`)} keyboardType="url" placeholder="https://" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={url} autoCapitalize="none" autoFocus />
+          <TextInput ref={this.addInput} onChange={this.onAddInputChange} onSubmitEditing={this.onAddInputKeyPress} style={tailwind(`ml-3 flex-1 rounded-full border border-gray-400 bg-white px-3.5 text-base font-normal text-gray-700 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 ${inputClassNames}`)} keyboardType="url" placeholder="https://" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={url} autoCapitalize="none" />
         </View>
         {msg !== '' && <Text style={tailwind('pt-3 text-sm font-normal text-red-500')}>{msg}</Text>}
         <View style={tailwind(`flex-row items-center justify-start ${msg !== '' ? 'pt-3' : 'pt-5'}`)}>
