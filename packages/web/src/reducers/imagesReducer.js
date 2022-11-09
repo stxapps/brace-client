@@ -2,8 +2,8 @@ import { REHYDRATE } from 'redux-persist/constants';
 
 import {
   REHYDRATE_STATIC_FILES, FETCH_COMMIT, FETCH_MORE_COMMIT, UPDATE_IMAGES,
-  DELETE_LINKS_COMMIT, DELETE_OLD_LINKS_IN_TRASH_COMMIT, CLEAN_UP_STATIC_FILES_COMMIT,
-  DELETE_ALL_DATA, RESET_STATE,
+  UPDATE_CUSTOM_DATA_COMMIT, DELETE_LINKS_COMMIT, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
+  CLEAN_UP_STATIC_FILES_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import { getMainId, extractFPath } from '../utils';
 
@@ -26,6 +26,23 @@ const imagesReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_IMAGES) {
     return { ...state, ...action.payload };
+  }
+
+  if (action.type === UPDATE_CUSTOM_DATA_COMMIT) {
+    const { localUnusedFPaths } = action.payload;
+
+    const mainIds = localUnusedFPaths.map(fpath => {
+      const { id } = extractFPath(fpath);
+      return getMainId(id);
+    });
+
+    const newState = {};
+    for (const fpath in state) {
+      const { id } = extractFPath(fpath);
+      if (mainIds.includes(getMainId(id))) continue;
+      newState[fpath] = state[fpath];
+    }
+    return newState;
   }
 
   if (

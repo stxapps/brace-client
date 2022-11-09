@@ -35,6 +35,8 @@ const cachedFPathsReducer = (state = initialState, action) => {
     // No new object for fpaths for reference comparison
     fpathsRef = cachedFPaths.fpaths;
 
+    // As some deletions don't wait for completion,
+    //   deleted fpaths might still be here, until next dispatch.
     const newState = { ...state, fpaths: cachedFPaths.fpaths };
     if (isObject(cachedFPaths.fpaths)) newState.fpaths = copyFPaths(cachedFPaths.fpaths);
     return newState;

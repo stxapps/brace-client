@@ -448,7 +448,7 @@ const updateCustomData = async (params) => {
     // error in this step should be fine
   }
 
-  return { listName, fromLink, toLink };
+  return { listName, fromLink, toLink, serverUnusedFPaths, localUnusedFPaths };
 };
 
 const blockstack = {
