@@ -146,7 +146,8 @@ const ListPanel = (props) => {
     throw new Error(`Invalid item.id: ${item.id}`);
   }, [
     links, hasFetchedMore, isFetchingMore, getItemId, renderItem, renderEmpty,
-    renderFetchMoreBtn, renderFetchingMore, renderUpdateFetchedBtn, safeAreaWidth,
+    renderFetchMoreBtn, renderFetchingMore, renderUpdateFetchedBtn, columnWidth,
+    safeAreaWidth,
   ]);
 
   useEffect(() => {
