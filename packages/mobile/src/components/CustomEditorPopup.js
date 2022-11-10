@@ -153,13 +153,18 @@ const CustomEditorPopup = () => {
   }, [isShown, popupAnim, registerPopupBackHandler]);
 
   useEffect(() => {
-    if (Platform.OS === 'ios') KeyboardManager.setEnable(true);
+    if (isShown) {
+      if (Platform.OS === 'ios') KeyboardManager.setEnable(true);
+    } else {
+      if (Platform.OS === 'ios') KeyboardManager.setEnable(false);
+      if (Platform.OS === 'android') Keyboard.dismiss();
+    }
 
     return () => {
       if (Platform.OS === 'ios') KeyboardManager.setEnable(false);
       if (Platform.OS === 'android') Keyboard.dismiss();
     };
-  }, []);
+  }, [isShown]);
 
   if (derivedIsShown !== isShown) {
     if (derivedIsShown && !isShown) setDidCloseAnimEnd(false);
@@ -190,7 +195,7 @@ const CustomEditorPopup = () => {
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>
       <Animated.View style={[tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
-        <ScrollView style={{ maxHeight: safeAreaHeight - 16 - 16 }}>
+        <ScrollView style={{ maxHeight: safeAreaHeight - 16 - 16 }} keyboardShouldPersistTaps="handled">
           {imageUrl && <View style={tailwind('w-full rounded-t-lg bg-white blk:border-b blk:border-gray-700 blk:bg-gray-800 aspect-7/12 shadow-xs')}>
             <Image style={tailwind('h-full w-full')} source={cache(`CEP_image_${imageUrl}`, { uri: imageUrl }, [imageUrl])} />
             <TouchableOpacity onPress={onClearImageBtnClick} style={tailwind('absolute bottom-1 right-1 flex h-10 w-10 items-center justify-center')}>
