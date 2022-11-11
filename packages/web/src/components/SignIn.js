@@ -3,9 +3,9 @@ import GracefulImage from 'react-graceful-image';
 
 import walletApi from '../apis/wallet';
 import { HASH_SUPPORT } from '../types/const';
-import { getUserImageUrl } from '../utils';
+import { getUserImageUrl, isIPadIPhoneIPod } from '../utils';
 
-import { useTailwind } from '.';
+import { useSafeAreaFrame, useTailwind } from '.';
 
 const VIEW_YOUR = 1;
 const VIEW_CHOOSE = 2;
@@ -13,6 +13,7 @@ const VIEW_CHOOSE = 2;
 const SignIn = (props) => {
 
   const { domainName, appName, appIconUrl, appScopes } = props;
+  const { height: safeAreaHeight } = useSafeAreaFrame();
   const [viewId, setViewId] = useState(VIEW_YOUR);
   const [isLoadingShown, setLoadingShown] = useState(false);
   const [isErrorShown, setErrorShown] = useState(false);
@@ -21,6 +22,7 @@ const SignIn = (props) => {
   const walletData = useRef(null);
   const scrollView = useRef(null);
   const textarea = useRef(null);
+  const prevSafeAreaHeight = useRef(safeAreaHeight);
   const didClick = useRef(false);
   const tailwind = useTailwind();
 
@@ -105,6 +107,17 @@ const SignIn = (props) => {
       }, 100);
     }
   }, [viewId]);
+
+  useEffect(() => {
+    const heightDiff = prevSafeAreaHeight.current - safeAreaHeight;
+    if (isIPadIPhoneIPod() && heightDiff > 240) {
+      setTimeout(() => {
+        window.scrollBy({ top: heightDiff * -1, behavior: 'smooth' });
+      }, 100);
+    }
+
+    prevSafeAreaHeight.current = safeAreaHeight;
+  }, [safeAreaHeight]);
 
   const _render = (content) => {
     return (

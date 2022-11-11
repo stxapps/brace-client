@@ -82,7 +82,7 @@ class TopBarAddPopup extends React.PureComponent {
       style = { top: 'auto', right: 0, transformOrigin: 'top right' };
     }
 
-    if (safeAreaHeight <= 360) style.top = '-12px';
+    if (safeAreaHeight <= 220) style.top = '-12px';
 
     return (
       <AnimatePresence key="AnimatePresence_TopBarAddPopup">
@@ -114,7 +114,7 @@ class TopBarAddPopup extends React.PureComponent {
           <svg className={tailwind('w-3 text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-200')} viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <span className={tailwind('ml-1 text-sm text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-200')}>Add</span>
+          <span className={tailwind('ml-1 text-sm leading-none text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-200')}>Add</span>
         </button>
         {this.renderAddPopup()}
       </div>

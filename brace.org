@@ -830,10 +830,12 @@ This and CI/CD are very important!
     ~ add new link, move/delete link, bulk edit
     ~ pin, unpin, move pin
   + List list names, change list name
+  + Card, List
   + New list name, edit list name, move list name, delete list name
   + Popups: CardMenu, ConfirmDelete, MoveTo, ListsMenu
   + Settings: account, subscription, data, lists, misc, about
   + Pin, unpin, move pin
+  + Custom link's title & image
   + WHT_MODE, BLK_MODE
 * brace-server-worker
 ** Creat an instance

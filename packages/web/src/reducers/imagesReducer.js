@@ -5,6 +5,7 @@ import {
   UPDATE_CUSTOM_DATA_COMMIT, DELETE_LINKS_COMMIT, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   CLEAN_UP_STATIC_FILES_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
+import { CD_ROOT } from '../types/const';
 import { getMainId, extractFPath } from '../utils';
 
 const initialState = {};
@@ -31,15 +32,13 @@ const imagesReducer = (state = initialState, action) => {
   if (action.type === UPDATE_CUSTOM_DATA_COMMIT) {
     const { localUnusedFPaths } = action.payload;
 
-    const mainIds = localUnusedFPaths.map(fpath => {
-      const { id } = extractFPath(fpath);
-      return getMainId(id);
-    });
+    // Can't delete by mainId as the link may exist,
+    //   just change from old image to a new one.
+    const cfpaths = localUnusedFPaths.map(fpath => CD_ROOT + '/' + fpath);
 
     const newState = {};
     for (const fpath in state) {
-      const { id } = extractFPath(fpath);
-      if (mainIds.includes(getMainId(id))) continue;
+      if (cfpaths.includes(fpath)) continue;
       newState[fpath] = state[fpath];
     }
     return newState;

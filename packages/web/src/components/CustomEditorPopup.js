@@ -11,6 +11,7 @@ import { CUSTOM_EDITOR_POPUP, IMAGES, CD_ROOT, BLK_MODE } from '../types/const';
 import { getCustomEditor, getThemeMode } from '../selectors';
 import {
   isObject, isString, isNumber, throttle, rerandomRandomTerm, getFileExt,
+  isIPadIPhoneIPod,
 } from '../utils';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
@@ -24,12 +25,14 @@ const CustomEditorPopup = () => {
   const customEditor = useSelector(state => getCustomEditor(state));
   const themeMode = useSelector(state => getThemeMode(state));
   const cancelBtn = useRef(null);
+  const scrollPanel = useRef(null);
   const uploadImageInput = useRef(null);
   const imageCanvas = useRef(null);
   const zoomInput = useRef(null);
   const isGrabbing = useRef(false);
   const didClick = useRef(false);
   const prevTouches = useRef(null);
+  const prevSafeAreaHeight = useRef(safeAreaHeight);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
 
@@ -340,6 +343,22 @@ const CustomEditorPopup = () => {
   }, [isShown]);
 
   useEffect(() => {
+    if (!isShown) return;
+
+    const heightDiff = prevSafeAreaHeight.current - safeAreaHeight;
+    if (isIPadIPhoneIPod() && heightDiff > 240) {
+      setTimeout(() => {
+        window.scrollBy({ top: heightDiff * -1, behavior: 'smooth' });
+        if (scrollPanel.current) {
+          scrollPanel.current.scrollBy({ top: heightDiff, behavior: 'smooth' });
+        }
+      }, 100);
+    }
+
+    prevSafeAreaHeight.current = safeAreaHeight;
+  }, [isShown, safeAreaHeight]);
+
+  useEffect(() => {
     if (!imageCanvas.current) return;
 
     const { image, rotate, translateX, translateY, zoom } = customEditor;
@@ -401,6 +420,7 @@ const CustomEditorPopup = () => {
 
     const ctx = imageCanvas.current.getContext('2d');
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.resetTransform();
     ctx.scale(devicePixelRatio, devicePixelRatio);
 
     ctx.drawImage(rotatedImage, sX, sY, sWidth, sHeight, dX, dY, dWidth, dHeight);
@@ -434,7 +454,7 @@ const CustomEditorPopup = () => {
             <motion.button ref={cancelBtn} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
           </div>
           <motion.div className={tailwind('w-full max-w-sm overflow-hidden rounded-lg shadow-xl ring-1 ring-black ring-opacity-5 blk:ring-white blk:ring-opacity-25')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-            <div style={{ maxHeight: safeAreaHeight - 16 - 16 }} className={tailwind('relative flex flex-col overflow-y-auto overflow-x-hidden rounded-lg bg-white blk:bg-gray-800')}>
+            <div ref={scrollPanel} style={{ maxHeight: safeAreaHeight - 16 - 16 }} className={tailwind('relative flex flex-col overflow-y-auto overflow-x-hidden rounded-lg bg-white blk:bg-gray-800')}>
               {isString(customEditor.image) && <div className={tailwind('aspect-w-12 aspect-h-7 w-full')}>
                 <div>
                   <img className={tailwind('h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={customEditor.imageUrl} alt="Custom link's illustration" />
@@ -463,7 +483,7 @@ const CustomEditorPopup = () => {
                 <div className={tailwind('aspect-w-12 aspect-h-8 w-full bg-gray-100 blk:bg-gray-700')}>
                   {/* aspect-ratio is padding-bottom underneath and this div is absolute inset-0 */}
                   <div className={tailwind('flex items-center justify-center')}>
-                    <canvas ref={imageCanvas} onTouchStart={onCanvasMouseDown} onMouseDown={onCanvasMouseDown} onDragStart={onCanvasDragStart} className={tailwind('h-full w-full cursor-grab')}></canvas>
+                    <canvas ref={imageCanvas} onTouchStart={onCanvasMouseDown} onMouseDown={onCanvasMouseDown} onDragStart={onCanvasDragStart} className={tailwind('h-full w-full cursor-grab touch-none overflow-hidden rounded-t-lg')}></canvas>
                   </div>
                 </div>
                 <div className={tailwind('flex items-center justify-end px-1')}>
