@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  }
+
   /* clears the 'X' from Internet Explorer */
   input.hide-clear[type=search]::-ms-clear,
   input.hide-clear[type=search]::-ms-reveal {
