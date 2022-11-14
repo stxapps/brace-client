@@ -348,6 +348,7 @@
 - github.com/PostHog/posthog - self host
 - matomo.org
 - plausible.io
+- mixpanel.com
 ** monorepo
 - webapp, firefox extension, chrome extension, android with react native, ios with react native
 ** CI/CD

@@ -97,25 +97,38 @@ class Main extends React.PureComponent {
     const {
       listName, links, rehydratedListNames, layoutType, safeAreaWidth,
     } = this.props;
+
+    if (links === null) return <Loading />;
+
     const columnWidth = this.getColumnWidth(safeAreaWidth);
+    const topBarRightPane = [PC_50, PC_33].includes(columnWidth) ?
+      SHOW_COMMANDS : SHOW_BLANK;
 
-    if (links === null || !rehydratedListNames.includes(listName)) {
-      return <Loading />;
+    // In Settings, remove a list that makes listName change to MY_LIST
+    //   and if not rehydrated yet, loading is shown
+    //   so if not rehydrated, show loading under Settings.
+    let contentPanel;
+    if (!rehydratedListNames.includes(listName)) {
+      contentPanel = <Loading />;
+    } else {
+      contentPanel = (
+        <React.Fragment>
+          {layoutType === LAYOUT_LIST ?
+            <ListPanel columnWidth={columnWidth} scrollYEvent={this.scrollYEvent} /> :
+            <CardPanel columnWidth={columnWidth} scrollYEvent={this.scrollYEvent} />
+          }
+          {columnWidth === PC_100 && <BottomBar />}
+          <TopBar rightPane={topBarRightPane} isListNameShown={true} doSupportTheme={true} scrollY={this.scrollY} />
+          <FetchedPopup />
+          <PinMenuPopup />
+          <CustomEditorPopup />
+        </React.Fragment>
+      );
     }
-
-    const topBarRightPane = [PC_50, PC_33].includes(columnWidth) ? SHOW_COMMANDS : SHOW_BLANK;
 
     return (
       <React.Fragment>
-        {layoutType === LAYOUT_LIST ?
-          <ListPanel columnWidth={columnWidth} scrollYEvent={this.scrollYEvent} /> :
-          <CardPanel columnWidth={columnWidth} scrollYEvent={this.scrollYEvent} />
-        }
-        {columnWidth === PC_100 && <BottomBar />}
-        <TopBar rightPane={topBarRightPane} isListNameShown={true} doSupportTheme={true} scrollY={this.scrollY} />
-        <FetchedPopup />
-        <PinMenuPopup />
-        <CustomEditorPopup />
+        {contentPanel}
         <SettingsPopup />
         <SettingsListsMenuPopup />
         <TimePickPopup />
