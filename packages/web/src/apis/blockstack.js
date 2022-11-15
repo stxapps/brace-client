@@ -453,7 +453,7 @@ const updateCustomData = async (params) => {
 
 const blockstack = {
   batchGetFileWithRetry, batchPutFileWithRetry, batchDeleteFileWithRetry,
-  canDeleteListNames,
+  canDeleteListNames, deletePins,
 };
 
 export default blockstack;

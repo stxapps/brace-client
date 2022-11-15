@@ -1,12 +1,11 @@
 import { REHYDRATE } from 'redux-persist/constants';
 import { loop, Cmd } from 'redux-loop';
 
-import { movePinnedLinkDeleteStep } from '../actions';
+import { cleanUpPins } from '../actions';
 import {
   PIN_LINK, PIN_LINK_COMMIT, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_COMMIT,
   UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
-  MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, CANCEL_DIED_PINS,
-  DELETE_ALL_DATA, RESET_STATE,
+  MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, CANCEL_DIED_PINS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 
 /* {
@@ -37,7 +36,7 @@ const pendingPinsReducer = (state = initialState, action) => {
     const newState = { ...state };
     for (const pin of pins) delete newState[pin.id];
 
-    return newState;
+    return loop(newState, Cmd.run(cleanUpPins(), { args: [Cmd.dispatch, Cmd.getState] }));
   }
 
   if (action.type === PIN_LINK_ROLLBACK || action.type === UNPIN_LINK_ROLLBACK) {
@@ -55,17 +54,14 @@ const pendingPinsReducer = (state = initialState, action) => {
   }
 
   if (action.type === MOVE_PINNED_LINK_ADD_STEP_COMMIT) {
-    const { updatedDT, id } = action.meta;
+    const { id } = action.meta;
 
     const newState = { ...state };
     delete newState[id];
 
     return loop(
       newState,
-      Cmd.run(
-        movePinnedLinkDeleteStep(id, updatedDT),
-        { args: [Cmd.dispatch, Cmd.getState] }
-      ),
+      Cmd.run(cleanUpPins(), { args: [Cmd.dispatch, Cmd.getState] }),
     );
   }
 

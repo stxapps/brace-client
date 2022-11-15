@@ -39,9 +39,8 @@ import {
   UPDATE_IAP_PURCHASE_STATUS, UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
   PIN_LINK, PIN_LINK_COMMIT, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_COMMIT,
   UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
-  MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, MOVE_PINNED_LINK_DELETE_STEP,
-  MOVE_PINNED_LINK_DELETE_STEP_COMMIT, MOVE_PINNED_LINK_DELETE_STEP_ROLLBACK,
-  CANCEL_DIED_PINS, UPDATE_SYSTEM_THEME_MODE, UPDATE_THEME, UPDATE_UPDATING_THEME_MODE,
+  MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, CANCEL_DIED_PINS,
+  UPDATE_SYSTEM_THEME_MODE, UPDATE_THEME, UPDATE_UPDATING_THEME_MODE,
   UPDATE_TIME_PICK, UPDATE_IS_24H_FORMAT, UPDATE_CUSTOM_EDITOR, UPDATE_IMAGES,
   UPDATE_CUSTOM_DATA, UPDATE_CUSTOM_DATA_COMMIT, UPDATE_CUSTOM_DATA_ROLLBACK,
   REHYDRATE_STATIC_FILES, CLEAN_UP_STATIC_FILES, CLEAN_UP_STATIC_FILES_COMMIT,
@@ -64,15 +63,15 @@ import {
 } from '../types/const';
 import {
   isEqual, isString, isObject, isNumber, throttle, sleep, isIPadIPhoneIPod,
-  randomString, rerandomRandomTerm, deleteRemovedDT, getMainId,
+  randomString, rerandomRandomTerm, deleteRemovedDT, getMainId, getLinkMainIds,
   getUrlFirstChar, separateUrlAndParam, extractUrl, getUserImageUrl, randomDecor,
   isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
   doOutboxContainMethods, isDecorValid, isExtractedResultValid, isCustomValid,
   isListNameObjsValid, getLatestPurchase, getValidPurchase, doEnableExtraFeatures,
   createLinkFPath,
   getLinkFPaths, getStaticFPaths, extractPinFPath, getSortedLinks, getPinFPaths,
-  getPins, separatePinnedValues, sortLinks, sortWithPins, getFormattedTime,
-  get24HFormattedTime, extractLinkFPath, extractFPath,
+  getPins, separatePinnedValues, sortLinks, sortWithPins, getRawPins, getFormattedTime,
+  get24HFormattedTime, extractFPath,
 } from '../utils';
 import { _ } from '../utils/obj';
 import {
@@ -1929,17 +1928,15 @@ export const unpinLinks = (ids) => async (dispatch, getState) => {
   const state = getState();
   const pinFPaths = getPinFPaths(state);
 
-  const pins = [];
-  for (const linkId of ids) {
-    const linkMainId = getMainId(linkId);
+  const linkMainIds = ids.map(id => getMainId(id));
 
-    // when move, old paths might not be delete, so when unpin,
-    //   need to delete them all, can't use getPins and no break here.
-    for (const fpath of pinFPaths) {
-      const { rank, updatedDT, addedDT, id } = extractPinFPath(fpath);
-      const pinMainId = getMainId(id);
-      if (pinMainId === linkMainId) pins.push({ rank, updatedDT, addedDT, id });
-    }
+  // when move, old paths might not be deleted, so when unpin,
+  //   need to delete them all, can't use getPins and no break here.
+  const pins = [];
+  for (const fpath of pinFPaths) {
+    const { rank, updatedDT, addedDT, id } = extractPinFPath(fpath);
+    const pinMainId = getMainId(id);
+    if (linkMainIds.includes(pinMainId)) pins.push({ rank, updatedDT, addedDT, id });
   }
 
   if (pins.length === 0) {
@@ -2049,41 +2046,45 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
   });
 };
 
-export const movePinnedLinkDeleteStep = (linkId, currentUpdatedDT) => async (
-  dispatch, getState
-) => {
+export const cancelDiedPins = () => {
+  return { type: CANCEL_DIED_PINS };
+};
+
+export const cleanUpPins = () => async (dispatch, getState) => {
   const state = getState();
+  const linkFPaths = getLinkFPaths(state);
   const pinFPaths = getPinFPaths(state);
 
-  const linkMainId = getMainId(linkId);
+  const linkMainIds = getLinkMainIds(linkFPaths);
+  const pins = getRawPins(pinFPaths);
 
-  // In case of moving a pinned link, the link id is changed but the pin id is not.
-  // Pin still works because main id is used so when delete, need to use main id too.
-  // Delete the same main id except the current updatedDT.
-  const pins = [];
+  const unusedPins = [];
   for (const fpath of pinFPaths) {
     const { rank, updatedDT, addedDT, id } = extractPinFPath(fpath);
     const pinMainId = getMainId(id);
-    if (pinMainId === linkMainId && updatedDT !== currentUpdatedDT) {
-      pins.push({ rank, updatedDT, addedDT, id });
+
+    if (
+      !isString(pinMainId) ||
+      !linkMainIds.includes(pinMainId) ||
+      !isObject(pins[pinMainId]) ||
+      (
+        rank !== pins[pinMainId].rank ||
+        updatedDT !== pins[pinMainId].updatedDT ||
+        addedDT !== pins[pinMainId].addedDT ||
+        id !== pins[pinMainId].id
+      )
+    ) {
+      unusedPins.push({ rank, updatedDT, addedDT, id });
     }
   }
 
-  const payload = { pins };
-  dispatch({
-    type: MOVE_PINNED_LINK_DELETE_STEP,
-    meta: {
-      offline: {
-        effect: { method: UNPIN_LINK, params: payload },
-        commit: { type: MOVE_PINNED_LINK_DELETE_STEP_COMMIT },
-        rollback: { type: MOVE_PINNED_LINK_DELETE_STEP_ROLLBACK },
-      },
-    },
-  });
-};
-
-export const cancelDiedPins = () => {
-  return { type: CANCEL_DIED_PINS };
+  // Don't need offline, if no network or get killed, can do it later.
+  try {
+    dataApi.deletePins({ pins: unusedPins });
+  } catch (error) {
+    console.log('cleanUpPins error: ', error);
+    // error in this step should be fine
+  }
 };
 
 export const updateTheme = (mode, customOptions) => async (dispatch, getState) => {
@@ -2300,15 +2301,9 @@ export const rehydrateStaticFiles = () => async (dispatch, getState) => {
 
 const _cleanUpStaticFiles = async (linkFPaths, staticFPaths) => {
   // Delete unused static files in server
-  const mainIds = [], unusedIds = [];
-  for (const listName in linkFPaths) {
-    for (const fpath of linkFPaths[listName]) {
-      const { id } = extractLinkFPath(fpath);
-      mainIds.push(getMainId(id));
-    }
-  }
+  const mainIds = getLinkMainIds(linkFPaths);
 
-  let unusedFPaths = [];
+  let unusedIds = [], unusedFPaths = [];
   for (const fpath of staticFPaths) {
     const { id } = extractFPath(fpath);
     if (!mainIds.includes(getMainId(id))) {

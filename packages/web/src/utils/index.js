@@ -703,6 +703,18 @@ export const excludeWithMainIds = (links, ids) => {
   return newLinks;
 };
 
+export const getLinkMainIds = (linkFPaths) => {
+  const linkMainIds = [];
+  for (const listName in linkFPaths) {
+    for (const fpath of linkFPaths[listName]) {
+      const { id } = extractLinkFPath(fpath);
+      linkMainIds.push(getMainId(id));
+    }
+  }
+
+  return linkMainIds;
+};
+
 export const getWindowHeight = () => {
   return 'innerHeight' in window ? window.innerHeight : window.document.documentElement.offsetHeight;
 };
@@ -1136,7 +1148,7 @@ export const getPinFPaths = (state) => {
   return [];
 };
 
-const _getPins = (pinFPaths, pendingPins, doExcludeUnpinning) => {
+export const getRawPins = (pinFPaths) => {
   const pins = {};
   for (const fpath of pinFPaths) {
     const { rank, updatedDT, addedDT, id } = extractPinFPath(fpath);
@@ -1146,6 +1158,12 @@ const _getPins = (pinFPaths, pendingPins, doExcludeUnpinning) => {
     if (pinMainId in pins && pins[pinMainId].updatedDT > updatedDT) continue;
     pins[pinMainId] = { rank, updatedDT, addedDT, id };
   }
+
+  return pins;
+};
+
+const _getPins = (pinFPaths, pendingPins, doExcludeUnpinning) => {
+  const pins = getRawPins(pinFPaths);
 
   for (const id in pendingPins) {
     const { status, rank, updatedDT, addedDT } = pendingPins[id];
