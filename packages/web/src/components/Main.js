@@ -107,7 +107,6 @@ class Main extends React.PureComponent {
         </React.Fragment>
       );
     }
-    contentPanel = <Loading />;
 
     return (
       <div className={tailwind('min-h-screen bg-white blk:bg-gray-900')}>
