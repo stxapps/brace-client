@@ -24,7 +24,13 @@ class Blockstack {
     let decor = randomDecor(getUrlFirstChar(url))
 
     let fpath = "links/\(listName)/\(id).json"
-    let content = "{\"id\": \"\(id)\", \"url\": \"\(url)\", \"addedDT\": \(addedDT), \"decor\": \(decor)}"
+
+    let jsonObj: [String: Any] = ["id": id, "url": url, "addedDT": addedDT, "decor": decor];
+    guard let data = try? JSONSerialization.data(withJSONObject: jsonObj),
+          let content = String(data: data, encoding: .utf8) else {
+      callback(nil, NSError.create(description: "JSON stringify error in addLink"))
+      return
+    }
 
     self.sendPreExtract(url)
 
@@ -227,7 +233,7 @@ class Blockstack {
     return arr[randInt(arr.count)]
   }
 
-  private func randomDecor(_ text: String) -> String {
+  private func randomDecor(_ text: String) -> [String: Any] {
     var n: Int
 
     // image background
@@ -243,13 +249,13 @@ class Blockstack {
       imageBgType = IMAGE
       imageBgValue = sample(IMAGES)
     }
-    let imageBg = "{\"type\": \"\(imageBgType)\", \"value\": \"\(imageBgValue)\"}"
+    let imageBg = ["type": imageBgType, "value": imageBgValue]
 
     // image foreground
-    var imageFg = "null"
+    var imageFg: [String: String]? = nil
     n = randInt(100)
     if ((imageBgType == COLOR && n < 75) || (imageBgType == PATTERN && n < 25)) {
-      imageFg = "{\"text\": \"\(text)\"}"
+      imageFg = ["text": text]
     }
 
     // favicon background
@@ -262,9 +268,9 @@ class Blockstack {
       faviconBgType = PATTERN
       faviconBgValue = sample(PATTERNS)
     }
-    let faviconBg = "{\"type\": \"\(faviconBgType)\", \"value\": \"\(faviconBgValue)\"}"
+    let faviconBg = ["type": faviconBgType, "value": faviconBgValue]
 
-    return "{\"image\": {\"bg\": \(imageBg), \"fg\": \(imageFg)}, \"favicon\": {\"bg\": \(faviconBg)}}"
+    return ["image": ["bg": imageBg, "fg": imageFg], "favicon": ["bg": faviconBg]]
   }
 
   private func sendPreExtract(_ url: String) {
