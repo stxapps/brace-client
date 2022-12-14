@@ -172,7 +172,7 @@ const ListPanel = (props) => {
       keyExtractor={getItemId}
       renderItem={renderPanel}
       onEndReached={onEndReached}
-      onEndReachedThreshold={0.9}
+      onEndReachedThreshold={0.2}
       removeClippedSubviews={false}
       onScroll={scrollYEvent}
       scrollEventThrottle={16}

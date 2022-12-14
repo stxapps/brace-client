@@ -266,7 +266,7 @@ class CardPanel extends React.PureComponent {
         keyExtractor={this.getItemId}
         renderItem={this.renderPanel}
         onEndReached={this.onEndReached}
-        onEndReachedThreshold={0.9}
+        onEndReachedThreshold={0.2}
         removeClippedSubviews={false}
         onScroll={this.props.scrollYEvent}
         scrollEventThrottle={16}
