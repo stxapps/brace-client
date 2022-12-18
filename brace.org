@@ -846,7 +846,7 @@ This and CI/CD are very important!
 - Allow full access to all Cloud APIs
 - **Uncheck** Delete boot disk when instance is deleted
 ** Access the instance
-- gcloud compute ssh --zone=us-central1-a brace-server-worker
+- gcloud compute ssh --zone=us-west1-b brace-worker-002
 - If found WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
   + exit and run the command explained below the warning i.e. ssh-keygen -f "/home/linux/.ssh/google_compute_known_hosts" -R "compute.8353753600559446613"
 ** Setup the instance
@@ -857,12 +857,13 @@ This and CI/CD are very important!
 - git pull
 - yarn
 - if puppeteer errors, try stackoverflow.com/questions/66214552/tmp-chromium-error-while-loading-shared-libraries-libnss3-so-cannot-open-sha
+  + ldd node_modules/puppeteer/.local-chromium/linux-XXX/chrome-linux/chrome | grep not
 ** Add a startup script
 - As startup script is executed by root user, need to specify running commands by linux user
 - use 'sudo -i' to switch to root user and test the script below
 - startup script in Custom metadata, key: startup-script, value:
   #! /bin/bash
-  sudo -u linux bash -c 'cd /home/linux/brace-server-worker; mkdir -p ./logs; NOW=$(date +'%Y%m%d%H%M%S'); /home/linux/.nvm/versions/node/v16.16.0/bin/node --experimental-specifier-resolution=node src/index.js > "./logs/log_${NOW}.txt" 2>&1; sudo shutdown -h now'
+  sudo -u linux bash -c 'cd /home/linux/brace-server-worker; mkdir -p ./logs; NOW=$(date +'%Y%m%d%H%M%S'); /home/linux/.nvm/versions/node/v16.18.1/bin/node --experimental-specifier-resolution=node src/index.js > "./logs/log_${NOW}.txt" 2>&1; sudo shutdown -h now'
 - *Check node version as it's hard coded!*
 ** Schedule the instance
 - IAM

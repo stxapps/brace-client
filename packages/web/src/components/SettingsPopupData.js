@@ -385,8 +385,8 @@ class _SettingsPopupDataDelete extends React.PureComponent {
         <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>It may take several minutes to delete all your data.</p>
         <p className={tailwind('mt-6 text-base leading-relaxed text-red-600 blk:text-red-500')}>This action CANNOT be undone.</p>
         <div className={tailwind('mt-6 flex items-center')}>
-          <input onChange={this.onConfirmInputChange} checked={this.state.didCheckConfirm} className={tailwind('h-4 w-4 rounded border-gray-400 text-blue-500 transition duration-150 ease-in-out focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 blk:border-gray-400 blk:bg-gray-900 blk:focus:ring-offset-gray-900')} id="confirm-input" name="confirm-input" type="checkbox" />
-          <label htmlFor="confirm-input" className={tailwind('ml-2 block text-base text-gray-500 blk:text-gray-400')}>Yes, I’m absolutely sure I want to delete all my data.</label>
+          <input onChange={this.onConfirmInputChange} checked={this.state.didCheckConfirm} className={tailwind('h-4 w-4 cursor-pointer rounded border-gray-400 text-blue-500 transition duration-150 ease-in-out focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 blk:border-gray-400 blk:bg-gray-900 blk:focus:ring-offset-gray-900')} id="confirm-input" name="confirm-input" type="checkbox" />
+          <label htmlFor="confirm-input" className={tailwind('ml-2 block cursor-pointer text-base text-gray-500 blk:text-gray-400')}>Yes, I’m absolutely sure I want to delete all my data.</label>
         </div>
         {actionPanel}
       </div>

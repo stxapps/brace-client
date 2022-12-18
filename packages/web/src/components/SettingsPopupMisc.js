@@ -132,7 +132,7 @@ const SettingsPopupMisc = (props) => {
   const customRadioClassNames = themeMode === CUSTOM_MODE ? 'focus:ring-offset-blue-100 blk:focus:ring-gray-800 blk:focus:ring-offset-blue-600' : 'blk:focus:ring-offset-gray-900';
 
   const customTextClassNames = themeMode === CUSTOM_MODE ? 'text-blue-700 blk:text-blue-200' : 'text-gray-500 blk:text-gray-500';
-  const customInputClassNames = themeMode === CUSTOM_MODE ? 'border-gray-300 bg-white text-gray-600 blk:border-blue-200 blk:bg-blue-600 blk:text-blue-100 blk:focus:ring-blue-200' : 'border-gray-300 bg-white text-gray-400 blk:border-gray-600 blk:bg-gray-900 blk:text-gray-500';
+  const customInputClassNames = themeMode === CUSTOM_MODE ? 'cursor-pointer border-gray-300 bg-white text-gray-600 blk:border-blue-200 blk:bg-blue-600 blk:text-blue-100 blk:focus:ring-blue-200' : 'border-gray-300 bg-white text-gray-400 blk:border-gray-600 blk:bg-gray-900 blk:text-gray-500';
 
   let whtTime, blkTime;
   for (const option of customOptions) {

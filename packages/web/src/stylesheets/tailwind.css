@@ -4,7 +4,7 @@
 
 @layer base {
   html {
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
   }
 
   /* clears the 'X' from Internet Explorer */
