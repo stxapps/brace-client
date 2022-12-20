@@ -845,6 +845,20 @@ export const isIPadIPhoneIPod = () => {
   return false;
 };
 
+export const isMobile = () => {
+  const ua = navigator.userAgent;
+  if (/android/i.test(ua)) {
+    return true;
+  }
+  if (isIPadIPhoneIPod()) {
+    return true;
+  }
+  if (/windows phone/i.test(ua)) {
+    return true;
+  }
+  return false;
+};
+
 export const splitOnFirst = (str, sep) => {
   const i = str.indexOf(sep);
   if (i < 0) return [str, ''];

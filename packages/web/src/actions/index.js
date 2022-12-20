@@ -62,7 +62,7 @@ import {
   FEATURE_APPEARANCE, FEATURE_CUSTOM,
 } from '../types/const';
 import {
-  isEqual, isString, isObject, isNumber, throttle, sleep, isIPadIPhoneIPod,
+  isEqual, isString, isObject, isNumber, throttle, sleep, isMobile,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId, getLinkMainIds,
   getUrlFirstChar, separateUrlAndParam, extractUrl, getUserImageUrl, randomDecor,
   isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
@@ -114,7 +114,7 @@ export const init = async (store) => {
     popHistoryState(store);
   });
 
-  if (isIPadIPhoneIPod()) {
+  if (isMobile() && isObject(window.visualViewport)) {
     window.visualViewport.addEventListener('resize', throttle(() => {
       store.dispatch({
         type: UPDATE_WINDOW_SIZE,
