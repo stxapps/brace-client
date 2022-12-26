@@ -257,6 +257,16 @@ export const makeGetListNameEditor = () => {
   );
 };
 
+export const getLayoutType = createSelector(
+  state => state.settings.layoutType,
+  state => state.localSettings.doUseLocalLayout,
+  state => state.localSettings.layoutType,
+  (layoutType, doUseLocalLayout, localLayoutType) => {
+    if (doUseLocalLayout) return localLayoutType;
+    return layoutType;
+  },
+);
+
 export const getValidProduct = createSelector(
   state => state.iap.products,
   products => _getValidProduct(products),
@@ -294,19 +304,39 @@ export const makeGetPinStatus = () => {
   );
 };
 
+export const getRawThemeMode = createSelector(
+  state => state.settings.themeMode,
+  state => state.localSettings.doUseLocalTheme,
+  state => state.localSettings.themeMode,
+  (themeMode, doUseLocalTheme, localThemeMode) => {
+    if (doUseLocalTheme) return localThemeMode;
+    return themeMode;
+  },
+);
+
+export const getRawThemeCustomOptions = createSelector(
+  state => state.settings.themeCustomOptions,
+  state => state.localSettings.doUseLocalTheme,
+  state => state.localSettings.themeCustomOptions,
+  (customOptions, doUseLocalTheme, localCustomOptions) => {
+    if (doUseLocalTheme) return localCustomOptions;
+    return customOptions;
+  },
+);
+
 let lastCustomOptions = null, lastCurHH = null, lastCurMM = null, lastCurMode = null;
 export const getThemeMode = createSelector(
   state => state.user.isUserSignedIn,
   state => getDoEnableExtraFeatures(state),
   state => state.window.themeMode,
   state => {
-    const mode = state.localSettings.themeMode;
+    const mode = getRawThemeMode(state);
     if (mode !== CUSTOM_MODE) {
       [lastCustomOptions, lastCurHH, lastCurMM, lastCurMode] = [null, null, null, null];
       return WHT_MODE;
     }
 
-    const customOptions = state.localSettings.themeCustomOptions;
+    const customOptions = getRawThemeCustomOptions(state);
 
     const d = new Date();
     const curHH = d.getHours();
@@ -357,7 +387,7 @@ export const getThemeMode = createSelector(
     [lastCustomOptions, lastCurHH, lastCurMM, lastCurMode] = [null, null, null, null];
     return WHT_MODE;
   },
-  state => state.localSettings.themeMode,
+  state => getRawThemeMode(state),
   (isSignedIn, doEnable, systemMode, customMode, mode) => {
     if (!isSignedIn || !doEnable) return WHT_MODE;
 

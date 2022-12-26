@@ -32,15 +32,16 @@ import {
   UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
   UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_SETTINGS_VIEW_ID,
-  UPDATE_LAYOUT_TYPE, UPDATE_DELETE_ACTION, UPDATE_LIST_NAMES_MODE,
-  REQUEST_PURCHASE, RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT,
-  RESTORE_PURCHASES_ROLLBACK, REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT,
-  REFRESH_PURCHASES_ROLLBACK, UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS,
-  UPDATE_IAP_PURCHASE_STATUS, UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
-  PIN_LINK, PIN_LINK_COMMIT, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_COMMIT,
-  UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
-  MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, CANCEL_DIED_PINS,
-  UPDATE_SYSTEM_THEME_MODE, UPDATE_THEME, UPDATE_UPDATING_THEME_MODE,
+  UPDATE_DO_USE_LOCAL_LAYOUT, UPDATE_DEFAULT_LAYOUT_TYPE, UPDATE_LOCAL_LAYOUT_TYPE,
+  UPDATE_DELETE_ACTION, UPDATE_LIST_NAMES_MODE, REQUEST_PURCHASE, RESTORE_PURCHASES,
+  RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK, REFRESH_PURCHASES,
+  REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK, UPDATE_IAP_PUBLIC_KEY,
+  UPDATE_IAP_PRODUCT_STATUS, UPDATE_IAP_PURCHASE_STATUS, UPDATE_IAP_RESTORE_STATUS,
+  UPDATE_IAP_REFRESH_STATUS, PIN_LINK, PIN_LINK_COMMIT, PIN_LINK_ROLLBACK, UNPIN_LINK,
+  UNPIN_LINK_COMMIT, UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP,
+  MOVE_PINNED_LINK_ADD_STEP_COMMIT, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
+  CANCEL_DIED_PINS, UPDATE_SYSTEM_THEME_MODE, UPDATE_DO_USE_LOCAL_THEME,
+  UPDATE_DEFAULT_THEME, UPDATE_LOCAL_THEME, UPDATE_UPDATING_THEME_MODE,
   UPDATE_TIME_PICK, UPDATE_IS_24H_FORMAT, UPDATE_CUSTOM_EDITOR, UPDATE_IMAGES,
   UPDATE_CUSTOM_DATA, UPDATE_CUSTOM_DATA_COMMIT, UPDATE_CUSTOM_DATA_ROLLBACK,
   REHYDRATE_STATIC_FILES, CLEAN_UP_STATIC_FILES, CLEAN_UP_STATIC_FILES_COMMIT,
@@ -1256,8 +1257,16 @@ export const cancelDiedSettings = () => async (dispatch, getState) => {
   });
 };
 
-export const updateLayoutType = (type) => {
-  return { type: UPDATE_LAYOUT_TYPE, payload: type };
+export const updateDoUseLocalLayout = (doUse) => {
+  return { type: UPDATE_DO_USE_LOCAL_LAYOUT, payload: doUse };
+};
+
+export const updateLayoutType = (layoutType) => async (dispatch, getState) => {
+  const state = getState();
+  const doUseLocalLayout = state.localSettings.doUseLocalLayout;
+
+  const type = doUseLocalLayout ? UPDATE_LOCAL_LAYOUT_TYPE : UPDATE_DEFAULT_LAYOUT_TYPE;
+  dispatch({ type, payload: layoutType });
 };
 
 export const updateDeleteAction = (deleteAction) => {
@@ -2087,6 +2096,10 @@ export const cleanUpPins = () => async (dispatch, getState) => {
   }
 };
 
+export const updateDoUseLocalTheme = (doUse) => {
+  return { type: UPDATE_DO_USE_LOCAL_THEME, payload: doUse };
+};
+
 export const updateTheme = (mode, customOptions) => async (dispatch, getState) => {
   const state = getState();
   const purchases = state.settings.purchases;
@@ -2097,14 +2110,18 @@ export const updateTheme = (mode, customOptions) => async (dispatch, getState) =
     return;
   }
 
-  dispatch({ type: UPDATE_THEME, payload: { mode, customOptions } });
+  const doUseLocalTheme = state.localSettings.doUseLocalTheme;
+  const type = doUseLocalTheme ? UPDATE_LOCAL_THEME : UPDATE_DEFAULT_THEME;
+  dispatch({ type, payload: { mode, customOptions } });
 };
 
 export const updateUpdatingThemeMode = (updatingThemeMode) => async (
   dispatch, getState
 ) => {
   const state = getState();
-  const customOptions = state.localSettings.themeCustomOptions;
+  const doUseLocalTheme = state.localSettings.doUseLocalTheme;
+  const customOptions = doUseLocalTheme ?
+    state.localSettings.themeCustomOptions : state.settings.themeCustomOptions;
   const is24HFormat = state.window.is24HFormat;
 
   let option;
@@ -2134,7 +2151,10 @@ export const updateTimePick = (hour, minute, period) => {
 
 export const updateThemeCustomOptions = () => async (dispatch, getState) => {
   const state = getState();
-  const customOptions = state.localSettings.themeCustomOptions;
+  const doUseLocalTheme = state.localSettings.doUseLocalTheme;
+  const customOptions = doUseLocalTheme ?
+    state.localSettings.themeCustomOptions : state.settings.themeCustomOptions;
+
   const { updatingThemeMode, hour, minute, period } = state.timePick;
 
   const _themeMode = CUSTOM_MODE, _customOptions = [];

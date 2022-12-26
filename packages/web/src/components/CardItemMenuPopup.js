@@ -13,7 +13,8 @@ import {
   DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
 import {
-  getListNameMap, getPopupLink, getDoEnableExtraFeatures, makeGetPinStatus, getThemeMode,
+  getListNameMap, getPopupLink, getLayoutType, getDoEnableExtraFeatures,
+  makeGetPinStatus, getThemeMode,
 } from '../selectors';
 import {
   copyTextToClipboard, getListNameDisplayName, getAllListNames,
@@ -268,7 +269,7 @@ const makeMapStateToProps = () => {
       listNameMap: getListNameMap(state),
       popupLink,
       pinStatus,
-      layoutType: state.localSettings.layoutType,
+      layoutType: getLayoutType(state),
       themeMode: getThemeMode(state),
       safeAreaWidth: state.window.width,
       safeAreaHeight: state.window.height,

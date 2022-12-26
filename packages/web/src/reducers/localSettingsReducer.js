@@ -1,13 +1,16 @@
 import { REHYDRATE } from 'redux-persist/constants';
 
 import {
-  UPDATE_LAYOUT_TYPE, UPDATE_THEME, UPDATE_CUSTOM_DATA_COMMIT,
-  CLEAN_UP_STATIC_FILES_COMMIT, DELETE_ALL_DATA, RESET_STATE,
+  UPDATE_DO_USE_LOCAL_LAYOUT, UPDATE_LOCAL_LAYOUT_TYPE, UPDATE_DO_USE_LOCAL_THEME,
+  UPDATE_LOCAL_THEME, UPDATE_CUSTOM_DATA_COMMIT, CLEAN_UP_STATIC_FILES_COMMIT,
+  DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import { LAYOUT_CARD, WHT_MODE, BLK_MODE } from '../types/const';
 
 const initialState = {
+  doUseLocalLayout: false,
   layoutType: LAYOUT_CARD,
+  doUseLocalTheme: false,
   themeMode: WHT_MODE,
   themeCustomOptions: [
     { mode: WHT_MODE, startTime: '06:00' },
@@ -22,11 +25,19 @@ const localSettingsReducer = (state = initialState, action) => {
     return { ...initialState, ...action.payload.localSettings };
   }
 
-  if (action.type === UPDATE_LAYOUT_TYPE) {
+  if (action.type === UPDATE_DO_USE_LOCAL_LAYOUT) {
+    return { ...state, doUseLocalLayout: action.payload };
+  }
+
+  if (action.type === UPDATE_LOCAL_LAYOUT_TYPE) {
     return { ...state, layoutType: action.payload };
   }
 
-  if (action.type === UPDATE_THEME) {
+  if (action.type === UPDATE_DO_USE_LOCAL_THEME) {
+    return { ...state, doUseLocalTheme: action.payload };
+  }
+
+  if (action.type === UPDATE_LOCAL_THEME) {
     const { mode, customOptions } = action.payload;
     return { ...state, themeMode: mode, themeCustomOptions: customOptions };
   }

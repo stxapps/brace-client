@@ -7,6 +7,7 @@ import {
   PIN_MENU_POPUP, PIN_LEFT, PIN_RIGHT, PIN_UP, PIN_DOWN, UNPIN,
   SWAP_LEFT, SWAP_RIGHT, LAYOUT_LIST, SM_WIDTH,
 } from '../types/const';
+import { getLayoutType } from '../selectors';
 import { popupBgFMV, popupFMV } from '../types/animConfigs';
 
 import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
@@ -20,7 +21,7 @@ const PinMenuPopup = () => {
     state => state.display.pinMenuPopupPosition
   );
   const selectingLinkId = useSelector(state => state.display.selectingLinkId);
-  const layoutType = useSelector(state => state.localSettings.layoutType);
+  const layoutType = useSelector(state => getLayoutType(state));
   const [popupSize, setPopupSize] = useState(null);
   const popup = useRef(null);
   const cancelBtn = useRef(null);
