@@ -99,6 +99,10 @@ const SettingsPopupMisc = (props) => {
     });
   };
 
+  const isSystemShown = (
+    Platform.OS !== 'android' || (Platform.OS === 'android' && Platform.Version >= 29)
+  );
+
   const switchThumbColorOn = 'rgb(59, 130, 246)';
   const switchThumbColorOff = 'rgb(229, 231, 235)';
   const switchTrackColorOn = Platform.OS === 'android' ? 'rgb(191, 219, 254)' : 'rgb(59, 130, 246)';
@@ -140,7 +144,7 @@ const SettingsPopupMisc = (props) => {
   const whtRBtnInnerClassNames = themeMode === WHT_MODE ? 'bg-white' : 'bg-white blk:bg-gray-900';
 
   let blkBtnClassNames = themeMode === BLK_MODE ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-t-0 border-gray-200 blk:border-gray-700';
-  if (themeMode === SYSTEM_MODE) blkBtnClassNames += ' border-b-0';
+  if (isSystemShown && themeMode === SYSTEM_MODE) blkBtnClassNames += ' border-b-0';
   const blkBtnInnerClassNames = themeMode === BLK_MODE ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
   const blkRBtnClassNames = themeMode === BLK_MODE ? 'bg-blue-600 blk:bg-blue-400' : 'border border-gray-500 bg-white blk:border-gray-500 blk:bg-gray-900';
   const blkRBtnInnerClassNames = themeMode === BLK_MODE ? 'bg-white' : 'bg-white blk:bg-gray-900';
@@ -167,10 +171,6 @@ const SettingsPopupMisc = (props) => {
   }
   whtTime = getFormattedTime(whtTime, is24HFormat).time;
   blkTime = getFormattedTime(blkTime, is24HFormat).time;
-
-  const isSystemShown = (
-    Platform.OS !== 'android' || (Platform.OS === 'android' && Platform.Version >= 29)
-  );
 
   let systemText = (
     <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Choose appearance to be <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>Light</Text>, <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>Dark</Text>, <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>System</Text> (uses your device's setting), or <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>Custom</Text> (schedule times to change appearance automatically). For Sync, your choosing is synced across your devices. For Device, you can choose and use the setting for this device only.</Text>
