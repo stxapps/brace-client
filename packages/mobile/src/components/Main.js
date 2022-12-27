@@ -8,7 +8,7 @@ import {
   PC_100, PC_50, PC_33, SHOW_BLANK, SHOW_COMMANDS, SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
   IMAGES,
 } from '../types/const';
-import { getLinks } from '../selectors';
+import { getLinks, getLayoutType } from '../selectors';
 
 import { withSafeAreaContext } from '.';
 
@@ -151,7 +151,7 @@ const mapStateToProps = (state, props) => {
     didFetch: state.display.didFetch,
     didFetchSettings: state.display.didFetchSettings,
     fetchedListNames: state.display.fetchedListNames,
-    layoutType: state.localSettings.layoutType,
+    layoutType: getLayoutType(state),
   };
 };
 

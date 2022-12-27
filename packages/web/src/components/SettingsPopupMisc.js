@@ -181,13 +181,13 @@ const SettingsPopupMisc = (props) => {
         <p className={tailwind('mt-2.5 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Choose appearance to be <span className={tailwind('font-semibold blk:text-gray-300')}>Light</span>, <span className={tailwind('font-semibold blk:text-gray-300')}>Dark</span>, <span className={tailwind('font-semibold blk:text-gray-300')}>System</span> (uses your device's setting), or <span className={tailwind('font-semibold blk:text-gray-300')}>Custom</span> (schedule times to change appearance automatically). For Sync, your choosing is synced across your devices. For Device, you can choose and use the setting for this device only.</p>
         <div className={tailwind('mx-auto mt-2.5 w-full max-w-sm rounded-md bg-white shadow-sm blk:bg-gray-900')}>
           <div className={tailwind('relative flex justify-evenly')}>
-            <button onClick={() => onDoUseLocalThemeBtnClick(false)} className={tailwind(`relative w-full rounded-tl-md border border-b-0 border-gray-300 bg-white py-4 text-sm font-medium focus:outline-none focus-visible:ring focus-visible:ring-inset blk:border-gray-700 blk:bg-gray-900 ${themeDefaultBtnClassNames}`)} type="button">
+            <button onClick={() => onDoUseLocalThemeBtnClick(false)} className={tailwind(`relative flex-shrink flex-grow rounded-tl-md border border-b-0 border-gray-300 bg-white py-4 text-center text-sm font-medium focus:outline-none focus-visible:ring focus-visible:ring-inset blk:border-gray-700 blk:bg-gray-900 ${themeDefaultBtnClassNames}`)} type="button">
               Sync
-              {!doUseLocalTheme && <div className={tailwind('absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 blk:bg-blue-300')}></div>}
+              {!doUseLocalTheme && <div className={tailwind('absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 blk:bg-blue-300')} />}
             </button>
-            <button onClick={() => onDoUseLocalThemeBtnClick(true)} className={tailwind(`relative w-full rounded-tr-md border border-l-0 border-b-0 border-gray-300 bg-white py-4 text-sm font-medium focus:outline-none focus-visible:ring focus-visible:ring-inset blk:border-gray-700 blk:bg-gray-900 ${themeLocalBtnClassNames}`)} type="button">
+            <button onClick={() => onDoUseLocalThemeBtnClick(true)} className={tailwind(`relative flex-shrink flex-grow rounded-tr-md border border-l-0 border-b-0 border-gray-300 bg-white py-4 text-center text-sm font-medium focus:outline-none focus-visible:ring focus-visible:ring-inset blk:border-gray-700 blk:bg-gray-900 ${themeLocalBtnClassNames}`)} type="button">
               Device
-              {doUseLocalTheme && <div className={tailwind('absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 blk:bg-blue-300')}></div>}
+              {doUseLocalTheme && <div className={tailwind('absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 blk:bg-blue-300')} />}
             </button>
           </div>
           <button onClick={() => onThemeInputChange(WHT_MODE)} className={tailwind(`group flex w-full border p-4 focus:outline-none ${whtBtnClassNames}`)}>
@@ -242,13 +242,13 @@ const SettingsPopupMisc = (props) => {
           <p id="layout-type-option-description" className={tailwind('mt-2.5 flex-shrink flex-grow text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Choose whether your saved links are displayed in Cards view or in List view. For Sync, your choosing is synced across your devices. For Device, you can choose and use the setting for this device only.</p>
           <div className={tailwind('mx-auto mt-2.5 w-full max-w-48 rounded-md bg-white shadow-sm blk:bg-gray-900 sm:mt-1 sm:w-48 sm:max-w-none sm:flex-shrink-0 sm:flex-grow-0')}>
             <div className={tailwind('relative flex justify-evenly')}>
-              <button onClick={() => onDoUseLocalLayoutBtnClick(false)} className={tailwind(`relative w-full rounded-tl-md border border-b-0 border-gray-300 bg-white py-4 text-sm font-medium focus:outline-none focus-visible:ring focus-visible:ring-inset blk:border-gray-700 blk:bg-gray-900 ${layoutDefaultBtnClassNames}`)} type="button">
+              <button onClick={() => onDoUseLocalLayoutBtnClick(false)} className={tailwind(`relative flex-shrink flex-grow rounded-tl-md border border-b-0 border-gray-300 bg-white py-4 text-center text-sm font-medium focus:outline-none focus-visible:ring focus-visible:ring-inset blk:border-gray-700 blk:bg-gray-900 ${layoutDefaultBtnClassNames}`)} type="button">
                 Sync
-                {!doUseLocalLayout && <div className={tailwind('absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 blk:bg-blue-300')}></div>}
+                {!doUseLocalLayout && <div className={tailwind('absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 blk:bg-blue-300')} />}
               </button>
-              <button onClick={() => onDoUseLocalLayoutBtnClick(true)} className={tailwind(`relative w-full rounded-tr-md border border-l-0 border-b-0 border-gray-300 bg-white py-4 text-sm font-medium focus:outline-none focus-visible:ring focus-visible:ring-inset blk:border-gray-700 blk:bg-gray-900 ${layoutLocalBtnClassNames}`)} type="button">
+              <button onClick={() => onDoUseLocalLayoutBtnClick(true)} className={tailwind(`relative flex-shrink flex-grow rounded-tr-md border border-l-0 border-b-0 border-gray-300 bg-white py-4 text-center text-sm font-medium focus:outline-none focus-visible:ring focus-visible:ring-inset blk:border-gray-700 blk:bg-gray-900 ${layoutLocalBtnClassNames}`)} type="button">
                 Device
-                {doUseLocalLayout && <div className={tailwind('absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 blk:bg-blue-300')}></div>}
+                {doUseLocalLayout && <div className={tailwind('absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 blk:bg-blue-300')} />}
               </button>
             </div>
             <button onClick={() => onLayoutTypeInputChange(LAYOUT_CARD)} className={tailwind(`group flex w-full border p-4 focus:outline-none ${layoutCardBtnClassNames}`)}>

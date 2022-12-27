@@ -7,7 +7,7 @@ import {
   DELETE_LIST_NAMES, UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS_COMMIT, CANCEL_DIED_SETTINGS,
   REQUEST_PURCHASE_COMMIT, RESTORE_PURCHASES_COMMIT, REFRESH_PURCHASES_COMMIT,
-  DELETE_ALL_DATA, RESET_STATE,
+  UPDATE_DEFAULT_LAYOUT_TYPE, UPDATE_DEFAULT_THEME, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import { MY_LIST, TRASH, ARCHIVE, SWAP_LEFT, SWAP_RIGHT, VALID } from '../types/const';
 import {
@@ -277,6 +277,15 @@ const settingsReducer = (state = initialState, action) => {
     return loop(
       newState, Cmd.run(tryUpdateSettings(), { args: [Cmd.dispatch, Cmd.getState] })
     );
+  }
+
+  if (action.type === UPDATE_DEFAULT_LAYOUT_TYPE) {
+    return { ...state, layoutType: action.payload };
+  }
+
+  if (action.type === UPDATE_DEFAULT_THEME) {
+    const { mode, customOptions } = action.payload;
+    return { ...state, themeMode: mode, themeCustomOptions: customOptions };
   }
 
   if (action.type === DELETE_ALL_DATA || action.type === RESET_STATE) {

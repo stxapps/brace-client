@@ -4,13 +4,16 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import {
   updateDoExtractContents, updateDoDeleteOldLinksInTrash, updateDoDescendingOrder,
-  updateLayoutType, updateTheme, updateUpdatingThemeMode, updatePopup,
+  updateDoUseLocalLayout, updateLayoutType, updateDoUseLocalTheme, updateTheme,
+  updateUpdatingThemeMode, updatePopup,
 } from '../actions';
 import {
   DOMAIN_NAME, HASH_PRIVACY, LAYOUT_CARD, LAYOUT_LIST, WHT_MODE, BLK_MODE, SYSTEM_MODE,
   CUSTOM_MODE, TIME_PICK_POPUP,
 } from '../types/const';
-import { getThemeMode } from '../selectors';
+import {
+  getLayoutType, getRawThemeMode, getRawThemeCustomOptions, getThemeMode,
+} from '../selectors';
 import { getFormattedTime } from '../utils';
 
 import { useTailwind } from '.';
@@ -23,9 +26,11 @@ const SettingsPopupMisc = (props) => {
     state => state.settings.doDeleteOldLinksInTrash
   );
   const doDescendingOrder = useSelector(state => state.settings.doDescendingOrder);
-  const layoutType = useSelector(state => state.localSettings.layoutType);
-  const themeMode = useSelector(state => state.localSettings.themeMode);
-  const customOptions = useSelector(state => state.localSettings.themeCustomOptions);
+  const doUseLocalLayout = useSelector(state => state.localSettings.doUseLocalLayout);
+  const doUseLocalTheme = useSelector(state => state.localSettings.doUseLocalTheme);
+  const layoutType = useSelector(state => getLayoutType(state));
+  const themeMode = useSelector(state => getRawThemeMode(state));
+  const customOptions = useSelector(state => getRawThemeCustomOptions(state));
   const is24HFormat = useSelector(state => state.window.is24HFormat);
   const derivedThemeMode = useSelector(state => getThemeMode(state));
   const whtTimeBtn = useRef(null);
@@ -50,8 +55,16 @@ const SettingsPopupMisc = (props) => {
     dispatch(updateDoDescendingOrder(doDescend));
   };
 
+  const onDoUseLocalLayoutBtnClick = (doUse) => {
+    dispatch(updateDoUseLocalLayout(doUse));
+  };
+
   const onLayoutTypeInputChange = (value) => {
     dispatch(updateLayoutType(value));
+  };
+
+  const onDoUseLocalThemeBtnClick = (doUse) => {
+    dispatch(updateDoUseLocalTheme(doUse));
   };
 
   const onThemeInputChange = (value) => {
@@ -92,42 +105,57 @@ const SettingsPopupMisc = (props) => {
   const switchTrackColorOff = 'rgb(156, 163, 175)';
   const switchIosTrackColorOff = derivedThemeMode === BLK_MODE ? 'rgb(55, 65, 81)' : 'rgb(243, 244, 246)';
 
-  const ascendingBtnClassNames = !doDescendingOrder ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
+  let ascendingBtnClassNames = !doDescendingOrder ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
+  if (doDescendingOrder) ascendingBtnClassNames += ' border-b-0';
   const ascendingBtnInnerClassNames = !doDescendingOrder ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
-  const ascendingRBtnClassNames = !doDescendingOrder ? 'border-blue-600 blk:border-blue-300' : 'border-gray-300 blk:border-gray-600';
-  const ascendingRBtnInnerClassNames = !doDescendingOrder ? 'bg-blue-600 blk:bg-blue-300' : 'bg-gray-300 blk:bg-gray-900';
+  const ascendingRBtnClassNames = !doDescendingOrder ? 'bg-blue-600 blk:bg-blue-400' : 'border border-gray-500 bg-white blk:border-gray-500 blk:bg-gray-900';
+  const ascendingRBtnInnerClassNames = !doDescendingOrder ? 'bg-white' : 'bg-white blk:bg-gray-900';
 
-  const descendingBtnClassNames = doDescendingOrder ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
+  const descendingBtnClassNames = doDescendingOrder ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-t-0 border-gray-200 blk:border-gray-700';
   const descendingBtnInnerClassNames = doDescendingOrder ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
-  const descendingRBtnClassNames = doDescendingOrder ? 'border-blue-600 blk:border-blue-300' : 'border-gray-300 blk:border-gray-600';
-  const descendingRBtnInnerClassNames = doDescendingOrder ? 'bg-blue-600 blk:bg-blue-300' : 'bg-gray-300 blk:bg-gray-900';
+  const descendingRBtnClassNames = doDescendingOrder ? 'bg-blue-600 blk:bg-blue-400' : 'border border-gray-500 bg-white blk:border-gray-500 blk:bg-gray-900';
+  const descendingRBtnInnerClassNames = doDescendingOrder ? 'bg-white' : 'bg-white blk:bg-gray-900';
 
-  const layoutCardBtnClassNames = layoutType === LAYOUT_CARD ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
+  const layoutDefaultBtnClassNames = !doUseLocalLayout ? 'text-gray-700 blk:text-gray-200' : 'text-gray-500 blk:text-gray-400';
+  const layoutLocalBtnClassNames = doUseLocalLayout ? 'text-gray-700 blk:text-gray-200' : 'text-gray-500 blk:text-gray-400';
+
+  let layoutCardBtnClassNames = layoutType === LAYOUT_CARD ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
+  if (layoutType === LAYOUT_LIST) layoutCardBtnClassNames += ' border-b-0';
   const layoutCardBtnInnerClassNames = layoutType === LAYOUT_CARD ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
-  const layoutCardRBtnClassNames = layoutType === LAYOUT_CARD ? 'border-blue-600 blk:border-blue-300' : 'border-gray-300 blk:border-gray-600';
-  const layoutCardRBtnInnerClassNames = layoutType === LAYOUT_CARD ? 'bg-blue-600 blk:bg-blue-300' : 'bg-gray-300 blk:bg-gray-900';
+  const layoutCardRBtnClassNames = layoutType === LAYOUT_CARD ? 'bg-blue-600 blk:bg-blue-400' : 'border border-gray-500 bg-white blk:border-gray-500 blk:bg-gray-900';
+  const layoutCardRBtnInnerClassNames = layoutType === LAYOUT_CARD ? 'bg-white' : 'bg-white blk:bg-gray-900';
 
-  const layoutListBtnClassNames = layoutType === LAYOUT_LIST ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
+  const layoutListBtnClassNames = layoutType === LAYOUT_LIST ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-t-0 border-gray-200 blk:border-gray-700';
   const layoutListBtnInnerClassNames = layoutType === LAYOUT_LIST ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
-  const layoutListRBtnClassNames = layoutType === LAYOUT_LIST ? 'border-blue-600 blk:border-blue-300' : 'border-gray-300 blk:border-gray-600';
-  const layoutListRBtnInnerClassNames = layoutType === LAYOUT_LIST ? 'bg-blue-600 blk:bg-blue-300' : 'bg-gray-300 blk:bg-gray-900';
+  const layoutListRBtnClassNames = layoutType === LAYOUT_LIST ? 'bg-blue-600 blk:bg-blue-400' : 'border border-gray-500 bg-white blk:border-gray-500 blk:bg-gray-900';
+  const layoutListRBtnInnerClassNames = layoutType === LAYOUT_LIST ? 'bg-white' : 'bg-white blk:bg-gray-900';
 
-  const whtBtnClassNames = themeMode === WHT_MODE ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
+  const themeDefaultBtnClassNames = !doUseLocalTheme ? 'text-gray-700 blk:text-gray-200' : 'text-gray-500 blk:text-gray-400';
+  const themeLocalBtnClassNames = doUseLocalTheme ? 'text-gray-700 blk:text-gray-200' : 'text-gray-500 blk:text-gray-400';
+
+  let whtBtnClassNames = themeMode === WHT_MODE ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
+  if (themeMode === BLK_MODE) whtBtnClassNames += ' border-b-0';
   const whtBtnInnerClassNames = themeMode === WHT_MODE ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
-  const whtRBtnClassNames = themeMode === WHT_MODE ? 'border-blue-600 blk:border-blue-300' : 'border-gray-300 blk:border-gray-600';
-  const whtRBtnInnerClassNames = themeMode === WHT_MODE ? 'bg-blue-600 blk:bg-blue-300' : 'bg-gray-300 blk:bg-gray-900';
-  const blkBtnClassNames = themeMode === BLK_MODE ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
+  const whtRBtnClassNames = themeMode === WHT_MODE ? 'bg-blue-600 blk:bg-blue-400' : 'border border-gray-500 bg-white blk:border-gray-500 blk:bg-gray-900';
+  const whtRBtnInnerClassNames = themeMode === WHT_MODE ? 'bg-white' : 'bg-white blk:bg-gray-900';
+
+  let blkBtnClassNames = themeMode === BLK_MODE ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-t-0 border-gray-200 blk:border-gray-700';
+  if (themeMode === SYSTEM_MODE) blkBtnClassNames += ' border-b-0';
   const blkBtnInnerClassNames = themeMode === BLK_MODE ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
-  const blkRBtnClassNames = themeMode === BLK_MODE ? 'border-blue-600 blk:border-blue-300' : 'border-gray-300 blk:border-gray-600';
-  const blkRBtnInnerClassNames = themeMode === BLK_MODE ? 'bg-blue-600 blk:bg-blue-300' : 'bg-gray-300 blk:bg-gray-900';
-  const systemBtnClassNames = themeMode === SYSTEM_MODE ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
+  const blkRBtnClassNames = themeMode === BLK_MODE ? 'bg-blue-600 blk:bg-blue-400' : 'border border-gray-500 bg-white blk:border-gray-500 blk:bg-gray-900';
+  const blkRBtnInnerClassNames = themeMode === BLK_MODE ? 'bg-white' : 'bg-white blk:bg-gray-900';
+
+  let systemBtnClassNames = themeMode === SYSTEM_MODE ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-t-0 border-gray-200 blk:border-gray-700';
+  if (themeMode === CUSTOM_MODE) systemBtnClassNames += ' border-b-0';
   const systemBtnInnerClassNames = themeMode === SYSTEM_MODE ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
-  const systemRBtnClassNames = themeMode === SYSTEM_MODE ? 'border-blue-600 blk:border-blue-300' : 'border-gray-300 blk:border-gray-600';
-  const systemRBtnInnerClassNames = themeMode === SYSTEM_MODE ? 'bg-blue-600 blk:bg-blue-300' : 'bg-gray-300 blk:bg-gray-900';
-  const customBtnClassNames = themeMode === CUSTOM_MODE ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
+  const systemRBtnClassNames = themeMode === SYSTEM_MODE ? 'bg-blue-600 blk:bg-blue-400' : 'border border-gray-500 bg-white blk:border-gray-500 blk:bg-gray-900';
+  const systemRBtnInnerClassNames = themeMode === SYSTEM_MODE ? 'bg-white' : 'bg-white blk:bg-gray-900';
+
+  const customBtnClassNames = themeMode === CUSTOM_MODE ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-t-0 border-gray-200 blk:border-gray-700';
   const customBtnInnerClassNames = themeMode === CUSTOM_MODE ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
-  const customRBtnClassNames = themeMode === CUSTOM_MODE ? 'border-blue-600 blk:border-blue-300' : 'border-gray-300 blk:border-gray-600';
-  const customRBtnInnerClassNames = themeMode === CUSTOM_MODE ? 'bg-blue-600 blk:bg-blue-300' : 'bg-gray-300 blk:bg-gray-900';
+  const customRBtnClassNames = themeMode === CUSTOM_MODE ? 'bg-blue-600 blk:bg-blue-400' : 'border border-gray-500 bg-white blk:border-gray-500 blk:bg-gray-900';
+  const customRBtnInnerClassNames = themeMode === CUSTOM_MODE ? 'bg-white' : 'bg-white blk:bg-gray-900';
+
   const customTextClassNames = themeMode === CUSTOM_MODE ? 'text-blue-700 blk:text-blue-200' : 'text-gray-500 blk:text-gray-400';
   const customInputClassNames = themeMode === CUSTOM_MODE ? 'border-gray-300 bg-white blk:border-blue-300 blk:bg-blue-600' : 'border-gray-300 bg-white blk:border-gray-600 blk:bg-gray-900';
   const customInputInnerClassNames = themeMode === CUSTOM_MODE ? 'text-gray-600 blk:text-blue-200' : 'text-gray-400 blk:text-gray-500';
@@ -145,11 +173,11 @@ const SettingsPopupMisc = (props) => {
   );
 
   let systemText = (
-    <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Choose appearance to be <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>Light</Text>, <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>Dark</Text>, <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>System</Text> (uses your device's setting), or <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>Custom</Text> (schedule times to change appearance automatically). This setting is not synced so you can have a different appearance for each of your devices.</Text>
+    <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Choose appearance to be <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>Light</Text>, <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>Dark</Text>, <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>System</Text> (uses your device's setting), or <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>Custom</Text> (schedule times to change appearance automatically). For Sync, your choosing is synced across your devices. For Device, you can choose and use the setting for this device only.</Text>
   );
   if (!isSystemShown) {
     systemText = (
-      <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Choose appearance to be <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>Light</Text>, <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>Dark</Text>, or <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>Custom</Text> (schedule times to change appearance automatically). This setting is not synced so you can have a different appearance for each of your devices.</Text>
+      <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Choose appearance to be <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>Light</Text>, <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>Dark</Text>, or <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>Custom</Text> (schedule times to change appearance automatically). For Sync, your choosing is synced across your devices. For Device, you can choose and use the setting for this device only.</Text>
     );
   }
 
@@ -166,11 +194,21 @@ const SettingsPopupMisc = (props) => {
         {systemText}
         <View style={tailwind('mt-2.5 w-full items-center justify-start')}>
           <View style={tailwind('w-full max-w-sm rounded-md bg-white shadow-sm blk:bg-gray-900')}>
+            <View style={tailwind('flex-row justify-evenly')}>
+              <TouchableOpacity onPress={() => onDoUseLocalThemeBtnClick(false)} style={tailwind('flex-shrink flex-grow rounded-tl-md border border-b-0 border-gray-300 bg-white py-4 blk:border-gray-700 blk:bg-gray-900')}>
+                <Text style={tailwind(`text-center text-sm font-medium ${themeDefaultBtnClassNames}`)}>Sync</Text>
+                {!doUseLocalTheme && <View style={tailwind('absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 blk:bg-blue-300')} />}
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => onDoUseLocalThemeBtnClick(true)} style={tailwind('flex-shrink flex-grow rounded-tr-md border border-l-0 border-b-0 border-gray-300 bg-white py-4 blk:border-gray-700 blk:bg-gray-900')}>
+                <Text style={tailwind(`text-center text-sm font-medium ${themeLocalBtnClassNames}`)}>Device</Text>
+                {doUseLocalTheme && <View style={tailwind('absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 blk:bg-blue-300')} />}
+              </TouchableOpacity>
+            </View>
             <TouchableOpacity onPress={() => onThemeInputChange(WHT_MODE)}>
-              <View style={tailwind(`flex-row rounded-tl-md rounded-tr-md border p-4 ${whtBtnClassNames}`)}>
+              <View style={tailwind(`flex-row border p-4 ${whtBtnClassNames}`)}>
                 <View style={tailwind('h-5 flex-row items-center')}>
-                  <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full border bg-transparent ${whtRBtnClassNames}`)}>
-                    <View style={tailwind(`h-3 w-3 rounded-full ${whtRBtnInnerClassNames}`)} />
+                  <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full ${whtRBtnClassNames}`)}>
+                    <View style={tailwind(`h-1.5 w-1.5 rounded-full ${whtRBtnInnerClassNames}`)} />
                   </View>
                 </View>
                 <Text style={tailwind(`ml-3 text-sm font-medium leading-5 ${whtBtnInnerClassNames}`)}>Light</Text>
@@ -179,8 +217,8 @@ const SettingsPopupMisc = (props) => {
             <TouchableOpacity onPress={() => onThemeInputChange(BLK_MODE)}>
               <View style={tailwind(`flex-row border p-4 ${blkBtnClassNames}`)}>
                 <View style={tailwind('h-5 flex-row items-center')}>
-                  <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full border bg-transparent ${blkRBtnClassNames}`)}>
-                    <View style={tailwind(`h-3 w-3 rounded-full ${blkRBtnInnerClassNames}`)} />
+                  <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full ${blkRBtnClassNames}`)}>
+                    <View style={tailwind(`h-1.5 w-1.5 rounded-full ${blkRBtnInnerClassNames}`)} />
                   </View>
                 </View>
                 <Text style={tailwind(`ml-3 text-sm font-medium leading-5 ${blkBtnInnerClassNames}`)}>Dark</Text>
@@ -189,8 +227,8 @@ const SettingsPopupMisc = (props) => {
             {isSystemShown && <TouchableOpacity onPress={() => onThemeInputChange(SYSTEM_MODE)}>
               <View style={tailwind(`flex-row border p-4 ${systemBtnClassNames}`)}>
                 <View style={tailwind('h-5 flex-row items-center')}>
-                  <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full border bg-transparent ${systemRBtnClassNames}`)}>
-                    <View style={tailwind(`h-3 w-3 rounded-full ${systemRBtnInnerClassNames}`)} />
+                  <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full ${systemRBtnClassNames}`)}>
+                    <View style={tailwind(`h-1.5 w-1.5 rounded-full ${systemRBtnInnerClassNames}`)} />
                   </View>
                 </View>
                 <Text style={tailwind(`ml-3 text-sm font-medium leading-5 ${systemBtnInnerClassNames}`)}>System</Text>
@@ -199,8 +237,8 @@ const SettingsPopupMisc = (props) => {
             <TouchableOpacity onPress={() => onThemeInputChange(CUSTOM_MODE)}>
               <View style={tailwind(`flex-row rounded-bl-md rounded-br-md border p-4 ${customBtnClassNames}`)}>
                 <View style={tailwind('h-5 flex-row items-center')}>
-                  <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full border bg-transparent ${customRBtnClassNames}`)}>
-                    <View style={tailwind(`h-3 w-3 rounded-full ${customRBtnInnerClassNames}`)} />
+                  <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full ${customRBtnClassNames}`)}>
+                    <View style={tailwind(`h-1.5 w-1.5 rounded-full ${customRBtnInnerClassNames}`)} />
                   </View>
                 </View>
                 <View style={tailwind('ml-3')}>
@@ -233,15 +271,25 @@ const SettingsPopupMisc = (props) => {
         <Text style={tailwind('text-base font-medium leading-4 text-gray-800 blk:text-gray-100')}>Layout View</Text>
         <View style={tailwind('sm:flex-row sm:items-start sm:justify-between')}>
           <View style={tailwind('mt-2.5 sm:flex-shrink sm:flex-grow')}>
-            <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Choose whether your saved links are displayed in Cards view or in List view. This setting is not synced so you can have a different layout for each of your devices.</Text>
+            <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Choose whether your saved links are displayed in Cards view or in List view. For Sync, your choosing is synced across your devices. For Device, you can choose and use the setting for this device only.</Text>
           </View>
           <View style={tailwind('mt-2.5 items-center sm:ml-4 sm:flex-shrink-0 sm:flex-grow-0')}>
             <View style={tailwind('w-full max-w-48 rounded-md bg-white shadow-sm blk:bg-gray-900 sm:w-48')}>
+              <View style={tailwind('flex-row justify-evenly')}>
+                <TouchableOpacity onPress={() => onDoUseLocalLayoutBtnClick(false)} style={tailwind('flex-shrink flex-grow rounded-tl-md border border-b-0 border-gray-300 bg-white py-4 blk:border-gray-700 blk:bg-gray-900')}>
+                  <Text style={tailwind(`text-center text-sm font-medium ${layoutDefaultBtnClassNames}`)}>Sync</Text>
+                  {!doUseLocalLayout && <View style={tailwind('absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 blk:bg-blue-300')} />}
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => onDoUseLocalLayoutBtnClick(true)} style={tailwind('flex-shrink flex-grow rounded-tr-md border border-l-0 border-b-0 border-gray-300 bg-white py-4 blk:border-gray-700 blk:bg-gray-900')}>
+                  <Text style={tailwind(`text-center text-sm font-medium ${layoutLocalBtnClassNames}`)}>Device</Text>
+                  {doUseLocalLayout && <View style={tailwind('absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 blk:bg-blue-300')} />}
+                </TouchableOpacity>
+              </View>
               <TouchableOpacity onPress={() => onLayoutTypeInputChange(LAYOUT_CARD)}>
-                <View style={tailwind(`flex-row rounded-tl-md rounded-tr-md border p-4 ${layoutCardBtnClassNames}`)}>
+                <View style={tailwind(`flex-row border p-4 ${layoutCardBtnClassNames}`)}>
                   <View style={tailwind('h-5 flex-row items-center')}>
-                    <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full border bg-transparent ${layoutCardRBtnClassNames}`)}>
-                      <View style={tailwind(`h-3 w-3 rounded-full ${layoutCardRBtnInnerClassNames}`)} />
+                    <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full ${layoutCardRBtnClassNames}`)}>
+                      <View style={tailwind(`h-1.5 w-1.5 rounded-full ${layoutCardRBtnInnerClassNames}`)} />
                     </View>
                   </View>
                   <Text style={tailwind(`ml-3 text-sm font-medium leading-5 ${layoutCardBtnInnerClassNames}`)}>Cards view</Text>
@@ -250,8 +298,8 @@ const SettingsPopupMisc = (props) => {
               <TouchableOpacity onPress={() => onLayoutTypeInputChange(LAYOUT_LIST)}>
                 <View style={tailwind(`flex-row rounded-bl-md rounded-br-md border p-4 ${layoutListBtnClassNames}`)}>
                   <View style={tailwind('h-5 flex-row items-center')}>
-                    <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full border bg-transparent ${layoutListRBtnClassNames}`)}>
-                      <View style={tailwind(`h-3 w-3 rounded-full ${layoutListRBtnInnerClassNames}`)} />
+                    <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full ${layoutListRBtnClassNames}`)}>
+                      <View style={tailwind(`h-1.5 w-1.5 rounded-full ${layoutListRBtnInnerClassNames}`)} />
                     </View>
                   </View>
                   <Text style={tailwind(`ml-3 text-sm font-medium leading-5 ${layoutListBtnInnerClassNames}`)}>List View</Text>
@@ -272,8 +320,8 @@ const SettingsPopupMisc = (props) => {
               <TouchableOpacity onPress={() => onDoDescendingInputChange('ascending')} style={tailwind('')}>
                 <View style={tailwind(`flex-row rounded-tl-md rounded-tr-md border p-4 ${ascendingBtnClassNames}`)}>
                   <View style={tailwind('h-5 flex-row items-center')}>
-                    <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full border bg-transparent ${ascendingRBtnClassNames}`)}>
-                      <View style={tailwind(`h-3 w-3 rounded-full ${ascendingRBtnInnerClassNames}`)} />
+                    <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full ${ascendingRBtnClassNames}`)}>
+                      <View style={tailwind(`h-1.5 w-1.5 rounded-full ${ascendingRBtnInnerClassNames}`)} />
                     </View>
                   </View>
                   <Text style={tailwind(`ml-3 text-sm font-medium leading-5 ${ascendingBtnInnerClassNames}`)}>Ascending order</Text>
@@ -282,8 +330,8 @@ const SettingsPopupMisc = (props) => {
               <TouchableOpacity onPress={() => onDoDescendingInputChange('descending')} style={tailwind('')}>
                 <View style={tailwind(`flex-row rounded-bl-md rounded-br-md border p-4 ${descendingBtnClassNames}`)}>
                   <View style={tailwind('h-5 flex-row items-center')}>
-                    <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full border bg-transparent ${descendingRBtnClassNames}`)}>
-                      <View style={tailwind(`h-3 w-3 rounded-full ${descendingRBtnInnerClassNames}`)} />
+                    <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full ${descendingRBtnClassNames}`)}>
+                      <View style={tailwind(`h-1.5 w-1.5 rounded-full ${descendingRBtnInnerClassNames}`)} />
                     </View>
                   </View>
                   <Text style={tailwind(`ml-3 text-sm font-medium leading-5 ${descendingBtnInnerClassNames}`)}>Descending order</Text>
