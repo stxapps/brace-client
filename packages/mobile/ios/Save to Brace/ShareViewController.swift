@@ -60,7 +60,9 @@ class ShareViewController: UIViewController {
         }
         return
       }
-
+    }
+    // For all attachments, find url first then text. Firefox provides 2 attachments: first text, second url.
+    for (_, attachment) in attachments.enumerated() {
       if attachment.hasItemConformingToTypeIdentifier(textContentType) {
         attachment.loadItem(forTypeIdentifier: textContentType, options: nil) { [unowned self] data, error in
           if let text = data as? String, error == nil {
