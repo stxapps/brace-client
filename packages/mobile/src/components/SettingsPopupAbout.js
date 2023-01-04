@@ -57,7 +57,7 @@ const SettingsPopupAbout = (props) => {
         </TouchableOpacity>
       </View>
       <View style={tailwind('items-start justify-start pt-16 lg:flex-row lg:justify-between')}>
-        <Text style={tailwind('text-base font-normal text-gray-400 blk:text-gray-500')}>© 2022 <Text onPress={() => Linking.openURL('https://www.stxapps.com')} style={tailwind('text-base font-normal text-gray-400 blk:text-gray-500')}>STX Apps Co., Ltd.</Text></Text>
+        <Text style={tailwind('text-base font-normal text-gray-400 blk:text-gray-500')}>© 2023 <Text onPress={() => Linking.openURL('https://www.stxapps.com')} style={tailwind('text-base font-normal text-gray-400 blk:text-gray-500')}>STX Apps Co., Ltd.</Text></Text>
         <Text style={tailwind('text-base font-normal text-gray-400 blk:text-gray-500')}>Crafted with ❤ and ℅ for a better web</Text>
       </View>
     </View>

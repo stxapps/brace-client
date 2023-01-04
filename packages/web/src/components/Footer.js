@@ -34,7 +34,7 @@ class Footer extends React.PureComponent {
           </a>
         </div>
         <div className={tailwind('pt-16 md:flex md:justify-between')}>
-          <p className={tailwind('text-left text-base text-gray-400')}>©2022 <a className={tailwind('rounded-sm text-gray-400 hover:text-gray-500 focus:outline-none focus:ring')} href="https://www.stxapps.com" target="_blank" rel="noreferrer">STX Apps Co., Ltd.</a></p>
+          <p className={tailwind('text-left text-base text-gray-400')}>©2023 <a className={tailwind('rounded-sm text-gray-400 hover:text-gray-500 focus:outline-none focus:ring')} href="https://www.stxapps.com" target="_blank" rel="noreferrer">STX Apps Co., Ltd.</a></p>
           <p className={tailwind('text-left text-base text-gray-400')}>Crafted with ❤ and ℅ for a better web</p>
         </div>
       </footer>
