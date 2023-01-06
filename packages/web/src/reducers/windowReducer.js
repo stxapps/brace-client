@@ -22,6 +22,7 @@ const initialState = {
 const windowReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
+    // eslint-disable-next-line no-shadow
     const { windowWidth, windowHeight, visualWidth, visualHeight } = getWindowSize();
     const newState = {
       ...initialState,
