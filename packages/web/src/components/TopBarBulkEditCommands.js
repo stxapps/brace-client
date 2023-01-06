@@ -9,7 +9,7 @@ import {
   CONFIRM_DELETE_POPUP, LIST_NAMES_POPUP, MY_LIST, ARCHIVE, TRASH,
   DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
-import { getListNameMap, getThemeMode } from '../selectors';
+import { getListNameMap, getSafeAreaWidth, getThemeMode } from '../selectors';
 import { getListNameDisplayName, getAllListNames } from '../utils';
 import { popupFMV } from '../types/animConfigs';
 
@@ -237,7 +237,7 @@ const mapStateToProps = (state, props) => {
     listNameMap: getListNameMap(state),
     selectedLinkIds: state.display.selectedLinkIds,
     themeMode: getThemeMode(state),
-    safeAreaWidth: state.window.width,
+    safeAreaWidth: getSafeAreaWidth(state),
   };
 };
 

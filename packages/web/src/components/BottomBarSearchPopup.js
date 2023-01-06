@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 import { updatePopup, updateSearchString } from '../actions';
 import { SEARCH_POPUP } from '../types/const';
-import { getPopupLink, getThemeMode } from '../selectors';
+import { getPopupLink, getSafeAreaWidth, getThemeMode } from '../selectors';
 import { bbSearchPopupFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -109,7 +109,7 @@ const mapStateToProps = (state, props) => {
     ),
     isSearchPopupShown: state.display.isSearchPopupShown,
     themeMode: getThemeMode(state),
-    safeAreaWidth: state.window.width,
+    safeAreaWidth: getSafeAreaWidth(state),
   };
 };
 

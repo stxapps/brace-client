@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { updatePopup, updateLinkEditor, addLink } from '../actions';
 import { ADD_POPUP, NO_URL, ASK_CONFIRM_URL, URL_MSGS } from '../types/const';
-import { getThemeMode } from '../selectors';
+import { getSafeAreaWidth, getThemeMode } from '../selectors';
 import { validateUrl } from '../utils';
 
 import { withTailwind } from '.';
@@ -99,7 +99,7 @@ const mapStateToProps = (state, props) => {
     msg: state.linkEditor.msg,
     isAskingConfirm: state.linkEditor.isAskingConfirm,
     themeMode: getThemeMode(state),
-    safeAreaWidth: state.window.width,
+    safeAreaWidth: getSafeAreaWidth(state),
   };
 };
 

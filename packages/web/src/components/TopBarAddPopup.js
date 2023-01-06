@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import { updatePopup, updateLinkEditor, addLink } from '../actions';
 import { ADD_POPUP, NO_URL, ASK_CONFIRM_URL, URL_MSGS } from '../types/const';
-import { getThemeMode } from '../selectors';
+import { getSafeAreaWidth, getSafeAreaHeight, getThemeMode } from '../selectors';
 import { validateUrl } from '../utils';
 import { popupBgFMV, popupFMV } from '../types/animConfigs';
 
@@ -129,8 +129,8 @@ const mapStateToProps = (state, props) => {
     msg: state.linkEditor.msg,
     isAskingConfirm: state.linkEditor.isAskingConfirm,
     themeMode: getThemeMode(state),
-    safeAreaWidth: state.window.width,
-    safeAreaHeight: state.window.height,
+    safeAreaWidth: getSafeAreaWidth(state),
+    safeAreaHeight: getSafeAreaHeight(state),
   };
 };
 

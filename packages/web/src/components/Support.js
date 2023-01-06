@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { SHOW_BLANK } from '../types/const';
-import { getThemeMode } from '../selectors';
+import { getSafeAreaWidth, getThemeMode } from '../selectors';
 
 import { withTailwind } from '.';
 import TopBar from './TopBar';
@@ -61,7 +61,7 @@ class Support extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     themeMode: getThemeMode(state),
-    safeAreaWidth: state.window.width,
+    safeAreaWidth: getSafeAreaWidth(state),
   };
 };
 

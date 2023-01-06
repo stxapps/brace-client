@@ -12,7 +12,7 @@ import {
   isStringIn, isObject, isString, isArrayEqual, isEqual, getListNameObj, getStatusCounts,
   getMainId, getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
   getFilteredLinks, getSortedLinks, sortWithPins, getPinFPaths, getPins,
-  doEnableExtraFeatures,
+  doEnableExtraFeatures, isNumber, isMobile as _isMobile,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { tailwind } from '../stylesheets/tailwind';
@@ -265,6 +265,46 @@ export const getLayoutType = createSelector(
     if (doUseLocalLayout) return localLayoutType;
     return layoutType;
   },
+);
+
+export const getSafeAreaFrame = createSelector(
+  state => state.window.width,
+  state => state.window.height,
+  state => state.window.visualWidth,
+  state => state.window.visualHeight,
+  (windowWidth, windowHeight, visualWidth, visualHeight) => {
+    const isMobile = _isMobile();
+
+    [windowWidth, windowHeight] = [Math.round(windowWidth), Math.round(windowHeight)];
+    [visualWidth, visualHeight] = [Math.round(visualWidth), Math.round(visualHeight)];
+
+    const width = isMobile && isNumber(visualWidth) ? visualWidth : windowWidth;
+    const height = isMobile && isNumber(visualHeight) ? visualHeight : windowHeight;
+
+    return {
+      x: 0, y: 0, width, height, windowWidth, windowHeight, visualWidth, visualHeight,
+    };
+  }
+);
+
+export const getSafeAreaWidth = createSelector(
+  state => state.window.width,
+  state => state.window.visualWidth,
+  (windowWidth, visualWidth) => {
+    const isMobile = _isMobile();
+    [windowWidth, visualWidth] = [Math.round(windowWidth), Math.round(visualWidth)];
+    return isMobile && isNumber(visualWidth) ? visualWidth : windowWidth;
+  }
+);
+
+export const getSafeAreaHeight = createSelector(
+  state => state.window.height,
+  state => state.window.visualHeight,
+  (windowHeight, visualHeight) => {
+    const isMobile = _isMobile();
+    [windowHeight, visualHeight] = [Math.round(windowHeight), Math.round(visualHeight)];
+    return isMobile && isNumber(visualHeight) ? visualHeight : windowHeight;
+  }
 );
 
 export const getValidProduct = createSelector(

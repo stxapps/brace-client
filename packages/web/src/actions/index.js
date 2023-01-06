@@ -10,7 +10,7 @@ import axios from '../axiosWrapper';
 import dataApi from '../apis/blockstack';
 import fileApi from '../apis/file';
 import {
-  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW_SIZE,
+  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW_SIZE, UPDATE_VISUAL_SIZE,
   UPDATE_WINDOW, UPDATE_HISTORY_POSITION, UPDATE_STACKS_ACCESS, UPDATE_LIST_NAME,
   UPDATE_POPUP, UPDATE_SEARCH_STRING, UPDATE_LINK_EDITOR,
   UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
@@ -63,7 +63,7 @@ import {
   FEATURE_APPEARANCE, FEATURE_CUSTOM,
 } from '../types/const';
 import {
-  isEqual, isString, isObject, isNumber, throttle, sleep, isMobile,
+  isEqual, isString, isObject, isNumber, throttle, sleep,
   randomString, rerandomRandomTerm, deleteRemovedDT, getMainId, getLinkMainIds,
   getUrlFirstChar, separateUrlAndParam, extractUrl, getUserImageUrl, randomDecor,
   isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
@@ -72,7 +72,7 @@ import {
   createLinkFPath,
   getLinkFPaths, getStaticFPaths, extractPinFPath, getSortedLinks, getPinFPaths,
   getPins, separatePinnedValues, sortLinks, sortWithPins, getRawPins, getFormattedTime,
-  get24HFormattedTime, extractFPath,
+  get24HFormattedTime, extractFPath, getWindowSize,
 } from '../utils';
 import { _ } from '../utils/obj';
 import {
@@ -93,6 +93,8 @@ export const init = async (store) => {
     userImage = getUserImageUrl(userData);
   }
 
+  const { windowWidth, windowHeight, visualWidth, visualHeight } = getWindowSize();
+
   const darkMatches = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const is24HFormat = null;
 
@@ -103,8 +105,10 @@ export const init = async (store) => {
       username,
       userImage,
       href: window.location.href,
-      windowWidth: window.innerWidth,
-      windowHeight: window.innerHeight,
+      windowWidth,
+      windowHeight,
+      visualWidth,
+      visualHeight,
       systemThemeMode: darkMatches ? BLK_MODE : WHT_MODE,
       is24HFormat,
     },
@@ -115,23 +119,22 @@ export const init = async (store) => {
     popHistoryState(store);
   });
 
-  if (isMobile() && isObject(window.visualViewport)) {
+  window.addEventListener('resize', throttle(() => {
+    store.dispatch({
+      type: UPDATE_WINDOW_SIZE,
+      payload: {
+        windowWidth: window.innerWidth,
+        windowHeight: window.innerHeight,
+      },
+    });
+  }, 16));
+  if (isObject(window.visualViewport)) {
     window.visualViewport.addEventListener('resize', throttle(() => {
       store.dispatch({
-        type: UPDATE_WINDOW_SIZE,
+        type: UPDATE_VISUAL_SIZE,
         payload: {
-          windowWidth: window.innerWidth,
-          windowHeight: window.visualViewport.height,
-        },
-      });
-    }, 16));
-  } else {
-    window.addEventListener('resize', throttle(() => {
-      store.dispatch({
-        type: UPDATE_WINDOW_SIZE,
-        payload: {
-          windowWidth: window.innerWidth,
-          windowHeight: window.innerHeight,
+          visualWidth: window.visualViewport.width,
+          visualHeight: window.visualViewport.height,
         },
       });
     }, 16));

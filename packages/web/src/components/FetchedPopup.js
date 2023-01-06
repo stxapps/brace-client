@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { updateFetched } from '../actions';
-import { getThemeMode } from '../selectors';
+import { getSafeAreaWidth, getThemeMode } from '../selectors';
 import { MD_WIDTH } from '../types/const';
 import { fetchedPopupFMV } from '../types/animConfigs';
 
@@ -70,7 +70,7 @@ const mapStateToProps = (state, props) => {
   return {
     fetched: state.fetched[listName],
     themeMode: getThemeMode(state),
-    safeAreaWidth: state.window.width,
+    safeAreaWidth: getSafeAreaWidth(state),
   };
 };
 

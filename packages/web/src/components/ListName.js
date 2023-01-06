@@ -6,7 +6,7 @@ import {
   LIST_NAMES_POPUP, SM_WIDTH, LG_WIDTH, LIST_NAMES_MODE_CHANGE_LIST_NAME,
   LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
-import { getListNameMap, getThemeMode } from '../selectors';
+import { getListNameMap, getSafeAreaWidth, getThemeMode } from '../selectors';
 import { getListNameDisplayName } from '../utils';
 
 import { getTopBarSizes, withTailwind } from '.';
@@ -66,7 +66,7 @@ const mapStateToProps = (state, props) => {
     listNameMap: getListNameMap(state),
     updates: state.fetched,
     themeMode: getThemeMode(state),
-    safeAreaWidth: state.window.width,
+    safeAreaWidth: getSafeAreaWidth(state),
   };
 };
 

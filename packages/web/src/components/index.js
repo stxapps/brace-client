@@ -8,15 +8,7 @@ import {
   MD_WIDTH, LG_WIDTH,
 } from '../types/const';
 import { toPx } from '../utils';
-import { getThemeMode, getTailwind } from '../selectors';
-
-export const useSafeAreaFrame = () => {
-
-  const width = useSelector(state => state.window.width);
-  const height = useSelector(state => state.window.height);
-
-  return { x: 0, y: 0, width, height };
-};
+import { getSafeAreaFrame, getThemeMode, getTailwind } from '../selectors';
 
 export const getTopBarSizes = (width) => {
 
@@ -58,6 +50,10 @@ export const getTopBarSizes = (width) => {
     listNameArrowSpace,
     commandsWidth,
   };
+};
+
+export const useSafeAreaFrame = () => {
+  return useSelector(state => getSafeAreaFrame(state));
 };
 
 export const useTailwind = () => {

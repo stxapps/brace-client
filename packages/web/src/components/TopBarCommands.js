@@ -7,7 +7,7 @@ import {
   signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, updateBulkEdit,
 } from '../actions';
 import { HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT } from '../types/const';
-import { getThemeMode } from '../selectors';
+import { getSafeAreaWidth, getThemeMode } from '../selectors';
 import { popupBgFMV, popupFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -101,7 +101,7 @@ const mapStateToProps = (state, props) => {
   return {
     isProfilePopupShown: state.display.isProfilePopupShown,
     themeMode: getThemeMode(state),
-    safeAreaWidth: state.window.width,
+    safeAreaWidth: getSafeAreaWidth(state),
   };
 };
 

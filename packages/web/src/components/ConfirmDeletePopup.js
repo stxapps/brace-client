@@ -8,7 +8,9 @@ import {
 import {
   CONFIRM_DELETE_POPUP, DELETE_ACTION_LINK_COMMANDS, DELETE_ACTION_LIST_NAME, SM_WIDTH,
 } from '../types/const';
-import { getPopupLink, getThemeMode } from '../selectors';
+import {
+  getPopupLink, getSafeAreaWidth, getSafeAreaHeight, getThemeMode,
+} from '../selectors';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -139,8 +141,8 @@ const mapStateToProps = (state, props) => {
     selectedLinkIds: state.display.selectedLinkIds,
     deletingListName: state.display.deletingListName,
     themeMode: getThemeMode(state),
-    safeAreaWidth: state.window.width,
-    safeAreaHeight: state.window.height,
+    safeAreaWidth: getSafeAreaWidth(state),
+    safeAreaHeight: getSafeAreaHeight(state),
   };
 };
 

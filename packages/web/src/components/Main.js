@@ -6,7 +6,7 @@ import {
   BACK_DECIDER, BACK_POPUP, PC_100, PC_50, PC_33, SHOW_BLANK, SHOW_COMMANDS,
   SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
 } from '../types/const';
-import { getLinks, getLayoutType, getThemeMode } from '../selectors';
+import { getLinks, getLayoutType, getThemeMode, getSafeAreaWidth } from '../selectors';
 
 import { withTailwind } from '.';
 import Loading from './Loading';
@@ -134,7 +134,7 @@ const mapStateToProps = (state, props) => {
     fetchedListNames: state.display.fetchedListNames,
     layoutType: getLayoutType(state),
     themeMode: getThemeMode(state),
-    safeAreaWidth: state.window.width,
+    safeAreaWidth: getSafeAreaWidth(state),
   };
 };
 

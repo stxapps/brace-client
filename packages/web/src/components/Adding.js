@@ -7,7 +7,7 @@ import {
   ASK_CONFIRM_URL, URL_MSGS, BLK_MODE,
 } from '../types/const';
 import { updatePopup, addLink, cancelDiedLinks } from '../actions';
-import { getThemeMode } from '../selectors';
+import { getSafeAreaWidth, getThemeMode } from '../selectors';
 import {
   getUrlPathQueryHash,
   validateUrl, separateUrlAndParam, ensureContainUrlProtocol,
@@ -356,7 +356,7 @@ const mapStateToProps = (state) => {
     href: state.window.href,
     links: state.links[MY_LIST],
     themeMode: getThemeMode(state),
-    safeAreaWidth: state.window.width,
+    safeAreaWidth: getSafeAreaWidth(state),
   }
 };
 

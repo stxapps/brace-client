@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { HASH_ABOUT, HASH_TERMS, HASH_PRIVACY, HASH_SUPPORT } from '../types/const';
-import { getThemeMode } from '../selectors';
+import { getSafeAreaWidth, getThemeMode } from '../selectors';
 
 import { withTailwind } from '.';
 
@@ -46,7 +46,7 @@ class Footer extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     themeMode: getThemeMode(state),
-    safeAreaWidth: state.window.width,
+    safeAreaWidth: getSafeAreaWidth(state),
   };
 };
 

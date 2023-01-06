@@ -5,7 +5,7 @@ import GracefulImage from 'react-graceful-image';
 
 import { updatePopup, updateBulkEdit, addSelectedLinkIds } from '../actions';
 import { COLOR, PATTERN, IMAGE } from '../types/const';
-import { makeGetCustomImage, getThemeMode } from '../selectors';
+import { makeGetCustomImage, getSafeAreaWidth, getThemeMode } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
   extractUrl, isEqual,
@@ -250,7 +250,7 @@ const makeMapStateToProps = () => {
     return {
       customImage,
       themeMode: getThemeMode(state),
-      safeAreaWidth: state.window.width,
+      safeAreaWidth: getSafeAreaWidth(state),
     };
   };
 

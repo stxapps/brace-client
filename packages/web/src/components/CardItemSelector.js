@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
 import { MAX_SELECTED_LINK_IDS } from '../types/const';
 import {
-  makeIsLinkIdSelected, getSelectedLinkIdsLength, getThemeMode,
+  makeIsLinkIdSelected, getSelectedLinkIdsLength, getSafeAreaWidth, getThemeMode,
 } from '../selectors';
 import { popupBgFMV, popupFMV } from '../types/animConfigs';
 
@@ -126,7 +126,7 @@ const makeMapStateToProps = () => {
       isSelected: isLinkIdSelected(state, props),
       selectedLinkIdsLength: getSelectedLinkIdsLength(state),
       themeMode: getThemeMode(state),
-      safeAreaWidth: state.window.width,
+      safeAreaWidth: getSafeAreaWidth(state),
     };
   };
 

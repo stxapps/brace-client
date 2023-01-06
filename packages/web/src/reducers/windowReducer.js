@@ -2,16 +2,19 @@ import { REHYDRATE } from 'redux-persist/constants';
 
 import {
   INIT, UPDATE_WINDOW, UPDATE_HREF, UPDATE_HISTORY_POSITION, UPDATE_WINDOW_SIZE,
-  UPDATE_SYSTEM_THEME_MODE, UPDATE_IS_24H_FORMAT,
+  UPDATE_VISUAL_SIZE, UPDATE_SYSTEM_THEME_MODE, UPDATE_IS_24H_FORMAT,
 } from '../types/actionTypes';
 import { WHT_MODE } from '../types/const';
-import { isNumber, isObject } from '../utils';
+import { isObject, getWindowSize } from '../utils';
 
+const { windowWidth, windowHeight, visualWidth, visualHeight } = getWindowSize();
 const initialState = {
   href: null,
   historyPosition: null,
-  width: (window && isNumber(window.innerWidth)) ? window.innerWidth : null,
-  height: (window && isNumber(window.innerHeight)) ? window.innerHeight : null,
+  width: windowWidth,
+  height: windowHeight,
+  visualWidth,
+  visualHeight,
   themeMode: WHT_MODE,
   is24HFormat: null,
 };
@@ -19,10 +22,13 @@ const initialState = {
 const windowReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
+    const { windowWidth, windowHeight, visualWidth, visualHeight } = getWindowSize();
     const newState = {
       ...initialState,
-      width: (window && isNumber(window.innerWidth)) ? window.innerWidth : null,
-      height: (window && isNumber(window.innerHeight)) ? window.innerHeight : null,
+      width: windowWidth,
+      height: windowHeight,
+      visualWidth,
+      visualHeight,
     };
     if (isObject(action.payload.window) && 'themeMode' in action.payload.window) {
       newState.themeMode = action.payload.window.themeMode;
@@ -39,6 +45,8 @@ const windowReducer = (state = initialState, action) => {
       href: action.payload.href,
       width: action.payload.windowWidth,
       height: action.payload.windowHeight,
+      visualWidth: action.payload.visualWidth,
+      visualHeight: action.payload.visualHeight,
       themeMode: action.payload.systemThemeMode,
       is24HFormat: action.payload.is24HFormat,
     };
@@ -65,6 +73,14 @@ const windowReducer = (state = initialState, action) => {
       ...state,
       width: action.payload.windowWidth,
       height: action.payload.windowHeight,
+    };
+  }
+
+  if (action.type === UPDATE_VISUAL_SIZE) {
+    return {
+      ...state,
+      visualWidth: action.payload.visualWidth,
+      visualHeight: action.payload.visualHeight,
     };
   }
 

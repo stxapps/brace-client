@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { getThemeMode } from '../selectors';
+import { getSafeAreaWidth, getThemeMode } from '../selectors';
 import { SHOW_BLANK } from '../types/const';
 
 import { withTailwind } from '.';
@@ -115,7 +115,7 @@ class Terms extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     themeMode: getThemeMode(state),
-    safeAreaWidth: state.window.width,
+    safeAreaWidth: getSafeAreaWidth(state),
   };
 };
 

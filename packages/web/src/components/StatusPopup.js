@@ -10,7 +10,7 @@ import {
   UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
 } from '../types/actionTypes';
 import { SM_WIDTH } from '../types/const';
-import { getStatus, getThemeMode } from '../selectors';
+import { getStatus, getSafeAreaWidth, getThemeMode } from '../selectors';
 import { statusPopupFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -94,7 +94,7 @@ const mapStateToProps = (state, props) => {
   return {
     status: getStatus(state),
     themeMode: getThemeMode(state),
-    safeAreaWidth: state.window.width,
+    safeAreaWidth: getSafeAreaWidth(state),
   };
 };
 

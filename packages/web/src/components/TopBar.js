@@ -6,7 +6,7 @@ import { updatePopup } from '../actions';
 import {
   SIGN_IN_POPUP, SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS, MD_WIDTH, BLK_MODE,
 } from '../types/const';
-import { getThemeMode } from '../selectors';
+import { getSafeAreaWidth, getThemeMode } from '../selectors';
 import { toPx, throttle } from '../utils';
 
 import { getTopBarSizes, withTailwind } from '.';
@@ -174,7 +174,7 @@ const mapStateToProps = (state, props) => {
   return {
     isBulkEditing: state.display.isBulkEditing,
     themeMode: getThemeMode(state),
-    safeAreaWidth: state.window.width,
+    safeAreaWidth: getSafeAreaWidth(state),
   };
 };
 

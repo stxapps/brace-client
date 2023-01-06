@@ -14,7 +14,7 @@ import {
 } from '../types/const';
 import {
   getListNameMap, getPopupLink, getLayoutType, getDoEnableExtraFeatures,
-  makeGetPinStatus, getThemeMode,
+  makeGetPinStatus, getSafeAreaWidth, getSafeAreaHeight, getThemeMode,
 } from '../selectors';
 import {
   copyTextToClipboard, getListNameDisplayName, getAllListNames,
@@ -271,8 +271,8 @@ const makeMapStateToProps = () => {
       pinStatus,
       layoutType: getLayoutType(state),
       themeMode: getThemeMode(state),
-      safeAreaWidth: state.window.width,
-      safeAreaHeight: state.window.height,
+      safeAreaWidth: getSafeAreaWidth(state),
+      safeAreaHeight: getSafeAreaHeight(state),
       doEnableExtraFeatures,
     };
   };

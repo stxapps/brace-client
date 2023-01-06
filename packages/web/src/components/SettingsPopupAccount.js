@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { getThemeMode } from '../selectors';
+import { getSafeAreaWidth, getThemeMode } from '../selectors';
 
 import { withTailwind } from '.';
 
@@ -38,7 +38,7 @@ class SettingsPopupAccount extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     themeMode: getThemeMode(state),
-    safeAreaWidth: state.window.width,
+    safeAreaWidth: getSafeAreaWidth(state),
   };
 };
 

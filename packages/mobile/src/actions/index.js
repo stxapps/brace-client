@@ -147,6 +147,8 @@ export const init = async (store) => {
       href: DOMAIN_NAME + '/',
       windowWidth: null,
       windowHeight: null,
+      visualWidth: null,
+      visualHeight: null,
       systemThemeMode: darkMatches ? BLK_MODE : WHT_MODE,
       is24HFormat,
     },
