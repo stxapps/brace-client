@@ -27,7 +27,7 @@ const getFile = async (fpath, dir = Dirs.DocumentDir) => {
   try {
     cachedContent.content = await idb.get(fpath);
   } catch (error) {
-    console.log('In file.getFile, IndexedDB error:', error);
+    console.log('In localFile.getFile, IndexedDB error:', error);
     return cachedContent;
   }
 
@@ -59,7 +59,7 @@ const putFile = async (fpath, content, dir = Dirs.DocumentDir) => {
   try {
     await idb.set(fpath, content);
   } catch (error) {
-    console.log('In file.putFile, IndexedDB error:', error);
+    console.log('In localFile.putFile, IndexedDB error:', error);
   }
 
   if (fpath in cachedContents && 'contentUrl' in cachedContents[fpath]) {
@@ -89,7 +89,7 @@ const deleteFile = async (fpath, dir = Dirs.DocumentDir) => {
   try {
     await idb.del(fpath);
   } catch (error) {
-    console.log('In file.deleteFile, IndexedDB error:', error);
+    console.log('In localFile.deleteFile, IndexedDB error:', error);
   }
 
   if (fpath in cachedContents && 'contentUrl' in cachedContents[fpath]) {
@@ -108,7 +108,7 @@ const deleteAllFiles = async () => {
   try {
     await idb.clear();
   } catch (error) {
-    console.log('In file.deleteAllFiles, IndexedDB error:', error);
+    console.log('In localFile.deleteAllFiles, IndexedDB error:', error);
   }
 
   for (const fpath in cachedContents) {
@@ -124,14 +124,17 @@ const listKeys = async () => {
   try {
     keys = await idb.keys();
   } catch (error) {
-    console.log('In file.listKeys, IndexedDB error:', error);
+    console.log('In localFile.listKeys, IndexedDB error:', error);
+    keys = Object.keys(cachedContents);
   }
+  keys = keys.map(key => `${key}`); // Force key to be only string, no number.
+
   return keys;
 };
 
-const file = {
+const localFile = {
   getFile, getFiles, putFile, putFiles, deleteFile, deleteFiles, deleteAllFiles,
   listKeys,
 };
 
-export default file;
+export default localFile;

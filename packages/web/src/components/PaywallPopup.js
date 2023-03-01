@@ -8,7 +8,6 @@ import {
   SM_WIDTH,
 } from '../types/const';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
-import { paywallFeature } from '../vars';
 
 import { useSafeAreaFrame, useTailwind } from '.';
 
@@ -16,6 +15,7 @@ const PaywallPopup = () => {
 
   const { width: safeAreaWidth, height: safeAreaHeight } = useSafeAreaFrame();
   const isShown = useSelector(state => state.display.isPaywallPopupShown);
+  const feature = useSelector(state => state.display.paywallFeature);
   const cancelBtn = useRef(null);
   const didClick = useRef(false);
   const dispatch = useDispatch();
@@ -45,10 +45,10 @@ const PaywallPopup = () => {
 
   if (!isShown) return <AnimatePresence key="AP_PWP" />;
 
-  let feature = 'This';
-  if (paywallFeature.feature === FEATURE_PIN) feature = 'Pin to the top';
-  if (paywallFeature.feature === FEATURE_APPEARANCE) feature = 'Dark appearance';
-  if (paywallFeature.feature === FEATURE_CUSTOM) feature = 'Change title & image';
+  let featureText = 'This';
+  if (feature.feature === FEATURE_PIN) featureText = 'Pin to the top';
+  if (feature.feature === FEATURE_APPEARANCE) featureText = 'Dark appearance';
+  if (feature.feature === FEATURE_CUSTOM) featureText = 'Change title & image';
 
   const spanStyle = {};
   if (safeAreaWidth >= SM_WIDTH) spanStyle.height = safeAreaHeight;
@@ -73,7 +73,7 @@ const PaywallPopup = () => {
               <div className={tailwind('mt-3 text-center sm:mt-5')}>
                 <h3 className={tailwind('text-lg font-medium leading-6 text-gray-900')} id="modal-title">Purchase a subscription</h3>
                 <div className={tailwind('mt-2')}>
-                  <p className={tailwind('text-sm text-gray-500')}>{feature} is an extra feature. Please purchase a subscription to support us and unlock extra features.</p>
+                  <p className={tailwind('text-sm text-gray-500')}>{featureText} is an extra feature. Please purchase a subscription to support us and unlock extra features.</p>
                 </div>
               </div>
             </div>

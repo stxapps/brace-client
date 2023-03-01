@@ -2,9 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import {
-  updatePopup, deleteLinks, updateBulkEdit, deleteListNames,
-} from '../actions';
+import { updatePopup, deleteLinks, updateBulkEdit, deleteListNames } from '../actions';
 import {
   CONFIRM_DELETE_POPUP, DELETE_ACTION_LINK_COMMANDS, DELETE_ACTION_LIST_NAME, SM_WIDTH,
 } from '../types/const';
@@ -57,14 +55,14 @@ class ConfirmDeletePopup extends React.Component {
       }
 
       if (popupLink) {
-        this.props.deleteLinks([popupLink.id], true);
+        this.props.deleteLinks([popupLink.id]);
         this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
         this.props.updatePopup(popupLink.id, false);
         return;
       }
 
       if (selectedLinkIds.length > 0) {
-        this.props.deleteLinks(selectedLinkIds, true);
+        this.props.deleteLinks(selectedLinkIds);
         this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
         this.props.updateBulkEdit(false);
         return;

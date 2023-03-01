@@ -117,7 +117,7 @@ class Landing extends React.PureComponent {
           <div className={tailwind('w-full md:w-55/100 lg:pt-10')}>
             <img className={tailwind('mx-auto w-11/12 max-w-sm object-contain md:hidden')} src={saveLinksToVisitLater} alt="Save links to visit later" />
             <h1 className={tailwind('first-h1-text mt-16 font-bold leading-none text-gray-900 md:mt-0')}>Save links <br className={tailwind('inline sm:hidden md:inline lg:hidden')} />to visit later</h1>
-            <p className={tailwind('mt-4 text-lg font-normal text-gray-500 md:pr-4')}>Your bookmark manager with privacy at heart. Brace.to helps you save links to everything and visit them later easily anytime on your any devices. Powered by Stacks technology, all your saved links are encrypted and only you can decrypt them and see the content inside.</p>
+            <p className={tailwind('mt-4 text-lg font-normal text-gray-500 md:pr-4')}>Your bookmark manager with privacy at heart. Brace.to helps you save links to everything and visit them later easily anytime on any of your devices. Powered by Stacks technology, all your saved links are encrypted and only you can decrypt them and see the content inside.</p>
             <button onClick={this.onSignUpBtnClick} style={{ padding: '0.625rem 1.25rem' }} className={tailwind('mt-6 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring')}>
               <span className={tailwind('text-lg font-medium text-gray-50')}>Get Started</span>
               <svg className={tailwind('ml-2 w-2 text-gray-50')} viewBox="0 0 6 10" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -177,7 +177,7 @@ class Landing extends React.PureComponent {
                   </div>
                   <div className={tailwind('mt-0.5 ml-4')}>
                     <h3 className={tailwind('text-xl font-medium leading-none text-gray-900')}>Interesting websites</h3>
-                    <p className={tailwind('mt-2 text-base text-gray-500')}>You found a ridiculously cool and interesting website you want to check it out later? Not a problem. Just save to Brace.to to visit it later.</p>
+                    <p className={tailwind('mt-2 text-base text-gray-500')}>You found a ridiculously cool and interesting website you want to check out later? Not a problem. Just save to Brace.to to visit later.</p>
                   </div>
                 </div>
               </li>
@@ -192,7 +192,7 @@ class Landing extends React.PureComponent {
                   </div>
                   <div className={tailwind('mt-0.5 ml-4')}>
                     <h3 className={tailwind('text-xl font-medium leading-none text-gray-900')}>Items on online shops</h3>
-                    <p className={tailwind('mt-2 text-base text-gray-500')}>You found an item on online shop you don’t want it now but might want to buy it later? Not a problem. Just save to Brace.to.</p>
+                    <p className={tailwind('mt-2 text-base text-gray-500')}>You found an item on an online shop you don’t want now but might want to buy later? Not a problem. Just save to Brace.to.</p>
                   </div>
                 </div>
               </li>
@@ -207,7 +207,7 @@ class Landing extends React.PureComponent {
                   </div>
                   <div className={tailwind('mt-0.5 ml-4')}>
                     <h3 className={tailwind('text-xl font-medium leading-none text-gray-900')}>Videos and music</h3>
-                    <p className={tailwind('mt-2 text-base text-gray-500')}>Your friend’s just shared a video with you but you want to watch it tonight? Not a problem. Just save to Brace.to to watch it whenever you want.</p>
+                    <p className={tailwind('mt-2 text-base text-gray-500')}>Your friend has just shared a video with you but you want to watch it tonight. Not a problem. Just save to Brace.to to watch it whenever you want.</p>
                   </div>
                 </div>
               </li>
@@ -222,7 +222,7 @@ class Landing extends React.PureComponent {
                   <path d="M0 11C0 4.92486 4.92486 0 11 0H44C50.0753 0 55 4.92486 55 11V88L27.5 74.25L0 88V11Z" />
                 </svg>
               </div>
-              <h2 className={tailwind('px-4 pt-28 text-lg font-normal text-gray-200 md:px-6 md:leading-6 lg:px-8')}>There are several ways to save a link for your convenience. <br className={tailwind('hidden sm:inline')} />Just one or two clicks away to save any links on your any devices.</h2>
+              <h2 className={tailwind('px-4 pt-28 text-lg font-normal text-gray-200 md:px-6 md:leading-6 lg:px-8')}>There are several ways to save a link for your convenience. <br className={tailwind('hidden sm:inline')} />Just one or two clicks away to save any links on any of your devices.</h2>
               <div className={tailwind('px-4 pt-16 md:flex md:px-6 lg:px-8')}>
                 <div className={tailwind('md:flex-shrink-0')}>
                   <div className={tailwind('flex h-14 w-14 items-center justify-center rounded-full bg-gray-300')}>
@@ -238,7 +238,7 @@ class Landing extends React.PureComponent {
                 <div className={tailwind('md:flex md:flex-grow md:items-start')}>
                   <div className={tailwind('md:mt-0.5 md:ml-4 md:w-1/2')}>
                     <h3 className={tailwind('mt-5 text-xl font-semibold leading-none text-white md:mt-0 lg:text-2xl-extra lg:leading-none')}>Save at Brace.to</h3>
-                    <p className={tailwind('mt-2.5 text-base font-normal text-gray-300 md:pr-8 lg:text-lg lg:leading-6')}>Click the black button with a plus sign at our website.</p>
+                    <p className={tailwind('mt-2.5 text-base font-normal text-gray-300 md:pr-8 lg:text-lg lg:leading-6')}>Click the black button with a plus sign on our website.</p>
                   </div>
                   <img className={tailwind('mx-auto mt-4 w-full max-w-md md:mt-0 md:mr-0 md:w-1/2')} src={saveLinkAtTheSite} alt="Save link at brace.to" />
                 </div>
@@ -254,7 +254,7 @@ class Landing extends React.PureComponent {
                 <div className={tailwind('md:flex md:flex-grow md:items-start')}>
                   <div className={tailwind('md:mt-0.5 md:ml-4 md:w-1/2')}>
                     <h3 className={tailwind('mt-5 text-xl font-semibold leading-none text-white md:mt-0 lg:text-2xl-extra lg:leading-none')}>Save in Address Bar</h3>
-                    <p className={tailwind('mt-2.5 text-base font-normal text-gray-300 md:pr-8 lg:text-lg lg:leading-6')}>Type ‘brace.to’ and ‘/’ in front of any link in web browser address bar.</p>
+                    <p className={tailwind('mt-2.5 text-base font-normal text-gray-300 md:pr-8 lg:text-lg lg:leading-6')}>Type ‘brace.to’ and ‘/’ in front of any link in the web browser address bar.</p>
                   </div>
                   <img className={tailwind('mx-auto mt-4 w-full max-w-md md:mt-0 md:mr-0 md:w-1/2')} src={saveLinkInUrlBar} alt="Save link in address bar" />
                 </div>
@@ -313,8 +313,8 @@ class Landing extends React.PureComponent {
                   <path fillRule="evenodd" clipRule="evenodd" d="M24 48c13.255 0 24-10.745 24-24S37.255 0 24 0 0 10.745 0 24s10.745 24 24 24zm11.121-27.879a3 3 0 00-4.242-4.242L21 25.757l-3.879-3.878a3 3 0 10-4.242 4.242l6 6a3 3 0 004.242 0l12-12z" fill="#4ADE80" />
                   <path fillRule="evenodd" clipRule="evenodd" d="M35.121 20.121a3 3 0 00-4.242-4.242L21 25.757l-3.879-3.878a3 3 0 10-4.242 4.242l6 6a3 3 0 004.242 0l12-12z" fill="#166534" />
                 </svg>
-                <h3 className={tailwind('mt-5 text-xl font-semibold text-white sm:leading-none md:text-center lg:text-2xl-extra lg:leading-none')}>Visit Anytime <br className={tailwind('inline sm:hidden')} />on your Any Devices</h3>
-                <p className={tailwind('mt-2.5 text-base font-normal text-gray-300 md:mt-3.5 md:text-center lg:text-lg lg:leading-6')}>Every link you saved will be beautified with its representative image and title <br className={tailwind('hidden md:inline')} />so that you can easily find it and recognize it.</p>
+                <h3 className={tailwind('mt-5 text-xl font-semibold text-white sm:leading-none md:text-center lg:text-2xl-extra lg:leading-none')}>Visit Anytime <br className={tailwind('inline sm:hidden')} />on Any of your Devices</h3>
+                <p className={tailwind('mt-2.5 text-base font-normal text-gray-300 md:mt-3.5 md:text-center lg:text-lg lg:leading-6')}>Every link you save will be beautified with its representative image and title <br className={tailwind('hidden md:inline')} />so that you can easily find it and recognize it.</p>
                 <div className={tailwind('howitwork-gray-pb relative mt-4')}>
                   <img className={tailwind('absolute left-1/2 w-full max-w-lg -translate-x-1/2 transform md:max-w-lg lg:max-w-xl')} src={visitAnywhere} srcSet={`${visitAnywhere} 1x, ${visitAnywhere2x} 2x, ${visitAnywhere3x} 3x, ${visitAnywhere4x} 4x`} alt="Visit anywhere, anytime" />
                 </div>
@@ -356,8 +356,8 @@ class Landing extends React.PureComponent {
                   <path fillRule="evenodd" clipRule="evenodd" d="M25 27C25 25.8954 25.8954 25 27 25H51C52.1046 25 53 25.8954 53 27C53 28.1046 52.1046 29 51 29H27C25.8954 29 25 28.1046 25 27ZM25 35C25 33.8954 25.8954 33 27 33H51C52.1046 33 53 33.8954 53 35C53 36.1046 52.1046 37 51 37H27C25.8954 37 25 36.1046 25 35ZM25 43C25 41.8954 25.8954 41 27 41H51C52.1046 41 53 41.8954 53 43C53 44.1046 52.1046 45 51 45H27C25.8954 45 25 44.1046 25 43ZM25 51C25 49.8954 25.8954 49 27 49H51C52.1046 49 53 49.8954 53 51C53 52.1046 52.1046 53 51 53H27C25.8954 53 25 52.1046 25 51Z" fill="white" />
                 </svg>
                 <h3 className={tailwind('mt-5 text-xl font-medium leading-none text-gray-900')}>Data Storage</h3>
-                <p className={tailwind('mt-2.5 text-base font-normal text-gray-500')}>Your data lives in a storage of your choice and only you with your Secret Key can change it.</p>
-                <h4 className={tailwind('mt-5 text-base font-medium leading-snug text-gray-900')}>No lock out from your own data</h4>
+                <p className={tailwind('mt-2.5 text-base font-normal text-gray-500')}>Your data lives in the storage of your choice and only you with your Secret Key can change it.</p>
+                <h4 className={tailwind('mt-5 text-base font-medium leading-snug text-gray-900')}>No lock out of your own data</h4>
                 <p className={tailwind('mt-2.5 text-base font-normal text-gray-500')}>You can always access your data directly whenever you want as you have full control of your data storage. Plus, you can manage who can access your data too.</p>
               </div>
             </div>
@@ -370,7 +370,7 @@ class Landing extends React.PureComponent {
                 <h3 className={tailwind('mt-5 text-xl font-medium leading-none text-gray-900')}>Encryption</h3>
                 <p className={tailwind('mt-2.5 text-base font-normal text-gray-500')}>Everything is encrypted  and only you with your Secret Key can see the content inside.</p>
                 <h4 className={tailwind('mt-5 text-base font-medium leading-snug text-gray-900')}>No targeted ads and No data breach risk</h4>
-                <p className={tailwind('mt-2.5 text-base font-normal text-gray-500')}>As no one can see the content inside your data, your data cannot be used to make targeted ads on you. Also, there is no risk, if your data is stolen.</p>
+                <p className={tailwind('mt-2.5 text-base font-normal text-gray-500')}>As no one can see the content inside your data, your data cannot be used to make targeted ads on you. Also, there is no risk if your data is stolen.</p>
               </div>
             </div>
           </div>

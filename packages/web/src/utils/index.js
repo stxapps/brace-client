@@ -10,15 +10,19 @@ import {
   MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
 } from '../types/actionTypes';
 import {
-  HTTP, HTTPS, WWW, STATUS, ID, LINKS, IMAGES, SETTINGS, PINS, DOT_JSON, ADDED, MOVED,
-  ADDING, MOVING, UPDATING, DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING,
-  DIED_DELETING, COLOR, PATTERN, IMAGE, BG_COLOR_STYLES, PATTERNS, VALID_URL, NO_URL,
-  ASK_CONFIRM_URL, VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME,
+  HTTP, HTTPS, WWW, STATUS, ID, LINKS, IMAGES, SETTINGS, INFO, PINS, DOT_JSON, ADDED,
+  MOVED, ADDING, MOVING, UPDATING, DIED_ADDING, DIED_UPDATING, DIED_MOVING,
+  DIED_REMOVING, DIED_DELETING, COLOR, PATTERN, IMAGE, BG_COLOR_STYLES, PATTERNS,
+  VALID_URL, NO_URL, ASK_CONFIRM_URL, VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME,
   DUPLICATE_LIST_NAME, COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD,
-  PAUSED, UNKNOWN, CD_ROOT,
+  PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, MAX_TRY,
 } from '../types/const';
 import { IMAGE_PATHS } from '../types/imagePaths';
 import { _ } from './obj';
+
+const shortMonths = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
 
 export const removeTailingSlash = (url) => {
   if (url.slice(-1) === '/') return url.slice(0, -1);
@@ -672,7 +676,10 @@ export const multiplyPercent = (value, percent) => {
 
 export const rerandomRandomTerm = (id) => {
   const arr = id.split('-');
-  if (arr.length !== 3 && arr.length !== 4) throw new Error(`Invalid id: ${id}`);
+  if (arr.length !== 3 && arr.length !== 4) {
+    console.log(`In rerandomRandomTerm, invalid id: ${id}`);
+    return id;
+  }
 
   arr[2] = randomString(4);
   return arr.join('-');
@@ -680,7 +687,10 @@ export const rerandomRandomTerm = (id) => {
 
 export const deleteRemovedDT = (id) => {
   const arr = id.split('-');
-  if (arr.length !== 3 && arr.length !== 4) throw new Error(`Invalid id: ${id}`);
+  if (arr.length !== 3 && arr.length !== 4) {
+    console.log(`In deleteRemovedDT, invalid id: ${id}`);
+    return id;
+  }
 
   return arr.slice(0, 3).join('-');
 };
@@ -753,13 +763,21 @@ export const swapArrayElements = (a, x, y) => (a[x] && a[y] && [
   ...a.slice(y + 1),
 ]) || a;
 
-export const getFormattedDate = (d) => {
-  const months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-  ];
+export const getFormattedDT = (dt) => {
+  const d = new Date(dt);
 
+  const year = d.getFullYear() % 2000;
+  const month = shortMonths[d.getMonth()];
+  const date = d.getDate();
+  const hour = String(d.getHours()).padStart(2, '0');
+  const min = String(d.getMinutes()).padStart(2, '0');
+
+  return `${date} ${month} ${year} ${hour}:${min}`;
+};
+
+export const getFormattedDate = (d) => {
   const year = d.getFullYear();
-  const month = months[d.getMonth()];
+  const month = shortMonths[d.getMonth()];
   const date = d.getDate();
 
   return `${date} ${month} ${year}`;
@@ -804,9 +822,9 @@ export const shouldDispatchFetch = (outbox, payload) => {
             params.doDescendingOrder === payload.doDescendingOrder
           ) {
             if (
-              (params.doFetchSettings && payload.doFetchSettings) ||
-              (params.doFetchSettings && !payload.doFetchSettings) ||
-              (!params.doFetchSettings && !payload.doFetchSettings)
+              (params.doFetchStgsAndInfo && payload.doFetchStgsAndInfo) ||
+              (params.doFetchStgsAndInfo && !payload.doFetchStgsAndInfo) ||
+              (!params.doFetchStgsAndInfo && !payload.doFetchStgsAndInfo)
             ) return false;
           }
         }
@@ -870,28 +888,33 @@ export const escapeDoubleQuotes = (s) => {
   return s.trim().replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 };
 
-export const isDecorValid = (data) => {
-  if (!isObject(data.decor)) return false;
-  if (!isObject(data.decor.image) || !isObject(data.decor.favicon)) return false;
-  if (!isObject(data.decor.image.bg) || !isObject(data.decor.favicon.bg)) return false;
-  if (!isString(data.decor.image.bg.type) || !isString(data.decor.image.bg.value)) {
+const _isDecorValid = (decor) => {
+  if (!isObject(decor)) return false;
+  if (!isObject(decor.image) || !isObject(decor.favicon)) return false;
+  if (!isObject(decor.image.bg) || !isObject(decor.favicon.bg)) return false;
+  if (!isString(decor.image.bg.type) || !isString(decor.image.bg.value)) {
     return false;
   }
 
-  if ('fg' in data.decor.image) {
+  if ('fg' in decor.image) {
     if (!(
-      data.decor.image.fg === null ||
+      decor.image.fg === null ||
       (
-        isObject(data.decor.image.fg) && isString(data.decor.image.fg.text)
+        isObject(decor.image.fg) && isString(decor.image.fg.text)
       )
     )) return false;
   }
 
-  if (!isString(data.decor.favicon.bg.type) || !isString(data.decor.favicon.bg.value)) {
+  if (!isString(decor.favicon.bg.type) || !isString(decor.favicon.bg.value)) {
     return false;
   }
 
   return true;
+}
+
+export const isDecorValid = (data) => {
+  if (isObject(data) && 'decor' in data) return _isDecorValid(data.decor);
+  return _isDecorValid(data);
 };
 
 export const isExtractedResultValid = (data) => {
@@ -967,6 +990,10 @@ export const deriveSettingsState = (listNames, settings, initialState) => {
   return state;
 };
 
+export const deriveInfoState = (info, initialState) => {
+  return info ? { ...initialState, ...info } : { ...initialState };
+};
+
 export const getValidProduct = (products) => {
   if (!Array.isArray(products) || products.length === 0) return null;
   for (const product of products) {
@@ -1023,29 +1050,53 @@ export const createLinkFPath = (listName, id = null) => {
 };
 
 export const extractLinkFPath = (fpath) => {
-  const [listName, fname] = fpath.split('/').slice(1);
-  //listName = decodeURIComponent(listName);
+  const arr = fpath.split('/');
+  if (arr.length !== 3) console.log(`In extractLinkFPath, invalid fpath: ${fpath}`);
 
+  let id, ext;
+  const [listName, fname] = [arr[1] || '', arr[2] || ''];
   const dotIndex = fname.lastIndexOf('.');
-  const ext = fname.substring(dotIndex + 1);
-  const id = fname.substring(0, dotIndex);
+  if (dotIndex === -1) {
+    [id, ext] = [fname, ''];
+  } else {
+    [id, ext] = [fname.substring(0, dotIndex), fname.substring(dotIndex + 1)];
+  }
 
   return { listName, id, ext };
 };
 
-export const extractFPath = (fpath) => {
-  const [fname] = fpath.split('/').slice(-1);
-  const dotIndex = fname.lastIndexOf('.');
+export const extractLinkId = (id) => {
+  const arr = id.split('-');
+  if (arr.length !== 3 && arr.length !== 4) {
+    console.log(`In extractLinkId, invalid id: ${id}`);
+  }
+
+  return { dt: parseInt(arr[0], 10) };
+};
+
+export const extractStaticFPath = (fpath) => {
+  const arr = fpath.split('/');
+  if (arr.length !== 2) console.log(`In extractStaticFPath, invalid fpath: ${fpath}`);
 
   let id, ext;
+  const fname = arr[1] || '';
+  const dotIndex = fname.lastIndexOf('.');
   if (dotIndex === -1) {
-    id = fname;
+    [id, ext] = [fname, ''];
   } else {
-    id = fname.substring(0, dotIndex);
-    ext = fname.substring(dotIndex + 1);
+    [id, ext] = [fname.substring(0, dotIndex), fname.substring(dotIndex + 1)];
   }
 
   return { id, ext };
+};
+
+export const createSettingsFPath = (fname) => {
+  return `${SETTINGS}${fname}${DOT_JSON}`;
+};
+
+export const extractSettingsFPath = (fpath) => {
+  const fname = fpath.slice(SETTINGS.length, -1 * DOT_JSON.length);
+  return { fname };
 };
 
 export const createPinFPath = (rank, updatedDT, addedDT, id) => {
@@ -1053,14 +1104,22 @@ export const createPinFPath = (rank, updatedDT, addedDT, id) => {
 };
 
 export const extractPinFPath = (fpath) => {
-  const [rank, updatedDTStr, addedDTStr, fname] = fpath.split('/').slice(1);
+  const arr = fpath.split('/');
+  if (arr.length !== 5) console.log(`In extractPinFPath, invalid fpath: ${fpath}`);
+
+  let id, ext;
+  const [rank, fname] = [arr[1] || '', arr[4] || ''];
+  const [updatedDTStr, addedDTStr] = [arr[2] || '', arr[3] || ''];
 
   const updatedDT = parseInt(updatedDTStr, 10);
   const addedDT = parseInt(addedDTStr, 10);
 
   const dotIndex = fname.lastIndexOf('.');
-  const ext = fname.substring(dotIndex + 1);
-  const id = fname.substring(0, dotIndex);
+  if (dotIndex === -1) {
+    [id, ext] = [fname, ''];
+  } else {
+    [id, ext] = [fname.substring(0, dotIndex), fname.substring(dotIndex + 1)];
+  }
 
   return { rank, updatedDT, addedDT, id, ext };
 };
@@ -1077,7 +1136,16 @@ export const addFPath = (fpaths, fpath) => {
   } else if (fpath.startsWith(IMAGES)) {
     if (!fpaths.staticFPaths.includes(fpath)) fpaths.staticFPaths.push(fpath);
   } else if (fpath.startsWith(SETTINGS)) {
-    fpaths.settingsFPath = fpath;
+    if (!fpaths.settingsFPaths.includes(fpath)) fpaths.settingsFPaths.push(fpath);
+  } else if (fpath.startsWith(INFO)) {
+    if (!fpaths.infoFPath) fpaths.infoFPath = fpath;
+    else {
+      const dt = parseInt(
+        fpaths.infoFPath.slice(INFO.length, -1 * DOT_JSON.length), 10
+      );
+      const _dt = parseInt(fpath.slice(INFO.length, -1 * DOT_JSON.length), 10);
+      if (isNumber(dt) && isNumber(_dt) && dt < _dt) fpaths.infoFPath = fpath;
+    }
   } else if (fpath.startsWith(PINS)) {
     if (!fpaths.pinFPaths.includes(fpath)) fpaths.pinFPaths.push(fpath);
   } else {
@@ -1097,7 +1165,9 @@ export const deleteFPath = (fpaths, fpath) => {
   } else if (fpath.startsWith(IMAGES)) {
     fpaths.staticFPaths = fpaths.staticFPaths.filter(el => el !== fpath);
   } else if (fpath.startsWith(SETTINGS)) {
-    if (fpaths.settingsFPath === fpath) fpaths.settingsFPath = null;
+    fpaths.settingsFPaths = fpaths.settingsFPaths.filter(el => el !== fpath);
+  } else if (fpath.startsWith(INFO)) {
+    if (fpaths.infoFPath === fpath) fpaths.infoFPath = null;
   } else if (fpath.startsWith(PINS)) {
     fpaths.pinFPaths = fpaths.pinFPaths.filter(el => el !== fpath);
   } else {
@@ -1118,6 +1188,11 @@ export const copyFPaths = (fpaths) => {
   let newStaticFPaths = [];
   if (Array.isArray(fpaths.staticFPaths)) newStaticFPaths = [...fpaths.staticFPaths];
 
+  let newSettingsFPaths = [];
+  if (Array.isArray(fpaths.settingsFPaths)) {
+    newSettingsFPaths = [...fpaths.settingsFPaths];
+  }
+
   let newPinFPaths = [];
   if (Array.isArray(fpaths.pinFPaths)) newPinFPaths = [...fpaths.pinFPaths];
 
@@ -1125,6 +1200,7 @@ export const copyFPaths = (fpaths) => {
     ...fpaths,
     linkFPaths: newLinkFPaths,
     staticFPaths: newStaticFPaths,
+    settingsFPaths: newSettingsFPaths,
     pinFPaths: newPinFPaths,
   };
 };
@@ -1149,6 +1225,203 @@ export const getStaticFPaths = (state) => {
     return state.cachedFPaths.fpaths.staticFPaths;
   }
   return [];
+};
+
+export const getSettingsFPaths = (state) => {
+  if (
+    isObject(state.cachedFPaths) &&
+    isObject(state.cachedFPaths.fpaths) &&
+    Array.isArray(state.cachedFPaths.fpaths.settingsFPaths)
+  ) {
+    return state.cachedFPaths.fpaths.settingsFPaths;
+  }
+  return [];
+};
+
+export const getInfoFPath = (state) => {
+  if (isObject(state.cachedFPaths) && isObject(state.cachedFPaths.fpaths)) {
+    return state.cachedFPaths.fpaths.infoFPath;
+  }
+  return null;
+};
+
+export const createDataFName = (id, parentIds) => {
+  if (Array.isArray(parentIds)) {
+    parentIds = parentIds.filter(el => isString(el) && el.length > 0);
+    if (parentIds.length > 0) return `${id}_${parentIds.join('-')}`;
+  }
+  return id;
+};
+
+export const extractDataFName = (fname) => {
+  if (!fname.includes('_')) return { id: fname, parentIds: null };
+
+  const [id, _parentIds] = fname.split('_');
+  const parentIds = _parentIds.split('-');
+  return { id, parentIds };
+};
+
+export const extractDataId = (id) => {
+  let i;
+  for (i = id.length - 1; i >= 0; i--) {
+    if (/\d/.test(id[i])) break;
+  }
+
+  return { dt: parseInt(id.slice(0, i + 1), 10) };
+};
+
+export const getDataParentIds = (leafId, toParents) => {
+  const parentIds = [];
+
+  let pendingIds = [leafId];
+  while (pendingIds.length > 0) {
+    let id = pendingIds[0];
+    pendingIds = pendingIds.slice(1);
+
+    const parents = toParents[id];
+    if (!parents) continue;
+
+    for (const parentId of parents) {
+      if (!parentIds.includes(parentId)) {
+        pendingIds.push(parentId);
+        parentIds.push(parentId);
+      }
+    }
+  }
+
+  return parentIds;
+};
+
+const getDataRootIds = (leafId, toParents) => {
+  const rootIds = [];
+
+  let pendingIds = [leafId], passedIds = [leafId];
+  while (pendingIds.length > 0) {
+    let id = pendingIds[0];
+    pendingIds = pendingIds.slice(1);
+
+    let doBreak = false;
+    while (toParents[id]) {
+      const parents = toParents[id];
+
+      let i = 0, doFound = false;
+      for (; i < parents.length; i++) {
+        const parentId = parents[i];
+        if (!passedIds.includes(parentId)) {
+          [id, doFound] = [parentId, true];
+          passedIds.push(parentId);
+          break;
+        }
+      }
+      if (!doFound) {
+        doBreak = true;
+        break;
+      }
+
+      for (; i < parents.length; i++) {
+        const parentId = parents[i];
+        if (!passedIds.includes(parentId)) {
+          pendingIds.push(parentId);
+          passedIds.push(parentId);
+        }
+      }
+    }
+
+    if (!doBreak && !rootIds.includes(id)) rootIds.push(id);
+  }
+
+  return rootIds;
+};
+
+const getDataOldestRootId = (rootIds) => {
+  let rootId, addedDT;
+  for (const id of [...rootIds].sort()) {
+    const { dt } = extractDataId(id);
+    if (!isNumber(addedDT) || dt < addedDT) {
+      addedDT = dt;
+      rootId = id;
+    }
+  }
+  return rootId;
+};
+
+const _listDataIds = (dataFPaths, extractDataFPath, workingSubName) => {
+  const ids = [];
+  const toFPaths = {};
+  const toParents = {};
+  const toChildren = {};
+  for (const fpath of dataFPaths) {
+    const { fname, subName } = extractDataFPath(fpath);
+    const { id, parentIds } = extractDataFName(fname);
+
+    if (!toFPaths[id]) toFPaths[id] = [];
+    toFPaths[id].push(fpath);
+
+    if (subName !== workingSubName) continue;
+    if (ids.includes(id)) continue;
+    ids.push(id);
+
+    if (parentIds) {
+      toParents[id] = parentIds;
+      for (const pid of parentIds) {
+        if (!toChildren[pid]) toChildren[pid] = [];
+        toChildren[pid].push(id);
+      }
+    } else {
+      toParents[id] = null;
+    }
+  }
+
+  const leafIds = [];
+  for (const id of ids) {
+    if (!toChildren[id]) {
+      if (id.startsWith('deleted')) continue;
+      leafIds.push(id);
+    }
+  }
+
+  const toRootIds = {};
+  for (const id of ids) {
+    const rootIds = getDataRootIds(id, toParents);
+    const rootId = getDataOldestRootId(rootIds);
+    toRootIds[id] = rootId;
+  }
+
+  const toLeafIds = {};
+  for (const id of leafIds) {
+    const rootId = toRootIds[id];
+
+    if (!toLeafIds[rootId]) toLeafIds[rootId] = [];
+    toLeafIds[rootId].push(id);
+  }
+
+  const dataIds = [];
+  const conflictedIds = [];
+  for (const id of leafIds) {
+    const parentIds = toParents[id];
+
+    const rootId = toRootIds[id];
+    const { dt: addedDT } = extractDataId(rootId);
+    const { dt: updatedDT } = extractDataId(id);
+
+    const tIds = toLeafIds[rootId];
+    const isConflicted = tIds.length > 1;
+    const conflictWith = isConflicted ? tIds : null;
+
+    const fpaths = toFPaths[id];
+    const { listName } = extractDataFPath(fpaths[0]);
+
+    const dataId = {
+      parentIds, id, addedDT, updatedDT, isConflicted, conflictWith, fpaths, listName,
+    };
+
+    if (isConflicted) conflictedIds.push(dataId);
+    else dataIds.push(dataId);
+  }
+
+  const conflictWiths = Object.values(toLeafIds).filter(tIds => tIds.length > 1);
+
+  return { dataIds, conflictedIds, conflictWiths, toRootIds, toParents };
 };
 
 export const getPinFPaths = (state) => {
@@ -1300,6 +1573,49 @@ export const getSortedLinks = (links, listName, doDescendingOrder) => {
   return sortedLinks;
 };
 
+export const _listSettingsIds = (settingsFPaths) => {
+  const {
+    dataIds, conflictedIds, conflictWiths, toRootIds, toParents,
+  } = _listDataIds(settingsFPaths, extractSettingsFPath, undefined);
+  return { settingsIds: dataIds, conflictedIds, conflictWiths, toRootIds, toParents };
+};
+
+export const getLastSettingsFPaths = (settingsFPaths) => {
+  const _v1FPaths = [], _v2FPaths = [];
+  for (const fpath of settingsFPaths) {
+    const { fname } = extractSettingsFPath(fpath);
+    const { id } = extractDataFName(fname);
+    const { dt } = extractDataId(id);
+
+    if (!isNumber(dt)) _v1FPaths.push(fpath);
+    else _v2FPaths.push(fpath);
+  }
+
+  const v1FPath = _v1FPaths.length > 0 ? _v1FPaths[0] : null;
+
+  let v2FPaths = [];
+  const { settingsIds, conflictedIds } = _listSettingsIds(_v2FPaths);
+  for (const settingsId of [...settingsIds, ...conflictedIds]) {
+    for (const fpath of settingsId.fpaths) {
+      v2FPaths.push({ fpath, id: settingsId.id, dt: settingsId.updatedDT });
+    }
+  }
+  v2FPaths = v2FPaths.sort((a, b) => b.dt - a.dt);
+
+  const lastFPaths = [], lastIds = [];
+  if (v2FPaths.length > 0) {
+    for (const v2FPath of v2FPaths) {
+      if (lastFPaths.includes(v2FPath.fpath)) continue;
+      lastFPaths.push(v2FPath.fpath);
+      lastIds.push(v2FPath.id);
+    }
+  } else if (isString(v1FPath)) {
+    lastFPaths.push(v1FPath);
+  }
+
+  return { fpaths: lastFPaths, ids: lastIds };
+};
+
 export const getFormattedTime = (timeStr, is24HFormat) => {
   const [hStr, mStr] = timeStr.trim().split(':');
   if (is24HFormat) return { time: timeStr, hour: hStr, minute: mStr, period: null };
@@ -1341,10 +1657,7 @@ export const getStaticFPath = (fpath) => {
   return fpath;
 };
 
-export const deriveFPaths = (custom, toCustom, savingFPaths) => {
-  // Should name as newFPaths instead of usedFpaths
-  //   as it doesn't include existing, not changed usedFpaths.
-  // Keep consistency with Justnote.
+export const deriveFPaths = (custom, toCustom) => {
   const usedFPaths = [], serverUnusedFPaths = [], localUnusedFPaths = [];
 
   let image = null, toImage = null;
@@ -1356,13 +1669,6 @@ export const deriveFPaths = (custom, toCustom, savingFPaths) => {
     if (image) {
       serverUnusedFPaths.push(getStaticFPath(image));
       localUnusedFPaths.push(getStaticFPath(image));
-    }
-  }
-
-  if (savingFPaths) {
-    for (const fpath of savingFPaths) {
-      if (fpath === toImage) continue;
-      localUnusedFPaths.push(getStaticFPath(fpath));
     }
   }
 
@@ -1386,4 +1692,181 @@ export const getWindowSize = () => {
   }
 
   return { windowWidth, windowHeight, visualWidth, visualHeight };
+};
+
+export const excludeNotObjContents = (fpaths, contents) => {
+  const exFPaths = [], exContents = [];
+  for (let i = 0; i < fpaths.length; i++) {
+    const [fpath, content] = [fpaths[i], contents[i]];
+    if (!isObject(content)) continue;
+
+    exFPaths.push(fpath);
+    exContents.push(content);
+  }
+  return { fpaths: exFPaths, contents: exContents };
+};
+
+export const getEditingListNameEditors = (listNameEditors, listNameObjs) => {
+  let editingLNEs = null;
+  for (const k in listNameEditors) {
+    if (listNameEditors[k].mode !== MODE_EDIT) continue;
+    if (!isString(listNameEditors[k].value)) continue;
+
+    let displayName = ''; // Empty string and no listNameObj for newListNameEditor
+    const { listNameObj } = getListNameObj(k, listNameObjs);
+    if (isObject(listNameObj)) displayName = listNameObj.displayName;
+
+    if (listNameEditors[k].value === displayName) continue;
+
+    if (!isObject(editingLNEs)) editingLNEs = {};
+    editingLNEs[k] = { ...listNameEditors[k] };
+  }
+  return editingLNEs;
+};
+
+export const batchGetFileWithRetry = async (
+  getFile, fpaths, callCount, dangerouslyIgnoreError = false
+) => {
+
+  const responses = await Promise.all(
+    fpaths.map(fpath =>
+      getFile(fpath)
+        .then(content => ({ content, fpath, success: true }))
+        .catch(error => ({ error, fpath, content: null, success: false }))
+    )
+  );
+
+  const failedResponses = responses.filter(({ success }) => !success);
+  const failedFPaths = failedResponses.map(({ fpath }) => fpath);
+
+  if (failedResponses.length) {
+    if (callCount + 1 >= MAX_TRY) {
+      if (dangerouslyIgnoreError) {
+        console.log('batchGetFileWithRetry error: ', failedResponses[0].error);
+        return responses;
+      }
+      throw failedResponses[0].error;
+    }
+
+    return [
+      ...responses.filter(({ success }) => success),
+      ...(await batchGetFileWithRetry(
+        getFile, failedFPaths, callCount + 1, dangerouslyIgnoreError
+      )),
+    ];
+  }
+
+  return responses;
+};
+
+export const batchPutFileWithRetry = async (
+  putFile, fpaths, contents, callCount, dangerouslyIgnoreError = false
+) => {
+
+  const responses = await Promise.all(
+    fpaths.map((fpath, i) =>
+      putFile(fpath, contents[i])
+        .then(publicUrl => ({ publicUrl, fpath, success: true }))
+        .catch(error => ({ error, fpath, content: contents[i], success: false }))
+    )
+  );
+
+  const failedResponses = responses.filter(({ success }) => !success);
+  const failedFPaths = failedResponses.map(({ fpath }) => fpath);
+  const failedContents = failedResponses.map(({ content }) => content);
+
+  if (failedResponses.length) {
+    if (callCount + 1 >= MAX_TRY) {
+      if (dangerouslyIgnoreError) {
+        console.log('batchPutFileWithRetry error: ', failedResponses[0].error);
+        return responses;
+      }
+      throw failedResponses[0].error;
+    }
+
+    return [
+      ...responses.filter(({ success }) => success),
+      ...(await batchPutFileWithRetry(
+        putFile, failedFPaths, failedContents, callCount + 1, dangerouslyIgnoreError
+      )),
+    ];
+  }
+
+  return responses;
+};
+
+export const batchDeleteFileWithRetry = async (
+  deleteFile, fpaths, callCount, dangerouslyIgnoreError = false
+) => {
+
+  const responses = await Promise.all(
+    fpaths.map((fpath) =>
+      deleteFile(fpath)
+        .then(() => ({ fpath, success: true }))
+        .catch(error => {
+          // BUG ALERT
+          // Treat not found error as not an error as local data might be out-dated.
+          //   i.e. user tries to delete a not-existing file, it's ok.
+          // Anyway, if the file should be there, this will hide the real error!
+          if (
+            isObject(error) &&
+            isString(error.message) &&
+            (
+              (
+                error.message.includes('failed to delete') &&
+                error.message.includes('404')
+              ) ||
+              (
+                error.message.includes('deleteFile Error') &&
+                error.message.includes('GaiaError error 5')
+              ) ||
+              error.message.includes('does_not_exist') ||
+              error.message.includes('file_not_found')
+            )
+          ) {
+            return { fpath, success: true };
+          }
+          return { error, fpath, success: false };
+        })
+    )
+  );
+
+  const failedResponses = responses.filter(({ success }) => !success);
+  const failedFPaths = failedResponses.map(({ fpath }) => fpath);
+
+  if (failedResponses.length) {
+    if (callCount + 1 >= MAX_TRY) {
+      if (dangerouslyIgnoreError) {
+        console.log('batchDeleteFileWithRetry error: ', failedResponses[0].error);
+        return responses;
+      }
+      throw failedResponses[0].error;
+    }
+
+    return [
+      ...responses.filter(({ success }) => success),
+      ...(await batchDeleteFileWithRetry(
+        deleteFile, failedFPaths, callCount + 1, dangerouslyIgnoreError
+      )),
+    ];
+  }
+
+  return responses;
+};
+
+export const deriveUnknownErrorLink = (fpath) => {
+  const { id } = extractLinkFPath(fpath);
+  const { dt } = extractLinkId(id);
+
+  const decor = {
+    image: {
+      bg: { type: COLOR, value: BG_COLOR_STYLES[0] },
+      fg: null,
+    },
+    favicon: {
+      bg: { type: COLOR, value: BG_COLOR_STYLES[0] },
+    },
+  };
+
+  return { id, url: 'Unknown error', addedDT: dt, decor };
 };

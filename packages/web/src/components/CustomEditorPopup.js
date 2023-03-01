@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import loadImage from 'blueimp-load-image';
 
-import fileApi from '../apis/file';
+import fileApi from '../apis/localFile';
 import {
   updatePopup, updateCustomEditor, updateImages, updateCustomData,
 } from '../actions';

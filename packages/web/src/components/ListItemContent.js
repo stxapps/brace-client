@@ -7,22 +7,20 @@ import {
   COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING, UPDATING, LG_WIDTH,
   REMOVE, RESTORE,
 } from '../types/const';
-import { makeGetPinStatus, makeGetCustomImage } from '../selectors';
+import { makeGetCustomImage } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
-  extractUrl, isPinningStatus,
+  extractUrl, isPinningStatus, isDecorValid,
 } from '../utils';
 
 import { useSafeAreaFrame, useTailwind } from '.';
 
 const ListItemContent = (props) => {
 
-  const { link } = props;
+  const { link, pinStatus } = props;
   const { width: safeAreaWidth } = useSafeAreaFrame();
-  const getPinStatus = useMemo(makeGetPinStatus, []);
   const getCustomImage = useMemo(makeGetCustomImage, []);
   const listName = useSelector(state => state.display.listName);
-  const pinStatus = useSelector(state => getPinStatus(state, link));
   const customImage = useSelector(state => getCustomImage(state, link));
   const [extractedFaviconError, setExtractedFaviconError] = useState(false);
   const clickPressTimer = useRef(null);
@@ -112,31 +110,32 @@ const ListItemContent = (props) => {
     }
 
     // Only plain color background or plain color background with a letter
-    if (decor.image.bg.type === COLOR) {
+    if (isDecorValid(decor) && decor.image.bg.type === COLOR) {
       return <div className={tailwind(`absolute h-full w-full ${decor.image.bg.value}`)} />;
     }
 
     // Only pattern background or pattern background with a big letter
-    if (decor.image.bg.type === PATTERN) {
+    if (isDecorValid(decor) && decor.image.bg.type === PATTERN) {
       // Require both 'pattern' and [pattern_name] class names
       return <div className={tailwind(`absolute h-full w-full pattern ${decor.image.bg.value}`)} />;
     }
 
     // Random image
-    if (decor.image.bg.type === IMAGE) {
+    if (isDecorValid(decor) && decor.image.bg.type === IMAGE) {
       return <GracefulImage key="image-graceful-image-decor" className={tailwind('absolute h-full w-full object-cover object-center')} src={decor.image.bg.value} alt={`illustration of ${url}`} />;
     }
 
-    throw new Error(`Invalid decor: ${JSON.stringify(decor)}`);
+    console.log(`In ListItemContent.renderImage, invalid decor: ${JSON.stringify(decor)}`);
+    return null;
   };
 
   const renderFavicon = () => {
     const placeholder = (ref) => {
-      if (decor.favicon.bg.type === COLOR) {
+      if (isDecorValid(decor) && decor.favicon.bg.type === COLOR) {
         return <div ref={ref} className={tailwind(`h-3.5 w-3.5 flex-shrink-0 flex-grow-0 rounded-full ${decor.favicon.bg.value}`)} />;
       }
 
-      if (decor.favicon.bg.type === PATTERN) {
+      if (isDecorValid(decor) && decor.favicon.bg.type === PATTERN) {
         // Require both 'pattern' and [pattern_name] class names
         // Require under relative class
         return (
@@ -147,6 +146,8 @@ const ListItemContent = (props) => {
           </div>
         );
       }
+
+      return null;
     };
 
     let favicon;

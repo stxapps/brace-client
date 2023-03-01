@@ -1,6 +1,5 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { motion, AnimateSharedLayout } from 'framer-motion';
 
 import { fetchMore, updateFetchedMore } from '../actions';
 import {
@@ -8,8 +7,7 @@ import {
   MD_WIDTH, PC_100,
 } from '../types/const';
 import { getLinks, getIsFetchingMore } from '../selectors';
-import { addRem, getWindowHeight, getWindowScrollHeight, debounce } from '../utils';
-import { cardItemFMV } from '../types/animConfigs';
+import { addRem, getWindowHeight, getWindowScrollHeight, throttle } from '../utils';
 import vars from '../vars';
 
 import { useSafeAreaFrame, useTailwind } from '.';
@@ -27,6 +25,9 @@ const ListPanel = (props) => {
   );
   const isFetchingMore = useSelector(state => getIsFetchingMore(state));
   const listChangedCount = useSelector(state => state.display.listChangedCount);
+  const hasMoreRef = useRef(hasMore);
+  const hasFetchedMoreRef = useRef(hasFetchedMore);
+  const isFetchingMoreRef = useRef(isFetchingMore);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
 
@@ -46,11 +47,13 @@ const ListPanel = (props) => {
     vars.scrollPanel.layoutHeight = windowHeight;
     vars.scrollPanel.pageYOffset = scrollTop;
 
-    if (!hasMore || hasFetchedMore || isFetchingMore) return;
+    if (
+      !hasMoreRef.current || hasFetchedMoreRef.current || isFetchingMoreRef.current
+    ) return;
 
     const windowBottom = windowHeight + scrollTop;
     if (windowBottom > (scrollHeight * 0.96)) dispatch(fetchMore());
-  }, [hasMore, hasFetchedMore, isFetchingMore, dispatch]);
+  }, [dispatch]);
 
   const onFetchMoreBtnClick = () => {
     dispatch(fetchMore());
@@ -58,6 +61,11 @@ const ListPanel = (props) => {
 
   const onUpdateFetchedBtnClick = () => {
     dispatch(updateFetchedMore());
+  };
+
+  const renderEmpty = () => {
+    vars.scrollPanel.pageYOffset = 0;
+    return <EmptyContent />;
   };
 
   const renderFetchMoreBtn = () => {
@@ -96,27 +104,28 @@ const ListPanel = (props) => {
   const renderItems = () => {
     return (
       <ul className={tailwind('divide-y divide-gray-200 blk:divide-gray-700')}>
-        <AnimateSharedLayout>
-          {links.map(link => {
-            return (
-              <motion.div key={link.id} layoutId={link.id} variants={cardItemFMV} initial="hidden" animate="visible">
-                <ListItem link={link} />
-              </motion.div>
-            );
-          })}
-        </AnimateSharedLayout>
+        {links.map(link => <ListItem key={link.id} link={link} />)}
       </ul>
     );
   };
 
   useEffect(() => {
-    setTimeout(() => window.scrollTo(0, 0), 1);
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      vars.scrollPanel.pageYOffset = 0;
+    }, 1);
   }, [listChangedCount]);
 
   useEffect(() => {
+    hasMoreRef.current = hasMore;
+    hasFetchedMoreRef.current = hasFetchedMore;
+    isFetchingMoreRef.current = isFetchingMore;
+  }, [hasMore, hasFetchedMore, isFetchingMore]);
+
+  useEffect(() => {
     // throttle may refer to stale updateScrollY with old isFetchingMore,
-    //   use debounce with immediate = true to prevent duplicate fetchMore.
-    const listener = debounce(updateScrollY, 16, true);
+    //   use refs to access current values to prevent duplicate fetchMore.
+    const listener = throttle(updateScrollY, 16);
 
     window.addEventListener('scroll', listener);
     return () => {
@@ -143,7 +152,7 @@ const ListPanel = (props) => {
   return (
     <div style={style} className={tailwind('relative mx-auto max-w-6xl px-4 md:px-6 lg:px-8')}>
       <div className={tailwind('pt-6')}>
-        {links.length === 0 && <EmptyContent />}
+        {links.length === 0 && renderEmpty()}
         {links.length > 0 && renderItems()}
         {fetchMoreBtn}
       </div>

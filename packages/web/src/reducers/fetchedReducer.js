@@ -42,10 +42,21 @@ const fetchedReducer = (state = initialState, action) => {
   }
 
   if (
-    action.type === DELETE_LINKS_COMMIT ||
-    action.type === MOVE_LINKS_DELETE_STEP_COMMIT ||
-    action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT
+    action.type === DELETE_LINKS_COMMIT || action.type === MOVE_LINKS_DELETE_STEP_COMMIT
   ) {
+    const { listName, successIds } = action.payload;
+    if (!state[listName]) return state;
+
+    const { payload, meta } = state[listName];
+    const newPayload = {
+      ...payload,
+      links: payload.links.filter(l => !successIds.includes(l.id)),
+    };
+
+    return { ...state, [listName]: { payload: newPayload, meta } };
+  }
+
+  if (action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT) {
     const { listName, ids } = action.payload;
     if (!state[listName]) return state;
 
@@ -59,11 +70,11 @@ const fetchedReducer = (state = initialState, action) => {
   }
 
   if (action.type === EXTRACT_CONTENTS_COMMIT) {
-    const { listName, links } = action.payload;
+    const { listName, successLinks } = action.payload;
     if (!state[listName]) return state;
 
     const linkObjs = {};
-    for (const link of links) {
+    for (const link of successLinks) {
       linkObjs[link.id] = link;
     }
 

@@ -313,12 +313,12 @@ export const getValidProduct = createSelector(
 );
 
 export const getValidPurchase = createSelector(
-  state => state.settings.purchases,
+  state => state.info.purchases,
   purchases => _getValidPurchase(purchases),
 );
 
 export const getDoEnableExtraFeatures = createSelector(
-  state => state.settings.purchases,
+  state => state.info.purchases,
   purchases => doEnableExtraFeatures(purchases),
 );
 
@@ -327,10 +327,9 @@ export const makeGetPinStatus = () => {
   return createSelector(
     state => getPinFPaths(state),
     state => state.pendingPins,
-    (__, link) => link ? link.id : null,
+    (__, link) => isObject(link) ? link.id : null,
     (pinFPaths, pendingPins, linkId) => {
-
-      if (!linkId) return null;
+      if (!isString(linkId)) return null;
 
       const pins = getPins(pinFPaths, pendingPins, false);
       const linkMainId = getMainId(linkId);

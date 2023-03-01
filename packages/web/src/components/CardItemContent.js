@@ -8,7 +8,7 @@ import { COLOR, PATTERN, IMAGE } from '../types/const';
 import { makeGetCustomImage, getSafeAreaWidth, getThemeMode } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
-  extractUrl, isEqual,
+  extractUrl, isEqual, isDecorValid,
 } from '../utils';
 
 import { withTailwind } from '.';
@@ -99,7 +99,7 @@ class CardItemContent extends React.Component {
     }
 
     let fg = null;
-    if (decor.image.fg) {
+    if (isDecorValid(decor) && decor.image.fg) {
       const { text } = decor.image.fg;
       fg = (
         <React.Fragment>
@@ -110,7 +110,7 @@ class CardItemContent extends React.Component {
     }
 
     // Only plain color background or plain color background with a letter
-    if (decor.image.bg.type === COLOR) {
+    if (isDecorValid(decor) && decor.image.bg.type === COLOR) {
       let blkClassNames = 'blk:ring-1 blk:ring-white blk:ring-opacity-10';
       if (decor.image.bg.value !== 'bg-gray-800') blkClassNames = '';
       return (
@@ -122,7 +122,7 @@ class CardItemContent extends React.Component {
     }
 
     // Only pattern background or pattern background with a big letter
-    if (decor.image.bg.type === PATTERN) {
+    if (isDecorValid(decor) && decor.image.bg.type === PATTERN) {
       // Require both 'pattern' and [pattern_name] class names
       return (
         <React.Fragment>
@@ -133,22 +133,23 @@ class CardItemContent extends React.Component {
     }
 
     // Random image
-    if (decor.image.bg.type === IMAGE) {
+    if (isDecorValid(decor) && decor.image.bg.type === IMAGE) {
       return <GracefulImage key="image-graceful-image-decor" className={tailwind('absolute h-full w-full object-cover object-center')} src={decor.image.bg.value} alt={`illustration of ${url}`} />;
     }
 
-    throw new Error(`Invalid decor: ${JSON.stringify(decor)}`);
+    console.log(`In CardItemContent.renderImage, invalid decor: ${JSON.stringify(decor)}`);
+    return null;
   }
 
   renderFavicon() {
     const { tailwind } = this.props;
 
     const placeholder = (ref) => {
-      if (decor.favicon.bg.type === COLOR) {
+      if (isDecorValid(decor) && decor.favicon.bg.type === COLOR) {
         return <div ref={ref} className={tailwind(`h-4 w-4 flex-shrink-0 flex-grow-0 rounded-full ${decor.favicon.bg.value}`)} />;
       }
 
-      if (decor.favicon.bg.type === PATTERN) {
+      if (isDecorValid(decor) && decor.favicon.bg.type === PATTERN) {
         // Require both 'pattern' and [pattern_name] class names
         // Require under relative class
         return (
@@ -159,6 +160,8 @@ class CardItemContent extends React.Component {
           </div>
         );
       }
+
+      return null;
     };
 
     const { url, decor, extractedResult } = this.props.link;

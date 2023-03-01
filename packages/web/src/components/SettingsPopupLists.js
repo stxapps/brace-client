@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { motion, AnimateSharedLayout, AnimatePresence } from 'framer-motion';
 
 import dataApi from '../apis/blockstack';
 import {
@@ -14,7 +13,6 @@ import {
 } from '../types/const';
 import { getListNameMap, makeGetListNameEditor } from '../selectors';
 import { validateListNameDisplayName, getAllListNames } from '../utils';
-import { listsFMV } from '../types/animConfigs';
 import { initialListNameEditorState } from '../types/initialStates';
 
 import { useSafeAreaFrame, useTailwind } from '.';
@@ -42,17 +40,7 @@ const SettingsPopupLists = (props) => {
       </div>
       <div className={tailwind('pt-2.5')}>
         <ListNameEditor key="SPL_newListNameEditor" listNameObj={null} validateDisplayName={validateDisplayName} level={0} />
-        <AnimateSharedLayout>
-          <AnimatePresence initial={false}>
-            {listNameMap.map(listNameObj => {
-              return (
-                <motion.div key={listNameObj.listName} layoutId={listNameObj.listName} variants={listsFMV} initial="hidden" animate="visible" exit="exit">
-                  <ListNameEditor listNameObj={listNameObj} validateDisplayName={validateDisplayName} level={0} />
-                </motion.div>
-              )
-            })}
-          </AnimatePresence>
-        </AnimateSharedLayout>
+        {listNameMap.map(listNameObj => <ListNameEditor key={listNameObj.listName} listNameObj={listNameObj} validateDisplayName={validateDisplayName} level={0} />)}
       </div>
     </div>
   );
@@ -165,7 +153,7 @@ const _ListNameEditor = (props) => {
     dispatch(updateListNameEditors({
       [key]: { ...initialListNameEditorState, focusCount: state.focusCount },
     }));
-    input.current.blur();
+    if (input.current) input.current.blur();
   };
 
   const onEditOkBtnClick = () => {
@@ -194,7 +182,7 @@ const _ListNameEditor = (props) => {
         focusCount: state.focusCount,
       },
     }));
-    input.current.blur();
+    if (input.current) input.current.blur();
   };
 
   const onCancelBtnPress = () => {
@@ -206,7 +194,7 @@ const _ListNameEditor = (props) => {
     dispatch(updateListNameEditors({
       [key]: { mode: MODE_VIEW, value, msg: '' },
     }));
-    input.current.blur();
+    if (input.current) input.current.blur();
   };
 
   const onMoveUpBtnClick = () => {
@@ -242,7 +230,9 @@ const _ListNameEditor = (props) => {
 
   useEffect(() => {
     // state.focusCount can be undefined when the popup is close, so can't use !==
-    if (state.focusCount > prevFocusCount.current) input.current.focus();
+    if (state.focusCount > prevFocusCount.current) {
+      if (input.current) input.current.focus();
+    }
     prevFocusCount.current = state.focusCount;
   }, [state.focusCount]);
 

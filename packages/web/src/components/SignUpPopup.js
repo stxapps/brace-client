@@ -4,12 +4,11 @@ import { showConnect } from '@stacks/connect/dist/index.esm';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import userSession from '../userSession';
-import { updatePopup, updateUserData } from '../actions';
-import { UPDATE_USER } from '../types/actionTypes';
+import { updatePopup, updateUserData, updateUserSignedIn } from '../actions';
 import {
   DOMAIN_NAME, APP_NAME, APP_ICON_NAME, APP_SCOPES, SIGN_UP_POPUP, SIGN_IN_POPUP,
 } from '../types/const';
-import { extractUrl, getUrlPathQueryHash, getUserImageUrl } from '../utils';
+import { extractUrl, getUrlPathQueryHash } from '../utils';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
 import { useSafeAreaFrame, useTailwind } from '.';
@@ -41,17 +40,7 @@ const SignUpPopup = () => {
     const authOptions = {
       appDetails: { name: APP_NAME, icon: appIconUrl },
       redirectTo: '/' + getUrlPathQueryHash(window.location.href),
-      onFinish: () => {
-        const userData = userSession.loadUserData();
-        dispatch({
-          type: UPDATE_USER,
-          payload: {
-            isUserSignedIn: true,
-            username: userData.username,
-            image: getUserImageUrl(userData),
-          },
-        });
-      },
+      onFinish: () => dispatch(updateUserSignedIn()),
       userSession: userSession._userSession,
       sendToSignIn: false,
     };

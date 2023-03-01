@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { motion, AnimateSharedLayout } from 'framer-motion';
 
 import { fetchMore, updateFetchedMore } from '../actions';
 import {
@@ -13,7 +12,6 @@ import {
   getLinks, getIsFetchingMore, getSafeAreaWidth, getThemeMode,
 } from '../selectors';
 import { addRem, getWindowHeight, getWindowScrollHeight, throttle } from '../utils';
-import { cardItemFMV } from '../types/animConfigs';
 import vars from '../vars';
 
 import { withTailwind } from '.';
@@ -31,11 +29,13 @@ class CardPanel extends React.PureComponent {
   componentDidMount() {
     window.scrollTo(0, 0);
     window.addEventListener('scroll', this.updateScrollY);
+    vars.scrollPanel.pageYOffset = 0;
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.listChangedCount !== prevProps.listChangedCount) {
       window.scrollTo(0, 0);
+      vars.scrollPanel.pageYOffset = 0;
     }
   }
 
@@ -66,6 +66,11 @@ class CardPanel extends React.PureComponent {
 
   onUpdateFetchedBtnClick = () => {
     this.props.updateFetchedMore();
+  }
+
+  renderEmtpy() {
+    vars.scrollPanel.pageYOffset = 0;
+    return <EmptyContent />;
   }
 
   renderFetchMoreBtn() {
@@ -136,21 +141,13 @@ class CardPanel extends React.PureComponent {
 
     return (
       <div className={tailwind(`flex items-start justify-evenly ${panelClassNames}`)}>
-        <AnimateSharedLayout>
-          {colData.map((colItems, i) => {
-            return (
-              <div key={`col-${i}`} className={tailwind(`w-full min-w-0 ${columnClassNames}`)}>
-                {colItems.map(link => {
-                  return (
-                    <motion.div key={link.id} layoutId={link.id} variants={cardItemFMV} initial="hidden" animate="visible">
-                      <CardItem link={link} />
-                    </motion.div>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </AnimateSharedLayout>
+        {colData.map((colItems, i) => {
+          return (
+            <div key={`col-${i}`} className={tailwind(`w-full min-w-0 ${columnClassNames}`)}>
+              {colItems.map(link => <CardItem key={link.id} link={link} />)}
+            </div>
+          );
+        })}
       </div>
     );
   }
@@ -180,7 +177,7 @@ class CardPanel extends React.PureComponent {
     return (
       <div style={style} className={tailwind('relative mx-auto max-w-6xl px-4 md:px-6 lg:px-8')}>
         <div className={tailwind('pt-6 md:pt-10')}>
-          {links.length === 0 && <EmptyContent />}
+          {links.length === 0 && this.renderEmtpy()}
           {links.length > 0 && this.renderPanel()}
           {fetchMoreBtn}
         </div>

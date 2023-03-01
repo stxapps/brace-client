@@ -21,7 +21,9 @@ import CustomEditorPopup from './CustomEditorPopup';
 import SettingsPopup from './SettingsPopup';
 import SettingsListsMenuPopup from './SettingsListsMenuPopup';
 import PinErrorPopup from './PinErrorPopup';
-import SettingsErrorPopup from './SettingsErrorPopup';
+import {
+  SettingsUpdateErrorPopup, SettingsConflictErrorPopup,
+} from './SettingsErrorPopup';
 import ListNamesPopup from './ListNamesPopup';
 import ConfirmDeletePopup from './ConfirmDeletePopup';
 import PaywallPopup from './PaywallPopup';
@@ -44,8 +46,6 @@ class Main extends React.PureComponent {
     if (
       prevProps.listName !== this.props.listName ||
       prevProps.rehydratedListNames !== this.props.rehydratedListNames ||
-      prevProps.didFetch !== this.props.didFetch ||
-      prevProps.didFetchSettings !== this.props.didFetchSettings ||
       prevProps.fetchedListNames !== this.props.fetchedListNames
     ) this.fetch();
   }
@@ -59,18 +59,14 @@ class Main extends React.PureComponent {
   }
 
   fetch = () => {
-    const {
-      listName, rehydratedListNames, didFetch, didFetchSettings, fetchedListNames,
-    } = this.props;
+    const { listName, rehydratedListNames, fetchedListNames } = this.props;
 
     if (!rehydratedListNames.includes(listName)) {
       this.props.rehydrateStaticFiles();
       return;
     }
 
-    if (!fetchedListNames.includes(listName)) {
-      this.props.fetch(didFetch ? false : null, null, !didFetchSettings);
-    }
+    if (!fetchedListNames.includes(listName)) this.props.fetch();
   }
 
   render() {
@@ -114,7 +110,8 @@ class Main extends React.PureComponent {
         <SettingsPopup />
         <SettingsListsMenuPopup />
         <PinErrorPopup />
-        <SettingsErrorPopup />
+        <SettingsConflictErrorPopup />
+        <SettingsUpdateErrorPopup />
         <ListNamesPopup />
         <ConfirmDeletePopup />
         <PaywallPopup />
@@ -129,8 +126,6 @@ const mapStateToProps = (state, props) => {
     listName: state.display.listName,
     links: getLinks(state),
     rehydratedListNames: state.display.rehydratedListNames,
-    didFetch: state.display.didFetch,
-    didFetchSettings: state.display.didFetchSettings,
     fetchedListNames: state.display.fetchedListNames,
     layoutType: getLayoutType(state),
     themeMode: getThemeMode(state),

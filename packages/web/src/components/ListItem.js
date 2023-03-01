@@ -113,7 +113,7 @@ const ListItem = (props) => {
 
   return (
     <li className={tailwind('relative bg-white blk:bg-gray-900')}>
-      <ListItemContent link={link} />
+      <ListItemContent link={link} pinStatus={pinStatus} />
       {[ADDING, MOVING, UPDATING].includes(status) && renderBusy()}
       {isPinning && renderPinning()}
       {[PINNED].includes(pinStatus) && renderPin()}

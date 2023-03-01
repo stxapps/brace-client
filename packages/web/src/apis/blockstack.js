@@ -1,18 +1,17 @@
-import userSession from '../userSession';
-import fileApi from './file';
-import {
-  SETTINGS, DOT_JSON, N_LINKS, MAX_TRY, N_DAYS, TRASH, CD_ROOT,
-} from '../types/const';
+import serverApi from './server';
+import fileApi from './localFile';
+import { N_LINKS, N_DAYS, TRASH, CD_ROOT, DOT_JSON, INFO } from '../types/const';
 import {
   FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
-  UPDATE_SETTINGS, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA,
+  UPDATE_SETTINGS, UPDATE_INFO, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA,
 } from '../types/actionTypes';
 import {
-  isObject, isString, createLinkFPath, extractLinkFPath, extractFPath, createPinFPath,
-  addFPath, deleteFPath, copyFPaths, getMainId, sortWithPins, getStaticFPath,
-  deriveFPaths,
+  isObject, isString, randomString, createLinkFPath, extractLinkFPath, createPinFPath,
+  addFPath, getMainId, sortWithPins, getStaticFPath, deriveFPaths, createDataFName,
+  getLastSettingsFPaths, createSettingsFPath, excludeNotObjContents,
+  batchGetFileWithRetry, batchPutFileWithRetry, batchDeleteFileWithRetry,
+  deriveUnknownErrorLink,
 } from '../utils';
-import { cachedFPaths } from '../vars';
 
 export const effect = async (effectObj, _action) => {
 
@@ -39,7 +38,11 @@ export const effect = async (effectObj, _action) => {
   }
 
   if (method === UPDATE_SETTINGS) {
-    return updateSettings(params);
+    return putSettings(params);
+  }
+
+  if (method === UPDATE_INFO) {
+    return putInfo(params);
   }
 
   if (method === PIN_LINK) {
@@ -57,14 +60,14 @@ export const effect = async (effectObj, _action) => {
   throw new Error(`${method} is invalid for blockstack effect.`);
 };
 
-const _listFPaths = async () => {
+const _listFPaths = async (listFiles) => {
   // List fpaths(keys)
   // Even though aws, az, gc sorts a-z but on Gaia local machine, it's arbitrary
   //   so need to fetch all and sort locally.
   const fpaths = {
-    linkFPaths: {}, staticFPaths: [], settingsFPath: null, pinFPaths: [],
+    linkFPaths: {}, staticFPaths: [], settingsFPaths: [], infoFPath: null, pinFPaths: [],
   };
-  await userSession.listFiles((fpath) => {
+  await listFiles((fpath) => {
     addFPath(fpaths, fpath);
     return true;
   });
@@ -72,96 +75,57 @@ const _listFPaths = async () => {
 };
 
 const listFPaths = async (doForce = false) => {
-  if (isObject(cachedFPaths.fpaths) && !doForce) return copyFPaths(cachedFPaths.fpaths);
-  cachedFPaths.fpaths = await _listFPaths();
-  return copyFPaths(cachedFPaths.fpaths);
-};
-
-const batchGetFileWithRetry = async (
-  fpaths, callCount, dangerouslyIgnoreError = false
-) => {
-
-  const responses = await Promise.all(
-    fpaths.map(fpath =>
-      userSession.getFile(fpath)
-        .then(content => ({ content, fpath, success: true }))
-        .catch(error => ({ content: null, fpath, success: false, error }))
-    )
-  );
-
-  const failedResponses = responses.filter(({ success }) => !success);
-  const failedFPaths = failedResponses.map(({ fpath }) => fpath);
-
-  if (failedResponses.length) {
-    if (callCount + 1 >= MAX_TRY) {
-      if (dangerouslyIgnoreError) {
-        console.log('batchGetFileWithRetry error: ', failedResponses[0].error);
-        return responses;
-      }
-      throw failedResponses[0].error;
-    }
-
-    return [
-      ...responses.filter(({ success }) => success),
-      ...(await batchGetFileWithRetry(
-        failedFPaths, callCount + 1, dangerouslyIgnoreError
-      )),
-    ];
+  if (isObject(serverApi.cachedFPaths.fpaths) && !doForce) {
+    return serverApi.cachedFPaths.fpaths;
   }
-
-  return responses;
-};
-
-const fetchStaticFiles = async (links) => {
-  const fpaths = [];
-  for (const link of links) {
-    if (isObject(link.custom)) {
-      const { image } = link.custom;
-      if (isString(image) && image.startsWith(CD_ROOT + '/')) {
-        fpaths.push(image);
-      }
-    }
-  }
-
-  const files = await fileApi.getFiles(fpaths); // Check if already exists locally
-
-  const images = {}, remainedFPaths = [];
-  for (let i = 0; i < files.fpaths.length; i++) {
-    const fpath = files.fpaths[i], contentUrl = files.contentUrls[i];
-    if (isString(contentUrl)) images[fpath] = contentUrl;
-    else remainedFPaths.push(fpath);
-  }
-
-  const fpathMap = {}, remainedStaticFPaths = [];
-  for (const fpath of remainedFPaths) {
-    const staticFPath = getStaticFPath(fpath);
-    fpathMap[staticFPath] = fpath;
-    remainedStaticFPaths.push(staticFPath);
-  }
-  const _responses = await batchGetFileWithRetry(remainedStaticFPaths, 0, true);
-  const responses = _responses.filter(r => r.success);
-
-  const results = await fileApi.putFiles(
-    responses.map(r => r.fpath).map(fpath => fpathMap[fpath]),
-    responses.map(r => r.content)
-  );
-
-  for (let i = 0; i < results.fpaths.length; i++) {
-    images[results.fpaths[i]] = results.contentUrls[i];
-  }
-
-  return { images };
+  serverApi.cachedFPaths.fpaths = await _listFPaths(serverApi.listFiles);
+  return serverApi.cachedFPaths.fpaths;
 };
 
 const fetch = async (params) => {
 
-  let { listName, doDescendingOrder, doFetchSettings, pendingPins } = params;
-  const { linkFPaths, settingsFPath, pinFPaths } = await listFPaths(doFetchSettings);
+  let { listName, doDescendingOrder, doFetchStgsAndInfo, pendingPins } = params;
+  const {
+    linkFPaths, settingsFPath: _settingsFPaths, infoFPath, pinFPaths,
+  } = await listFPaths(doFetchStgsAndInfo);
+  const {
+    fpaths: settingsFPaths, ids: settingsIds,
+  } = getLastSettingsFPaths(_settingsFPaths);
 
-  let settings;
-  if (settingsFPath && doFetchSettings) {
-    settings = await userSession.getFile(settingsFPath);
-    doDescendingOrder = settings.doDescendingOrder;
+  let settings, conflictedSettings = [], info;
+  if (doFetchStgsAndInfo) {
+    if (settingsFPaths.length > 0) {
+      const files = await serverApi.getFiles(settingsFPaths, true);
+
+      // content can be null if dangerouslyIgnoreError is true.
+      const { fpaths, contents } = excludeNotObjContents(files.fpaths, files.contents);
+      for (let i = 0; i < fpaths.length; i++) {
+        const [fpath, content] = [fpaths[i], contents[i]];
+        if (fpaths.length === 1) {
+          settings = content;
+          doDescendingOrder = settings.doDescendingOrder;
+          continue;
+        }
+        conflictedSettings.push({
+          ...content, id: settingsIds[settingsFPaths.indexOf(fpath)], fpath,
+        });
+      }
+    }
+
+    if (infoFPath) {
+      const { contents } = await serverApi.getFiles([infoFPath], true);
+      if (isObject(contents[0])) info = contents[0];
+    }
+
+    // Transition from purchases in settings to info.
+    if (isObject(settings) && !isObject(info)) {
+      if ('purchases' in settings) {
+        info = { purchases: settings.purchases, checkPurchasesDT: null };
+        if ('checkPurchasesDT' in settings) {
+          info.checkPurchasesDT = settings.checkPurchasesDT;
+        }
+      }
+    }
   }
 
   const namedLinkFPaths = linkFPaths[listName] || [];
@@ -174,8 +138,14 @@ const fetch = async (params) => {
   });
   const selectedLinkFPaths = sortedLinkFPaths.slice(0, N_LINKS);
 
-  const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0, true);
-  const links = responses.filter(r => r.success).map(r => r.content);
+  const responses = await batchGetFileWithRetry(
+    serverApi.getFile, selectedLinkFPaths, 0, true
+  );
+  const links = [];
+  for (const { success, fpath, content } of responses) {
+    if (success) links.push(content);
+    else links.push(deriveUnknownErrorLink(fpath));
+  }
   const hasMore = namedLinkFPaths.length > N_LINKS;
 
   // List names should be retrieve from settings
@@ -185,8 +155,8 @@ const fetch = async (params) => {
   const { images } = await fetchStaticFiles(links);
 
   return {
-    listName, doDescendingOrder, links, hasMore, listNames, doFetchSettings, settings,
-    images,
+    listName, doDescendingOrder, links, hasMore, listNames, doFetchStgsAndInfo, settings,
+    conflictedSettings, info, images,
   };
 };
 
@@ -216,8 +186,14 @@ const fetchMore = async (params) => {
   }
   const selectedLinkFPaths = filteredLinkFPaths.slice(0, N_LINKS);
 
-  const responses = await batchGetFileWithRetry(selectedLinkFPaths, 0, true);
-  const links = responses.filter(r => r.success).map(r => r.content);
+  const responses = await batchGetFileWithRetry(
+    serverApi.getFile, selectedLinkFPaths, 0, true
+  );
+  const links = [];
+  for (const { success, fpath, content } of responses) {
+    if (success) links.push(content);
+    else links.push(deriveUnknownErrorLink(fpath));
+  }
   const hasMore = filteredLinkFPaths.length > N_LINKS;
 
   const { images } = await fetchStaticFiles(links);
@@ -225,140 +201,98 @@ const fetchMore = async (params) => {
   return { listName, doDescendingOrder, links, hasMore, hasDisorder, images };
 };
 
-const batchPutFileWithRetry = async (fpaths, contents, callCount) => {
-
-  const responses = await Promise.all(
-    fpaths.map((fpath, i) =>
-      userSession.putFile(fpath, contents[i])
-        .then(publicUrl => {
-          if (!cachedFPaths.fpaths) {
-            // Possible if in Adding.js and just sign in to add a link,
-            //  so fetch is never called and also nothing to rehydrate in redux-offline.
-            console.log('In batchPutFileWithRetry, cachedFPaths.fpaths is null.');
-          } else {
-            addFPath(cachedFPaths.fpaths, fpath);
-            cachedFPaths.fpaths = copyFPaths(cachedFPaths.fpaths);
-          }
-          return { publicUrl, fpath, success: true };
-        })
-        .catch(error => ({ error, fpath, content: contents[i], success: false }))
-    )
-  );
-
-  const failedResponses = responses.filter(({ success }) => !success);
-  const failedFPaths = failedResponses.map(({ fpath }) => fpath);
-  const failedContents = failedResponses.map(({ content }) => content);
-
-  if (failedResponses.length) {
-    if (callCount + 1 >= MAX_TRY) throw failedResponses[0].error;
-
-    return [
-      ...responses.filter(({ success }) => success),
-      ...(await batchPutFileWithRetry(failedFPaths, failedContents, callCount + 1)),
-    ];
+const fetchStaticFiles = async (links) => {
+  const fpaths = [];
+  for (const link of links) {
+    if (isObject(link.custom)) {
+      const { image } = link.custom;
+      if (isString(image) && image.startsWith(CD_ROOT + '/')) {
+        fpaths.push(image);
+      }
+    }
   }
 
-  return responses;
+  const files = await fileApi.getFiles(fpaths); // Check if already exists locally
+
+  const images = {}, remainedFPaths = [];
+  for (let i = 0; i < files.fpaths.length; i++) {
+    const fpath = files.fpaths[i], contentUrl = files.contentUrls[i];
+    if (isString(contentUrl)) images[fpath] = contentUrl;
+    else remainedFPaths.push(fpath);
+  }
+
+  const fpathMap = {}, remainedStaticFPaths = [];
+  for (const fpath of remainedFPaths) {
+    const staticFPath = getStaticFPath(fpath);
+    fpathMap[staticFPath] = fpath;
+    remainedStaticFPaths.push(staticFPath);
+  }
+  const _responses = await batchGetFileWithRetry(
+    serverApi.getFile, remainedStaticFPaths, 0, true
+  );
+  const responses = _responses.filter(r => r.success);
+
+  const results = await fileApi.putFiles(
+    responses.map(r => r.fpath).map(fpath => fpathMap[fpath]),
+    responses.map(r => r.content)
+  );
+
+  for (let i = 0; i < results.fpaths.length; i++) {
+    images[results.fpaths[i]] = results.contentUrls[i];
+  }
+
+  return { images };
 };
 
 const putLinks = async (params) => {
-  const { listName, links } = params;
+  const { listName, links, manuallyManageError } = params;
 
-  const fpaths = [], contents = [];
+  const fpaths = [], contents = [], linkMap = {}, successLinks = [], errorLinks = [];
   for (const link of links) {
-    fpaths.push(createLinkFPath(listName, link.id));
+    const fpath = createLinkFPath(listName, link.id);
+    fpaths.push(fpath);
     contents.push(link);
+    linkMap[fpath] = link;
   }
 
-  await batchPutFileWithRetry(fpaths, contents, 0);
-  return { listName, links };
-};
-
-const batchDeleteFileWithRetry = async (fpaths, callCount) => {
-
-  const responses = await Promise.all(
-    fpaths.map((fpath) =>
-      userSession.deleteFile(fpath)
-        .then(() => {
-          deleteFPath(cachedFPaths.fpaths, fpath);
-          cachedFPaths.fpaths = copyFPaths(cachedFPaths.fpaths);
-          return { fpath, success: true };
-        })
-        .catch(error => {
-          // BUG ALERT
-          // Treat not found error as not an error as local data might be out-dated.
-          //   i.e. user tries to delete a not-existing file, it's ok.
-          // Anyway, if the file should be there, this will hide the real error!
-          if (
-            isObject(error) &&
-            isString(error.message) &&
-            (
-              (
-                error.message.includes('failed to delete') &&
-                error.message.includes('404')
-              ) ||
-              (
-                error.message.includes('deleteFile Error') &&
-                error.message.includes('GaiaError error 5')
-              ) ||
-              error.message.includes('does_not_exist') ||
-              error.message.includes('file_not_found')
-            )
-          ) {
-            return { fpath, success: true };
-          }
-          return { error, fpath, success: false };
-        })
-    )
+  // Beware size should be max at N_NOTES, so can call batchPutFileWithRetry directly.
+  // Use dangerouslyIgnoreError=true to manage which succeeded/failed manually.
+  const responses = await batchPutFileWithRetry(
+    serverApi.putFile, fpaths, contents, 0, !!manuallyManageError
   );
-
-  const failedResponses = responses.filter(({ success }) => !success);
-  const failedFPaths = failedResponses.map(({ fpath }) => fpath);
-
-  if (failedResponses.length) {
-    if (callCount + 1 >= MAX_TRY) throw failedResponses[0].error;
-
-    return [
-      ...responses.filter(({ success }) => success),
-      ...(await batchDeleteFileWithRetry(failedFPaths, callCount + 1)),
-    ];
+  for (const response of responses) {
+    if (response.success) successLinks.push(linkMap[response.fpath]);
+    else errorLinks.push({ ...linkMap[response.fpath], error: response.error });
   }
 
-  return responses;
-};
-
-const deleteStaticFiles = async (ids) => {
-  const mainIds = ids.map(id => getMainId(id));
-
-  const staticFPaths = [];
-  const { staticFPaths: _staticFPaths } = await listFPaths();
-  for (const fpath of _staticFPaths) {
-    const { id } = extractFPath(fpath);
-    if (mainIds.includes(getMainId(id))) staticFPaths.push(fpath);
-  }
-
-  try {
-    batchDeleteFileWithRetry(staticFPaths, 0);
-    fileApi.deleteFiles(staticFPaths);
-  } catch (error) {
-    console.log('deleteStaticFiles error: ', error);
-    // error in this step should be fine
-  }
+  return { listName, successLinks, errorLinks };
 };
 
 const deleteLinks = async (params) => {
+  const { listName, ids, manuallyManageError } = params;
 
-  const { listName, ids } = params;
-  const linkFPaths = ids.map(id => createLinkFPath(listName, id));
-  await batchDeleteFileWithRetry(linkFPaths, 0);
+  const fpaths = [], idMap = {}, successIds = [], errorIds = [], errors = [];
+  for (const id of ids) {
+    const fpath = createLinkFPath(listName, id);
+    fpaths.push(fpath);
+    idMap[fpath] = id;
+  }
 
-  if (params.doDeleteStaticFiles) await deleteStaticFiles(ids);
+  const responses = await batchDeleteFileWithRetry(
+    serverApi.deleteFile, fpaths, 0, !!manuallyManageError
+  );
+  for (const response of responses) {
+    if (response.success) successIds.push(idMap[response.fpath]);
+    else {
+      errorIds.push(idMap[response.fpath]);
+      errors.push(response.error);
+    }
+  }
 
-  return { listName, ids };
+  return { listName, successIds, errorIds, errors };
 };
 
 const deleteOldLinksInTrash = async () => {
-
   const { linkFPaths } = await listFPaths();
 
   const trashLinkFPaths = linkFPaths[TRASH] || [];
@@ -377,21 +311,12 @@ const deleteOldLinksInTrash = async () => {
     return id;
   });
 
-  await batchDeleteFileWithRetry(oldFPaths, 0);
-  await deleteStaticFiles(ids);
+  await serverApi.deleteFiles(oldFPaths);
 
   return { listName: TRASH, ids };
 };
 
-const updateSettings = async (settings) => {
-  const fpaths = [`${SETTINGS}${DOT_JSON}`];
-  const contents = [settings];
-
-  await batchPutFileWithRetry(fpaths, contents, 0);
-};
-
 const canDeleteListNames = async (listNames) => {
-
   const { linkFPaths } = await listFPaths();
   const inUseListNames = Object.keys(linkFPaths);
 
@@ -403,6 +328,33 @@ const canDeleteListNames = async (listNames) => {
   return canDeletes;
 };
 
+const putSettings = async (params) => {
+  const { settings } = params;
+  const { settingsFPaths } = await listFPaths();
+
+  const addedDT = Date.now();
+  const {
+    fpaths: _settingsFPaths, ids: _settingsIds,
+  } = getLastSettingsFPaths(settingsFPaths);
+
+  const settingsFName = createDataFName(`${addedDT}${randomString(4)}`, _settingsIds);
+  const settingsFPath = createSettingsFPath(settingsFName);
+
+  await serverApi.putFiles([settingsFPath], [settings]);
+  return { settings, _settingsFPaths };
+};
+
+const putInfo = async (params) => {
+  const { info } = params;
+  const { infoFPath: _infoFPath } = await listFPaths();
+
+  const addedDT = Date.now();
+  const infoFPath = `${INFO}${addedDT}${DOT_JSON}`;
+
+  await serverApi.putFiles([infoFPath], [info]);
+  return { info, _infoFPath };
+};
+
 const putPins = async (params) => {
   const { pins } = params;
 
@@ -411,18 +363,21 @@ const putPins = async (params) => {
     fpaths.push(createPinFPath(pin.rank, pin.updatedDT, pin.addedDT, pin.id));
     contents.push({});
   }
+  // Use dangerouslyIgnoreError=true to manage which succeeded/failed manually.
+  // Bug alert: if several pins and error, rollback is incorrect
+  //   as some are successful but some aren't.
+  await serverApi.putFiles(fpaths, contents);
 
-  await batchPutFileWithRetry(fpaths, contents, 0);
   return { pins };
 };
 
 const deletePins = async (params) => {
-
   const { pins } = params;
+
   const pinFPaths = pins.map(pin => {
     return createPinFPath(pin.rank, pin.updatedDT, pin.addedDT, pin.id);
   });
-  await batchDeleteFileWithRetry(pinFPaths, 0);
+  await serverApi.deleteFiles(pinFPaths);
 
   return { pins };
 };
@@ -437,23 +392,12 @@ const updateCustomData = async (params) => {
   const usedFiles = await fileApi.getFiles(usedFPaths);
 
   // Make sure save static files successfully first
-  await batchPutFileWithRetry(usedFiles.fpaths, usedFiles.contents, 0);
-  await batchPutFileWithRetry([createLinkFPath(listName, toLink.id)], [toLink], 0);
-
-  try {
-    batchDeleteFileWithRetry(serverUnusedFPaths, 0);
-    fileApi.deleteFiles(localUnusedFPaths);
-  } catch (error) {
-    console.log('updateCustomData error: ', error);
-    // error in this step should be fine
-  }
+  await serverApi.putFiles(usedFiles.fpaths, usedFiles.contents);
+  await serverApi.putFiles([createLinkFPath(listName, toLink.id)], [toLink]);
 
   return { listName, fromLink, toLink, serverUnusedFPaths, localUnusedFPaths };
 };
 
-const blockstack = {
-  batchGetFileWithRetry, batchPutFileWithRetry, batchDeleteFileWithRetry,
-  canDeleteListNames, deletePins,
-};
+const blockstack = { canDeleteListNames, deletePins };
 
 export default blockstack;

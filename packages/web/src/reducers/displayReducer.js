@@ -10,15 +10,17 @@ import {
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
   UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME, DELETE_LIST_NAMES,
   UPDATE_DELETE_ACTION, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
-  UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_SETTINGS_VIEW_ID,
-  UPDATE_LIST_NAMES_MODE, REHYDRATE_STATIC_FILES, UPDATE_IMPORT_ALL_DATA_PROGRESS,
+  UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, MERGE_SETTINGS_COMMIT,
+  UPDATE_SETTINGS_VIEW_ID, UPDATE_LIST_NAMES_MODE, REHYDRATE_STATIC_FILES,
+  UPDATE_PAYWALL_FEATURE, UPDATE_IMPORT_ALL_DATA_PROGRESS,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   LIST_NAMES_POPUP, PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP, PAYWALL_POPUP,
-  CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP,
+  CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP,
+  SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP,
   ACCESS_ERROR_POPUP, MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING,
   SETTINGS_VIEW_ACCOUNT, DELETE_ACTION_LIST_NAME,
 } from '../types/const';
@@ -39,6 +41,7 @@ const initialState = {
   isCustomEditorPopupShown: false,
   isPaywallPopupShown: false,
   isConfirmDeletePopupShown: false,
+  isConfirmDiscardPopupShown: false,
   isSettingsPopupShown: false,
   isSettingsListsMenuPopupShown: false,
   settingsListsMenuPopupPosition: null,
@@ -66,6 +69,7 @@ const initialState = {
   updateSettingsViewIdCount: 0,
   listNamesMode: null,
   listNamesAnimType: null,
+  paywallFeature: null,
   importAllDataProgress: null,
   exportAllDataProgress: null,
   deleteAllDataProgress: null,
@@ -90,6 +94,7 @@ const displayReducer = (state = initialState, action) => {
       isCustomEditorPopupShown: false,
       isPaywallPopupShown: false,
       isConfirmDeletePopupShown: false,
+      isConfirmDiscardPopupShown: false,
       isSettingsPopupShown: false,
       isSettingsListsMenuPopupShown: false,
       settingsListsMenuPopupPosition: null,
@@ -118,6 +123,7 @@ const displayReducer = (state = initialState, action) => {
       updateSettingsViewIdCount: 0,
       listNamesMode: null,
       listNamesAnimType: null,
+      paywallFeature: null,
       importAllDataProgress: null,
       exportAllDataProgress: null,
       deleteAllDataProgress: null,
@@ -151,6 +157,7 @@ const displayReducer = (state = initialState, action) => {
         isCustomEditorPopupShown: isShown,
         isPaywallPopupShown: isShown,
         isConfirmDeletePopupShown: isShown,
+        isConfirmDiscardPopupShown: isShown,
         isSettingsPopupShown: isShown,
         //isAccessErrorPopupShown: isShown, // ErrorPopup should still be shown
       };
@@ -218,6 +225,11 @@ const displayReducer = (state = initialState, action) => {
       return newState;
     }
 
+    if (id === CONFIRM_DISCARD_POPUP) {
+      const newState = { ...state, isConfirmDiscardPopupShown: isShown };
+      return newState;
+    }
+
     if (id === SETTINGS_POPUP) {
       const newState = { ...state, isSettingsPopupShown: isShown };
       if (isShown) {
@@ -267,8 +279,8 @@ const displayReducer = (state = initialState, action) => {
     };
 
     // Make sure listName is in listNameMap, if not, set to My List.
-    const { listNames, doFetchSettings, settings } = action.payload;
-    if (!doFetchSettings) return newState;
+    const { listNames, doFetchStgsAndInfo, settings } = action.payload;
+    if (!doFetchStgsAndInfo) return newState;
 
     newState.settingsStatus = null;
 
@@ -453,8 +465,10 @@ const displayReducer = (state = initialState, action) => {
     };
   }
 
-  if (action.type === CANCEL_DIED_SETTINGS) {
+  if (action.type === CANCEL_DIED_SETTINGS || action.type === MERGE_SETTINGS_COMMIT) {
     const { settings } = action.payload;
+    const doFetch = action.type === CANCEL_DIED_SETTINGS ?
+      action.payload.doFetch : action.meta.doFetch;
     const doContain = doContainListName(state.listName, settings.listNameMap);
 
     let isActive = false;
@@ -462,12 +476,14 @@ const displayReducer = (state = initialState, action) => {
       if (statusCount.count > 0) isActive = true;
     }
 
-    return {
+    const newState = {
       ...state,
       listName: doContain ? state.listName : MY_LIST,
       statuses: isActive ? [...state.statuses, null] : [],
       settingsStatus: null,
     };
+    if (doFetch) newState.fetchedListNames = [];
+    return newState;
   }
 
   if (action.type === UPDATE_SETTINGS_VIEW_ID) {
@@ -484,6 +500,10 @@ const displayReducer = (state = initialState, action) => {
       ...state,
       rehydratedListNames: [...state.rehydratedListNames, listName],
     };
+  }
+
+  if (action.type === UPDATE_PAYWALL_FEATURE) {
+    return { ...state, paywallFeature: action.payload };
   }
 
   if (action.type === UPDATE_IMPORT_ALL_DATA_PROGRESS) {

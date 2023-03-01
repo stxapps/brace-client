@@ -6,6 +6,9 @@ export const myListListNameObj = { listName: MY_LIST, displayName: MY_LIST };
 export const trashListNameObj = { listName: TRASH, displayName: TRASH };
 export const archiveListNameObj = { listName: ARCHIVE, displayName: ARCHIVE };
 
+export const whtModeThemeCustomOptions = { mode: WHT_MODE, startTime: '06:00' };
+export const blkModeThemeCustomOptions = { mode: BLK_MODE, startTime: '18:00' };
+
 export const initialSettingsState = {
   defaultListName: MY_LIST,
   doEncrypt: true,
@@ -17,14 +20,29 @@ export const initialSettingsState = {
   listNameMap: [
     { ...myListListNameObj }, { ...trashListNameObj }, { ...archiveListNameObj },
   ],
-  purchases: null, // an array with elements as purchase objs
-  checkPurchasesDT: null,
+  purchases: null, // No need anymore but keep it for comparing
+  checkPurchasesDT: null, // No need anymore but keep it for comparing
   layoutType: LAYOUT_CARD,
   themeMode: WHT_MODE,
   themeCustomOptions: [
-    { mode: WHT_MODE, startTime: '06:00' },
-    { mode: BLK_MODE, startTime: '18:00' },
+    { ...whtModeThemeCustomOptions }, { ...blkModeThemeCustomOptions },
   ],
+};
+
+export const initialLocalSettingsState = {
+  doUseLocalLayout: false,
+  layoutType: LAYOUT_CARD,
+  doUseLocalTheme: false,
+  themeMode: WHT_MODE,
+  themeCustomOptions: [
+    { ...whtModeThemeCustomOptions }, { ...blkModeThemeCustomOptions },
+  ],
+  cleanUpStaticFilesDT: null,
+};
+
+export const initialInfoState = {
+  purchases: null, // an array with elements as purchase objs
+  checkPurchasesDT: null,
 };
 
 export const initialListNameEditorState = {
@@ -34,4 +52,5 @@ export const initialListNameEditorState = {
   isCheckingCanDelete: false,
   doExpand: false,
   focusCount: 0,
+  blurCount: 0,
 };

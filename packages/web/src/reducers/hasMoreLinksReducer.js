@@ -2,7 +2,7 @@ import { REHYDRATE } from 'redux-persist/constants';
 
 import {
   FETCH_COMMIT, UPDATE_FETCHED, UPDATE_FETCHED_MORE, UPDATE_SETTINGS,
-  CANCEL_DIED_SETTINGS, DELETE_ALL_DATA, RESET_STATE,
+  CANCEL_DIED_SETTINGS, MERGE_SETTINGS_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   MY_LIST, TRASH, ARCHIVE, STATUS, ADDED, N_LINKS,
@@ -37,10 +37,10 @@ const hasMoreLinksReducer = (state = initialState, action) => {
   }
 
   if (action.type === FETCH_COMMIT) {
-    const { listNames, doFetchSettings, settings } = action.payload;
+    const { listNames, doFetchStgsAndInfo, settings } = action.payload;
 
     const newState = {};
-    if (doFetchSettings) {
+    if (doFetchStgsAndInfo) {
       if (settings) {
         for (const k of getAllListNames(settings.listNameMap)) {
           // Be careful as possible values are true, false, null, undefined
@@ -54,9 +54,10 @@ const hasMoreLinksReducer = (state = initialState, action) => {
     }
 
     for (const name of listNames) {
-      if (!(name in newState)) {
-        newState[name] = null;
-      }
+      if (!(name in newState)) newState[name] = null;
+    }
+    for (const name of [MY_LIST, TRASH, ARCHIVE]) { // In case of invalid settings.
+      if (!(name in newState)) newState[name] = null;
     }
 
     return newState;
@@ -76,9 +77,19 @@ const hasMoreLinksReducer = (state = initialState, action) => {
     return { ...state, [listName]: hasMore };
   }
 
-  if (action.type === UPDATE_SETTINGS || action.type === CANCEL_DIED_SETTINGS) {
+  if (
+    action.type === UPDATE_SETTINGS ||
+    action.type === CANCEL_DIED_SETTINGS ||
+    action.type === MERGE_SETTINGS_COMMIT
+  ) {
     const { settings } = action.payload;
+
     const listNames = getAllListNames(settings.listNameMap);
+    if (action.type === CANCEL_DIED_SETTINGS) {
+      listNames.push(...action.payload.listNames);
+    } else if (action.type === MERGE_SETTINGS_COMMIT) {
+      listNames.push(...action.meta.listNames);
+    }
 
     const newState = {};
     for (const listName in state) {
@@ -86,9 +97,11 @@ const hasMoreLinksReducer = (state = initialState, action) => {
       newState[listName] = state[listName];
     }
 
-    for (const k of listNames) {
-      // Be careful as possible values are true, false, null, undefined
-      if (newState[k] === undefined) newState[k] = null;
+    for (const name of listNames) {
+      if (!(name in newState)) newState[name] = null;
+    }
+    for (const name of [MY_LIST, TRASH, ARCHIVE]) { // Just to be safe.
+      if (!(name in newState)) newState[name] = null;
     }
 
     return newState;

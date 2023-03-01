@@ -6,7 +6,7 @@ export const didChange = {
   purchases: false,
 };
 
-export const cachedFPaths = {
+export const cachedServerFPaths = {
   fpaths: null,
 };
 
@@ -16,9 +16,19 @@ const scrollPanel = {
   pageYOffset: 0,
 };
 
-export const paywallFeature = {
-  feature: null,
+const runAfterFetchTask = {
+  didRun: false,
 };
 
-const vars = { cachedFPaths, scrollPanel, paywallFeature };
+const randomHouseworkTasks = {
+  dt: 0,
+};
+
+export const getCachedFPaths = () => {
+  return cachedServerFPaths;
+};
+
+const vars = {
+  cachedServerFPaths, scrollPanel, runAfterFetchTask, randomHouseworkTasks,
+};
 export default vars;
