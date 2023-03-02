@@ -1796,13 +1796,6 @@ export const exportAllData = () => async (dispatch, getState) => {
     const {
       successData, errorData,
     } = await exportAllDataLoop(dispatch, fpaths, total, doneCount);
-    if (errorData.length > 0) {
-      dispatch(updateExportAllDataProgress({
-        total: -1,
-        done: -1,
-        error: 'Some download requests failed. Data might be missing in the exported file.',
-      }));
-    }
 
     for (const item of successData) {
       if (isUint8Array(item.data)) item.data = new Blob([item.data]);
@@ -1815,6 +1808,14 @@ export const exportAllData = () => async (dispatch, getState) => {
       [JSON.stringify(successData)], { type: 'text/plain;charset=utf-8' }
     );
     saveAs(blob, 'brace-data.txt');
+
+    if (errorData.length > 0) {
+      dispatch(updateExportAllDataProgress({
+        total: -1,
+        done: -1,
+        error: 'Some download requests failed. Data might be missing in the exported file.',
+      }));
+    }
   } catch (error) {
     dispatch(updateExportAllDataProgress({
       total: -1,
