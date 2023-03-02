@@ -962,6 +962,7 @@ const getToExtractLinks = (listName, ids, getState) => {
     );
     const links = Object.values(_links)
       .filter(link => {
+        if ('custom' in link) return false;
         return !link.extractedResult || link.extractedResult.status === EXTRACT_INIT;
       })
       .sort((a, b) => b.addedDT - a.addedDT)
