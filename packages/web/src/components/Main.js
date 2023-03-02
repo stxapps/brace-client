@@ -26,6 +26,7 @@ import {
 } from './SettingsErrorPopup';
 import ListNamesPopup from './ListNamesPopup';
 import ConfirmDeletePopup from './ConfirmDeletePopup';
+import ConfirmDiscardPopup from './ConfirmDiscardPopup';
 import PaywallPopup from './PaywallPopup';
 import AccessErrorPopup from './AccessErrorPopup';
 
@@ -114,6 +115,7 @@ class Main extends React.PureComponent {
         <SettingsUpdateErrorPopup />
         <ListNamesPopup />
         <ConfirmDeletePopup />
+        <ConfirmDiscardPopup />
         <PaywallPopup />
         <AccessErrorPopup />
       </div>

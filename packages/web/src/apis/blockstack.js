@@ -86,7 +86,7 @@ const fetch = async (params) => {
 
   let { listName, doDescendingOrder, doFetchStgsAndInfo, pendingPins } = params;
   const {
-    linkFPaths, settingsFPath: _settingsFPaths, infoFPath, pinFPaths,
+    linkFPaths, settingsFPaths: _settingsFPaths, infoFPath, pinFPaths,
   } = await listFPaths(doFetchStgsAndInfo);
   const {
     fpaths: settingsFPaths, ids: settingsIds,

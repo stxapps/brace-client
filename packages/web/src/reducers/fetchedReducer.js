@@ -32,11 +32,11 @@ const fetchedReducer = (state = initialState, action) => {
   }
 
   if (action.type === ADD_LINKS_COMMIT) {
-    const { listName, links } = action.payload;
+    const { listName, successLinks } = action.payload;
     if (!state[listName]) return state;
 
     const { payload, meta } = state[listName];
-    const newPayload = { ...payload, links: [...payload.links, ...links] };
+    const newPayload = { ...payload, links: [...payload.links, ...successLinks] };
 
     return { ...state, [listName]: { payload: newPayload, meta } };
   }

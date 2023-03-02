@@ -858,6 +858,8 @@ This and CI/CD are very important!
 - yarn
 - if puppeteer errors, try stackoverflow.com/questions/66214552/tmp-chromium-error-while-loading-shared-libraries-libnss3-so-cannot-open-sha
   + ldd node_modules/puppeteer/.local-chromium/linux-XXX/chrome-linux/chrome | grep not
+- curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh && sudo bash add-google-cloud-ops-agent-repo.sh --also-install
+  + cloud.google.com/stackdriver/docs/solutions/agents/ops-agent/installation
 ** Add a startup script
 - As startup script is executed by root user, need to specify running commands by linux user
 - use 'sudo -i' to switch to root user and test the script below

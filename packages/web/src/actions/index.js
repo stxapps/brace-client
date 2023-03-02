@@ -752,7 +752,7 @@ export const addLink = (url, listName, doExtractContents) => async (
     meta: {
       offline: {
         effect: { method: ADD_LINKS, params: payload },
-        commit: { type: ADD_LINKS_COMMIT, meta: { doExtractContents } },
+        commit: { type: ADD_LINKS_COMMIT },
         rollback: { type: ADD_LINKS_ROLLBACK, meta: payload },
       },
     },
@@ -810,6 +810,8 @@ export const moveLinks = (toListName, ids, fromListName = null) => async (
 export const moveLinksDeleteStep = (listName, ids, toListName, toIds) => async (
   dispatch, getState
 ) => {
+  if (ids.length !== toIds.length) console.log('In moveLinksDeleteStep, invalid ids:', ids, 'or toIds:', toIds);
+  if (ids.length === 0) return; // can happen if all are errorIds.
 
   const payload = { listName, ids, manuallyManageError: true, toListName, toIds };
   dispatch({
@@ -1024,7 +1026,10 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
     links[i].extractedResult = extractedResult;
     extractedLinks.push(links[i]);
   }
-  if (extractedLinks.length === 0) return;
+  if (extractedLinks.length === 0) {
+    dispatch(runAfterFetchTask());
+    return;
+  }
 
   const payload = { listName: listName, links: extractedLinks };
   dispatch({
@@ -1110,7 +1115,7 @@ export const updateSettingsPopup = (isShown, doCheckEditing = false) => async (
         dispatch(updateListNameEditors(editingLNEs));
 
         dispatch(updateDiscardAction(DISCARD_ACTION_UPDATE_LIST_NAME));
-        updatePopup(CONFIRM_DISCARD_POPUP, true);
+        dispatch(updatePopup(CONFIRM_DISCARD_POPUP, true));
         return;
       }
     }
@@ -1247,6 +1252,7 @@ const updateSettings = async (dispatch, getState) => {
 export const updateSettingsDeleteStep = (_settingsFPaths) => async (
   dispatch, getState
 ) => {
+  if (_settingsFPaths.length === 0) return;
   try {
     await serverApi.putFiles(_settingsFPaths, _settingsFPaths.map(() => ({})));
   } catch (error) {
@@ -1277,8 +1283,9 @@ const updateInfo = async (dispatch, getState) => {
 };
 
 export const updateInfoDeleteStep = (_infoFPath) => async (dispatch, getState) => {
+  if (!isString(_infoFPath)) return;
   try {
-    if (_infoFPath) await serverApi.deleteFiles([_infoFPath]);
+    await serverApi.deleteFiles([_infoFPath]);
   } catch (error) {
     console.log('updateInfo clean up error: ', error);
     // error in this step should be fine
@@ -1733,31 +1740,27 @@ export const updateImportAllDataProgress = (progress) => {
 };
 
 const exportAllDataLoop = async (dispatch, fpaths, total, doneCount) => {
+  const successData = [], errorData = [];
+  for (let i = 0; i < fpaths.length; i += N_LINKS) {
+    const selectedFPaths = fpaths.slice(i, i + N_LINKS);
+    const responses = await batchGetFileWithRetry(
+      serverApi.getFile, selectedFPaths, 0, true
+    );
+    for (const response of responses) {
+      if (response.success) {
+        successData.push({ path: response.fpath, data: response.content });
+      } else {
+        errorData.push(response);
+      }
+    }
 
-  if (fpaths.length === 0) throw new Error(`Invalid fpaths: ${fpaths}`);
-
-  const selectedCount = Math.min(fpaths.length - doneCount, N_LINKS);
-  const selectedFPaths = fpaths.slice(doneCount, doneCount + selectedCount);
-  const responses = await batchGetFileWithRetry(
-    serverApi.getFile, selectedFPaths, 0, true
-  );
-  const data = responses.filter(r => r.success).map((response) => {
-    return { path: response.fpath, data: response.content };
-  });
-
-  doneCount = doneCount + selectedCount;
-  if (doneCount > fpaths.length) {
-    throw new Error(`Invalid doneCount: ${doneCount}, total: ${fpaths.length}`);
+    doneCount += selectedFPaths.length;
+    if (doneCount < total || errorData.length === 0) {
+      dispatch(updateExportAllDataProgress({ total, done: doneCount }));
+    }
   }
 
-  dispatch(updateExportAllDataProgress({ total, done: doneCount }));
-
-  if (doneCount < fpaths.length) {
-    const remainingData = await exportAllDataLoop(dispatch, fpaths, total, doneCount);
-    data.push(...remainingData);
-  }
-
-  return data;
+  return { successData, errorData };
 };
 
 export const exportAllData = () => async (dispatch, getState) => {
@@ -1766,7 +1769,7 @@ export const exportAllData = () => async (dispatch, getState) => {
 
   const fpaths = [], settingsFPaths = [];
   try {
-    await userSession.listFiles((fpath) => {
+    await serverApi.listFiles((fpath) => {
       if (fpath.startsWith(SETTINGS)) settingsFPaths.push(fpath);
       else if (fpath.startsWith(INFO)) return true;
       else fpaths.push(fpath);
@@ -1790,16 +1793,27 @@ export const exportAllData = () => async (dispatch, getState) => {
   if (total === 0) return;
 
   try {
-    const data = await exportAllDataLoop(dispatch, fpaths, total, doneCount);
+    const {
+      successData, errorData,
+    } = await exportAllDataLoop(dispatch, fpaths, total, doneCount);
+    if (errorData.length > 0) {
+      dispatch(updateExportAllDataProgress({
+        total: -1,
+        done: -1,
+        error: 'Some download requests failed. Data might be missing in the exported file.',
+      }));
+    }
 
-    for (const item of data) {
+    for (const item of successData) {
       if (isUint8Array(item.data)) item.data = new Blob([item.data]);
       if (isBlob(item.data)) {
         item.data = await convertBlobToDataUrl(item.data);
       }
     }
 
-    var blob = new Blob([JSON.stringify(data)], { type: 'text/plain;charset=utf-8' });
+    var blob = new Blob(
+      [JSON.stringify(successData)], { type: 'text/plain;charset=utf-8' }
+    );
     saveAs(blob, 'brace-data.txt');
   } catch (error) {
     dispatch(updateExportAllDataProgress({
@@ -1877,7 +1891,7 @@ export const deleteAllData = () => async (dispatch, getState) => {
 
   try {
     if (fpaths.length > 0) {
-      await deleteAllDataLoop(dispatch, fpaths, doneCount);
+      await deleteAllDataLoop(dispatch, fpaths, total, doneCount);
 
       doneCount += fpaths.length;
       dispatch(updateDeleteAllDataProgress({ total, done: doneCount }));

@@ -22,7 +22,7 @@ const ConfirmDiscardPopup = () => {
 
   const onConfirmDiscardCancelBtnClick = () => {
     if (didClick.current) return;
-    updatePopup(CONFIRM_DISCARD_POPUP, false, null);
+    dispatch(updatePopup(CONFIRM_DISCARD_POPUP, false, null));
     didClick.current = true;
   };
 
@@ -65,7 +65,7 @@ const ConfirmDiscardPopup = () => {
       <div className={tailwind('fixed inset-0 z-50 overflow-y-auto')} aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div style={{ minHeight: safeAreaHeight }} className={tailwind('flex items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0')}>
           <div className={tailwind('fixed inset-0')} aria-hidden="true">
-            <motion.button ref={cancelBtn} onClick={onConfirmDiscardCancelBtnClick} tabIndex={-1} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
+            <motion.button ref={cancelBtn} onClick={onConfirmDiscardCancelBtnClick} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
           </div>
           <span style={spanStyle} className={tailwind('hidden sm:inline-block sm:align-middle')} aria-hidden="true">&#8203;</span>
           <motion.div className={tailwind('relative inline-block overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl blk:bg-gray-800 blk:ring-1 blk:ring-white blk:ring-opacity-25 sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden">
