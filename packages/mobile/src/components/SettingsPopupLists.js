@@ -78,6 +78,7 @@ const _ListNameEditor = (props) => {
   const state = useSelector(s => getListNameEditor(s, key));
   const themeMode = useSelector(s => getThemeMode(s));
   const prevFocusCount = useRef(state.focusCount);
+  const prevBlurCount = useRef(state.blurCount);
   const prevDisplayName = useRef(null);
   const input = useRef(null);
   const menuBtn = useRef(null);
@@ -221,6 +222,7 @@ const _ListNameEditor = (props) => {
   };
 
   const onMenuBtnClick = () => {
+    if (!menuBtn.current) return;
     menuBtn.current.measure((_fx, _fy, width, height, x, y) => {
       const rect = {
         x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
@@ -254,6 +256,13 @@ const _ListNameEditor = (props) => {
     }
     prevFocusCount.current = state.focusCount;
   }, [state.focusCount]);
+
+  useEffect(() => {
+    if (state.blurCount > prevBlurCount.current && Platform.OS === 'ios') {
+      if (input.current) input.current.blur();
+    }
+    prevBlurCount.current = state.blurCount;
+  }, [state.blurCount]);
 
   useEffect(() => {
     const deleteListName = async () => {

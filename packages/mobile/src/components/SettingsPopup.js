@@ -484,6 +484,7 @@ const SettingsPopup = () => {
 
   const renderDeleteAllDataView = () => {
     const content = (
+      /* @ts-ignore */
       <SettingsPopupDataDelete onBackToDataViewBtnClick={onBackToDataViewBtnClick} />
     );
     return _render(content);
