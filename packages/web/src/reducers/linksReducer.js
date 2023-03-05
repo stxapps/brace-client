@@ -254,7 +254,8 @@ const linksReducer = (state = initialState, action) => {
       newState,
       Cmd.run(
         moveLinksDeleteStep(fromListName, fromIds, listName, successIds),
-        { args: [Cmd.dispatch, Cmd.getState] })
+        { args: [Cmd.dispatch, Cmd.getState] }
+      )
     );
   }
 

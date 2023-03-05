@@ -122,7 +122,7 @@ const SignUp = (props) => {
     {
       key: 'faqs1-3',
       title: "Why don't I have a password?",
-      body: "Your Secret Key is your password. It's needed to be multiple words for encryption mechanism and it's needed to be long to prevent brute force attacks.",
+      body: "Your Secret Key is your password. It's needed to be multiple words for the encryption mechanism and it's needed to be long to prevent brute-force attacks.",
     },
   ];
 

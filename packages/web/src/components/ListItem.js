@@ -6,10 +6,9 @@ import { ADDING, MOVING, UPDATING, SM_WIDTH, PINNED } from '../types/const';
 import { makeGetPinStatus } from '../selectors';
 import { ensureContainUrlProtocol, isDiedStatus, isPinningStatus } from '../utils';
 
+import { useSafeAreaFrame, useTailwind } from '.';
 import ListItemContent from './ListItemContent';
 import ListItemSelector from './ListItemSelector';
-
-import { useSafeAreaFrame, useTailwind } from '.';
 
 const ListItem = (props) => {
 

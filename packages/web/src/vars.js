@@ -16,19 +16,21 @@ const scrollPanel = {
   pageYOffset: 0,
 };
 
-const runAfterFetchTask = {
-  didRun: false,
+const fetch = {
+  dt: 0,
 };
 
 const randomHouseworkTasks = {
   dt: 0,
 };
 
+const platform = {
+  isReactNative: false,
+};
+
 export const getCachedFPaths = () => {
   return cachedServerFPaths;
 };
 
-const vars = {
-  cachedServerFPaths, scrollPanel, runAfterFetchTask, randomHouseworkTasks,
-};
+const vars = { cachedServerFPaths, scrollPanel, fetch, randomHouseworkTasks, platform };
 export default vars;

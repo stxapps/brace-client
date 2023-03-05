@@ -384,7 +384,6 @@ const resetState = async (dispatch) => {
   vars.cachedServerFPaths.fpaths = null;
 
   // clear vars
-  vars.runAfterFetchTask.didRun = false;
   vars.randomHouseworkTasks.dt = 0;
 
   // clear all user data!
@@ -493,6 +492,8 @@ export const fetch = () => async (dispatch, getState) => {
       },
     },
   });
+
+  if (doFetchStgsAndInfo) vars.fetch.dt = Date.now();
 };
 
 export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) => {
@@ -517,6 +518,9 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
     return;
   }
   _links = Object.values(_.select(_links, STATUS, ADDED));
+
+  // If no links from fetching, they are all deleted,
+  //   still process of updating is the same.
 
   /*
     updateAction
@@ -810,7 +814,9 @@ export const moveLinks = (toListName, ids, fromListName = null) => async (
 export const moveLinksDeleteStep = (listName, ids, toListName, toIds) => async (
   dispatch, getState
 ) => {
-  if (ids.length !== toIds.length) console.log('In moveLinksDeleteStep, invalid ids:', ids, 'or toIds:', toIds);
+  if (ids.length !== toIds.length) {
+    console.log('In moveLinksDeleteStep, invalid ids:', ids, 'or toIds:', toIds);
+  }
   if (ids.length === 0) return; // can happen if all are errorIds.
 
   const payload = { listName, ids, manuallyManageError: true, toListName, toIds };
@@ -829,8 +835,8 @@ export const moveLinksDeleteStep = (listName, ids, toListName, toIds) => async (
 
 export const deleteLinks = (ids) => async (dispatch, getState) => {
   const listName = getState().display.listName;
-  const payload = { listName, ids, manuallyManageError: true };
 
+  const payload = { listName, ids, manuallyManageError: true };
   dispatch({
     type: DELETE_LINKS,
     payload,
@@ -936,14 +942,10 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
 };
 
 export const cancelDiedLinks = (ids, listName = null) => async (dispatch, getState) => {
-
   if (!listName) listName = getState().display.listName;
-  const payload = { listName, ids };
 
-  dispatch({
-    type: CANCEL_DIED_LINKS,
-    payload,
-  });
+  const payload = { listName, ids };
+  dispatch({ type: CANCEL_DIED_LINKS, payload });
 };
 
 const getToExtractLinks = (listName, ids, getState) => {
@@ -1371,7 +1373,7 @@ export const mergeSettingsDeleteStep = (_settingsFPaths) => async (
     console.log('mergeSettings clean up error: ', error);
     // error in this step should be fine
   }
-}
+};
 
 export const updateDoUseLocalLayout = (doUse) => {
   return { type: UPDATE_DO_USE_LOCAL_LAYOUT, payload: doUse };
@@ -2410,9 +2412,7 @@ export const updateImages = (name, content) => {
   return { type: UPDATE_IMAGES, payload: { [name]: content } };
 };
 
-export const updateCustomData = (title, image) => async (
-  dispatch, getState
-) => {
+export const updateCustomData = (title, image) => async (dispatch, getState) => {
   const links = getState().links;
   const listName = getState().display.listName;
   const selectingLinkId = getState().display.selectingLinkId;

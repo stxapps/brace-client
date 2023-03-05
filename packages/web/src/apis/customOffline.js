@@ -1,5 +1,6 @@
 import defaultQueue from '@redux-offline/redux-offline/lib/defaults/queue';
 
+import userSession from '../userSession';
 import {
   FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_SETTINGS, UPDATE_INFO, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA,
@@ -42,6 +43,10 @@ export const queue = {
     }*/
 
     return [...array, action];
+  },
+  peek(array, item, context) {
+    if (!userSession.didSessionCreate()) return undefined;
+    return array[0];
   },
 };
 

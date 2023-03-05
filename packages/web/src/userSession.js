@@ -6,6 +6,10 @@ import { DOMAIN_NAME, APP_SCOPES } from './types/const';
 const _appConfig = new AppConfig(APP_SCOPES, DOMAIN_NAME);
 const _userSession = new UserSession({ appConfig: _appConfig });
 
+const didSessionCreate = () => {
+  return true;
+};
+
 const isUserSignedIn = () => {
   return _userSession.isUserSignedIn();
 };
@@ -39,8 +43,8 @@ const signECDSA = (content) => {
 };
 
 const userSession = {
-  _userSession, isUserSignedIn, isSignInPending, handlePendingSignIn, signUserOut,
-  updateUserData, loadUserData, signECDSA,
+  _userSession, didSessionCreate, isUserSignedIn, isSignInPending, handlePendingSignIn,
+  signUserOut, updateUserData, loadUserData, signECDSA,
 };
 
 export default userSession;

@@ -12,6 +12,7 @@ import {
   batchGetFileWithRetry, batchPutFileWithRetry, batchDeleteFileWithRetry,
   deriveUnknownErrorLink,
 } from '../utils';
+import vars from '../vars';
 
 export const effect = async (effectObj, _action) => {
 
@@ -223,7 +224,9 @@ const fetchStaticFiles = async (links) => {
 
   const fpathMap = {}, remainedStaticFPaths = [];
   for (const fpath of remainedFPaths) {
-    const staticFPath = getStaticFPath(fpath);
+    let staticFPath = getStaticFPath(fpath);
+    if (vars.platform.isReactNative) staticFPath = 'file://' + staticFPath;
+
     fpathMap[staticFPath] = fpath;
     remainedStaticFPaths.push(staticFPath);
   }
@@ -390,6 +393,9 @@ const updateCustomData = async (params) => {
   } = deriveFPaths(fromLink.custom, toLink.custom);
 
   const usedFiles = await fileApi.getFiles(usedFPaths);
+  if (vars.platform.isReactNative) {
+    usedFiles.fpaths = usedFiles.fpaths.map(fpath => 'file://' + fpath);
+  }
 
   // Make sure save static files successfully first
   await serverApi.putFiles(usedFiles.fpaths, usedFiles.contents);

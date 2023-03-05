@@ -910,7 +910,7 @@ const _isDecorValid = (decor) => {
   }
 
   return true;
-}
+};
 
 export const isDecorValid = (data) => {
   if (isObject(data) && 'decor' in data) return _isDecorValid(data.decor);
