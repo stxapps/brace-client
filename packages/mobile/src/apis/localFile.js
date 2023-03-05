@@ -74,7 +74,7 @@ const deleteFile = async (fpath, dir = Dirs.DocumentDir) => {
     // Treat not found error as not an error as local data might be out-dated.
     //   i.e. user tries to delete a not-existing file, it's ok.
     // Anyway, if the file should be there, this will hide the real error!
-    console.log('fileApi.deleteFile error: ', error);
+    console.log('In localFile.deleteFile, error: ', error);
   }
 };
 
@@ -134,9 +134,9 @@ const cp = async (source, fpath, dir = Dirs.DocumentDir) => {
   return cachedContent;
 };
 
-const file = {
+const localFile = {
   getFile, getFiles, putFile, putFiles, deleteFile, deleteFiles, deleteAllFiles,
   listKeys, exists, mkdir, cp,
 };
 
-export default file;
+export default localFile;

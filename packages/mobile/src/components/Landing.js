@@ -92,7 +92,7 @@ class Landing extends React.PureComponent {
             </View>
             <View style={tailwind('mt-0.5 ml-4 flex-shrink flex-grow')}>
               <Text style={tailwind('text-xl font-medium leading-5 text-gray-900 md:text-2xl')}>Interesting websites</Text>
-              <Text style={tailwind('mt-2 text-base font-normal text-gray-500 md:text-lg')}>You found a ridiculously cool and interesting website you want to check it out later? Not a problem. Just save to Brace.to to visit it later.</Text>
+              <Text style={tailwind('mt-2 text-base font-normal text-gray-500 md:text-lg')}>You found a ridiculously cool and interesting website you want to check out later? Not a problem. Just save to Brace.to to visit later.</Text>
             </View>
           </View>
         </View>
@@ -107,7 +107,7 @@ class Landing extends React.PureComponent {
             </View>
             <View style={tailwind('mt-0.5 ml-4 flex-shrink flex-grow')}>
               <Text style={tailwind('text-xl font-medium leading-5 text-gray-900 md:text-2xl')}>Items on online shops</Text>
-              <Text style={tailwind('mt-2 text-base font-normal text-gray-500 md:text-lg')}>You found an item on online shop you don’t want it now but might want to buy it later? Not a problem. Just save to Brace.to.</Text>
+              <Text style={tailwind('mt-2 text-base font-normal text-gray-500 md:text-lg')}>You found an item on an online shop you don’t want now but might want to buy later? Not a problem. Just save to Brace.to.</Text>
             </View>
           </View>
           <View style={tailwind('mt-10 max-w-md flex-row md:mt-12')}>
@@ -120,7 +120,7 @@ class Landing extends React.PureComponent {
             </View>
             <View style={tailwind('mt-0.5 ml-4 flex-shrink flex-grow')}>
               <Text style={tailwind('text-xl font-medium leading-5 text-gray-900 md:text-2xl')}>Videos and music</Text>
-              <Text style={tailwind('mt-2 text-base font-normal text-gray-500 md:text-lg')}>Your friend’s just shared a video with you but you want to watch it tonight? Not a problem. Just save to Brace.to to watch it whenever you want.</Text>
+              <Text style={tailwind('mt-2 text-base font-normal text-gray-500 md:text-lg')}>Your friend has just shared a video with you but you want to watch it tonight. Not a problem. Just save to Brace.to to watch it whenever you want.</Text>
             </View>
           </View>
         </View>
@@ -154,8 +154,8 @@ class Landing extends React.PureComponent {
               <Path fillRule="evenodd" clipRule="evenodd" d="M25 27C25 25.8954 25.8954 25 27 25H51C52.1046 25 53 25.8954 53 27C53 28.1046 52.1046 29 51 29H27C25.8954 29 25 28.1046 25 27ZM25 35C25 33.8954 25.8954 33 27 33H51C52.1046 33 53 33.8954 53 35C53 36.1046 52.1046 37 51 37H27C25.8954 37 25 36.1046 25 35ZM25 43C25 41.8954 25.8954 41 27 41H51C52.1046 41 53 41.8954 53 43C53 44.1046 52.1046 45 51 45H27C25.8954 45 25 44.1046 25 43ZM25 51C25 49.8954 25.8954 49 27 49H51C52.1046 49 53 49.8954 53 51C53 52.1046 52.1046 53 51 53H27C25.8954 53 25 52.1046 25 51Z" fill="white" />
             </Svg>
             <Text style={tailwind('mt-5 text-xl font-semibold leading-5 text-gray-900 md:text-2xl')}>Data Storage</Text>
-            <Text style={tailwind('mt-2.5 text-base font-normal text-gray-500 md:text-lg')}>Your data lives in a storage of your choice and only you with your secret key can change it.</Text>
-            <Text style={tailwind('mt-5 text-base font-medium leading-5.5 text-gray-900 md:text-lg')}>No lock out from your own data</Text>
+            <Text style={tailwind('mt-2.5 text-base font-normal text-gray-500 md:text-lg')}>Your data lives in the storage of your choice and only you with your secret key can change it.</Text>
+            <Text style={tailwind('mt-5 text-base font-medium leading-5.5 text-gray-900 md:text-lg')}>No lock out of your own data</Text>
             <Text style={tailwind('mt-2.5 text-base font-normal text-gray-500 md:text-lg')}>You can access your data directly whenever you want as you have full control of your data storage.</Text>
           </View>
         </View>
@@ -168,7 +168,7 @@ class Landing extends React.PureComponent {
             <Text style={tailwind('mt-5 text-xl font-semibold leading-5 text-gray-900 md:text-2xl')}>Encryption</Text>
             <Text style={tailwind('mt-2.5 text-base font-normal text-gray-500 md:text-lg')}>Everything is encrypted and only you with your secret key can see the content inside.</Text>
             <Text style={tailwind('mt-5 text-base font-medium leading-5.5 text-gray-900 md:text-lg')}>No targeted ads and No data breach risk</Text>
-            <Text style={tailwind('mt-2.5 text-base font-normal text-gray-500 md:text-lg')}>Your data cannot be used to make targeted ads on you and there is no risk, if your data is stolen.</Text>
+            <Text style={tailwind('mt-2.5 text-base font-normal text-gray-500 md:text-lg')}>Your data cannot be used to make targeted ads on you and there is no risk if your data is stolen.</Text>
           </View>
         </View>
         <View style={tailwind('h-full w-full items-center justify-center bg-purple-blockstack px-4 md:px-6 lg:px-8')}>

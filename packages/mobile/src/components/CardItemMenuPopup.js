@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView, View, Text, LayoutAnimation } from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Svg, { Path } from 'react-native-svg';
@@ -23,7 +23,6 @@ import {
   getListNameDisplayName, getAllListNames, getLastHalfHeight,
 } from '../utils';
 import cache from '../utils/cache';
-import { cardItemFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
 import MenuPopupRenderer from './MenuPopupRenderer';
@@ -83,19 +82,14 @@ class CardItemMenuPopup extends React.PureComponent {
     if (!text || this.didClick) return true;
 
     const { id, url } = this.props.link;
-    const { safeAreaWidth } = this.props;
-    const animConfig = cardItemFMV(safeAreaWidth);
 
     if (text === COPY_LINK) {
       Clipboard.setString(url);
     } else if (text === ARCHIVE) {
-      LayoutAnimation.configureNext(animConfig);
       this.props.moveLinks(ARCHIVE, [id]);
     } else if (text === REMOVE) {
-      LayoutAnimation.configureNext(animConfig);
       this.props.moveLinks(TRASH, [id]);
     } else if (text === RESTORE) {
-      LayoutAnimation.configureNext(animConfig);
       this.props.moveLinks(MY_LIST, [id]);
     } else if (text === DELETE) {
       this.props.updateDeleteAction(DELETE_ACTION_LINK_COMMANDS);

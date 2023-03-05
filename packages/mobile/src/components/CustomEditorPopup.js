@@ -8,7 +8,7 @@ import Svg, { Path } from 'react-native-svg';
 import ImagePicker from 'react-native-image-crop-picker';
 import KeyboardManager from 'react-native-keyboard-manager';
 
-import fileApi from '../apis/file';
+import fileApi from '../apis/localFile';
 import {
   updatePopup, updateCustomEditor, updateImages, updateCustomData,
 } from '../actions';

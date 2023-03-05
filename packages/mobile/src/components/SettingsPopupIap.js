@@ -229,7 +229,7 @@ const IapHome = (props) => {
   return (
     <View style={tailwind('mt-6 mb-4 md:mt-0')}>
       <Text style={tailwind('text-base font-medium leading-4 text-gray-800 blk:text-gray-100')}>Purchase subscription</Text>
-      <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Brace.to is free and we offer a paid subscription for use of extra features. It's our intention to never show advertisments and we don't rent, sell or share your information with other companies. Our optional paid subscription is the only way we make money.</Text>
+      <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Brace.to is free and we offer a paid subscription for use of extra features. It's our intention to never show advertisements and we don't rent, sell or share your information with other companies. Our optional paid subscription is the only way we make money.</Text>
       <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Support us and unlock extra features: pin to the top, dark appearance, and change title & image.</Text>
       <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Start with a 14 day free trial.</Text>
       {actionPanel}

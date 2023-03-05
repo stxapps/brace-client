@@ -71,6 +71,7 @@ const ListPanel = (props) => {
   }, [dispatch]);
 
   const renderEmpty = useCallback(() => {
+    vars.scrollPanel.pageYOffset = 0;
     return <EmptyContent />;
   }, []);
 
@@ -155,6 +156,7 @@ const ListPanel = (props) => {
       setTimeout(() => {
         if (flatList.current) {
           flatList.current.scrollToOffset({ offset: 0, animated: true });
+          vars.scrollPanel.pageYOffset = 0;
         }
       }, 1);
     }

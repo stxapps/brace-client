@@ -19,6 +19,7 @@ import { queue, discard, effect } from './apis/customOffline';
 import { BLK_MODE } from './types/const';
 import { getThemeMode } from './selectors';
 import cache from './utils/cache';
+import vars from './vars';
 
 import App from './components/App';
 import Share from './components/Share';
@@ -38,6 +39,8 @@ offlineConfig.persistCallback = () => {
 offlineConfig.dispatch = (...args) => {
   store.dispatch(...args);
 };
+
+vars.platform.isReactNative = true;
 
 /** @ts-ignore */
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

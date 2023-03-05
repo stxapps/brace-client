@@ -8,10 +8,10 @@ import {
   DOMAIN_NAME, COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING, UPDATING,
   LG_WIDTH,
 } from '../types/const';
-import { makeGetPinStatus, makeGetCustomImage } from '../selectors';
+import { makeGetCustomImage } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
-  extractUrl, isPinningStatus,
+  extractUrl, isPinningStatus, isDecorValid,
 } from '../utils';
 import cache from '../utils/cache';
 import { PATTERN_MAP } from '../types/patternPaths';
@@ -27,12 +27,10 @@ const prependDomainName = (/** @type string */ value) => {
 
 const ListItemContent = (props) => {
 
-  const { link } = props;
+  const { link, pinStatus } = props;
   const { width: safeAreaWidth } = useSafeAreaFrame();
-  const getPinStatus = useMemo(makeGetPinStatus, []);
   const getCustomImage = useMemo(makeGetCustomImage, []);
   const listName = useSelector(state => state.display.listName);
-  const pinStatus = useSelector(state => getPinStatus(state, link));
   const customImage = useSelector(state => getCustomImage(state, link));
   const [extractedFaviconError, setExtractedFaviconError] = useState(false);
   const didClick = useRef(false);
@@ -87,7 +85,7 @@ const ListItemContent = (props) => {
     }
 
     // Only plain color background or plain color background with a letter
-    if (decor.image.bg.type === COLOR) {
+    if (isDecorValid(decor) && decor.image.bg.type === COLOR) {
       return (
         <React.Fragment>
           <View style={tailwind(`w-full items-center justify-center rounded aspect-7/12 shadow-xs ${decor.image.bg.value}`)} />
@@ -96,7 +94,7 @@ const ListItemContent = (props) => {
     }
 
     // Only pattern background or pattern background with a big letter
-    if (decor.image.bg.type === PATTERN) {
+    if (isDecorValid(decor) && decor.image.bg.type === PATTERN) {
       return (
         <View style={tailwind('w-full items-center justify-center rounded bg-white blk:bg-gray-900 aspect-7/12 shadow-xs')}>
           <GracefulImage key="image-graceful-image-pattern" style={tailwind('absolute inset-0 rounded bg-white blk:bg-gray-900')} contentStyle={tailwind('rounded')} source={PATTERN_MAP[decor.image.bg.value]} />
@@ -105,25 +103,27 @@ const ListItemContent = (props) => {
     }
 
     // Random image
-    if (decor.image.bg.type === IMAGE) {
+    if (isDecorValid(decor) && decor.image.bg.type === IMAGE) {
       return <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full rounded bg-white blk:bg-gray-900 aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded')} source={cache(`CI_decorImage_${decor.image.bg.value}`, { uri: prependDomainName(decor.image.bg.value) }, [decor.image.bg.value])} />;
     }
 
-    throw new Error(`Invalid decor: ${JSON.stringify(decor)}`);
+    console.log(`In ListItemContent.renderImage, invalid decor: ${JSON.stringify(decor)}`);
+    return null;
   };
 
   const renderFavicon = () => {
-
     const placeholder = () => {
-      if (decor.favicon.bg.type === COLOR) {
+      if (isDecorValid(decor) && decor.favicon.bg.type === COLOR) {
         return <View style={tailwind(`h-4 w-4 flex-shrink-0 flex-grow-0 rounded-full ${decor.favicon.bg.value}`)} />;
       }
 
-      if (decor.favicon.bg.type === PATTERN) {
+      if (isDecorValid(decor) && decor.favicon.bg.type === PATTERN) {
         return (
           <GracefulImage key="favicon-graceful-image-pattern" style={tailwind('h-4 w-4 flex-shrink-0 flex-grow-0 rounded-full')} source={PATTERN_MAP[decor.favicon.bg.value]} />
         );
       }
+
+      return null;
     };
 
     let favicon;

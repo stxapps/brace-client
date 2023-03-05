@@ -41,6 +41,7 @@ class CardPanel extends React.PureComponent {
               offset: 0,
               animated: true,
             });
+            vars.scrollPanel.pageYOffset = 0;
           }
         }, 1);
       }
@@ -80,6 +81,7 @@ class CardPanel extends React.PureComponent {
   }
 
   renderEmpty = () => {
+    vars.scrollPanel.pageYOffset = 0;
     return <EmptyContent />;
   }
 

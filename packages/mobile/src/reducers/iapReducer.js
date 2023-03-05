@@ -79,8 +79,8 @@ const iapReducer = (state = initialState, action) => {
   }
 
   if (action.type === REFRESH_PURCHASES_COMMIT) {
-    const status = didChange.purchases ? null : REFRESH_PURCHASES_COMMIT;
-    return { ...state, refreshStatus: status };
+    // If didChange.purchases = true, show ok but don't update purchases in info.
+    return { ...state, refreshStatus: REFRESH_PURCHASES_COMMIT };
   }
 
   if (action.type === REFRESH_PURCHASES_ROLLBACK) {

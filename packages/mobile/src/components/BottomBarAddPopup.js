@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  View, Text, TouchableOpacity, TextInput, LayoutAnimation, Platform,
-} from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import Modal from 'react-native-modal';
 
@@ -11,7 +9,6 @@ import {
 } from '../types/const';
 import { getThemeMode } from '../selectors';
 import { validateUrl } from '../utils';
-import { cardItemFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
 
@@ -62,10 +59,6 @@ class BottomBarAddPopup extends React.PureComponent {
       }
     }
 
-    const { safeAreaWidth } = this.props;
-    const animConfig = cardItemFMV(safeAreaWidth);
-
-    LayoutAnimation.configureNext(animConfig);
     this.props.addLink(this.props.url, null, null);
     this.props.updatePopup(ADD_POPUP, false);
 

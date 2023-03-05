@@ -2,7 +2,7 @@ import React from 'react';
 import { Animated } from 'react-native';
 import { connect } from 'react-redux';
 
-import fileApi from '../apis/file';
+import fileApi from '../apis/localFile';
 import { fetch, rehydrateStaticFiles, endIapConnection } from '../actions';
 import {
   PC_100, PC_50, PC_33, SHOW_BLANK, SHOW_COMMANDS, SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
@@ -24,9 +24,12 @@ import SettingsPopup from './SettingsPopup';
 import SettingsListsMenuPopup from './SettingsListsMenuPopup';
 import TimePickPopup from './TimePickPopup';
 import PinErrorPopup from './PinErrorPopup';
-import SettingsErrorPopup from './SettingsErrorPopup';
+import {
+  SettingsUpdateErrorPopup, SettingsConflictErrorPopup,
+} from './SettingsErrorPopup';
 import ListNamesPopup from './ListNamesPopup';
 import ConfirmDeletePopup from './ConfirmDeletePopup';
+import ConfirmDiscardPopup from './ConfirmDiscardPopup';
 import PaywallPopup from './PaywallPopup';
 import AccessErrorPopup from './AccessErrorPopup';
 
@@ -49,8 +52,6 @@ class Main extends React.PureComponent {
     if (
       prevProps.listName !== this.props.listName ||
       prevProps.rehydratedListNames !== this.props.rehydratedListNames ||
-      prevProps.didFetch !== this.props.didFetch ||
-      prevProps.didFetchSettings !== this.props.didFetchSettings ||
       prevProps.fetchedListNames !== this.props.fetchedListNames
     ) this.fetch();
   }
@@ -68,18 +69,14 @@ class Main extends React.PureComponent {
   }
 
   fetch = () => {
-    const {
-      listName, rehydratedListNames, didFetch, didFetchSettings, fetchedListNames,
-    } = this.props;
+    const { listName, rehydratedListNames, fetchedListNames } = this.props;
 
     if (!rehydratedListNames.includes(listName)) {
       this.props.rehydrateStaticFiles();
       return;
     }
 
-    if (!fetchedListNames.includes(listName)) {
-      this.props.fetch(didFetch ? false : null, null, !didFetchSettings);
-    }
+    if (!fetchedListNames.includes(listName)) this.props.fetch();
   }
 
   mkDirAndFetch = async () => {
@@ -133,9 +130,11 @@ class Main extends React.PureComponent {
         <SettingsListsMenuPopup />
         <TimePickPopup />
         <PinErrorPopup />
-        <SettingsErrorPopup />
+        <SettingsUpdateErrorPopup />
+        <SettingsConflictErrorPopup />
         <ListNamesPopup />
         <ConfirmDeletePopup />
+        <ConfirmDiscardPopup />
         <PaywallPopup />
         <AccessErrorPopup />
       </React.Fragment>
@@ -148,8 +147,6 @@ const mapStateToProps = (state, props) => {
     listName: state.display.listName,
     links: getLinks(state),
     rehydratedListNames: state.display.rehydratedListNames,
-    didFetch: state.display.didFetch,
-    didFetchSettings: state.display.didFetchSettings,
     fetchedListNames: state.display.fetchedListNames,
     layoutType: getLayoutType(state),
   };

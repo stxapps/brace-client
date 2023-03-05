@@ -5,19 +5,7 @@ import {
   UPDATE_LOCAL_THEME, UPDATE_CUSTOM_DATA_COMMIT, CLEAN_UP_STATIC_FILES_COMMIT,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
-import { LAYOUT_CARD, WHT_MODE, BLK_MODE } from '../types/const';
-
-const initialState = {
-  doUseLocalLayout: false,
-  layoutType: LAYOUT_CARD,
-  doUseLocalTheme: false,
-  themeMode: WHT_MODE,
-  themeCustomOptions: [
-    { mode: WHT_MODE, startTime: '06:00' },
-    { mode: BLK_MODE, startTime: '18:00' },
-  ],
-  cleanUpStaticFilesDT: null,
-};
+import { initialLocalSettingsState as initialState } from '../types/initialStates';
 
 const localSettingsReducer = (state = initialState, action) => {
 

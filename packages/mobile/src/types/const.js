@@ -29,6 +29,7 @@ export const LIST_NAMES_POPUP = 'LIST_NAMES_POPUP';
 export const PIN_MENU_POPUP = 'PIN_MENU_POPUP';
 export const CUSTOM_EDITOR_POPUP = 'CUSTOM_EDITOR_POPUP';
 export const CONFIRM_DELETE_POPUP = 'CONFIRM_DELETE_POPUP';
+export const CONFIRM_DISCARD_POPUP = 'CONFIRM_DISCARD_POPUP';
 export const SETTINGS_POPUP = 'SETTINGS_POPUP';
 export const SETTINGS_LISTS_MENU_POPUP = 'SETTINGS_LISTS_MENU_POPUP';
 export const TIME_PICK_POPUP = 'TIME_PICK_POPUP';
@@ -43,13 +44,14 @@ export const CD_ROOT = 'cdroot';
 export const LINKS = 'links';
 export const IMAGES = 'images';
 export const SETTINGS = 'settings';
+export const INFO = 'info';
 export const PINS = 'pins';
 export const DOT_JSON = '.json';
 export const BASE64 = 'base64';
 export const UTF8 = 'utf8';
 
 export const N_LINKS = 10;
-export const MAX_TRY = 3;
+export const MAX_TRY = 1;
 export const N_DAYS = 45;
 
 export const MY_LIST = 'My List';
@@ -59,18 +61,20 @@ export const ARCHIVE = 'Archive';
 export const ID = 'id';
 export const STATUS = 'status';
 
-export const ADDING = 'ADDING';
 export const ADDED = 'ADDED';
-export const MOVING = 'MOVING';
-export const MOVED = 'MOVED';
-export const REMOVING = 'REMOVING';
-export const DELETING = 'DELETING';
+export const ADDING = 'ADDING';
 export const UPDATING = 'UPDATING';
+export const MOVING = 'MOVING';
+export const DELETING = 'DELETING';
+export const REMOVING = 'REMOVING';
+export const MERGING = 'MERGING';
+export const MOVED = 'MOVED';
 export const DIED_ADDING = 'DIED_ADDING';
-export const DIED_MOVING = 'DIED_MOVING';
-export const DIED_REMOVING = 'DIED_REMOVING';
-export const DIED_DELETING = 'DIED_DELETING';
 export const DIED_UPDATING = 'DIED_UPDATING';
+export const DIED_MOVING = 'DIED_MOVING';
+export const DIED_DELETING = 'DIED_DELETING';
+export const DIED_REMOVING = 'DIED_REMOVING';
+export const DIED_MERGING = 'DIED_MERGING';
 
 export const COPY_LINK = 'Copy link';
 //export const ARCHIVE = 'Archive';
@@ -177,6 +181,8 @@ export const EDGE_TRIGGER = 'EDGE_TRIGGER'; // bottom or right of the trigger
 
 export const DELETE_ACTION_LINK_COMMANDS = 0;
 export const DELETE_ACTION_LIST_NAME = 1;
+
+export const DISCARD_ACTION_UPDATE_LIST_NAME = 0;
 
 export const APP_GROUP_SHARE = 'group.bracedotto.share';
 export const APP_GROUP_SHARE_UKEY = 'uKey';

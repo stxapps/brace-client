@@ -135,7 +135,7 @@ const ListItem = (props) => {
 
   return (
     <View style={tailwind('border-b border-gray-200 bg-white blk:border-gray-700 blk:bg-gray-900')}>
-      <ListItemContent link={link} />
+      <ListItemContent link={link} pinStatus={pinStatus} />
       {[ADDING, MOVING, UPDATING].includes(status) && renderBusy()}
       {isPinning && renderPinning()}
       {[PINNED].includes(pinStatus) && renderPin()}

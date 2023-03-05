@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  View, Text, TouchableOpacity, TextInput, LayoutAnimation, Platform,
-} from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import {
   Menu, MenuOptions, MenuTrigger, withMenuContext,
@@ -13,7 +11,6 @@ import { ADD_POPUP, NO_URL, ASK_CONFIRM_URL, URL_MSGS, BLK_MODE } from '../types
 import { getThemeMode } from '../selectors';
 import { validateUrl } from '../utils';
 import cache from '../utils/cache';
-import { cardItemFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
 import MenuPopoverRenderers from './MenuPopoverRenderer';
@@ -84,10 +81,6 @@ class TopBarAddPopup extends React.PureComponent {
       }
     }
 
-    const { safeAreaWidth } = this.props;
-    const animConfig = cardItemFMV(safeAreaWidth);
-
-    LayoutAnimation.configureNext(animConfig);
     this.props.addLink(this.props.url, null, null);
     this.props.ctx.menuActions.closeMenu();
     this.props.updatePopup(ADD_POPUP, false);

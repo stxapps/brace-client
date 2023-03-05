@@ -1,19 +1,16 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, LayoutAnimation } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { withMenuContext } from 'react-native-popup-menu';
 import Modal from 'react-native-modal';
 import Svg, { Path } from 'react-native-svg';
 
-import {
-  updatePopup, deleteLinks, updateBulkEdit, deleteListNames,
-} from '../actions';
+import { updatePopup, deleteLinks, updateBulkEdit, deleteListNames } from '../actions';
 import {
   CONFIRM_DELETE_POPUP, MODAL_SUPPORTED_ORIENTATIONS, DELETE_ACTION_LINK_COMMANDS,
   DELETE_ACTION_LIST_NAME, SM_WIDTH,
 } from '../types/const';
 import { getPopupLink, getThemeMode } from '../selectors';
-import { cardItemFMV, listsFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
 
@@ -48,9 +45,7 @@ class ConfirmDeletePopup extends React.Component {
     if (this.didClick) return;
     this.didClick = true;
 
-    const {
-      deleteAction, popupLink, selectedLinkIds, deletingListName, safeAreaWidth,
-    } = this.props;
+    const { deleteAction, popupLink, selectedLinkIds, deletingListName } = this.props;
 
     if (deleteAction === DELETE_ACTION_LINK_COMMANDS) {
       const v1 = popupLink ? 1 : 0;
@@ -61,10 +56,7 @@ class ConfirmDeletePopup extends React.Component {
       }
 
       if (popupLink) {
-        const animConfig = cardItemFMV(safeAreaWidth);
-
-        LayoutAnimation.configureNext(animConfig);
-        this.props.deleteLinks([popupLink.id], true);
+        this.props.deleteLinks([popupLink.id]);
         this.props.ctx.menuActions.closeMenu();
         this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
         this.props.updatePopup(popupLink.id, false);
@@ -72,7 +64,7 @@ class ConfirmDeletePopup extends React.Component {
       }
 
       if (selectedLinkIds.length > 0) {
-        this.props.deleteLinks(selectedLinkIds, true);
+        this.props.deleteLinks(selectedLinkIds);
         this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
         this.props.updateBulkEdit(false);
         return;
@@ -80,9 +72,6 @@ class ConfirmDeletePopup extends React.Component {
 
       console.log(`In ConfirmDeletePopup, invalid popupLink: ${popupLink} and selectedLinkIds: ${selectedLinkIds}`);
     } else if (deleteAction === DELETE_ACTION_LIST_NAME) {
-      const animConfig = listsFMV();
-
-      LayoutAnimation.configureNext(animConfig);
       this.props.deleteListNames([deletingListName]);
       this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
     } else {

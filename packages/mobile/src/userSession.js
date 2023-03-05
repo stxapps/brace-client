@@ -1,7 +1,5 @@
 // @ts-ignore
 import RNBlockstackSdk from 'react-native-blockstack';
-import { Dirs } from 'react-native-file-access';
-import { DOT_JSON } from './types/const';
 
 /* Need this sync function to check if session is available in ReduxOffline peek  */
 let _didSessionCreate = false;
@@ -47,36 +45,6 @@ const loadUserData = async () => {
   return userData;
 };
 
-const putFileOptions = { encrypt: true, dir: Dirs.DocumentDir };
-const putFile = async (path, content, options = putFileOptions) => {
-  if (path.endsWith(DOT_JSON)) content = JSON.stringify(content);
-  const { fileUrl } = await RNBlockstackSdk.putFile(path, content, options);
-  return fileUrl;
-};
-
-const getFileOptions = { decrypt: true, dir: Dirs.DocumentDir };
-const getFile = async (path, options = getFileOptions) => {
-  const result = await RNBlockstackSdk.getFile(path, options);
-
-  let content;
-  if ('fileContentsEncoded' in result) content = result.fileContentsEncoded;
-  else content = result.fileContents;
-
-  if (path.endsWith(DOT_JSON)) content = JSON.parse(content);
-  return content;
-};
-
-const deleteFile = async (path, options = { wasSigned: false }) => {
-  const { deleted } = await RNBlockstackSdk.deleteFile(path, options);
-  return deleted;
-};
-
-const listFiles = async (callback) => {
-  const { files, fileCount } = await RNBlockstackSdk.listFiles();
-  files.forEach(file => callback(file));
-  return fileCount;
-};
-
 const signECDSA = async (content) => {
   const userData = await loadUserData();
   const sigObj = await RNBlockstackSdk.signECDSA(userData.appPrivateKey, content);
@@ -84,10 +52,8 @@ const signECDSA = async (content) => {
 };
 
 const userSession = {
-  didSessionCreate, hasSession, createSession,
-  isUserSignedIn, handlePendingSignIn, signUserOut,
-  updateUserData, loadUserData, putFile, getFile, deleteFile,
-  listFiles, signECDSA,
+  didSessionCreate, hasSession, createSession, isUserSignedIn, handlePendingSignIn,
+  signUserOut, updateUserData, loadUserData, signECDSA,
 };
 
 export default userSession;

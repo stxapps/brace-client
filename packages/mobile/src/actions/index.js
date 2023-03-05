@@ -10,75 +10,73 @@ import { is24HourFormat } from 'react-native-device-time-format';
 import userSession from '../userSession';
 import axios from '../axiosWrapper';
 import dataApi from '../apis/blockstack';
-import fileApi from '../apis/file';
+import serverApi from '../apis/server';
+import fileApi from '../apis/localFile';
 import {
-  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_STACKS_ACCESS, UPDATE_LIST_NAME,
-  UPDATE_POPUP, UPDATE_SEARCH_STRING, UPDATE_LINK_EDITOR,
-  UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
-  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
-  FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED,
-  FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK, CACHE_FETCHED_MORE,
-  UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE, CLEAR_FETCHED_LIST_NAMES, REFRESH_FETCHED,
-  ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
-  UPDATE_LINKS, DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK,
-  MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
-  MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT,
-  MOVE_LINKS_DELETE_STEP_ROLLBACK, CANCEL_DIED_LINKS,
-  DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
-  DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
+  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_STACKS_ACCESS, UPDATE_LIST_NAME, UPDATE_POPUP,
+  UPDATE_SEARCH_STRING, UPDATE_LINK_EDITOR, UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN,
+  UPDATE_BULK_EDITING, ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS,
+  UPDATE_SELECTING_LINK_ID, FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED,
+  UPDATE_FETCHED, FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
+  CACHE_FETCHED_MORE, UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE,
+  CLEAR_FETCHED_LIST_NAMES, REFRESH_FETCHED, ADD_LINKS, ADD_LINKS_COMMIT,
+  ADD_LINKS_ROLLBACK, UPDATE_LINKS, DELETE_LINKS, DELETE_LINKS_COMMIT,
+  DELETE_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT,
+  MOVE_LINKS_ADD_STEP_ROLLBACK, MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT,
+  MOVE_LINKS_DELETE_STEP_ROLLBACK, CANCEL_DIED_LINKS, DELETE_OLD_LINKS_IN_TRASH,
+  DELETE_OLD_LINKS_IN_TRASH_COMMIT, DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
   UPDATE_EXTRACTED_CONTENTS, UPDATE_LIST_NAME_EDITORS, ADD_LIST_NAMES,
   UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME, DELETE_LIST_NAMES,
-  UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME,
-  UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
-  UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
-  UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, UPDATE_SETTINGS_VIEW_ID,
-  UPDATE_DO_USE_LOCAL_LAYOUT, UPDATE_DEFAULT_LAYOUT_TYPE, UPDATE_LOCAL_LAYOUT_TYPE,
-  UPDATE_DELETE_ACTION, UPDATE_LIST_NAMES_MODE,
-  GET_PRODUCTS, GET_PRODUCTS_COMMIT, GET_PRODUCTS_ROLLBACK,
-  REQUEST_PURCHASE, REQUEST_PURCHASE_COMMIT, REQUEST_PURCHASE_ROLLBACK,
-  RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
-  REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
-  UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS, UPDATE_IAP_PURCHASE_STATUS,
-  UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
+  UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME, UPDATE_DO_EXTRACT_CONTENTS,
+  UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH, UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS,
+  UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK, UPDATE_INFO, UPDATE_INFO_COMMIT,
+  UPDATE_INFO_ROLLBACK, CANCEL_DIED_SETTINGS, MERGE_SETTINGS, MERGE_SETTINGS_COMMIT,
+  MERGE_SETTINGS_ROLLBACK, UPDATE_SETTINGS_VIEW_ID, UPDATE_DO_USE_LOCAL_LAYOUT,
+  UPDATE_DEFAULT_LAYOUT_TYPE, UPDATE_LOCAL_LAYOUT_TYPE, UPDATE_DELETE_ACTION,
+  UPDATE_DISCARD_ACTION, UPDATE_LIST_NAMES_MODE, GET_PRODUCTS, GET_PRODUCTS_COMMIT,
+  GET_PRODUCTS_ROLLBACK, REQUEST_PURCHASE, REQUEST_PURCHASE_COMMIT,
+  REQUEST_PURCHASE_ROLLBACK, RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT,
+  RESTORE_PURCHASES_ROLLBACK, REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT,
+  REFRESH_PURCHASES_ROLLBACK, UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS,
+  UPDATE_IAP_PURCHASE_STATUS, UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
   PIN_LINK, PIN_LINK_COMMIT, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_COMMIT,
   UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
-  MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, CANCEL_DIED_PINS,
-  UPDATE_SYSTEM_THEME_MODE, UPDATE_DO_USE_LOCAL_THEME,
-  UPDATE_DEFAULT_THEME, UPDATE_LOCAL_THEME, UPDATE_UPDATING_THEME_MODE,
-  UPDATE_TIME_PICK, UPDATE_IS_24H_FORMAT, UPDATE_CUSTOM_EDITOR, UPDATE_IMAGES,
-  UPDATE_CUSTOM_DATA, UPDATE_CUSTOM_DATA_COMMIT, UPDATE_CUSTOM_DATA_ROLLBACK,
-  REHYDRATE_STATIC_FILES, CLEAN_UP_STATIC_FILES, CLEAN_UP_STATIC_FILES_COMMIT,
-  CLEAN_UP_STATIC_FILES_ROLLBACK, UPDATE_IMPORT_ALL_DATA_PROGRESS,
-  UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS,
-  DELETE_ALL_DATA, RESET_STATE,
+  MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, CANCEL_DIED_PINS, UPDATE_SYSTEM_THEME_MODE,
+  UPDATE_DO_USE_LOCAL_THEME, UPDATE_DEFAULT_THEME, UPDATE_LOCAL_THEME,
+  UPDATE_UPDATING_THEME_MODE, UPDATE_TIME_PICK, UPDATE_IS_24H_FORMAT,
+  UPDATE_CUSTOM_EDITOR, UPDATE_IMAGES, UPDATE_CUSTOM_DATA, UPDATE_CUSTOM_DATA_COMMIT,
+  UPDATE_CUSTOM_DATA_ROLLBACK, REHYDRATE_STATIC_FILES, CLEAN_UP_STATIC_FILES,
+  CLEAN_UP_STATIC_FILES_COMMIT, CLEAN_UP_STATIC_FILES_ROLLBACK, UPDATE_PAYWALL_FEATURE,
+  UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
+  UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
-  DOMAIN_NAME, APP_URL_SCHEME, APP_DOMAIN_NAME, BLOCKSTACK_AUTH,
-  APP_GROUP_SHARE, APP_GROUP_SHARE_UKEY,
-  SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
-  LIST_NAMES_POPUP, PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP, PAYWALL_POPUP,
-  CONFIRM_DELETE_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, ID,
-  STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK, MY_LIST, TRASH,
-  N_LINKS, N_DAYS, CD_ROOT, ADDED,
-  DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING,
-  BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
-  IAP_VERIFY_URL, IAP_STATUS_URL, APPSTORE, PLAYSTORE, COM_BRACEDOTTO,
-  COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, UNKNOWN, ERROR, ACTIVE,
-  SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE, FEATURE_PIN,
-  FEATURE_APPEARANCE, FEATURE_CUSTOM,
+  DOMAIN_NAME, APP_URL_SCHEME, APP_DOMAIN_NAME, BLOCKSTACK_AUTH, APP_GROUP_SHARE,
+  APP_GROUP_SHARE_UKEY, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP,
+  PROFILE_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP, PAYWALL_POPUP,
+  CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP,
+  SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, DISCARD_ACTION_UPDATE_LIST_NAME, ID,
+  STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK, MY_LIST, TRASH, N_LINKS,
+  N_DAYS, CD_ROOT, SETTINGS, ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING,
+  DIED_DELETING, DIED_UPDATING, BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT,
+  EXTRACT_EXCEEDING_N_URLS, IAP_VERIFY_URL, IAP_STATUS_URL, APPSTORE, PLAYSTORE,
+  COM_BRACEDOTTO, COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID,
+  UNKNOWN, ERROR, ACTIVE, SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE,
+  FEATURE_PIN, FEATURE_APPEARANCE, FEATURE_CUSTOM,
 } from '../types/const';
 import {
-  isEqual, isString, isObject, isNumber, sleep,
-  randomString, rerandomRandomTerm, deleteRemovedDT, getMainId, getLinkMainIds,
-  getUrlFirstChar, separateUrlAndParam, getUserImageUrl, randomDecor,
-  isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
-  getLatestPurchase, getValidPurchase, doEnableExtraFeatures,
-  getLinkFPaths, getStaticFPaths, extractPinFPath, getSortedLinks, getPinFPaths,
-  getPins, separatePinnedValues, sortLinks, sortWithPins, getRawPins, getFormattedTime,
-  get24HFormattedTime, extractFPath,
+  isEqual, isString, isObject, isNumber, sleep, randomString, rerandomRandomTerm,
+  deleteRemovedDT, getMainId, getLinkMainIds, getUrlFirstChar, separateUrlAndParam,
+  getUserImageUrl, randomDecor, isOfflineActionWithPayload, shouldDispatchFetch,
+  getListNameObj, getAllListNames, getLatestPurchase, getValidPurchase,
+  doEnableExtraFeatures, createDataFName, getLinkFPaths, getStaticFPaths,
+  createSettingsFPath, getLastSettingsFPaths, extractPinFPath, getSortedLinks,
+  getPinFPaths, getPins, separatePinnedValues, sortLinks, sortWithPins, getRawPins,
+  getFormattedTime, get24HFormattedTime, extractStaticFPath, getEditingListNameEditors,
 } from '../utils';
 import { _ } from '../utils/obj';
+import { initialSettingsState } from '../types/initialStates';
 import vars from '../vars';
 
 import DefaultPreference from 'react-native-default-preference';
@@ -118,7 +116,7 @@ export const init = async (store) => {
       store.dispatch(updateIs24HFormat(is24HFormat));
 
       if (isUserSignedIn) {
-        const interval = (Date.now() - _lastFetchDT) / 1000 / 60 / 60;
+        const interval = (Date.now() - vars.fetch.dt) / 1000 / 60 / 60;
         if (interval < 0.6) return;
         if (isPopupShown(store.getState()) && interval < 0.9) return;
 
@@ -183,20 +181,7 @@ const handlePendingSignIn = (url) => async (dispatch, getState) => {
   }
 
   const isUserSignedIn = await userSession.isUserSignedIn();
-  if (isUserSignedIn) {
-    const userData = await userSession.loadUserData();
-    if (Platform.OS === 'ios') {
-      await DefaultPreference.set(APP_GROUP_SHARE_UKEY, JSON.stringify(userData));
-    }
-    dispatch({
-      type: UPDATE_USER,
-      payload: {
-        isUserSignedIn: true,
-        username: userData.username,
-        image: getUserImageUrl(userData),
-      },
-    });
-  }
+  if (isUserSignedIn) dispatch(updateUserSignedIn());
 
   // Stop show loading
   dispatch({
@@ -212,6 +197,7 @@ const getPopupShownId = (state) => {
   //if (state.display.isAccessErrorPopupShown) return ACCESS_ERROR_POPUP;
   if (state.display.isTimePickPopupShown) return TIME_PICK_POPUP;
   if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
+  if (state.display.isConfirmDiscardPopupShown) return CONFIRM_DISCARD_POPUP;
   if (state.display.isPaywallPopupShown) return PAYWALL_POPUP;
   if (state.display.isCustomEditorPopupShown) return CUSTOM_EDITOR_POPUP;
   if (state.display.isPinMenuPopupShown) return PIN_MENU_POPUP;
@@ -255,8 +241,35 @@ export const updateMenuPopupAsBackPressed = (menuProvider, dispatch, getState) =
 };
 
 export const signOut = () => async (dispatch, getState) => {
-
   await userSession.signUserOut();
+  await resetState(dispatch);
+};
+
+export const updateUserData = (data) => async (dispatch, getState) => {
+  await userSession.updateUserData(data);
+
+  const isUserSignedIn = await userSession.isUserSignedIn();
+  if (isUserSignedIn) dispatch(updateUserSignedIn());
+};
+
+export const updateUserSignedIn = () => async (dispatch, getState) => {
+  await resetState(dispatch);
+
+  const userData = await userSession.loadUserData();
+  if (Platform.OS === 'ios') {
+    await DefaultPreference.set(APP_GROUP_SHARE_UKEY, JSON.stringify(userData));
+  }
+  dispatch({
+    type: UPDATE_USER,
+    payload: {
+      isUserSignedIn: true,
+      username: userData.username,
+      image: getUserImageUrl(userData),
+    },
+  });
+};
+
+const resetState = async (dispatch) => {
   if (Platform.OS === 'ios') await DefaultPreference.clearAll();
 
   // redux-offline: Empty outbox
@@ -266,32 +279,13 @@ export const signOut = () => async (dispatch, getState) => {
   await fileApi.deleteAllFiles();
 
   // clear cached fpaths
-  vars.cachedFPaths.fpaths = null;
+  vars.cachedServerFPaths.fpaths = null;
+
+  // clear vars
+  vars.randomHouseworkTasks.dt = 0;
 
   // clear all user data!
-  dispatch({
-    type: RESET_STATE,
-  });
-};
-
-export const updateUserData = (data) => async (dispatch, getState) => {
-  await userSession.updateUserData(data);
-
-  const isUserSignedIn = await userSession.isUserSignedIn();
-  if (isUserSignedIn) {
-    const userData = await userSession.loadUserData();
-    if (Platform.OS === 'ios') {
-      await DefaultPreference.set(APP_GROUP_SHARE_UKEY, JSON.stringify(userData));
-    }
-    dispatch({
-      type: UPDATE_USER,
-      payload: {
-        isUserSignedIn: true,
-        username: userData.username,
-        image: getUserImageUrl(userData),
-      },
-    });
-  }
+  dispatch({ type: RESET_STATE });
 };
 
 export const updateStacksAccess = (data) => {
@@ -372,25 +366,16 @@ export const updateSelectingLinkId = (id) => {
   };
 };
 
-let _lastFetchDT = 0;
-export const fetch = (
-  doDeleteOldLinksInTrash, doExtractContents, doFetchSettings = false
-) => async (dispatch, getState) => {
+export const fetch = () => async (dispatch, getState) => {
 
   const listName = getState().display.listName;
-  // Always call deleteOldlinksintrash and extractContents
-  //   and check at that time to actually do it or not.
-  // So it's real time with updated settings from fetch.
-  /*if (doDeleteOldLinksInTrash === null) {
-    doDeleteOldLinksInTrash = getState().settings.doDeleteOldLinksInTrash;
-  }
-  if (doExtractContents === null) {
-    doExtractContents = getState().settings.doExtractContents;
-  }*/
+  const didFetchSettings = getState().display.didFetchSettings;
   const doDescendingOrder = getState().settings.doDescendingOrder;
   const pendingPins = getState().pendingPins;
 
-  const payload = { listName, doDescendingOrder, doFetchSettings, pendingPins };
+  const doFetchStgsAndInfo = !didFetchSettings;
+
+  const payload = { listName, doDescendingOrder, doFetchStgsAndInfo, pendingPins };
 
   // If there is already FETCH with the same list name, no need to dispatch a new one.
   if (!shouldDispatchFetch(getState().offline.outbox, payload)) return;
@@ -400,16 +385,13 @@ export const fetch = (
     meta: {
       offline: {
         effect: { method: FETCH, params: payload },
-        commit: {
-          type: FETCH_COMMIT,
-          meta: { doDeleteOldLinksInTrash, doExtractContents },
-        },
+        commit: { type: FETCH_COMMIT },
         rollback: { type: FETCH_ROLLBACK },
       },
     },
   });
 
-  if (doFetchSettings) _lastFetchDT = Date.now();
+  if (doFetchStgsAndInfo) vars.fetch.dt = Date.now();
 };
 
 export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) => {
@@ -437,11 +419,6 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
 
   // If no links from fetching, they are all deleted,
   //   still process of updating is the same.
-  /*if (links.length === 0) {
-    const { doDeleteOldLinksInTrash, doExtractContents } = meta;
-    dispatch(deleteOldLinksInTrash(doDeleteOldLinksInTrash, doExtractContents));
-    return;
-  }*/
 
   /*
     updateAction
@@ -484,8 +461,7 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
   }
 
   if (updateAction === 0) {
-    const { doDeleteOldLinksInTrash, doExtractContents } = meta;
-    dispatch(deleteOldLinksInTrash(doDeleteOldLinksInTrash, doExtractContents));
+    dispatch(extractContents());
     return;
   }
 
@@ -501,11 +477,7 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
     }
   }
 
-  dispatch({
-    type: CACHE_FETCHED,
-    payload,
-    theMeta: meta,
-  });
+  dispatch({ type: CACHE_FETCHED, payload, theMeta: meta });
 };
 
 export const updateFetched = (
@@ -535,10 +507,6 @@ export const fetchMore = () => async (dispatch, getState) => {
   const listName = getState().display.listName;
   const ids = Object.keys(getState().links[listName]);
   const doDescendingOrder = getState().settings.doDescendingOrder;
-  // Always call extractContents
-  //   and check at that time to actually do it or not.
-  // So it's real time with updated settings from fetch.
-  //const doExtractContents = getState().settings.doExtractContents;
   const pendingPins = getState().pendingPins;
 
   const payload = { fetchMoreId, listName, ids, doDescendingOrder, pendingPins };
@@ -587,11 +555,7 @@ export const tryUpdateFetchedMore = (payload, meta) => async (dispatch, getState
   }
 
   if (isInterrupted) {
-    dispatch({
-      type: CANCEL_FETCHED_MORE,
-      payload,
-      theMeta: meta,
-    });
+    dispatch({ type: CANCEL_FETCHED_MORE, payload, theMeta: meta });
     return;
   }
 
@@ -614,11 +578,7 @@ export const tryUpdateFetchedMore = (payload, meta) => async (dispatch, getState
     }
   }
 
-  dispatch({
-    type: CACHE_FETCHED_MORE,
-    payload,
-    theMeta: meta,
-  });
+  dispatch({ type: CACHE_FETCHED_MORE, payload, theMeta: meta });
 };
 
 export const updateFetchedMore = (payload, meta, listName = null) => async (
@@ -647,9 +607,7 @@ export const clearFetchedListNames = () => {
 export const refreshFetched = () => async (dispatch, getState) => {
   const listName = getState().display.listName;
   const doDescendingOrder = getState().settings.doDescendingOrder;
-  const payload = {
-    listName, doDescendingOrder, doFetchSettings: true, shouldDispatchFetch: true,
-  };
+  const payload = { listName, doDescendingOrder, shouldDispatchFetch: true };
 
   // If there is already FETCH with the same list name, no need to dispatch a new one.
   if (!shouldDispatchFetch(getState().offline.outbox, payload)) {
@@ -659,7 +617,9 @@ export const refreshFetched = () => async (dispatch, getState) => {
   dispatch({ type: REFRESH_FETCHED, payload });
 };
 
-export const addLink = (url, listName, doExtractContents) => async (dispatch, getState) => {
+export const addLink = (url, listName, doExtractContents) => async (
+  dispatch, getState
+) => {
 
   if (listName === null) listName = getState().display.listName;
   if (listName === TRASH) listName = MY_LIST;
@@ -679,11 +639,6 @@ export const addLink = (url, listName, doExtractContents) => async (dispatch, ge
   const links = [link];
   const payload = { listName, links };
 
-  // Always call extractContents
-  //   and check at that time to actually do it or not.
-  // So it's real time with updated settings from fetch.
-  //if (doExtractContents === null) doExtractContents = getState().settings.doExtractContents;
-
   // If doExtractContents is false but from settings is true, send pre-extract to server
   if (doExtractContents === false && getState().settings.doExtractContents === true) {
     axios.post(BRACE_PRE_EXTRACT_URL, { urls: [url] })
@@ -699,24 +654,26 @@ export const addLink = (url, listName, doExtractContents) => async (dispatch, ge
     meta: {
       offline: {
         effect: { method: ADD_LINKS, params: payload },
-        commit: { type: ADD_LINKS_COMMIT, meta: { doExtractContents } },
+        commit: { type: ADD_LINKS_COMMIT },
         rollback: { type: ADD_LINKS_ROLLBACK, meta: payload },
       },
     },
   });
 };
 
-export const moveLinks = (toListName, ids, fromListName = null) => async (dispatch, getState) => {
+export const moveLinks = (toListName, ids, fromListName = null) => async (
+  dispatch, getState
+) => {
 
   if (!fromListName) fromListName = getState().display.listName;
 
-  let links = _.ignore(
+  const links = _.ignore(
     _.select(getState().links[fromListName], ID, ids),
     [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
   );
-  links = Object.values(links);
+  const fromLinks = Object.values(links);
 
-  const payload = { listName: toListName, links: links };
+  const payload = { listName: toListName, links: fromLinks, manuallyManageError: true };
   payload.links = payload.links.map(link => {
     return { ...link, id: rerandomRandomTerm(link.id) };
   });
@@ -732,6 +689,11 @@ export const moveLinks = (toListName, ids, fromListName = null) => async (dispat
     });
   }
 
+  const fromIdMap = {};
+  for (let i = 0; i < fromLinks.length; i++) {
+    fromIdMap[payload.links[i].id] = fromLinks[i].id;
+  }
+
   dispatch({
     type: MOVE_LINKS_ADD_STEP,
     payload,
@@ -739,7 +701,7 @@ export const moveLinks = (toListName, ids, fromListName = null) => async (dispat
       offline: {
         effect: { method: ADD_LINKS, params: payload },
         commit: {
-          type: MOVE_LINKS_ADD_STEP_COMMIT, meta: { fromListName, fromIds: ids },
+          type: MOVE_LINKS_ADD_STEP_COMMIT, meta: { fromListName, fromIdMap },
         },
         rollback: { type: MOVE_LINKS_ADD_STEP_ROLLBACK, meta: payload },
       },
@@ -747,10 +709,15 @@ export const moveLinks = (toListName, ids, fromListName = null) => async (dispat
   });
 };
 
-export const moveLinksDeleteStep = (listName, ids, toListName, toIds) => async (dispatch, getState) => {
+export const moveLinksDeleteStep = (listName, ids, toListName, toIds) => async (
+  dispatch, getState
+) => {
+  if (ids.length !== toIds.length) {
+    console.log('In moveLinksDeleteStep, invalid ids:', ids, 'or toIds:', toIds);
+  }
+  if (ids.length === 0) return; // can happen if all are errorIds.
 
-  const payload = { listName, ids, toListName, toIds };
-
+  const payload = { listName, ids, manuallyManageError: true, toListName, toIds };
   dispatch({
     type: MOVE_LINKS_DELETE_STEP,
     payload,
@@ -764,15 +731,10 @@ export const moveLinksDeleteStep = (listName, ids, toListName, toIds) => async (
   });
 };
 
-export const deleteLinks = (ids, doDeleteStaticFiles = false) => async (
-  dispatch, getState
-) => {
-  // Require doDeleteStaticFiles
-  //   as maybe moving and calling this method for the delete step
-  //   or retry died removing which can't delete static files.
+export const deleteLinks = (ids) => async (dispatch, getState) => {
   const listName = getState().display.listName;
-  const payload = { listName, ids, doDeleteStaticFiles };
 
+  const payload = { listName, ids, manuallyManageError: true };
   dispatch({
     type: DELETE_LINKS,
     payload,
@@ -822,7 +784,7 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
       });
     } else if (status === DIED_MOVING) {
 
-      const payload = { listName, ids };
+      const payload = { listName, ids: [id] };
       dispatch({
         type: CANCEL_DIED_LINKS,
         payload,
@@ -841,7 +803,7 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
       }
       if (fromId === null) {
         console.log(`In retryDiedLinks, could not find fromId for id: ${id}`);
-        return;
+        continue;
       }
 
       dispatch(moveLinks(listName, [fromId], fromListName));
@@ -849,7 +811,7 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
     } else if (status === DIED_REMOVING) {
       dispatch(deleteLinks([id]));
     } else if (status === DIED_DELETING) {
-      dispatch(deleteLinks([id], true));
+      dispatch(deleteLinks([id]));
     } else if (status === DIED_UPDATING) {
       const toLink = {};
       for (const attr in link) {
@@ -878,90 +840,65 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
 };
 
 export const cancelDiedLinks = (ids, listName = null) => async (dispatch, getState) => {
-
   if (!listName) listName = getState().display.listName;
+
   const payload = { listName, ids };
-
-  dispatch({
-    type: CANCEL_DIED_LINKS,
-    payload,
-  });
+  dispatch({ type: CANCEL_DIED_LINKS, payload });
 };
 
-export const deleteOldLinksInTrash = (
-  doDeleteOldLinksInTrash, doExtractContents
-) => async (dispatch, getState) => {
-
-  // If not specified, get from settings. Get it here so that it's the most updated.
-  if (doDeleteOldLinksInTrash === null) {
-    doDeleteOldLinksInTrash = getState().settings.doDeleteOldLinksInTrash;
-  }
-  if (!doDeleteOldLinksInTrash) {
-    dispatch(extractContents(doExtractContents, null, null));
-    return;
-  }
-
-  dispatch({
-    type: DELETE_OLD_LINKS_IN_TRASH,
-    meta: {
-      offline: {
-        effect: { method: DELETE_OLD_LINKS_IN_TRASH },
-        commit: { type: DELETE_OLD_LINKS_IN_TRASH_COMMIT, meta: { doExtractContents } },
-        rollback: { type: DELETE_OLD_LINKS_IN_TRASH_ROLLBACK },
-      },
-    },
-  });
-};
-
-export const extractContents = (doExtractContents, listName, ids) => async (dispatch, getState) => {
-
-  // If not specified, get from settings. Get it here so that it's the most updated.
-  if (doExtractContents === null) {
-    doExtractContents = getState().settings.doExtractContents;
-  }
-  if (!doExtractContents) return;
-
-  // IMPORTANT: didBeautify is removed as it's not needed
-  //   Legacy old link contains didBeautify
-
-  let links;
+const getToExtractLinks = (listName, ids, getState) => {
   if (listName === null && ids === null) {
     // Need to fetch first before update the link so that etags are available.
     // Do extract contents only on the current list name
     //   and make sure it's already fetched.
     listName = getState().display.listName;
-    if (listName === TRASH) return;
+    if (listName === TRASH) return [];
 
     const obj = getState().links[listName];
-    if (!obj) return;
+    if (!isObject(obj)) return [];
 
-    let _links = _.ignore(
+    const _links = _.ignore(
       obj, [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
     );
-    _links = Object.values(_links)
+    const links = Object.values(_links)
       .filter(link => {
+        if ('custom' in link) return false;
         return !link.extractedResult || link.extractedResult.status === EXTRACT_INIT;
       })
-      .sort((a, b) => b.addedDT - a.addedDT);
-    if (_links.length > 0) {
-      links = _links.slice(0, N_LINKS);
-    } else {
-      return; // No unextracted link found, return
-    }
-  } else if (listName !== null && ids !== null) {
-    let _links = _.ignore(
+      .sort((a, b) => b.addedDT - a.addedDT)
+      .slice(0, N_LINKS);
+
+    return links;
+  }
+
+  if (listName !== null && ids !== null) {
+    const _links = _.ignore(
       _.select(getState().links[listName], ID, ids),
       [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
     );
-    _links = Object.values(_links);
-    if (_links.length > 0) {
-      links = _links.slice(0, N_LINKS);
-    } else {
-      console.log(`Links not found: ${listName}, ${ids}`);
-      return;
-    }
-  } else {
-    throw new Error(`Invalid parameters: ${listName}, ${ids}`);
+    const links = Object.values(_links);
+    return links;
+  }
+
+  console.log(`Invalid parameters: ${listName}, ${ids}`);
+  return [];
+};
+
+export const extractContents = (listName, ids) => async (dispatch, getState) => {
+
+  const doExtractContents = getState().settings.doExtractContents;
+  if (!doExtractContents) {
+    dispatch(runAfterFetchTask());
+    return;
+  }
+
+  // IMPORTANT: didBeautify is removed as it's not needed
+  //   Legacy old link contains didBeautify
+
+  const links = getToExtractLinks(listName, ids, getState);
+  if (links.length === 0) {
+    dispatch(runAfterFetchTask());
+    return;
   }
 
   let res;
@@ -990,7 +927,10 @@ export const extractContents = (doExtractContents, listName, ids) => async (disp
     links[i].extractedResult = extractedResult;
     extractedLinks.push(links[i]);
   }
-  if (extractedLinks.length === 0) return;
+  if (extractedLinks.length === 0) {
+    dispatch(runAfterFetchTask());
+    return;
+  }
 
   const payload = { listName: listName, links: extractedLinks };
   dispatch({
@@ -1018,7 +958,42 @@ export const tryUpdateExtractedContents = (payload) => async (dispatch, getState
   });
 };
 
-export const updateSettingsPopup = (isShown) => async (dispatch, getState) => {
+export const runAfterFetchTask = () => async (dispatch, getState) => {
+  dispatch(randomHouseworkTasks());
+};
+
+export const randomHouseworkTasks = () => async (dispatch, getState) => {
+  const now = Date.now();
+  if (now - vars.randomHouseworkTasks.dt < 24 * 60 * 60 * 1000) return;
+
+  const rand = Math.random();
+  if (rand < 0.33) dispatch(deleteOldLinksInTrash());
+  else if (rand < 0.66) dispatch(checkPurchases());
+  else dispatch(cleanUpStaticFiles());
+
+  vars.randomHouseworkTasks.dt = now;
+};
+
+export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
+
+  const doDeleteOldLinksInTrash = getState().settings.doDeleteOldLinksInTrash;
+  if (!doDeleteOldLinksInTrash) return;
+
+  dispatch({
+    type: DELETE_OLD_LINKS_IN_TRASH,
+    meta: {
+      offline: {
+        effect: { method: DELETE_OLD_LINKS_IN_TRASH },
+        commit: { type: DELETE_OLD_LINKS_IN_TRASH_COMMIT },
+        rollback: { type: DELETE_OLD_LINKS_IN_TRASH_ROLLBACK },
+      },
+    },
+  });
+};
+
+export const updateSettingsPopup = (isShown, doCheckEditing = false) => async (
+  dispatch, getState
+) => {
   /*
     A settings snapshot is made when FETCH_COMMIT and UPDATE_SETTINGS_COMMIT
     For FETCH_COMMIT and UPDATE_SETTINGS_COMMIT, check action type in snapshotReducer
@@ -1028,7 +1003,25 @@ export const updateSettingsPopup = (isShown) => async (dispatch, getState) => {
       1. FETCH_COMMIT might be after the popup is open
       2. user might open the popup while settings is being updated or rolled back
   */
-  if (!isShown) dispatch(updateSettings());
+  if (!isShown) {
+    if (doCheckEditing) {
+      const listNameEditors = getState().listNameEditors;
+      const listNameMap = getState().settings.listNameMap;
+      const editingLNEs = getEditingListNameEditors(listNameEditors, listNameMap);
+      if (isObject(editingLNEs)) {
+        for (const k in editingLNEs) {
+          if (!isNumber(editingLNEs[k].blurCount)) editingLNEs[k].blurCount = 0;
+          editingLNEs[k].blurCount += 1;
+        }
+        dispatch(updateListNameEditors(editingLNEs));
+
+        dispatch(updateDiscardAction(DISCARD_ACTION_UPDATE_LIST_NAME));
+        dispatch(updatePopup(CONFIRM_DISCARD_POPUP, true));
+        return;
+      }
+    }
+    dispatch(updateStgsAndInfo());
+  }
 
   dispatch(updatePopup(SETTINGS_POPUP, isShown));
 };
@@ -1132,17 +1125,10 @@ export const updateDeletingListName = (listName) => {
   };
 };
 
-export const tryUpdateSettings = () => async (dispatch, getState) => {
-  const isSettingsPopupShown = getState().display.isSettingsPopupShown;
-  if (isSettingsPopupShown) return;
-
-  dispatch(updateSettings());
-};
-
-export const updateSettings = () => async (dispatch, getState) => {
-
+const updateSettings = async (dispatch, getState) => {
   const settings = getState().settings;
   const snapshotSettings = getState().snapshot.settings;
+
   if (isEqual(settings, snapshotSettings)) {
     dispatch(cancelDiedSettings());
     return;
@@ -1150,12 +1136,13 @@ export const updateSettings = () => async (dispatch, getState) => {
 
   const doFetch = settings.doDescendingOrder !== snapshotSettings.doDescendingOrder;
   const payload = { settings, doFetch };
+
   dispatch({
     type: UPDATE_SETTINGS,
     payload: payload,
     meta: {
       offline: {
-        effect: { method: UPDATE_SETTINGS, params: settings },
+        effect: { method: UPDATE_SETTINGS, params: payload },
         commit: { type: UPDATE_SETTINGS_COMMIT, meta: payload },
         rollback: { type: UPDATE_SETTINGS_ROLLBACK, meta: payload },
       },
@@ -1163,17 +1150,127 @@ export const updateSettings = () => async (dispatch, getState) => {
   });
 };
 
+export const updateSettingsDeleteStep = (_settingsFPaths) => async (
+  dispatch, getState
+) => {
+  if (_settingsFPaths.length === 0) return;
+  try {
+    await serverApi.putFiles(_settingsFPaths, _settingsFPaths.map(() => ({})));
+  } catch (error) {
+    console.log('updateSettings clean up error: ', error);
+    // error in this step should be fine
+  }
+};
+
+const updateInfo = async (dispatch, getState) => {
+  const info = getState().info;
+  const snapshotInfo = getState().snapshot.info;
+
+  // It's ok if IAP in progess as when complete, it'll update again.
+  if (isEqual(info, snapshotInfo)) return;
+
+  const payload = { info };
+  dispatch({
+    type: UPDATE_INFO,
+    payload: payload,
+    meta: {
+      offline: {
+        effect: { method: UPDATE_INFO, params: payload },
+        commit: { type: UPDATE_INFO_COMMIT, meta: payload },
+        rollback: { type: UPDATE_INFO_ROLLBACK, meta: payload },
+      },
+    },
+  });
+};
+
+export const updateInfoDeleteStep = (_infoFPath) => async (dispatch, getState) => {
+  if (!isString(_infoFPath)) return;
+  try {
+    await serverApi.deleteFiles([_infoFPath]);
+  } catch (error) {
+    console.log('updateInfo clean up error: ', error);
+    // error in this step should be fine
+  }
+};
+
+export const updateStgsAndInfo = () => async (dispatch, getState) => {
+  await updateSettings(dispatch, getState);
+  await updateInfo(dispatch, getState);
+};
+
 export const retryDiedSettings = () => async (dispatch, getState) => {
-  dispatch(updateSettings());
+  await updateSettings(dispatch, getState);
 };
 
 export const cancelDiedSettings = () => async (dispatch, getState) => {
-  const { settings } = getState().snapshot;
-  const payload = { settings };
+  const settings = getState().settings;
+  const snapshotSettings = getState().snapshot.settings;
+
+  const linkFPaths = getLinkFPaths(getState());
+
+  const listNames = Object.keys(linkFPaths);
+  const doFetch = (
+    settings.sortOn !== snapshotSettings.sortOn ||
+    settings.doDescendingOrder !== snapshotSettings.doDescendingOrder
+  );
+  const payload = { listNames, settings: snapshotSettings, doFetch };
+
+  dispatch({ type: CANCEL_DIED_SETTINGS, payload: payload });
+};
+
+export const tryUpdateInfo = () => async (dispatch, getState) => {
+  const isSettingsPopupShown = getState().display.isSettingsPopupShown;
+  if (isSettingsPopupShown) return;
+
+  await updateInfo(dispatch, getState);
+};
+
+export const mergeSettings = (selectedId) => async (dispatch, getState) => {
+  const currentSettings = getState().settings;
+  const contents = getState().conflictedSettings.contents;
+
+  const addedDT = Date.now();
+  const _settingsFPaths = contents.map(content => content.fpath);
+  const _settingsIds = contents.map(content => content.id);
+  const _settings = contents.find(content => content.id === selectedId);
+
+  const settingsFName = createDataFName(`${addedDT}${randomString(4)}`, _settingsIds);
+  const settingsFPath = createSettingsFPath(settingsFName);
+
+  const settings = { ...initialSettingsState };
+  for (const k in settings) {
+    // Conflicted settings content has extra attrs i.e. id and fpath.
+    if (k in _settings) settings[k] = _settings[k];
+  }
+
+  const linkFPaths = getLinkFPaths(getState());
+
+  const listNames = Object.keys(linkFPaths);
+  const doFetch = settings.doDescendingOrder !== currentSettings.doDescendingOrder;
+  const payload = { settingsFPath, listNames, settings, doFetch, _settingsFPaths };
+
   dispatch({
-    type: CANCEL_DIED_SETTINGS,
+    type: MERGE_SETTINGS,
     payload: payload,
+    meta: {
+      offline: {
+        effect: { method: UPDATE_SETTINGS, params: payload },
+        commit: { type: MERGE_SETTINGS_COMMIT, meta: payload },
+        rollback: { type: MERGE_SETTINGS_ROLLBACK, meta: payload },
+      },
+    },
   });
+};
+
+export const mergeSettingsDeleteStep = (_settingsFPaths) => async (
+  dispatch, getState
+) => {
+  try {
+    await serverApi.putFiles(_settingsFPaths, _settingsFPaths.map(() => ({})));
+  } catch (error) {
+    console.log('mergeSettings clean up error: ', error);
+    // error in this step should be fine
+  }
 };
 
 export const updateDoUseLocalLayout = (doUse) => {
@@ -1181,8 +1278,7 @@ export const updateDoUseLocalLayout = (doUse) => {
 };
 
 export const updateLayoutType = (layoutType) => async (dispatch, getState) => {
-  const state = getState();
-  const doUseLocalLayout = state.localSettings.doUseLocalLayout;
+  const doUseLocalLayout = getState().localSettings.doUseLocalLayout;
 
   const type = doUseLocalLayout ? UPDATE_LOCAL_LAYOUT_TYPE : UPDATE_DEFAULT_LAYOUT_TYPE;
   dispatch({ type, payload: layoutType });
@@ -1195,11 +1291,22 @@ export const updateDeleteAction = (deleteAction) => {
   };
 };
 
+export const updateDiscardAction = (discardAction) => {
+  return {
+    type: UPDATE_DISCARD_ACTION,
+    payload: discardAction,
+  };
+};
+
 export const updateListNamesMode = (mode, animType) => {
   return {
     type: UPDATE_LIST_NAMES_MODE,
     payload: { listNamesMode: mode, listNamesAnimType: animType },
   };
+};
+
+export const updatePaywallFeature = (feature) => {
+  return { type: UPDATE_PAYWALL_FEATURE, payload: feature };
 };
 
 export const importAllData = () => async (dispatch, getState) => {
@@ -1224,46 +1331,38 @@ export const updateExportAllDataProgress = (progress) => {
   };
 };
 
-const deleteAllDataLoop = async (dispatch, fpaths, doneCount) => {
+const deleteAllDataLoop = async (dispatch, fpaths, total, doneCount) => {
 
   if (fpaths.length === 0) throw new Error(`Invalid fpaths: ${fpaths}`);
 
   const selectedCount = Math.min(fpaths.length - doneCount, N_LINKS);
   const selectedFPaths = fpaths.slice(doneCount, doneCount + selectedCount);
-  const responses = await dataApi.batchDeleteFileWithRetry(selectedFPaths, 0);
+  await serverApi.deleteFiles(selectedFPaths);
 
   doneCount = doneCount + selectedCount;
   if (doneCount > fpaths.length) {
     throw new Error(`Invalid doneCount: ${doneCount}, total: ${fpaths.length}`);
   }
 
-  dispatch(updateDeleteAllDataProgress({
-    total: fpaths.length,
-    done: doneCount,
-  }));
+  dispatch(updateDeleteAllDataProgress({ total, done: doneCount }));
 
   if (doneCount < fpaths.length) {
-    const remainingResponses = await deleteAllDataLoop(dispatch, fpaths, doneCount);
-    responses.push(...remainingResponses);
+    await deleteAllDataLoop(dispatch, fpaths, total, doneCount);
   }
-
-  return responses;
 };
 
 export const deleteAllData = () => async (dispatch, getState) => {
+  let doneCount = 0;
+  dispatch(updateDeleteAllDataProgress({ total: 'calculating...', done: doneCount }));
 
   // redux-offline: Empty outbox
   dispatch({ type: OFFLINE_RESET_STATE });
 
-  dispatch(updateDeleteAllDataProgress({
-    total: 'calculating...',
-    done: 0,
-  }));
-
-  const fpaths = [];
+  let fpaths = [], settingsFPaths = [], settingsIds;
   try {
-    await userSession.listFiles((fpath) => {
-      fpaths.push(fpath);
+    await serverApi.listFiles((fpath) => {
+      if (fpath.startsWith(SETTINGS)) settingsFPaths.push(fpath);
+      else fpaths.push(fpath);
       return true;
     });
   } catch (error) {
@@ -1275,20 +1374,46 @@ export const deleteAllData = () => async (dispatch, getState) => {
     return;
   }
 
-  dispatch(updateDeleteAllDataProgress({
-    total: fpaths.length,
-    done: 0,
-  }));
+  const lastSettingsFPaths = getLastSettingsFPaths(settingsFPaths);
+  [settingsFPaths, settingsIds] = [lastSettingsFPaths.fpaths, lastSettingsFPaths.ids];
+  if (settingsFPaths.length === 1) {
+    const { contents } = await serverApi.getFiles(settingsFPaths, true);
+    if (isEqual(initialSettingsState, contents[0])) {
+      [settingsFPaths, settingsIds] = [[], []];
+    }
+  }
 
-  if (fpaths.length === 0) return;
+  const total = fpaths.length + settingsFPaths.length;
+  dispatch(updateDeleteAllDataProgress({ total, done: doneCount }));
+
+  if (total === 0) return;
 
   try {
-    await deleteAllDataLoop(dispatch, fpaths, 0);
+    if (fpaths.length > 0) {
+      await deleteAllDataLoop(dispatch, fpaths, total, doneCount);
+
+      doneCount += fpaths.length;
+      dispatch(updateDeleteAllDataProgress({ total, done: doneCount }));
+    }
+    if (settingsFPaths.length > 0) {
+      const addedDT = Date.now();
+      const fname = createDataFName(`${addedDT}${randomString(4)}`, settingsIds);
+      const newSettingsFPath = createSettingsFPath(fname);
+
+      await serverApi.putFiles([newSettingsFPath], [{ ...initialSettingsState }]);
+      try {
+        await serverApi.putFiles(settingsFPaths, settingsFPaths.map(() => ({})));
+      } catch (error) {
+        console.log('deleteAllData error: ', error);
+        // error in this step should be fine
+      }
+
+      doneCount += settingsFPaths.length;
+      dispatch(updateDeleteAllDataProgress({ total, done: doneCount }));
+    }
     await fileApi.deleteAllFiles();
 
-    dispatch({
-      type: DELETE_ALL_DATA,
-    });
+    dispatch({ type: DELETE_ALL_DATA });
   } catch (error) {
     dispatch(updateDeleteAllDataProgress({
       total: -1,
@@ -1574,7 +1699,7 @@ export const refreshPurchases = () => async (dispatch, getState) => {
 };
 
 export const checkPurchases = () => async (dispatch, getState) => {
-  const { purchases, checkPurchasesDT } = getState().settings;
+  const { purchases, checkPurchasesDT } = getState().info;
 
   const purchase = getValidPurchase(purchases);
   if (!purchase) return;
@@ -1642,17 +1767,16 @@ export const updateIapRefreshStatus = (status) => {
 };
 
 export const pinLinks = (ids) => async (dispatch, getState) => {
-  const state = getState();
-  const purchases = state.settings.purchases;
+  const purchases = getState().info.purchases;
 
   if (!doEnableExtraFeatures(purchases)) {
-    vars.paywallFeature.feature = FEATURE_PIN;
+    dispatch(updatePaywallFeature(FEATURE_PIN));
     dispatch(updatePopup(PAYWALL_POPUP, true));
     return;
   }
 
-  const pinFPaths = getPinFPaths(state);
-  const pendingPins = state.pendingPins;
+  const pinFPaths = getPinFPaths(getState());
+  const pendingPins = getState().pendingPins;
 
   const currentPins = getPins(pinFPaths, pendingPins, true);
   const currentRanks = Object.values(currentPins).map(pin => pin.rank).sort();
@@ -1690,8 +1814,7 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
 };
 
 export const unpinLinks = (ids) => async (dispatch, getState) => {
-  const state = getState();
-  const pinFPaths = getPinFPaths(state);
+  const pinFPaths = getPinFPaths(getState());
 
   const linkMainIds = ids.map(id => getMainId(id));
 
@@ -1726,12 +1849,11 @@ export const unpinLinks = (ids) => async (dispatch, getState) => {
 };
 
 export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
-  const state = getState();
-  const links = state.links;
-  const listName = state.display.listName;
-  const doDescendingOrder = state.settings.doDescendingOrder;
-  const pinFPaths = getPinFPaths(state);
-  const pendingPins = state.pendingPins;
+  const links = getState().links;
+  const listName = getState().display.listName;
+  const doDescendingOrder = getState().settings.doDescendingOrder;
+  const pinFPaths = getPinFPaths(getState());
+  const pendingPins = getState().pendingPins;
 
   const sortedLinks = getSortedLinks(links, listName, doDescendingOrder);
   if (!sortedLinks) {
@@ -1816,14 +1938,13 @@ export const cancelDiedPins = () => {
 };
 
 export const cleanUpPins = () => async (dispatch, getState) => {
-  const state = getState();
-  const linkFPaths = getLinkFPaths(state);
-  const pinFPaths = getPinFPaths(state);
+  const linkFPaths = getLinkFPaths(getState());
+  const pinFPaths = getPinFPaths(getState());
 
   const linkMainIds = getLinkMainIds(linkFPaths);
   const pins = getRawPins(pinFPaths);
 
-  const unusedPins = [];
+  let unusedPins = [];
   for (const fpath of pinFPaths) {
     const { rank, updatedDT, addedDT, id } = extractPinFPath(fpath);
     const pinMainId = getMainId(id);
@@ -1842,13 +1963,16 @@ export const cleanUpPins = () => async (dispatch, getState) => {
       unusedPins.push({ rank, updatedDT, addedDT, id });
     }
   }
+  unusedPins = unusedPins.slice(0, N_LINKS);
 
-  // Don't need offline, if no network or get killed, can do it later.
-  try {
-    dataApi.deletePins({ pins: unusedPins });
-  } catch (error) {
-    console.log('cleanUpPins error: ', error);
-    // error in this step should be fine
+  if (unusedPins.length > 0) {
+    // Don't need offline, if no network or get killed, can do it later.
+    try {
+      await dataApi.deletePins({ pins: unusedPins });
+    } catch (error) {
+      console.log('cleanUpPins error: ', error);
+      // error in this step should be fine
+    }
   }
 };
 
@@ -1857,16 +1981,15 @@ export const updateDoUseLocalTheme = (doUse) => {
 };
 
 export const updateTheme = (mode, customOptions) => async (dispatch, getState) => {
-  const state = getState();
-  const purchases = state.settings.purchases;
+  const purchases = getState().info.purchases;
 
   if (!doEnableExtraFeatures(purchases)) {
-    vars.paywallFeature.feature = FEATURE_APPEARANCE;
+    dispatch(updatePaywallFeature(FEATURE_APPEARANCE));
     dispatch(updatePopup(PAYWALL_POPUP, true));
     return;
   }
 
-  const doUseLocalTheme = state.localSettings.doUseLocalTheme;
+  const doUseLocalTheme = getState().localSettings.doUseLocalTheme;
   const type = doUseLocalTheme ? UPDATE_LOCAL_THEME : UPDATE_DEFAULT_THEME;
   dispatch({ type, payload: { mode, customOptions } });
 };
@@ -1874,11 +1997,11 @@ export const updateTheme = (mode, customOptions) => async (dispatch, getState) =
 export const updateUpdatingThemeMode = (updatingThemeMode) => async (
   dispatch, getState
 ) => {
-  const state = getState();
-  const doUseLocalTheme = state.localSettings.doUseLocalTheme;
+  const doUseLocalTheme = getState().localSettings.doUseLocalTheme;
   const customOptions = doUseLocalTheme ?
-    state.localSettings.themeCustomOptions : state.settings.themeCustomOptions;
-  const is24HFormat = state.window.is24HFormat;
+    getState().localSettings.themeCustomOptions :
+    getState().settings.themeCustomOptions;
+  const is24HFormat = getState().window.is24HFormat;
 
   let option;
   for (const opt of customOptions) {
@@ -1906,12 +2029,12 @@ export const updateTimePick = (hour, minute, period) => {
 };
 
 export const updateThemeCustomOptions = () => async (dispatch, getState) => {
-  const state = getState();
-  const doUseLocalTheme = state.localSettings.doUseLocalTheme;
+  const doUseLocalTheme = getState().localSettings.doUseLocalTheme;
   const customOptions = doUseLocalTheme ?
-    state.localSettings.themeCustomOptions : state.settings.themeCustomOptions;
+    getState().localSettings.themeCustomOptions :
+    getState().settings.themeCustomOptions;
 
-  const { updatingThemeMode, hour, minute, period } = state.timePick;
+  const { updatingThemeMode, hour, minute, period } = getState().timePick;
 
   const _themeMode = CUSTOM_MODE, _customOptions = [];
 
@@ -1934,11 +2057,10 @@ export const updateIs24HFormat = (is24HFormat) => {
 
 export const updateCustomEditorPopup = (isShown, id) => async (dispatch, getState) => {
   if (isShown) {
-    const state = getState();
-    const purchases = state.settings.purchases;
+    const purchases = getState().info.purchases;
 
     if (!doEnableExtraFeatures(purchases)) {
-      vars.paywallFeature.feature = FEATURE_CUSTOM;
+      dispatch(updatePaywallFeature(FEATURE_CUSTOM));
       dispatch(updatePopup(PAYWALL_POPUP, true));
       return;
     }
@@ -1997,13 +2119,10 @@ export const updateImages = (name, content) => {
   return { type: UPDATE_IMAGES, payload: { [name]: content } };
 };
 
-export const updateCustomData = (title, image) => async (
-  dispatch, getState
-) => {
-  const state = getState();
-  const links = state.links;
-  const listName = state.display.listName;
-  const selectingLinkId = state.display.selectingLinkId;
+export const updateCustomData = (title, image) => async (dispatch, getState) => {
+  const links = getState().links;
+  const listName = getState().display.listName;
+  const selectingLinkId = getState().display.selectingLinkId;
 
   if (!isObject(links[listName]) || !isObject(links[listName][selectingLinkId])) {
     console.log('UpdateCustomData: No link found with selectingLinkId: ', selectingLinkId);
@@ -2047,10 +2166,21 @@ export const updateCustomData = (title, image) => async (
   });
 };
 
+export const updateCustomDataDeleteStep = (
+  serverUnusedFPaths, localUnusedFPaths
+) => async (dispatch, getState) => {
+  try {
+    await serverApi.deleteFiles(serverUnusedFPaths);
+    await fileApi.deleteFiles(localUnusedFPaths);
+  } catch (error) {
+    console.log('updateCustomData error: ', error);
+    // error in this step should be fine
+  }
+};
+
 export const rehydrateStaticFiles = () => async (dispatch, getState) => {
-  const state = getState();
-  const listName = state.display.listName;
-  const links = state.links;
+  const listName = getState().display.listName;
+  const links = getState().links;
 
   let fpaths = [];
   for (const id in links[listName]) {
@@ -2075,13 +2205,16 @@ export const rehydrateStaticFiles = () => async (dispatch, getState) => {
   });
 };
 
-const _cleanUpStaticFiles = async (linkFPaths, staticFPaths) => {
+const _cleanUpStaticFiles = async (getState) => {
+  const linkFPaths = getLinkFPaths(getState());
+  const staticFPaths = getStaticFPaths(getState());
+
   // Delete unused static files in server
   const mainIds = getLinkMainIds(linkFPaths);
 
   let unusedIds = [], unusedFPaths = [];
   for (const fpath of staticFPaths) {
-    const { id } = extractFPath(fpath);
+    const { id } = extractStaticFPath(fpath);
     if (!mainIds.includes(getMainId(id))) {
       unusedIds.push(id);
       unusedFPaths.push(fpath);
@@ -2089,7 +2222,7 @@ const _cleanUpStaticFiles = async (linkFPaths, staticFPaths) => {
   }
   unusedFPaths = unusedFPaths.slice(0, N_LINKS);
 
-  await dataApi.batchDeleteFileWithRetry(unusedFPaths, 0);
+  await serverApi.deleteFiles(unusedFPaths);
   await fileApi.deleteFiles(unusedFPaths);
 
   // Delete unused static files in local
@@ -2097,12 +2230,13 @@ const _cleanUpStaticFiles = async (linkFPaths, staticFPaths) => {
 
   unusedFPaths = [];
   for (const fpath of localFPaths) {
-    const { id } = extractFPath(fpath);
+    const { id } = extractStaticFPath(fpath);
     if (!mainIds.includes(getMainId(id))) {
       unusedIds.push(id);
       unusedFPaths.push(fpath);
     }
   }
+  unusedFPaths = unusedFPaths.slice(0, N_LINKS);
 
   await fileApi.deleteFiles(unusedFPaths);
 
@@ -2114,13 +2248,8 @@ const _cleanUpStaticFiles = async (linkFPaths, staticFPaths) => {
 };
 
 export const cleanUpStaticFiles = () => async (dispatch, getState) => {
-  const state = getState();
-
-  const { cleanUpStaticFilesDT } = state.localSettings;
+  const { cleanUpStaticFilesDT } = getState().localSettings;
   if (!cleanUpStaticFilesDT) return;
-
-  const linkFPaths = getLinkFPaths(state);
-  const staticFPaths = getStaticFPaths(state);
 
   const now = Date.now();
   let p = 1.0 / (N_DAYS * 24 * 60 * 60 * 1000) * Math.abs(now - cleanUpStaticFilesDT);
@@ -2132,7 +2261,7 @@ export const cleanUpStaticFiles = () => async (dispatch, getState) => {
   // Don't need offline, if no network or get killed, can do it later.
   dispatch({ type: CLEAN_UP_STATIC_FILES });
   try {
-    const ids = await _cleanUpStaticFiles(linkFPaths, staticFPaths);
+    const ids = await _cleanUpStaticFiles(getState);
     dispatch({ type: CLEAN_UP_STATIC_FILES_COMMIT, payload: { ids } });
   } catch (error) {
     console.log('Error when clean up static files: ', error);

@@ -2,7 +2,7 @@ import { REHYDRATE } from 'redux-persist/constants';
 
 import { RESET_STATE } from '../types/actionTypes';
 import { isObject, copyFPaths } from '../utils';
-import { cachedFPaths } from '../vars';
+import { getCachedFPaths } from '../vars';
 
 const initialState = {
   fpaths: null,
@@ -16,30 +16,28 @@ const cachedFPathsReducer = (state = initialState, action) => {
       isObject(action.payload.cachedFPaths) &&
       isObject(action.payload.cachedFPaths.fpaths)
     ) {
-      cachedFPaths.fpaths = copyFPaths(action.payload.cachedFPaths.fpaths);
+      getCachedFPaths().fpaths = copyFPaths(action.payload.cachedFPaths.fpaths);
+
       // No new object for fpaths for reference comparison
-      fpathsRef = cachedFPaths.fpaths;
-      return { ...initialState, fpaths: copyFPaths(cachedFPaths.fpaths) };
+      fpathsRef = getCachedFPaths().fpaths;
+      return { ...initialState, fpaths: copyFPaths(getCachedFPaths().fpaths) };
     }
     return { ...initialState };
   }
 
   // Only RESET_STATE, no need to reset state for DELETE_ALL_DATA
   if (action.type === RESET_STATE) {
-    cachedFPaths.fpaths = null;
-    fpathsRef = cachedFPaths.fpaths;
+    fpathsRef = getCachedFPaths().fpaths;
     return { ...initialState };
   }
 
-  if (fpathsRef !== cachedFPaths.fpaths) {
+  if (fpathsRef !== getCachedFPaths().fpaths) {
     // No new object for fpaths for reference comparison
-    fpathsRef = cachedFPaths.fpaths;
+    fpathsRef = getCachedFPaths().fpaths;
 
-    // As some deletions don't wait for completion,
-    //   deleted fpaths might still be here, until next dispatch.
-    const newState = { ...state, fpaths: cachedFPaths.fpaths };
-    if (isObject(cachedFPaths.fpaths)) newState.fpaths = copyFPaths(cachedFPaths.fpaths);
-    return newState;
+    let fpaths = null;
+    if (isObject(getCachedFPaths().fpaths)) fpaths = copyFPaths(getCachedFPaths().fpaths);
+    return { ...state, fpaths };
   }
 
   return state;

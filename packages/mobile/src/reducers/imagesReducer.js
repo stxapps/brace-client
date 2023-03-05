@@ -6,7 +6,7 @@ import {
   CLEAN_UP_STATIC_FILES_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import { CD_ROOT } from '../types/const';
-import { getMainId, extractFPath } from '../utils';
+import { getMainId, extractStaticFPath } from '../utils';
 
 const initialState = {};
 
@@ -49,12 +49,14 @@ const imagesReducer = (state = initialState, action) => {
     action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT ||
     action.type === CLEAN_UP_STATIC_FILES_COMMIT
   ) {
-    const { ids } = action.payload;
+    let { ids } = action.payload;
+    if (action.type === DELETE_LINKS_COMMIT) ids = action.payload.successIds;
+
     const mainIds = ids.map(id => getMainId(id));
 
     const newState = {};
     for (const fpath in state) {
-      const { id } = extractFPath(fpath);
+      const { id } = extractStaticFPath(fpath);
       if (mainIds.includes(getMainId(id))) continue;
       newState[fpath] = state[fpath];
     }
