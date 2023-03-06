@@ -109,7 +109,7 @@ const ConfirmDiscardPopup = () => {
   }
 
   return (
-    <View style={[tailwind('absolute inset-0 items-center justify-end px-4 pt-4 pb-20 sm:justify-center sm:p-0 elevation-xl'), canvasStyle]}>
+    <View style={[tailwind('absolute inset-0 z-50 items-center justify-end px-4 pt-4 pb-20 shadow-xl sm:justify-center sm:p-0'), canvasStyle]}>
       <TouchableWithoutFeedback onPress={onConfirmDiscardCancelBtnClick}>
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>
@@ -128,10 +128,10 @@ const ConfirmDiscardPopup = () => {
           </View>
         </View>
         <View style={tailwind('mt-5 sm:mt-4 sm:ml-10 sm:flex-row sm:pl-4')}>
-          <TouchableOpacity onPress={onConfirmDiscardOkBtnClick} style={tailwind('w-full rounded-full border border-red-600 bg-red-600 py-2 shadow-sm blk:border-red-500 blk:bg-red-500 sm:w-auto sm:px-3.5 sm:py-1.5')}>
-            <Text style={tailwind('text-center text-base font-medium text-white sm:text-sm')}>Discard</Text>
+          <TouchableOpacity onPress={onConfirmDiscardOkBtnClick} style={tailwind('w-full rounded-full border border-red-600 bg-red-600 py-2 blk:border-red-500 blk:bg-red-500 sm:w-auto sm:px-3.5 sm:py-1.5')}>
+            <Text style={tailwind('text-center text-base font-medium text-white sm:rounded-full sm:text-sm')}>Discard</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={onConfirmDiscardCancelBtnClick} style={[tailwind('mt-3 w-full rounded-full border border-gray-400 bg-white shadow-sm blk:border-gray-400 blk:bg-gray-800 sm:mt-0 sm:ml-3 sm:w-auto sm:px-3 sm:py-1.5'), cancelBtnStyle]}>
+          <TouchableOpacity onPress={onConfirmDiscardCancelBtnClick} style={[tailwind('mt-3 w-full rounded-full border border-gray-400 bg-white blk:border-gray-400 blk:bg-gray-800 sm:mt-0 sm:ml-3 sm:w-auto sm:px-3 sm:py-1.5'), cancelBtnStyle]}>
             <Text style={tailwind('text-center text-base font-normal text-gray-500 blk:text-gray-300 sm:text-sm')}>Cancel</Text>
           </TouchableOpacity>
         </View>

@@ -31,7 +31,7 @@ class TopBar extends React.PureComponent {
 
     return (
       <TouchableOpacity onPress={this.onSignInBtnClick} style={tailwind('h-14 items-center justify-center')}>
-        <View style={tailwind('rounded-full border border-gray-400 bg-white px-2.5 py-1.5 shadow-sm')}>
+        <View style={tailwind('rounded-full border border-gray-400 bg-white px-2.5 py-1.5')}>
           <Text style={tailwind('text-sm font-normal text-gray-500')}>Sign in</Text>
         </View>
       </TouchableOpacity>

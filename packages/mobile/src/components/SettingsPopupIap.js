@@ -129,7 +129,7 @@ const IapHome = (props) => {
 
       actionPanel = (
         <View style={tailwind('mt-6 items-start justify-start')}>
-          <TouchableOpacity onPress={onRequestBtnClick} style={tailwind('rounded-full border border-gray-400 bg-white px-3.5 py-1.5 shadow-sm blk:border-gray-400 blk:bg-gray-900')}>
+          <TouchableOpacity onPress={onRequestBtnClick} style={tailwind('rounded-full border border-gray-400 bg-white px-3.5 py-1.5 blk:border-gray-400 blk:bg-gray-900')}>
             <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-300')}>Subscribe for {product.localizedPrice} / year</Text>
           </TouchableOpacity>
         </View>
@@ -479,7 +479,7 @@ const _SettingsPopupIapRestore = (props) => {
   if (restoreStatus === null) {
     actionPanel = (
       <View style={tailwind('mt-7 mb-4 items-start justify-start')}>
-        <TouchableOpacity onPress={onRestoreBtnClick} style={tailwind('rounded-full border border-gray-400 bg-white px-3.5 py-1.5 shadow-sm blk:border-gray-400 blk:bg-gray-900')}>
+        <TouchableOpacity onPress={onRestoreBtnClick} style={tailwind('rounded-full border border-gray-400 bg-white px-3.5 py-1.5 blk:border-gray-400 blk:bg-gray-900')}>
           <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-300')}>Restore my purchases</Text>
         </TouchableOpacity>
       </View>
