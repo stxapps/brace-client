@@ -7,9 +7,11 @@ import {
   SETTINGS_VIEW_ACCOUNT, SETTINGS_VIEW_IAP, SETTINGS_VIEW_IAP_RESTORE,
   SETTINGS_VIEW_DATA, SETTINGS_VIEW_DATA_IMPORT, SETTINGS_VIEW_DATA_EXPORT,
   SETTINGS_VIEW_DATA_DELETE, SETTINGS_VIEW_LISTS, SETTINGS_VIEW_MISC,
-  SETTINGS_VIEW_ABOUT, LG_WIDTH,
+  SETTINGS_VIEW_ABOUT, HASH_SUPPORT, LG_WIDTH, MERGING, DIED_MERGING,
 } from '../types/const';
-import { canvasFMV, sideBarOverlayFMV, sideBarFMV } from '../types/animConfigs';
+import {
+  canvasFMV, sideBarOverlayFMV, sideBarFMV, popupFMV,
+} from '../types/animConfigs';
 
 import SettingsPopupAccount from './SettingsPopupAccount';
 import { SettingsPopupIap, SettingsPopupIapRestore } from './SettingsPopupIap';
@@ -41,9 +43,7 @@ const SettingsPopup = () => {
   const isShown = useSelector(state => state.display.isSettingsPopupShown);
   const viewId = useSelector(state => state.display.settingsViewId);
   const isSidebarShown = useSelector(state => state.display.isSettingsSidebarShown);
-  const conflictedSettingsContents = useSelector(
-    state => state.conflictedSettings.contents
-  );
+  const conflictedSettings = useSelector(state => state.conflictedSettings);
   const overflowPanel = useRef(null);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
@@ -139,7 +139,7 @@ const SettingsPopup = () => {
     <AnimatePresence key="AnimatePresence_SP" />
   );
 
-  const _renderPanel = (content) => {
+  const _renderPanelCloseBtn = () => {
     const MAX_W_6XL = 1152; // If change max-w-6xl below, need to update this too.
     const closeBtnStyle = { right: 0 };
     if (safeAreaWidth >= LG_WIDTH) closeBtnStyle.right = 6;
@@ -148,20 +148,23 @@ const SettingsPopup = () => {
     }
 
     return (
-      <div className={tailwind('fixed inset-0 z-30 bg-white blk:bg-gray-900')}>
-        <div ref={overflowPanel} className={tailwind('h-full overflow-y-scroll')}>
-          <div className={tailwind('relative mx-auto max-w-6xl')}>
-            {content}
+      <div style={closeBtnStyle} className={tailwind('absolute top-0')}>
+        <button onClick={onPopupCloseBtnClick} className={tailwind('group flex h-12 w-12 items-center justify-center focus:outline-none')} aria-label="Close settings popup">
+          <div className={tailwind('rounded-full bg-white blk:bg-gray-900')}>
+            <svg className={tailwind('h-5 w-5 rounded text-gray-300 group-hover:text-gray-500 group-focus:ring blk:text-gray-600 blk:group-hover:text-gray-400 md:h-7 md:w-7')} stroke="currentColor" fill="none" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </div>
-        </div>
-        <div style={closeBtnStyle} className={tailwind('absolute top-0')}>
-          <button onClick={onPopupCloseBtnClick} className={tailwind('group flex h-12 w-12 items-center justify-center focus:outline-none')} aria-label="Close settings popup">
-            <div className={tailwind('rounded-full bg-white blk:bg-gray-900')}>
-              <svg className={tailwind('h-5 w-5 rounded text-gray-300 group-hover:text-gray-500 group-focus:ring blk:text-gray-600 blk:group-hover:text-gray-400 md:h-7 md:w-7')} stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </div>
-          </button>
+        </button>
+      </div>
+    );
+  };
+
+  const _renderPanel = (content) => {
+    return (
+      <div ref={overflowPanel} className={tailwind('h-full overflow-y-scroll')}>
+        <div className={tailwind('relative mx-auto max-w-6xl')}>
+          {content}
         </div>
       </div>
     );
@@ -245,8 +248,9 @@ const SettingsPopup = () => {
     );
 
     return (
-      <React.Fragment>
+      <div className={tailwind('fixed inset-0 z-30 bg-white blk:bg-gray-900')}>
         {_renderPanel(contentWithSidebar)}
+        {_renderPanelCloseBtn()}
         {/* Sidebar for mobile */}
         <motion.div key="sidebar-for-mobile" className={tailwind('fixed inset-0 z-30 md:hidden')} variants={canvasFMV} initial={false} animate={animate}>
           <div className={tailwind('relative flex h-full')}>
@@ -314,7 +318,7 @@ const SettingsPopup = () => {
             </div>
           </div>
         </motion.div>
-      </React.Fragment>
+      </div>
     );
   };
 
@@ -341,6 +345,7 @@ const SettingsPopup = () => {
 
   const renderDataView = () => {
     const content = (
+      /* @ts-ignore */
       <SettingsPopupData onSidebarOpenBtnClick={onSidebarOpenBtnClick} onToImportAllDataViewBtnClick={onToImportAllDataViewBtnClick} onToExportAllDataViewBtnClick={onToExportAllDataViewBtnClick} onToDeleteAllDataViewBtnClick={onToDeleteAllDataViewBtnClick} />
     );
     return _render(content);
@@ -355,6 +360,7 @@ const SettingsPopup = () => {
 
   const renderExportAllDataView = () => {
     const content = (
+      /* @ts-ignore */
       <SettingsPopupDataExport onBackToDataViewBtnClick={onBackToDataViewBtnClick} />
     );
     return _render(content);
@@ -362,6 +368,7 @@ const SettingsPopup = () => {
 
   const renderDeleteAllDataView = () => {
     const content = (
+      /* @ts-ignore */
       <SettingsPopupDataDelete onBackToDataViewBtnClick={onBackToDataViewBtnClick} />
     );
     return _render(content);
@@ -388,16 +395,64 @@ const SettingsPopup = () => {
     return _render(content);
   };
 
+  const _renderConflictLoading = () => {
+    if (!(conflictedSettings.status === MERGING)) return null;
+
+    return (
+      <React.Fragment>
+        <div className={tailwind('absolute inset-0 bg-white bg-opacity-25 blk:bg-gray-900 blk:bg-opacity-25')} />
+        <div className={tailwind('absolute top-1/3 left-1/2 flex -translate-x-1/2 -translate-y-1/2 transform items-center justify-center')}>
+          <div className={tailwind('ball-clip-rotate blk:ball-clip-rotate-blk')}>
+            <div />
+          </div>
+        </div>
+      </React.Fragment>
+    );
+  };
+
+  const _renderConflictMergeError = () => {
+    if (!(conflictedSettings.status === DIED_MERGING)) return (
+      <AnimatePresence key="AP_SPC_mergeError" />
+    );
+
+    return (
+      <AnimatePresence key="AP_SPC_mergeError">
+        <motion.div className={tailwind('absolute inset-x-0 top-10 flex items-start justify-center lg:top-0')} variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
+          <div className={tailwind('m-4 rounded-md bg-red-50 p-4 shadow-lg')}>
+            <div className={tailwind('flex')}>
+              <div className={tailwind('flex-shrink-0')}>
+                <svg className={tailwind('h-6 w-6 text-red-400')} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className={tailwind('ml-3 lg:mt-0.5')}>
+                <h3 className={tailwind('text-left text-base font-medium text-red-800 lg:text-sm')}>Oops..., something went wrong!</h3>
+                <p className={tailwind('mt-2.5 text-sm text-red-700')}>Please wait a moment and try again.<br />If the problem persists, please <a className={tailwind('rounded-sm underline hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a>.</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    );
+  };
+
   const renderConflictView = () => {
     const content = (
       <SettingsPopupConflict />
     );
-    return _renderPanel(content);
+    return (
+      <div className={tailwind('fixed inset-0 z-30 bg-white blk:bg-gray-900')}>
+        {_renderPanel(content)}
+        {_renderConflictLoading()}
+        {_renderConflictMergeError()}
+        {_renderPanelCloseBtn()}
+      </div>
+    );
   };
 
   if (
-    Array.isArray(conflictedSettingsContents) &&
-    conflictedSettingsContents.length > 0
+    Array.isArray(conflictedSettings.contents) &&
+    conflictedSettings.contents.length > 0
   ) {
     return renderConflictView();
   }

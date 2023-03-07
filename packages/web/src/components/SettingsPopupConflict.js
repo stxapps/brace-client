@@ -1,12 +1,9 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { motion, AnimatePresence } from 'framer-motion';
 
 import { mergeSettings } from '../actions';
-import { HASH_SUPPORT, MERGING, DIED_MERGING } from '../types/const';
 import { initialSettingsState } from '../types/initialStates';
 import { extractDataId, getFormattedDT } from '../utils';
-import { popupFMV } from '../types/animConfigs';
 
 import { useTailwind } from '.';
 
@@ -16,61 +13,18 @@ const SettingsPopupConflict = (props) => {
   const didClick = useRef(false);
   const tailwind = useTailwind();
 
-  const renderLoading = () => {
-    if (!(conflictedSettings.status === MERGING)) return null;
-
-    return (
-      <React.Fragment>
-        <div className={tailwind('absolute inset-0 bg-white bg-opacity-25 blk:bg-gray-900 blk:bg-opacity-25')} />
-        <div className={tailwind('absolute top-1/3 left-1/2 flex -translate-x-1/2 -translate-y-1/2 transform items-center justify-center')}>
-          <div className={tailwind('ball-clip-rotate blk:ball-clip-rotate-blk')}>
-            <div />
-          </div>
-        </div>
-      </React.Fragment>
-    );
-  };
-
-  const renderMergeError = () => {
-    if (!(conflictedSettings.status === DIED_MERGING)) return (
-      <AnimatePresence key="AP_SPC_mergeError" />
-    );
-
-    return (
-      <AnimatePresence key="AP_SPC_mergeError">
-        <motion.div className={tailwind('absolute inset-x-0 top-10 flex items-start justify-center lg:top-0')} variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
-          <div className={tailwind('m-4 rounded-md bg-red-50 p-4 shadow-lg')}>
-            <div className={tailwind('flex')}>
-              <div className={tailwind('flex-shrink-0')}>
-                <svg className={tailwind('h-6 w-6 text-red-400')} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className={tailwind('ml-3 lg:mt-0.5')}>
-                <h3 className={tailwind('text-left text-base font-medium text-red-800 lg:text-sm')}>Oops..., something went wrong!</h3>
-                <p className={tailwind('mt-2.5 text-sm text-red-700')}>Please wait a moment and try again.<br />If the problem persists, please <a className={tailwind('rounded-sm underline hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a>.</p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </AnimatePresence>
-    );
-  };
-
   useEffect(() => {
     didClick.current = false;
   }, [conflictedSettings]);
 
   return (
     <React.Fragment>
-      <div className={tailwind('relative mx-auto max-w-3xl px-4 pb-4 md:px-6 md:pb-6 lg:px-8 lg:pb-8')}>
+      <div className={tailwind('relative mx-auto min-h-xl max-w-3xl px-4 pb-4 md:px-6 md:pb-6 lg:px-8 lg:pb-8')}>
         <div className={tailwind('h-16 w-full')} />
         <h3 className={tailwind('pt-5 text-lg font-medium text-gray-800 blk:text-gray-200')}>{conflictedSettings.contents.length} Versions of Settings found</h3>
         <p className={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>Please choose the correct version of the settings.</p>
         {conflictedSettings.contents.map(content => <ConflictItem key={content.id} content={content} status={conflictedSettings.status} />)}
       </div>
-      {renderLoading()}
-      {renderMergeError()}
     </React.Fragment>
   );
 };

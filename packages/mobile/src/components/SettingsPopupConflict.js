@@ -1,91 +1,32 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Animated, Linking } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
-import { Circle } from 'react-native-animated-spinkit';
 
 import { mergeSettings } from '../actions';
-import {
-  DOMAIN_NAME, HASH_SUPPORT, MERGING, DIED_MERGING, BLK_MODE,
-} from '../types/const';
 import { initialSettingsState } from '../types/initialStates';
-import { getThemeMode } from '../selectors';
 import { extractDataId, getFormattedDT } from '../utils';
-import { popupFMV } from '../types/animConfigs';
 
 import { useTailwind } from '.';
 
 const SettingsPopupConflict = (props) => {
 
   const conflictedSettings = useSelector(state => state.conflictedSettings);
-  const themeMode = useSelector(state => getThemeMode(state));
-  const mergeErrorAnim = useRef(new Animated.Value(0)).current;
   const didClick = useRef(false);
   const tailwind = useTailwind();
-
-  const renderLoading = () => {
-    if (!(conflictedSettings.status === MERGING)) return null;
-
-    return (
-      <React.Fragment>
-        <View style={tailwind('absolute inset-0 bg-white bg-opacity-25 blk:bg-gray-900 blk:bg-opacity-25')} />
-        <View style={[tailwind('absolute top-1/3 left-1/2 items-center justify-center'), { transform: [{ translateX: -10 }, { translateY: -10 }] }]}>
-          <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} />
-        </View>
-      </React.Fragment>
-    );
-  };
-
-  const renderMergeError = () => {
-    if (!(conflictedSettings.status === DIED_MERGING)) return null;
-
-    const mergeErrorStyle = {
-      transform: [{
-        scale: mergeErrorAnim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }),
-      }],
-    };
-
-    return (
-      <View style={tailwind('absolute inset-x-0 top-10 flex-row items-start justify-center lg:top-0')}>
-        <Animated.View style={[tailwind('m-4 rounded-md bg-red-50 p-4 shadow-lg'), mergeErrorStyle]}>
-          <View style={tailwind('flex-row')}>
-            <View style={tailwind('flex-shrink-0')}>
-              <Svg width={24} height={24} style={tailwind('font-normal text-red-400')} viewBox="0 0 20 20" fill="currentColor">
-                <Path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </Svg>
-            </View>
-            <View style={tailwind('ml-3 lg:mt-0.5')}>
-              <Text style={tailwind('text-left text-base font-medium text-red-800 lg:text-sm')}>Oops..., something went wrong!</Text>
-              <Text style={tailwind('mt-2.5 text-sm font-normal text-red-700')}>Please wait a moment and try again.{'\n'}If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-sm font-normal text-red-700 underline')}>contact us</Text>.</Text>
-            </View>
-          </View>
-        </Animated.View>
-      </View>
-    );
-  };
 
   useEffect(() => {
     didClick.current = false;
   }, [conflictedSettings]);
 
-  useEffect(() => {
-    if (conflictedSettings.status === MERGING) {
-      Animated.timing(mergeErrorAnim, { toValue: 1, ...popupFMV.visible }).start();
-    } else {
-      Animated.timing(mergeErrorAnim, { toValue: 0, ...popupFMV.visible }).start();
-    }
-  }, [conflictedSettings.status, mergeErrorAnim]);
-
   return (
     <React.Fragment>
-      <View style={tailwind('w-full max-w-3xl px-4 pb-4 md:px-6 md:pb-6 lg:px-8 lg:pb-8')}>
+      <View style={tailwind('min-h-xl w-full max-w-3xl px-4 pb-4 md:px-6 md:pb-6 lg:px-8 lg:pb-8')}>
         <View style={tailwind('h-16 w-full')} />
         <Text style={tailwind('pt-5 text-lg font-medium text-gray-800 blk:text-gray-200')}>{conflictedSettings.contents.length} Versions of Settings found</Text>
         <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>Please choose the correct version of the settings.</Text>
         {conflictedSettings.contents.map(content => <ConflictItem key={content.id} content={content} status={conflictedSettings.status} />)}
       </View>
-      {renderLoading()}
-      {renderMergeError()}
     </React.Fragment>
   );
 };

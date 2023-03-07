@@ -1,19 +1,22 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   ScrollView, View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated,
-  BackHandler, PanResponder,
+  BackHandler, PanResponder, Linking,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
+import { Circle } from 'react-native-animated-spinkit';
 
 import { updateSettingsPopup, updateSettingsViewId } from '../actions';
 import {
   SETTINGS_VIEW_ACCOUNT, SETTINGS_VIEW_IAP, SETTINGS_VIEW_IAP_RESTORE,
   SETTINGS_VIEW_DATA, SETTINGS_VIEW_DATA_DELETE, SETTINGS_VIEW_LISTS,
-  SETTINGS_VIEW_MISC, SETTINGS_VIEW_ABOUT, MD_WIDTH, LG_WIDTH,
+  SETTINGS_VIEW_MISC, SETTINGS_VIEW_ABOUT, DOMAIN_NAME, HASH_SUPPORT, MD_WIDTH,
+  LG_WIDTH, MERGING, DIED_MERGING, BLK_MODE,
 } from '../types/const';
+import { getThemeMode } from '../selectors';
 import cache from '../utils/cache';
-import { dialogFMV, sidebarFMV } from '../types/animConfigs';
+import { dialogFMV, sidebarFMV, popupFMV } from '../types/animConfigs';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
@@ -48,12 +51,12 @@ const SettingsPopup = () => {
   const updateSettingsViewIdCount = useSelector(
     state => state.display.updateSettingsViewIdCount
   );
-  const conflictedSettingsContents = useSelector(
-    state => state.conflictedSettings.contents
-  );
+  const conflictedSettings = useSelector(state => state.conflictedSettings);
+  const themeMode = useSelector(state => getThemeMode(state));
   const [derivedIsShown, setDerivedIsShown] = useState(isShown);
   const popupAnim = useRef(new Animated.Value(0)).current;
   const sidebarAnim = useRef(new Animated.Value(0)).current;
+  const mergeErrorAnim = useRef(new Animated.Value(0)).current;
   const popupBackHandler = useRef(null);
   const panelContent = useRef(null);
   const didSwipeToOpenSidebar = useRef(false);
@@ -239,6 +242,14 @@ const SettingsPopup = () => {
   }, [isSidebarShown, updateSettingsViewIdCount, sidebarAnim, dispatch]);
 
   useEffect(() => {
+    if (conflictedSettings.status === DIED_MERGING) {
+      Animated.timing(mergeErrorAnim, { toValue: 1, ...popupFMV.visible }).start();
+    } else {
+      Animated.timing(mergeErrorAnim, { toValue: 0, ...popupFMV.visible }).start();
+    }
+  }, [conflictedSettings.status, mergeErrorAnim]);
+
+  useEffect(() => {
     if (panelContent.current) {
       setTimeout(() => {
         if (panelContent.current) {
@@ -263,7 +274,7 @@ const SettingsPopup = () => {
     paddingLeft: insets.left, paddingRight: insets.right,
   };
 
-  const _renderPanel = (content) => {
+  const _renderPanelCloseBtn = () => {
     const MAX_W_6XL = 1152; // If change max-w-6xl below, need to update this too.
     const closeBtnStyle = { top: insets.top, right: insets.right };
     if (safeAreaWidth >= LG_WIDTH) closeBtnStyle.right = 6 + insets.right;
@@ -273,24 +284,27 @@ const SettingsPopup = () => {
     const closeBtnSvgWidth = safeAreaWidth < MD_WIDTH ? 20 : 28;
 
     return (
-      <React.Fragment>
-        <ScrollView ref={panelContent} style={tailwind('flex-1')} keyboardShouldPersistTaps="handled">
-          <View style={tailwind('items-center justify-start')}>
-            <View style={tailwind('w-full max-w-6xl items-center justify-start')}>
-              {content}
-            </View>
+      <View style={[tailwind('absolute'), closeBtnStyle]}>
+        <TouchableOpacity onPress={onPopupCloseBtnClick} style={tailwind('h-12 w-12 items-center justify-center')}>
+          <View style={tailwind('rounded-full bg-white blk:bg-gray-900')}>
+            <Svg style={tailwind('font-normal text-gray-300 blk:text-gray-600')} width={closeBtnSvgWidth} height={closeBtnSvgWidth} stroke="currentColor" fill="none" viewBox="0 0 24 24">
+              <Path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </Svg>
           </View>
-        </ScrollView>
-        <View style={[tailwind('absolute'), closeBtnStyle]}>
-          <TouchableOpacity onPress={onPopupCloseBtnClick} style={tailwind('h-12 w-12 items-center justify-center')}>
-            <View style={tailwind('rounded-full bg-white blk:bg-gray-900')}>
-              <Svg style={tailwind('font-normal text-gray-300 blk:text-gray-600')} width={closeBtnSvgWidth} height={closeBtnSvgWidth} stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                <Path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </Svg>
-            </View>
-          </TouchableOpacity>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const _renderPanel = (content) => {
+    return (
+      <ScrollView ref={panelContent} style={tailwind('flex-1')} keyboardShouldPersistTaps="handled">
+        <View style={tailwind('items-center justify-start')}>
+          <View style={tailwind('w-full max-w-6xl items-center justify-start')}>
+            {content}
+          </View>
         </View>
-      </React.Fragment>
+      </ScrollView>
     );
   };
 
@@ -381,6 +395,7 @@ const SettingsPopup = () => {
     return (
       <View {...viewPanResponder.panHandlers} style={cache('SP_modal', [tailwind('absolute inset-0 z-30 bg-white shadow-lg blk:bg-gray-900'), modalStyle], [insets.top, insets.bottom, insets.left, insets.right, tailwind])}>
         {_renderPanel(contentWithSidebar)}
+        {_renderPanelCloseBtn()}
         {/* Sidebar for mobile */}
         <View key="sidebar-for-mobile" style={[tailwind(`md:relative md:hidden ${sidebarCanvasStyleClasses}`), modalStyle]}>
           <View style={tailwind('flex h-full flex-row')}>
@@ -511,6 +526,47 @@ const SettingsPopup = () => {
     return _render(content);
   };
 
+  const _renderConflictLoading = () => {
+    if (!(conflictedSettings.status === MERGING)) return null;
+
+    return (
+      <React.Fragment>
+        <View style={tailwind('absolute inset-0 bg-white bg-opacity-25 blk:bg-gray-900 blk:bg-opacity-25')} />
+        <View style={[tailwind('absolute top-1/3 left-1/2 items-center justify-center'), { transform: [{ translateX: -10 }, { translateY: -10 }] }]}>
+          <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} />
+        </View>
+      </React.Fragment>
+    );
+  };
+
+  const _renderConflictMergeError = () => {
+    if (!(conflictedSettings.status === DIED_MERGING)) return null;
+
+    const mergeErrorStyle = {
+      transform: [{
+        scale: mergeErrorAnim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }),
+      }],
+    };
+
+    return (
+      <View style={tailwind('absolute inset-x-0 top-10 flex-row items-start justify-center lg:top-0')}>
+        <Animated.View style={[tailwind('m-4 rounded-md bg-red-50 p-4 shadow-lg'), mergeErrorStyle]}>
+          <View style={tailwind('flex-row')}>
+            <View style={tailwind('flex-shrink-0')}>
+              <Svg width={24} height={24} style={tailwind('font-normal text-red-400')} viewBox="0 0 20 20" fill="currentColor">
+                <Path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </Svg>
+            </View>
+            <View style={tailwind('ml-3 lg:mt-0.5')}>
+              <Text style={tailwind('text-left text-base font-medium text-red-800 lg:text-sm')}>Oops..., something went wrong!</Text>
+              <Text style={tailwind('mt-2.5 text-sm font-normal text-red-700')}>Please wait a moment and try again.{'\n'}If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-sm font-normal text-red-700 underline')}>contact us</Text>.</Text>
+            </View>
+          </View>
+        </Animated.View>
+      </View>
+    );
+  };
+
   const renderConflictView = () => {
     const content = (
       <SettingsPopupConflict />
@@ -518,13 +574,16 @@ const SettingsPopup = () => {
     return (
       <View style={cache('SP_modal', [tailwind('absolute inset-0 z-30 bg-white shadow-lg blk:bg-gray-900'), modalStyle], [insets.top, insets.bottom, insets.left, insets.right, tailwind])}>
         {_renderPanel(content)}
+        {_renderConflictLoading()}
+        {_renderConflictMergeError()}
+        {_renderPanelCloseBtn()}
       </View>
     );
   };
 
   if (
-    Array.isArray(conflictedSettingsContents) &&
-    conflictedSettingsContents.length > 0
+    Array.isArray(conflictedSettings.contents) &&
+    conflictedSettings.contents.length > 0
   ) {
     return renderConflictView();
   }
