@@ -89,12 +89,13 @@ const fetch = async (params) => {
   const {
     linkFPaths, settingsFPaths: _settingsFPaths, infoFPath, pinFPaths,
   } = await listFPaths(doFetchStgsAndInfo);
-  const {
-    fpaths: settingsFPaths, ids: settingsIds,
-  } = getLastSettingsFPaths(_settingsFPaths);
 
   let settings, conflictedSettings = [], info;
   if (doFetchStgsAndInfo) {
+    const {
+      fpaths: settingsFPaths, ids: settingsIds,
+    } = getLastSettingsFPaths(_settingsFPaths);
+
     if (settingsFPaths.length > 0) {
       const files = await serverApi.getFiles(settingsFPaths, true);
 
