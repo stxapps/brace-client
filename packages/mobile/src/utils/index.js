@@ -15,7 +15,7 @@ import {
   DIED_REMOVING, DIED_DELETING, COLOR, PATTERN, IMAGE, BG_COLOR_STYLES, PATTERNS,
   VALID_URL, NO_URL, ASK_CONFIRM_URL, VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME,
   DUPLICATE_LIST_NAME, COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD,
-  PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, MAX_TRY,
+  PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, MAX_TRY, EXTRACT_INVALID_URL,
 } from '../types/const';
 import { IMAGE_PATHS } from '../types/imagePaths';
 import { _ } from './obj';
@@ -1858,6 +1858,7 @@ export const deriveUnknownErrorLink = (fpath) => {
   const { id } = extractLinkFPath(fpath);
   const { dt } = extractLinkId(id);
 
+  const url = 'Unknown error';
   const decor = {
     image: {
       bg: { type: COLOR, value: BG_COLOR_STYLES[0] },
@@ -1867,6 +1868,10 @@ export const deriveUnknownErrorLink = (fpath) => {
       bg: { type: COLOR, value: BG_COLOR_STYLES[0] },
     },
   };
+  const extractedResult = {
+    url, extractedDT: Date.now(), status: EXTRACT_INVALID_URL,
+  };
 
-  return { id, url: 'Unknown error', addedDT: dt, decor };
+  // Need extractedResult to prevent extractContents to override the link content!
+  return { id, url, addedDT: dt, decor, extractedResult };
 };

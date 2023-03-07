@@ -6,7 +6,7 @@ import {
   CLEAN_UP_STATIC_FILES_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import { CD_ROOT } from '../types/const';
-import { getMainId, extractStaticFPath } from '../utils';
+import { getMainId, extractStaticFPath, getStaticFPath } from '../utils';
 
 const initialState = {};
 
@@ -56,7 +56,7 @@ const imagesReducer = (state = initialState, action) => {
 
     const newState = {};
     for (const fpath in state) {
-      const { id } = extractStaticFPath(fpath);
+      const { id } = extractStaticFPath(getStaticFPath(fpath));
       if (mainIds.includes(getMainId(id))) continue;
       newState[fpath] = state[fpath];
     }

@@ -67,7 +67,7 @@ class Landing extends React.PureComponent {
           <Text style={tailwind('mt-4 text-center text-lg font-normal text-gray-500')}>A lot of interesting, useful, and important stuff is {safeAreaWidth >= SM_WIDTH && safeAreaWidth < MD_WIDTH ? '\n' : ''}out there on the internet. {safeAreaWidth >= MD_WIDTH ? '\n' : ''}Brace.to helps you save them so that you will never miss anything.</Text>
         </View>
         <View style={tailwind('h-full w-full items-center justify-center px-4 md:px-6 lg:px-8')}>
-          <View style={tailwind('max-w-md flex-row')}>
+          <View style={tailwind('w-full max-w-md flex-row')}>
             <View style={tailwind('flex-shrink-0 flex-grow-0')}>
               <View style={tailwind('flex h-12 w-12 items-center justify-center rounded-md bg-gray-600')}>
                 <Svg style={tailwind('font-normal text-white')} width={18} height={21} viewBox="0 0 47 56" fill="currentColor">
@@ -80,7 +80,7 @@ class Landing extends React.PureComponent {
               <Text style={tailwind('mt-2 text-base font-normal text-gray-500 md:text-lg')}>You found a long, useful, and important article you can't read it right now? Not a problem. Just save to Brace.to to read it later.</Text>
             </View>
           </View>
-          <View style={tailwind('mt-10 max-w-md flex-row md:mt-12')}>
+          <View style={tailwind('w-full mt-10 max-w-md flex-row md:mt-12')}>
             <View style={tailwind('flex-shrink-0 flex-grow-0')}>
               <View style={tailwind('flex h-12 w-12 items-center justify-center rounded-md bg-blue-400')}>
                 <Svg style={tailwind('font-normal text-white')} width={20} height={20} viewBox="0 0 56 56" fill="currentColor">
@@ -97,7 +97,7 @@ class Landing extends React.PureComponent {
           </View>
         </View>
         <View style={tailwind('h-full w-full items-center justify-center px-4 md:px-6 lg:px-8')}>
-          <View style={tailwind('max-w-md flex-row')}>
+          <View style={tailwind('w-full max-w-md flex-row')}>
             <View style={tailwind('flex-shrink-0 flex-grow-0')}>
               <View style={tailwind('flex h-12 w-12 items-center justify-center rounded-md bg-yellow-500')}>
                 <Svg style={tailwind('font-normal text-white')} width={28} height={21} viewBox="0 0 75 56" fill="currentColor">
@@ -110,7 +110,7 @@ class Landing extends React.PureComponent {
               <Text style={tailwind('mt-2 text-base font-normal text-gray-500 md:text-lg')}>You found an item on an online shop you don’t want now but might want to buy later? Not a problem. Just save to Brace.to.</Text>
             </View>
           </View>
-          <View style={tailwind('mt-10 max-w-md flex-row md:mt-12')}>
+          <View style={tailwind('w-full mt-10 max-w-md flex-row md:mt-12')}>
             <View style={tailwind('flex-shrink-0 flex-grow-0')}>
               <View style={tailwind('flex h-12 w-12 items-center justify-center rounded-md bg-red-500')}>
                 <Svg style={tailwind('text-base font-normal text-white')} width={24} height={18} viewBox="0 0 56 42" fill="currentColor">

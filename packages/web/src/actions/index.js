@@ -708,8 +708,7 @@ export const clearFetchedListNames = () => {
 
 export const refreshFetched = () => async (dispatch, getState) => {
   const listName = getState().display.listName;
-  const doDescendingOrder = getState().settings.doDescendingOrder;
-  const payload = { listName, doDescendingOrder, shouldDispatchFetch: true };
+  const payload = { listName, shouldDispatchFetch: true };
 
   // If there is already FETCH with the same list name, no need to dispatch a new one.
   if (!shouldDispatchFetch(getState().offline.outbox, payload)) {
@@ -949,41 +948,26 @@ export const cancelDiedLinks = (ids, listName = null) => async (dispatch, getSta
 };
 
 const getToExtractLinks = (listName, ids, getState) => {
-  if (listName === null && ids === null) {
-    // Need to fetch first before update the link so that etags are available.
-    // Do extract contents only on the current list name
-    //   and make sure it's already fetched.
-    listName = getState().display.listName;
-    if (listName === TRASH) return [];
 
-    const obj = getState().links[listName];
-    if (!isObject(obj)) return [];
+  if (listName === TRASH) return [];
 
-    const _links = _.ignore(
-      obj, [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
-    );
-    const links = Object.values(_links)
-      .filter(link => {
-        if ('custom' in link) return false;
-        return !link.extractedResult || link.extractedResult.status === EXTRACT_INIT;
-      })
-      .sort((a, b) => b.addedDT - a.addedDT)
-      .slice(0, N_LINKS);
+  let obj = getState().links[listName];
+  if (!isObject(obj)) return [];
 
-    return links;
-  }
+  if (Array.isArray(ids)) obj = _.select(obj, ID, ids);
 
-  if (listName !== null && ids !== null) {
-    const _links = _.ignore(
-      _.select(getState().links[listName], ID, ids),
-      [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
-    );
-    const links = Object.values(_links);
-    return links;
-  }
+  const _links = _.ignore(
+    obj, [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
+  );
+  const links = Object.values(_links)
+    .filter(link => {
+      if ('custom' in link) return false;
+      return !link.extractedResult || link.extractedResult.status === EXTRACT_INIT;
+    })
+    .sort((a, b) => b.addedDT - a.addedDT)
+    .slice(0, N_LINKS);
 
-  console.log(`Invalid parameters: ${listName}, ${ids}`);
-  return [];
+  return links;
 };
 
 export const extractContents = (listName, ids) => async (dispatch, getState) => {
@@ -994,8 +978,7 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
     return;
   }
 
-  // IMPORTANT: didBeautify is removed as it's not needed
-  //   Legacy old link contains didBeautify
+  if (!listName) listName = getState().display.listName;
 
   const links = getToExtractLinks(listName, ids, getState);
   if (links.length === 0) {
@@ -1023,8 +1006,9 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
 
     // Some links might be moved while extracting.
     // If that the case, ignore them.
-    if (!getState().links[listName]) continue;
-    if (!Object.keys(getState().links[listName]).includes(links[i][ID])) continue;
+    const obj = getState().links[listName];
+    if (!isObject(obj)) continue;
+    if (!Object.keys(obj).includes(links[i][ID])) continue;
 
     links[i].extractedResult = extractedResult;
     extractedLinks.push(links[i]);

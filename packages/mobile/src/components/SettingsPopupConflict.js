@@ -157,7 +157,7 @@ const _ConflictItem = (props) => {
           </TouchableOpacity>
         </View>
         <View style={tailwind('py-3 pl-2.5 sm:flex-shrink-0 sm:flex-grow-0 sm:pl-6 sm:pr-4')}>
-          <TouchableOpacity onPress={onChooseBtnClick} style={[tailwind('flex-row items-center self-start rounded-full border border-gray-400 bg-white blk:border-gray-400 blk:bg-gray-900'), { height: 34, paddingLeft: 10, paddingRight: 12 }]}>
+          <TouchableOpacity onPress={onChooseBtnClick} style={[tailwind('flex-row items-center self-start rounded-full border border-gray-300 bg-white blk:border-gray-500 blk:bg-gray-800'), { height: 34, paddingLeft: 10, paddingRight: 12 }]}>
             <Svg width={18} height={18} style={tailwind('mr-1 font-normal text-gray-500 blk:text-gray-300')} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M16.7069 5.29303C16.8944 5.48056 16.9997 5.73487 16.9997 6.00003C16.9997 6.26519 16.8944 6.5195 16.7069 6.70703L8.70692 14.707C8.51939 14.8945 8.26508 14.9998 7.99992 14.9998C7.73475 14.9998 7.48045 14.8945 7.29292 14.707L3.29292 10.707C3.11076 10.5184 3.00997 10.2658 3.01224 10.0036C3.01452 9.74143 3.11969 9.49062 3.3051 9.30521C3.49051 9.1198 3.74132 9.01464 4.00352 9.01236C4.26571 9.01008 4.51832 9.11087 4.70692 9.29303L7.99992 12.586L15.2929 5.29303C15.4804 5.10556 15.7348 5.00024 15.9999 5.00024C16.2651 5.00024 16.5194 5.10556 16.7069 5.29303Z" />
             </Svg>

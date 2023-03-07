@@ -152,8 +152,7 @@ const linksReducer = (state = initialState, action) => {
     }
 
     return loop(
-      newState,
-      Cmd.run(extractContents(null, null), { args: [Cmd.dispatch, Cmd.getState] })
+      newState, Cmd.run(extractContents(), { args: [Cmd.dispatch, Cmd.getState] })
     );
   }
 
@@ -177,8 +176,7 @@ const linksReducer = (state = initialState, action) => {
     };
 
     return loop(
-      newState,
-      Cmd.run(extractContents(null, null), { args: [Cmd.dispatch, Cmd.getState] })
+      newState, Cmd.run(extractContents(), { args: [Cmd.dispatch, Cmd.getState] })
     );
   }
 
