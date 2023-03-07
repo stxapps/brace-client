@@ -213,7 +213,6 @@ const SignUp = (props) => {
         </div>
         <div className={tailwind('mt-10 mb-1.5 flex pt-1')}>
           <button onClick={props.onSignInBtnClick} className={tailwind('rounded-sm text-sm font-medium text-blue-700 hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} type="button">Sign in</button>
-          <a className={tailwind('ml-3 rounded-sm text-sm font-medium text-blue-700 hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} href="https://docs.stacks.co/docs/build-apps/references/authentication#how-it-works" target="_blank" rel="noreferrer">How it works</a>
         </div>
       </React.Fragment>
     );
