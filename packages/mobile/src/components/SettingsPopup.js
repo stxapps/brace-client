@@ -544,7 +544,9 @@ const SettingsPopup = () => {
 
     const mergeErrorStyle = {
       transform: [{
-        scale: mergeErrorAnim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }),
+        scale: mergeErrorAnim.interpolate({
+          inputRange: [0, 1], outputRange: [0.95, 1],
+        }),
       }],
     };
 
