@@ -110,7 +110,7 @@ const requestSubscription = async (productId) => {
     const sigObj = await userSession.signECDSA(SIGNED_TEST_STRING);
     const userId = sigObj.publicKey;
 
-    randomId = `${randomString(4)}-${randomString(4)}-${randomString(4)}-${randomString(4)}`;
+    randomId = `${randomString(8)}-${randomString(8)}-${randomString(8)}-${randomString(8)}`;
     await axios.post(IAP_PADDLE_PRE_URL, { userId, randomId });
 
     lsgApi.setItemSync(PADDLE_RANDOM_ID, randomId);

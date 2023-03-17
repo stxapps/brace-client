@@ -924,7 +924,7 @@ This and CI/CD are very important!
 ** Setup in iap-server
 - cd Drive/Workspace/iap-server
 - gcloud app create --project=iap-001 --region=us-central
-- assume unchanged: git update-index --assume-unchanged src/appstore-keys.json src/playstore-service-account.json
+- assume unchanged: git update-index --assume-unchanged src/appstore-keys.json src/playstore-service-account.json src/paddle-keys.json
 - yarn add googleapis node-apple-receipt-verify
 - Create Application Default Credential (ADC)
   + select project: iap-001, go to IAM & Admin -> Service Accounts -> Select App Engine default service account -> Keys -> Add Key -> Create new Key
