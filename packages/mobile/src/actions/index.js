@@ -3,7 +3,7 @@ import {
   RESET_STATE as OFFLINE_RESET_STATE,
 } from '@redux-offline/redux-offline/lib/constants';
 //import RNFS from 'react-native-fs';
-import * as RNIap from 'react-native-iap';
+import * as iapApi from 'react-native-iap';
 import { LexoRank } from '@wewatch/lexorank';
 import { is24HourFormat } from 'react-native-device-time-format';
 
@@ -1457,7 +1457,7 @@ const verifyPurchase = async (rawPurchase) => {
 
   try {
     if (Platform.OS !== 'android') {
-      await RNIap.finishTransaction(rawPurchase, false);
+      await iapApi.finishTransaction(rawPurchase, false);
     }
   } catch (error) {
     console.log('Error when finishTransaction: ', error);
@@ -1533,7 +1533,7 @@ const getPurchases = (
     // As iapUpdatedListener can be missed, need to getAvailablePurchases
     const validPurchases = [], originalOrderIds = [];
 
-    const rawPurchases = await RNIap.getAvailablePurchases();
+    const rawPurchases = await iapApi.getAvailablePurchases();
     for (const rawPurchase of rawPurchases) {
       let originalOrderId;
       if (Platform.OS === 'ios') {
@@ -1586,42 +1586,40 @@ const iapErrorListener = (dispatch, getState) => async (error) => {
   }
 };
 
-let iapUpdatedEventEmitter = null, iapErrorEventEmitter = null;
 const registerIapListeners = (doRegister, dispatch, getState) => {
   if (doRegister) {
-    if (!iapUpdatedEventEmitter) {
-      iapUpdatedEventEmitter = RNIap.purchaseUpdatedListener(
+    if (!vars.iap.updatedEventEmitter) {
+      vars.iap.updatedEventEmitter = iapApi.purchaseUpdatedListener(
         iapUpdatedListener(dispatch, getState)
       );
     }
-    if (!iapErrorEventEmitter) {
-      iapErrorEventEmitter = RNIap.purchaseErrorListener(
+    if (!vars.iap.errorEventEmitter) {
+      vars.iap.errorEventEmitter = iapApi.purchaseErrorListener(
         iapErrorListener(dispatch, getState)
       );
     }
   } else {
-    if (iapUpdatedEventEmitter) {
-      iapUpdatedEventEmitter.remove();
-      iapUpdatedEventEmitter = null;
+    if (vars.iap.updatedEventEmitter) {
+      vars.iap.updatedEventEmitter.remove();
+      vars.iap.updatedEventEmitter = null;
     }
-    if (iapErrorEventEmitter) {
-      iapErrorEventEmitter.remove();
-      iapErrorEventEmitter = null;
+    if (vars.iap.errorEventEmitter) {
+      vars.iap.errorEventEmitter.remove();
+      vars.iap.errorEventEmitter = null;
     }
   }
 };
 
-let didGetProducts = false;
 export const endIapConnection = (isInit = false) => async (dispatch, getState) => {
   registerIapListeners(false, dispatch, getState);
   try {
-    await RNIap.endConnection();
+    await iapApi.endConnection();
   } catch (error) {
     console.log('Error when end IAP connection: ', error);
   }
 
   if (!isInit) {
-    didGetProducts = false;
+    vars.iap.didGetProducts = false;
     dispatch(updateIapProductStatus(null, null, null));
   }
 };
@@ -1629,19 +1627,19 @@ export const endIapConnection = (isInit = false) => async (dispatch, getState) =
 export const initIapConnectionAndGetProducts = (doForce) => async (
   dispatch, getState
 ) => {
-  if (didGetProducts && !doForce) return;
-  didGetProducts = true;
+  if (vars.iap.didGetProducts && !doForce) return;
+  vars.iap.didGetProducts = true;
   dispatch({ type: GET_PRODUCTS });
 
   if (doForce) await endIapConnection(true)(dispatch, getState);
 
   try {
-    const canMakePayments = await RNIap.initConnection();
+    const canMakePayments = await iapApi.initConnection();
     registerIapListeners(true, dispatch, getState);
 
     let products = null;
     if (canMakePayments) {
-      products = await RNIap.getSubscriptions([COM_BRACEDOTTO_SUPPORTER]);
+      products = await iapApi.getSubscriptions([COM_BRACEDOTTO_SUPPORTER]);
     }
 
     dispatch({
@@ -1657,7 +1655,7 @@ export const initIapConnectionAndGetProducts = (doForce) => async (
 export const requestPurchase = (product) => async (dispatch, getState) => {
   dispatch({ type: REQUEST_PURCHASE });
   try {
-    await RNIap.requestSubscription(product.productId);
+    await iapApi.requestSubscription(product.productId);
   } catch (error) {
     console.log('Error when request purchase: ', error);
     if (error.code === 'E_USER_CANCELLED') {

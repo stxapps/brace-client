@@ -24,6 +24,12 @@ const randomHouseworkTasks = {
   dt: 0,
 };
 
+const iap = {
+  didGetProducts: false,
+  updatedEventEmitter: null,
+  errorEventEmitter: null,
+};
+
 const platform = {
   isReactNative: false,
 };
@@ -32,5 +38,7 @@ export const getCachedFPaths = () => {
   return cachedServerFPaths;
 };
 
-const vars = { cachedServerFPaths, scrollPanel, fetch, randomHouseworkTasks, platform };
+const vars = {
+  cachedServerFPaths, scrollPanel, fetch, randomHouseworkTasks, iap, platform,
+};
 export default vars;

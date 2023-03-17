@@ -20,4 +20,5 @@ declare module '*.json' {
 
 interface Window {
   PasswordCredential?: any;
+  Paddle?: any;
 }

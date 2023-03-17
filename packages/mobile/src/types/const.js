@@ -196,12 +196,15 @@ export const LAYOUT_LIST = 'LAYOUT_LIST';
 export const IAP_URL = 'https://iap-001.uc.r.appspot.com'; //'http://192.168.1.44:8088';
 export const IAP_VERIFY_URL = IAP_URL + '/verify';
 export const IAP_STATUS_URL = IAP_URL + '/status';
+export const IAP_PADDLE_PRE_URL = IAP_URL + '/paddle/pre';
 
 export const APPSTORE = 'AppStore';
 export const PLAYSTORE = 'PlayStore';
+export const PADDLE = 'Paddle';
 export const COM_BRACEDOTTO = 'com.bracedotto';
 export const COM_BRACEDOTTO_SUPPORTER = 'com.bracedotto.supporter';
 export const SIGNED_TEST_STRING = 'Privacy Security UX';
+export const PADDLE_RANDOM_ID = 'PADDLE_RANDOM_ID';
 
 export const VALID = 'VALID';
 export const INVALID = 'INVALID';

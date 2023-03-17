@@ -36,7 +36,7 @@ const loadUserData = () => {
   return _userSession.loadUserData();
 };
 
-const signECDSA = (content) => {
+const signECDSA = async (content) => {
   const userData = loadUserData();
   const sigObj = _signECDSA(userData.appPrivateKey, content);
   return sigObj;

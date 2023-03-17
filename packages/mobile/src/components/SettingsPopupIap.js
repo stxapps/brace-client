@@ -15,7 +15,8 @@ import {
 } from '../types/actionTypes';
 import {
   DOMAIN_NAME, HASH_TERMS, HASH_PRIVACY, HASH_SUPPORT, VALID, INVALID, UNKNOWN, ERROR,
-  ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, APPSTORE, PLAYSTORE, SM_WIDTH, BLK_MODE,
+  ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, APPSTORE, PLAYSTORE, PADDLE, SM_WIDTH,
+  BLK_MODE,
 } from '../types/const';
 import { getValidProduct, getValidPurchase, getThemeMode } from '../selectors';
 import { getFormattedDate } from '../utils';
@@ -233,7 +234,7 @@ const IapHome = (props) => {
       <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Support us and unlock extra features: pin to the top, dark appearance, and change title & image.</Text>
       <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Start with a 14 day free trial.</Text>
       {actionPanel}
-      <Text style={tailwind('mt-6 text-sm font-normal leading-6.5 text-gray-400 blk:text-gray-500')}>By subscribing, you agree to our <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_TERMS)} style={tailwind('text-sm font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Terms of Service</Text> and <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-sm font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Privacy Policy</Text>. Only one free trial per user, the App Store Terms and Conditions apply.</Text>
+      <Text style={tailwind('mt-6 text-sm font-normal leading-6.5 text-gray-400 blk:text-gray-500')}>By subscribing, you agree to our <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_TERMS)} style={tailwind('text-sm font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Terms of Service</Text> and <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-sm font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Privacy Policy</Text>. Only one free trial per user, the App Store's Terms and Conditions apply.</Text>
       <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>If you've already purchased the subscription, try <Text onPress={onToRestoreIapViewBtnClick} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Restore purchases</Text></Text>
     </View>
   );
@@ -291,6 +292,16 @@ const IapPurchased = (props) => {
     appStoreLink = (
       <Text onPress={() => Linking.openURL('https://play.google.com/store/account/subscriptions?sku=com.bracedotto.supporter&package=com.bracedotto')} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Google Play</Text>
     );
+  } else if (purchase.source === PADDLE) {
+    if (purchase.status === NO_RENEW) {
+      appStoreLink = (
+        <Text onPress={() => Linking.openURL('https://paddle.net/')} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Paddle</Text>
+      );
+    } else {
+      appStoreLink = (
+        <Text onPress={() => Linking.openURL(purchase.receiptUrl)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Paddle</Text>
+      );
+    }
   }
 
   let publicKeyText = (
@@ -516,7 +527,7 @@ const _SettingsPopupIapRestore = (props) => {
           <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-gray-500 blk:text-gray-400')}>No purchase found.</Text>
         </View>
         <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>If there should be a purchase, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text> with your app public key below and order ID in your order confirmation email.</Text>
-        <View style={tailwind('mt-6 mb-4 sm:flex-row')}>
+        <View style={tailwind('mt-6 sm:flex-row')}>
           <Text style={tailwind('flex-shrink-0 flex-grow-0 text-base font-normal text-gray-500 blk:text-gray-400')}>App public key:</Text>
           {publicKeyText}
         </View>
