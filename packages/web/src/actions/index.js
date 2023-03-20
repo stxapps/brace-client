@@ -11,6 +11,7 @@ import iapApi from '../paddleWrapper';
 import dataApi from '../apis/blockstack';
 import serverApi from '../apis/server';
 import fileApi from '../apis/localFile';
+import lsgApi from '../apis/localSg';
 import {
   INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW_SIZE, UPDATE_VISUAL_SIZE, UPDATE_WINDOW,
   UPDATE_HISTORY_POSITION, UPDATE_STACKS_ACCESS, UPDATE_LIST_NAME, UPDATE_POPUP,
@@ -63,6 +64,7 @@ import {
   IAP_VERIFY_URL, IAP_STATUS_URL, PADDLE, COM_BRACEDOTTO, COM_BRACEDOTTO_SUPPORTER,
   SIGNED_TEST_STRING, VALID, INVALID, ACTIVE, UNKNOWN, SWAP_LEFT, SWAP_RIGHT, WHT_MODE,
   BLK_MODE, CUSTOM_MODE, FEATURE_PIN, FEATURE_APPEARANCE, FEATURE_CUSTOM,
+  PADDLE_RANDOM_ID,
 } from '../types/const';
 import {
   isEqual, isString, isObject, isNumber, throttle, sleep, randomString,
@@ -376,6 +378,8 @@ export const updateUserSignedIn = () => async (dispatch, getState) => {
 };
 
 const resetState = async (dispatch) => {
+  lsgApi.removeItemSync(PADDLE_RANDOM_ID);
+
   // redux-offline: Empty outbox
   dispatch({ type: OFFLINE_RESET_STATE });
 
@@ -386,6 +390,7 @@ const resetState = async (dispatch) => {
   vars.cachedServerFPaths.fpaths = null;
 
   // clear vars
+  vars.fetch.dt = 0;
   vars.randomHouseworkTasks.dt = 0;
 
   // clear all user data!
@@ -2137,9 +2142,9 @@ export const checkPurchases = () => async (dispatch, getState) => {
 };
 
 export const retryVerifyPurchase = () => async (dispatch, getState) => {
-  dispatch({ type: REQUEST_PURCHASE });
-
   const rawPurchase = getState().iap.rawPurchase;
+
+  dispatch({ type: REQUEST_PURCHASE });
   const verifyResult = await verifyPurchase(rawPurchase);
   dispatch({
     type: REQUEST_PURCHASE_COMMIT,

@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { updateHistoryPosition, fetch, rehydrateStaticFiles } from '../actions';
+import {
+  updateHistoryPosition, fetch, rehydrateStaticFiles, endIapConnection,
+} from '../actions';
 import {
   BACK_DECIDER, BACK_POPUP, PC_100, PC_50, PC_33, SHOW_BLANK, SHOW_COMMANDS,
   SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
@@ -49,6 +51,10 @@ class Main extends React.PureComponent {
       prevProps.rehydratedListNames !== this.props.rehydratedListNames ||
       prevProps.fetchedListNames !== this.props.fetchedListNames
     ) this.fetch();
+  }
+
+  componentWillUnmount() {
+    this.props.endIapConnection();
   }
 
   getColumnWidth = (safeAreaWidth) => {
@@ -135,6 +141,8 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { updateHistoryPosition, fetch, rehydrateStaticFiles };
+const mapDispatchToProps = {
+  updateHistoryPosition, fetch, rehydrateStaticFiles, endIapConnection,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(Main));

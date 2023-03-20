@@ -32,6 +32,10 @@ class CardPanel extends React.PureComponent {
     this.panelFlatList = React.createRef();
   }
 
+  componentDidMount() {
+    vars.scrollPanel.pageYOffset = 0;
+  }
+
   componentDidUpdate(prevProps) {
     if (this.props.listChangedCount !== prevProps.listChangedCount) {
       if (this.panelFlatList.current) {

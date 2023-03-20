@@ -282,6 +282,7 @@ const resetState = async (dispatch) => {
   vars.cachedServerFPaths.fpaths = null;
 
   // clear vars
+  vars.fetch.dt = 0;
   vars.randomHouseworkTasks.dt = 0;
 
   // clear all user data!
@@ -1705,9 +1706,9 @@ export const checkPurchases = () => async (dispatch, getState) => {
 };
 
 export const retryVerifyPurchase = () => async (dispatch, getState) => {
-  dispatch({ type: REQUEST_PURCHASE });
-
   const rawPurchase = getState().iap.rawPurchase;
+
+  dispatch({ type: REQUEST_PURCHASE });
   const verifyResult = await verifyPurchase(rawPurchase);
   dispatch({
     type: REQUEST_PURCHASE_COMMIT,
