@@ -15,7 +15,7 @@ import {
   ERROR, ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, APPSTORE, PLAYSTORE, PADDLE, SM_WIDTH,
 } from '../types/const';
 import { getValidProduct, getValidPurchase } from '../selectors';
-import { getFormattedDate } from '../utils';
+import { getFormattedDate, isString } from '../utils';
 
 import { useSafeAreaFrame, useTailwind } from '.';
 
@@ -288,8 +288,18 @@ const IapPurchased = (props) => {
         <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href="https://paddle.net/" target="_blank" rel="noreferrer">Paddle</a>
       );
     } else {
+      let link = purchase.receiptUrl;
+      if (isString(purchase.updateUrl) && purchase.updateUrl.endsWith('/update')) {
+        link = purchase.updateUrl.slice(0, '/update'.length * -1);
+        link += '/manage-subscription';
+      } else if (
+        isString(purchase.cancelUrl) && purchase.cancelUrl.endsWith('/cancel')
+      ) {
+        link = purchase.cancelUrl.slice(0, '/cancel'.length * -1);
+        link += '/manage-subscription';
+      }
       appStoreLink = (
-        <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={purchase.receiptUrl} target="_blank" rel="noreferrer">Paddle</a>
+        <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={link} target="_blank" rel="noreferrer">Paddle</a>
       );
     }
   }
