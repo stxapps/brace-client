@@ -19,7 +19,7 @@ import {
   BLK_MODE,
 } from '../types/const';
 import { getValidProduct, getValidPurchase, getThemeMode } from '../selectors';
-import { getFormattedDate } from '../utils';
+import { getFormattedDate, isString } from '../utils';
 
 import { useSafeAreaFrame, useTailwind } from '.';
 
@@ -298,8 +298,18 @@ const IapPurchased = (props) => {
         <Text onPress={() => Linking.openURL('https://paddle.net/')} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Paddle</Text>
       );
     } else {
+      let link = purchase.receiptUrl;
+      if (isString(purchase.updateUrl) && purchase.updateUrl.endsWith('/update')) {
+        link = purchase.updateUrl.slice(0, '/update'.length * -1);
+        link += '/manage-subscription';
+      } else if (
+        isString(purchase.cancelUrl) && purchase.cancelUrl.endsWith('/cancel')
+      ) {
+        link = purchase.cancelUrl.slice(0, '/cancel'.length * -1);
+        link += '/manage-subscription';
+      }
       appStoreLink = (
-        <Text onPress={() => Linking.openURL(purchase.receiptUrl)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Paddle</Text>
+        <Text onPress={() => Linking.openURL(link)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Paddle</Text>
       );
     }
   }
