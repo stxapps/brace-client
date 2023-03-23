@@ -46,9 +46,9 @@ const PaywallPopup = () => {
   if (!isShown) return <AnimatePresence key="AP_PWP" />;
 
   let featureText = 'This';
-  if (feature.feature === FEATURE_PIN) featureText = 'Pin to the top';
-  if (feature.feature === FEATURE_APPEARANCE) featureText = 'Dark appearance';
-  if (feature.feature === FEATURE_CUSTOM) featureText = 'Change title & image';
+  if (feature === FEATURE_PIN) featureText = 'Pin to the top';
+  if (feature === FEATURE_APPEARANCE) featureText = 'Dark appearance';
+  if (feature === FEATURE_CUSTOM) featureText = 'Change title & image';
 
   const spanStyle = {};
   if (safeAreaWidth >= SM_WIDTH) spanStyle.height = safeAreaHeight;
