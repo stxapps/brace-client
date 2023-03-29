@@ -1961,11 +1961,14 @@ const verifyPurchase = async (rawPurchase) => {
 
 const getIapStatus = async (doForce) => {
   const sigObj = await userSession.signECDSA(SIGNED_TEST_STRING);
+  const randomId = await lsgApi.getItem(PADDLE_RANDOM_ID);
   const reqBody = {
+    source: PADDLE,
     userId: sigObj.publicKey,
     signature: sigObj.signature,
     appId: COM_BRACEDOTTO,
     doForce: doForce,
+    randomId: randomId,
   };
 
   const res = await axios.post(IAP_STATUS_URL, reqBody);
