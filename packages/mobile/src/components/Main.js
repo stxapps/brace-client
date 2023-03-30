@@ -39,9 +39,6 @@ class Main extends React.PureComponent {
     super(props);
 
     this.scrollY = new Animated.Value(0);
-    this.scrollYEvent = Animated.event([{
-      nativeEvent: { contentOffset: { y: this.scrollY } },
-    }], { useNativeDriver: true });
   }
 
   componentDidMount() {
@@ -111,8 +108,8 @@ class Main extends React.PureComponent {
       contentPanel = (
         <React.Fragment>
           {layoutType === LAYOUT_LIST ?
-            <ListPanel columnWidth={columnWidth} scrollYEvent={this.scrollYEvent} /> :
-            <CardPanel columnWidth={columnWidth} scrollYEvent={this.scrollYEvent} />
+            <ListPanel columnWidth={columnWidth} scrollY={this.scrollY} /> :
+            <CardPanel columnWidth={columnWidth} scrollY={this.scrollY} />
           }
           {columnWidth === PC_100 && <BottomBar />}
           <TopBar rightPane={topBarRightPane} isListNameShown={true} doSupportTheme={true} scrollY={this.scrollY} />

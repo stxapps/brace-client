@@ -30,33 +30,37 @@ class CardPanel extends React.PureComponent {
     super(props);
 
     this.panelFlatList = React.createRef();
+    this.scrollYEvent = Animated.event(
+      [{ nativeEvent: { contentOffset: { y: this.props.scrollY } } }],
+      { listener: this.onScroll, useNativeDriver: true },
+    );
   }
 
   componentDidMount() {
-    vars.scrollPanel.pageYOffset = 0;
+    this.resetScroll();
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.listChangedCount !== prevProps.listChangedCount) {
-      if (this.panelFlatList.current) {
-        setTimeout(() => {
-          if (this.panelFlatList.current) {
-            this.panelFlatList.current.scrollToOffset({
-              offset: 0,
-              animated: true,
-            });
-            vars.scrollPanel.pageYOffset = 0;
-          }
-        }, 1);
-      }
+      this.resetScroll();
     }
+  }
+
+  resetScroll = () => {
+    setTimeout(() => {
+      if (this.panelFlatList.current) {
+        this.panelFlatList.current.scrollToOffset({ offset: 0, animated: true });
+      }
+      this.props.scrollY.setValue(0);
+      vars.scrollPanel.pageYOffset = 0;
+    }, 1);
   }
 
   getItemId = (item) => {
     return item.id;
   }
 
-  onScrollEnd = (e) => {
+  onScroll = (e) => {
     const contentHeight = e.nativeEvent.contentSize.height;
     const layoutHeight = e.nativeEvent.layoutMeasurement.height;
     const pageYOffset = e.nativeEvent.contentOffset.y;
@@ -85,7 +89,6 @@ class CardPanel extends React.PureComponent {
   }
 
   renderEmpty = () => {
-    vars.scrollPanel.pageYOffset = 0;
     return <EmptyContent />;
   }
 
@@ -274,10 +277,8 @@ class CardPanel extends React.PureComponent {
         onEndReached={this.onEndReached}
         onEndReachedThreshold={0.2}
         removeClippedSubviews={false}
-        onScroll={this.props.scrollYEvent}
+        onScroll={this.scrollYEvent}
         scrollEventThrottle={16}
-        onScrollEndDrag={this.onScrollEnd}
-        onMomentumScrollEnd={this.onScrollEnd}
         overScrollMode="always" />
     );
   }
@@ -285,7 +286,7 @@ class CardPanel extends React.PureComponent {
 
 CardPanel.propTypes = {
   columnWidth: PropTypes.string.isRequired,
-  scrollYEvent: PropTypes.object.isRequired,
+  scrollY: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state, props) => {

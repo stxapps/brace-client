@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, useMemo } from 'react';
 import { FlatList, View, Text, TouchableOpacity, Animated } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { Flow } from 'react-native-animated-spinkit';
@@ -24,7 +24,7 @@ const PANEL_PADDING_BOTTOM = 'PANEL_PADDING_BOTTOM';
 
 const ListPanel = (props) => {
 
-  const { columnWidth, scrollYEvent } = props;
+  const { columnWidth, scrollY } = props;
   const { width: safeAreaWidth } = useSafeAreaFrame();
   const listName = useSelector(state => state.display.listName);
   const hasMore = useSelector(state => state.hasMoreLinks[listName]);
@@ -47,7 +47,7 @@ const ListPanel = (props) => {
     return item.id;
   }, []);
 
-  const onScrollEnd = useCallback((e) => {
+  const onScroll = useCallback((e) => {
     const contentHeight = e.nativeEvent.contentSize.height;
     const layoutHeight = e.nativeEvent.layoutMeasurement.height;
     const pageYOffset = e.nativeEvent.contentOffset.y;
@@ -71,7 +71,6 @@ const ListPanel = (props) => {
   }, [dispatch]);
 
   const renderEmpty = useCallback(() => {
-    vars.scrollPanel.pageYOffset = 0;
     return <EmptyContent />;
   }, []);
 
@@ -151,16 +150,22 @@ const ListPanel = (props) => {
     safeAreaWidth,
   ]);
 
+  const scrollYEvent = useMemo(() => {
+    return Animated.event(
+      [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+      { listener: onScroll, useNativeDriver: true },
+    );
+  }, [scrollY, onScroll]);
+
   useEffect(() => {
-    if (flatList.current) {
-      setTimeout(() => {
-        if (flatList.current) {
-          flatList.current.scrollToOffset({ offset: 0, animated: true });
-          vars.scrollPanel.pageYOffset = 0;
-        }
-      }, 1);
-    }
-  }, [listChangedCount]);
+    setTimeout(() => {
+      if (flatList.current) {
+        flatList.current.scrollToOffset({ offset: 0, animated: true });
+      }
+      scrollY.setValue(0);
+      vars.scrollPanel.pageYOffset = 0;
+    }, 1);
+  }, [scrollY, listChangedCount]);
 
   const panelData = [{ id: PANEL_HEAD }, { id: PANEL_BODY }];
   if (hasMore) panelData.push({ id: PANEL_FOOTER });
@@ -178,8 +183,6 @@ const ListPanel = (props) => {
       removeClippedSubviews={false}
       onScroll={scrollYEvent}
       scrollEventThrottle={16}
-      onScrollEndDrag={onScrollEnd}
-      onMomentumScrollEnd={onScrollEnd}
       overScrollMode="always" />
   );
 };
