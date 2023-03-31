@@ -1758,6 +1758,15 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
     return;
   }
 
+  const listName = getState().display.listName;
+
+  // Object.values() might give diff sequence of links from ids and pins.
+  const _links = _.ignore(
+    _.select(getState().links[listName], ID, ids),
+    [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
+  );
+  const links = ids.map(id => _links[id]);
+
   const pinFPaths = getPinFPaths(getState());
   const pendingPins = getState().pendingPins;
 
@@ -1782,7 +1791,7 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
     now += 1;
   }
 
-  const payload = { pins };
+  const payload = { listName, links, pins };
   dispatch({
     type: PIN_LINK,
     payload,

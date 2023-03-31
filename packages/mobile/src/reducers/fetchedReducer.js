@@ -3,8 +3,8 @@ import { REHYDRATE } from 'redux-persist/constants';
 import {
   CACHE_FETCHED, UPDATE_FETCHED, REFRESH_FETCHED,
   ADD_LINKS_COMMIT, DELETE_LINKS_COMMIT, MOVE_LINKS_DELETE_STEP_COMMIT,
-  DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT,
-  DELETE_ALL_DATA, RESET_STATE,
+  DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT, PIN_LINK_COMMIT,
+  UPDATE_CUSTOM_DATA_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 
 const initialState = {};
@@ -84,6 +84,33 @@ const fetchedReducer = (state = initialState, action) => {
       ...payload,
       links: payload.links.map(l => {
         if (l.id in linkObjs) return linkObjs[l.id];
+        return l;
+      }),
+    };
+
+    return { ...state, [listName]: { payload: newPayload, meta } };
+  }
+
+  if (action.type === PIN_LINK_COMMIT) {
+    const { listName, links } = action.meta;
+    if (!state[listName]) return state;
+
+    const { payload, meta } = state[listName];
+    const newPayload = { ...payload, links: [...payload.links, ...links] };
+
+    return { ...state, [listName]: { payload: newPayload, meta } };
+  }
+
+  if (action.type === UPDATE_CUSTOM_DATA_COMMIT) {
+    const { listName, toLink } = action.payload;
+    if (!state[listName]) return state;
+
+    const { payload, meta } = state[listName];
+
+    const newPayload = {
+      ...payload,
+      links: payload.links.map(l => {
+        if (l.id === toLink.id) return toLink;
         return l;
       }),
     };
