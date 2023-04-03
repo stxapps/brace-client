@@ -165,7 +165,8 @@ const SignUpPopup = () => {
 
   return (
     <View style={[tailwind('absolute inset-0 items-center justify-center'), canvasStyle]}>
-      <TouchableWithoutFeedback onPress={onPopupCloseBtnClick}>
+      {/* No cancel on background of SignUpPopup */}
+      <TouchableWithoutFeedback>
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>
       <Animated.View style={[tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl'), popupStyle]}>

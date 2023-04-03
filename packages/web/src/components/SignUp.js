@@ -151,7 +151,7 @@ const SignUp = (props) => {
           {content}
           <div className={tailwind('absolute top-0 right-0 p-1')}>
             <button onClick={props.onPopupCloseBtnClick} className={tailwind('group flex h-7 w-7 items-center justify-center focus:outline-none')} aria-label="Close sign up popup">
-              <svg className={tailwind('h-5 w-5 rounded text-gray-300 group-hover:text-gray-400 group-focus:ring-2 group-focus:ring-gray-300')} stroke="currentColor" fill="none" viewBox="0 0 24 24">
+              <svg className={tailwind('h-5 w-5 rounded text-gray-400 group-hover:text-gray-500 group-focus:ring-2 group-focus:ring-gray-400')} stroke="currentColor" fill="none" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>

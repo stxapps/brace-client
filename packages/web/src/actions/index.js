@@ -357,7 +357,12 @@ export const signOut = () => async (dispatch, getState) => {
 };
 
 export const updateUserData = (data) => async (dispatch, getState) => {
-  userSession.updateUserData(data);
+  try {
+    userSession.updateUserData(data);
+  } catch (error) {
+    window.alert(`Update user data failed. Please refresh the page and try again. If the problem persists, please contact us.\n\n${error}`);
+    return;
+  }
 
   const isUserSignedIn = userSession.isUserSignedIn();
   if (isUserSignedIn) dispatch(updateUserSignedIn());

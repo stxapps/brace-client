@@ -1,4 +1,5 @@
 import { UserSession, AppConfig } from '@stacks/auth/dist/esm'
+import { SessionData } from '@stacks/auth/dist/esm/sessionData'
 import { signECDSA as _signECDSA } from '@stacks/encryption/dist/esm';
 
 import { DOMAIN_NAME, APP_SCOPES } from './types/const';
@@ -27,7 +28,13 @@ const signUserOut = () => {
 };
 
 const updateUserData = (userData) => {
-  const sessionData = _userSession.store.getSessionData();
+  let sessionData;
+  try {
+    sessionData = _userSession.store.getSessionData();
+  } catch (error) {
+    console.log('Create a new SessionData as getSessionData error:', error);
+    sessionData = new SessionData({});
+  }
   sessionData.userData = userData;
   _userSession.store.setSessionData(sessionData);
 };
