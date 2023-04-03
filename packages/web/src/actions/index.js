@@ -360,7 +360,7 @@ export const updateUserData = (data) => async (dispatch, getState) => {
   try {
     userSession.updateUserData(data);
   } catch (error) {
-    window.alert(`Update user data failed. Please refresh the page and try again. If the problem persists, please contact us.\n\n${error}`);
+    window.alert(`Update user data failed! Please refresh the page and try again. If the problem persists, please contact us.\n\n${error}`);
     return;
   }
 
