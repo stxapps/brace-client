@@ -6,6 +6,8 @@ import {
   DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT, PIN_LINK_COMMIT,
   UPDATE_CUSTOM_DATA_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
+import { getLinkFPaths, extractLinkFPath } from '../utils';
+import { getCachedFPaths } from '../vars';
 
 const initialState = {};
 
@@ -95,8 +97,21 @@ const fetchedReducer = (state = initialState, action) => {
     const { listName, links } = action.meta;
     if (!state[listName]) return state;
 
+    // Add to the fetched only if also exists in fpaths to prevent pin on a link
+    //   that was already moved/removed/deleted.
+    const linkIds = [];
+    const linkFPaths = getLinkFPaths({ cachedFPaths: getCachedFPaths() });
+    if (Array.isArray(linkFPaths[listName])) {
+      for (const fpath of linkFPaths[listName]) {
+        const { id } = extractLinkFPath(fpath);
+        linkIds.push(id);
+      }
+    }
+
+    const filteredLinks = links.filter(link => linkIds.includes(link.id));
+
     const { payload, meta } = state[listName];
-    const newPayload = { ...payload, links: [...payload.links, ...links] };
+    const newPayload = { ...payload, links: [...payload.links, ...filteredLinks] };
 
     return { ...state, [listName]: { payload: newPayload, meta } };
   }
