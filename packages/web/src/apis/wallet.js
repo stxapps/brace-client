@@ -129,7 +129,7 @@ const restoreUsernames = async (wallet) => {
       const stxAddress = getStxAddress({
         account, transactionVersion: TransactionVersion.Mainnet,
       });
-      const nameUrl = `https://stacks-node-api.mainnet.stacks.co/v1/addresses/stacks/${stxAddress}`;
+      const nameUrl = `https://api.hiro.so/v1/addresses/stacks/${stxAddress}`;
       const res = await fetchPrivate(nameUrl);
       if (res.ok) {
         const json = await res.json();

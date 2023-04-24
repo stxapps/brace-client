@@ -26,14 +26,14 @@ const replaceMatchedLine = (fpath, actionObjs) => {
 const patchWalletUtils = () => {
   // Use new Stacks apis instead of the old one
   let match = '    const url = `https://core.blockstack.org/v1/names/${name}`;';
-  let repmt = '    const url = `https://stacks-node-api.mainnet.stacks.co/v1/names/${name}`;';
+  let repmt = '    const url = `https://api.hiro.so/v1/names/${name}`;';
   replaceMatchedLine(
     'node_modules/@stacks/wallet-sdk/dist/utils.js',
     [{ match, repmt }],
   );
 
   match = '    const url = `https://core.blockstack.org/v1/names/${name}`;';
-  repmt = '    const url = `https://stacks-node-api.mainnet.stacks.co/v1/names/${name}`;';
+  repmt = '    const url = `https://api.hiro.so/v1/names/${name}`;';
   replaceMatchedLine(
     'node_modules/@stacks/wallet-sdk/dist/esm/utils.js',
     [{ match, repmt }],
