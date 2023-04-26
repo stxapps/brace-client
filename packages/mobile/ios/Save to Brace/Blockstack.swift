@@ -87,17 +87,17 @@ class Blockstack {
 
       guard let gaiaChallenge = hubInfo.challengeText,
             let latestAuthVersion = hubInfo.latestAuthVersion,
-            let readURLPrefix = hubInfo.readURLPrefix,
+            let readUrlPrefix = hubInfo.readUrlPrefix,
             let iss = Keys.getPublicKeyFromPrivate(challengeSignerHex, compressed: true),
             let salt = Keys.getEntropy(numberOfBytes:16) else {
-        completion(nil, NSError.create(description: "connectToGaiaHub: invalid hubInfo"))
+        callback(nil, NSError.create(description: "connectToGaiaHub: invalid hubInfo"))
         return
       }
 
       let lavIndex = latestAuthVersion.index(latestAuthVersion.startIndex, offsetBy: 1)
       let lavNum = Int(latestAuthVersion[lavIndex...]) ?? 0
       if (lavNum < 1) {
-        completion(nil, NSError.create(description: "connectToGaiaHub: Gaia server doesn't support v1"))
+        callback(nil, NSError.create(description: "connectToGaiaHub: Gaia server doesn't support v1"))
         return
       }
 
@@ -110,12 +110,12 @@ class Blockstack {
       ]
       guard let address = Keys.getAddressFromPublicKey(iss),
             let signedPayload = JSONTokensJS().signToken(payload: payload, privateKey: challengeSignerHex) else {
-        completion(nil, NSError.create(description: "connectToGaiaHub: invalid signedPayload"))
+        callback(nil, NSError.create(description: "connectToGaiaHub: invalid signedPayload"))
         return
       }
       let token = "v1:\(signedPayload)"
 
-      let config = GaiaConfig(URLPrefix: readURLPrefix, address: address, token: token, server: hubUrl)
+      let config = GaiaConfig(UrlPrefix: readUrlPrefix, address: address, token: token, server: hubUrl)
       callback(config, nil)
     }
   }

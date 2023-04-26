@@ -12,12 +12,7 @@ open class EncryptionJS {
   lazy var context: JSContext? = {
     let context = JSContext()
     
-    let frameworkBundle = Bundle(for: type(of: self))
-    let bundleURL = frameworkBundle.resourceURL?.appendingPathComponent("Blockstack.bundle")
-    let resourceBundle = Bundle(url: bundleURL!)
-    
-    guard let
-            JSPath = resourceBundle?.path(forResource: "encryption", ofType: "js") else {
+    guard let JSPath = Bundle.main.path(forResource: "encryption", ofType: "js") else {
       print("Unable to read resource files.")
       return nil
     }
