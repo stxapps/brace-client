@@ -63,10 +63,8 @@ class Blockstack {
       callback(nil, NSError.create(description: "getGaiaConfig: not found appPrivateKey"))
       return
     }
-    guard let gaiaAssociationToken = userData?.gaiaAssociationToken else {
-      callback(nil, NSError.create(description: "getGaiaConfig: not found gaiaAssociationToken"))
-      return
-    }
+    // If signed in from previous version, no gaiaAssociationToken in UserData.
+    let gaiaAssociationToken = userData?.gaiaAssociationToken
     self.connectToGaiaHub(hubUrl: hubUrl, challengeSignerHex: appPrivateKey, gaiaAssociationToken: gaiaAssociationToken) { config, error in
       guard let config = config, error == nil else {
         callback(nil, error)
@@ -78,7 +76,7 @@ class Blockstack {
     }
   }
 
-  private func connectToGaiaHub(hubUrl: String, challengeSignerHex: String, gaiaAssociationToken: String, callback: @escaping (GaiaConfig?, Error?) -> Void) {
+  private func connectToGaiaHub(hubUrl: String, challengeSignerHex: String, gaiaAssociationToken: String?, callback: @escaping (GaiaConfig?, Error?) -> Void) {
     self.getGaiaHubInfo(for: hubUrl) { hubInfo, error in
       guard let hubInfo = hubInfo, error == nil else {
         callback(nil, error)
@@ -101,13 +99,15 @@ class Blockstack {
         return
       }
 
-      let payload: [String: Any] = [
+      var payload: [String: Any] = [
         "gaiaChallenge": gaiaChallenge,
         "hubUrl": hubUrl,
         "iss": iss,
         "salt": salt,
-        "gaiaAssociationToken": gaiaAssociationToken
       ]
+      if let gaiaAssociationToken = gaiaAssociationToken {
+        payload["gaiaAssociationToken"] = gaiaAssociationToken
+      }
       guard let address = Keys.getAddressFromPublicKey(iss),
             let signedPayload = JSONTokensJS().signToken(payload: payload, privateKey: challengeSignerHex) else {
         callback(nil, NSError.create(description: "connectToGaiaHub: invalid signedPayload"))

@@ -7,7 +7,7 @@ install! 'cocoapods', :deterministic_uuids => false
 target 'Bracedotto' do
 
   pod 'PromisesObjC', :modular_headers => true
-  pod 'Blockstack', :git => 'https://github.com/bracedotto/blockstack-ios.git', :commit => 'c8b38de'
+  pod 'Blockstack', :git => 'https://github.com/bracedotto/blockstack-ios.git', :commit => '0b5b85d'
 
   config = use_native_modules!
 
