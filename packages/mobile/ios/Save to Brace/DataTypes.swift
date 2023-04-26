@@ -16,6 +16,7 @@ public struct UserData: Codable {
   public var privateKey: String?
   public let publicKeys: [String]?
   public let username, profileUrl, hubUrl, version: String?
+  public let gaiaAssociationToken: String?
 
   enum CodingKeys: String, CodingKey {
     case jti, iat, exp, iss
@@ -24,16 +25,19 @@ public struct UserData: Codable {
     case username
     case profileUrl = "profile_url"
     case hubUrl, version
+    case gaiaAssociationToken
   }
 }
 
 public struct GaiaHubInfo: Codable {
   let challengeText: String?
   let readUrlPrefix: String?
+  let latestAuthVersion: String?
 
   enum CodingKeys: String, CodingKey {
     case challengeText = "challenge_text"
     case readUrlPrefix = "read_url_prefix"
+    case latestAuthVersion = "latest_auth_version"
   }
 }
 

@@ -60,10 +60,14 @@ class Blockstack {
     let userData = self.getUserData()
     let hubUrl = userData?.hubUrl ?? defaultGaiaHubUrl
     guard let appPrivateKey = userData?.privateKey else {
-      callback(nil, NSError.create(description: "Error not found appPrivateKey in getGaiaConfig"))
+      callback(nil, NSError.create(description: "getGaiaConfig: not found appPrivateKey"))
       return
     }
-    self.connectToGaiaHub(hubUrl: hubUrl, challengeSignerHex: appPrivateKey) { config, error in
+    guard let gaiaAssociationToken = userData?.gaiaAssociationToken else {
+      callback(nil, NSError.create(description: "getGaiaConfig: not found gaiaAssociationToken"))
+      return
+    }
+    self.connectToGaiaHub(hubUrl: hubUrl, challengeSignerHex: appPrivateKey, gaiaAssociationToken: gaiaAssociationToken) { config, error in
       guard let config = config, error == nil else {
         callback(nil, error)
         return
@@ -74,20 +78,44 @@ class Blockstack {
     }
   }
 
-  private func connectToGaiaHub(hubUrl: String, challengeSignerHex: String, callback: @escaping (GaiaConfig?, Error?) -> Void) {
+  private func connectToGaiaHub(hubUrl: String, challengeSignerHex: String, gaiaAssociationToken: String, callback: @escaping (GaiaConfig?, Error?) -> Void) {
     self.getGaiaHubInfo(for: hubUrl) { hubInfo, error in
       guard let hubInfo = hubInfo, error == nil else {
         callback(nil, error)
         return
       }
 
-      let bitcoinJS = BitcoinJS()
-      let signature = bitcoinJS.signChallenge(privateKey: challengeSignerHex, challengeText: hubInfo.challengeText!)
-      let publicKey = Keys.getPublicKeyFromPrivate(challengeSignerHex, compressed: true)
-      let tokenObject: [String: Any?] = ["publickey": publicKey, "signature": signature]
-      let token = tokenObject.toJsonString()?.encodingToBase64()
-      let address = Keys.getAddressFromPublicKey(publicKey!)
-      let config = GaiaConfig(UrlPrefix: hubInfo.readUrlPrefix, address: address, token: token, server: hubUrl)
+      guard let gaiaChallenge = hubInfo.challengeText,
+            let latestAuthVersion = hubInfo.latestAuthVersion,
+            let readURLPrefix = hubInfo.readURLPrefix,
+            let iss = Keys.getPublicKeyFromPrivate(challengeSignerHex, compressed: true),
+            let salt = Keys.getEntropy(numberOfBytes:16) else {
+        completion(nil, NSError.create(description: "connectToGaiaHub: invalid hubInfo"))
+        return
+      }
+
+      let lavIndex = latestAuthVersion.index(latestAuthVersion.startIndex, offsetBy: 1)
+      let lavNum = Int(latestAuthVersion[lavIndex...]) ?? 0
+      if (lavNum < 1) {
+        completion(nil, NSError.create(description: "connectToGaiaHub: Gaia server doesn't support v1"))
+        return
+      }
+
+      let payload: [String: Any] = [
+        "gaiaChallenge": gaiaChallenge,
+        "hubUrl": hubUrl,
+        "iss": iss,
+        "salt": salt,
+        "gaiaAssociationToken": gaiaAssociationToken
+      ]
+      guard let address = Keys.getAddressFromPublicKey(iss),
+            let signedPayload = JSONTokensJS().signToken(payload: payload, privateKey: challengeSignerHex) else {
+        completion(nil, NSError.create(description: "connectToGaiaHub: invalid signedPayload"))
+        return
+      }
+      let token = "v1:\(signedPayload)"
+
+      let config = GaiaConfig(URLPrefix: readURLPrefix, address: address, token: token, server: hubUrl)
       callback(config, nil)
     }
   }
