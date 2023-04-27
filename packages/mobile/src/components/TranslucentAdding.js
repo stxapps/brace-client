@@ -64,6 +64,12 @@ class TranslucentAdding extends React.PureComponent {
     const { type } = this.getAction();
 
     if (type === RENDER_ADDED || type === RENDER_IN_OTHER_PROCESSING) {
+      // Possible componentDidUpdate might be called several times
+      //   and race conditions occur.
+      //   1. componentDidUpdate for ADDING
+      //   2. getAction already sees link's status ADDED
+      //   3. componentDidUpdate for ADDED
+      if (this.timeoutId !== null) return;
       // Need to clear timeout!
       // Push app in background with BackHandler, js process is stopped
       //   and it will continue running when back to foreground
@@ -84,7 +90,7 @@ class TranslucentAdding extends React.PureComponent {
       this.removeListener = null;
     }
 
-    if (this.timeoutId) {
+    if (this.timeoutId !== null) {
       clearTimeout(this.timeoutId);
       this.timeoutId = null;
     }
