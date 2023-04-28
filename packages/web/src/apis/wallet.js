@@ -1,156 +1,128 @@
 import { SECP256K1Client } from 'jsontokens';
+import { parseZoneFile } from 'zone-file';
 import { makeDIDFromAddress } from '@stacks/auth/dist/esm'
 import {
-  generateSecretKey, generateWallet, getRootNode, deriveLegacyConfigPrivateKey,
-  fetchWalletConfig, deriveAccount, makeWalletConfig, updateWalletConfigWithApp,
-  getAppPrivateKey, getStxAddress,
+  generateSecretKey, generateWallet, getRootNode, deriveAccount, makeWalletConfig,
+  updateWalletConfigWithApp, getAppPrivateKey, getStxAddress,
 } from '@stacks/wallet-sdk/dist/esm';
-import {
-  DEFAULT_PROFILE, fetchAccountProfile,
-} from '@stacks/wallet-sdk/dist/esm/models/profile';
-import {
-  fetchLegacyWalletConfig,
-} from '@stacks/wallet-sdk/dist/esm/models/legacy-wallet-config';
+import { DEFAULT_PROFILE } from '@stacks/wallet-sdk/dist/esm/models/profile';
 import {
   getHubInfo, connectToGaiaHubWithConfig, makeGaiaAssociationToken,
 } from '@stacks/wallet-sdk/dist/esm/utils';
 import { TransactionVersion } from '@stacks/transactions/dist/esm';
 import {
-  getPublicKeyFromPrivate, publicKeyToAddress,
+  decryptContent, getPublicKeyFromPrivate, publicKeyToAddress,
 } from '@stacks/encryption/dist/esm';
 import { fetchPrivate } from '@stacks/common/dist/esm';
 
 const DEFAULT_PASSWORD = 'password';
-const DEFAULT_GAIA_HUB_URL = 'https://hub.blockstack.org';
-const DEFAULT_GAIA_HUB_READ_URL = 'https://gaia.blockstack.org/hub/';
+
+const BS_HUB_URL = 'https://hub.blockstack.org';
+const HR_HUB_URL = 'https://hub.hiro.so';
+const SD_HUB_URL = 'https://hub.stacksdrive.com';
 
 const N_ACCOUNTS = 10;
 
 const createAccount = async () => {
   const secretKey = generateSecretKey(256);
   const wallet = await generateWallet({ secretKey, password: DEFAULT_PASSWORD });
+
   return { secretKey, wallet };
 };
 
-const restoreConfigs = async (wallet, gaiaHubUrl) => {
-  const hubInfo = await getHubInfo(gaiaHubUrl);
+const getHubConfig = async (privateKey, hubUrl) => {
+  // if server down, throw error.
+  const hubInfo = await getHubInfo(hubUrl);
+  const hubConfig = connectToGaiaHubWithConfig({
+    hubInfo: hubInfo,
+    privateKey: privateKey,
+    gaiaHubUrl: hubUrl,
+  });
+
+  return hubConfig;
+};
+
+const _getWalletConfig = async (wallet, hubUrl) => {
+  const walletHubConfig = await getHubConfig(wallet.configPrivateKey, hubUrl);
+
+  // If server down, throw error. If 404, 403, not found, return null. Else throw error.
+  const { url_prefix, address } = walletHubConfig;
+  const url = `${url_prefix}${address}/wallet-config.json`;
+  const res = await fetchPrivate(url);
+  if (res.ok) {
+    const encrypted = await res.text();
+    const configJson = /** @type {string} */(await decryptContent(
+      encrypted, { privateKey: wallet.configPrivateKey }
+    ));
+    const walletConfig = JSON.parse(configJson);
+    return { walletConfig, walletHubConfig };
+  }
+  if ([403, 404].includes(res.status)) return { walletConfig: null, walletHubConfig };
+
+  throw new Error('Network error when fetching walletConfig');
+};
+
+const getWalletConfig = async (wallet) => {
+  let result = await _getWalletConfig(wallet, SD_HUB_URL);
+  if (result.walletConfig) return result;
+
+  const sdWalletHubConfig = result.walletHubConfig;
+
+  result = await _getWalletConfig(wallet, HR_HUB_URL);
+  if (result.walletConfig) return result;
+
+  result = await _getWalletConfig(wallet, BS_HUB_URL);
+  if (result.walletConfig) return result;
+
+  // if not found, walletHubConfig points to SD_HUB_URL for default in profile lookup.
+  return { walletConfig: null, walletHubConfig: sdWalletHubConfig };
+};
+
+const restoreWalletConfig = async (wallet) => {
   const rootNode = getRootNode(wallet);
-  const legacyGaiaConfig = connectToGaiaHubWithConfig({
-    hubInfo,
-    privateKey: deriveLegacyConfigPrivateKey(rootNode),
-    gaiaHubUrl,
-  });
-  const currentGaiaConfig = connectToGaiaHubWithConfig({
-    hubInfo,
-    privateKey: wallet.configPrivateKey,
-    gaiaHubUrl,
-  });
+  const salt = wallet.salt;
 
-  const [walletConfig, legacyWalletConfig] = await Promise.all([
-    fetchWalletConfig({ wallet, gaiaHubConfig: currentGaiaConfig }),
-    fetchLegacyWalletConfig({ wallet, gaiaHubConfig: legacyGaiaConfig }),
-  ]);
-
-  let walletConfigAccountsLength = 0;
-  if (walletConfig && walletConfig.accounts) {
-    walletConfigAccountsLength = walletConfig.accounts.length;
-  }
-  let walletConfigIdentitiesLength = 0;
-  if (legacyWalletConfig && legacyWalletConfig.identities) {
-    walletConfigIdentitiesLength = legacyWalletConfig.identities.length;
-  }
-  if (walletConfig && walletConfigAccountsLength >= walletConfigIdentitiesLength) {
+  const { walletConfig, walletHubConfig } = await getWalletConfig(wallet);
+  if (walletConfig && Array.isArray(walletConfig.accounts)) {
     const newAccounts = walletConfig.accounts.map((account, index) => {
       let existingAccount = wallet.accounts[index];
       if (!existingAccount) {
-        existingAccount = deriveAccount({
-          rootNode,
-          index,
-          salt: wallet.salt,
-        });
+        existingAccount = deriveAccount({ rootNode, index, salt });
       }
-      return {
-        ...existingAccount,
-        username: account.username,
-      };
+      return { ...existingAccount };
     });
 
     wallet = { ...wallet, accounts: newAccounts };
-    return { wallet, walletConfig, walletGaiaConfig: currentGaiaConfig };
   }
 
-  if (legacyWalletConfig) {
-    const newAccounts = legacyWalletConfig.identities.map((identity, index) => {
-      let existingAccount = wallet.accounts[index];
-      if (!existingAccount) {
-        existingAccount = deriveAccount({
-          rootNode,
-          index,
-          salt: wallet.salt,
-        });
-      }
-      return {
-        ...existingAccount,
-        username: identity.username,
-      };
-    });
+  return { wallet, walletConfig, walletHubConfig };
+};
 
-    wallet = { ...wallet, accounts: newAccounts };
+const getUsername = async (account) => {
+  const stxAddress = getStxAddress({
+    account, transactionVersion: TransactionVersion.Mainnet,
+  });
 
-    const meta = {};
-    if (legacyWalletConfig.hideWarningForReusingIdentity) {
-      meta.hideWarningForReusingIdentity = true;
-    }
-    const newConfig = {
-      accounts: legacyWalletConfig.identities.map(identity => ({
-        username: identity.username,
-        apps: identity.apps,
-      })),
-      meta,
-    };
-
-    return {
-      wallet,
-      walletConfig: newConfig,
-      walletGaiaConfig: currentGaiaConfig,
-      doUpdate: true,
-    };
+  // if server down, need to throw an error to get hubUrl correctly
+  const url = `https://api.hiro.so/v1/addresses/stacks/${stxAddress}`;
+  const res = await fetchPrivate(url);
+  if (res.ok) {
+    const json = await res.json();
+    if (Array.isArray(json.names) && json.names.length > 0) return json.names[0];
+    return null;
   }
 
-  return { wallet, walletGaiaConfig: currentGaiaConfig };
+  throw new Error('Network error when restoring username');
 };
 
 const restoreUsernames = async (wallet) => {
   for (let i = 0, j = wallet.accounts.length; i < j; i += N_ACCOUNTS) {
     const _accounts = wallet.accounts.slice(i, i + N_ACCOUNTS);
     await Promise.all(_accounts.map(async (account) => {
-      if (account.username) return;
-
-      const stxAddress = getStxAddress({
-        account, transactionVersion: TransactionVersion.Mainnet,
-      });
-      const nameUrl = `https://api.hiro.so/v1/addresses/stacks/${stxAddress}`;
-      const res = await fetchPrivate(nameUrl);
-      if (res.ok) {
-        const json = await res.json();
-        if (Array.isArray(json.names) && json.names.length > 0) {
-          account.username = json.names[0];
-        }
-      }
+      account.username = await getUsername(account);
     }));
   }
 
-  return wallet;
-};
-
-const restoreProfiles = async (wallet, gaiaHubReadUrl) => {
-  for (let i = 0, j = wallet.accounts.length; i < j; i += N_ACCOUNTS) {
-    const _accounts = wallet.accounts.slice(i, i + N_ACCOUNTS);
-    await Promise.all(_accounts.map(async (account) => {
-      const profile = await fetchAccountProfile({ account, gaiaHubUrl: gaiaHubReadUrl });
-      if (profile) account.profile = profile;
-    }));
-  }
   return wallet;
 };
 
@@ -165,13 +137,68 @@ const restoreAccount = async (secretKey) => {
     return { errMsg: 'Your Secret Key is invaid. Please check and try again.' };
   }
 
-  const walletData = await restoreConfigs(wallet, DEFAULT_GAIA_HUB_URL);
-  walletData.wallet = await restoreUsernames(walletData.wallet);
-  walletData.wallet = await restoreProfiles(
-    walletData.wallet, DEFAULT_GAIA_HUB_READ_URL
-  );
+  const walletData = await restoreWalletConfig(wallet);
+  if (walletData.wallet.accounts.length > 1) {
+    walletData.wallet = await restoreUsernames(walletData.wallet);
+  }
 
   return walletData;
+};
+
+const getProfileUrlFromZoneFile = async (name) => {
+  // if server down, need to throw an error to get hubUrl correctly
+  const url = `https://api.hiro.so/v1/names/${name}`;
+  const res = await fetchPrivate(url);
+  if (res.ok) {
+    const nameInfo = await res.json();
+    const zone = parseZoneFile(nameInfo.zonefile);
+    return zone.uri[0].target;
+  }
+  // should not happen as just get the username from the API
+  if (res.status === 404) return null;
+
+  throw new Error('Network error when getting profileUrl from zoneFile');
+};
+
+const getProfileUrl = async (account, hubReadUrl) => {
+  if (account.username) {
+    const url = await getProfileUrlFromZoneFile(account.username);
+    if (url) return { profileUrl: url, fromZoneFile: true };
+  }
+
+  const publicKey = getPublicKeyFromPrivate(account.dataPrivateKey);
+  const address = publicKeyToAddress(publicKey);
+
+  return { profileUrl: `${hubReadUrl}${address}/profile.json`, fromZoneFile: false };
+};
+
+const restoreProfile = async (account, walletHubConfig) => {
+  // Just create a new account, no profile for sure
+  if (!walletHubConfig) return null;
+
+  // If already done in restoreUsernames, there will be attr:username in account.
+  //   It can be null so need to use in.
+  if (!('username' in account)) account.username = await getUsername(account);
+
+  // If no username, default hubReadUrl to where found walletConfig
+  const hubReadUrl = walletHubConfig.url_prefix;
+  const { profileUrl, fromZoneFile } = await getProfileUrl(account, hubReadUrl);
+
+  const res = await fetchPrivate(profileUrl);
+  if (res.ok) {
+    try {
+      const json = await res.json();
+      const { decodedToken } = json[0];
+      return decodedToken.payload.claim;
+    } catch (error) {
+      return null;
+    }
+  } else if ([403, 404].includes(res.status)) {
+    if (fromZoneFile) throw new Error('Not found profile specified in the zone file');
+    return null;
+  }
+
+  throw new Error('Network error when restoring profile');
 };
 
 const doUseBefore = (walletConfig, appDomain, accountIndex = null) => {
@@ -190,33 +217,36 @@ const doUseBefore = (walletConfig, appDomain, accountIndex = null) => {
         }
       }
     }
-  } catch (error) { console.log('doUseBefore error: ', error); }
+  } catch (error) {
+    console.log('doUseBefore error:', error);
+  }
 
   return false;
 };
 
 const chooseAccount = async (walletData, appData, accountIndex) => {
-  const { wallet } = walletData;
+  // If create a new account, walletConfig and walletHubConfig are null.
+  // If restore account,
+  //   if found in one of three hubs, walletConfig and walletHubConfig are not null.
+  //   if not found, walletConfig is null and walletHubConfig points to SD_HUB_URL.
+  let { wallet, walletConfig, walletHubConfig } = walletData;
   const { domainName, appName, appIconUrl, appScopes } = appData;
 
   const account = wallet.accounts[accountIndex];
+  const profile = await restoreProfile(account, walletHubConfig);
 
+  // Update walletConfig only if
+  //   1. Create a new account
+  //   2. Not found in 3 hubs and no profile
+  //   3. Found in one of 3 hubs and do not use before
   if (
-    !walletData.walletConfig ||
-    !doUseBefore(walletData.walletConfig, domainName, accountIndex) ||
-    walletData.doUpdate
+    (!walletConfig && !walletHubConfig) ||
+    (!walletConfig && !profile) ||
+    (walletConfig && !doUseBefore(walletConfig, domainName, accountIndex))
   ) {
-    let walletConfig = walletData.walletConfig;
     if (!walletConfig) walletConfig = makeWalletConfig(wallet);
-
-    let walletGaiaConfig = walletData.walletGaiaConfig;
-    if (!walletGaiaConfig) {
-      const hubInfo = await getHubInfo(DEFAULT_GAIA_HUB_URL);
-      walletGaiaConfig = connectToGaiaHubWithConfig({
-        hubInfo,
-        privateKey: wallet.configPrivateKey,
-        gaiaHubUrl: DEFAULT_GAIA_HUB_URL,
-      });
+    if (!walletHubConfig) {
+      walletHubConfig = await getHubConfig(wallet.configPrivateKey, SD_HUB_URL);
     }
 
     await updateWalletConfigWithApp({
@@ -229,14 +259,12 @@ const chooseAccount = async (walletData, appData, accountIndex) => {
         appIcon: appIconUrl,
         name: appName,
       },
-      gaiaHubConfig: walletGaiaConfig,
+      gaiaHubConfig: walletHubConfig,
       walletConfig,
     });
   }
 
-  const profile = account.profile;
-
-  let gaiaUrl = DEFAULT_GAIA_HUB_URL;
+  let gaiaUrl = walletHubConfig.server;
   if (profile && profile.api && profile.api.gaiaHubUrl) {
     gaiaUrl = profile.api.gaiaHubUrl;
   }
