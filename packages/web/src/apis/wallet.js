@@ -56,10 +56,10 @@ const getHubConfig = (hubUrl, hubInfo, privateKey, associationToken) => {
   };
 };
 
-const _getWalletConfig = async (wallet, hubUrl) => {
+const _getWalletConfig = async (hubUrl, privateKey) => {
   // if server down, throw error.
   const hubInfo = await getHubInfo(hubUrl);
-  const walletHubConfig = getHubConfig(hubUrl, hubInfo, wallet.configPrivateKey, null);
+  const walletHubConfig = getHubConfig(hubUrl, hubInfo, privateKey, null);
 
   // If server down, throw error. If 404, 403, not found, return null. Else throw error.
   const { url_prefix, address } = walletHubConfig;
@@ -68,7 +68,7 @@ const _getWalletConfig = async (wallet, hubUrl) => {
   if (res.ok) {
     const encrypted = await res.text();
     const configJson = /** @type {string} */(await decryptContent(
-      encrypted, { privateKey: wallet.configPrivateKey }
+      encrypted, { privateKey }
     ));
     try {
       const walletConfig = JSON.parse(configJson);
@@ -85,18 +85,19 @@ const _getWalletConfig = async (wallet, hubUrl) => {
   throw new Error('Network error when fetching walletConfig');
 };
 
-const getWalletConfig = async (wallet) => {
+const getWalletConfig = async (privateKey) => {
   const wcResult = {};
 
-  const sdResult = await _getWalletConfig(wallet, SD_HUB_URL);
+  const sdResult = await _getWalletConfig(SD_HUB_URL, privateKey);
   wcResult.sdHubInfo = sdResult.hubInfo;
+  wcResult.sdWalletHubConfig = sdResult.walletHubConfig;
   if (sdResult.walletConfig) {
     wcResult.walletConfig = sdResult.walletConfig;
     wcResult.walletHubConfig = sdResult.walletHubConfig;
     return wcResult;
   }
 
-  const hrResult = await _getWalletConfig(wallet, HR_HUB_URL);
+  const hrResult = await _getWalletConfig(HR_HUB_URL, privateKey);
   wcResult.hrHubInfo = hrResult.hubInfo;
   if (hrResult.walletConfig) {
     wcResult.walletConfig = hrResult.walletConfig;
@@ -104,7 +105,7 @@ const getWalletConfig = async (wallet) => {
     return wcResult;
   }
 
-  const bsResult = await _getWalletConfig(wallet, BS_HUB_URL);
+  const bsResult = await _getWalletConfig(BS_HUB_URL, privateKey);
   wcResult.bsHubInfo = bsResult.hubInfo;
   if (bsResult.walletConfig) {
     wcResult.walletConfig = bsResult.walletConfig;
@@ -118,11 +119,13 @@ const getWalletConfig = async (wallet) => {
   return wcResult;
 };
 
-const restoreWalletConfig = async (wallet) => {
+const restoreWalletConfig = async (walletData) => {
+  const { wallet } = walletData;
+
   const rootNode = getRootNode(wallet);
   const salt = wallet.salt;
 
-  const wcResult = await getWalletConfig(wallet);
+  const wcResult = await getWalletConfig(wallet.configPrivateKey);
   if (wcResult.walletConfig && Array.isArray(wcResult.walletConfig.accounts)) {
     const newAccounts = wcResult.walletConfig.accounts.map((account, index) => {
       let existingAccount = wallet.accounts[index];
@@ -132,10 +135,10 @@ const restoreWalletConfig = async (wallet) => {
       return { ...existingAccount };
     });
 
-    wallet = { ...wallet, accounts: newAccounts };
+    wallet.accounts = newAccounts;
   }
 
-  return { ...wcResult, wallet };
+  for (const k in wcResult) walletData[k] = wcResult[k];
 };
 
 const getUsername = async (account) => {
@@ -175,7 +178,9 @@ const restoreAccount = async (secretKey) => {
     return { errMsg: 'Your Secret Key is invaid. Please check and try again.' };
   }
 
-  const walletData = await restoreWalletConfig(wallet);
+  const walletData = { wallet };
+  await restoreWalletConfig(walletData);
+
   if (walletData.wallet.accounts.length > 1) {
     await restoreUsernames(walletData.wallet.accounts);
   }
@@ -238,75 +243,6 @@ const restoreProfile = async (account, fromCreateAccount, walletHubConfig) => {
   }
 
   throw new Error('Network error when restoring profile');
-};
-
-const doUseBefore = (walletConfig, appDomain, accountIndex = null) => {
-  if (!walletConfig) return false;
-
-  try {
-    if (accountIndex) {
-      const acc = walletConfig.accounts[accountIndex];
-      for (const k in acc.apps) {
-        if (k === appDomain) return true;
-      }
-    } else {
-      for (const acc of walletConfig.accounts) {
-        for (const k in acc.apps) {
-          if (k === appDomain) return true;
-        }
-      }
-    }
-  } catch (error) {
-    console.log('doUseBefore error:', error);
-  }
-
-  return false;
-};
-
-const updateWalletConfig = async (walletData, appData, account, accountIndex) => {
-  const { wallet, fromCreateAccount } = walletData;
-  const { domainName, appName, appIconUrl, appScopes } = appData;
-
-  let { walletConfig, walletHubConfig, sdHubInfo } = walletData;
-
-  // Update walletConfig only if
-  //   1. Create a new account
-  //   2. Not found in 3 hubs and no profile
-  //   3. Found in one of 3 hubs and do not use before
-  if (
-    fromCreateAccount ||
-    (!walletConfig && !account.profile) ||
-    (walletConfig && !doUseBefore(walletConfig, domainName, accountIndex))
-  ) {
-    if (!walletConfig) {
-      walletConfig = makeWalletConfig(wallet);
-      walletData.walletConfig = walletConfig;
-    }
-    if (!walletHubConfig) {
-      if (!sdHubInfo) {
-        sdHubInfo = await getHubInfo(SD_HUB_URL);
-        walletData.sdHubInfo = sdHubInfo;
-      }
-      walletHubConfig = getHubConfig(
-        SD_HUB_URL, sdHubInfo, wallet.configPrivateKey, null
-      );
-      walletData.walletHubConfig = walletHubConfig;
-    }
-
-    await updateWalletConfigWithApp({
-      wallet,
-      account,
-      app: {
-        origin: domainName,
-        scopes: appScopes,
-        lastLoginAt: new Date().getTime(),
-        appIcon: appIconUrl,
-        name: appName,
-      },
-      gaiaHubConfig: walletHubConfig,
-      walletConfig,
-    });
-  }
 };
 
 const isUsingHub = async (hubConfig) => {
@@ -428,6 +364,82 @@ const getUsingHubUrl = async (walletData, profile, appPrivateKey, associationTok
   return SD_HUB_URL;
 };
 
+const doUseBefore = (walletConfig, appDomain, accountIndex = null) => {
+  if (!walletConfig) return false;
+
+  try {
+    if (accountIndex) {
+      const acc = walletConfig.accounts[accountIndex];
+      for (const k in acc.apps) {
+        if (k === appDomain) return true;
+      }
+    } else {
+      for (const acc of walletConfig.accounts) {
+        for (const k in acc.apps) {
+          if (k === appDomain) return true;
+        }
+      }
+    }
+  } catch (error) {
+    console.log('doUseBefore error:', error);
+  }
+
+  return false;
+};
+
+const updateWalletConfig = async (
+  walletData, appData, account, accountIndex, hubUrl
+) => {
+  const { wallet, fromCreateAccount } = walletData;
+  const { domainName, appName, appIconUrl, appScopes } = appData;
+
+  let { walletConfig, walletHubConfig, sdHubInfo, sdWalletHubConfig } = walletData;
+
+  // Update walletConfig only if
+  //   1. Create a new account
+  //   2. Not found in 3 hubs
+  //   3. Use StacksDrive hub but not found walletConfig in it
+  //   4. Found in one of 3 hubs and do not use before
+  const noSdWalletConfig = (
+    walletHubConfig && walletHubConfig.server !== SD_HUB_URL && hubUrl === SD_HUB_URL
+  );
+  const didUse = doUseBefore(walletConfig, domainName, accountIndex);
+  if (fromCreateAccount || !walletConfig || noSdWalletConfig || !didUse) {
+    if (!walletConfig) {
+      walletConfig = makeWalletConfig(wallet);
+      walletData.walletConfig = walletConfig;
+    }
+    if (!walletHubConfig || noSdWalletConfig) {
+      if (!sdHubInfo) {
+        sdHubInfo = await getHubInfo(SD_HUB_URL);
+        walletData.sdHubInfo = sdHubInfo;
+      }
+      if (!sdWalletHubConfig) {
+        sdWalletHubConfig = getHubConfig(
+          SD_HUB_URL, sdHubInfo, wallet.configPrivateKey, null
+        );
+        walletData.sdWalletHubConfig = sdWalletHubConfig;
+      }
+      walletHubConfig = sdWalletHubConfig;
+      walletData.walletHubConfig = walletHubConfig;
+    }
+
+    await updateWalletConfigWithApp({
+      wallet,
+      account,
+      app: {
+        origin: domainName,
+        scopes: appScopes,
+        lastLoginAt: new Date().getTime(),
+        appIcon: appIconUrl,
+        name: appName,
+      },
+      gaiaHubConfig: walletHubConfig,
+      walletConfig,
+    });
+  }
+};
+
 const chooseAccount = async (walletData, appData, accountIndex) => {
   // If create a new account, walletConfig and walletHubConfig are null.
   // If restore account,
@@ -450,11 +462,11 @@ const chooseAccount = async (walletData, appData, accountIndex) => {
     childPublicKeyHex: compressedAppPublicKey,
   });
 
-  await updateWalletConfig(walletData, appData, account, accountIndex);
-
   const hubUrl = await getUsingHubUrl(
     walletData, account.profile, appPrivateKey, associationToken,
   );
+
+  await updateWalletConfig(walletData, appData, account, accountIndex, hubUrl);
 
   const userData = {
     username: account.username || '',
