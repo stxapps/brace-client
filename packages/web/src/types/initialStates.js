@@ -54,3 +54,10 @@ export const initialListNameEditorState = {
   focusCount: 0,
   blurCount: 0,
 };
+
+export const initialMigrateHubState = {
+  hubUrl: null,
+  hubUrlInProfile: false,
+  didWarn: false,
+  progress: null,
+};

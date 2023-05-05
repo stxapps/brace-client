@@ -8,6 +8,7 @@ import { LexoRank } from '@wewatch/lexorank';
 import userSession from '../userSession';
 import axios from '../axiosWrapper';
 import iapApi from '../paddleWrapper';
+import mhApi from '../apis/migrateHub';
 import dataApi from '../apis/blockstack';
 import serverApi from '../apis/server';
 import fileApi from '../apis/localFile';
@@ -51,6 +52,7 @@ import {
   CLEAN_UP_STATIC_FILES_COMMIT, CLEAN_UP_STATIC_FILES_ROLLBACK, UPDATE_PAYWALL_FEATURE,
   UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
   UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
+  UPDATE_MIGRATE_HUB_STATE,
 } from '../types/actionTypes';
 import {
   BACK_DECIDER, BACK_POPUP, ALL, HASH_BACK, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP,
@@ -216,10 +218,8 @@ const handlePendingSignIn = () => async (dispatch, getState) => {
 };
 
 const getPopupShownId = (state) => {
-
-  // No SettingsErrorPopup and PinErrorPopup in displayReducer
-  //   so no AccessErrorPopup here too.
-  //if (state.display.isAccessErrorPopupShown) return ACCESS_ERROR_POPUP;
+  // No need these popups here:
+  //   SettingsErrorPopup, PinErrorPopup, AccessErrorPopup, and MigrateHubPopup.
   if (state.display.isTimePickPopupShown) return TIME_PICK_POPUP;
   if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
   if (state.display.isConfirmDiscardPopupShown) return CONFIRM_DISCARD_POPUP;
@@ -1063,6 +1063,8 @@ export const runAfterFetchTask = () => async (dispatch, getState) => {
 export const randomHouseworkTasks = () => async (dispatch, getState) => {
   const now = Date.now();
   if (now - vars.randomHouseworkTasks.dt < 24 * 60 * 60 * 1000) return;
+
+  await checkObsoleteHub(dispatch, getState);
 
   const rand = Math.random();
   if (rand < 0.33) dispatch(deleteOldLinksInTrash());
@@ -2702,5 +2704,81 @@ export const cleanUpStaticFiles = () => async (dispatch, getState) => {
   } catch (error) {
     console.log('Error when clean up static files: ', error);
     dispatch({ type: CLEAN_UP_STATIC_FILES_ROLLBACK });
+  }
+};
+
+const checkObsoleteHub = async (dispatch, getState) => {
+  const userData = userSession.loadUserData();
+
+  const { hubUrl, profile } = userData;
+  if (!hubUrl.includes('hub.blockstack.org')) return;
+
+  const hubUrlInProfile = profile && profile.api && profile.api.gaiaHubUrl;
+  dispatch(updateMigrateHubState({ hubUrl, hubUrlInProfile }));
+};
+
+export const updateMigrateHubState = (data) => {
+  return { type: UPDATE_MIGRATE_HUB_STATE, payload: data };
+};
+
+export const updateMigrateHubProgress = (progress) => {
+  return { type: UPDATE_MIGRATE_HUB_STATE, payload: { progress } };
+};
+
+const _migrateHub = async (dispatch, getState) => {
+  let doneCount = 0;
+  dispatch(updateMigrateHubProgress({ total: 'calculating...', done: doneCount }));
+
+  const userData = userSession.loadUserData();
+  const sdHubConfig = await mhApi.createSdHubConfig(
+    userData.appPrivateKey, userData.gaiaAssociationToken
+  );
+
+  const fpaths = [], sdFPaths = [], ftdFPaths = [];
+  await serverApi.listFiles((fpath) => {
+    fpaths.push(fpath);
+    return true;
+  });
+  if (fpaths.length === 0) {
+    await mhApi.storeInfoFile(sdHubConfig, userData.appPrivateKey);
+    await mhApi.revokeAuth(userData.gaiaHubConfig);
+    dispatch(updateMigrateHubProgress({ total: 0, done: doneCount }));
+    return;
+  }
+
+  sdFPaths.push(...(await mhApi.listFiles(sdHubConfig)));
+
+  for (const fpath of fpaths) {
+    if (sdFPaths.includes(fpath)) continue;
+    ftdFPaths.push(fpath);
+  }
+
+  const total = ftdFPaths.length;
+  if (total > doneCount) {
+    dispatch(updateMigrateHubProgress({ total, done: doneCount }));
+  }
+
+  for (let i = 0; i < sdFPaths.length; i += N_LINKS) {
+    const _fpaths = sdFPaths.slice(i, N_LINKS);
+    await Promise.all(_fpaths.map(fpath => mhApi.migrateFile(
+      userData.gaiaHubConfig, sdHubConfig, fpath
+    )));
+
+    doneCount += _fpaths.length;
+    if (total > doneCount) {
+      dispatch(updateMigrateHubProgress({ total, done: doneCount }));
+    }
+  }
+
+  await mhApi.revokeAuth(userData.gaiaHubConfig);
+  dispatch(updateMigrateHubProgress({ total, done: doneCount }));
+};
+
+export const migrateHub = () => async (dispatch, getState) => {
+  try {
+    await _migrateHub(dispatch, getState);
+  } catch (error) {
+    dispatch(updateMigrateHubProgress({ total: -1, done: -1, error: `${error}` }));
+    return;
   }
 };

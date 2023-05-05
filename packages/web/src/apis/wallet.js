@@ -82,7 +82,7 @@ const _getWalletConfig = async (hubUrl, privateKey) => {
     return { walletConfig: null, walletHubConfig, hubInfo };
   }
 
-  throw new Error('Network error when fetching walletConfig');
+  throw new Error(`(_getWalletConfig) Error ${res.status}`);
 };
 
 const getWalletConfig = async (privateKey) => {
@@ -155,7 +155,7 @@ const getUsername = async (account) => {
     return null;
   }
 
-  throw new Error('Network error when restoring username');
+  throw new Error(`(getUsername) Error ${res.status}`);
 };
 
 const restoreUsernames = async (accounts) => {
@@ -200,7 +200,7 @@ const getProfileUrlFromZoneFile = async (name) => {
   // should not happen as just get the username from the API
   if (res.status === 404) return null;
 
-  throw new Error('Network error when getting profileUrl from zoneFile');
+  throw new Error(`(getProfileUrlFromZoneFile) Error ${res.status}`);
 };
 
 const getProfileUrl = async (account, hubReadUrl) => {
@@ -242,7 +242,7 @@ const restoreProfile = async (account, fromCreateAccount, walletHubConfig) => {
     return;
   }
 
-  throw new Error('Network error when restoring profile');
+  throw new Error(`(restoreProfile) Error ${res.status}`);
 };
 
 const isUsingHub = async (hubConfig) => {
@@ -263,12 +263,11 @@ const isUsingHub = async (hubConfig) => {
     return false;
   }
 
-  throw new Error('Network error when calling isUsingHub');
+  throw new Error(`(isUsingHub) Error ${res.status}`);
 };
 
 const storeInfoFile = async (hubConfig, privateKey) => {
-  const publicKey = getPublicKeyFromPrivate(privateKey);
-  const encryptedContent = await encryptContent(JSON.stringify({}), { publicKey });
+  const encryptedContent = await encryptContent(JSON.stringify({}), { privateKey });
 
   const addedDT = Date.now();
   const url = `${hubConfig.server}/store/${hubConfig.address}/info${addedDT}.json`;
@@ -287,7 +286,7 @@ const storeInfoFile = async (hubConfig, privateKey) => {
     return json;
   }
 
-  throw new Error('Network error when storing info file');
+  throw new Error(`(storeInfoFile) Error ${res.status}`);
 };
 
 const revokeAuth = async (hubConfig) => {
