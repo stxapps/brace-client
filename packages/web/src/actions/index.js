@@ -1064,7 +1064,8 @@ export const randomHouseworkTasks = () => async (dispatch, getState) => {
   const now = Date.now();
   if (now - vars.randomHouseworkTasks.dt < 24 * 60 * 60 * 1000) return;
 
-  await checkObsoleteHub(dispatch, getState);
+  //Disable migrate hub for now.
+  //await checkObsoleteHub(dispatch, getState);
 
   const rand = Math.random();
   if (rand < 0.33) dispatch(deleteOldLinksInTrash());
