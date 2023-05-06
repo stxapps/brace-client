@@ -100,20 +100,16 @@ const MigrateHubPopup = () => {
     return (
       <div className={tailwind('fixed inset-0 z-40 overflow-hidden')}>
         <div className={tailwind('flex items-center justify-center p-4')} style={{ minHeight: safeAreaHeight }}>
-          <div className={tailwind('fixed inset-0')}>
-            <div className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} />
-          </div>
-          <div className={tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl blk:bg-gray-800 blk:ring-1 blk:ring-white blk:ring-opacity-25')}>
-            <div className={tailwind('relative flex flex-col overflow-hidden')} style={{ height: panelHeight }}>
-              <div ref={scrollView} className={tailwind('relative flex-1 overflow-y-auto overflow-x-hidden px-4 sm:px-6')}>
-                {content}
-                <div className={tailwind('absolute top-0 right-0 p-1')}>
-                  <button onClick={onCloseBtnClick} className={tailwind('group flex h-7 w-7 items-center justify-center focus:outline-none')} aria-label="Close sign up popup">
-                    <svg className={tailwind('h-5 w-5 rounded text-gray-400 group-hover:text-gray-500 group-focus:ring blk:text-gray-500 blk:group-hover:text-gray-400')} stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
+          <div className={tailwind('fixed inset-0 bg-black bg-opacity-25')} />
+          <div className={tailwind('relative w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl blk:bg-gray-800 blk:ring-1 blk:ring-white blk:ring-opacity-25')}>
+            <div ref={scrollView} className={tailwind('relative overflow-y-auto overflow-x-hidden px-4 sm:px-6')} style={{ height: panelHeight }}>
+              {content}
+              <div className={tailwind('absolute top-0 right-0 p-1')}>
+                <button onClick={onCloseBtnClick} className={tailwind('group flex h-7 w-7 items-center justify-center focus:outline-none')} aria-label="Close sign up popup">
+                  <svg className={tailwind('h-5 w-5 rounded text-gray-400 group-hover:text-gray-500 group-focus:ring blk:text-gray-500 blk:group-hover:text-gray-400')} stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
@@ -150,7 +146,7 @@ const MigrateHubPopup = () => {
             <svg className={tailwind('w-5 flex-shrink-0 flex-grow-0 text-green-500 blk:text-green-400')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.7071 8.70711C14.0976 8.31658 14.0976 7.68342 13.7071 7.29289C13.3166 6.90237 12.6834 6.90237 12.2929 7.29289L9 10.5858L7.70711 9.29289C7.31658 8.90237 6.68342 8.90237 6.29289 9.29289C5.90237 9.68342 5.90237 10.3166 6.29289 10.7071L8.29289 12.7071C8.68342 13.0976 9.31658 13.0976 9.70711 12.7071L13.7071 8.70711Z" />
             </svg>
-            <p className={tailwind('ml-1 flex-shrink flex-grow text-base text-gray-500 blk:text-gray-400')}>Finish. Please <button onClick={onSignOutBtnClick} className={tailwind('underline rounded-md hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-300')}>Sign out</button>.</p>
+            <p className={tailwind('ml-1 flex-shrink flex-grow text-base text-gray-500 blk:text-gray-400')}>Finish. Please <button onClick={onSignOutBtnClick} className={tailwind('rounded-md underline hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-300')}>Sign out</button>.</p>
           </div>
         </div>
       );
@@ -172,7 +168,7 @@ const MigrateHubPopup = () => {
       <React.Fragment>
         <h3 className={tailwind('mt-8 text-left text-xl font-medium leading-none text-gray-800 blk:text-gray-100')}>Data Migration</h3>
         <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>As our current data server will be out of service soon, all your data is needed to migrate to our new data server. Please start the migration by clicking the button below and wait until it finishes.</p>
-        <ul className={tailwind('list-inside list-disc mt-3 pl-2 text-base text-gray-500 blk:text-gray-400')}>
+        <ul className={tailwind('mt-3 list-inside list-disc pl-2 text-base text-gray-500 blk:text-gray-400')}>
           <li>It may take several minutes.</li>
           <li className={tailwind('mt-1')}>You need to sign out and sign back in after it finishes.</li>
           <li className={tailwind('mt-1')}>Also, you need to sign in again on your other devices.</li>

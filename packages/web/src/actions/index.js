@@ -2758,8 +2758,8 @@ const _migrateHub = async (dispatch, getState) => {
     dispatch(updateMigrateHubProgress({ total, done: doneCount }));
   }
 
-  for (let i = 0; i < sdFPaths.length; i += N_LINKS) {
-    const _fpaths = sdFPaths.slice(i, N_LINKS);
+  for (let i = 0, j = ftdFPaths.length; i < j; i += N_LINKS) {
+    const _fpaths = ftdFPaths.slice(i, i + N_LINKS);
     await Promise.all(_fpaths.map(fpath => mhApi.migrateFile(
       userData.gaiaHubConfig, sdHubConfig, fpath
     )));

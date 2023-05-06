@@ -40,7 +40,7 @@ const listFiles = async (hubConfig) => {
 };
 
 const migrateFile = async (fromHubConfig, toHubConfig, fpath) => {
-  const readUrl = `${fromHubConfig.url_prefix}${fpath}`;
+  const readUrl = `${fromHubConfig.url_prefix}${fromHubConfig.address}/${fpath}`;
   const readRes = await fetchPrivate(readUrl);
   if (!readRes.ok) throw new Error(`(migrateFile) Read error ${readRes.status}`);
 
@@ -50,13 +50,15 @@ const migrateFile = async (fromHubConfig, toHubConfig, fpath) => {
   };
   if (contentType) headers['Content-Type'] = contentType;
 
+  const content = await readRes.blob();
+
   const writeUrl = `${toHubConfig.server}/store/${toHubConfig.address}/${fpath}`;
   const writeRes = await fetchPrivate(writeUrl, {
     method: 'POST',
     mode: 'cors',
     cache: 'no-cache',
     headers: headers,
-    body: readRes.body,
+    body: content,
   });
   if (!writeRes.ok) throw new Error(`(migrateFile) Write error ${writeRes.status}`);
 };
