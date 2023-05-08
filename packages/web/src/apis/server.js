@@ -78,7 +78,11 @@ const deleteFiles = async (fpaths) => {
 
 const listFiles = (callback) => {
   const storage = new Storage({ userSession: _userSession });
-  return storage.listFiles(callback);
+  return storage.listFiles((fpath) => {
+    // A bug in Gaia hub, fpath for revocation is also included!
+    if (fpath === 'auth/authTimestamp') return true;
+    return callback(fpath);
+  });
 };
 
 const server = {

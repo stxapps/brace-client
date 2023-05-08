@@ -79,7 +79,11 @@ const deleteFiles = async (fpaths) => {
 
 const listFiles = async (callback) => {
   const { files, fileCount } = await RNBlockstackSdk.listFiles();
-  files.forEach(file => callback(file));
+  for (const fpath of files) {
+    // A bug in Gaia hub, fpath for revocation is also included!
+    if (fpath === 'auth/authTimestamp') continue;
+    callback(fpath);
+  }
   return fileCount;
 };
 

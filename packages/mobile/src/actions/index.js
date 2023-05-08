@@ -1,4 +1,6 @@
-import { Linking, AppState, Platform, Appearance, Alert } from 'react-native';
+import {
+  Linking, AppState, Platform, Appearance, Share, Alert, PermissionsAndroid,
+} from 'react-native';
 import {
   RESET_STATE as OFFLINE_RESET_STATE,
 } from '@redux-offline/redux-offline/lib/constants';
@@ -6,6 +8,7 @@ import {
 import * as iapApi from 'react-native-iap';
 import { LexoRank } from '@wewatch/lexorank';
 import { is24HourFormat } from 'react-native-device-time-format';
+import { FileSystem, Dirs } from 'react-native-file-access';
 
 import userSession from '../userSession';
 import axios from '../axiosWrapper';
@@ -58,12 +61,12 @@ import {
   CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP,
   SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, DISCARD_ACTION_UPDATE_LIST_NAME, ID,
   STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK, MY_LIST, TRASH, N_LINKS,
-  N_DAYS, CD_ROOT, SETTINGS, ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING,
-  DIED_DELETING, DIED_UPDATING, BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT,
-  EXTRACT_EXCEEDING_N_URLS, IAP_VERIFY_URL, IAP_STATUS_URL, APPSTORE, PLAYSTORE,
-  COM_BRACEDOTTO, COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID,
-  UNKNOWN, ERROR, ACTIVE, SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE,
-  FEATURE_PIN, FEATURE_APPEARANCE, FEATURE_CUSTOM,
+  N_DAYS, CD_ROOT, IMAGES, SETTINGS, INFO, ADDED, DIED_ADDING, DIED_MOVING,
+  DIED_REMOVING, DIED_DELETING, DIED_UPDATING, BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL,
+  EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, IAP_VERIFY_URL, IAP_STATUS_URL, APPSTORE,
+  PLAYSTORE, COM_BRACEDOTTO, COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID,
+  INVALID, UNKNOWN, ERROR, ACTIVE, SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE,
+  CUSTOM_MODE, FEATURE_PIN, FEATURE_APPEARANCE, FEATURE_CUSTOM, UTF8,
 } from '../types/const';
 import {
   isEqual, isString, isObject, isNumber, sleep, randomString, rerandomRandomTerm,
@@ -74,6 +77,7 @@ import {
   createSettingsFPath, getLastSettingsFPaths, extractPinFPath, getSortedLinks,
   getPinFPaths, getPins, separatePinnedValues, sortLinks, sortWithPins, getRawPins,
   getFormattedTime, get24HFormattedTime, extractStaticFPath, getEditingListNameEditors,
+  batchGetFileWithRetry,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -1310,8 +1314,138 @@ export const updateImportAllDataProgress = (progress) => {
   };
 };
 
+const exportAllDataLoop = async (dispatch, fpaths, total, doneCount) => {
+  const successData = [], errorData = [];
+  for (let i = 0; i < fpaths.length; i += N_LINKS) {
+    const selectedFPaths = fpaths.slice(i, i + N_LINKS);
+    const responses = await batchGetFileWithRetry(
+      serverApi.getFile, selectedFPaths, 0, true
+    );
+    for (const response of responses) {
+      if (response.success) {
+        successData.push({ path: response.fpath, data: response.content });
+      } else {
+        errorData.push(response);
+      }
+    }
+
+    doneCount += selectedFPaths.length;
+    if (doneCount < total || errorData.length === 0) {
+      dispatch(updateExportAllDataProgress({ total, done: doneCount }));
+    }
+  }
+
+  return { successData, errorData };
+};
+
 export const exportAllData = () => async (dispatch, getState) => {
-  // Do nothing on mobile. This is for web.
+  let doneCount = 0;
+  dispatch(updateExportAllDataProgress({ total: 'calculating...', done: doneCount }));
+
+  const fpaths = [], settingsFPaths = [];
+  try {
+    await serverApi.listFiles((fpath) => {
+      if (vars.platform.isReactNative && fpath.startsWith(IMAGES)) {
+        fpaths.push('file://' + fpath);
+        return true;
+      }
+
+      if (fpath.startsWith(SETTINGS)) settingsFPaths.push(fpath);
+      else if (fpath.startsWith(INFO)) return true;
+      else fpaths.push(fpath);
+      return true;
+    });
+  } catch (error) {
+    dispatch(updateExportAllDataProgress({
+      total: -1,
+      done: -1,
+      error: `${error}`,
+    }));
+    return;
+  }
+
+  const { fpaths: lastSettingsFPaths } = getLastSettingsFPaths(settingsFPaths);
+  if (lastSettingsFPaths.length > 0) fpaths.push(lastSettingsFPaths[0]);
+
+  const total = fpaths.length;
+  dispatch(updateExportAllDataProgress({ total, done: doneCount }));
+
+  if (total === 0) return;
+
+  try {
+    const {
+      successData, errorData,
+    } = await exportAllDataLoop(dispatch, fpaths, total, doneCount);
+
+    // If use too much memory, try FileSystem.appendFile.
+    for (const item of successData) {
+      if (item.path.startsWith('file://')) {
+        const fpath = item.path.slice('file://'.length);
+        const content = await fileApi.getRealFile(fpath);
+        item.path = fpath;
+        item.data = `data:application/octet-stream;base64,${content}`;
+      }
+    }
+
+    const fileName = 'brace-data.txt';
+    await fileApi.putRealFile(
+      fileName, JSON.stringify(successData), Dirs.CacheDir, UTF8
+    );
+    const filePath = `${Dirs.CacheDir}/${fileName}`;
+
+    if (Platform.OS === 'ios') {
+      try {
+        const result = await Share.share({ url: 'file://' + filePath });
+        if (result.action === Share.sharedAction) {
+          let msg = 'exportAllData shared';
+          if (result.activityType) msg += ` with activity type: ${result.activityType}`;
+          console.log(msg);
+        } else if (result.action === Share.dismissedAction) {
+          console.log('exportAllData dismissed.');
+        }
+      } catch (error) {
+        Alert.alert('Exporting Data Error!', `Please wait a moment and try again. If the problem persists, please contact us.\n\n${error}`);
+      }
+    } else if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      );
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        Alert.alert(
+          'Permission denied',
+          'We don\'t have permission to save the exported data file in Downloads.\n\nPlease grant this permission in Settings -> Apps -> Permissions.',
+        );
+        return;
+      }
+
+      try {
+        await FileSystem.cpExternal(filePath, fileName, 'downloads');
+        Alert.alert(
+          'Export completed',
+          `The exported data file - ${fileName} - has been saved in Downloads.`,
+        );
+      } catch (error) {
+        Alert.alert('Exporting Data Error!', `Please wait a moment and try again. If the problem persists, please contact us.\n\n${error}`);
+      }
+    } else {
+      console.log('Invalid platform: ', Platform.OS);
+    }
+
+    if (errorData.length > 0) {
+      dispatch(updateExportAllDataProgress({
+        total: -1,
+        done: -1,
+        error: 'Some download requests failed. Data might be missing in the exported file.',
+      }));
+    }
+  } catch (error) {
+    dispatch(updateExportAllDataProgress({
+      total: -1,
+      done: -1,
+      error: `${error}`,
+    }));
+    return;
+  }
 };
 
 export const updateExportAllDataProgress = (progress) => {

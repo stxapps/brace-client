@@ -29,7 +29,8 @@ const listFiles = async (hubConfig) => {
 
     const json = await res.json();
     for (const entry of json.entries) {
-      if (entry) fpaths.push(entry);
+      // A bug in Gaia hub, fpath for revocation is also included!
+      if (entry && entry !== 'auth/authTimestamp') fpaths.push(entry);
     }
 
     if (!json.page) break;

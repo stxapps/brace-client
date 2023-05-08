@@ -1,6 +1,6 @@
 import { Dirs, FileSystem } from 'react-native-file-access';
 
-import { CD_ROOT, IMAGES } from '../types/const';
+import { CD_ROOT, IMAGES, BASE64 } from '../types/const';
 
 // getFile and putFile here just check if the file exists
 //   and return the file url!!!
@@ -140,9 +140,37 @@ const cp = async (source, fpath, dir = Dirs.DocumentDir) => {
   return cachedContent;
 };
 
+const getRealFile = async (fpath, dir = Dirs.DocumentDir, encoding = BASE64) => {
+  fpath = deriveFPath(fpath, dir);
+
+  let content; // If NotFound, return undefined.
+  try {
+    /* @ts-ignore */
+    content = await FileSystem.readFile(fpath, encoding);
+  } catch (error) {
+    console.log('In localFile.getRealFile, error:', error);
+  }
+
+  return content;
+};
+
+const putRealFile = async (
+  fpath, content, dir = Dirs.DocumentDir, encoding = BASE64
+) => {
+  fpath = deriveFPath(fpath, dir);
+
+  if (encoding === BASE64) {
+    const i = content.indexOf(',');
+    if (i >= 0) content = content.slice(i + 1);
+  }
+
+  /* @ts-ignore */
+  await FileSystem.writeFile(fpath, content, encoding);
+};
+
 const localFile = {
   getFile, getFiles, putFile, putFiles, deleteFile, deleteFiles, deleteAllFiles,
-  listKeys, exists, mkdir, cp,
+  listKeys, exists, mkdir, cp, getRealFile, putRealFile,
 };
 
 export default localFile;
