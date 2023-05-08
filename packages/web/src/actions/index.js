@@ -2708,7 +2708,7 @@ export const cleanUpStaticFiles = () => async (dispatch, getState) => {
   }
 };
 
-const checkObsoleteHub = async (dispatch, getState) => {
+export const checkObsoleteHub = async (dispatch, getState) => {
   const userData = userSession.loadUserData();
 
   const { hubUrl, profile } = userData;
