@@ -9,6 +9,9 @@ import * as iapApi from 'react-native-iap';
 import { LexoRank } from '@wewatch/lexorank';
 import { is24HourFormat } from 'react-native-device-time-format';
 import { FileSystem, Dirs } from 'react-native-file-access';
+import DocumentPicker, {
+  types as DocumentPickerTypes,
+} from 'react-native-document-picker';
 
 import userSession from '../userSession';
 import axios from '../axiosWrapper';
@@ -60,21 +63,23 @@ import {
   PROFILE_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP, PAYWALL_POPUP,
   CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP,
   SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, DISCARD_ACTION_UPDATE_LIST_NAME, ID,
-  STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK, MY_LIST, TRASH, N_LINKS,
-  N_DAYS, CD_ROOT, IMAGES, SETTINGS, INFO, ADDED, DIED_ADDING, DIED_MOVING,
-  DIED_REMOVING, DIED_DELETING, DIED_UPDATING, BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL,
-  EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, IAP_VERIFY_URL, IAP_STATUS_URL, APPSTORE,
-  PLAYSTORE, COM_BRACEDOTTO, COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID,
-  INVALID, UNKNOWN, ERROR, ACTIVE, SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE,
-  CUSTOM_MODE, FEATURE_PIN, FEATURE_APPEARANCE, FEATURE_CUSTOM, UTF8,
+  STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK, MY_LIST, TRASH, ARCHIVE,
+  N_LINKS, N_DAYS, CD_ROOT, LINKS, IMAGES, SETTINGS, INFO, PINS, DOT_JSON, BASE64,
+  ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING,
+  BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS,
+  IAP_VERIFY_URL, IAP_STATUS_URL, APPSTORE, PLAYSTORE, COM_BRACEDOTTO,
+  COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, UNKNOWN, ERROR, ACTIVE,
+  SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE, FEATURE_PIN,
+  FEATURE_APPEARANCE, FEATURE_CUSTOM, UTF8,
 } from '../types/const';
 import {
   isEqual, isString, isObject, isNumber, sleep, randomString, rerandomRandomTerm,
   deleteRemovedDT, getMainId, getLinkMainIds, getUrlFirstChar, separateUrlAndParam,
   getUserImageUrl, randomDecor, isOfflineActionWithPayload, shouldDispatchFetch,
-  getListNameObj, getAllListNames, getLatestPurchase, getValidPurchase,
-  doEnableExtraFeatures, createDataFName, getLinkFPaths, getStaticFPaths,
-  createSettingsFPath, getLastSettingsFPaths, extractPinFPath, getSortedLinks,
+  getListNameObj, getAllListNames, isDecorValid, isExtractedResultValid, isCustomValid,
+  isListNameObjsValid, getLatestPurchase, getValidPurchase, doEnableExtraFeatures,
+  createDataFName, createLinkFPath, getLinkFPaths, getStaticFPaths, createSettingsFPath,
+  getSettingsFPaths, getLastSettingsFPaths, extractPinFPath, getSortedLinks,
   getPinFPaths, getPins, separatePinnedValues, sortLinks, sortWithPins, getRawPins,
   getFormattedTime, get24HFormattedTime, extractStaticFPath, getEditingListNameEditors,
   batchGetFileWithRetry,
@@ -1303,8 +1308,332 @@ export const updatePaywallFeature = (feature) => {
   return { type: UPDATE_PAYWALL_FEATURE, payload: feature };
 };
 
+const importAllDataLoop = async (dispatch, fpaths, contents) => {
+  let total = fpaths.length, doneCount = 0;
+  dispatch(updateImportAllDataProgress({ total, done: doneCount }));
+
+  try {
+    for (let i = 0; i < fpaths.length; i += N_LINKS) {
+      const selectedFPaths = fpaths.slice(i, i + N_LINKS);
+      const selectedContents = contents.slice(i, i + N_LINKS);
+      await serverApi.putFiles(selectedFPaths, selectedContents);
+
+      doneCount += selectedFPaths.length;
+      dispatch(updateImportAllDataProgress({ total, done: doneCount }));
+
+      await sleep(1000); // Make it slow to not overwhelm the server
+    }
+  } catch (error) {
+    dispatch(updateImportAllDataProgress({
+      total: -1,
+      done: -1,
+      error: `${error}`,
+    }));
+
+    if (doneCount < total) {
+      let msg = 'There is an error while importing! Below are contents that have not been imported:\n';
+      for (let i = doneCount; i < fpaths.length; i++) {
+        const fpath = fpaths[i];
+        const [fname] = fpath.split('/').slice(-1);
+        if (fpath.startsWith(LINKS)) {
+          msg += '    • ' + contents[i].url + '\n';
+        }
+        if (fpath.startsWith(IMAGES)) {
+          msg += '    • Image of ' + fname + '\n';
+        }
+        if (fpath.startsWith(PINS)) {
+          msg += '    • Pin on ' + fname + '\n';
+        }
+        if (fpath.startsWith(SETTINGS)) {
+          msg += '    • Settings\n';
+        }
+      }
+      Alert.alert('Importing Data Error!', `${msg}\nPlease wait a moment and try again. If the problem persists, please contact us.\n\n${error}`);
+    }
+  }
+};
+
+const parseImportedFile = async (dispatch, settingsParentIds, text) => {
+
+  dispatch(updateImportAllDataProgress({ total: 'calculating...', done: 0 }));
+
+  // 3 formats: json, html, and plain text
+  const fpaths = [], contents = [], settingsParts = [];
+  try {
+    const json = JSON.parse(text);
+    if (Array.isArray(json)) {
+      for (const obj of json) {
+        if (
+          !obj.path ||
+          !isString(obj.path) ||
+          !(
+            obj.path.startsWith(LINKS) ||
+            obj.path.startsWith(IMAGES) ||
+            obj.path.startsWith(PINS) ||
+            obj.path.startsWith(SETTINGS)
+          )
+        ) continue;
+
+        if (!obj.data) continue;
+        if (obj.path.startsWith(IMAGES)) {
+          if (!isString(obj.data)) continue;
+        } else {
+          if (!isObject(obj.data)) continue;
+        }
+
+        if (obj.path.startsWith(LINKS)) {
+          if (
+            !('id' in obj.data && 'url' in obj.data && 'addedDT' in obj.data)
+          ) continue;
+
+          if (!(isString(obj.data.id) && isString(obj.data.url))) continue;
+          if (!isNumber(obj.data.addedDT)) continue;
+
+          const arr = obj.path.split('/');
+          if (arr.length !== 3) continue;
+          if (arr[0] !== LINKS) continue;
+
+          const listName = arr[1], fname = arr[2];
+          if (!fname.endsWith(DOT_JSON)) continue;
+
+          const id = fname.slice(0, -5);
+          if (id !== obj.data.id) continue;
+
+          const tokens = id.split('-');
+          if (listName === TRASH) {
+            if (tokens.length !== 4) continue;
+            if (!(/^\d+$/.test(tokens[0]) && /^\d+$/.test(tokens[3]))) continue;
+          } else {
+            if (tokens.length !== 3) continue;
+            if (!(/^\d+$/.test(tokens[0]))) continue;
+          }
+
+          if (!isDecorValid(obj.data)) {
+            obj.data.decor = randomDecor(getUrlFirstChar(obj.data.url));
+          }
+
+          if ('extractedResult' in obj.data) {
+            if (!isExtractedResultValid(obj.data)) {
+              obj.data = { ...obj.data };
+              delete obj.data.extractedResult;
+            }
+          }
+
+          if ('custom' in obj.data) {
+            if (!isCustomValid(obj.data)) {
+              obj.data = { ...obj.data };
+              delete obj.data.custom;
+            }
+          }
+        }
+
+        if (obj.path.startsWith(IMAGES)) {
+          const arr = obj.path.split('/');
+          if (arr.length !== 2) continue;
+
+          if (!obj.data.startsWith('data:')) continue;
+
+          const i = obj.data.indexOf(',');
+          if (i === -1) continue;
+          if (!obj.data.slice(0, i).includes(BASE64)) continue;
+
+          await fileApi.putRealFile(obj.path, obj.data);
+          obj.path = 'file://' + obj.path;
+          obj.data = '';
+        }
+
+        if (obj.path.startsWith(PINS)) {
+          const arr = obj.path.split('/');
+          if (arr.length !== 5) continue;
+          if (arr[0] !== PINS) continue;
+
+          const updatedDT = arr[2], addedDT = arr[3], fname = arr[4];
+          if (!(/^\d+$/.test(updatedDT))) continue;
+          if (!(/^\d+$/.test(addedDT))) continue;
+          if (!fname.endsWith(DOT_JSON)) continue;
+
+          const id = fname.slice(0, -5);
+          const tokens = id.split('-');
+          if (tokens.length !== 3) continue;
+          if (!(/^\d+$/.test(tokens[0]))) continue;
+        }
+
+        if (obj.path.startsWith(SETTINGS)) {
+          if (!obj.path.endsWith(DOT_JSON)) continue;
+
+          let dt = parseInt(obj.path.slice(SETTINGS.length, -1 * DOT_JSON.length), 10);
+          if (!isNumber(dt)) dt = 0;
+
+          const settings = { ...initialSettingsState };
+          if ([true, false].includes(obj.data.doExtractContents)) {
+            settings.doExtractContents = obj.data.doExtractContents;
+          }
+          if ([true, false].includes(obj.data.doDeleteOldLinksInTrash)) {
+            settings.doDeleteOldLinksInTrash = obj.data.doDeleteOldLinksInTrash;
+          }
+          if ([true, false].includes(obj.data.doDescendingOrder)) {
+            settings.doDescendingOrder = obj.data.doDescendingOrder;
+          }
+          if ('listNameMap' in obj.data && isListNameObjsValid(obj.data.listNameMap)) {
+            settings.listNameMap = obj.data.listNameMap;
+          }
+
+          settingsParts.push({ dt, content: settings });
+          continue;
+        }
+
+        fpaths.push(obj.path);
+        contents.push(obj.data);
+      }
+    }
+  } catch (error) {
+    console.log('parseImportedFile: JSON.parse error: ', error);
+
+    let listName = MY_LIST;
+    let now = Date.now();
+
+    if (text.includes('</a>') || text.includes('</A>')) {
+      let start, end;
+      for (const match of text.matchAll(/<h[^<]*<\/h|<a[^<]*<\/a>/gi)) {
+        const str = match[0];
+        if (str.toLowerCase().startsWith('<h')) {
+          start = str.indexOf('>');
+          if (start < 0) {
+            console.log(`Not found > from <h, str: ${str}`);
+            continue;
+          }
+          start += 1;
+
+          end = str.indexOf('<', start);
+          if (end < 0) {
+            console.log(`Not found < from <h, str: ${str}, start: ${start}`);
+            continue;
+          }
+
+          const value = str.slice(start, end);
+          if (value.toLowerCase().includes(ARCHIVE.toLowerCase())) listName = ARCHIVE;
+          else listName = MY_LIST;
+        }
+
+        if (str.toLowerCase().startsWith('<a')) {
+          start = str.toLowerCase().indexOf('href="');
+          if (start < 0) {
+            console.log(`Not found href= from <a, str: ${str}`);
+            continue;
+          }
+          start += 6;
+
+          end = str.indexOf('"', start);
+          if (end < 0) {
+            console.log(`Not found " from href, str: ${str}, start: ${start}`);
+            continue;
+          }
+
+          const url = str.slice(start, end);
+          if (url.length === 0) continue;
+
+          let addDate;
+          start = str.toLowerCase().indexOf('add_date="');
+          if (start > 0) start += 10;
+          else {
+            start = str.toLowerCase().indexOf('time_added="');
+            if (start > 0) start += 12;
+          }
+          if (start > 0) {
+            end = str.indexOf('"', start);
+            if (end < 0) {
+              console.log(`Not found " from add_date, str: ${str}, start: ${start}`);
+              continue;
+            }
+
+            addDate = str.slice(start, end);
+          }
+
+          let addedDT = now;
+          if (addDate && /^\d+$/.test(addDate)) {
+            if (addDate.length === 16) addDate = addDate.slice(0, 13);
+            if (addDate.length === 10) addDate = addDate + '000';
+            const dt = parseInt(addDate, 10);
+            if (isNumber(dt)) addedDT = dt;
+          }
+
+          const id = `${addedDT}-${randomString(4)}-${randomString(4)}`;
+          const decor = randomDecor(getUrlFirstChar(url));
+          const link = { id, url, addedDT, decor };
+          const fpath = createLinkFPath(listName, link.id);
+
+          fpaths.push(fpath);
+          contents.push(link);
+          now += 1;
+        }
+      }
+    } else {
+      for (const match of text.matchAll(
+        /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/gi
+      )) {
+        const url = match[0];
+        const addedDT = now;
+
+        const id = `${addedDT}-${randomString(4)}-${randomString(4)}`;
+        const decor = randomDecor(getUrlFirstChar(url));
+        const link = { id, url, addedDT, decor };
+        const fpath = createLinkFPath(listName, link.id);
+
+        fpaths.push(fpath);
+        contents.push(link);
+        now += 1;
+      }
+    }
+  }
+
+  let latestSettingsPart;
+  for (const settingsPart of settingsParts) {
+    if (!isObject(latestSettingsPart)) {
+      latestSettingsPart = settingsPart;
+      continue;
+    }
+    if (latestSettingsPart.dt < settingsPart.dt) latestSettingsPart = settingsPart;
+  }
+  if (isObject(latestSettingsPart)) {
+    const addedDT = Date.now();
+    const fname = createDataFName(`${addedDT}${randomString(4)}`, settingsParentIds);
+    fpaths.push(createSettingsFPath(fname));
+    contents.push(latestSettingsPart.content);
+  }
+
+  await importAllDataLoop(dispatch, fpaths, contents);
+};
+
+const _importAllData = async (dispatch, getState) => {
+  const settingsFPaths = getSettingsFPaths(getState());
+  const { ids: settingsParentIds } = getLastSettingsFPaths(settingsFPaths);
+
+  try {
+    const results = await DocumentPicker.pick({
+      type: DocumentPickerTypes.plainText,
+      copyTo: 'cachesDirectory',
+    });
+    const result = results[0];
+    if (!isObject(result) || !isString(result.fileCopyUri)) {
+      const error = result.copyError || '';
+      Alert.alert('Read file failed!', `Could not read content in the file. Please recheck your file.\n\n${error}`);
+      return;
+    }
+
+    const text = await FileSystem.readFile(result.fileCopyUri, UTF8);
+    await parseImportedFile(dispatch, settingsParentIds, text);
+  } catch (error) {
+    if (DocumentPicker.isCancel(error)) return;
+
+    Alert.alert('Read file failed!', `Could not read content in the file. Please recheck your file.\n\n${error}`);
+  }
+};
+
 export const importAllData = () => async (dispatch, getState) => {
-  // Do nothing on mobile. This is for web.
+  if (vars.importAllData.didPick) return;
+  vars.importAllData.didPick = true;
+  await _importAllData(dispatch, getState);
+  vars.importAllData.didPick = false;
 };
 
 export const updateImportAllDataProgress = (progress) => {

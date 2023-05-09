@@ -10,9 +10,10 @@ import { Circle } from 'react-native-animated-spinkit';
 import { updateSettingsPopup, updateSettingsViewId } from '../actions';
 import {
   SETTINGS_VIEW_ACCOUNT, SETTINGS_VIEW_IAP, SETTINGS_VIEW_IAP_RESTORE,
-  SETTINGS_VIEW_DATA, SETTINGS_VIEW_DATA_EXPORT, SETTINGS_VIEW_DATA_DELETE,
-  SETTINGS_VIEW_LISTS, SETTINGS_VIEW_MISC, SETTINGS_VIEW_ABOUT, DOMAIN_NAME,
-  HASH_SUPPORT, MD_WIDTH, LG_WIDTH, MERGING, DIED_MERGING, BLK_MODE,
+  SETTINGS_VIEW_DATA, SETTINGS_VIEW_DATA_IMPORT, SETTINGS_VIEW_DATA_EXPORT,
+  SETTINGS_VIEW_DATA_DELETE, SETTINGS_VIEW_LISTS, SETTINGS_VIEW_MISC,
+  SETTINGS_VIEW_ABOUT, DOMAIN_NAME, HASH_SUPPORT, MD_WIDTH, LG_WIDTH, MERGING,
+  DIED_MERGING, BLK_MODE,
 } from '../types/const';
 import { getThemeMode } from '../selectors';
 import cache from '../utils/cache';
@@ -23,7 +24,8 @@ import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 import SettingsPopupAccount from './SettingsPopupAccount';
 import { SettingsPopupIap, SettingsPopupIapRestore } from './SettingsPopupIap';
 import {
-  SettingsPopupData, SettingsPopupDataExport, SettingsPopupDataDelete,
+  SettingsPopupData, SettingsPopupDataImport, SettingsPopupDataExport,
+  SettingsPopupDataDelete,
 } from './SettingsPopupData';
 import SettingsPopupLists from './SettingsPopupLists';
 import SettingsPopupMisc from './SettingsPopupMisc';
@@ -34,6 +36,7 @@ const VIEW_ACCOUNT = SETTINGS_VIEW_ACCOUNT;
 const VIEW_IAP = SETTINGS_VIEW_IAP;
 const VIEW_IAP_RESTORE = SETTINGS_VIEW_IAP_RESTORE;
 const VIEW_DATA = SETTINGS_VIEW_DATA;
+const VIEW_DATA_IMPORT = SETTINGS_VIEW_DATA_IMPORT;
 const VIEW_DATA_EXPORT = SETTINGS_VIEW_DATA_EXPORT;
 const VIEW_DATA_DELETE = SETTINGS_VIEW_DATA_DELETE;
 const VIEW_LISTS = SETTINGS_VIEW_LISTS;
@@ -124,7 +127,7 @@ const SettingsPopup = () => {
   }, [shouldSetPanResponder, onPanResponderMove, onPanResponderRelease]);
 
   const isViewSelected = (refViewId) => {
-    const dataViews = [VIEW_DATA, VIEW_DATA_EXPORT, VIEW_DATA_DELETE];
+    const dataViews = [VIEW_DATA, VIEW_DATA_IMPORT, VIEW_DATA_EXPORT, VIEW_DATA_DELETE];
     if (refViewId === VIEW_DATA) {
       return dataViews.includes(viewId);
     }
@@ -177,6 +180,10 @@ const SettingsPopup = () => {
 
   const onBackToIapViewBtnClick = () => {
     dispatch(updateSettingsViewId(VIEW_IAP, false, null, true));
+  };
+
+  const onToImportAllDataViewBtnClick = () => {
+    dispatch(updateSettingsViewId(VIEW_DATA_IMPORT, null));
   };
 
   const onToExportAllDataViewBtnClick = () => {
@@ -499,7 +506,14 @@ const SettingsPopup = () => {
 
   const renderDataView = () => {
     const content = (
-      <SettingsPopupData onSidebarOpenBtnClick={onSidebarOpenBtnClick} onToExportAllDataViewBtnClick={onToExportAllDataViewBtnClick} onToDeleteAllDataViewBtnClick={onToDeleteAllDataViewBtnClick} />
+      <SettingsPopupData onSidebarOpenBtnClick={onSidebarOpenBtnClick} onToImportAllDataViewBtnClick={onToImportAllDataViewBtnClick} onToExportAllDataViewBtnClick={onToExportAllDataViewBtnClick} onToDeleteAllDataViewBtnClick={onToDeleteAllDataViewBtnClick} />
+    );
+    return _render(content);
+  };
+
+  const renderImportAllDataView = () => {
+    const content = (
+      <SettingsPopupDataImport onBackToDataViewBtnClick={onBackToDataViewBtnClick} />
     );
     return _render(content);
   };
@@ -609,6 +623,7 @@ const SettingsPopup = () => {
   else if (viewId === VIEW_IAP) return renderIapView();
   else if (viewId === VIEW_IAP_RESTORE) return renderRestoreIapView();
   else if (viewId === VIEW_DATA) return renderDataView();
+  else if (viewId === VIEW_DATA_IMPORT) return renderImportAllDataView();
   else if (viewId === VIEW_DATA_EXPORT) return renderExportAllDataView();
   else if (viewId === VIEW_DATA_DELETE) return renderDeleteAllDataView();
   else if (viewId === VIEW_LISTS) return renderListsView();

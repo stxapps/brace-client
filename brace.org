@@ -775,7 +775,7 @@ This and CI/CD are very important!
 - yarn add @welldone-software/why-did-you-render --dev
 - yarn add typescript@4.0.8 --dev
 - yarn add @types/react-native --dev
-- yarn add react-native-fs <-- NOT USING
+- yarn add react-native-file-access
 - yarn add react-native-iap@8.0.8 @wewatch/lexorank
 - yarn add https://github.com/stxapps/react-native-device-time-format#63f4a9158a91c391d67317a489ccfe8ec28a7c84
 - yarn add react-native-image-crop-picker
@@ -784,6 +784,7 @@ This and CI/CD are very important!
 - Set up Android deep linking: reactnative.dev/docs/linking and developer.android.com/training/app-links/deep-linking
 - npx react-native-asset to link assets i.e. fonts
   + medium.com/@mehrankhandev/ultimate-guide-to-use-custom-fonts-in-react-native-77fcdf859cf4
+- yarn add react-native-document-picker
 - ios
   + Edit PodFile: ios target 12.0, pod 'Blockstack'
   + In Xcode, Bracedotto General -> Target iOS 12.0
