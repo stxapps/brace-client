@@ -326,6 +326,8 @@ PODS:
   - react-native-blockstack (0.4.6):
     - Blockstack
     - React
+  - react-native-document-picker (8.2.0):
+    - React-Core
   - react-native-file-access (2.5.0):
     - React-Core
     - ZIPFoundation (= 0.9.11)
@@ -502,6 +504,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-blockstack (from `../node_modules/react-native-blockstack`)
+  - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - react-native-file-access (from `../node_modules/react-native-file-access`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-receive-sharing-intent (from `../node_modules/react-native-receive-sharing-intent`)
@@ -607,6 +610,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-blockstack:
     :path: "../node_modules/react-native-blockstack"
+  react-native-document-picker:
+    :path: "../node_modules/react-native-document-picker"
   react-native-file-access:
     :path: "../node_modules/react-native-file-access"
   react-native-netinfo:
@@ -710,6 +715,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 0553c9fe7218e1f127be070bd5a4d2fc19fb8190
   React-logger: cffcc09e8aba8a3014be8d18da7f922802e9f19e
   react-native-blockstack: a54aed35a241b7be1e735a334f9c644f6d9237fe
+  react-native-document-picker: 495c444c0c773c6e83a5d91165890ecb1c0a399a
   react-native-file-access: 204693d308701ba232dcf91facef05498fcde9a2
   react-native-netinfo: 6ac9bcc7c88dc51717bda3484eb99093acb755e0
   react-native-receive-sharing-intent: feba0a332a07977549a85aa58b496eb44368366a
