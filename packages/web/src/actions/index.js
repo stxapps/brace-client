@@ -1701,7 +1701,7 @@ const parseImportedFile = async (dispatch, settingsParentIds, text) => {
     contents.push(latestSettingsPart.content);
   }
 
-  importAllDataLoop(dispatch, fpaths, contents);
+  await importAllDataLoop(dispatch, fpaths, contents);
 };
 
 export const importAllData = () => async (dispatch, getState) => {
@@ -1772,6 +1772,11 @@ export const exportAllData = () => async (dispatch, getState) => {
   const fpaths = [], settingsFPaths = [];
   try {
     await serverApi.listFiles((fpath) => {
+      if (vars.platform.isReactNative && fpath.startsWith(IMAGES)) {
+        fpaths.push('file://' + fpath);
+        return true;
+      }
+
       if (fpath.startsWith(SETTINGS)) settingsFPaths.push(fpath);
       else if (fpath.startsWith(INFO)) return true;
       else fpaths.push(fpath);

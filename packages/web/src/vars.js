@@ -38,7 +38,12 @@ export const getCachedFPaths = () => {
   return cachedServerFPaths;
 };
 
+const importAllData = {
+  didPick: false,
+};
+
 const vars = {
   cachedServerFPaths, scrollPanel, fetch, randomHouseworkTasks, iap, platform,
+  importAllData,
 };
 export default vars;
