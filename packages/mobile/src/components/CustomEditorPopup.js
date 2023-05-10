@@ -189,7 +189,7 @@ const CustomEditorPopup = () => {
   else if (isObject(customEditor.image)) imageUrl = customEditor.image.path;
 
   return (
-    <View style={[tailwind('absolute inset-0 z-30 items-center justify-center shadow-lg'), canvasStyle]}>
+    <View style={[tailwind('absolute inset-0 z-30 items-center justify-center bg-transparent elevation-lg'), canvasStyle]}>
       {/* No cancel on background of CustomEditorPopup */}
       <TouchableWithoutFeedback>
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />

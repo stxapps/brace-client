@@ -41,7 +41,7 @@ const PinErrorPopup = () => {
   if (!haveDiedPins) return null;
 
   return (
-    <View style={tailwind('absolute inset-x-0 top-14 z-40 flex-row items-start justify-center bg-transparent shadow-xl md:top-0')}>
+    <View style={tailwind('absolute inset-x-0 top-14 z-40 flex-row items-start justify-center bg-transparent md:top-0 elevation-xl')}>
       <View style={tailwind('w-full max-w-md')}>
         <View style={tailwind('m-4 rounded-md bg-red-50 p-4 shadow-lg')}>
           <View style={tailwind('flex-row')}>

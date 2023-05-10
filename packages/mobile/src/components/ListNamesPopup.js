@@ -415,7 +415,7 @@ const ListNamesPopup = () => {
   const bgStyle = { opacity: popupAnim };
 
   return (
-    <View style={tailwind('absolute inset-0 z-40 bg-transparent shadow-xl')}>
+    <View style={tailwind('absolute inset-0 z-40 bg-transparent elevation-xl')}>
       <TouchableWithoutFeedback onPress={onCancelBtnClick}>
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>

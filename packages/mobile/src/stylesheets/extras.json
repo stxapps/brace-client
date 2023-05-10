@@ -107,7 +107,22 @@
     "elevation": 1.1
   },
   "elevation-xs": {
-    "elevation": 1
+    "elevation": 0.3
+  },
+  "elevation-sm": {
+    "elevation": 0.5
+  },
+  "elevation": {
+    "elevation": 1.5
+  },
+  "elevation-md": {
+    "elevation": 3
+  },
+  "elevation-lg": {
+    "elevation": 4
+  },
+  "elevation-xl": {
+    "elevation": 6
   },
   "w-auto": {
     "width": "auto"
