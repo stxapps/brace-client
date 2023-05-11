@@ -436,6 +436,8 @@ PODS:
     - React-Core
     - React-RCTImage
     - TOCropViewController
+  - RNShare (8.2.2):
+    - React-Core
   - RNSVG (13.4.0):
     - React-Core
   - SDWebImage (5.11.1):
@@ -530,6 +532,7 @@ DEPENDENCIES:
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - RNIap (from `../node_modules/react-native-iap`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
+  - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -662,6 +665,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-iap"
   RNImageCropPicker:
     :path: "../node_modules/react-native-image-crop-picker"
+  RNShare:
+    :path: "../node_modules/react-native-share"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   Yoga:
@@ -741,6 +746,7 @@ SPEC CHECKSUMS:
   RNFastImage: 3207b9eb17c2425d574ca40db35185db6e324f4e
   RNIap: bb56165cc68bfa269e2effd407d6ec0af63e796f
   RNImageCropPicker: 648356d68fbf9911a1016b3e3723885d28373eda
+  RNShare: d82e10f6b7677f4b0048c23709bd04098d5aee6c
   RNSVG: 07dbd870b0dcdecc99b3a202fa37c8ca163caec2
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d

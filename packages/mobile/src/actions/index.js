@@ -1,5 +1,5 @@
 import {
-  Linking, AppState, Platform, Appearance, Share, Alert, PermissionsAndroid,
+  Linking, AppState, Platform, Appearance, Alert, PermissionsAndroid,
 } from 'react-native';
 import {
   RESET_STATE as OFFLINE_RESET_STATE,
@@ -12,6 +12,7 @@ import { FileSystem, Dirs } from 'react-native-file-access';
 import DocumentPicker, {
   types as DocumentPickerTypes,
 } from 'react-native-document-picker';
+import Share from 'react-native-share';
 
 import userSession from '../userSession';
 import axios from '../axiosWrapper';
@@ -1733,15 +1734,20 @@ export const exportAllData = () => async (dispatch, getState) => {
 
     if (Platform.OS === 'ios') {
       try {
-        const result = await Share.share({ url: 'file://' + filePath });
-        if (result.action === Share.sharedAction) {
-          let msg = 'exportAllData shared';
-          if (result.activityType) msg += ` with activity type: ${result.activityType}`;
-          console.log(msg);
-        } else if (result.action === Share.dismissedAction) {
-          console.log('exportAllData dismissed.');
-        }
+        await Share.open({ url: 'file://' + filePath });
       } catch (error) {
+        console.log('error:', error);
+        if (isObject(error)) {
+          if (
+            isObject(error.error) &&
+            isString(error.error.message) &&
+            error.error.message.includes('The operation was cancelled')
+          ) return;
+          if (
+            isString(error.message) &&
+            error.message.includes('User did not share')
+          ) return;
+        }
         Alert.alert('Exporting Data Error!', `Please wait a moment and try again. If the problem persists, please contact us.\n\n${error}`);
       }
     } else if (Platform.OS === 'android') {

@@ -38,6 +38,7 @@
     "react-native-popup-menu": "^0.16.1",
     "react-native-receive-sharing-intent": "https://github.com/stxapps/react-native-receive-sharing-intent#c3acb5afdae0087aef58ad806e8208ef2f280f7e",
     "react-native-safe-area-context": "^4.4.1",
+    "react-native-share": "^8.2.2",
     "react-native-svg": "^13.4.0",
     "react-native-swiper": "^1.6.0",
     "react-native-webview": "^11.23.1",
