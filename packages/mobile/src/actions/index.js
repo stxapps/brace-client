@@ -1316,15 +1316,14 @@ const importAllDataLoop = async (dispatch, fpaths, contents) => {
   dispatch(updateImportAllDataProgress({ total, done: doneCount }));
 
   try {
-    for (let i = 0; i < fpaths.length; i += N_LINKS) {
-      const selectedFPaths = fpaths.slice(i, i + N_LINKS);
-      const selectedContents = contents.slice(i, i + N_LINKS);
+    for (let i = 0; i < fpaths.length; i += 1) {
+      // One at a time to not overwhelm the server
+      const selectedFPaths = fpaths.slice(i, i + 1);
+      const selectedContents = contents.slice(i, i + 1);
       await serverApi.putFiles(selectedFPaths, selectedContents);
 
       doneCount += selectedFPaths.length;
       dispatch(updateImportAllDataProgress({ total, done: doneCount }));
-
-      await sleep(1000); // Make it slow to not overwhelm the server
     }
   } catch (error) {
     dispatch(updateImportAllDataProgress({

@@ -69,13 +69,13 @@ import {
   PADDLE_RANDOM_ID,
 } from '../types/const';
 import {
-  isEqual, isString, isObject, isNumber, throttle, sleep, randomString,
-  rerandomRandomTerm, deleteRemovedDT, getMainId, getLinkMainIds, getUrlFirstChar,
-  separateUrlAndParam, extractUrl, getUserImageUrl, randomDecor,
-  isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
-  doOutboxContainMethods, isDecorValid, isExtractedResultValid, isCustomValid,
-  isListNameObjsValid, getLatestPurchase, getValidPurchase, doEnableExtraFeatures,
-  createDataFName, createLinkFPath, getLinkFPaths, getStaticFPaths, createSettingsFPath,
+  isEqual, isString, isObject, isNumber, throttle, randomString, rerandomRandomTerm,
+  deleteRemovedDT, getMainId, getLinkMainIds, getUrlFirstChar, separateUrlAndParam,
+  extractUrl, getUserImageUrl, randomDecor, isOfflineActionWithPayload,
+  shouldDispatchFetch, getListNameObj, getAllListNames, doOutboxContainMethods,
+  isDecorValid, isExtractedResultValid, isCustomValid, isListNameObjsValid,
+  getLatestPurchase, getValidPurchase, doEnableExtraFeatures, createDataFName,
+  createLinkFPath, getLinkFPaths, getStaticFPaths, createSettingsFPath,
   getSettingsFPaths, getLastSettingsFPaths, extractPinFPath, getSortedLinks,
   getPinFPaths, getPins, separatePinnedValues, sortLinks, sortWithPins, getRawPins,
   getFormattedTime, get24HFormattedTime, extractStaticFPath, getWindowSize,
@@ -1415,15 +1415,14 @@ const importAllDataLoop = async (dispatch, fpaths, contents) => {
   dispatch(updateImportAllDataProgress({ total, done: doneCount }));
 
   try {
-    for (let i = 0; i < fpaths.length; i += N_LINKS) {
-      const selectedFPaths = fpaths.slice(i, i + N_LINKS);
-      const selectedContents = contents.slice(i, i + N_LINKS);
+    for (let i = 0; i < fpaths.length; i += 1) {
+      // One at a time to not overwhelm the server
+      const selectedFPaths = fpaths.slice(i, i + 1);
+      const selectedContents = contents.slice(i, i + 1);
       await serverApi.putFiles(selectedFPaths, selectedContents);
 
       doneCount += selectedFPaths.length;
       dispatch(updateImportAllDataProgress({ total, done: doneCount }));
-
-      await sleep(1000); // Make it slow to not overwhelm the server
     }
   } catch (error) {
     dispatch(updateImportAllDataProgress({
