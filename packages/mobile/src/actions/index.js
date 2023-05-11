@@ -1672,6 +1672,57 @@ const exportAllDataLoop = async (dispatch, fpaths, total, doneCount) => {
   return { successData, errorData };
 };
 
+export const saveAs = async (fileName, filePath) => {
+  if (Platform.OS === 'ios') {
+    try {
+      await Share.open({ url: 'file://' + filePath });
+    } catch (error) {
+      if (isObject(error)) {
+        if (
+          isObject(error.error) &&
+          isString(error.error.message) &&
+          error.error.message.includes('The operation was cancelled')
+        ) return;
+        if (
+          isString(error.message) &&
+          error.message.includes('User did not share')
+        ) return;
+      }
+
+      Alert.alert('Exporting Data Error!', `Please wait a moment and try again. If the problem persists, please contact us.\n\n${error}`);
+    }
+
+    return;
+  }
+
+  if (Platform.OS === 'android') {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+    );
+    if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+      Alert.alert(
+        'Permission denied',
+        'We don\'t have permission to save the exported data file in Downloads.\n\nPlease grant this permission in Settings -> Apps -> Permissions.',
+      );
+      return;
+    }
+
+    try {
+      await FileSystem.cpExternal(filePath, fileName, 'downloads');
+      Alert.alert(
+        'Export completed',
+        `The exported data file - ${fileName} - has been saved in Downloads.`,
+      );
+    } catch (error) {
+      Alert.alert('Exporting Data Error!', `Please wait a moment and try again. If the problem persists, please contact us.\n\n${error}`);
+    }
+
+    return;
+  }
+
+  console.log('Invalid platform: ', Platform.OS);
+};
+
 export const exportAllData = () => async (dispatch, getState) => {
   let doneCount = 0;
   dispatch(updateExportAllDataProgress({ total: 'calculating...', done: doneCount }));
@@ -1731,49 +1782,7 @@ export const exportAllData = () => async (dispatch, getState) => {
       fileName, JSON.stringify(successData), Dirs.CacheDir, UTF8
     );
     const filePath = `${Dirs.CacheDir}/${fileName}`;
-
-    if (Platform.OS === 'ios') {
-      try {
-        await Share.open({ url: 'file://' + filePath });
-      } catch (error) {
-        console.log('error:', error);
-        if (isObject(error)) {
-          if (
-            isObject(error.error) &&
-            isString(error.error.message) &&
-            error.error.message.includes('The operation was cancelled')
-          ) return;
-          if (
-            isString(error.message) &&
-            error.message.includes('User did not share')
-          ) return;
-        }
-        Alert.alert('Exporting Data Error!', `Please wait a moment and try again. If the problem persists, please contact us.\n\n${error}`);
-      }
-    } else if (Platform.OS === 'android') {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      );
-      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-        Alert.alert(
-          'Permission denied',
-          'We don\'t have permission to save the exported data file in Downloads.\n\nPlease grant this permission in Settings -> Apps -> Permissions.',
-        );
-        return;
-      }
-
-      try {
-        await FileSystem.cpExternal(filePath, fileName, 'downloads');
-        Alert.alert(
-          'Export completed',
-          `The exported data file - ${fileName} - has been saved in Downloads.`,
-        );
-      } catch (error) {
-        Alert.alert('Exporting Data Error!', `Please wait a moment and try again. If the problem persists, please contact us.\n\n${error}`);
-      }
-    } else {
-      console.log('Invalid platform: ', Platform.OS);
-    }
+    await saveAs(fileName, filePath);
 
     if (errorData.length > 0) {
       dispatch(updateExportAllDataProgress({
