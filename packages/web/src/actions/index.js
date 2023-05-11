@@ -1791,8 +1791,14 @@ export const exportAllData = () => async (dispatch, getState) => {
     return;
   }
 
-  const { fpaths: lastSettingsFPaths } = getLastSettingsFPaths(settingsFPaths);
-  if (lastSettingsFPaths.length > 0) fpaths.push(lastSettingsFPaths[0]);
+  const lastSettingsFPaths = getLastSettingsFPaths(settingsFPaths);
+  if (lastSettingsFPaths.fpaths.length > 0) {
+    const lastSettingsFPath = lastSettingsFPaths.fpaths[0];
+    const { contents } = await serverApi.getFiles([lastSettingsFPath], true);
+    if (!isEqual(initialSettingsState, contents[0])) {
+      fpaths.push(lastSettingsFPath);
+    }
+  }
 
   const total = fpaths.length;
   dispatch(updateExportAllDataProgress({ total, done: doneCount }));
