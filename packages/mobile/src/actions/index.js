@@ -1324,6 +1324,8 @@ const importAllDataLoop = async (dispatch, fpaths, contents) => {
 
       doneCount += selectedFPaths.length;
       dispatch(updateImportAllDataProgress({ total, done: doneCount }));
+
+      await sleep(300);
     }
   } catch (error) {
     dispatch(updateImportAllDataProgress({

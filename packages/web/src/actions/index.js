@@ -69,13 +69,13 @@ import {
   PADDLE_RANDOM_ID,
 } from '../types/const';
 import {
-  isEqual, isString, isObject, isNumber, throttle, randomString, rerandomRandomTerm,
-  deleteRemovedDT, getMainId, getLinkMainIds, getUrlFirstChar, separateUrlAndParam,
-  extractUrl, getUserImageUrl, randomDecor, isOfflineActionWithPayload,
-  shouldDispatchFetch, getListNameObj, getAllListNames, doOutboxContainMethods,
-  isDecorValid, isExtractedResultValid, isCustomValid, isListNameObjsValid,
-  getLatestPurchase, getValidPurchase, doEnableExtraFeatures, createDataFName,
-  createLinkFPath, getLinkFPaths, getStaticFPaths, createSettingsFPath,
+  isEqual, isString, isObject, isNumber, throttle, sleep, randomString,
+  rerandomRandomTerm, deleteRemovedDT, getMainId, getLinkMainIds, getUrlFirstChar,
+  separateUrlAndParam, extractUrl, getUserImageUrl, randomDecor,
+  isOfflineActionWithPayload, shouldDispatchFetch, getListNameObj, getAllListNames,
+  doOutboxContainMethods, isDecorValid, isExtractedResultValid, isCustomValid,
+  isListNameObjsValid, getLatestPurchase, getValidPurchase, doEnableExtraFeatures,
+  createDataFName, createLinkFPath, getLinkFPaths, getStaticFPaths, createSettingsFPath,
   getSettingsFPaths, getLastSettingsFPaths, extractPinFPath, getSortedLinks,
   getPinFPaths, getPins, separatePinnedValues, sortLinks, sortWithPins, getRawPins,
   getFormattedTime, get24HFormattedTime, extractStaticFPath, getWindowSize,
@@ -1423,6 +1423,8 @@ const importAllDataLoop = async (dispatch, fpaths, contents) => {
 
       doneCount += selectedFPaths.length;
       dispatch(updateImportAllDataProgress({ total, done: doneCount }));
+
+      await sleep(300);
     }
   } catch (error) {
     dispatch(updateImportAllDataProgress({
