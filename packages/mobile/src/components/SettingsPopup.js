@@ -407,7 +407,7 @@ const SettingsPopup = () => {
     );
 
     return (
-      <View {...viewPanResponder.panHandlers} style={cache('SP_modal', [tailwind('absolute inset-0 z-30 bg-white shadow-lg blk:bg-gray-900'), modalStyle], [insets.top, insets.bottom, insets.left, insets.right, tailwind])}>
+      <View {...viewPanResponder.panHandlers} style={cache('SP_modal', [tailwind('absolute inset-0 z-30 bg-white blk:bg-gray-900 elevation-lg'), modalStyle], [insets.top, insets.bottom, insets.left, insets.right, tailwind])}>
         {_renderPanel(contentWithSidebar)}
         {_renderPanelCloseBtn()}
         {/* Sidebar for mobile */}
@@ -603,7 +603,7 @@ const SettingsPopup = () => {
       <SettingsPopupConflict />
     );
     return (
-      <View style={cache('SP_modal', [tailwind('absolute inset-0 z-30 bg-white shadow-lg blk:bg-gray-900'), modalStyle], [insets.top, insets.bottom, insets.left, insets.right, tailwind])}>
+      <View style={cache('SP_modal', [tailwind('absolute inset-0 z-30 bg-white blk:bg-gray-900 elevation-lg'), modalStyle], [insets.top, insets.bottom, insets.left, insets.right, tailwind])}>
         {_renderPanel(content)}
         {_renderConflictLoading()}
         {_renderConflictMergeError()}
