@@ -1672,7 +1672,7 @@ const exportAllDataLoop = async (dispatch, fpaths, total, doneCount) => {
   return { successData, errorData };
 };
 
-export const saveAs = async (fileName, filePath) => {
+export const saveAs = async (filePath, fileName) => {
   if (Platform.OS === 'ios') {
     try {
       await Share.open({ url: 'file://' + filePath });
@@ -1782,7 +1782,7 @@ export const exportAllData = () => async (dispatch, getState) => {
       fileName, JSON.stringify(successData), Dirs.CacheDir, UTF8
     );
     const filePath = `${Dirs.CacheDir}/${fileName}`;
-    await saveAs(fileName, filePath);
+    await saveAs(filePath, fileName);
 
     if (errorData.length > 0) {
       dispatch(updateExportAllDataProgress({
