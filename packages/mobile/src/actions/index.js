@@ -2083,10 +2083,10 @@ export const rehydrateStaticFiles = () => async (dispatch, getState) => {
 
 const _cleanUpStaticFiles = async (getState) => {
   const linkFPaths = getLinkFPaths(getState());
-  const staticFPaths = getStaticFPaths(getState());
+  const mainIds = getLinkMainIds(linkFPaths);
 
   // Delete unused static files in server
-  const mainIds = getLinkMainIds(linkFPaths);
+  let staticFPaths = getStaticFPaths(getState());
 
   let unusedIds = [], unusedFPaths = [];
   for (const fpath of staticFPaths) {
@@ -2098,14 +2098,18 @@ const _cleanUpStaticFiles = async (getState) => {
   }
   unusedFPaths = unusedFPaths.slice(0, N_LINKS);
 
-  await serverApi.deleteFiles(unusedFPaths);
-  await fileApi.deleteFiles(unusedFPaths);
+  if (unusedFPaths.length > 0) {
+    console.log('In cleanUpStaticFiles, found unused fpaths on server:', unusedFPaths);
+    // Too risky. Clean up locally for now.
+    //await serverApi.deleteFiles(unusedFPaths);
+    await fileApi.deleteFiles(unusedFPaths);
+  }
 
   // Delete unused static files in local
-  let localFPaths = await fileApi.listKeys();
+  staticFPaths = await fileApi.getStaticFPaths();
 
   unusedFPaths = [];
-  for (const fpath of localFPaths) {
+  for (const fpath of staticFPaths) {
     const { id } = extractStaticFPath(fpath);
     if (!mainIds.includes(getMainId(id))) {
       unusedIds.push(id);
@@ -2114,7 +2118,9 @@ const _cleanUpStaticFiles = async (getState) => {
   }
   unusedFPaths = unusedFPaths.slice(0, N_LINKS);
 
-  await fileApi.deleteFiles(unusedFPaths);
+  if (unusedFPaths.length > 0) {
+    await fileApi.deleteFiles(unusedFPaths);
+  }
 
   // If too many static files locally, delete some of them.
   // If 1 image is around 500 KB, with 500 MB limitation, we can store 1000 images,

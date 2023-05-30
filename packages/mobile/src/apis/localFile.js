@@ -95,29 +95,8 @@ const deleteAllFiles = async (dir = Dirs.DocumentDir) => {
     const doExist = await FileSystem.exists(ddpath);
     if (!doExist) continue;
 
-    const fnames = await FileSystem.ls(ddpath);
-    for (const fname of fnames) await FileSystem.unlink(ddpath + '/' + fname);
+    await FileSystem.unlink(ddpath);
   }
-};
-
-const listKeys = async (dir = Dirs.DocumentDir) => {
-  // Different from web as there might be some other files too,
-  //   can't just list all files but need to specify dirs.
-  const dpaths = [IMAGES];
-
-  const keys = [];
-  for (const dpath of dpaths) {
-    const ddpath = deriveFPath(dpath, dir);
-
-    const doExist = await FileSystem.exists(ddpath);
-    if (!doExist) continue;
-
-    const fnames = await FileSystem.ls(ddpath);
-    const fpaths = fnames.map(fname => dpath + '/' + fname);
-    keys.push(...fpaths);
-  }
-
-  return keys;
 };
 
 const exists = async (fpath, dir = Dirs.DocumentDir) => {
@@ -138,6 +117,39 @@ const cp = async (source, fpath, dir = Dirs.DocumentDir) => {
   cachedContent.contentUrl = cachedContent.content;
 
   return cachedContent;
+};
+
+const _getFilePaths = async (dpath = Dirs.DocumentDir) => {
+  const fpaths = [];
+
+  const fnames = await FileSystem.ls(dpath);
+  for (const fname of fnames) {
+    const fpath = `${dpath}/${fname}`;
+    const isDir = await FileSystem.isDir(fpath);
+
+    if (isDir) {
+      const _fpaths = await _getFilePaths(fpath);
+      fpaths.push(..._fpaths);
+      continue;
+    }
+    fpaths.push(fpath);
+  }
+
+  return fpaths;
+};
+
+const getStaticFPaths = async () => {
+  const keys = await _getFilePaths();
+
+  const fpaths = [];
+  for (let key of keys) {
+    key = `${key}`; // Force key to be only string, no number.
+    if (key.startsWith(Dirs.DocumentDir)) {
+      key = key.slice(Dirs.DocumentDir.length + 1);
+      if (key.startsWith(IMAGES + '/')) fpaths.push(key);
+    }
+  }
+  return fpaths;
 };
 
 const getRealFile = async (fpath, dir = Dirs.DocumentDir, encoding = BASE64) => {
@@ -170,7 +182,7 @@ const putRealFile = async (
 
 const localFile = {
   getFile, getFiles, putFile, putFiles, deleteFile, deleteFiles, deleteAllFiles,
-  listKeys, exists, mkdir, cp, getRealFile, putRealFile,
+  exists, mkdir, cp, getStaticFPaths, getRealFile, putRealFile,
 };
 
 export default localFile;

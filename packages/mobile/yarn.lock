@@ -6129,9 +6129,9 @@ react-native-animated-spinkit@^1.5.2:
   resolved "https://registry.yarnpkg.com/react-native-animated-spinkit/-/react-native-animated-spinkit-1.5.2.tgz#b1c00ecbadf48634273e6a843f8dfbcb7c006186"
   integrity sha512-YCQGR3HzEQvyaAnepiyf/hv88Sta3UIZ2CFZPtFqwu+VbFJfMgjJZniOx4157TuR5AAYajEJP9Fgy+JLIU3jzQ==
 
-"react-native-blockstack@https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?75854753bb20b72c0da94e16bb4b5e56a385578f":
+"react-native-blockstack@https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?509b207c1f9090e07faefe4bbbc7b130672654e6":
   version "0.4.6"
-  resolved "https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?75854753bb20b72c0da94e16bb4b5e56a385578f#5523994f6ae751a4695622768238585ef7f88f35"
+  resolved "https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?509b207c1f9090e07faefe4bbbc7b130672654e6#db40ba7ffee96afccc0ae9148530b0d15cafc9cd"
 
 react-native-codegen@^0.70.5:
   version "0.70.5"
@@ -6152,10 +6152,10 @@ react-native-default-preference@^1.4.4:
   version "2.3.0"
   resolved "https://github.com/stxapps/react-native-device-time-format#63f4a9158a91c391d67317a489ccfe8ec28a7c84"
 
-react-native-document-picker@^8.2.0:
-  version "8.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-document-picker/-/react-native-document-picker-8.2.0.tgz#d0d2f9ff8667e90e7ff6f9733077043e3f86d1a9"
-  integrity sha512-S/n4DIHWC0DTrtJnj2WZZleIfN4C2QjPMUpe8l/URt2Gc3/95dxkyfp4Dz4d7aZq5yEVFkdAvXv0nyWkM5w4MA==
+react-native-document-picker@^9.0.1:
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-document-picker/-/react-native-document-picker-9.0.1.tgz#a5ceec157f84dbadb85fe717c657569755f4c6ca"
+  integrity sha512-l2c2xChwsdjzZIV9QJc85buC3vXkM5ZuY4943yMDj3TiszJp1spmHNaRMZKYIh3yVwdD2jENm0DBU5AWa+jhLg==
   dependencies:
     invariant "^2.2.4"
 

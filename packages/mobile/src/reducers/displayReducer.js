@@ -511,9 +511,10 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_IMPORT_ALL_DATA_PROGRESS) {
-    const newState = { ...state, importAllDataProgress: action.payload };
-    if (action.payload && action.payload.total && action.payload.done) {
-      if (action.payload.total === action.payload.done) {
+    const progress = isObject(action.payload) ? { ...action.payload } : action.payload;
+    const newState = { ...state, importAllDataProgress: progress };
+    if (isObject(progress) && progress.total && progress.done) {
+      if (progress.total === progress.done) {
         newState.didFetchSettings = false;
         newState.fetchedListNames = [];
       }
@@ -522,11 +523,13 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_EXPORT_ALL_DATA_PROGRESS) {
-    return { ...state, exportAllDataProgress: action.payload };
+    const progress = isObject(action.payload) ? { ...action.payload } : action.payload;
+    return { ...state, exportAllDataProgress: progress };
   }
 
   if (action.type === UPDATE_DELETE_ALL_DATA_PROGRESS) {
-    return { ...state, deleteAllDataProgress: action.payload };
+    const progress = isObject(action.payload) ? { ...action.payload } : action.payload;
+    return { ...state, deleteAllDataProgress: progress };
   }
 
   if (action.type === DELETE_ALL_DATA) {

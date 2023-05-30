@@ -1,6 +1,6 @@
 import * as idb from 'idb-keyval';
 
-import { CD_ROOT } from '../types/const';
+import { CD_ROOT, IMAGES } from '../types/const';
 import { isUint8Array, isBlob } from '../utils/index-web';
 
 const Dirs = { DocumentDir: 'DocumentDir' };
@@ -119,22 +119,29 @@ const deleteAllFiles = async () => {
   cachedContents = {};
 };
 
-const listKeys = async () => {
-  let keys = [];
+const getStaticFPaths = async () => {
+  let keys;
   try {
     keys = await idb.keys();
   } catch (error) {
-    console.log('In localFile.listKeys, IndexedDB error:', error);
+    console.log('In localFile.getStaticFPaths, IndexedDB error:', error);
     keys = Object.keys(cachedContents);
   }
-  keys = keys.map(key => `${key}`); // Force key to be only string, no number.
 
-  return keys;
+  const fpaths = [];
+  for (let key of keys) {
+    key = `${key}`; // Force key to be only string, no number.
+    if (key.startsWith(Dirs.DocumentDir)) {
+      key = key.slice(Dirs.DocumentDir.length + 1);
+      if (key.startsWith(IMAGES + '/')) fpaths.push(key);
+    }
+  }
+  return fpaths;
 };
 
 const localFile = {
   getFile, getFiles, putFile, putFiles, deleteFile, deleteFiles, deleteAllFiles,
-  listKeys,
+  getStaticFPaths,
 };
 
 export default localFile;
