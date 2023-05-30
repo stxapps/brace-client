@@ -7,7 +7,7 @@ import { Circle } from 'react-native-animated-spinkit';
 import {
   importAllData, updateImportAllDataProgress, exportAllData, updateExportAllDataProgress,
   deleteAllData, updateDeleteAllDataProgress,
-} from '../actions';
+} from '../actions/data';
 import { DOMAIN_NAME, HASH_SUPPORT, SM_WIDTH, BLK_MODE } from '../types/const';
 import { getThemeMode } from '../selectors';
 
