@@ -2099,9 +2099,7 @@ const _cleanUpStaticFiles = async (getState) => {
   unusedFPaths = unusedFPaths.slice(0, N_LINKS);
 
   if (unusedFPaths.length > 0) {
-    console.log('In cleanUpStaticFiles, found unused fpaths on server:', unusedFPaths);
-    // Too risky. Clean up locally for now.
-    //await serverApi.deleteFiles(unusedFPaths);
+    await serverApi.deleteFiles(unusedFPaths);
     await fileApi.deleteFiles(unusedFPaths);
   }
 
