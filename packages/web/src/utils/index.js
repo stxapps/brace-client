@@ -1643,6 +1643,17 @@ export const get24HFormattedTime = (hStr, mStr, period) => {
   return `${newHStr}:${mStr}`;
 };
 
+export const getFormattedTimeStamp = (d) => {
+  const year = d.getFullYear();
+  const month = d.getMonth() + 1;
+  const date = d.getDate();
+  const hour = String(d.getHours()).padStart(2, '0');
+  const min = String(d.getMinutes()).padStart(2, '0');
+  const sec = String(d.getSeconds()).padStart(2, '0');
+
+  return `${year}-${month}-${date} ${hour}-${min}-${sec}`;
+};
+
 export const getFileExt = (fname) => {
   if (fname.includes('.')) {
     const ext = fname.split('.').pop();
@@ -1874,4 +1885,12 @@ export const deriveUnknownErrorLink = (fpath) => {
 
   // Need extractedResult to prevent extractContents to override the link content!
   return { id, url, addedDT: dt, decor, extractedResult };
+};
+
+export const extractFPath = (fpath) => {
+  const fpathParts = fpath.split('/');
+  const fname = fpathParts[fpathParts.length - 1];
+  const fnameParts = fname.split('.');
+  const fext = fnameParts[fnameParts.length - 1];
+  return { fpath, fpathParts, fname, fnameParts, fext };
 };

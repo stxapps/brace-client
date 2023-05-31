@@ -2,7 +2,7 @@ import { Platform, Alert, PermissionsAndroid } from 'react-native';
 import {
   RESET_STATE as OFFLINE_RESET_STATE,
 } from '@redux-offline/redux-offline/lib/constants';
-import { FileSystem, Dirs } from 'react-native-file-access';
+import { FileSystem, Dirs, Util } from 'react-native-file-access';
 import DocumentPicker, {
   types as DocumentPickerTypes,
 } from 'react-native-document-picker';
@@ -16,283 +16,98 @@ import {
 } from '../types/actionTypes';
 import {
   MY_LIST, TRASH, ARCHIVE, N_LINKS, LINKS, IMAGES, SETTINGS, INFO, PINS, DOT_JSON,
-  BASE64, UTF8,
+  UTF8, BASE64, LAYOUT_CARD, LAYOUT_LIST,
 } from '../types/const';
 import {
   isEqual, isString, isObject, isNumber, sleep, randomString, getUrlFirstChar,
   randomDecor, isDecorValid, isExtractedResultValid, isCustomValid, isListNameObjsValid,
-  createDataFName, createLinkFPath, createSettingsFPath, getSettingsFPaths,
-  getLastSettingsFPaths, batchGetFileWithRetry,
+  createDataFName, createLinkFPath, createSettingsFPath, getLastSettingsFPaths,
+  batchGetFileWithRetry, extractFPath, getPins, getMainId, getFormattedTimeStamp,
 } from '../utils';
 import { initialSettingsState } from '../types/initialStates';
 import vars from '../vars';
 
-const importAllDataLoop = async (dispatch, fpaths, contents) => {
-  let total = fpaths.length, doneCount = 0;
-  dispatch(updateImportAllDataProgress({ total, done: doneCount }));
+const importAllDataLoop = async (fpaths, contents) => {
+  // One at a time to not overwhelm the server
+  const nLinks = 1;
+  for (let i = 0; i < fpaths.length; i += nLinks) {
+    const _fpaths = fpaths.slice(i, i + nLinks);
+    const _contents = contents.slice(i, i + nLinks);
+    await serverApi.putFiles(_fpaths, _contents);
 
-  try {
-    for (let i = 0; i < fpaths.length; i += 1) {
-      // One at a time to not overwhelm the server
-      const selectedFPaths = fpaths.slice(i, i + 1);
-      const selectedContents = contents.slice(i, i + 1);
-      await serverApi.putFiles(selectedFPaths, selectedContents);
-
-      doneCount += selectedFPaths.length;
-      dispatch(updateImportAllDataProgress({ total, done: doneCount }));
-
-      await sleep(300);
-    }
-  } catch (error) {
-    dispatch(updateImportAllDataProgress({
-      total: -1,
-      done: -1,
-      error: `${error}`,
-    }));
-
-    if (doneCount < total) {
-      let msg = 'There is an error while importing! Below are contents that have not been imported:\n';
-      for (let i = doneCount; i < fpaths.length; i++) {
-        const fpath = fpaths[i];
-        const [fname] = fpath.split('/').slice(-1);
-        if (fpath.startsWith(LINKS)) {
-          msg += '    • ' + contents[i].url + '\n';
-        }
-        if (fpath.startsWith(IMAGES)) {
-          msg += '    • Image of ' + fname + '\n';
-        }
-        if (fpath.startsWith(PINS)) {
-          msg += '    • Pin on ' + fname + '\n';
-        }
-        if (fpath.startsWith(SETTINGS)) {
-          msg += '    • Settings\n';
-        }
-      }
-      Alert.alert('Importing Data Error!', `${msg}\nPlease wait a moment and try again. If the problem persists, please contact us.\n\n${error}`);
-    }
+    await sleep(300);
   }
 };
 
-const parseImportedFile = async (dispatch, settingsParentIds, text) => {
+const parseRawImportedFile = async (dispatch, getState, text) => {
 
-  dispatch(updateImportAllDataProgress({ total: 'calculating...', done: 0 }));
-
-  // 3 formats: json, html, and plain text
-  const fpaths = [], contents = [], settingsParts = [];
-  try {
-    const json = JSON.parse(text);
-    if (Array.isArray(json)) {
-      for (const obj of json) {
-        if (
-          !obj.path ||
-          !isString(obj.path) ||
-          !(
-            obj.path.startsWith(LINKS) ||
-            obj.path.startsWith(IMAGES) ||
-            obj.path.startsWith(PINS) ||
-            obj.path.startsWith(SETTINGS)
-          )
-        ) continue;
-
-        if (!obj.data) continue;
-        if (obj.path.startsWith(IMAGES)) {
-          if (!isString(obj.data)) continue;
-        } else {
-          if (!isObject(obj.data)) continue;
+  let listName = MY_LIST, now = Date.now();
+  const fpaths = [], contents = [];
+  if (text.includes('</a>') || text.includes('</A>')) {
+    let start, end;
+    for (const match of text.matchAll(/<h[^<]*<\/h|<a[^<]*<\/a>/gi)) {
+      const str = match[0];
+      if (str.toLowerCase().startsWith('<h')) {
+        start = str.indexOf('>');
+        if (start < 0) {
+          console.log(`Not found > from <h, str: ${str}`);
+          continue;
         }
+        start += 1;
 
-        if (obj.path.startsWith(LINKS)) {
-          if (
-            !('id' in obj.data && 'url' in obj.data && 'addedDT' in obj.data)
-          ) continue;
-
-          if (!(isString(obj.data.id) && isString(obj.data.url))) continue;
-          if (!isNumber(obj.data.addedDT)) continue;
-
-          const arr = obj.path.split('/');
-          if (arr.length !== 3) continue;
-          if (arr[0] !== LINKS) continue;
-
-          const listName = arr[1], fname = arr[2];
-          if (!fname.endsWith(DOT_JSON)) continue;
-
-          const id = fname.slice(0, -5);
-          if (id !== obj.data.id) continue;
-
-          const tokens = id.split('-');
-          if (listName === TRASH) {
-            if (tokens.length !== 4) continue;
-            if (!(/^\d+$/.test(tokens[0]) && /^\d+$/.test(tokens[3]))) continue;
-          } else {
-            if (tokens.length !== 3) continue;
-            if (!(/^\d+$/.test(tokens[0]))) continue;
-          }
-
-          if (!isDecorValid(obj.data)) {
-            obj.data.decor = randomDecor(getUrlFirstChar(obj.data.url));
-          }
-
-          if ('extractedResult' in obj.data) {
-            if (!isExtractedResultValid(obj.data)) {
-              obj.data = { ...obj.data };
-              delete obj.data.extractedResult;
-            }
-          }
-
-          if ('custom' in obj.data) {
-            if (!isCustomValid(obj.data)) {
-              obj.data = { ...obj.data };
-              delete obj.data.custom;
-            }
-          }
-        }
-
-        if (obj.path.startsWith(IMAGES)) {
-          const arr = obj.path.split('/');
-          if (arr.length !== 2) continue;
-
-          if (!obj.data.startsWith('data:')) continue;
-
-          const i = obj.data.indexOf(',');
-          if (i === -1) continue;
-          if (!obj.data.slice(0, i).includes(BASE64)) continue;
-
-          await fileApi.putRealFile(obj.path, obj.data);
-          obj.path = 'file://' + obj.path;
-          obj.data = '';
-        }
-
-        if (obj.path.startsWith(PINS)) {
-          const arr = obj.path.split('/');
-          if (arr.length !== 5) continue;
-          if (arr[0] !== PINS) continue;
-
-          const updatedDT = arr[2], addedDT = arr[3], fname = arr[4];
-          if (!(/^\d+$/.test(updatedDT))) continue;
-          if (!(/^\d+$/.test(addedDT))) continue;
-          if (!fname.endsWith(DOT_JSON)) continue;
-
-          const id = fname.slice(0, -5);
-          const tokens = id.split('-');
-          if (tokens.length !== 3) continue;
-          if (!(/^\d+$/.test(tokens[0]))) continue;
-        }
-
-        if (obj.path.startsWith(SETTINGS)) {
-          if (!obj.path.endsWith(DOT_JSON)) continue;
-
-          let dt = parseInt(obj.path.slice(SETTINGS.length, -1 * DOT_JSON.length), 10);
-          if (!isNumber(dt)) dt = 0;
-
-          const settings = { ...initialSettingsState };
-          if ([true, false].includes(obj.data.doExtractContents)) {
-            settings.doExtractContents = obj.data.doExtractContents;
-          }
-          if ([true, false].includes(obj.data.doDeleteOldLinksInTrash)) {
-            settings.doDeleteOldLinksInTrash = obj.data.doDeleteOldLinksInTrash;
-          }
-          if ([true, false].includes(obj.data.doDescendingOrder)) {
-            settings.doDescendingOrder = obj.data.doDescendingOrder;
-          }
-          if ('listNameMap' in obj.data && isListNameObjsValid(obj.data.listNameMap)) {
-            settings.listNameMap = obj.data.listNameMap;
-          }
-
-          settingsParts.push({ dt, content: settings });
+        end = str.indexOf('<', start);
+        if (end < 0) {
+          console.log(`Not found < from <h, str: ${str}, start: ${start}`);
           continue;
         }
 
-        fpaths.push(obj.path);
-        contents.push(obj.data);
+        const value = str.slice(start, end);
+        if (value.toLowerCase().includes(ARCHIVE.toLowerCase())) listName = ARCHIVE;
+        else listName = MY_LIST;
+        continue;
       }
-    }
-  } catch (error) {
-    console.log('parseImportedFile: JSON.parse error: ', error);
 
-    let listName = MY_LIST;
-    let now = Date.now();
+      if (str.toLowerCase().startsWith('<a')) {
+        start = str.toLowerCase().indexOf('href="');
+        if (start < 0) {
+          console.log(`Not found href= from <a, str: ${str}`);
+          continue;
+        }
+        start += 6;
 
-    if (text.includes('</a>') || text.includes('</A>')) {
-      let start, end;
-      for (const match of text.matchAll(/<h[^<]*<\/h|<a[^<]*<\/a>/gi)) {
-        const str = match[0];
-        if (str.toLowerCase().startsWith('<h')) {
-          start = str.indexOf('>');
-          if (start < 0) {
-            console.log(`Not found > from <h, str: ${str}`);
-            continue;
-          }
-          start += 1;
-
-          end = str.indexOf('<', start);
-          if (end < 0) {
-            console.log(`Not found < from <h, str: ${str}, start: ${start}`);
-            continue;
-          }
-
-          const value = str.slice(start, end);
-          if (value.toLowerCase().includes(ARCHIVE.toLowerCase())) listName = ARCHIVE;
-          else listName = MY_LIST;
+        end = str.indexOf('"', start);
+        if (end < 0) {
+          console.log(`Not found " from href, str: ${str}, start: ${start}`);
+          continue;
         }
 
-        if (str.toLowerCase().startsWith('<a')) {
-          start = str.toLowerCase().indexOf('href="');
-          if (start < 0) {
-            console.log(`Not found href= from <a, str: ${str}`);
-            continue;
-          }
-          start += 6;
+        const url = str.slice(start, end);
+        if (url.length === 0) continue;
 
+        let addDate;
+        start = str.toLowerCase().indexOf('add_date="');
+        if (start > 0) start += 10;
+        else {
+          start = str.toLowerCase().indexOf('time_added="');
+          if (start > 0) start += 12;
+        }
+        if (start > 0) {
           end = str.indexOf('"', start);
           if (end < 0) {
-            console.log(`Not found " from href, str: ${str}, start: ${start}`);
+            console.log(`Not found " from add_date, str: ${str}, start: ${start}`);
             continue;
           }
 
-          const url = str.slice(start, end);
-          if (url.length === 0) continue;
-
-          let addDate;
-          start = str.toLowerCase().indexOf('add_date="');
-          if (start > 0) start += 10;
-          else {
-            start = str.toLowerCase().indexOf('time_added="');
-            if (start > 0) start += 12;
-          }
-          if (start > 0) {
-            end = str.indexOf('"', start);
-            if (end < 0) {
-              console.log(`Not found " from add_date, str: ${str}, start: ${start}`);
-              continue;
-            }
-
-            addDate = str.slice(start, end);
-          }
-
-          let addedDT = now;
-          if (addDate && /^\d+$/.test(addDate)) {
-            if (addDate.length === 16) addDate = addDate.slice(0, 13);
-            if (addDate.length === 10) addDate = addDate + '000';
-            const dt = parseInt(addDate, 10);
-            if (isNumber(dt)) addedDT = dt;
-          }
-
-          const id = `${addedDT}-${randomString(4)}-${randomString(4)}`;
-          const decor = randomDecor(getUrlFirstChar(url));
-          const link = { id, url, addedDT, decor };
-          const fpath = createLinkFPath(listName, link.id);
-
-          fpaths.push(fpath);
-          contents.push(link);
-          now += 1;
+          addDate = str.slice(start, end);
         }
-      }
-    } else {
-      for (const match of text.matchAll(
-        /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/gi
-      )) {
-        const url = match[0];
-        const addedDT = now;
+
+        let addedDT = now;
+        if (addDate && /^\d+$/.test(addDate)) {
+          if (addDate.length === 16) addDate = addDate.slice(0, 13);
+          if (addDate.length === 10) addDate = addDate + '000';
+          const dt = parseInt(addDate, 10);
+          if (isNumber(dt)) addedDT = dt;
+        }
 
         const id = `${addedDT}-${randomString(4)}-${randomString(4)}`;
         const decor = randomDecor(getUrlFirstChar(url));
@@ -302,8 +117,74 @@ const parseImportedFile = async (dispatch, settingsParentIds, text) => {
         fpaths.push(fpath);
         contents.push(link);
         now += 1;
+        continue;
       }
     }
+  } else {
+    for (const match of text.matchAll(
+      /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/gi
+    )) {
+      const url = match[0];
+      const addedDT = now;
+
+      const id = `${addedDT}-${randomString(4)}-${randomString(4)}`;
+      const decor = randomDecor(getUrlFirstChar(url));
+      const link = { id, url, addedDT, decor };
+      const fpath = createLinkFPath(listName, link.id);
+
+      fpaths.push(fpath);
+      contents.push(link);
+      now += 1;
+    }
+  }
+
+  const progress = { total: fpaths.length, done: 0 };
+  dispatch(updateImportAllDataProgress(progress));
+
+  if (progress.total === 0) return;
+
+  for (let i = 0, j = fpaths.length; i < j; i += N_LINKS) {
+    const _fpaths = fpaths.slice(i, i + N_LINKS);
+    const _contents = contents.slice(i, i + N_LINKS);
+
+    await importAllDataLoop(_fpaths, _contents);
+
+    progress.done += _fpaths.length;
+    dispatch(updateImportAllDataProgress(progress));
+  }
+};
+
+const _parseBraceSettings = async (settingsFPaths, settingsEntries) => {
+  const settingsParts = [];
+  for (const entry of settingsEntries) {
+    const { fpath } = extractFPath(entry.path);
+    if (!fpath.endsWith(DOT_JSON)) continue;
+
+    let dt = parseInt(fpath.slice(SETTINGS.length, -1 * DOT_JSON.length), 10);
+    if (!isNumber(dt)) dt = 0;
+
+    const content = entry.data;
+    if (!content) continue;
+
+    const settings = { ...initialSettingsState };
+    if ([true, false].includes(content.doExtractContents)) {
+      settings.doExtractContents = content.doExtractContents;
+    }
+    if ([true, false].includes(content.doDeleteOldLinksInTrash)) {
+      settings.doDeleteOldLinksInTrash = content.doDeleteOldLinksInTrash;
+    }
+    if ([true, false].includes(content.doDescendingOrder)) {
+      settings.doDescendingOrder = content.doDescendingOrder;
+    }
+    if ('listNameMap' in content && isListNameObjsValid(content.listNameMap)) {
+      settings.listNameMap = content.listNameMap;
+    }
+    if ([LAYOUT_CARD, LAYOUT_LIST].includes(content.layoutType)) {
+      settings.layoutType = content.layoutType;
+    }
+
+    // For choosing the latest one.
+    settingsParts.push({ dt, content: settings });
   }
 
   let latestSettingsPart;
@@ -314,35 +195,268 @@ const parseImportedFile = async (dispatch, settingsParentIds, text) => {
     }
     if (latestSettingsPart.dt < settingsPart.dt) latestSettingsPart = settingsPart;
   }
-  if (isObject(latestSettingsPart)) {
-    const addedDT = Date.now();
-    const fname = createDataFName(`${addedDT}${randomString(4)}`, settingsParentIds);
-    fpaths.push(createSettingsFPath(fname));
-    contents.push(latestSettingsPart.content);
+  if (!isObject(latestSettingsPart)) return;
+
+  const lastSettingsFPaths = getLastSettingsFPaths(settingsFPaths);
+  if (lastSettingsFPaths.fpaths.length > 0) {
+    const lastSettingsFPath = lastSettingsFPaths.fpaths[0];
+    const { contents } = await serverApi.getFiles([lastSettingsFPath], true);
+    if (isEqual(latestSettingsPart.content, contents[0])) {
+      return;
+    }
   }
 
-  await importAllDataLoop(dispatch, fpaths, contents);
+  let now = Date.now();
+  const fname = createDataFName(`${now}${randomString(4)}`, lastSettingsFPaths.ids);
+  const fpath = createSettingsFPath(fname);
+  now += 1;
+
+  await importAllDataLoop([fpath], [latestSettingsPart.content]);
+};
+
+const parseBraceSettings = async (
+  dispatch, settingsFPaths, settingsEntries, progress
+) => {
+  await _parseBraceSettings(settingsFPaths, settingsEntries);
+  progress.done += settingsEntries.length;
+  dispatch(updateImportAllDataProgress(progress));
+};
+
+const parseBraceImages = async (dispatch, existFPaths, imgEntries, progress) => {
+  for (let i = 0, j = imgEntries.length; i < j; i += N_LINKS) {
+    const selectedEntries = imgEntries.slice(i, i + N_LINKS);
+
+    const fpaths = [], contents = [];
+    for (const entry of selectedEntries) {
+      const { fpath, fpathParts, fnameParts } = extractFPath(entry.path);
+      if (fpathParts.length !== 2 || fpathParts[0] !== IMAGES) continue;
+      if (fnameParts.length !== 2) continue;
+
+      if (existFPaths.includes(fpath)) continue;
+
+      let content = entry.data;
+      if (!isString(content) || !content.startsWith('data:')) continue;
+
+      const k = content.indexOf(',');
+      if (k === -1) continue;
+      if (!content.slice(0, k).includes(BASE64)) continue;
+
+      content = content.slice(k + 1);
+
+      const destFPath = `${Dirs.DocumentDir}/${fpath}`;
+      const destDPath = Util.dirname(destFPath);
+      const doExist = await FileSystem.exists(destDPath);
+      if (!doExist) await FileSystem.mkdir(destDPath);
+      await FileSystem.writeFile(destFPath, content, BASE64);
+
+      fpaths.push('file://' + fpath);
+      contents.push('');
+    }
+
+    await importAllDataLoop(fpaths, contents);
+
+    progress.done += selectedEntries.length;
+    dispatch(updateImportAllDataProgress(progress));
+  }
+};
+
+const parseBraceLinks = async (dispatch, existFPaths, linkEntries, progress) => {
+  for (let i = 0, j = linkEntries.length; i < j; i += N_LINKS) {
+    const selectedEntries = linkEntries.slice(i, i + N_LINKS);
+
+    const fpaths = [], contents = [];
+    for (const entry of selectedEntries) {
+      const { fpath, fpathParts, fname } = extractFPath(entry.path);
+      if (fpathParts.length !== 3 || fpathParts[0] !== LINKS) continue;
+      if (!fname.endsWith(DOT_JSON)) continue;
+
+      if (existFPaths.includes(fpath)) continue;
+
+      let content = entry.data;
+      if (!isObject(content)) continue;
+
+      if (
+        !('id' in content && 'url' in content && 'addedDT' in content)
+      ) continue;
+
+      if (!(isString(content.id) && isString(content.url))) continue;
+      if (!isNumber(content.addedDT)) continue;
+
+      const id = fname.slice(0, -5);
+      if (id !== content.id) continue;
+
+      const listName = fpathParts[1];
+      const tokens = id.split('-');
+      if (listName === TRASH) {
+        if (tokens.length !== 4) continue;
+        if (!(/^\d+$/.test(tokens[0]) && /^\d+$/.test(tokens[3]))) continue;
+      } else {
+        if (tokens.length !== 3) continue;
+        if (!(/^\d+$/.test(tokens[0]))) continue;
+      }
+
+      if (!isDecorValid(content)) {
+        content.decor = randomDecor(getUrlFirstChar(content.url));
+      }
+
+      if ('extractedResult' in content) {
+        if (!isExtractedResultValid(content)) {
+          content = { ...content };
+          delete content.extractedResult;
+        }
+      }
+
+      if ('custom' in content) {
+        if (!isCustomValid(content)) {
+          content = { ...content };
+          delete content.custom;
+        }
+      }
+
+      fpaths.push(fpath);
+      contents.push(content);
+    }
+
+    await importAllDataLoop(fpaths, contents);
+
+    progress.done += selectedEntries.length;
+    dispatch(updateImportAllDataProgress(progress));
+  }
+};
+
+const parseBracePins = async (dispatch, pins, pinEntries, progress) => {
+  for (let i = 0, j = pinEntries.length; i < j; i += N_LINKS) {
+    const selectedEntries = pinEntries.slice(i, i + N_LINKS);
+
+    const fpaths = [], contents = [];
+    for (const entry of selectedEntries) {
+      const { fpathParts, fnameParts } = extractFPath(entry.path);
+      if (fpathParts.length !== 5 || fpathParts[0] !== PINS) continue;
+      if (fnameParts.length !== 2) continue;
+
+      const updatedDT = fpathParts[2], addedDT = fpathParts[3], fname = fpathParts[4];
+      if (!(/^\d+$/.test(updatedDT))) continue;
+      if (!(/^\d+$/.test(addedDT))) continue;
+      if (!fname.endsWith(DOT_JSON)) continue;
+
+      const id = fname.slice(0, -5);
+      const tokens = id.split('-');
+      if (tokens.length !== 3) continue;
+      if (!(/^\d+$/.test(tokens[0]))) continue;
+
+      if (getMainId(id) in pins) continue;
+
+      const content = entry.data;
+      if (!isEqual(content, {})) continue;
+
+      fpaths.push(fpathParts.join('/'));
+      contents.push(content);
+    }
+
+    await importAllDataLoop(fpaths, contents);
+
+    progress.done += selectedEntries.length;
+    dispatch(updateImportAllDataProgress(progress));
+  }
+};
+
+const parseBraceImportedFile = async (dispatch, getState, json) => {
+
+  const existFPaths = [], settingsFPaths = [], pinFPaths = [];
+  await serverApi.listFiles((fpath) => {
+    if (fpath.startsWith(SETTINGS)) settingsFPaths.push(fpath);
+    else if (fpath.startsWith(PINS)) pinFPaths.push(fpath);
+
+    existFPaths.push(fpath);
+    return true;
+  });
+
+  const pins = getPins(pinFPaths, {}, false);
+
+  const linkEntries = [], pinEntries = [], imgEntries = [], settingsEntries = [];
+  if (Array.isArray(json)) {
+    for (const obj of json) {
+      if (!isObject(obj) || !isString(obj.path)) continue;
+
+      if (obj.path.startsWith(LINKS)) {
+        linkEntries.push(obj);
+        continue;
+      }
+      if (obj.path.startsWith(PINS)) {
+        pinEntries.push(obj);
+        continue;
+      }
+      if (obj.path.startsWith(IMAGES)) {
+        imgEntries.push(obj);
+        continue;
+      }
+      if (obj.path.startsWith(SETTINGS)) {
+        settingsEntries.push(obj);
+        continue;
+      }
+    }
+  }
+
+  const total = (
+    linkEntries.length + pinEntries.length + imgEntries.length + settingsEntries.length
+  );
+  const progress = { total, done: 0 };
+  dispatch(updateImportAllDataProgress(progress));
+
+  if (progress.total === 0) return;
+
+  await parseBraceSettings(dispatch, settingsFPaths, settingsEntries, progress);
+  await parseBraceImages(dispatch, existFPaths, imgEntries, progress);
+
+  await parseBraceLinks(dispatch, existFPaths, linkEntries, progress);
+  await parseBracePins(dispatch, pins, pinEntries, progress);
+};
+
+const parseImportedFile = async (dispatch, getState, text) => {
+  try {
+    let isRaw = false, json;
+    try {
+      json = JSON.parse(text);
+    } catch (error) {
+      isRaw = true;
+    }
+
+    if (isRaw) {
+      await parseRawImportedFile(dispatch, getState, text);
+    } else {
+      await parseBraceImportedFile(dispatch, getState, json);
+    }
+  } catch (error) {
+    dispatch(updateImportAllDataProgress({
+      total: -1,
+      done: -1,
+      error: `${error}`,
+    }));
+    return;
+  }
 };
 
 const _importAllData = async (dispatch, getState) => {
-  const settingsFPaths = getSettingsFPaths(getState());
-  const { ids: settingsParentIds } = getLastSettingsFPaths(settingsFPaths);
+  dispatch(updateImportAllDataProgress({ total: 'calculating...', done: 0 }));
 
   try {
     const results = await DocumentPicker.pick({
-      type: DocumentPickerTypes.plainText,
+      type: DocumentPickerTypes.allFiles,
       copyTo: 'cachesDirectory',
     });
     const result = results[0];
     if (!isObject(result) || !isString(result.fileCopyUri)) {
+      dispatch(updateImportAllDataProgress(null));
+
       const error = result.copyError || '';
       Alert.alert('Read file failed!', `Could not read content in the file. Please recheck your file.\n\n${error}`);
       return;
     }
 
     const text = await FileSystem.readFile(result.fileCopyUri, UTF8);
-    await parseImportedFile(dispatch, settingsParentIds, text);
+    await parseImportedFile(dispatch, getState, text);
   } catch (error) {
+    dispatch(updateImportAllDataProgress(null));
     if (DocumentPicker.isCancel(error)) return;
 
     Alert.alert('Read file failed!', `Could not read content in the file. Please recheck your file.\n\n${error}`);
@@ -361,30 +475,6 @@ export const updateImportAllDataProgress = (progress) => {
     type: UPDATE_IMPORT_ALL_DATA_PROGRESS,
     payload: progress,
   };
-};
-
-const exportAllDataLoop = async (dispatch, fpaths, total, doneCount) => {
-  const successData = [], errorData = [];
-  for (let i = 0; i < fpaths.length; i += N_LINKS) {
-    const selectedFPaths = fpaths.slice(i, i + N_LINKS);
-    const responses = await batchGetFileWithRetry(
-      serverApi.getFile, selectedFPaths, 0, true
-    );
-    for (const response of responses) {
-      if (response.success) {
-        successData.push({ path: response.fpath, data: response.content });
-      } else {
-        errorData.push(response);
-      }
-    }
-
-    doneCount += selectedFPaths.length;
-    if (doneCount < total || errorData.length === 0) {
-      dispatch(updateExportAllDataProgress({ total, done: doneCount }));
-    }
-  }
-
-  return { successData, errorData };
 };
 
 export const saveAs = async (filePath, fileName) => {
@@ -439,8 +529,7 @@ export const saveAs = async (filePath, fileName) => {
 };
 
 export const exportAllData = () => async (dispatch, getState) => {
-  let doneCount = 0;
-  dispatch(updateExportAllDataProgress({ total: 'calculating...', done: doneCount }));
+  dispatch(updateExportAllDataProgress({ total: 'calculating...', done: 0 }));
 
   const fpaths = [], settingsFPaths = [];
   try {
@@ -473,39 +562,59 @@ export const exportAllData = () => async (dispatch, getState) => {
     }
   }
 
-  const total = fpaths.length;
-  dispatch(updateExportAllDataProgress({ total, done: doneCount }));
+  const progress = { total: fpaths.length, done: 0 };
+  dispatch(updateExportAllDataProgress(progress));
 
-  if (total === 0) return;
+  if (progress.total === 0) return;
 
   try {
-    const {
-      successData, errorData,
-    } = await exportAllDataLoop(dispatch, fpaths, total, doneCount);
+    const successResponses = [], errorResponses = [];
+    for (let i = 0; i < fpaths.length; i += N_LINKS) {
+      const selectedFPaths = fpaths.slice(i, i + N_LINKS);
+      const responses = await batchGetFileWithRetry(
+        serverApi.getFile, selectedFPaths, 0, true
+      );
+      for (const response of responses) {
+        if (response.success) {
+          let path = response.fpath, data = response.content;
+          if (path.startsWith('file://')) {
+            path = path.slice('file://'.length);
 
-    for (const item of successData) {
-      if (item.path.startsWith('file://')) {
-        const fpath = item.path.slice('file://'.length);
-        const content = await fileApi.getRealFile(fpath);
-        item.path = fpath;
-        item.data = `data:application/octet-stream;base64,${content}`;
+            const srcFPath = `${Dirs.DocumentDir}/${path}`;
+            const doExist = await FileSystem.exists(srcFPath);
+            if (!doExist) continue;
+            data = await FileSystem.readFile(srcFPath, BASE64);
+
+            data = `data:application/octet-stream;base64,${data}`;
+          }
+
+          successResponses.push({ path, data });
+        } else {
+          errorResponses.push(response);
+        }
+      }
+
+      progress.done += selectedFPaths.length;
+      if (progress.done < progress.total) {
+        dispatch(updateExportAllDataProgress(progress));
       }
     }
 
-    const fileName = 'brace-data.txt';
-    await fileApi.putRealFile(
-      fileName, JSON.stringify(successData), Dirs.CacheDir, UTF8
-    );
-    const filePath = `${Dirs.CacheDir}/${fileName}`;
+    const filePath = `${Dirs.CacheDir}/brace-data.txt`;
+    const doFileExist = await FileSystem.exists(filePath);
+    if (doFileExist) await FileSystem.unlink(filePath);
+
+    await FileSystem.writeFile(filePath, JSON.stringify(successResponses), UTF8);
+
+    const fileName = `Brace.to data ${getFormattedTimeStamp(new Date())}.txt`;
     await saveAs(filePath, fileName);
 
-    if (errorData.length > 0) {
-      dispatch(updateExportAllDataProgress({
-        total: -1,
-        done: -1,
-        error: 'Some download requests failed. Data might be missing in the exported file.',
-      }));
+    if (errorResponses.length > 0) {
+      progress.total = -1;
+      progress.done = -1;
+      progress.error = 'Some download requests failed. Data might be missing in the exported file.';
     }
+    dispatch(updateExportAllDataProgress(progress));
   } catch (error) {
     dispatch(updateExportAllDataProgress({
       total: -1,
@@ -523,29 +632,8 @@ export const updateExportAllDataProgress = (progress) => {
   };
 };
 
-const deleteAllDataLoop = async (dispatch, fpaths, total, doneCount) => {
-
-  if (fpaths.length === 0) throw new Error(`Invalid fpaths: ${fpaths}`);
-
-  const selectedCount = Math.min(fpaths.length - doneCount, N_LINKS);
-  const selectedFPaths = fpaths.slice(doneCount, doneCount + selectedCount);
-  await serverApi.deleteFiles(selectedFPaths);
-
-  doneCount = doneCount + selectedCount;
-  if (doneCount > fpaths.length) {
-    throw new Error(`Invalid doneCount: ${doneCount}, total: ${fpaths.length}`);
-  }
-
-  dispatch(updateDeleteAllDataProgress({ total, done: doneCount }));
-
-  if (doneCount < fpaths.length) {
-    await deleteAllDataLoop(dispatch, fpaths, total, doneCount);
-  }
-};
-
 export const deleteAllData = () => async (dispatch, getState) => {
-  let doneCount = 0;
-  dispatch(updateDeleteAllDataProgress({ total: 'calculating...', done: doneCount }));
+  dispatch(updateDeleteAllDataProgress({ total: 'calculating...', done: 0 }));
 
   // redux-offline: Empty outbox
   dispatch({ type: OFFLINE_RESET_STATE });
@@ -576,20 +664,22 @@ export const deleteAllData = () => async (dispatch, getState) => {
   }
 
   const total = fpaths.length + settingsFPaths.length;
-  dispatch(updateDeleteAllDataProgress({ total, done: doneCount }));
+  const progress = { total, done: 0 };
+  dispatch(updateDeleteAllDataProgress(progress));
 
-  if (total === 0) return;
+  if (progress.total === 0) return;
 
   try {
-    if (fpaths.length > 0) {
-      await deleteAllDataLoop(dispatch, fpaths, total, doneCount);
+    for (let i = 0, j = fpaths.length; i < j; i += N_LINKS) {
+      const selectedFPaths = fpaths.slice(i, i + N_LINKS);
+      await serverApi.deleteFiles(selectedFPaths);
 
-      doneCount += fpaths.length;
-      dispatch(updateDeleteAllDataProgress({ total, done: doneCount }));
+      progress.done += selectedFPaths.length;
+      dispatch(updateDeleteAllDataProgress(progress));
     }
     if (settingsFPaths.length > 0) {
-      const addedDT = Date.now();
-      const fname = createDataFName(`${addedDT}${randomString(4)}`, settingsIds);
+      const now = Date.now();
+      const fname = createDataFName(`${now}${randomString(4)}`, settingsIds);
       const newSettingsFPath = createSettingsFPath(fname);
 
       await serverApi.putFiles([newSettingsFPath], [{ ...initialSettingsState }]);
@@ -600,8 +690,8 @@ export const deleteAllData = () => async (dispatch, getState) => {
         // error in this step should be fine
       }
 
-      doneCount += settingsFPaths.length;
-      dispatch(updateDeleteAllDataProgress({ total, done: doneCount }));
+      progress.done += settingsFPaths.length;
+      dispatch(updateDeleteAllDataProgress(progress));
     }
     await fileApi.deleteAllFiles();
 
