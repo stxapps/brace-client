@@ -1,4 +1,4 @@
-import { Dirs, FileSystem } from 'react-native-file-access';
+import { Dirs, FileSystem, Util } from 'react-native-file-access';
 
 import { CD_ROOT, IMAGES } from '../types/const';
 
@@ -111,6 +111,14 @@ const mkdir = async (fpath, dir = Dirs.DocumentDir) => {
 
 const cp = async (source, fpath, dir = Dirs.DocumentDir) => {
   fpath = deriveFPath(fpath, dir);
+
+  let doExist = await FileSystem.exists(fpath);
+  if (doExist) await FileSystem.unlink(fpath);
+
+  const dpath = Util.dirname(fpath);
+  doExist = await FileSystem.exists(dpath);
+  if (!doExist) await FileSystem.mkdir(dpath);
+
   await FileSystem.cp(source, fpath);
 
   const cachedContent = { content: `file://${fpath}` };
