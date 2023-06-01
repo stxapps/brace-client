@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Text, TextInput, Platform, StatusBar, Keyboard } from 'react-native';
 import { Provider, useSelector } from 'react-redux';
-import { createStore, compose } from 'redux';
+import { createStore, compose, applyMiddleware } from 'redux';
 import { install as installReduxLoop } from 'redux-loop';
 import { offline } from '@redux-offline/redux-offline';
 import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
@@ -42,15 +42,22 @@ offlineConfig.dispatch = (...args) => {
 
 vars.platform.isReactNative = true;
 
-/** @ts-ignore */
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(
-  /** @type {any} */(reducers),
-  composeEnhancers(
+let enhancers;
+if (__DEV__) {
+  const createDebugger = require('redux-flipper').default;
+  enhancers = compose(
     installReduxLoop({ ENABLE_THUNK_MIGRATION: true }),
     offline(offlineConfig),
-  )
-);
+    applyMiddleware(createDebugger()),
+  );
+} else {
+  enhancers = compose(
+    installReduxLoop({ ENABLE_THUNK_MIGRATION: true }),
+    offline(offlineConfig),
+  );
+}
+const store = createStore(/** @type {any} */(reducers), enhancers);
+
 const backHandler = (menuProvider) => updateMenuPopupAsBackPressed(menuProvider, store.dispatch, store.getState);
 
 if (Platform.OS === 'ios') {
