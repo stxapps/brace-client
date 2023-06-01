@@ -432,7 +432,7 @@ const parseImportedFile = async (dispatch, getState, text) => {
 
 export const importAllData = () => async (dispatch, getState) => {
   const onError = () => {
-    window.alert('Read failed: could not read content in the file. Please recheck your file.');
+    window.alert('Read failed: could not read the content in the file. Please recheck your file.');
   };
 
   const onReaderLoad = (e) => {
@@ -452,7 +452,7 @@ export const importAllData = () => async (dispatch, getState) => {
 
   const input = document.createElement('input');
   input.type = 'file';
-  input.accept = '.txt, .html, .json';
+  input.accept = '.txt, .htm, .html';
   input.addEventListener('change', onInputChange);
   input.click();
 };
