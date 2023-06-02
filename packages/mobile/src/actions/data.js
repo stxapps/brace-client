@@ -456,7 +456,7 @@ const _importAllData = async (dispatch, getState) => {
     const fext = Util.extname(result.fileCopyUri);
     if (!['txt', 'htm', 'html'].includes(fext)) {
       dispatch(updateImportAllDataProgress(null));
-      Alert.alert('Read file failed!', `Could not read the content in the file. Only a file ending with .txt or .html can be imported.`);
+      Alert.alert('Read file failed!', 'Could not read the content in the file. Only a file ending with .txt or .html can be imported.');
       return;
     }
 
