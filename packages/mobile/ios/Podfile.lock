@@ -326,11 +326,13 @@ PODS:
   - react-native-blockstack (0.4.6):
     - Blockstack
     - React
-  - react-native-document-picker (8.2.0):
+  - react-native-document-picker (9.0.1):
     - React-Core
   - react-native-file-access (2.5.0):
     - React-Core
     - ZIPFoundation (= 0.9.11)
+  - react-native-flipper (0.192.0):
+    - React-Core
   - react-native-netinfo (9.3.4):
     - React-Core
   - react-native-receive-sharing-intent (1.0.4):
@@ -455,7 +457,7 @@ PODS:
   - ZIPFoundation (0.9.11)
 
 DEPENDENCIES:
-  - Blockstack (from `https://github.com/bracedotto/blockstack-ios.git`, commit `0b5b85d`)
+  - Blockstack (from `https://github.com/bracedotto/blockstack-ios.git`, commit `45bcb11`)
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - CryptoSwift (~> 1.3.8)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
@@ -508,6 +510,7 @@ DEPENDENCIES:
   - react-native-blockstack (from `../node_modules/react-native-blockstack`)
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - react-native-file-access (from `../node_modules/react-native-file-access`)
+  - react-native-flipper (from `../node_modules/react-native-flipper`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-receive-sharing-intent (from `../node_modules/react-native-receive-sharing-intent`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -567,7 +570,7 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   Blockstack:
-    :commit: 0b5b85d
+    :commit: 45bcb11
     :git: https://github.com/bracedotto/blockstack-ios.git
   boost:
     :podspec: "../node_modules/react-native/third-party-podspecs/boost.podspec"
@@ -617,6 +620,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-document-picker"
   react-native-file-access:
     :path: "../node_modules/react-native-file-access"
+  react-native-flipper:
+    :path: "../node_modules/react-native-flipper"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-receive-sharing-intent:
@@ -674,7 +679,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   Blockstack:
-    :commit: 0b5b85d
+    :commit: 45bcb11
     :git: https://github.com/bracedotto/blockstack-ios.git
 
 SPEC CHECKSUMS:
@@ -720,8 +725,9 @@ SPEC CHECKSUMS:
   React-jsinspector: 0553c9fe7218e1f127be070bd5a4d2fc19fb8190
   React-logger: cffcc09e8aba8a3014be8d18da7f922802e9f19e
   react-native-blockstack: a54aed35a241b7be1e735a334f9c644f6d9237fe
-  react-native-document-picker: 495c444c0c773c6e83a5d91165890ecb1c0a399a
+  react-native-document-picker: 2b8f18667caee73a96708a82b284a4f40b30a156
   react-native-file-access: 204693d308701ba232dcf91facef05498fcde9a2
+  react-native-flipper: 1ff68d2514c4c3f3577c8d528419488f2394c553
   react-native-netinfo: 6ac9bcc7c88dc51717bda3484eb99093acb755e0
   react-native-receive-sharing-intent: feba0a332a07977549a85aa58b496eb44368366a
   react-native-safe-area-context: 99b24a0c5acd0d5dcac2b1a7f18c49ea317be99a
@@ -757,6 +763,6 @@ SPEC CHECKSUMS:
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
   ZIPFoundation: b1f0de4eed33e74a676f76e12559ab6b75990197
 
-PODFILE CHECKSUM: 0be7228741d1499ac995a3518dffc1265f946af6
+PODFILE CHECKSUM: a6cd384a1af2dfb9a4f37e9c56488a1e1fe07b4a
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1
