@@ -427,11 +427,7 @@ const parseImportedFile = async (dispatch, getState, text) => {
       await parseBraceImportedFile(dispatch, getState, json);
     }
   } catch (error) {
-    dispatch(updateImportAllDataProgress({
-      total: -1,
-      done: -1,
-      error: `${error}`,
-    }));
+    dispatch(updateImportAllDataProgress({ total: -1, done: -1, error: `${error}` }));
     return;
   }
 };
@@ -538,7 +534,7 @@ export const saveAs = async (filePath, fileName) => {
 export const exportAllData = () => async (dispatch, getState) => {
   dispatch(updateExportAllDataProgress({ total: 'calculating...', done: 0 }));
 
-  const fpaths = [], settingsFPaths = [];
+  const fpaths = [], settingsFPaths = [], pinFPaths = [];
   try {
     await serverApi.listFiles((fpath) => {
       if (vars.platform.isReactNative && fpath.startsWith(IMAGES)) {
@@ -548,15 +544,12 @@ export const exportAllData = () => async (dispatch, getState) => {
 
       if (fpath.startsWith(SETTINGS)) settingsFPaths.push(fpath);
       else if (fpath.startsWith(INFO)) return true;
+      else if (fpath.startsWith(PINS)) pinFPaths.push(fpath);
       else fpaths.push(fpath);
       return true;
     });
   } catch (error) {
-    dispatch(updateExportAllDataProgress({
-      total: -1,
-      done: -1,
-      error: `${error}`,
-    }));
+    dispatch(updateExportAllDataProgress({ total: -1, done: -1, error: `${error}` }));
     return;
   }
 
@@ -569,7 +562,7 @@ export const exportAllData = () => async (dispatch, getState) => {
     }
   }
 
-  const progress = { total: fpaths.length, done: 0 };
+  const progress = { total: fpaths.length + pinFPaths.length, done: 0 };
   dispatch(updateExportAllDataProgress(progress));
 
   if (progress.total === 0) return;
@@ -607,11 +600,26 @@ export const exportAllData = () => async (dispatch, getState) => {
       }
     }
 
+    for (let i = 0; i < pinFPaths.length; i += N_LINKS) {
+      const selectedFPaths = pinFPaths.slice(i, i + N_LINKS);
+      for (const fpath of selectedFPaths) {
+        const path = fpath, data = {};
+        successResponses.push({ path, data });
+      }
+
+      progress.done += selectedFPaths.length;
+      if (progress.done < progress.total) {
+        dispatch(updateExportAllDataProgress(progress));
+      }
+    }
+
     const filePath = `${Dirs.CacheDir}/brace-data.txt`;
     const doFileExist = await FileSystem.exists(filePath);
     if (doFileExist) await FileSystem.unlink(filePath);
 
-    await FileSystem.writeFile(filePath, JSON.stringify(successResponses), UTF8);
+    await FileSystem.writeFile(
+      filePath, JSON.stringify(successResponses, null, 2), UTF8
+    );
 
     const fileName = `Brace.to data ${getFormattedTimeStamp(new Date())}.txt`;
     await saveAs(filePath, fileName);
@@ -623,11 +631,7 @@ export const exportAllData = () => async (dispatch, getState) => {
     }
     dispatch(updateExportAllDataProgress(progress));
   } catch (error) {
-    dispatch(updateExportAllDataProgress({
-      total: -1,
-      done: -1,
-      error: `${error}`,
-    }));
+    dispatch(updateExportAllDataProgress({ total: -1, done: -1, error: `${error}` }));
     return;
   }
 };
@@ -653,11 +657,7 @@ export const deleteAllData = () => async (dispatch, getState) => {
       return true;
     });
   } catch (error) {
-    dispatch(updateDeleteAllDataProgress({
-      total: -1,
-      done: -1,
-      error: `${error}`,
-    }));
+    dispatch(updateDeleteAllDataProgress({ total: -1, done: -1, error: `${error}` }));
     return;
   }
 
@@ -704,11 +704,7 @@ export const deleteAllData = () => async (dispatch, getState) => {
 
     dispatch({ type: DELETE_ALL_DATA });
   } catch (error) {
-    dispatch(updateDeleteAllDataProgress({
-      total: -1,
-      done: -1,
-      error: `${error}`,
-    }));
+    dispatch(updateDeleteAllDataProgress({ total: -1, done: -1, error: `${error}` }));
     return;
   }
 };

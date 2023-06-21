@@ -1,3 +1,5 @@
+import platformWrapper from './platformWrapper';
+
 export const didChange = {
   doExtractContents: false,
   doDeleteOldLinksInTrash: false,
@@ -31,7 +33,7 @@ const iap = {
 };
 
 const platform = {
-  isReactNative: false,
+  isReactNative: platformWrapper.isReactNative,
 };
 
 export const getCachedFPaths = () => {
