@@ -3,7 +3,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { createStore, compose } from 'redux';
+import { legacy_createStore as createStore, compose } from 'redux';
 import { install as installReduxLoop } from 'redux-loop';
 import { offline } from '@redux-offline/redux-offline';
 import offlineConfig from '@redux-offline/redux-offline/lib/defaults';

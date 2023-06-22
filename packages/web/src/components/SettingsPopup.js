@@ -135,9 +135,7 @@ const SettingsPopup = () => {
     };
   }, []);
 
-  if (!isShown) return (
-    <AnimatePresence key="AnimatePresence_SP" />
-  );
+  if (!isShown) return null;
 
   const _renderPanelCloseBtn = () => {
     const MAX_W_6XL = 1152; // If change max-w-6xl below, need to update this too.

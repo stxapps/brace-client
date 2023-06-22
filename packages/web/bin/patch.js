@@ -118,8 +118,15 @@ const patchFetchReferer = () => {
 
 const patchTypeReactRedux = () => {
 
-  let match = 'export declare const useSelector: <TState = unknown, Selected = unknown>(selector: (state: TState) => Selected, equalityFn?: EqualityFn<Selected> | undefined) => Selected;';
-  let repmt = 'export declare const useSelector: <TState = any, Selected = any>(selector: (state: TState) => Selected, equalityFn?: EqualityFn<Selected> | undefined) => Selected;';
+  let match = '    <TState = unknown, Selected = unknown>(selector: (state: TState) => Selected, equalityFn?: EqualityFn<Selected>): Selected;';
+  let repmt = '    <TState = any, Selected = any>(selector: (state: TState) => Selected, equalityFn?: EqualityFn<Selected>): Selected;';
+  replaceMatchedLine(
+    'node_modules/react-redux/es/hooks/useSelector.d.ts',
+    [{ match, repmt }],
+  );
+
+  match = '    <TState = unknown, Selected = unknown>(selector: (state: TState) => Selected, options?: UseSelectorOptions<Selected>): Selected;';
+  repmt = '    <TState = any, Selected = any>(selector: (state: TState) => Selected, options?: UseSelectorOptions<Selected>): Selected;';
   replaceMatchedLine(
     'node_modules/react-redux/es/hooks/useSelector.d.ts',
     [{ match, repmt }],
