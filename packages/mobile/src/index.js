@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Text, TextInput, Platform, StatusBar, Keyboard } from 'react-native';
 import { Provider, useSelector } from 'react-redux';
-import { createStore, compose, applyMiddleware } from 'redux';
+import { legacy_createStore as createStore, compose, applyMiddleware } from 'redux';
 import { install as installReduxLoop } from 'redux-loop';
 import { offline } from '@redux-offline/redux-offline';
 import offlineConfig from '@redux-offline/redux-offline/lib/defaults';

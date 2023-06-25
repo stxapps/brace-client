@@ -4,7 +4,7 @@ import { ScrollView, View, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Svg, { Path } from 'react-native-svg';
-import Clipboard from '@react-native-community/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 import {
   updatePopup, updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction,

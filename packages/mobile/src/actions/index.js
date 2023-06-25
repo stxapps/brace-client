@@ -74,6 +74,7 @@ import {
   createSettingsFPath, extractPinFPath, getSortedLinks, getPinFPaths, getPins,
   separatePinnedValues, sortLinks, sortWithPins, getRawPins, getFormattedTime,
   get24HFormattedTime, extractStaticFPath, getEditingListNameEditors,
+  applySubscriptionOfferDetails,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -1342,7 +1343,7 @@ const verifyPurchase = async (rawPurchase) => {
 
   try {
     if (Platform.OS !== 'android') {
-      await iapApi.finishTransaction(rawPurchase, false);
+      await iapApi.finishTransaction({ purchase: rawPurchase, isConsumable: false });
     }
   } catch (error) {
     console.log('Error when finishTransaction: ', error);
@@ -1520,11 +1521,20 @@ export const initIapConnectionAndGetProducts = (doForce) => async (
 
   try {
     const canMakePayments = await iapApi.initConnection();
+    try {
+      await iapApi.flushFailedPurchasesCachedAsPendingAndroid();
+    } catch (flushError) {
+      console.log('Flush failed purchases error: ', flushError);
+      // error in this step should be fine
+    }
     registerIapListeners(true, dispatch, getState);
 
     let products = null;
     if (canMakePayments) {
-      products = await iapApi.getSubscriptions([COM_BRACEDOTTO_SUPPORTER]);
+      products = /** @type {Object[]} */ (await iapApi.getSubscriptions({
+        skus: [COM_BRACEDOTTO_SUPPORTER],
+      }));
+      for (let product of products) applySubscriptionOfferDetails(product);
     }
 
     dispatch({
@@ -1540,7 +1550,12 @@ export const initIapConnectionAndGetProducts = (doForce) => async (
 export const requestPurchase = (product) => async (dispatch, getState) => {
   dispatch({ type: REQUEST_PURCHASE });
   try {
-    await iapApi.requestSubscription(product.productId);
+    const { productId, offerToken } = product;
+    await iapApi.requestSubscription({
+      sku: productId,
+      // github.com/dooboolab-community/react-native-iap/issues/2247
+      subscriptionOffers: [{ sku: productId, offerToken }],
+    });
   } catch (error) {
     console.log('Error when request purchase: ', error);
     if (error.code === 'E_USER_CANCELLED') {

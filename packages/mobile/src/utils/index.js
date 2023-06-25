@@ -1894,3 +1894,57 @@ export const extractFPath = (fpath) => {
   const fext = fnameParts[fnameParts.length - 1];
   return { fpath, fpathParts, fname, fnameParts, fext };
 };
+
+export const applySubscriptionOfferDetails = (product) => {
+  if (!isObject(product)) return;
+
+  const { subscriptionOfferDetails } = product;
+  if (!Array.isArray(subscriptionOfferDetails)) return;
+
+  const offers = [];
+  for (const offer of subscriptionOfferDetails) {
+    if (!isObject(offer)) continue;
+    if (!isObject(offer.pricingPhases)) continue;
+    if (!Array.isArray(offer.pricingPhases.pricingPhaseList)) continue;
+
+    let firstPrice, firstNonZeroFormattedPrice;
+    for (const pricing of offer.pricingPhases.pricingPhaseList) {
+      if (!isObject(pricing)) continue;
+
+      const price = parseInt(pricing.priceAmountMicros, 10);
+      if (isNumber(price)) {
+        if (!isNumber(firstPrice)) firstPrice = price;
+        if (price > 0 && !isString(firstNonZeroFormattedPrice)) {
+          firstNonZeroFormattedPrice = pricing.formattedPrice;
+        }
+      }
+    }
+
+    if (isNumber(firstPrice) && isString(firstNonZeroFormattedPrice)) {
+      offers.push({ ...offer, firstPrice, firstNonZeroFormattedPrice });
+    }
+  }
+
+  let offer = offers.find(_offer => {
+    return _offer.basePlanId === 'p1y' && _offer.offerId === 'freetrial';
+  });
+  if (!isObject(offer)) {
+    offer = offers.find(_offer => {
+      return _offer.basePlanId === 'p1y' && _offer.offerId === null;
+    });
+  }
+  if (!isObject(offer)) {
+    for (const _offer of offers) {
+      if (!isObject(offer)) {
+        offer = _offer;
+        continue;
+      }
+      // Not totally correct, good enough for now.
+      if (_offer.firstPrice < offer.firstPrice) offer = _offer;
+    }
+  }
+  if (!isObject(offer)) return;
+
+  product.offerToken = offer.offerToken;
+  product.localizedPrice = offer.firstNonZeroFormattedPrice;
+};
