@@ -160,13 +160,11 @@ class CardItemContent extends React.Component {
     const { link, tailwind } = this.props;
     const { url, extractedResult, custom } = link;
 
-    let title, classNames = '';
+    let title;
     if (custom && custom.title) {
       title = custom.title;
-      classNames = 'text-justify';
     } else if (extractedResult && extractedResult.title) {
       title = extractedResult.title;
-      classNames = 'text-justify';
     }
     if (!title) {
       title = url;
@@ -191,7 +189,7 @@ class CardItemContent extends React.Component {
           <CardItemMenuPopup link={link} />
         </View>
         <TouchableOpacity onPress={() => Linking.openURL(ensureContainUrlProtocol(url))}>
-          <Text style={tailwind(`mt-0 mb-3 ml-4 mr-3 text-base font-medium leading-6 text-gray-800 blk:text-gray-100 lg:mb-4 ${classNames}`)}>{title}</Text>
+          <Text style={tailwind('mt-0 mb-3 ml-4 mr-3 text-base font-medium leading-6 text-gray-800 blk:text-gray-100 lg:mb-4')}>{title}</Text>
         </TouchableOpacity>
       </React.Fragment>
     );

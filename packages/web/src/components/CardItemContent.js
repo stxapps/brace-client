@@ -191,10 +191,10 @@ class CardItemContent extends React.Component {
     let title, classNames = '';
     if (custom && custom.title) {
       title = custom.title;
-      classNames = 'text-justify hyphens-auto';
+      classNames = 'hyphens-auto';
     } else if (extractedResult && extractedResult.title) {
       title = extractedResult.title;
-      classNames = 'text-justify hyphens-auto';
+      classNames = 'hyphens-auto';
     }
     if (!title) {
       title = url;
