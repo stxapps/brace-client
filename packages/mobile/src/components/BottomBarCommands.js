@@ -40,7 +40,7 @@ class BottomBarCommands extends React.PureComponent {
           <View style={tailwind('flex-1 p-1')}>
             <TouchableOpacity onPress={this.onAddBtnClick} style={tailwind('h-full w-full items-center justify-center')}>
               <View style={tailwind('h-6 w-6 items-center justify-center')}>
-                <Svg style={tailwind('mb-0.5 font-normal text-gray-500 blk:text-gray-400')} width={18} height={17} viewBox="0 0 13 12" stroke="currentColor">
+                <Svg style={tailwind('mb-0.5 font-normal text-gray-500 blk:text-gray-400')} width={18} height={17} viewBox="0 0 13 12" fill="none" stroke="currentColor">
                   <Path d="M6.5 1V10.4286M1 5.67609H12" strokeWidth="1.57143" strokeLinecap="round" strokeLinejoin="round" />
                 </Svg>
               </View>
