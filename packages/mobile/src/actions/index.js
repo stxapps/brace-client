@@ -1531,9 +1531,7 @@ export const initIapConnectionAndGetProducts = (doForce) => async (
 
     let products = null;
     if (canMakePayments) {
-      products = /** @type {Object[]} */ (await iapApi.getSubscriptions({
-        skus: [COM_BRACEDOTTO_SUPPORTER],
-      }));
+      products = await iapApi.getSubscriptions({ skus: [COM_BRACEDOTTO_SUPPORTER] });
       for (let product of products) applySubscriptionOfferDetails(product);
     }
 

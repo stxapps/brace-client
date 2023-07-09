@@ -140,7 +140,18 @@ const patchTypeReactRedux = () => {
   );
 };
 
+const patchTypeReselect = () => {
+
+  let match = 'export type Selector<State = any, Result = unknown, Params extends never | readonly any[] = any[]> = [Params] extends [never] ? (state: State) => Result : (state: State, ...params: Params) => Result;';
+  let repmt = 'export type Selector<State = any, Result = any, Params extends never | readonly any[] = any[]> = [Params] extends [never] ? (state: State) => Result : (state: State, ...params: Params) => Result;';
+  replaceMatchedLine(
+    'node_modules/reselect/es/types.d.ts',
+    [{ match, repmt }],
+  );
+};
+
 patchWalletUtils();
 patchSignECDSA();
 patchFetchReferer();
 patchTypeReactRedux();
+patchTypeReselect();
