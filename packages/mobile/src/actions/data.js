@@ -504,15 +504,17 @@ export const saveAs = async (filePath, fileName) => {
   }
 
   if (Platform.OS === 'android') {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-    );
-    if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-      Alert.alert(
-        'Permission denied',
-        'We don\'t have permission to save the exported data file in Downloads.\n\nPlease grant this permission in Settings -> Apps -> Permissions.',
+    if (Platform.Version < 33) {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
       );
-      return;
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        Alert.alert(
+          'Permission denied',
+          'We don\'t have permission to save the exported data file in Downloads.\n\nPlease grant this permission in Settings -> Apps -> Permissions.',
+        );
+        return;
+      }
     }
 
     try {
