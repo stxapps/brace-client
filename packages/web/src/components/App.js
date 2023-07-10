@@ -17,7 +17,7 @@ import Support from './Support';
 import Back from './Back';
 import ErrorBoundary from './ErrorBoundary';
 
-// @ts-ignore
+// @ts-expect-error
 const _Main = import('./Main');
 const Main = React.lazy(() => _Main);
 

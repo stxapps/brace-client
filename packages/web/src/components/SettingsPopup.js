@@ -343,7 +343,7 @@ const SettingsPopup = () => {
 
   const renderDataView = () => {
     const content = (
-      /* @ts-ignore */
+      /* @ts-expect-error */
       <SettingsPopupData onSidebarOpenBtnClick={onSidebarOpenBtnClick} onToImportAllDataViewBtnClick={onToImportAllDataViewBtnClick} onToExportAllDataViewBtnClick={onToExportAllDataViewBtnClick} onToDeleteAllDataViewBtnClick={onToDeleteAllDataViewBtnClick} />
     );
     return _render(content);
@@ -358,7 +358,7 @@ const SettingsPopup = () => {
 
   const renderExportAllDataView = () => {
     const content = (
-      /* @ts-ignore */
+      /* @ts-expect-error */
       <SettingsPopupDataExport onBackToDataViewBtnClick={onBackToDataViewBtnClick} />
     );
     return _render(content);
@@ -366,7 +366,7 @@ const SettingsPopup = () => {
 
   const renderDeleteAllDataView = () => {
     const content = (
-      /* @ts-ignore */
+      /* @ts-expect-error */
       <SettingsPopupDataDelete onBackToDataViewBtnClick={onBackToDataViewBtnClick} />
     );
     return _render(content);

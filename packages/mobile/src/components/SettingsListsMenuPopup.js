@@ -223,7 +223,7 @@ const SettingsListsMenuPopup = () => {
     popupStyle.transform.push({
       scale: popupAnim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }),
     });
-    /* @ts-ignore */
+    /* @ts-expect-error */
     bgStyle = { opacity: popupAnim };
 
     panel = (

@@ -520,7 +520,6 @@ const SettingsPopup = () => {
 
   const renderExportAllDataView = () => {
     const content = (
-      /* @ts-ignore */
       <SettingsPopupDataExport onBackToDataViewBtnClick={onBackToDataViewBtnClick} />
     );
     return _render(content);
@@ -528,7 +527,7 @@ const SettingsPopup = () => {
 
   const renderDeleteAllDataView = () => {
     const content = (
-      /* @ts-ignore */
+      /* @ts-expect-error */
       <SettingsPopupDataDelete onBackToDataViewBtnClick={onBackToDataViewBtnClick} />
     );
     return _render(content);

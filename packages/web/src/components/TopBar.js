@@ -96,9 +96,8 @@ class TopBar extends React.PureComponent {
     const opacity = Math.max(0, 1.0 - (offsetY / statusPopupDistanceY));
     const visibility = offsetY >= statusPopupDistanceY ? 'hidden' : 'visible';
 
-    const statusPopupStyle = { top, right, opacity, visibility };
+    const statusPopupStyle = /** @type any */({ top, right, opacity, visibility });
     return (
-      /** @ts-ignore */
       <div style={statusPopupStyle} className={tailwind('absolute')}>
         <StatusPopup />
       </div>

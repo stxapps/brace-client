@@ -30,7 +30,7 @@ offlineConfig.dispatch = (...args) => {
   store.dispatch(...args);
 };
 
-/** @ts-ignore */
+/** @ts-expect-error */
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
   /** @type {any} */(reducers),

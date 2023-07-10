@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import RNBlockstackSdk from 'react-native-blockstack';
 
 /* Need this sync function to check if session is available in ReduxOffline peek  */

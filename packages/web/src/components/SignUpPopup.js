@@ -15,7 +15,7 @@ import { useSafeAreaFrame, useTailwind } from '.';
 import Loading from './Loading';
 import ErrorBoundary from './ErrorBoundary';
 
-// @ts-ignore
+// @ts-expect-error
 const _SignUp = import('./SignUp');
 const SignUp = React.lazy(() => _SignUp);
 

@@ -2024,7 +2024,7 @@ export const updateCustomData = (title, image) => async (dispatch, getState) => 
   );
   const link = _links[selectingLinkId];
 
-  const toLink = {};
+  const toLink = /** @type any */({});
   for (const attr in link) {
     if (attr === 'custom') continue;
     toLink[attr] = link[attr];

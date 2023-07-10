@@ -37,7 +37,8 @@ const _tailwind = (classes) => {
     //   in em unit, that's why it requires a font size to be set too.
     if (key === 'letterSpacing') {
       if ('fontSize' in _style) {
-        style.letterSpacing = parseFloat(_style[key]) * _style.fontSize;
+        const fontSize = /** @type any */(_style.fontSize);
+        style.letterSpacing = parseFloat(_style[key]) * fontSize;
       } else {
         console.warn('Using tracking-[xxx], need to also have text-[size]');
       }

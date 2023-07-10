@@ -726,7 +726,7 @@ export const getLinkMainIds = (linkFPaths) => {
 };
 
 export const getWindowHeight = () => {
-  return 'innerHeight' in window ? window.innerHeight : window.document.documentElement.offsetHeight;
+  return window.innerHeight;
 };
 
 export const getWindowScrollHeight = () => {

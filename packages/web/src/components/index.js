@@ -65,8 +65,7 @@ export const useTailwind = () => {
 
 export const withTailwind = (Component) => {
   return React.forwardRef((props, ref) => {
-    /* @ts-ignore */
-    const { safeAreaWidth, themeMode } = props;
+    const { safeAreaWidth, themeMode } = /** @type any */(props);
     const tailwind = getTailwind(safeAreaWidth, themeMode);
     return <Component {...props} tailwind={tailwind} ref={ref} />;
   });
