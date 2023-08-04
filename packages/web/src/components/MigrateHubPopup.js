@@ -105,7 +105,7 @@ const MigrateHubPopup = () => {
             <div ref={scrollView} className={tailwind('relative overflow-y-auto overflow-x-hidden px-4 sm:px-6')} style={{ height: panelHeight }}>
               {content}
               <div className={tailwind('absolute top-0 right-0 p-1')}>
-                <button onClick={onCloseBtnClick} className={tailwind('group flex h-7 w-7 items-center justify-center focus:outline-none')} aria-label="Close sign up popup">
+                <button onClick={onCloseBtnClick} className={tailwind('group flex h-7 w-7 items-center justify-center focus:outline-none')} aria-label="Close migrate hub popup">
                   <svg className={tailwind('h-5 w-5 rounded text-gray-400 group-hover:text-gray-500 group-focus:ring blk:text-gray-500 blk:group-hover:text-gray-400')} stroke="currentColor" fill="none" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>

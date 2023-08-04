@@ -4,10 +4,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Url from 'url-parse';
 
 import {
-  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId,
+  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, lockCurrentList,
 } from '../actions';
-import { getSafeAreaWidth, getThemeMode } from '../selectors';
-import { HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT } from '../types/const';
+import {
+  getSafeAreaWidth, getThemeMode, getCurrentLockListStatus, getCanChangeListNames,
+} from '../selectors';
+import {
+  HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT, LOCK, UNLOCKED,
+} from '../types/const';
 import { bModalBgFMV, bModalFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -40,20 +44,44 @@ class BottomBarProfilePopup extends React.PureComponent {
     this.props.signOut();
   }
 
+  onLockBtnClick = () => {
+    this.props.updatePopup(PROFILE_POPUP, false);
+    // Wait for the close animation to finish first
+    setTimeout(() => this.props.lockCurrentList(), 100);
+  };
+
   render() {
-    const { isProfilePopupShown, tailwind } = this.props;
+    const { isProfilePopupShown, tailwind, lockStatus, canChangeListNames } = this.props;
 
     if (!isProfilePopupShown) return (
       <AnimatePresence key="AnimatePresence_BB_ProfilePopup" />
     );
 
+    const supportAndSignOutButtons = (
+      <React.Fragment>
+        <button onClick={this.onSupportBtnClick} className={tailwind('block w-full rounded-md py-4 pl-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')}>Support</button>
+        <button onClick={this.onSignOutBtnClick} className={tailwind('block w-full rounded-md py-4 pl-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')}>Sign out</button>
+      </React.Fragment>
+    );
+
+    let buttons;
+    if (!canChangeListNames) {
+      buttons = supportAndSignOutButtons;
+    } else {
+      buttons = (
+        <React.Fragment>
+          {lockStatus === UNLOCKED && <button onClick={this.onLockBtnClick} className={tailwind('block w-full rounded-md py-4 pl-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')}>{LOCK}</button>}
+          <button onClick={this.onSettingsBtnClick} className={tailwind('block w-full rounded-md py-4 pl-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')}>Settings</button>
+          {supportAndSignOutButtons}
+        </React.Fragment>
+      );
+    }
+
     return (
       <AnimatePresence key="AnimatePresence_BB_ProfilePopup">
         <motion.button key="BB_ProfilePopup_cancelBtn" onClick={this.onProfileCancelBtnClick} tabIndex={-1} className={tailwind('fixed inset-0 z-40 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={bModalBgFMV} initial="hidden" animate="visible" exit="hidden" />
         <motion.div key="BB_ProfilePopup_menuPopup" className={tailwind('fixed inset-x-0 bottom-0 z-41 rounded-t-lg bg-white pt-4 pb-4 shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25')} variants={bModalFMV} initial="hidden" animate="visible" exit="hidden">
-          <button onClick={this.onSettingsBtnClick} className={tailwind('block w-full rounded-md py-4 pl-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')}>Settings</button>
-          <button onClick={this.onSupportBtnClick} className={tailwind('block w-full rounded-md py-4 pl-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')}>Support</button>
-          <button onClick={this.onSignOutBtnClick} className={tailwind('block w-full rounded-md py-4 pl-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')}>Sign out</button>
+          {buttons}
         </motion.div>
       </AnimatePresence>
     );
@@ -65,11 +93,13 @@ const mapStateToProps = (state, props) => {
     isProfilePopupShown: state.display.isProfilePopupShown,
     themeMode: getThemeMode(state),
     safeAreaWidth: getSafeAreaWidth(state),
+    lockStatus: getCurrentLockListStatus(state),
+    canChangeListNames: getCanChangeListNames(state),
   };
 };
 
 const mapDispatchToProps = {
-  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId,
+  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, lockCurrentList,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(BottomBarProfilePopup));

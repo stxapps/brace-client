@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { updatePopup, updateSettingsPopup, updateSettingsViewId } from '../actions';
 import {
   PAYWALL_POPUP, SETTINGS_VIEW_IAP, FEATURE_PIN, FEATURE_APPEARANCE, FEATURE_CUSTOM,
-  SM_WIDTH,
+  FEATURE_LOCK, SM_WIDTH,
 } from '../types/const';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
@@ -45,10 +45,16 @@ const PaywallPopup = () => {
 
   if (!isShown) return <AnimatePresence key="AP_PWP" />;
 
-  let featureText = 'This';
-  if (feature === FEATURE_PIN) featureText = 'Pin to the top';
-  if (feature === FEATURE_APPEARANCE) featureText = 'Dark appearance';
-  if (feature === FEATURE_CUSTOM) featureText = 'Change title & image';
+  let featureText = 'This is an extra feature.';
+  if (feature === FEATURE_PIN) {
+    featureText = 'Pin to the top is an extra feature.';
+  } else if (feature === FEATURE_APPEARANCE) {
+    featureText = 'Dark appearance is an extra feature.';
+  } else if (feature === FEATURE_CUSTOM) {
+    featureText = 'Change title & image are an extra feature.';
+  } else if (feature === FEATURE_LOCK) {
+    featureText = 'Lock lists are an extra feature.';
+  }
 
   const spanStyle = {};
   if (safeAreaWidth >= SM_WIDTH) spanStyle.height = safeAreaHeight;
@@ -73,7 +79,7 @@ const PaywallPopup = () => {
               <div className={tailwind('mt-3 text-center sm:mt-5')}>
                 <h3 className={tailwind('text-lg font-medium leading-6 text-gray-900')} id="modal-title">Purchase a subscription</h3>
                 <div className={tailwind('mt-2')}>
-                  <p className={tailwind('text-sm text-gray-500')}>{featureText} is an extra feature. Please purchase a subscription to support us and unlock extra features.</p>
+                  <p className={tailwind('text-sm text-gray-500')}>{featureText} Please purchase a subscription to support us and unlock all extra features.</p>
                 </div>
               </div>
             </div>

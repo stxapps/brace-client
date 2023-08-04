@@ -521,7 +521,7 @@ const CustomEditorPopup = () => {
               <div className={tailwind(`flex px-4 ${isObject(customEditor.image) ? 'pt-2' : 'pt-4'}`)}>
                 <span className={tailwind('inline-flex items-center text-sm text-gray-500 blk:text-gray-300')}>Title:</span>
                 <div className={tailwind('ml-3 flex-1')}>
-                  <input onChange={onTitleInputChange} onKeyPress={onTitleInputKeyPress} className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent')} type="text" placeholder="Title" value={customEditor.title} />
+                  <input onChange={onTitleInputChange} onKeyDown={onTitleInputKeyPress} className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent')} type="text" placeholder="Title" value={customEditor.title} />
                 </div>
               </div>
               <div className={tailwind('px-4 pt-3 pb-4')}>

@@ -259,7 +259,7 @@ const putLinks = async (params) => {
     linkMap[fpath] = link;
   }
 
-  // Beware size should be max at N_NOTES, so can call batchPutFileWithRetry directly.
+  // Beware size should be max at N_LINKS, so can call batchPutFileWithRetry directly.
   // Use dangerouslyIgnoreError=true to manage which succeeded/failed manually.
   const responses = await batchPutFileWithRetry(
     serverApi.putFile, fpaths, contents, 0, !!manuallyManageError

@@ -4,12 +4,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import {
   moveListName, updateListNameEditors, updatePopup, updateListNamesMode,
+  updateLockAction, showAddLockEditorPopup,
 } from '../actions';
 import {
-  SETTINGS_LISTS_MENU_POPUP, LIST_NAMES_POPUP, MY_LIST, TRASH, ARCHIVE, MODE_EDIT,
-  SWAP_LEFT, SWAP_RIGHT, LIST_NAMES_MODE_MOVE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP,
+  SETTINGS_LISTS_MENU_POPUP, LIST_NAMES_POPUP, LOCK_EDITOR_POPUP, MY_LIST, TRASH,
+  ARCHIVE, MODE_EDIT, SWAP_LEFT, SWAP_RIGHT, LIST_NAMES_MODE_MOVE_LIST_NAME,
+  LIST_NAMES_ANIM_TYPE_POPUP, LOCK, REMOVE_LOCK, LOCK_ACTION_ADD_LOCK_LIST,
+  LOCK_ACTION_REMOVE_LOCK_LIST,
 } from '../types/const';
-import { makeGetListNameEditor } from '../selectors';
+import { makeGetListNameEditor, makeGetLockListStatus } from '../selectors';
 import { popupBgFMV, popupFMV } from '../types/animConfigs';
 
 import { useSafeAreaFrame, useTailwind } from '.';
@@ -18,13 +21,15 @@ import { computePosition, createLayouts, getOriginClassName } from './MenuPopupR
 const SettingsListsMenuPopup = () => {
 
   const { width: safeAreaWidth, height: safeAreaHeight } = useSafeAreaFrame();
+  const getListNameEditor = useMemo(makeGetListNameEditor, []);
+  const getLockListStatus = useMemo(makeGetLockListStatus, []);
   const isShown = useSelector(state => state.display.isSettingsListsMenuPopupShown);
   const anchorPosition = useSelector(
     state => state.display.settingsListsMenuPopupPosition
   );
   const selectingListName = useSelector(state => state.display.selectingListName);
-  const getListNameEditor = useMemo(makeGetListNameEditor, []);
   const listNameEditor = useSelector(s => getListNameEditor(s, selectingListName));
+  const lockStatus = useSelector(state => getLockListStatus(state, selectingListName));
   const [popupSize, setPopupSize] = useState(null);
   const popup = useRef(null);
   const cancelBtn = useRef(null);
@@ -85,6 +90,21 @@ const SettingsListsMenuPopup = () => {
     didClick.current = true;
   };
 
+  const onAddLockBtnClick = () => {
+    if (didClick.current) return;
+    onCancelBtnClick();
+    dispatch(showAddLockEditorPopup(LOCK_ACTION_ADD_LOCK_LIST));
+    didClick.current = true;
+  };
+
+  const onRemoveLockBtnClick = () => {
+    if (didClick.current) return;
+    onCancelBtnClick();
+    dispatch(updateLockAction(LOCK_ACTION_REMOVE_LOCK_LIST));
+    dispatch(updatePopup(LOCK_EDITOR_POPUP, true));
+    didClick.current = true;
+  };
+
   useEffect(() => {
     if (isShown) {
       const s = popup.current.getBoundingClientRect();
@@ -129,15 +149,27 @@ const SettingsListsMenuPopup = () => {
         Move to
       </button>
       {![MY_LIST, TRASH, ARCHIVE].includes(selectingListName) && <button onClick={onDeleteBtnClick} className={tailwind('group flex w-full items-center px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-gray-50 blk:focus:bg-gray-700 blk:focus:text-white')} role="menuitem">
-        <svg className={tailwind('mr-3 w-4 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 blk:text-gray-400 blk:group-hover:text-gray-300 blk:group-focus:text-gray-300')} viewBox="0 0 14 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg className={tailwind('mr-3.5 w-3.5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 blk:text-gray-400 blk:group-hover:text-gray-300 blk:group-focus:text-gray-300')} viewBox="0 0 14 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path fillRule="evenodd" clipRule="evenodd" d="M6 0C5.62123 0 5.27497 0.214 5.10557 0.55279L4.38197 2H1C0.44772 2 0 2.44772 0 3C0 3.55228 0.44772 4 1 4V14C1 15.1046 1.89543 16 3 16H11C12.1046 16 13 15.1046 13 14V4C13.5523 4 14 3.55228 14 3C14 2.44772 13.5523 2 13 2H9.618L8.8944 0.55279C8.725 0.214 8.3788 0 8 0H6ZM4 6C4 5.44772 4.44772 5 5 5C5.55228 5 6 5.44772 6 6V12C6 12.5523 5.55228 13 5 13C4.44772 13 4 12.5523 4 12V6ZM9 5C8.4477 5 8 5.44772 8 6V12C8 12.5523 8.4477 13 9 13C9.5523 13 10 12.5523 10 12V6C10 5.44772 9.5523 5 9 5Z" />
         </svg>
         Delete
       </button>}
+      {lockStatus === null && <button onClick={onAddLockBtnClick} className={tailwind('group flex w-full items-center py-3 pl-3.5 pr-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-gray-50 blk:focus:bg-gray-700 blk:focus:text-white')} role="menuitem">
+        <svg className={tailwind('mr-3 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 blk:text-gray-400 blk:group-hover:text-gray-300 blk:group-focus:text-gray-300')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fillRule="evenodd" clipRule="evenodd" d="M5 9V7C5 5.67392 5.52678 4.40215 6.46447 3.46447C7.40215 2.52678 8.67392 2 10 2C11.3261 2 12.5979 2.52678 13.5355 3.46447C14.4732 4.40215 15 5.67392 15 7V9C15.5304 9 16.0391 9.21071 16.4142 9.58579C16.7893 9.96086 17 10.4696 17 11V16C17 16.5304 16.7893 17.0391 16.4142 17.4142C16.0391 17.7893 15.5304 18 15 18H5C4.46957 18 3.96086 17.7893 3.58579 17.4142C3.21071 17.0391 3 16.5304 3 16V11C3 10.4696 3.21071 9.96086 3.58579 9.58579C3.96086 9.21071 4.46957 9 5 9ZM13 7V9H7V7C7 6.20435 7.31607 5.44129 7.87868 4.87868C8.44129 4.31607 9.20435 4 10 4C10.7956 4 11.5587 4.31607 12.1213 4.87868C12.6839 5.44129 13 6.20435 13 7Z" />
+        </svg>
+        {LOCK}
+      </button>}
+      {lockStatus !== null && <button onClick={onRemoveLockBtnClick} className={tailwind('group flex w-full items-center py-3 pl-3.5 pr-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-gray-50 blk:focus:bg-gray-700 blk:focus:text-white')} role="menuitem">
+        <svg className={tailwind('mr-2.5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 blk:text-gray-400 blk:group-hover:text-gray-300 blk:group-focus:text-gray-300')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 2C8.67392 2 7.40215 2.52678 6.46447 3.46447C5.52678 4.40215 5 5.67392 5 7V9C4.46957 9 3.96086 9.21071 3.58579 9.58579C3.21071 9.96086 3 10.4696 3 11V16C3 16.5304 3.21071 17.0391 3.58579 17.4142C3.96086 17.7893 4.46957 18 5 18H15C15.5304 18 16.0391 17.7893 16.4142 17.4142C16.7893 17.0391 17 16.5304 17 16V11C17 10.4696 16.7893 9.96086 16.4142 9.58579C16.0391 9.21071 15.5304 9 15 9H7V7C6.99975 6.26964 7.26595 5.56428 7.74866 5.01618C8.23138 4.46809 8.89747 4.11491 9.622 4.02289C10.3465 3.93087 11.0798 4.10631 11.6842 4.51633C12.2886 4.92635 12.7227 5.54277 12.905 6.25C12.9713 6.50686 13.1369 6.72686 13.3654 6.86161C13.4786 6.92833 13.6038 6.97211 13.7338 6.99045C13.8639 7.00879 13.9963 7.00133 14.1235 6.9685C14.2507 6.93567 14.3702 6.87811 14.4751 6.79911C14.58 6.7201 14.6684 6.6212 14.7351 6.50806C14.8018 6.39491 14.8456 6.26973 14.8639 6.13966C14.8823 6.00959 14.8748 5.87719 14.842 5.75C14.5645 4.67676 13.9384 3.7261 13.062 3.04734C12.1856 2.36857 11.1085 2.00017 10 2Z" />
+        </svg>
+        {REMOVE_LOCK}
+      </button>}
     </div>
   );
 
-  let popupClassNames = 'fixed z-41 w-36 overflow-auto rounded-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25';
+  let popupClassNames = 'fixed z-41 min-w-36 overflow-auto rounded-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25';
   let panel;
   if (popupSize) {
 

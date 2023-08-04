@@ -78,7 +78,7 @@ class BottomBarAddPopup extends React.PureComponent {
           <div className={tailwind('flex')}>
             <span className={tailwind('inline-flex items-center text-sm text-gray-500 blk:text-gray-300')}>Url:</span>
             <div className={tailwind('ml-3 flex-1')}>
-              <input ref={this.addInput} onChange={this.onAddInputChange} onKeyPress={this.onAddInputKeyPress} className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent')} type="url" placeholder="https://" value={url} autoCapitalize="none" />
+              <input ref={this.addInput} onChange={this.onAddInputChange} onKeyDown={this.onAddInputKeyPress} className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent')} type="url" placeholder="https://" value={url} autoCapitalize="none" />
             </div>
           </div>
           {msg !== '' && <p className={tailwind('pt-3 text-sm text-red-500')}>{msg}</p>}

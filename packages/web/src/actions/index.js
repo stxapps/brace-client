@@ -49,20 +49,22 @@ import {
   UPDATE_CUSTOM_EDITOR, UPDATE_IMAGES, UPDATE_CUSTOM_DATA, UPDATE_CUSTOM_DATA_COMMIT,
   UPDATE_CUSTOM_DATA_ROLLBACK, REHYDRATE_STATIC_FILES, CLEAN_UP_STATIC_FILES,
   CLEAN_UP_STATIC_FILES_COMMIT, CLEAN_UP_STATIC_FILES_ROLLBACK, UPDATE_PAYWALL_FEATURE,
-  RESET_STATE, UPDATE_MIGRATE_HUB_STATE,
+  UPDATE_LOCK_ACTION, UPDATE_LOCK_EDITOR, ADD_LOCK_LIST, REMOVE_LOCK_LIST, LOCK_LIST,
+  UNLOCK_LIST, CLEAN_UP_LOCKS, RESET_STATE, UPDATE_MIGRATE_HUB_STATE,
 } from '../types/actionTypes';
 import {
   BACK_DECIDER, BACK_POPUP, ALL, HASH_BACK, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP,
   SEARCH_POPUP, PROFILE_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP,
   PAYWALL_POPUP, CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP,
-  SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, DISCARD_ACTION_UPDATE_LIST_NAME, ID,
-  STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK, MY_LIST, TRASH, N_LINKS,
-  N_DAYS, CD_ROOT, ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
-  DIED_UPDATING, BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT,
-  EXTRACT_EXCEEDING_N_URLS, IAP_VERIFY_URL, IAP_STATUS_URL, PADDLE, COM_BRACEDOTTO,
-  COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, ACTIVE, UNKNOWN,
-  SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE, FEATURE_PIN,
-  FEATURE_APPEARANCE, FEATURE_CUSTOM, PADDLE_RANDOM_ID,
+  SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP,
+  DISCARD_ACTION_UPDATE_LIST_NAME, ID, STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION,
+  FROM_LINK, MY_LIST, TRASH, N_LINKS, N_DAYS, CD_ROOT, ADDED, DIED_ADDING, DIED_MOVING,
+  DIED_REMOVING, DIED_DELETING, DIED_UPDATING, BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL,
+  EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, IAP_VERIFY_URL, IAP_STATUS_URL, PADDLE,
+  COM_BRACEDOTTO, COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, ACTIVE,
+  UNKNOWN, SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE, FEATURE_PIN,
+  FEATURE_APPEARANCE, FEATURE_CUSTOM, FEATURE_LOCK, PADDLE_RANDOM_ID, VALID_PASSWORD,
+  PASSWORD_MSGS,
 } from '../types/const';
 import {
   isEqual, isString, isObject, isNumber, throttle, randomString, rerandomRandomTerm,
@@ -73,7 +75,7 @@ import {
   getLinkFPaths, getStaticFPaths, createSettingsFPath, extractPinFPath, getSortedLinks,
   getPinFPaths, getPins, separatePinnedValues, sortLinks, sortWithPins, getRawPins,
   getFormattedTime, get24HFormattedTime, extractStaticFPath, getWindowSize,
-  getEditingListNameEditors,
+  getEditingListNameEditors, validatePassword, doContainListName, sleep,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -211,6 +213,7 @@ const handlePendingSignIn = () => async (dispatch, getState) => {
 const getPopupShownId = (state) => {
   // No need these popups here:
   //   SettingsErrorPopup, PinErrorPopup, AccessErrorPopup, and MigrateHubPopup.
+  if (state.display.isLockEditorPopupShown) return LOCK_EDITOR_POPUP;
   if (state.display.isTimePickPopupShown) return TIME_PICK_POPUP;
   if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
   if (state.display.isConfirmDiscardPopupShown) return CONFIRM_DISCARD_POPUP;
@@ -1248,6 +1251,7 @@ export const updateSettingsDeleteStep = (_settingsFPaths) => async (
   if (_settingsFPaths.length === 0) return;
   try {
     await serverApi.putFiles(_settingsFPaths, _settingsFPaths.map(() => ({})));
+    await cleanUpLocks(dispatch, getState);
   } catch (error) {
     console.log('updateSettings clean up error: ', error);
     // error in this step should be fine
@@ -2176,6 +2180,125 @@ export const cleanUpStaticFiles = () => async (dispatch, getState) => {
     console.log('Error when clean up static files: ', error);
     dispatch({ type: CLEAN_UP_STATIC_FILES_ROLLBACK });
   }
+};
+
+export const updateLockAction = (lockAction) => {
+  return { type: UPDATE_LOCK_ACTION, payload: lockAction };
+};
+
+export const updateLockEditor = (payload) => {
+  return { type: UPDATE_LOCK_EDITOR, payload };
+};
+
+export const showAddLockEditorPopup = (actionType) => async (dispatch, getState) => {
+  const purchases = getState().info.purchases;
+
+  if (!doEnableExtraFeatures(purchases)) {
+    dispatch(updatePaywallFeature(FEATURE_LOCK));
+    dispatch(updatePopup(PAYWALL_POPUP, true));
+    return;
+  }
+
+  dispatch(updateLockAction(actionType));
+  dispatch(updatePopup(LOCK_EDITOR_POPUP, true));
+};
+
+export const addLockList = (
+  listName, password, canChangeListNames, canExport
+) => async (dispatch, getState) => {
+  const vResult = validatePassword(password);
+  if (vResult !== VALID_PASSWORD) {
+    dispatch(updateLockEditor({ errMsg: PASSWORD_MSGS[vResult] }));
+    return;
+  }
+
+  dispatch(updateLockEditor({ isLoadingShown: true, errMsg: '' }));
+  await sleep(16);
+
+  password = await userSession.encrypt(password);
+
+  dispatch({
+    type: ADD_LOCK_LIST,
+    payload: { listName, password, canChangeListNames, canExport },
+  });
+  dispatch(updatePopup(LOCK_EDITOR_POPUP, false));
+};
+
+export const removeLockList = (listName, password) => async (dispatch, getState) => {
+  const vResult = validatePassword(password);
+  if (vResult !== VALID_PASSWORD) {
+    dispatch(updateLockEditor({ errMsg: PASSWORD_MSGS[vResult] }));
+    return;
+  }
+
+  dispatch(updateLockEditor({ isLoadingShown: true, errMsg: '' }));
+  await sleep(16);
+
+  const lockedList = getState().lockSettings.lockedLists[listName];
+
+  let isValid = false;
+  if (isObject(lockedList)) {
+    if (isString(lockedList.password)) {
+      const lockedPassword = await userSession.decrypt(lockedList.password);
+      if (lockedPassword === password) isValid = true;
+    }
+  }
+  if (!isValid) {
+    dispatch(updateLockEditor({
+      isLoadingShown: false, errMsg: 'Password is not correct. Please try again.',
+    }));
+    return;
+  }
+
+  dispatch({ type: REMOVE_LOCK_LIST, payload: { listName } });
+  dispatch(updatePopup(LOCK_EDITOR_POPUP, false));
+};
+
+export const lockCurrentList = () => async (dispatch, getState) => {
+  const listName = getState().display.listName;
+  dispatch({ type: LOCK_LIST, payload: { listName } });
+};
+
+export const unlockList = (listName, password) => async (dispatch, getState) => {
+  const vResult = validatePassword(password);
+  if (vResult !== VALID_PASSWORD) {
+    dispatch(updateLockEditor({ errMsg: PASSWORD_MSGS[vResult] }));
+    return;
+  }
+
+  dispatch(updateLockEditor({ isLoadingShown: true, errMsg: '' }));
+  await sleep(16);
+
+  const lockedList = getState().lockSettings.lockedLists[listName];
+
+  let isValid = false;
+  if (isObject(lockedList)) {
+    if (isString(lockedList.password)) {
+      const lockedPassword = await userSession.decrypt(lockedList.password);
+      if (lockedPassword === password) isValid = true;
+    }
+  }
+  if (!isValid) {
+    dispatch(updateLockEditor({
+      isLoadingShown: false, errMsg: 'Password is not correct. Please try again.',
+    }));
+    return;
+  }
+
+  dispatch({ type: UNLOCK_LIST, payload: { listName, unlockedDT: Date.now() } });
+  dispatch(updatePopup(LOCK_EDITOR_POPUP, false));
+};
+
+const cleanUpLocks = async (dispatch, getState) => {
+  const { listNameMap } = getState().settings;
+  const lockSettings = getState().lockSettings;
+
+  const listNames = [];
+  for (const listName in lockSettings.lockedLists) {
+    if (!doContainListName(listName, listNameMap)) listNames.push(listName);
+  }
+
+  dispatch({ type: CLEAN_UP_LOCKS, payload: { listNames } });
 };
 
 export const checkObsoleteHub = async (dispatch, getState) => {

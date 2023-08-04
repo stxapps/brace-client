@@ -1,12 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { updatePopup, updateListNamesMode } from '../actions';
 import {
-  LIST_NAMES_POPUP, SM_WIDTH, LG_WIDTH, LIST_NAMES_MODE_CHANGE_LIST_NAME,
-  LIST_NAMES_ANIM_TYPE_POPUP,
+  updatePopup, updateListNamesMode, updateSelectingListName, updateLockAction,
+} from '../actions';
+import {
+  LIST_NAMES_POPUP, LOCK_EDITOR_POPUP, SM_WIDTH, LG_WIDTH,
+  LIST_NAMES_MODE_CHANGE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP, LOCK_ACTION_UNLOCK_LIST,
 } from '../types/const';
-import { getListNameMap, getSafeAreaWidth, getThemeMode } from '../selectors';
+import {
+  getListNameMap, getSafeAreaWidth, getThemeMode, getCanChangeListNames,
+} from '../selectors';
 import { getListNameDisplayName } from '../utils';
 
 import { getTopBarSizes, withTailwind } from '.';
@@ -14,6 +18,13 @@ import { getTopBarSizes, withTailwind } from '.';
 class ListName extends React.PureComponent {
 
   onListNameBtnClick = (e) => {
+    if (!this.props.canChangeListNames) {
+      this.props.updateSelectingListName(this.props.listName);
+      this.props.updateLockAction(LOCK_ACTION_UNLOCK_LIST);
+      this.props.updatePopup(LOCK_EDITOR_POPUP, true);
+      return;
+    }
+
     this.props.updateListNamesMode(
       LIST_NAMES_MODE_CHANGE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP,
     );
@@ -67,9 +78,12 @@ const mapStateToProps = (state, props) => {
     updates: state.fetched,
     themeMode: getThemeMode(state),
     safeAreaWidth: getSafeAreaWidth(state),
+    canChangeListNames: getCanChangeListNames(state),
   };
 };
 
-const mapDispatchToProps = { updatePopup, updateListNamesMode };
+const mapDispatchToProps = {
+  updatePopup, updateListNamesMode, updateSelectingListName, updateLockAction,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(ListName));

@@ -44,8 +44,12 @@ const importAllData = {
   didPick: false,
 };
 
+const appState = {
+  lastChangeDT: Date.now(),
+};
+
 const vars = {
   cachedServerFPaths, scrollPanel, fetch, randomHouseworkTasks, iap, platform,
-  importAllData,
+  importAllData, appState,
 };
 export default vars;

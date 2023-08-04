@@ -314,7 +314,7 @@ const _ListNameEditor = (props) => {
           </svg>
         </button>}
         <div className={tailwind('relative flex-shrink flex-grow')}>
-          <input ref={input} onFocus={onInputFocus} onBlur={onInputBlur} onChange={onInputChange} onKeyPress={onInputKeyPress} className={tailwind('w-full border-0 bg-white px-0 py-2 text-base text-gray-600 placeholder:text-gray-500 focus:outline-none focus:ring-0 blk:bg-gray-900 blk:text-gray-300 blk:placeholder:text-gray-400')} type="text" placeholder="Create new list" value={state.value} disabled={isBusy} />
+          <input ref={input} onFocus={onInputFocus} onBlur={onInputBlur} onChange={onInputChange} onKeyDown={onInputKeyPress} className={tailwind('w-full border-0 bg-white px-0 py-2 text-base text-gray-600 placeholder:text-gray-500 focus:outline-none focus:ring-0 blk:bg-gray-900 blk:text-gray-300 blk:placeholder:text-gray-400')} type="text" placeholder="Create new list" value={state.value} disabled={isBusy} />
           <p style={{ bottom: '-0.5rem' }} className={tailwind('absolute left-0 right-0 truncate text-sm font-medium leading-5 text-red-600 blk:text-red-500')}>{state.msg}</p>
         </div>
         {state.mode === MODE_EDIT && <button onTouchStart={onOkBtnPress} onMouseDown={onOkBtnPress} onClick={onOkBtnClick} className={tailwind('group flex h-10 w-10 flex-shrink-0 flex-grow-0 items-center justify-center focus:outline-none')}>
