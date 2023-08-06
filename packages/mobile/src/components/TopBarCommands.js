@@ -6,12 +6,14 @@ import Svg, { Path } from 'react-native-svg';
 
 import {
   signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, updateBulkEdit,
-  refreshFetched,
+  refreshFetched, lockCurrentList,
 } from '../actions';
 import {
-  DOMAIN_NAME, HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT,
+  DOMAIN_NAME, HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT, LOCK, UNLOCKED,
 } from '../types/const';
-import { getThemeMode } from '../selectors';
+import {
+  getThemeMode, getCurrentLockListStatus, getCanChangeListNames,
+} from '../selectors';
 import cache from '../utils/cache';
 
 import MenuPopoverRenderers from './MenuPopoverRenderer';
@@ -57,17 +59,17 @@ class TopBarCommands extends React.PureComponent {
     this.props.signOut();
   }
 
-  renderProfilePopup() {
-    const { tailwind } = this.props;
+  onLockBtnClick = () => {
+    this.props.updatePopup(PROFILE_POPUP, false);
+    // Wait for the close animation to finish first
+    setTimeout(() => this.props.lockCurrentList(), 100);
+  }
 
-    return (
+  renderProfilePopup() {
+    const { tailwind, lockStatus, canChangeListNames } = this.props;
+
+    const supportAndSignOutButtons = (
       <React.Fragment>
-        <MenuOption onSelect={this.onRefreshBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
-          <Text style={tailwind('py-2.5 pl-4 text-sm font-normal text-gray-700 blk:text-gray-200')}>Refresh</Text>
-        </MenuOption>
-        <MenuOption onSelect={this.onSettingsBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
-          <Text style={tailwind('py-2.5 pl-4 text-sm font-normal text-gray-700 blk:text-gray-200')}>Settings</Text>
-        </MenuOption>
         <MenuOption onSelect={this.onSupportBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
           <Text style={tailwind('py-2.5 pl-4 text-sm font-normal text-gray-700 blk:text-gray-200')}>Support</Text>
         </MenuOption>
@@ -76,6 +78,28 @@ class TopBarCommands extends React.PureComponent {
         </MenuOption>
       </React.Fragment>
     );
+
+    let buttons;
+    if (!canChangeListNames) {
+      buttons = supportAndSignOutButtons;
+    } else {
+      buttons = (
+        <React.Fragment>
+          {lockStatus === UNLOCKED && <MenuOption onSelect={this.onLockBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
+            <Text style={tailwind('py-2.5 pl-4 text-sm font-normal text-gray-700 blk:text-gray-200')}>{LOCK}</Text>
+          </MenuOption>}
+          <MenuOption onSelect={this.onRefreshBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
+            <Text style={tailwind('py-2.5 pl-4 text-sm font-normal text-gray-700 blk:text-gray-200')}>Refresh</Text>
+          </MenuOption>
+          <MenuOption onSelect={this.onSettingsBtnClick} customStyles={cache('TBC_profileMenuOption', { optionWrapper: { padding: 0 } })}>
+            <Text style={tailwind('py-2.5 pl-4 text-sm font-normal text-gray-700 blk:text-gray-200')}>Settings</Text>
+          </MenuOption>
+          {supportAndSignOutButtons}
+        </React.Fragment>
+      );
+    }
+
+    return buttons;
   }
 
   render() {
@@ -116,12 +140,14 @@ class TopBarCommands extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     themeMode: getThemeMode(state),
+    lockStatus: getCurrentLockListStatus(state),
+    canChangeListNames: getCanChangeListNames(state),
   };
 };
 
 const mapDispatchToProps = {
   signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, updateBulkEdit,
-  refreshFetched,
+  refreshFetched, lockCurrentList,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(TopBarCommands));

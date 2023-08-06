@@ -35,6 +35,7 @@ export const SETTINGS_LISTS_MENU_POPUP = 'SETTINGS_LISTS_MENU_POPUP';
 export const TIME_PICK_POPUP = 'TIME_PICK_POPUP';
 export const PAYWALL_POPUP = 'PAYWALL_POPUP';
 export const ACCESS_ERROR_POPUP = 'ACCESS_ERROR_POPUP';
+export const LOCK_EDITOR_POPUP = 'LOCK_EDITOR_POPUP';
 
 export const IS_POPUP_SHOWN = 'isPopupShown';
 export const POPUP_ANCHOR_POSITION = 'popupAnchorPosition';
@@ -255,3 +256,31 @@ export const CUSTOM_MODE = 3;
 export const FEATURE_PIN = 'FEATURE_PIN';
 export const FEATURE_APPEARANCE = 'FEATURE_APPEARANCE';
 export const FEATURE_CUSTOM = 'FEATURE_CUSTOM';
+export const FEATURE_LOCK = 'FEATURE_LOCK';
+
+export const LOCK_ACTION_ADD_LOCK_LIST = 'LOCK_ACTION_ADD_LOCK_LIST';
+export const LOCK_ACTION_REMOVE_LOCK_LIST = 'LOCK_ACTION_REMOVE_LOCK_LIST';
+export const LOCK_ACTION_UNLOCK_LIST = 'LOCK_ACTION_UNLOCK_LIST';
+
+export const LOCK = 'Lock';
+export const UNLOCK = 'Unlock';
+export const REMOVE_LOCK = 'Remove lock';
+
+export const LOCKED = 'LOCKED';
+export const UNLOCKED = 'UNLOCKED';
+
+export const VALID_PASSWORD = 'VALID_PASSWORD';
+export const NO_PASSWORD = 'NO_PASSWORD';
+export const CONTAIN_SPACES_PASSWORD = 'CONTAIN_SPACES_PASSWORD';
+export const TOO_LONG_PASSWORD = 'TOO_LONG_PASSWORD';
+
+export const PASSWORD_MSGS = {
+  [VALID_PASSWORD]: '',
+  [NO_PASSWORD]: 'Please fill in a password.',
+  [CONTAIN_SPACES_PASSWORD]: 'Please no spaces in the password.',
+  [TOO_LONG_PASSWORD]: 'Please no more than 27 characters.',
+};
+
+export const APP_STATE_ACTIVE = 'active';
+export const APP_STATE_INACTIVE = 'inactive';
+export const APP_STATE_BACKGROUND = 'background';

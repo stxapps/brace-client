@@ -130,6 +130,8 @@ const displayReducer = (state = initialState, action) => {
       listNamesMode: null,
       listNamesAnimType: null,
       paywallFeature: null,
+      lockAction: null,
+      doForceLock: false,
       importAllDataProgress: null,
       exportAllDataProgress: null,
       deleteAllDataProgress: null,
@@ -263,13 +265,11 @@ const displayReducer = (state = initialState, action) => {
     }
 
     if (id === LOCK_EDITOR_POPUP) {
-      const newState = { ...state, isLockEditorPopupShown: isShown };
-      return newState;
+      return { ...state, isLockEditorPopupShown: isShown };
     }
 
     if (id === ACCESS_ERROR_POPUP) {
-      const newState = { ...state, isAccessErrorPopupShown: isShown };
-      return newState;
+      return { ...state, isAccessErrorPopupShown: isShown };
     }
 
     return state;

@@ -6,9 +6,9 @@ import fileApi from '../apis/localFile';
 import { fetch, rehydrateStaticFiles, endIapConnection } from '../actions';
 import {
   PC_100, PC_50, PC_33, SHOW_BLANK, SHOW_COMMANDS, SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
-  IMAGES,
+  IMAGES, LOCKED,
 } from '../types/const';
-import { getLinks, getLayoutType } from '../selectors';
+import { getLinks, getLayoutType, getCurrentLockListStatus } from '../selectors';
 
 import { withSafeAreaContext } from '.';
 
@@ -17,6 +17,7 @@ import TopBar from './TopBar';
 import BottomBar from './BottomBar';
 import CardPanel from './CardPanel';
 import ListPanel from './ListPanel';
+import LockPanel from './LockPanel';
 import FetchedPopup from './FetchedPopup';
 import PinMenuPopup from './PinMenuPopup';
 import CustomEditorPopup from './CustomEditorPopup';
@@ -28,6 +29,7 @@ import {
   SettingsUpdateErrorPopup, SettingsConflictErrorPopup,
 } from './SettingsErrorPopup';
 import ListNamesPopup from './ListNamesPopup';
+import LockEditorPopup from './LockEditorPopup';
 import ConfirmDeletePopup from './ConfirmDeletePopup';
 import ConfirmDiscardPopup from './ConfirmDiscardPopup';
 import PaywallPopup from './PaywallPopup';
@@ -89,7 +91,7 @@ class Main extends React.PureComponent {
 
   render() {
     const {
-      listName, links, rehydratedListNames, layoutType, safeAreaWidth,
+      listName, links, rehydratedListNames, layoutType, safeAreaWidth, lockStatus,
     } = this.props;
 
     if (links === null) return <Loading />;
@@ -104,6 +106,14 @@ class Main extends React.PureComponent {
     let contentPanel;
     if (!rehydratedListNames.includes(listName)) {
       contentPanel = <Loading />;
+    } else if (lockStatus === LOCKED) {
+      contentPanel = (
+        <React.Fragment>
+          <LockPanel columnWidth={columnWidth} />
+          {columnWidth === PC_100 && <BottomBar />}
+          <TopBar rightPane={topBarRightPane} isListNameShown={true} doSupportTheme={true} scrollY={this.scrollY} />
+        </React.Fragment>
+      );
     } else {
       contentPanel = (
         <React.Fragment>
@@ -130,6 +140,7 @@ class Main extends React.PureComponent {
         <SettingsUpdateErrorPopup />
         <SettingsConflictErrorPopup />
         <ListNamesPopup />
+        <LockEditorPopup />
         <ConfirmDeletePopup />
         <ConfirmDiscardPopup />
         <PaywallPopup />
@@ -146,9 +157,9 @@ const mapStateToProps = (state, props) => {
     rehydratedListNames: state.display.rehydratedListNames,
     fetchedListNames: state.display.fetchedListNames,
     layoutType: getLayoutType(state),
+    lockStatus: getCurrentLockListStatus(state),
   };
 };
-
 const mapDispatchToProps = { fetch, rehydrateStaticFiles, endIapConnection };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(Main));

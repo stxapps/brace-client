@@ -15,14 +15,16 @@ import {
   UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA,
 } from '../types/actionTypes';
 import {
-  MY_LIST, TRASH, ARCHIVE, N_LINKS, LINKS, IMAGES, SETTINGS, INFO, PINS, DOT_JSON,
-  UTF8, BASE64, LAYOUT_CARD, LAYOUT_LIST,
+  MY_LIST, TRASH, ARCHIVE, N_LINKS, LINKS, IMAGES, SETTINGS, PINS, DOT_JSON, BASE64,
+  LAYOUT_CARD, LAYOUT_LIST, CD_ROOT,
+  UTF8,
 } from '../types/const';
 import {
   isEqual, isString, isObject, isNumber, sleep, randomString, getUrlFirstChar,
   randomDecor, isDecorValid, isExtractedResultValid, isCustomValid, isListNameObjsValid,
   createDataFName, createLinkFPath, createSettingsFPath, getLastSettingsFPaths,
   batchGetFileWithRetry, extractFPath, getPins, getMainId, getFormattedTimeStamp,
+  extractLinkFPath, extractPinFPath,
 } from '../utils';
 import { initialSettingsState } from '../types/initialStates';
 import vars from '../vars';
@@ -533,21 +535,27 @@ export const saveAs = async (filePath, fileName) => {
   console.log('Invalid platform: ', Platform.OS);
 };
 
+const _canExport = (listName, lockSettings) => {
+  const lockedList = lockSettings.lockedLists[listName];
+  if (isObject(lockedList)) {
+    if (!isNumber(lockedList.unlockedDT)) {
+      if (!lockedList.canExport) return false;
+    }
+  }
+  return true;
+};
+
 export const exportAllData = () => async (dispatch, getState) => {
   dispatch(updateExportAllDataProgress({ total: 'calculating...', done: 0 }));
 
-  const fpaths = [], settingsFPaths = [], pinFPaths = [];
+  const lockSettings = getState().lockSettings;
+
+  const _linkFPaths = [], _pinFPaths = [], _settingsFPaths = [];
   try {
     await serverApi.listFiles((fpath) => {
-      if (vars.platform.isReactNative && fpath.startsWith(IMAGES)) {
-        fpaths.push('file://' + fpath);
-        return true;
-      }
-
-      if (fpath.startsWith(SETTINGS)) settingsFPaths.push(fpath);
-      else if (fpath.startsWith(INFO)) return true;
-      else if (fpath.startsWith(PINS)) pinFPaths.push(fpath);
-      else fpaths.push(fpath);
+      if (fpath.startsWith(LINKS)) _linkFPaths.push(fpath);
+      else if (fpath.startsWith(PINS)) _pinFPaths.push(fpath);
+      else if (fpath.startsWith(SETTINGS)) _settingsFPaths.push(fpath);
       return true;
     });
   } catch (error) {
@@ -555,28 +563,69 @@ export const exportAllData = () => async (dispatch, getState) => {
     return;
   }
 
-  const lastSettingsFPaths = getLastSettingsFPaths(settingsFPaths);
+  const linkFPaths = [], pinFPaths = [], settingsFPaths = [], linkMainIds = [];
+
+  for (const linkFPath of _linkFPaths) {
+    const { listName, id } = extractLinkFPath(linkFPath);
+    if (!_canExport(listName, lockSettings)) continue;
+    linkFPaths.push(linkFPath);
+    linkMainIds.push(getMainId(id));
+  }
+
+  for (const pinFPath of _pinFPaths) {
+    const { id } = extractPinFPath(pinFPath);
+    const pinMainId = getMainId(id);
+    if (!linkMainIds.includes(pinMainId)) continue;
+    pinFPaths.push(pinFPath);
+  }
+
+  const lastSettingsFPaths = getLastSettingsFPaths(_settingsFPaths);
   if (lastSettingsFPaths.fpaths.length > 0) {
     const lastSettingsFPath = lastSettingsFPaths.fpaths[0];
     const { contents } = await serverApi.getFiles([lastSettingsFPath], true);
     if (!isEqual(initialSettingsState, contents[0])) {
-      fpaths.push(lastSettingsFPath);
+      settingsFPaths.push(lastSettingsFPath);
     }
   }
 
-  const progress = { total: fpaths.length + pinFPaths.length, done: 0 };
+  const progress = {
+    total: linkFPaths.length + pinFPaths.length + settingsFPaths.length, done: 0,
+  };
   dispatch(updateExportAllDataProgress(progress));
 
   if (progress.total === 0) return;
 
   try {
     const successResponses = [], errorResponses = [];
-    for (let i = 0; i < fpaths.length; i += N_LINKS) {
-      const selectedFPaths = fpaths.slice(i, i + N_LINKS);
+    for (let i = 0; i < linkFPaths.length; i += N_LINKS) {
+      const fileFPaths = [];
+
+      const selectedFPaths = linkFPaths.slice(i, i + N_LINKS);
       const responses = await batchGetFileWithRetry(
         serverApi.getFile, selectedFPaths, 0, true
       );
       for (const response of responses) {
+        if (response.success) {
+          const path = response.fpath, data = response.content;
+          successResponses.push({ path, data });
+
+          if (isObject(data.custom)) {
+            const { image } = data.custom;
+            if (isString(image) && image.startsWith(CD_ROOT + '/')) {
+              let fileFPath = image.slice(image.indexOf(CD_ROOT + '/'));
+              if (vars.platform.isReactNative) fileFPath = 'file://' + fileFPath;
+              if (!fileFPaths.includes(fileFPath)) fileFPaths.push(fileFPath);
+            }
+          }
+        } else {
+          errorResponses.push(response);
+        }
+      }
+
+      const fileResponses = await batchGetFileWithRetry(
+        serverApi.getFile, fileFPaths, 0, true
+      );
+      for (const response of fileResponses) {
         if (response.success) {
           let path = response.fpath, data = response.content;
           if (path.startsWith('file://')) {
@@ -588,8 +637,10 @@ export const exportAllData = () => async (dispatch, getState) => {
             data = await FileSystem.readFile(srcFPath, BASE64);
 
             data = `data:application/octet-stream;base64,${data}`;
+          } else {
+            //if (isUint8Array(data)) data = new Blob([data]);
+            //if (isBlob(data)) data = await convertBlobToDataUrl(data);
           }
-
           successResponses.push({ path, data });
         } else {
           errorResponses.push(response);
@@ -615,15 +666,34 @@ export const exportAllData = () => async (dispatch, getState) => {
       }
     }
 
-    const filePath = `${Dirs.CacheDir}/brace-data.txt`;
+    for (let i = 0; i < settingsFPaths.length; i += N_LINKS) {
+      const selectedFPaths = settingsFPaths.slice(i, i + N_LINKS);
+      const responses = await batchGetFileWithRetry(
+        serverApi.getFile, selectedFPaths, 0, true
+      );
+      for (const response of responses) {
+        if (response.success) {
+          const path = response.fpath, data = response.content;
+          successResponses.push({ path, data });
+        } else {
+          errorResponses.push(response);
+        }
+      }
+
+      progress.done += selectedFPaths.length;
+      if (progress.done < progress.total) {
+        dispatch(updateExportAllDataProgress(progress));
+      }
+    }
+
+    const fileName = `Brace.to data ${getFormattedTimeStamp(new Date())}.txt`;
+    const filePath = `${Dirs.CacheDir}/${fileName}`;
     const doFileExist = await FileSystem.exists(filePath);
     if (doFileExist) await FileSystem.unlink(filePath);
 
     await FileSystem.writeFile(
       filePath, JSON.stringify(successResponses, null, 2), UTF8
     );
-
-    const fileName = `Brace.to data ${getFormattedTimeStamp(new Date())}.txt`;
     await saveAs(filePath, fileName);
 
     if (errorResponses.length > 0) {

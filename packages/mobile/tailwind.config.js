@@ -12,6 +12,7 @@ module.exports = {
       minWidth: {
         '28': '7rem',
         '32': '8rem',
+        '36': '9rem',
       },
       minHeight: {
         '14': '3.5rem',
@@ -32,6 +33,7 @@ module.exports = {
         '51': '51',
       },
       lineHeight: {
+        '3.5': '0.875rem',
         '5.5': '1.375rem',
         '6.5': '1.625rem',
       },

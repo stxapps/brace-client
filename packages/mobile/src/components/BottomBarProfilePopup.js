@@ -4,11 +4,14 @@ import { connect } from 'react-redux';
 
 import {
   signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, refreshFetched,
+  lockCurrentList,
 } from '../actions';
 import {
-  DOMAIN_NAME, HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT,
+  DOMAIN_NAME, HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT, LOCK, UNLOCKED,
 } from '../types/const';
-import { getThemeMode } from '../selectors';
+import {
+  getThemeMode, getCurrentLockListStatus, getCanChangeListNames,
+} from '../selectors';
 import { bModalFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -125,8 +128,16 @@ class BottomBarProfilePopup extends React.PureComponent {
     this.props.signOut();
   }
 
+  onLockBtnClick = () => {
+    this.props.updatePopup(PROFILE_POPUP, false);
+    // Wait for the close animation to finish first
+    setTimeout(() => this.props.lockCurrentList(), 100);
+  }
+
   render() {
-    const { isProfilePopupShown, insets, tailwind } = this.props;
+    const {
+      isProfilePopupShown, insets, tailwind, lockStatus, canChangeListNames,
+    } = this.props;
 
     if (!isProfilePopupShown && this.state.didCloseAnimEnd) return null;
 
@@ -135,22 +146,42 @@ class BottomBarProfilePopup extends React.PureComponent {
       transform: [{ translateY: this.profilePopupTranslateY }],
     };
 
-    return (
+    const supportAndSignOutButtons = (
       <React.Fragment>
-        <TouchableOpacity activeOpacity={1.0} onPress={this.onProfileCancelBtnClick} style={tailwind('absolute inset-0 z-40 bg-black bg-opacity-25')} />
-        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 z-41 rounded-t-lg bg-white pt-4 shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
+        <TouchableOpacity onPress={this.onSupportBtnClick} style={tailwind('w-full py-4 pl-4')}>
+          <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>Support</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this.onSignOutBtnClick} style={tailwind('w-full py-4 pl-4')}>
+          <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>Sign out</Text>
+        </TouchableOpacity>
+      </React.Fragment>
+    );
+
+    let buttons;
+    if (!canChangeListNames) {
+      buttons = supportAndSignOutButtons;
+    } else {
+      buttons = (
+        <React.Fragment>
+          {lockStatus === UNLOCKED && <TouchableOpacity onPress={this.onLockBtnClick} style={tailwind('w-full py-4 pl-4')}>
+            <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>{LOCK}</Text>
+          </TouchableOpacity>}
           <TouchableOpacity onPress={this.onRefreshBtnClick} style={tailwind('w-full py-4 pl-4')}>
             <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>Refresh</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.onSettingsBtnClick} style={tailwind('w-full py-4 pl-4')}>
             <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>Settings</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={this.onSupportBtnClick} style={tailwind('w-full py-4 pl-4')}>
-            <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>Support</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={this.onSignOutBtnClick} style={tailwind('w-full py-4 pl-4')}>
-            <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>Sign out</Text>
-          </TouchableOpacity>
+          {supportAndSignOutButtons}
+        </React.Fragment>
+      );
+    }
+
+    return (
+      <React.Fragment>
+        <TouchableOpacity activeOpacity={1.0} onPress={this.onProfileCancelBtnClick} style={tailwind('absolute inset-0 z-40 bg-black bg-opacity-25')} />
+        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 z-41 rounded-t-lg bg-white pt-4 shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
+          {buttons}
         </Animated.View>
       </React.Fragment>
     );
@@ -161,11 +192,14 @@ const mapStateToProps = (state, props) => {
   return {
     isProfilePopupShown: state.display.isProfilePopupShown,
     themeMode: getThemeMode(state),
+    lockStatus: getCurrentLockListStatus(state),
+    canChangeListNames: getCanChangeListNames(state),
   };
 };
 
 const mapDispatchToProps = {
   signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, refreshFetched,
+  lockCurrentList,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(BottomBarProfilePopup));

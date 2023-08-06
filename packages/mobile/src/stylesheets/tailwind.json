@@ -4519,6 +4519,9 @@
 	"min-w-32": {
 		"minWidth": 128
 	},
+	"min-w-36": {
+		"minWidth": 144
+	},
 	"min-w-full": {
 		"minWidth": "100%"
 	},
@@ -7262,6 +7265,9 @@
 	},
 	"leading-10": {
 		"lineHeight": 40
+	},
+	"leading-3.5": {
+		"lineHeight": 14
 	},
 	"leading-5.5": {
 		"lineHeight": 22

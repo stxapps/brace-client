@@ -23,6 +23,8 @@ import iapReducer from './iapReducer';
 import cachedFPathsReducer from './cachedFPathsReducer';
 import pendingPinsReducer from './pendingPinsReducer';
 import timePickReducer from './timePickReducer';
+import lockSettingsReducer from './lockSettingsReducer';
+import lockEditorReducer from './lockEditorReducer';
 import migrateHubReducer from './migrateHubReducer';
 
 export default combineReducers({
@@ -49,5 +51,7 @@ export default combineReducers({
   cachedFPaths: cachedFPathsReducer,
   pendingPins: pendingPinsReducer,
   timePick: timePickReducer,
+  lockSettings: lockSettingsReducer,
+  lockEditor: lockEditorReducer,
   migrateHub: migrateHubReducer,
 });

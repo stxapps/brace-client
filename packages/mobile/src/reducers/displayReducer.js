@@ -11,16 +11,18 @@ import {
   UPDATE_DELETE_ACTION, UPDATE_DISCARD_ACTION, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
   UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, MERGE_SETTINGS_COMMIT,
   UPDATE_SETTINGS_VIEW_ID, UPDATE_LIST_NAMES_MODE, REHYDRATE_STATIC_FILES,
-  UPDATE_PAYWALL_FEATURE, UPDATE_IMPORT_ALL_DATA_PROGRESS,
-  UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA,
-  RESET_STATE,
+  UPDATE_PAYWALL_FEATURE, UPDATE_LOCK_ACTION, ADD_LOCK_LIST, LOCK_LIST,
+  UPDATE_LOCKS_FOR_ACTIVE_APP, UPDATE_LOCKS_FOR_INACTIVE_APP,
+  UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
+  UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   LIST_NAMES_POPUP, PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP, PAYWALL_POPUP,
   CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP,
-  SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, ACCESS_ERROR_POPUP, MY_LIST, TRASH,
-  ARCHIVE, UPDATING, DIED_UPDATING, SETTINGS_VIEW_ACCOUNT, DELETE_ACTION_LIST_NAME,
+  SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP, ACCESS_ERROR_POPUP,
+  MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING, SETTINGS_VIEW_ACCOUNT,
+  DELETE_ACTION_LIST_NAME,
 } from '../types/const';
 import { doContainListName, getStatusCounts, isObject, isString } from '../utils';
 
@@ -45,6 +47,7 @@ const initialState = {
   settingsListsMenuPopupPosition: null,
   isTimePickPopupShown: false,
   timePickPopupPosition: null,
+  isLockEditorPopupShown: false,
   isAccessErrorPopupShown: false,
   statuses: [],
   isHandlingSignIn: false,
@@ -69,6 +72,8 @@ const initialState = {
   listNamesMode: null,
   listNamesAnimType: null,
   paywallFeature: null,
+  lockAction: null,
+  doForceLock: false,
   importAllDataProgress: null,
   exportAllDataProgress: null,
   deleteAllDataProgress: null,
@@ -99,6 +104,7 @@ const displayReducer = (state = initialState, action) => {
       settingsListsMenuPopupPosition: null,
       isTimePickPopupShown: false,
       timePickPopupPosition: null,
+      isLockEditorPopupShown: false,
       isAccessErrorPopupShown: false,
       statuses: [],
       isHandlingSignIn: false,
@@ -124,6 +130,8 @@ const displayReducer = (state = initialState, action) => {
       listNamesMode: null,
       listNamesAnimType: null,
       paywallFeature: null,
+      lockAction: null,
+      doForceLock: false,
       importAllDataProgress: null,
       exportAllDataProgress: null,
       deleteAllDataProgress: null,
@@ -159,6 +167,7 @@ const displayReducer = (state = initialState, action) => {
         isConfirmDeletePopupShown: isShown,
         isConfirmDiscardPopupShown: isShown,
         isSettingsPopupShown: isShown,
+        isLockEditorPopupShown: isShown,
         //isAccessErrorPopupShown: isShown, // ErrorPopup should still be shown
       };
       if (!isShown) {
@@ -255,9 +264,12 @@ const displayReducer = (state = initialState, action) => {
       };
     }
 
+    if (id === LOCK_EDITOR_POPUP) {
+      return { ...state, isLockEditorPopupShown: isShown };
+    }
+
     if (id === ACCESS_ERROR_POPUP) {
-      const newState = { ...state, isAccessErrorPopupShown: isShown };
-      return newState;
+      return { ...state, isAccessErrorPopupShown: isShown };
     }
 
     return state;
@@ -508,6 +520,38 @@ const displayReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_PAYWALL_FEATURE) {
     return { ...state, paywallFeature: action.payload };
+  }
+
+  if (action.type === UPDATE_LOCK_ACTION) {
+    return { ...state, lockAction: action.payload };
+  }
+
+  if ([ADD_LOCK_LIST, LOCK_LIST].includes(action.type)) {
+    return { ...state };
+  }
+
+  if (action.type === UPDATE_LOCKS_FOR_ACTIVE_APP) {
+    const { isLong } = action.payload;
+
+    const newState = { ...state, doForceLock: false };
+    if (isLong) {
+      newState.selectedLinkIds = [];
+    }
+    return newState;
+  }
+
+  if (action.type === UPDATE_LOCKS_FOR_INACTIVE_APP) {
+    return {
+      ...state,
+      doForceLock: true,
+      isListNamesPopupShown: false,
+      listNamesPopupPosition: null,
+      isPinMenuPopupShown: false,
+      pinMenuPopupPosition: null,
+      isCustomEditorPopupShown: false,
+      isLockEditorPopupShown: false,
+      isConfirmDeletePopupShown: false,
+    };
   }
 
   if (action.type === UPDATE_IMPORT_ALL_DATA_PROGRESS) {

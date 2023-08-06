@@ -31,6 +31,7 @@
     "react-native-document-picker": "^9.0.1",
     "react-native-fast-image": "^8.6.3",
     "react-native-file-access": "^3.0.4",
+    "react-native-flag-secure": "^1.0.4",
     "react-native-iap": "^12.10.5",
     "react-native-image-crop-picker": "^0.40.0",
     "react-native-keyboard-manager": "^6.5.11-1",

@@ -8,6 +8,7 @@ import Svg, { Path } from 'react-native-svg';
 import { updatePopup, updateSettingsPopup, updateSettingsViewId } from '../actions';
 import {
   PAYWALL_POPUP, SETTINGS_VIEW_IAP, FEATURE_PIN, FEATURE_APPEARANCE, FEATURE_CUSTOM,
+  FEATURE_LOCK,
 } from '../types/const';
 import { dialogFMV } from '../types/animConfigs';
 
@@ -85,10 +86,16 @@ const PaywallPopup = () => {
 
   if (!isShown && didCloseAnimEnd) return null;
 
-  let featureText = 'This';
-  if (feature === FEATURE_PIN) featureText = 'Pin to the top';
-  if (feature === FEATURE_APPEARANCE) featureText = 'Dark appearance';
-  if (feature === FEATURE_CUSTOM) featureText = 'Change title & image';
+  let featureText = 'This is an extra feature.';
+  if (feature === FEATURE_PIN) {
+    featureText = 'Pin to the top is an extra feature.';
+  } else if (feature === FEATURE_APPEARANCE) {
+    featureText = 'Dark appearance is an extra feature.';
+  } else if (feature === FEATURE_CUSTOM) {
+    featureText = 'Change title & image are an extra feature.';
+  } else if (feature === FEATURE_LOCK) {
+    featureText = 'Lock lists are an extra feature.';
+  }
 
   const canvasStyle = { paddingLeft: 16 + insets.left, paddingRight: 16 + insets.right };
   const popupStyle = {
@@ -116,7 +123,7 @@ const PaywallPopup = () => {
           <View style={tailwind('mt-3 sm:mt-5')}>
             <Text style={tailwind('text-center text-lg font-medium leading-6 text-gray-900')}>Purchase a subscription</Text>
             <View style={tailwind('mt-2')}>
-              <Text style={tailwind('text-center text-sm font-normal text-gray-500')}>{featureText} is an extra feature. Please purchase a subscription to support us and unlock extra features.</Text>
+              <Text style={tailwind('text-center text-sm font-normal text-gray-500')}>{featureText} Please purchase a subscription to support us and unlock all extra features.</Text>
             </View>
           </View>
         </View>

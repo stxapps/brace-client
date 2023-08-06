@@ -612,11 +612,10 @@ export const exportAllData = () => async (dispatch, getState) => {
       }
     }
 
+    const fileName = `Brace.to data ${getFormattedTimeStamp(new Date())}.txt`;
     const blob = new Blob(
       [JSON.stringify(successResponses, null, 2)], { type: 'text/plain;charset=utf-8' }
     );
-
-    const fileName = `Brace.to data ${getFormattedTimeStamp(new Date())}.txt`;
     saveAs(blob, fileName);
 
     if (errorResponses.length > 0) {

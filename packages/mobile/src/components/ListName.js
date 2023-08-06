@@ -3,12 +3,14 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
-import { updatePopup, updateListNamesMode } from '../actions';
 import {
-  LIST_NAMES_POPUP, SM_WIDTH, LG_WIDTH, LIST_NAMES_MODE_CHANGE_LIST_NAME,
-  LIST_NAMES_ANIM_TYPE_POPUP,
+  updatePopup, updateListNamesMode, updateSelectingListName, updateLockAction,
+} from '../actions';
+import {
+  LIST_NAMES_POPUP, LOCK_EDITOR_POPUP, SM_WIDTH, LG_WIDTH,
+  LIST_NAMES_MODE_CHANGE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP, LOCK_ACTION_UNLOCK_LIST,
 } from '../types/const';
-import { getListNameMap, getThemeMode } from '../selectors';
+import { getListNameMap, getThemeMode, getCanChangeListNames } from '../selectors';
 import { getListNameDisplayName } from '../utils';
 import cache from '../utils/cache';
 
@@ -23,6 +25,13 @@ class ListName extends React.PureComponent {
   }
 
   onListNameBtnClick = () => {
+    if (!this.props.canChangeListNames) {
+      this.props.updateSelectingListName(this.props.listName);
+      this.props.updateLockAction(LOCK_ACTION_UNLOCK_LIST);
+      this.props.updatePopup(LOCK_EDITOR_POPUP, true);
+      return;
+    }
+
     this.listNameBtn.current.measure((_fx, _fy, width, height, x, y) => {
       this.props.updateListNamesMode(
         LIST_NAMES_MODE_CHANGE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP,
@@ -73,9 +82,12 @@ const mapStateToProps = (state, props) => {
     listNameMap: getListNameMap(state),
     updates: state.fetched,
     themeMode: getThemeMode(state),
+    canChangeListNames: getCanChangeListNames(state),
   };
 };
 
-const mapDispatchToProps = { updatePopup, updateListNamesMode };
+const mapDispatchToProps = {
+  updatePopup, updateListNamesMode, updateSelectingListName, updateLockAction,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(ListName));

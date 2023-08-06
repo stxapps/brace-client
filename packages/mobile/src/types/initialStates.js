@@ -61,3 +61,7 @@ export const initialMigrateHubState = {
   didWarn: false,
   progress: null,
 };
+
+export const initialLockSettingsState = {
+  lockedLists: {},
+};

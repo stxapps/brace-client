@@ -15,7 +15,8 @@ import {
   DIED_REMOVING, DIED_DELETING, COLOR, PATTERN, IMAGE, BG_COLOR_STYLES, PATTERNS,
   VALID_URL, NO_URL, ASK_CONFIRM_URL, VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME,
   DUPLICATE_LIST_NAME, COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD,
-  PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, MAX_TRY, EXTRACT_INVALID_URL,
+  PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, MAX_TRY, EXTRACT_INVALID_URL, VALID_PASSWORD,
+  NO_PASSWORD, CONTAIN_SPACES_PASSWORD, TOO_LONG_PASSWORD,
 } from '../types/const';
 import { IMAGE_PATHS } from '../types/imagePaths';
 import { _ } from './obj';
@@ -1947,4 +1948,24 @@ export const applySubscriptionOfferDetails = (product) => {
 
   product.offerToken = offer.offerToken;
   product.localizedPrice = offer.firstNonZeroFormattedPrice;
+};
+
+export const validatePassword = (password) => {
+  if (!isString(password) || password.length === 0) return NO_PASSWORD;
+  if (/\s/g.test(password)) return CONTAIN_SPACES_PASSWORD;
+  if (password.length > 27) return TOO_LONG_PASSWORD;
+  return VALID_PASSWORD;
+};
+
+export const doListContainUnlocks = (state) => {
+  const listName = state.display.listName;
+  const { lockedLists } = state.lockSettings;
+
+  if (isObject(lockedLists[listName])) {
+    if (isString(lockedLists[listName].password)) {
+      if (isNumber(lockedLists[listName].unlockedDT)) return true;
+    }
+  }
+
+  return false;
 };

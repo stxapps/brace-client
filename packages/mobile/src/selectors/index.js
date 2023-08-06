@@ -6,7 +6,7 @@ import {
 } from '../types/actionTypes';
 import {
   IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, PINNED, WHT_MODE, BLK_MODE, SYSTEM_MODE,
-  CUSTOM_MODE, FROM_LINK,
+  CUSTOM_MODE, FROM_LINK, LOCKED, UNLOCKED, MY_LIST,
 } from '../types/const';
 import {
   isStringIn, isObject, isString, isArrayEqual, isEqual, getListNameObj, getStatusCounts,
@@ -515,3 +515,45 @@ export const makeGetCustomImage = () => {
     }
   );
 };
+
+export const makeGetLockListStatus = () => {
+  return createSelector(
+    state => state.display.doForceLock,
+    state => state.lockSettings.lockedLists,
+    (__, listName) => listName,
+    (doForceLock, lockedLists, listName) => {
+      if (!isString(listName)) return null;
+
+      if (isObject(lockedLists[listName])) {
+        if (isString(lockedLists[listName].password)) {
+          if (doForceLock) return LOCKED;
+          if (isNumber(lockedLists[listName].unlockedDT)) return UNLOCKED;
+          return LOCKED;
+        }
+      }
+      return null;
+    },
+  );
+};
+
+const _getCurrentLockListStatus = makeGetLockListStatus();
+export const getCurrentLockListStatus = (state) => {
+  return _getCurrentLockListStatus(state, state.display.listName);
+};
+
+export const getCanChangeListNames = createSelector(
+  state => state.display.doForceLock,
+  state => state.display.listName,
+  state => state.lockSettings.lockedLists,
+  (doForceLock, listName, lockedLists) => {
+    if (listName !== MY_LIST) return true;
+
+    if (isObject(lockedLists[listName])) {
+      if (!doForceLock && isNumber(lockedLists[listName].unlockedDT)) return true;
+      if ([true, false].includes(lockedLists[listName].canChangeListNames)) {
+        return lockedLists[listName].canChangeListNames;
+      }
+    }
+    return true;
+  },
+);
