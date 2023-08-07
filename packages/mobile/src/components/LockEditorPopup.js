@@ -231,7 +231,7 @@ const LockEditorPopup = () => {
             <Text style={tailwind('text-left text-xl font-semibold text-gray-800 blk:text-gray-100')}>{title}</Text>
             {desc}
             <View style={tailwind([LOCK_ACTION_ADD_LOCK_LIST].includes(lockAction) ? 'pt-1' : 'pt-3.5')}>
-              <View style={tailwind('mt-1 rounded-md bg-white blk:bg-gray-800')}>
+              <View style={tailwind('mt-1 bg-white blk:bg-gray-800')}>
                 <TextInput ref={passwordInput} onChange={onPasswordInputChange} style={tailwind('h-9 w-full rounded-full border border-gray-400 bg-white pl-4 pr-6 text-sm font-normal leading-3.5 text-gray-700 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100')} placeholder="Password" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={passwordInputValue} autoCapitalize="none" secureTextEntry={!doShowPassword} />
                 <TouchableOpacity onPress={() => setDoShowPassword(!doShowPassword)} style={tailwind('absolute inset-y-0 right-0 items-center justify-center pr-2')}>
                   <Svg width={16} height={16} style={tailwind('font-normal text-gray-400 blk:text-gray-500')} viewBox="0 0 20 20" fill="currentColor">
@@ -257,13 +257,13 @@ const LockEditorPopup = () => {
             </View>}
             <View style={tailwind(errMsg ? '' : isAddLockList ? 'pt-5' : 'pt-3.5')}>
               {errMsg && <Text style={tailwind('py-2 text-sm font-normal text-red-500')}>{errMsg}</Text>}
-              <TouchableOpacity onPress={onOkBtnClick} style={tailwind('w-full rounded-full border border-gray-800 bg-gray-800 py-2 shadow-sm blk:border-gray-500 blk:bg-gray-500')}>
+              <TouchableOpacity onPress={onOkBtnClick} style={tailwind('w-full rounded-full border border-gray-800 bg-gray-800 py-2 blk:border-gray-500 blk:bg-gray-500')}>
                 <Text style={tailwind('text-center text-base font-medium text-gray-50 sm:text-sm')}>{btnText}</Text>
               </TouchableOpacity>
             </View>
             <View style={tailwind('absolute top-0 right-0 p-1')}>
               <TouchableOpacity onPress={onCancelBtnClick} style={tailwind('h-7 w-7 items-center justify-center')}>
-                <Svg width={20} height={20} style={tailwind('rounded font-normal text-gray-400 blk:text-gray-500')} stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <Svg width={20} height={20} style={tailwind('font-normal text-gray-400 blk:text-gray-500')} stroke="currentColor" fill="none" viewBox="0 0 24 24">
                   <Path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                 </Svg>
               </TouchableOpacity>
