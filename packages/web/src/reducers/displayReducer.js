@@ -527,7 +527,7 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if ([ADD_LOCK_LIST, LOCK_LIST].includes(action.type)) {
-    return { ...state };
+    return state;
   }
 
   if (action.type === UPDATE_LOCKS_FOR_ACTIVE_APP) {
@@ -548,8 +548,11 @@ const displayReducer = (state = initialState, action) => {
       listNamesPopupPosition: null,
       isPinMenuPopupShown: false,
       pinMenuPopupPosition: null,
-      isCustomEditorPopupShown: false,
-      isLockEditorPopupShown: false,
+      // CustomEditorPopup (and some others) won't be rendered by Main when locked,
+      //   so no need to force close it.
+      // And can't because ImagePicker makes app inactive!
+      //isCustomEditorPopupShown: false,
+      isLockEditorPopupShown: false, // Force close in case of already filling password.
       isConfirmDeletePopupShown: false,
     };
   }

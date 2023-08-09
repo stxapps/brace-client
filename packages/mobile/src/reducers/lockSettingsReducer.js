@@ -5,6 +5,7 @@ import {
   UPDATE_LOCKS_FOR_ACTIVE_APP, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import { initialLockSettingsState as initialState } from '../types/initialStates';
+import { isObject } from '../utils';
 
 /* {
   lockedLists: {
@@ -15,7 +16,26 @@ import { initialLockSettingsState as initialState } from '../types/initialStates
 const lockSettingsReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
-    const { lockSettings } = action.payload;
+    const { lockSettings: _lockSettings } = action.payload;
+
+    const lockSettings = { ...initialState };
+    if (isObject(_lockSettings)) {
+      for (const k1 in _lockSettings) {
+        if (!(k1 in lockSettings)) continue;
+
+        const v1 = {}, _v1 = _lockSettings[k1];
+        for (const k2 in _v1) {
+          const v2 = {}, _v2 = _v1[k2];
+          for (const k3 in _v2) {
+            if (k3 === 'unlockedDT') continue;
+            v2[k3] = _v2[k3];
+          }
+          v1[k2] = v2;
+        }
+        lockSettings[k1] = v1;
+      }
+    }
+
     return { ...state, ...lockSettings };
   }
 

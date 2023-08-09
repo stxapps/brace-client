@@ -24,7 +24,7 @@ import {
   randomDecor, isDecorValid, isExtractedResultValid, isCustomValid, isListNameObjsValid,
   createDataFName, createLinkFPath, createSettingsFPath, getLastSettingsFPaths,
   batchGetFileWithRetry, extractFPath, getPins, getMainId, getFormattedTimeStamp,
-  extractLinkFPath, extractPinFPath,
+  extractLinkFPath, extractPinFPath, getStaticFPath,
 } from '../utils';
 import { initialSettingsState } from '../types/initialStates';
 import vars from '../vars';
@@ -612,7 +612,7 @@ export const exportAllData = () => async (dispatch, getState) => {
           if (isObject(data.custom)) {
             const { image } = data.custom;
             if (isString(image) && image.startsWith(CD_ROOT + '/')) {
-              let fileFPath = image.slice(image.indexOf(CD_ROOT + '/'));
+              let fileFPath = getStaticFPath(image);
               if (vars.platform.isReactNative) fileFPath = 'file://' + fileFPath;
               if (!fileFPaths.includes(fileFPath)) fileFPaths.push(fileFPath);
             }
