@@ -24,19 +24,18 @@ const LockPanel = (props) => {
     dispatch(updatePopup(LOCK_EDITOR_POPUP, true));
   };
 
-  let paddingBottom = '1.5rem';
+  let pt = safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD;
+
+  let pb = '1.5rem';
   if (columnWidth === PC_100) {
-    paddingBottom = addRem(SEARCH_POPUP_HEIGHT, addRem(BOTTOM_BAR_HEIGHT, '1.5rem'));
+    pb = addRem(SEARCH_POPUP_HEIGHT, addRem(BOTTOM_BAR_HEIGHT, '1.5rem'));
   }
 
-  const style = {
-    paddingTop: safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD,
-    paddingBottom,
-  };
+  const style = { paddingTop: pt, paddingBottom: pb };
   const btnStyle = {
-    height: safeAreaWidth < MD_WIDTH ? '2.5rem' : '2.125rem',
-    paddingLeft: safeAreaWidth < MD_WIDTH ? '0.75rem' : '0.625rem',
-    paddingRight: safeAreaWidth < MD_WIDTH ? '0.875rem' : '0.75rem',
+    height: safeAreaWidth < SM_WIDTH ? '2.5rem' : '2.125rem',
+    paddingLeft: safeAreaWidth < SM_WIDTH ? '0.75rem' : '0.625rem',
+    paddingRight: safeAreaWidth < SM_WIDTH ? '0.875rem' : '0.75rem',
   };
 
   return (
