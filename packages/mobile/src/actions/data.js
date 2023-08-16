@@ -731,11 +731,10 @@ export const deleteAllData = () => async (dispatch, getState) => {
   // redux-offline: Empty outbox
   dispatch({ type: OFFLINE_RESET_STATE });
 
-  let fpaths = [], settingsFPaths = [], settingsIds;
+  const fpaths = [];
   try {
     await serverApi.listFiles((fpath) => {
-      if (fpath.startsWith(SETTINGS)) settingsFPaths.push(fpath);
-      else fpaths.push(fpath);
+      fpaths.push(fpath);
       return true;
     });
   } catch (error) {
@@ -743,16 +742,7 @@ export const deleteAllData = () => async (dispatch, getState) => {
     return;
   }
 
-  const lastSettingsFPaths = getLastSettingsFPaths(settingsFPaths);
-  [settingsFPaths, settingsIds] = [lastSettingsFPaths.fpaths, lastSettingsFPaths.ids];
-  if (settingsFPaths.length === 1) {
-    const { contents } = await serverApi.getFiles(settingsFPaths, true);
-    if (isEqual(initialSettingsState, contents[0])) {
-      [settingsFPaths, settingsIds] = [[], []];
-    }
-  }
-
-  const total = fpaths.length + settingsFPaths.length;
+  const total = fpaths.length;
   const progress = { total, done: 0 };
   dispatch(updateDeleteAllDataProgress(progress));
 
@@ -764,22 +754,6 @@ export const deleteAllData = () => async (dispatch, getState) => {
       await serverApi.deleteFiles(selectedFPaths);
 
       progress.done += selectedFPaths.length;
-      dispatch(updateDeleteAllDataProgress(progress));
-    }
-    if (settingsFPaths.length > 0) {
-      const now = Date.now();
-      const fname = createDataFName(`${now}${randomString(4)}`, settingsIds);
-      const newSettingsFPath = createSettingsFPath(fname);
-
-      await serverApi.putFiles([newSettingsFPath], [{ ...initialSettingsState }]);
-      try {
-        await serverApi.putFiles(settingsFPaths, settingsFPaths.map(() => ({})));
-      } catch (error) {
-        console.log('deleteAllData error: ', error);
-        // error in this step should be fine
-      }
-
-      progress.done += settingsFPaths.length;
       dispatch(updateDeleteAllDataProgress(progress));
     }
     await fileApi.deleteAllFiles();
