@@ -12,7 +12,9 @@ import fileApi from '../apis/localFile';
 import {
   updatePopup, updateCustomEditor, updateImages, updateCustomData,
 } from '../actions';
-import { CUSTOM_EDITOR_POPUP, IMAGES, CD_ROOT, BLK_MODE } from '../types/const';
+import {
+  CUSTOM_EDITOR_POPUP, IMAGES, CD_ROOT, BLK_MODE, LG_WIDTH,
+} from '../types/const';
 import { getCustomEditor, getThemeMode } from '../selectors';
 import { isObject, isString, rerandomRandomTerm, getFileExt } from '../utils';
 import { dialogFMV } from '../types/animConfigs';
@@ -22,7 +24,7 @@ import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
 const CustomEditorPopup = () => {
 
-  const { height: safeAreaHeight } = useSafeAreaFrame();
+  const { width: safeAreaWidth, height: safeAreaHeight } = useSafeAreaFrame();
   const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isCustomEditorPopupShown);
   const selectingLinkId = useSelector(state => state.display.selectingLinkId);
@@ -155,14 +157,12 @@ const CustomEditorPopup = () => {
   useEffect(() => {
     if (isShown) {
       if (Platform.OS === 'ios') KeyboardManager.setEnable(true);
-    } else {
-      if (Platform.OS === 'ios') KeyboardManager.setEnable(false);
-      if (Platform.OS === 'android') Keyboard.dismiss();
     }
-
     return () => {
-      if (Platform.OS === 'ios') KeyboardManager.setEnable(false);
-      if (Platform.OS === 'android') Keyboard.dismiss();
+      if (isShown) {
+        if (Platform.OS === 'ios') KeyboardManager.setEnable(false);
+        if (Platform.OS === 'android') Keyboard.dismiss();
+      }
     };
   }, [isShown]);
 
@@ -173,6 +173,11 @@ const CustomEditorPopup = () => {
 
   if (!isShown && didCloseAnimEnd) return null;
 
+  // safeAreaHeight doesn't include status bar height, but minus it anyway.
+  const statusBarHeight = 24;
+  const appHeight = safeAreaHeight - statusBarHeight;
+  const panelHeight = Math.min(480 - 40, appHeight * 0.9);
+
   const canvasStyle = { paddingLeft: 16 + insets.left, paddingRight: 16 + insets.right };
   const popupStyle = {
     opacity: popupAnim,
@@ -180,6 +185,9 @@ const CustomEditorPopup = () => {
       { scale: popupAnim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }) },
     ],
   };
+  if (Platform.OS === 'ios' && safeAreaWidth >= LG_WIDTH) {
+    popupStyle.marginTop = Math.round(appHeight / 6);
+  }
   const bgStyle = { opacity: popupAnim };
 
   const inputClassNames = Platform.OS === 'ios' ? 'py-1.5 leading-5' : 'py-0.5';
@@ -189,13 +197,13 @@ const CustomEditorPopup = () => {
   else if (isObject(customEditor.image)) imageUrl = customEditor.image.path;
 
   return (
-    <View style={[tailwind('absolute inset-0 z-30 items-center justify-center elevation-lg'), canvasStyle]}>
+    <View style={[tailwind(`absolute inset-0 z-30 items-center justify-center elevation-lg ${Platform.OS === 'ios' ? 'lg:justify-start' : ''}`), canvasStyle]}>
       {/* No cancel on background of CustomEditorPopup */}
       <TouchableWithoutFeedback>
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>
       <Animated.View style={[tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
-        <ScrollView style={{ maxHeight: safeAreaHeight - 16 - 16 }} keyboardShouldPersistTaps="handled">
+        <ScrollView style={{ maxHeight: panelHeight }} keyboardShouldPersistTaps="handled">
           {imageUrl && <View style={tailwind('w-full rounded-t-lg bg-white blk:border-b blk:border-gray-700 blk:bg-gray-800 aspect-7/12 shadow-xs')}>
             <Image style={tailwind('h-full w-full')} source={cache(`CEP_image_${imageUrl}`, { uri: imageUrl }, [imageUrl])} />
             <TouchableOpacity onPress={onClearImageBtnClick} style={tailwind('absolute bottom-1 right-1 flex h-10 w-10 items-center justify-center')}>

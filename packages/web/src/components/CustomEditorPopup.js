@@ -11,15 +11,14 @@ import { CUSTOM_EDITOR_POPUP, IMAGES, CD_ROOT, BLK_MODE } from '../types/const';
 import { getCustomEditor, getThemeMode } from '../selectors';
 import {
   isObject, isString, isNumber, throttle, rerandomRandomTerm, getFileExt,
-  isIPadIPhoneIPod,
 } from '../utils';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
 import { useSafeAreaFrame, useTailwind } from '.';
 
 const CustomEditorPopup = () => {
-
-  const { height: safeAreaHeight } = useSafeAreaFrame();
+  // Use windowHeight to move along with a virtual keyboard.
+  const { windowHeight } = useSafeAreaFrame();
   const isShown = useSelector(state => state.display.isCustomEditorPopupShown);
   const selectingLinkId = useSelector(state => state.display.selectingLinkId);
   const customEditor = useSelector(state => getCustomEditor(state));
@@ -32,7 +31,6 @@ const CustomEditorPopup = () => {
   const isGrabbing = useRef(false);
   const didClick = useRef(false);
   const prevTouches = useRef(null);
-  const prevSafeAreaHeight = useRef(safeAreaHeight);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
 
@@ -343,22 +341,6 @@ const CustomEditorPopup = () => {
   }, [isShown]);
 
   useEffect(() => {
-    if (!isShown) return;
-
-    const heightDiff = prevSafeAreaHeight.current - safeAreaHeight;
-    if (isIPadIPhoneIPod() && heightDiff > 240) {
-      setTimeout(() => {
-        window.scrollBy({ top: heightDiff * -1, behavior: 'smooth' });
-        if (scrollPanel.current) {
-          scrollPanel.current.scrollBy({ top: heightDiff, behavior: 'smooth' });
-        }
-      }, 100);
-    }
-
-    prevSafeAreaHeight.current = safeAreaHeight;
-  }, [isShown, safeAreaHeight]);
-
-  useEffect(() => {
     if (!imageCanvas.current) return;
 
     const { image, rotate, translateX, translateY, zoom } = customEditor;
@@ -443,18 +425,19 @@ const CustomEditorPopup = () => {
 
   if (!isShown) return <AnimatePresence key="AnimatePresence_LEP" />;
 
+  const panelHeight = Math.min(480, windowHeight * 0.9);
   const zoomRangeStyle = { backgroundSize: `${customEditor.zoom}% 100%` };
 
   return (
     <AnimatePresence key="AnimatePresence_LEP">
       <div className={tailwind('fixed inset-0 z-30 touch-none overflow-hidden')}>
-        <div onTouchMove={onTouchMove} onTouchEnd={onMouseUp} onTouchCancel={onMouseLeave} onMouseMove={onMouseMove} onMouseUp={onMouseUp} onMouseLeave={onMouseLeave} className={tailwind('flex items-center justify-center p-4')} style={{ minHeight: safeAreaHeight }}>
+        <div onTouchMove={onTouchMove} onTouchEnd={onMouseUp} onTouchCancel={onMouseLeave} onMouseMove={onMouseMove} onMouseUp={onMouseUp} onMouseLeave={onMouseLeave} className={tailwind('flex items-center justify-center p-4')} style={{ minHeight: windowHeight }}>
           <div className={tailwind('fixed inset-0')}>
             {/* No cancel on background of CustomEditorPopup */}
             <motion.button ref={cancelBtn} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
           </div>
           <motion.div className={tailwind('w-full max-w-sm overflow-hidden rounded-lg shadow-xl ring-1 ring-black ring-opacity-5 blk:ring-white blk:ring-opacity-25')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-            <div ref={scrollPanel} style={{ maxHeight: safeAreaHeight - 16 - 16 }} className={tailwind('relative flex flex-col overflow-y-auto overflow-x-hidden rounded-lg bg-white blk:bg-gray-800')}>
+            <div ref={scrollPanel} style={{ maxHeight: panelHeight }} className={tailwind('relative flex flex-col overflow-y-auto overflow-x-hidden rounded-lg bg-white blk:bg-gray-800')}>
               {isString(customEditor.image) && <div className={tailwind('aspect-w-12 aspect-h-7 w-full')}>
                 <div>
                   <img className={tailwind('h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={customEditor.imageUrl} alt="Custom link's illustration" />

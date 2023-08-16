@@ -142,24 +142,7 @@ const IapHome = (props) => {
           <Text style={tailwind('ml-1 text-base font-normal text-gray-500 blk:text-gray-400')}>Subscribing...</Text>
         </View>
       );
-    } else if (purchaseStatus === INVALID) {
-      // verify and it's invalid
-      actionPanel = (
-        <View style={tailwind('mt-6')}>
-          <View style={tailwind('flex-row items-center')}>
-            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
-              <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
-            </Svg>
-            <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 blk:text-red-500')}>Unable to verify the purchase</Text>
-          </View>
-          <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Please check with the App Store that the purchase has been processed successfully. If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text> with your app public key below and order ID in your order confirmation email.</Text>
-          <View style={tailwind('mt-6 sm:flex-row')}>
-            <Text style={tailwind('flex-shrink-0 flex-grow-0 text-base font-normal text-gray-500 blk:text-gray-400')}>App public key:</Text>
-            {publicKeyText}
-          </View>
-        </View>
-      );
-    } else if (purchaseStatus === UNKNOWN || purchaseStatus === ERROR) {
+    } else if ([INVALID, UNKNOWN, ERROR].includes(purchaseStatus)) {
       // got rawPurchase, can retry to verify
       actionPanel = (
         <View style={tailwind('mt-6')}>
@@ -167,7 +150,7 @@ const IapHome = (props) => {
             <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
             </Svg>
-            <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 blk:text-red-500')}>Oops..., something went wrong!</Text>
+            <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 blk:text-red-500')}>Unable to verify the purchase</Text>
           </View>
           <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Please wait a moment and <Text onPress={onRetryVerifyPurchaseBtnClick} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>try again</Text>.</Text>
           <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text> with your app public key below and order ID in your order confirmation email.</Text>
@@ -235,7 +218,7 @@ const IapHome = (props) => {
       <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Start with a 14 day free trial.</Text>
       {actionPanel}
       <Text style={tailwind('mt-6 text-sm font-normal leading-6.5 text-gray-400 blk:text-gray-500')}>By subscribing, you agree to our <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_TERMS)} style={tailwind('text-sm font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Terms of Service</Text> and <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-sm font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Privacy Policy</Text>. Only one free trial per user, the App Store's Terms and Conditions apply.</Text>
-      <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>If you've already purchased the subscription, try <Text onPress={onToRestoreIapViewBtnClick} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Restore purchases</Text></Text>
+      <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>If you've completed the payment or already purchased the subscription, try <Text onPress={onToRestoreIapViewBtnClick} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Restore purchases</Text></Text>
     </View>
   );
 };

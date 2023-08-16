@@ -131,12 +131,15 @@ const LockEditorPopup = () => {
       if (Platform.OS === 'ios' && KBM_ACTIONS.includes(lockActionRef.current)) {
         KeyboardManager.setEnable(true);
       }
-    } else {
-      if (Platform.OS === 'ios' && KBM_ACTIONS.includes(lockActionRef.current)) {
-        KeyboardManager.setEnable(false);
-      }
-      if (Platform.OS === 'android') Keyboard.dismiss();
     }
+    return () => {
+      if (isShown) {
+        if (Platform.OS === 'ios' && KBM_ACTIONS.includes(lockActionRef.current)) {
+          KeyboardManager.setEnable(false);
+        }
+        if (Platform.OS === 'android') Keyboard.dismiss();
+      }
+    };
   }, [isShown]);
 
   useEffect(() => {

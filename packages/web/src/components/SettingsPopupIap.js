@@ -132,23 +132,7 @@ const IapHome = (props) => {
           <p className={tailwind('ml-1 text-base text-gray-500 blk:text-gray-400')}>Subscribing...</p>
         </div>
       );
-    } else if (purchaseStatus === INVALID) {
-      actionPanel = (
-        <div className={tailwind('mt-6')}>
-          <div className={tailwind('flex items-center')}>
-            <svg className={tailwind('w-5 flex-shrink-0 flex-grow-0 text-red-500 blk:text-red-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
-            </svg>
-            <p className={tailwind('ml-1 flex-shrink flex-grow text-base text-red-600 blk:text-red-500')}>Unable to verify the purchase</p>
-          </div>
-          <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Please wait a moment and try again. If the problem persists, please <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a> with your app public key below and order ID in your order confirmation email.</p>
-          <div className={tailwind('mt-6 flex flex-col sm:flex-row')}>
-            <p className={tailwind('flex-shrink-0 flex-grow-0 text-base text-gray-500 blk:text-gray-400')}>App public key:</p>
-            {publicKeyText}
-          </div>
-        </div>
-      );
-    } else if (purchaseStatus === UNKNOWN || purchaseStatus === ERROR) {
+    } else if ([INVALID, UNKNOWN, ERROR].includes(purchaseStatus)) {
       // got rawPurchase, can retry to verify
       actionPanel = (
         <div className={tailwind('mt-6')}>
@@ -156,7 +140,7 @@ const IapHome = (props) => {
             <svg className={tailwind('w-5 flex-shrink-0 flex-grow-0 text-red-500 blk:text-red-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
             </svg>
-            <p className={tailwind('ml-1 flex-shrink flex-grow text-base text-red-600 blk:text-red-500')}>Oops..., something went wrong!</p>
+            <p className={tailwind('ml-1 flex-shrink flex-grow text-base text-red-600 blk:text-red-500')}>Unable to verify the purchase</p>
           </div>
           <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Please wait a moment and <button onClick={onRetryVerifyPurchaseBtnClick} className={tailwind('inline underline')}>try again</button>.</p>
           <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>If the problem persists, please <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a> with your app public key below and order ID in your order confirmation email.</p>
@@ -226,7 +210,7 @@ const IapHome = (props) => {
       <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Start with a 14 day free trial.</p>
       {actionPanel}
       <p className={tailwind('mt-6 text-sm leading-relaxed text-gray-400 blk:text-gray-500')}>By subscribing, you agree to our <a className={tailwind('rounded text-gray-500 underline hover:text-gray-700 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-gray-200')} href={'/' + HASH_TERMS} target="_blank" rel="noreferrer">Terms of Service</a> and <a className={tailwind('rounded text-gray-500 underline hover:text-gray-700 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-gray-200')} href={'/' + HASH_PRIVACY} target="_blank" rel="noreferrer">Privacy Policy</a>. Only one free trial per user.</p>
-      <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>If you've already purchased the subscription, try <button onClick={onToRestoreIapViewBtnClick} className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')}>Restore purchases</button>.</p>
+      <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>If you've completed the payment or already purchased the subscription, try <button onClick={onToRestoreIapViewBtnClick} className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')}>Restore purchases</button>.</p>
     </div>
   );
 };

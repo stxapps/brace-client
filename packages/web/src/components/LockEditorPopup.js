@@ -129,7 +129,7 @@ const LockEditorPopup = () => {
 
   return (
     <AnimatePresence key="AP_LockP">
-      <div className={tailwind('fixed inset-0 z-30 touch-none overflow-hidden')}>
+      <div className={tailwind('fixed inset-0 z-30 overflow-hidden')}>
         <div className={tailwind('flex items-center justify-center p-4')} style={{ minHeight: windowHeight }}>
           <div className={tailwind('fixed inset-0')}>
             <motion.button onClick={onCancelBtnClick} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
@@ -142,7 +142,7 @@ const LockEditorPopup = () => {
                 <div className={tailwind([LOCK_ACTION_ADD_LOCK_LIST].includes(lockAction) ? 'pt-1' : 'pt-3.5')}>
                   <label htmlFor="password-input" className={tailwind('sr-only')}>Password</label>
                   <div className={tailwind('relative mt-1 bg-white blk:bg-gray-800')}>
-                    <input ref={passwordInput} onChange={onPasswordInputChange} className={tailwind('block w-full rounded-full border border-gray-400 bg-white py-[0.5625rem] pl-4 pr-6 text-sm text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 sm:py-[0.4375rem] blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent')} placeholder="Password" value={passwordInputValue} id="password-input" name="password-input" autoCapitalize="none" type={doShowPassword ? 'text' : 'password'}></input>
+                    <input ref={passwordInput} onChange={onPasswordInputChange} className={tailwind('block w-full rounded-full border border-gray-400 bg-white py-[0.5625rem] pl-4 pr-6 text-sm text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent sm:py-[0.4375rem]')} placeholder="Password" value={passwordInputValue} id="password-input" name="password-input" autoCapitalize="none" type={doShowPassword ? 'text' : 'password'}></input>
                     <button onClick={() => setDoShowPassword(!doShowPassword)} className={tailwind('group absolute inset-y-0 right-0 flex items-center pr-2 focus:outline-none')} >
                       <svg className={tailwind('h-4 w-4 cursor-pointer rounded text-gray-400 group-hover:text-gray-500 group-focus-visible:text-gray-500 group-focus-visible:ring blk:text-gray-500 blk:group-hover:text-gray-400 blk:group-focus-visible:text-gray-400')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                         {doShowPassword && <React.Fragment>

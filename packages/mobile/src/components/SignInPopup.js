@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
-  View, TouchableWithoutFeedback, BackHandler, Animated, Linking,
+  View, TouchableWithoutFeedback, BackHandler, Animated, Linking, Platform,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { WebView } from 'react-native-webview';
@@ -8,6 +8,7 @@ import { WebView } from 'react-native-webview';
 import { updatePopup, updateStacksAccess, updateUserData } from '../actions';
 import {
   DOMAIN_NAME, APP_NAME, APP_ICON_NAME, APP_SCOPES, SIGN_UP_POPUP, SIGN_IN_POPUP,
+  LG_WIDTH,
 } from '../types/const';
 import { splitOnFirst, escapeDoubleQuotes } from '../utils';
 import cache from '../utils/cache';
@@ -22,7 +23,7 @@ const SignInPopup = () => {
   // This height is different to state.window.height,
   //   it's SafeAreaView's height so it takes insets and keyboard into account already.
   // state.window.height is from Dimensions, need to manually calculate safe height.
-  const { height: safeAreaHeight } = useSafeAreaFrame();
+  const { width: safeAreaWidth, height: safeAreaHeight } = useSafeAreaFrame();
   const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isSignInPopupShown);
   const viewId = useSelector(state => state.stacksAccess.viewId);
@@ -155,10 +156,13 @@ const SignInPopup = () => {
       { scale: popupAnim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }) },
     ],
   };
+  if (Platform.OS === 'ios' && safeAreaWidth >= LG_WIDTH) {
+    popupStyle.marginTop = Math.round(appHeight / 6);
+  }
   const bgStyle = { opacity: popupAnim };
 
   return (
-    <View style={[tailwind('absolute inset-0 items-center justify-center'), canvasStyle]}>
+    <View style={[tailwind(`absolute inset-0 items-center justify-center ${Platform.OS === 'ios' ? 'lg:justify-start' : ''}`), canvasStyle]}>
       {/* No cancel on background of SignInPopup */}
       <TouchableWithoutFeedback>
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />

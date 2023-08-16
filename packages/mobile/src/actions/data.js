@@ -536,7 +536,17 @@ export const saveAs = async (filePath, fileName) => {
 };
 
 const _canExport = (listName, lockSettings) => {
-  const lockedList = lockSettings.lockedLists[listName];
+  // Possible e.g., force lock while settingsPopup is shown.
+  let lockedList = lockSettings.lockedLists[MY_LIST];
+  if (isObject(lockedList)) {
+    if (!isNumber(lockedList.unlockedDT)) {
+      if (!lockedList.canChangeListNames) {
+        if (!lockedList.canExport) return false;
+      }
+    }
+  }
+
+  lockedList = lockSettings.lockedLists[listName];
   if (isObject(lockedList)) {
     if (!isNumber(lockedList.unlockedDT)) {
       if (!lockedList.canExport) return false;
