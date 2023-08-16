@@ -477,38 +477,32 @@ export const randomString = (length) => {
 };
 
 export const isStringIn = (link, searchString) => {
-  let url = link.url;
-  if (!containUppercase(searchString)) {
-    url = url.toLowerCase();
-  }
-  if (url.startsWith(HTTP)) {
-    url = url.substring(HTTP.length);
-  }
-  if (url.startsWith(HTTPS)) {
-    url = url.substring(HTTPS.length);
-  }
-  if (url.startsWith(WWW)) {
-    url = url.substring(WWW.length);
-  }
-
+  const hasUppercase = containUppercase(searchString);
   const searchWords = searchString.split(' ');
 
-  let inUrl = searchWords.every(word => url.includes(word));
+  let text, isIn;
+  if (isObject(link.custom) && isString(link.custom.title)) {
+    text = link.custom.title;
+    if (!hasUppercase) text = text.toLowerCase();
 
-  let inTitle = null;
-  if (link.title) {
-    inTitle = searchWords.every(word => link.title.includes(word));
+    isIn = searchWords.every(word => text.includes(word));
+    if (isIn) return true;
+  } else if (isObject(link.extractedResult) && isString(link.extractedResult.title)) {
+    text = link.extractedResult.title;
+    if (!hasUppercase) text = text.toLowerCase();
+
+    isIn = searchWords.every(word => text.includes(word));
+    if (isIn) return true;
   }
 
-  if (inTitle === null) {
-    if (inUrl) {
-      return true;
-    }
-  } else {
-    if (inUrl || inTitle) {
-      return true;
-    }
-  }
+  text = link.url;
+  if (!hasUppercase) text = text.toLowerCase();
+  if (text.startsWith(HTTPS)) text = text.substring(HTTPS.length);
+  if (text.startsWith(HTTP)) text = text.substring(HTTP.length);
+  if (text.startsWith(WWW)) text = text.substring(WWW.length);
+
+  isIn = searchWords.every(word => text.includes(word));
+  if (isIn) return true;
 
   return false;
 };
