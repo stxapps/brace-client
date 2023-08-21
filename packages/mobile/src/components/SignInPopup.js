@@ -30,6 +30,7 @@ const SignInPopup = () => {
   const walletData = useSelector(state => state.stacksAccess.walletData);
   const [didCloseAnimEnd, setDidCloseAnimEnd] = useState(!isShown);
   const [derivedIsShown, setDerivedIsShown] = useState(isShown);
+  const [terminateCount, setTerminateCount] = useState(0);
   const popupAnim = useRef(new Animated.Value(0)).current;
   const popupBackHandler = useRef(null);
   const webView = useRef(null);
@@ -94,7 +95,7 @@ const SignInPopup = () => {
   }, []);
 
   const onContentProcessDidTerminate = useCallback(() => {
-    webView.current.reload();
+    setTerminateCount(c => c + 1);
   }, []);
 
   const registerPopupBackHandler = useCallback((doRegister) => {
@@ -169,7 +170,7 @@ const SignInPopup = () => {
       </TouchableWithoutFeedback>
       <Animated.View style={[tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl'), popupStyle]}>
         <View style={{ height: panelHeight }}>
-          <WebView ref={webView} style={tailwind('flex-1')} source={cache('SIP_webView_source', { baseUrl: '', html: stacksAccessSignIn })} originWhitelist={cache('SIP_webView_originWhitelist', ['*'])} onMessage={onMessage} keyboardDisplayRequiresUserAction={false} hideKeyboardAccessoryView={true} textZoom={100} androidLayerType="hardware" onShouldStartLoadWithRequest={onShouldStartLoadWithRequest} onContentProcessDidTerminate={onContentProcessDidTerminate} onRenderProcessGone={onContentProcessDidTerminate} />
+          <WebView key={`SIP_webView_key_${terminateCount}`} ref={webView} style={tailwind('flex-1')} source={cache('SIP_webView_source', { baseUrl: '', html: stacksAccessSignIn })} originWhitelist={cache('SIP_webView_originWhitelist', ['*'])} onMessage={onMessage} keyboardDisplayRequiresUserAction={false} hideKeyboardAccessoryView={true} textZoom={100} androidLayerType="hardware" onShouldStartLoadWithRequest={onShouldStartLoadWithRequest} onContentProcessDidTerminate={onContentProcessDidTerminate} onRenderProcessGone={onContentProcessDidTerminate} />
         </View>
       </Animated.View>
     </View>
