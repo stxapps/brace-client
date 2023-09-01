@@ -30,7 +30,7 @@ class CardItemMenuPopup extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.initialScrollY = window.pageYOffset;
+    this.initialScrollY = window.scrollY;
     this.state = {
       scrollY: this.initialScrollY,
       menuPopupSize: null,
@@ -59,7 +59,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (!this.props.popupLink && nextProps.popupLink) {
-      this.initialScrollY = window.pageYOffset;
+      this.initialScrollY = window.scrollY;
       this.setState({
         scrollY: this.initialScrollY,
         menuPopupSize: null,
@@ -84,7 +84,7 @@ class CardItemMenuPopup extends React.PureComponent {
   }
 
   updateScrollY = () => {
-    this.setState({ scrollY: window.pageYOffset });
+    this.setState({ scrollY: window.scrollY });
   }
 
   populateMenu() {

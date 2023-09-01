@@ -50,11 +50,11 @@ const ListPanel = (props) => {
   const onScroll = useCallback((e) => {
     const contentHeight = e.nativeEvent.contentSize.height;
     const layoutHeight = e.nativeEvent.layoutMeasurement.height;
-    const pageYOffset = e.nativeEvent.contentOffset.y;
+    const scrollY = e.nativeEvent.contentOffset.y;
 
     vars.scrollPanel.contentHeight = contentHeight;
     vars.scrollPanel.layoutHeight = layoutHeight;
-    vars.scrollPanel.pageYOffset = pageYOffset;
+    vars.scrollPanel.scrollY = scrollY;
   }, []);
 
   const onEndReached = useCallback(() => {
@@ -163,7 +163,7 @@ const ListPanel = (props) => {
         flatList.current.scrollToOffset({ offset: 0, animated: true });
       }
       scrollY.setValue(0);
-      vars.scrollPanel.pageYOffset = 0;
+      vars.scrollPanel.scrollY = 0;
     }, 1);
   }, [scrollY, listChangedCount]);
 

@@ -506,10 +506,10 @@ export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) =>
 
   const isBulkEditing = getState().display.isBulkEditing;
   if (!isBulkEditing) {
-    const pageYOffset = vars.scrollPanel.pageYOffset;
+    const scrollY = vars.scrollPanel.scrollY;
     if (
-      (updateAction === 1 && pageYOffset < 64 / 10 * _links.length) ||
-      (updateAction === 2 && pageYOffset === 0 && !isPopupShown(getState()))
+      (updateAction === 1 && scrollY < 64 / 10 * _links.length) ||
+      (updateAction === 2 && scrollY === 0 && !isPopupShown(getState()))
     ) {
       dispatch(updateFetched(payload, meta));
       return;
@@ -609,7 +609,7 @@ export const tryUpdateFetchedMore = (payload, meta) => async (dispatch, getState
   if (!isBulkEditing) {
     const scrollHeight = vars.scrollPanel.contentHeight;
     const windowHeight = vars.scrollPanel.layoutHeight;
-    const windowBottom = windowHeight + vars.scrollPanel.pageYOffset;
+    const windowBottom = windowHeight + vars.scrollPanel.scrollY;
 
     if (windowBottom > (scrollHeight * 0.96) && !isPopupShown(getState())) {
       dispatch(updateFetchedMore(payload, meta));
@@ -972,8 +972,8 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
 export const tryUpdateExtractedContents = (payload) => async (dispatch, getState) => {
 
   const isBulkEditing = getState().display.isBulkEditing;
-  const pageYOffset = vars.scrollPanel.pageYOffset;
-  const canRerender = !isBulkEditing && pageYOffset === 0 && !isPopupShown(getState());
+  const scrollY = vars.scrollPanel.scrollY;
+  const canRerender = !isBulkEditing && scrollY === 0 && !isPopupShown(getState());
 
   dispatch({
     type: UPDATE_EXTRACTED_CONTENTS,

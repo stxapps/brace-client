@@ -27,7 +27,7 @@ class TopBar extends React.PureComponent {
     const { listNameDistanceY } = getTopBarSizes(props.safeAreaWidth);
 
     this.state = {
-      offsetY: Math.min(window.pageYOffset, listNameDistanceY),
+      scrollY: Math.min(window.scrollY, listNameDistanceY),
     };
 
     this.updateScrollY = throttle(this.updateScrollY, 16);
@@ -46,8 +46,10 @@ class TopBar extends React.PureComponent {
   updateScrollY = () => {
     const { safeAreaWidth } = this.props;
     const { listNameDistanceY } = getTopBarSizes(safeAreaWidth);
-    if (window.pageYOffset >= listNameDistanceY && this.state.offsetY >= listNameDistanceY) return;
-    this.setState({ offsetY: Math.min(window.pageYOffset, listNameDistanceY) });
+    if (window.scrollY >= listNameDistanceY && this.state.scrollY >= listNameDistanceY) {
+      return;
+    }
+    this.setState({ scrollY: Math.min(window.scrollY, listNameDistanceY) });
   }
 
   onSignInBtnClick = () => {
@@ -66,14 +68,14 @@ class TopBar extends React.PureComponent {
 
   renderListName() {
     const { safeAreaWidth, tailwind } = this.props;
-    const { offsetY } = this.state;
+    const { scrollY } = this.state;
     const {
       listNameDistanceX,
       listNameStartY, listNameEndY, listNameDistanceY,
     } = getTopBarSizes(safeAreaWidth);
 
-    let top = listNameStartY + (offsetY * (listNameEndY - listNameStartY) / listNameDistanceY) + 3;
-    const left = offsetY * listNameDistanceX / listNameDistanceY;
+    let top = listNameStartY + (scrollY * (listNameEndY - listNameStartY) / listNameDistanceY) + 3;
+    const left = scrollY * listNameDistanceX / listNameDistanceY;
 
     const listNameStyle = { top, left };
     return (
@@ -85,16 +87,16 @@ class TopBar extends React.PureComponent {
 
   renderStatusPopup() {
     const { safeAreaWidth, tailwind } = this.props;
-    const { offsetY } = this.state;
+    const { scrollY } = this.state;
     const {
       statusPopupDistanceY,
     } = getTopBarSizes(safeAreaWidth);
 
     const initialTop = safeAreaWidth < MD_WIDTH ? '4.75rem' : '5.25rem';
-    const top = Math.max(0, toPx(initialTop) - offsetY);
+    const top = Math.max(0, toPx(initialTop) - scrollY);
     const right = 0;
-    const opacity = Math.max(0, 1.0 - (offsetY / statusPopupDistanceY));
-    const visibility = offsetY >= statusPopupDistanceY ? 'hidden' : 'visible';
+    const opacity = Math.max(0, 1.0 - (scrollY / statusPopupDistanceY));
+    const visibility = scrollY >= statusPopupDistanceY ? 'hidden' : 'visible';
 
     const statusPopupStyle = /** @type any */({ top, right, opacity, visibility });
     return (
@@ -121,13 +123,13 @@ class TopBar extends React.PureComponent {
     let topBarStyle, topBarStyleClasses = 'bg-white';
     if (isListNameShown) {
 
-      const { offsetY } = this.state;
+      const { scrollY } = this.state;
       const {
         topBarHeight, headerHeight,
         listNameDistanceY,
       } = getTopBarSizes(safeAreaWidth);
 
-      const height = topBarHeight + (offsetY * (headerHeight - topBarHeight) / listNameDistanceY);
+      const height = topBarHeight + (scrollY * (headerHeight - topBarHeight) / listNameDistanceY);
 
       topBarStyle = { height };
       topBarStyleClasses += ' fixed inset-x-0 top-0 z-30';

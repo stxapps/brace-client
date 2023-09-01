@@ -80,7 +80,7 @@ class StatusPopup extends React.PureComponent {
         this.timeout = window.setTimeout(this.onTimeout, 1000);
       }
     }
-    if (window.pageYOffset > 100) animate += 'NoAnim';
+    if (window.scrollY > 100) animate += 'NoAnim';
 
     return (
       <div className={tailwind('w-48 overflow-hidden text-right sm:w-64')}>

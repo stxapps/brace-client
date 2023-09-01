@@ -15,7 +15,7 @@ export const cachedServerFPaths = {
 const scrollPanel = {
   contentHeight: 0,
   layoutHeight: 0,
-  pageYOffset: 0,
+  scrollY: 0,
 };
 
 const fetch = {

@@ -52,7 +52,7 @@ class CardPanel extends React.PureComponent {
         this.panelFlatList.current.scrollToOffset({ offset: 0, animated: true });
       }
       this.props.scrollY.setValue(0);
-      vars.scrollPanel.pageYOffset = 0;
+      vars.scrollPanel.scrollY = 0;
     }, 1);
   }
 
@@ -63,11 +63,11 @@ class CardPanel extends React.PureComponent {
   onScroll = (e) => {
     const contentHeight = e.nativeEvent.contentSize.height;
     const layoutHeight = e.nativeEvent.layoutMeasurement.height;
-    const pageYOffset = e.nativeEvent.contentOffset.y;
+    const scrollY = e.nativeEvent.contentOffset.y;
 
     vars.scrollPanel.contentHeight = contentHeight;
     vars.scrollPanel.layoutHeight = layoutHeight;
-    vars.scrollPanel.pageYOffset = pageYOffset;
+    vars.scrollPanel.scrollY = scrollY;
   }
 
   onEndReached = () => {

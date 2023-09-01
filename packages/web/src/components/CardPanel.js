@@ -32,13 +32,13 @@ class CardPanel extends React.PureComponent {
   componentDidMount() {
     window.scrollTo(0, 0);
     window.addEventListener('scroll', this.updateScrollY);
-    vars.scrollPanel.pageYOffset = 0;
+    vars.scrollPanel.scrollY = 0;
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.listChangedCount !== prevProps.listChangedCount) {
       window.scrollTo(0, 0);
-      vars.scrollPanel.pageYOffset = 0;
+      vars.scrollPanel.scrollY = 0;
     }
   }
 
@@ -50,16 +50,16 @@ class CardPanel extends React.PureComponent {
     // https://gist.github.com/enqtran/25c6b222a73dc497cc3a64c090fb6700
     const scrollHeight = getWindowScrollHeight()
     const windowHeight = getWindowHeight();
-    const scrollTop = window.pageYOffset;
+    const scrollY = window.scrollY;
 
     vars.scrollPanel.contentHeight = scrollHeight;
     vars.scrollPanel.layoutHeight = windowHeight;
-    vars.scrollPanel.pageYOffset = scrollTop;
+    vars.scrollPanel.scrollY = scrollY;
 
     const { hasMore, hasFetchedMore, isFetchingMore } = this.props;
     if (!hasMore || hasFetchedMore || isFetchingMore) return;
 
-    const windowBottom = windowHeight + scrollTop;
+    const windowBottom = windowHeight + scrollY;
     if (windowBottom > (scrollHeight * 0.96)) this.props.fetchMore();
   }
 
@@ -72,12 +72,12 @@ class CardPanel extends React.PureComponent {
   }
 
   renderLoading() {
-    vars.scrollPanel.pageYOffset = 0;
+    vars.scrollPanel.scrollY = 0;
     return <CardLoadingContent />;
   }
 
   renderEmtpy() {
-    vars.scrollPanel.pageYOffset = 0;
+    vars.scrollPanel.scrollY = 0;
     return <EmptyContent />;
   }
 

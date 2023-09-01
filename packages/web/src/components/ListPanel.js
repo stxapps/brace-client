@@ -37,17 +37,17 @@ const ListPanel = (props) => {
     // https://gist.github.com/enqtran/25c6b222a73dc497cc3a64c090fb6700
     const scrollHeight = getWindowScrollHeight()
     const windowHeight = getWindowHeight();
-    const scrollTop = window.pageYOffset;
+    const scrollY = window.scrollY;
 
     vars.scrollPanel.contentHeight = scrollHeight;
     vars.scrollPanel.layoutHeight = windowHeight;
-    vars.scrollPanel.pageYOffset = scrollTop;
+    vars.scrollPanel.scrollY = scrollY;
 
     if (
       !hasMoreRef.current || hasFetchedMoreRef.current || isFetchingMoreRef.current
     ) return;
 
-    const windowBottom = windowHeight + scrollTop;
+    const windowBottom = windowHeight + scrollY;
     if (windowBottom > (scrollHeight * 0.96)) dispatch(fetchMore());
   }, [dispatch]);
 
@@ -60,12 +60,12 @@ const ListPanel = (props) => {
   };
 
   const renderLoading = () => {
-    vars.scrollPanel.pageYOffset = 0;
+    vars.scrollPanel.scrollY = 0;
     return <ListLoadingContent />;
   };
 
   const renderEmpty = () => {
-    vars.scrollPanel.pageYOffset = 0;
+    vars.scrollPanel.scrollY = 0;
     return <EmptyContent />;
   };
 
@@ -113,7 +113,7 @@ const ListPanel = (props) => {
   useEffect(() => {
     setTimeout(() => {
       window.scrollTo(0, 0);
-      vars.scrollPanel.pageYOffset = 0;
+      vars.scrollPanel.scrollY = 0;
     }, 1);
   }, [listChangedCount]);
 
