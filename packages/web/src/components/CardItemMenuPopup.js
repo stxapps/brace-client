@@ -10,15 +10,15 @@ import {
   MY_LIST, TRASH, ADDING, MOVING, UPDATING, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
   MOVE_TO, CHANGE, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP,
   PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
-  DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
+  DELETE_ACTION_LINK_ITEM_MENU, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
 import {
   getListNameMap, getPopupLink, getLayoutType, makeGetPinStatus, getThemeMode,
   getSafeAreaWidth, getSafeAreaHeight,
 } from '../selectors';
 import {
-  copyTextToClipboard, getListNameDisplayName, getAllListNames,
-  isEqual, throttle, getLastHalfHeight,
+  copyTextToClipboard, getListNameDisplayName, getAllListNames, isEqual,
+  getLastHalfHeight,
 } from '../utils';
 import { popupBgFMV, popupFMV } from '../types/animConfigs';
 
@@ -30,40 +30,29 @@ class CardItemMenuPopup extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.initialScrollY = window.scrollY;
-    this.state = {
-      scrollY: this.initialScrollY,
-      menuPopupSize: null,
-    };
-
+    this.state = { menuPopupSize: null };
     this.menuPopup = React.createRef();
-    this.updateScrollY = throttle(this.updateScrollY, 16);
-
     this.didClick = false;
   }
 
   componentDidMount() {
-    this.updateState(this.props.popupLink !== null);
+    this.updateState(this.props.isShown);
   }
 
   componentDidUpdate(prevProps) {
-    if (!prevProps.popupLink && this.props.popupLink) {
+    if (!prevProps.isShown && this.props.isShown) {
       this.updateState(true);
       this.didClick = false;
     }
 
-    if (prevProps.popupLink && !this.props.popupLink) {
+    if (prevProps.isShown && !this.props.isShown) {
       this.updateState(false);
     }
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    if (!this.props.popupLink && nextProps.popupLink) {
-      this.initialScrollY = window.scrollY;
-      this.setState({
-        scrollY: this.initialScrollY,
-        menuPopupSize: null,
-      });
+    if (!this.props.isShown && nextProps.isShown) {
+      this.setState({ menuPopupSize: null });
     }
   }
 
@@ -73,22 +62,16 @@ class CardItemMenuPopup extends React.PureComponent {
 
   updateState(isShown) {
     if (isShown) {
-      const menuPopupSize = this.menuPopup.current.getBoundingClientRect();
-      if (!isEqual(menuPopupSize, this.state.menuPopupSize)) {
-        this.setState({ menuPopupSize });
+      if (this.menuPopup.current) {
+        const menuPopupSize = this.menuPopup.current.getBoundingClientRect();
+        if (!isEqual(menuPopupSize, this.state.menuPopupSize)) {
+          this.setState({ menuPopupSize });
+        }
       }
-      window.addEventListener('scroll', this.updateScrollY);
-    } else {
-      window.removeEventListener('scroll', this.updateScrollY);
     }
   }
 
-  updateScrollY = () => {
-    this.setState({ scrollY: window.scrollY });
-  }
-
   populateMenu() {
-
     const {
       listName, listNameMap, popupLink, pinStatus, layoutType, safeAreaWidth,
     } = this.props;
@@ -127,7 +110,8 @@ class CardItemMenuPopup extends React.PureComponent {
   onMenuPopupClick = (text) => {
     if (!text || this.didClick) return;
 
-    const { id, url, popupAnchorPosition } = this.props.popupLink;
+    const { popupAnchorPosition } = this.props;
+    const { id, url } = this.props.popupLink;
 
     if (text === COPY_LINK) {
       copyTextToClipboard(url);
@@ -138,7 +122,7 @@ class CardItemMenuPopup extends React.PureComponent {
     } else if (text === RESTORE) {
       this.props.moveLinks(MY_LIST, [id]);
     } else if (text === DELETE) {
-      this.props.updateDeleteAction(DELETE_ACTION_LINK_COMMANDS);
+      this.props.updateDeleteAction(DELETE_ACTION_LINK_ITEM_MENU);
       this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
       return;
     } else if (text === MOVE_TO) {
@@ -176,14 +160,14 @@ class CardItemMenuPopup extends React.PureComponent {
       console.log(`In CardItemMenuPopup, invalid text: ${text}`);
     }
 
-    this.props.updatePopup(id, false);
+    this.props.updatePopup(CARD_ITEM_POPUP_MENU, false);
     this.didClick = true;
   };
 
   onCancelBtnClick = () => {
     // In Chrome desktop, touch mode,
     //   double clicks on menu popup, the second click is on cancelBtn.
-    if (this.props.popupLink) this.props.updatePopup(this.props.popupLink.id, false);
+    this.props.updatePopup(CARD_ITEM_POPUP_MENU, false);
   };
 
   renderMenu() {
@@ -202,20 +186,20 @@ class CardItemMenuPopup extends React.PureComponent {
   }
 
   render() {
-    const { popupLink, safeAreaWidth, safeAreaHeight, tailwind } = this.props;
-    if (!popupLink) return (
+    const {
+      isShown, anchorPosition, safeAreaWidth, safeAreaHeight, tailwind,
+    } = this.props;
+    if (!isShown) return (
       <AnimatePresence key="AnimatePresence_CIMP_menuPopup" />
     );
 
-    const { scrollY, menuPopupSize } = this.state;
+    const { menuPopupSize } = this.state;
 
     let popupClassNames = 'fixed z-41 min-w-32 max-w-64 overflow-auto rounded-lg bg-white py-2 shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25';
     let menuPopup;
     if (menuPopupSize) {
 
       const maxHeight = getLastHalfHeight(Math.min(288, safeAreaHeight - 16), 40, 8, 8);
-
-      const anchorPosition = popupLink.popupAnchorPosition;
       const layouts = createLayouts(
         anchorPosition,
         {
@@ -228,8 +212,7 @@ class CardItemMenuPopup extends React.PureComponent {
       const popupPosition = computePosition(layouts, triggerOffsets, 8);
 
       const { top, left, topOrigin, leftOrigin } = popupPosition;
-      const offsetScrollY = this.initialScrollY - scrollY;
-      const popupStyle = { top: top + offsetScrollY, left: left, maxHeight };
+      const popupStyle = { top, left, maxHeight };
       popupClassNames += ' ' + getOriginClassName(topOrigin, leftOrigin);
 
       menuPopup = (
@@ -239,7 +222,7 @@ class CardItemMenuPopup extends React.PureComponent {
       )
     } else {
       menuPopup = (
-        <div key="CIMP_menuPopup" ref={this.menuPopup} className={tailwind(popupClassNames)}>
+        <div key="CIMP_menuPopup" ref={this.menuPopup} style={{ top: safeAreaHeight, left: safeAreaWidth }} className={tailwind(popupClassNames)}>
           {this.renderMenu()}
         </div>
       );
@@ -263,6 +246,8 @@ const makeMapStateToProps = () => {
     const pinStatus = getPinStatus(state, popupLink);
 
     return {
+      isShown: state.display.isCardItemMenuPopupShown,
+      anchorPosition: state.display.cardItemMenuPopupPosition,
       listName: state.display.listName,
       listNameMap: getListNameMap(state),
       popupLink,

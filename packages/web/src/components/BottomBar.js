@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { motion } from 'framer-motion';
 
 import { BOTTOM_BAR_HEIGHT } from '../types/const';
-import { getPopupLink, getSafeAreaWidth, getThemeMode } from '../selectors';
+import { getSafeAreaWidth, getThemeMode } from '../selectors';
 import { bbFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -34,11 +34,12 @@ class BottomBar extends React.PureComponent {
 
 const mapStateToProps = (state, props) => {
 
-  const { isListNamesPopupShown, isPinMenuPopupShown } = state.display;
-  const popupLink = getPopupLink(state);
+  const {
+    isCardItemMenuPopupShown, isListNamesPopupShown, isPinMenuPopupShown,
+  } = state.display;
 
   return {
-    isShown: popupLink === null && !isListNamesPopupShown && !isPinMenuPopupShown,
+    isShown: !isCardItemMenuPopupShown && !isListNamesPopupShown && !isPinMenuPopupShown,
     isBulkEditing: state.display.isBulkEditing,
     themeMode: getThemeMode(state),
     safeAreaWidth: getSafeAreaWidth(state),

@@ -55,11 +55,11 @@ import {
 } from '../types/actionTypes';
 import {
   BACK_DECIDER, BACK_POPUP, ALL, HASH_BACK, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP,
-  SEARCH_POPUP, PROFILE_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP,
-  PAYWALL_POPUP, CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP,
-  SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP,
-  DISCARD_ACTION_UPDATE_LIST_NAME, ID, IS_POPUP_SHOWN, LOCAL_LINK_ATTRS, MY_LIST, TRASH,
-  N_LINKS, N_DAYS, CD_ROOT, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
+  SEARCH_POPUP, PROFILE_POPUP, CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP,
+  CUSTOM_EDITOR_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP,
+  SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP,
+  DISCARD_ACTION_UPDATE_LIST_NAME, ID, LOCAL_LINK_ATTRS, MY_LIST, TRASH, N_LINKS,
+  N_DAYS, CD_ROOT, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   DIED_UPDATING, BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT,
   EXTRACT_EXCEEDING_N_URLS, IAP_VERIFY_URL, IAP_STATUS_URL, PADDLE, COM_BRACEDOTTO,
   COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, ACTIVE, UNKNOWN,
@@ -224,18 +224,13 @@ const getPopupShownId = (state) => {
   if (state.display.isCustomEditorPopupShown) return CUSTOM_EDITOR_POPUP;
   if (state.display.isPinMenuPopupShown) return PIN_MENU_POPUP;
   if (state.display.isListNamesPopupShown) return LIST_NAMES_POPUP;
+  if (state.display.isCardItemMenuPopupShown) return CARD_ITEM_MENU_POPUP;
   if (state.display.isSettingsListsMenuPopupShown) return SETTINGS_LISTS_MENU_POPUP;
   if (state.display.isSettingsPopupShown) return SETTINGS_POPUP;
   if (state.display.isProfilePopupShown) return PROFILE_POPUP;
   if (state.display.isAddPopupShown) return ADD_POPUP;
   if (state.display.isSignUpPopupShown) return SIGN_UP_POPUP;
   if (state.display.isSignInPopupShown) return SIGN_IN_POPUP;
-
-  for (const listName in state.links) {
-    for (const id in state.links[listName]) {
-      if (state.links[listName][id][IS_POPUP_SHOWN]) return id;
-    }
-  }
 
   // IMPORTANT that search is on the last as updatePopupAsBackPressed relies on this
   //   to close other popups before search (search is the last to be closed).

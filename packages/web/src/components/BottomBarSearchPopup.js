@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 import { updatePopup, updateSearchString } from '../actions';
 import { SEARCH_POPUP } from '../types/const';
-import { getPopupLink, getSafeAreaWidth, getThemeMode } from '../selectors';
+import { getSafeAreaWidth, getThemeMode } from '../selectors';
 import { bbSearchPopupFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -99,13 +99,14 @@ class BottomBarSearchPopup extends React.PureComponent {
 
 const mapStateToProps = (state, props) => {
 
-  const { isListNamesPopupShown, isPinMenuPopupShown } = state.display;
-  const popupLink = getPopupLink(state);
+  const {
+    isCardItemMenuPopupShown, isListNamesPopupShown, isPinMenuPopupShown,
+  } = state.display;
 
   return {
     searchString: state.display.searchString,
     isBottomBarShown: (
-      popupLink === null && !isListNamesPopupShown && !isPinMenuPopupShown
+      !isCardItemMenuPopupShown && !isListNamesPopupShown && !isPinMenuPopupShown
     ),
     isSearchPopupShown: state.display.isSearchPopupShown,
     themeMode: getThemeMode(state),

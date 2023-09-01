@@ -13,7 +13,7 @@ import {
   DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK, CANCEL_DIED_LINKS,
   DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT, UPDATE_EXTRACTED_CONTENTS,
   UPDATE_CUSTOM_DATA, UPDATE_CUSTOM_DATA_COMMIT, UPDATE_CUSTOM_DATA_ROLLBACK,
-  UPDATE_LOCKS_FOR_INACTIVE_APP, DELETE_ALL_DATA, RESET_STATE,
+  DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, TRASH, ARCHIVE, ID, STATUS, ADDED, MOVED,
@@ -341,12 +341,7 @@ const linksReducer = (state = initialState, action) => {
       } else if ([DIED_REMOVING, DIED_DELETING].includes(status)) {
         newState[listName][id] = { ...state[listName][id], status: ADDED };
       } else if ([DIED_UPDATING]) {
-        newState[listName][id] = {
-          ...state[listName][id].fromLink,
-          [STATUS]: ADDED,
-          [IS_POPUP_SHOWN]: false,
-          [POPUP_ANCHOR_POSITION]: null,
-        };
+        newState[listName][id] = { ...state[listName][id].fromLink, status: ADDED };
       } else {
         console.log(`Invalid status: ${status} of link id: ${id}`);
       }
@@ -451,20 +446,6 @@ const linksReducer = (state = initialState, action) => {
       state[listName], ID, _.extract([toLink], ID), STATUS, DIED_UPDATING
     );
 
-    return newState;
-  }
-
-  if (action.type === UPDATE_LOCKS_FOR_INACTIVE_APP) {
-    const newState = {};
-    for (const listName in state) {
-      newState[listName] = _.update(
-        state[listName],
-        null,
-        null,
-        [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION],
-        [false, null]
-      );
-    }
     return newState;
   }
 

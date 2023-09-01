@@ -4,11 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import { updatePopup, deleteLinks, updateBulkEdit, deleteListNames } from '../actions';
 import {
-  CONFIRM_DELETE_POPUP, DELETE_ACTION_LINK_COMMANDS, DELETE_ACTION_LIST_NAME, SM_WIDTH,
+  CARD_ITEM_MENU_POPUP, CONFIRM_DELETE_POPUP, DELETE_ACTION_LINK_COMMANDS,
+  DELETE_ACTION_LINK_ITEM_MENU, DELETE_ACTION_LIST_NAME, SM_WIDTH,
 } from '../types/const';
-import {
-  getPopupLink, getSafeAreaWidth, getSafeAreaHeight, getThemeMode,
-} from '../selectors';
+import { getSafeAreaWidth, getSafeAreaHeight, getThemeMode } from '../selectors';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -44,31 +43,18 @@ class ConfirmDeletePopup extends React.Component {
     if (this.didClick) return;
     this.didClick = true;
 
-    const { deleteAction, popupLink, selectedLinkIds, deletingListName } = this.props;
+    const {
+      deleteAction, selectedLinkIds, selectingLinkId, deletingListName,
+    } = this.props;
 
     if (deleteAction === DELETE_ACTION_LINK_COMMANDS) {
-      const v1 = popupLink ? 1 : 0;
-      const v2 = selectedLinkIds.length > 0 ? 1 : 0;
-      if (v1 + v2 !== 1) {
-        console.log(`In ConfirmDeletePopup, invalid popupLink: ${popupLink} and selectedLinkIds: ${selectedLinkIds}`);
-        return;
-      }
-
-      if (popupLink) {
-        this.props.deleteLinks([popupLink.id]);
-        this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
-        this.props.updatePopup(popupLink.id, false);
-        return;
-      }
-
-      if (selectedLinkIds.length > 0) {
-        this.props.deleteLinks(selectedLinkIds);
-        this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
-        this.props.updateBulkEdit(false);
-        return;
-      }
-
-      console.log(`In ConfirmDeletePopup, invalid popupLink: ${popupLink} and selectedLinkIds: ${selectedLinkIds}`);
+      this.props.deleteLinks(selectedLinkIds);
+      this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+      this.props.updateBulkEdit(false);
+    } else if (deleteAction === DELETE_ACTION_LINK_ITEM_MENU) {
+      this.props.deleteLinks([selectingLinkId]);
+      this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+      this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
     } else if (deleteAction === DELETE_ACTION_LIST_NAME) {
       this.props.deleteListNames([deletingListName]);
       this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
@@ -135,8 +121,8 @@ const mapStateToProps = (state, props) => {
   return {
     isConfirmDeletePopupShown: state.display.isConfirmDeletePopupShown,
     deleteAction: state.display.deleteAction,
-    popupLink: getPopupLink(state),
     selectedLinkIds: state.display.selectedLinkIds,
+    selectingLinkId: state.display.selectingLinkId,
     deletingListName: state.display.deletingListName,
     themeMode: getThemeMode(state),
     safeAreaWidth: getSafeAreaWidth(state),

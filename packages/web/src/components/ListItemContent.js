@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import GracefulImage from 'react-graceful-image';
 
-import { updatePopup, updateBulkEdit, addSelectedLinkIds, moveLinks } from '../actions';
 import {
-  COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING, UPDATING, LG_WIDTH,
-  REMOVE, RESTORE,
+  updatePopup, updateSelectingLinkId, updateBulkEdit, addSelectedLinkIds, moveLinks,
+} from '../actions';
+import {
+  CARD_ITEM_MENU_POPUP, COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING,
+  UPDATING, LG_WIDTH, REMOVE, RESTORE,
 } from '../types/const';
 import { makeGetCustomImage } from '../selectors';
 import {
@@ -70,8 +72,10 @@ const ListItemContent = (props) => {
   };
 
   const onMenuBtnClick = (e) => {
+    dispatch(updateSelectingLinkId(link.id));
+
     const menuBtnPosition = e.currentTarget.getBoundingClientRect();
-    dispatch(updatePopup(link.id, true, menuBtnPosition));
+    dispatch(updatePopup(CARD_ITEM_MENU_POPUP, true, menuBtnPosition));
     if (window.document.activeElement instanceof HTMLElement) {
       window.document.activeElement.blur();
     }

@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import GracefulImage from 'react-graceful-image';
 
-import { updatePopup, updateBulkEdit, addSelectedLinkIds } from '../actions';
-import { COLOR, PATTERN, IMAGE } from '../types/const';
+import {
+  updatePopup, updateSelectingLinkId, updateBulkEdit, addSelectedLinkIds,
+} from '../actions';
+import { CARD_ITEM_MENU_POPUP, COLOR, PATTERN, IMAGE } from '../types/const';
 import { makeGetCustomImage, getSafeAreaWidth, getThemeMode } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
@@ -70,8 +72,10 @@ class CardItemContent extends React.Component {
   }
 
   onMenuBtnClick = (e) => {
+    this.props.updateSelectingLinkId(this.props.link.id);
+
     const menuBtnPosition = e.currentTarget.getBoundingClientRect();
-    this.props.updatePopup(this.props.link.id, true, menuBtnPosition);
+    this.props.updatePopup(CARD_ITEM_MENU_POPUP, true, menuBtnPosition);
     if (window.document.activeElement instanceof HTMLElement) {
       window.document.activeElement.blur();
     }
@@ -260,6 +264,8 @@ const makeMapStateToProps = () => {
   return mapStateToProps;
 };
 
-const mapDispatchToProps = { updatePopup, updateBulkEdit, addSelectedLinkIds };
+const mapDispatchToProps = {
+  updatePopup, updateSelectingLinkId, updateBulkEdit, addSelectedLinkIds,
+};
 
 export default connect(makeMapStateToProps, mapDispatchToProps)(withTailwind(CardItemContent));

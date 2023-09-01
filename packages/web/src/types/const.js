@@ -25,6 +25,7 @@ export const SIGN_IN_POPUP = 'SIGN_IN_POPUP';
 export const ADD_POPUP = 'ADD_POPUP';
 export const SEARCH_POPUP = 'SEARCH_POPUP';
 export const PROFILE_POPUP = 'PROFILE_POPUP';
+export const CARD_ITEM_MENU_POPUP = 'CARD_ITEM_MENU_POPUP';
 export const LIST_NAMES_POPUP = 'LIST_NAMES_POPUP';
 export const PIN_MENU_POPUP = 'PIN_MENU_POPUP';
 export const CUSTOM_EDITOR_POPUP = 'CUSTOM_EDITOR_POPUP';
@@ -189,7 +190,8 @@ export const AT_TRIGGER = 'AT_TRIGGER'; // top or left of the trigger
 export const EDGE_TRIGGER = 'EDGE_TRIGGER'; // bottom or right of the trigger
 
 export const DELETE_ACTION_LINK_COMMANDS = 0;
-export const DELETE_ACTION_LIST_NAME = 1;
+export const DELETE_ACTION_LINK_ITEM_MENU = 1;
+export const DELETE_ACTION_LIST_NAME = 2;
 
 export const DISCARD_ACTION_UPDATE_LIST_NAME = 0;
 

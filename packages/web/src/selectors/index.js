@@ -5,14 +5,13 @@ import {
   UPDATE_SETTINGS_COMMIT,
 } from '../types/actionTypes';
 import {
-  IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, SHOWING_STATUSES, PINNED, WHT_MODE, BLK_MODE,
-  SYSTEM_MODE, CUSTOM_MODE, LOCKED, UNLOCKED, MY_LIST,
+  SHOWING_STATUSES, PINNED, WHT_MODE, BLK_MODE, SYSTEM_MODE, CUSTOM_MODE, LOCKED,
+  UNLOCKED, MY_LIST,
 } from '../types/const';
 import {
   isStringIn, isObject, isString, isArrayEqual, isEqual, getListNameObj, getStatusCounts,
   getMainId, getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
-  getFilteredLinks, getPinFPaths, getPins, doEnableExtraFeatures, isNumber,
-  isMobile as _isMobile, getLink,
+  getPinFPaths, getPins, doEnableExtraFeatures, isNumber, isMobile as _isMobile, getLink,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { tailwind } from '../stylesheets/tailwind';
@@ -130,71 +129,6 @@ export const getLinks = createSelectorLinks(
   }
 );
 
-const createSelectorPopupLink = createSelectorCreator(
-  defaultMemoize,
-  (prevVal, val) => {
-
-    // doDescendingOrder shouldn't change which link its popup shown
-
-    if (prevVal['display'].listName !== val['display'].listName) return false;
-    if (prevVal['display'].searchString !== val['display'].searchString) return false;
-
-    // cachedFPaths shouldn't change which link its popup shown
-    // pendingPins shouldn't change which link its popup shown
-
-    if (prevVal['links'] === val['links']) return true;
-    if (!isArrayEqual(Object.keys(prevVal['links']).sort(), Object.keys(val['links']).sort())) {
-      return false;
-    }
-
-    for (const key in val['links']) {
-
-      if (!prevVal['links'][key] || !val['links'][key]) {
-        if (prevVal['links'][key] !== val['links'][key]) return false;
-        continue;
-      }
-
-      // Deep equal only attributes: popup and popupAnchorPosition.
-      const res = isEqual(
-        _.choose(prevVal['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]),
-        _.choose(val['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION])
-      );
-      if (!res) return false;
-    }
-
-    return true;
-  }
-);
-
-export const getPopupLink = createSelectorPopupLink(
-  state => state,
-  (state) => {
-
-    const links = state.links;
-    const listName = state.display.listName;
-    const searchString = state.display.searchString;
-
-    const filteredLinks = getFilteredLinks(links, listName);
-    if (!filteredLinks) return null;
-
-    const popupLinks = _.select(filteredLinks, IS_POPUP_SHOWN, true);
-
-    let popupLink = null;
-    for (const key in popupLinks) {
-      popupLink = popupLinks[key];
-      break;
-    }
-
-    if (popupLink && searchString !== '') {
-      if (!isStringIn(popupLink, searchString)) {
-        popupLink = null;
-      }
-    }
-
-    return popupLink;
-  }
-);
-
 export const getHasMoreLinks = createSelector(
   state => state.display.hasMoreLinks,
   (hasMoreLinks) => {
@@ -228,6 +162,14 @@ export const getHasFetchedMore = createSelector(
     if (isObject(obj) && !isEqual(obj, {})) return true;
 
     return false;
+  }
+);
+
+export const getPopupLink = createSelector(
+  state => state.links,
+  state => state.display.selectingLinkId,
+  (links, selectingLinkId) => {
+    return getLink(selectingLinkId, links);
   }
 );
 

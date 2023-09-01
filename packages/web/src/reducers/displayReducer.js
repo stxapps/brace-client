@@ -21,11 +21,11 @@ import {
 } from '../types/actionTypes';
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
-  LIST_NAMES_POPUP, PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP, PAYWALL_POPUP,
-  CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
-  TIME_PICK_POPUP, LOCK_EDITOR_POPUP, ACCESS_ERROR_POPUP, MY_LIST, TRASH, ARCHIVE,
-  UPDATING, DIED_UPDATING, SETTINGS_VIEW_ACCOUNT, DELETE_ACTION_LIST_NAME, DIED_ADDING,
-  DIED_MOVING,
+  CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP,
+  PAYWALL_POPUP, CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP,
+  SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP, ACCESS_ERROR_POPUP,
+  MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING, SETTINGS_VIEW_ACCOUNT,
+  DELETE_ACTION_LIST_NAME, DIED_ADDING, DIED_MOVING,
 } from '../types/const';
 import { doContainListName, getStatusCounts, isObject, isString } from '../utils';
 
@@ -38,6 +38,8 @@ const initialState = {
   isAddPopupShown: false,
   isSearchPopupShown: false,
   isProfilePopupShown: false,
+  isCardItemMenuPopupShown: false,
+  cardItemMenuPopupPosition: null,
   isListNamesPopupShown: false,
   listNamesPopupPosition: null,
   isPinMenuPopupShown: false,
@@ -100,6 +102,8 @@ const displayReducer = (state = initialState, action) => {
       isAddPopupShown: false,
       isSearchPopupShown: false,
       isProfilePopupShown: false,
+      isCardItemMenuPopupShown: false,
+      cardItemMenuPopupPosition: null,
       isListNamesPopupShown: false,
       listNamesPopupPosition: null,
       isPinMenuPopupShown: false,
@@ -184,6 +188,8 @@ const displayReducer = (state = initialState, action) => {
         //isAccessErrorPopupShown: isShown, // ErrorPopup should still be shown
       };
       if (!isShown) {
+        newState.isCardItemMenuPopupShown = false;
+        newState.cardItemMenuPopupPosition = null;
         newState.isListNamesPopupShown = false;
         newState.listNamesPopupPosition = null;
         newState.isPinMenuPopupShown = false;
@@ -214,6 +220,14 @@ const displayReducer = (state = initialState, action) => {
 
     if (id === PROFILE_POPUP) {
       return { ...state, isProfilePopupShown: isShown };
+    }
+
+    if (id === CARD_ITEM_MENU_POPUP) {
+      return {
+        ...state,
+        isCardItemMenuPopupShown: isShown,
+        cardItemMenuPopupPosition: anchorPosition,
+      };
     }
 
     if (id === LIST_NAMES_POPUP) {
@@ -633,6 +647,8 @@ const displayReducer = (state = initialState, action) => {
     return {
       ...state,
       doForceLock: true,
+      isCardItemMenuPopupShown: false,
+      cardItemMenuPopupPosition: null,
       isListNamesPopupShown: false,
       listNamesPopupPosition: null,
       isPinMenuPopupShown: false,
