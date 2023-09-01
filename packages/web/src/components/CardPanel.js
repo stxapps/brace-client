@@ -9,12 +9,15 @@ import {
   MD_WIDTH,
 } from '../types/const';
 import {
-  getLinks, getIsFetchingMore, getSafeAreaWidth, getThemeMode,
+  getLinks, getHasMoreLinks, getIsFetchingMore, getHasFetchedMore, getSafeAreaWidth,
+  getThemeMode,
 } from '../selectors';
 import { addRem, getWindowHeight, getWindowScrollHeight, throttle } from '../utils';
 import vars from '../vars';
 
 import { withTailwind } from '.';
+
+import CardLoadingContent from './CardLoadingContent';
 import CardItem from './CardItem';
 import EmptyContent from './EmptyContent';
 
@@ -53,8 +56,8 @@ class CardPanel extends React.PureComponent {
     vars.scrollPanel.layoutHeight = windowHeight;
     vars.scrollPanel.pageYOffset = scrollTop;
 
-    const { hasMoreLinks, hasFetchedMore, isFetchingMore } = this.props;
-    if (!hasMoreLinks || hasFetchedMore || isFetchingMore) return;
+    const { hasMore, hasFetchedMore, isFetchingMore } = this.props;
+    if (!hasMore || hasFetchedMore || isFetchingMore) return;
 
     const windowBottom = windowHeight + scrollTop;
     if (windowBottom > (scrollHeight * 0.96)) this.props.fetchMore();
@@ -66,6 +69,11 @@ class CardPanel extends React.PureComponent {
 
   onUpdateFetchedBtnClick = () => {
     this.props.updateFetchedMore();
+  }
+
+  renderLoading() {
+    vars.scrollPanel.pageYOffset = 0;
+    return <CardLoadingContent />;
   }
 
   renderEmtpy() {
@@ -154,12 +162,12 @@ class CardPanel extends React.PureComponent {
 
   render() {
     const {
-      links, hasMoreLinks, hasFetchedMore, isFetchingMore, columnWidth, safeAreaWidth,
+      links, hasMore, hasFetchedMore, isFetchingMore, columnWidth, safeAreaWidth,
       tailwind,
     } = this.props;
 
     let fetchMoreBtn;
-    if (!hasMoreLinks) fetchMoreBtn = null;
+    if (!hasMore) fetchMoreBtn = null;
     else if (hasFetchedMore) fetchMoreBtn = this.renderUpdateFetchedBtn();
     else if (isFetchingMore) fetchMoreBtn = this.renderFetchingMore();
     else fetchMoreBtn = this.renderFetchMoreBtn();
@@ -177,8 +185,9 @@ class CardPanel extends React.PureComponent {
     return (
       <div style={style} className={tailwind('relative mx-auto max-w-6xl px-4 md:px-6 lg:px-8')}>
         <div className={tailwind('pt-6 md:pt-10')}>
-          {links.length === 0 && this.renderEmtpy()}
-          {links.length > 0 && this.renderPanel()}
+          {!Array.isArray(links) && this.renderLoading()}
+          {(Array.isArray(links) && links.length === 0) && this.renderEmtpy()}
+          {(Array.isArray(links) && links.length > 0) && this.renderPanel()}
           {fetchMoreBtn}
         </div>
       </div>
@@ -191,20 +200,11 @@ CardPanel.propTypes = {
 };
 
 const mapStateToProps = (state, props) => {
-
-  const listName = state.display.listName;
-
-  let links = getLinks(state);
-  if (links === null) {
-    console.log(`Invalid links: ${links}. Links cannot be undefined as in LinkSelector and if links is null, it should be handled in Main, not in CardPanel.`);
-    links = [];
-  }
-
   return {
-    links: links,
-    hasMoreLinks: state.hasMoreLinks[listName],
-    hasFetchedMore: state.fetchedMore[listName] ? true : false,
+    links: getLinks(state),
+    hasMore: getHasMoreLinks(state),
     isFetchingMore: getIsFetchingMore(state),
+    hasFetchedMore: getHasFetchedMore(state),
     listChangedCount: state.display.listChangedCount,
     themeMode: getThemeMode(state),
     safeAreaWidth: getSafeAreaWidth(state),

@@ -2,7 +2,10 @@ import { REHYDRATE } from 'redux-persist/constants';
 
 import {
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING, FETCH, FETCH_COMMIT,
-  FETCH_ROLLBACK, UPDATE_FETCHED, CLEAR_FETCHED_LIST_NAMES, REFRESH_FETCHED,
+  FETCH_ROLLBACK, UPDATE_FETCHED, FETCH_MORE_ROLLBACK, UPDATE_FETCHED_MORE,
+  REFRESH_FETCHED, ADD_FETCHING_LN_OR_QT, DELETE_FETCHING_LN_OR_QT,
+  ADD_FETCHING_MORE_LN_OR_QT, DELETE_FETCHING_MORE_LN_OR_QT, SET_SHOWING_LINK_IDS,
+  ADD_LINKS, MOVE_LINKS_DELETE_STEP_COMMIT, DELETE_LINKS_COMMIT, CANCEL_DIED_LINKS,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK, EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK,
   EXTRACT_CONTENTS_COMMIT, UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
@@ -10,24 +13,25 @@ import {
   UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME, DELETE_LIST_NAMES,
   UPDATE_DELETE_ACTION, UPDATE_DISCARD_ACTION, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
   UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, MERGE_SETTINGS_COMMIT,
-  UPDATE_SETTINGS_VIEW_ID, UPDATE_LIST_NAMES_MODE, REHYDRATE_STATIC_FILES,
-  UPDATE_PAYWALL_FEATURE, UPDATE_LOCK_ACTION, ADD_LOCK_LIST, LOCK_LIST,
-  UPDATE_LOCKS_FOR_ACTIVE_APP, UPDATE_LOCKS_FOR_INACTIVE_APP,
-  UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
-  UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
+  UPDATE_SETTINGS_VIEW_ID, UPDATE_LIST_NAMES_MODE, UPDATE_PAYWALL_FEATURE,
+  UPDATE_LOCK_ACTION, ADD_LOCK_LIST, LOCK_LIST, UPDATE_LOCKS_FOR_ACTIVE_APP,
+  UPDATE_LOCKS_FOR_INACTIVE_APP, UPDATE_IMPORT_ALL_DATA_PROGRESS,
+  UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA,
+  RESET_STATE,
 } from '../types/actionTypes';
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   LIST_NAMES_POPUP, PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP, PAYWALL_POPUP,
-  CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP,
-  SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP, ACCESS_ERROR_POPUP,
-  MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING, SETTINGS_VIEW_ACCOUNT,
-  DELETE_ACTION_LIST_NAME,
+  CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
+  TIME_PICK_POPUP, LOCK_EDITOR_POPUP, ACCESS_ERROR_POPUP, MY_LIST, TRASH, ARCHIVE,
+  UPDATING, DIED_UPDATING, SETTINGS_VIEW_ACCOUNT, DELETE_ACTION_LIST_NAME, DIED_ADDING,
+  DIED_MOVING,
 } from '../types/const';
 import { doContainListName, getStatusCounts, isObject, isString } from '../utils';
 
 const initialState = {
   listName: MY_LIST,
+  queryString: '',
   searchString: '',
   isSignUpPopupShown: false,
   isSignInPopupShown: false,
@@ -56,10 +60,14 @@ const initialState = {
   selectingLinkId: null,
   selectingListName: null,
   deletingListName: null,
-  rehydratedListNames: [],
+  rehydratedListNames: [], // Unused but keep it for diff with old versions
   didFetch: false,
   didFetchSettings: false,
-  fetchedListNames: [],
+  fetchingLnOrQts: [],
+  fetchingMoreLnOrQts: [],
+  fetchedListNames: [], // Unused but keep it for diff with old versions
+  showingLinkIds: null,
+  hasMoreLinks: null,
   listChangedCount: 0,
   deleteAction: null,
   discardAction: null,
@@ -85,6 +93,7 @@ const displayReducer = (state = initialState, action) => {
     return {
       ...state,
       ...action.payload.display,
+      queryString: '',
       searchString: '',
       isSignUpPopupShown: false,
       isSignInPopupShown: false,
@@ -116,7 +125,11 @@ const displayReducer = (state = initialState, action) => {
       rehydratedListNames: [],
       didFetch: false,
       didFetchSettings: false,
+      fetchingLnOrQts: [],
+      fetchingMoreLnOrQts: [],
       fetchedListNames: [],
+      showingLinkIds: null,
+      hasMoreLinks: null,
       listChangedCount: 0,
       deleteAction: null,
       discardAction: null,
@@ -280,22 +293,20 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === FETCH_COMMIT) {
-    const { listName } = action.payload;
     const newState = {
       ...state,
       isAccessErrorPopupShown: false,
       statuses: [...state.statuses, FETCH_COMMIT],
-      didFetch: true,
-      didFetchSettings: true,
-      fetchedListNames: [...state.fetchedListNames, listName],
     };
 
-    // Make sure listName is in listNameMap, if not, set to My List.
     const { listNames, doFetchStgsAndInfo, settings } = action.payload;
     if (!doFetchStgsAndInfo) return newState;
 
+    newState.didFetch = true;
+    newState.didFetchSettings = true;
     newState.settingsStatus = null;
 
+    // Make sure listName is in listNameMap, if not, set to My List.
     if (listNames.includes(newState.listName)) return newState;
     if (settings) {
       if (!doContainListName(newState.listName, settings.listNameMap)) {
@@ -311,7 +322,10 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === FETCH_ROLLBACK) {
+    const { lnOrQt } = action.meta;
+
     const newState = { ...state, statuses: [...state.statuses, FETCH_ROLLBACK] };
+    newState.fetchingLnOrQts = state.fetchingLnOrQts.filter(el => el !== lnOrQt);
     if (
       (
         isObject(action.payload) &&
@@ -332,27 +346,104 @@ const displayReducer = (state = initialState, action) => {
     return newState;
   }
 
-  if (action.type === UPDATE_FETCHED) {
-    const { doChangeListCount } = action.payload;
-
+  if (
+    action.type === UPDATE_FETCHED ||
+    action.type === UPDATE_FETCHED_MORE ||
+    action.type === SET_SHOWING_LINK_IDS
+  ) {
     const newState = { ...state, selectedLinkIds: [] };
-    if (doChangeListCount) newState.listChangedCount += 1;
+    if ('ids' in action.payload) {
+      const { ids } = action.payload;
+      newState.showingLinkIds = Array.isArray(ids) ? [...ids] : ids;
+    }
+    if ('hasMore' in action.payload) {
+      newState.hasMoreLinks = action.payload.hasMore;
+    }
+    if ('doChangeListCount' in action.payload) {
+      if (action.payload.doChangeListCount) newState.listChangedCount += 1;
+    }
     return newState;
   }
 
-  if (action.type === CLEAR_FETCHED_LIST_NAMES) {
-    return { ...state, didFetchSettings: false, fetchedListNames: [] };
+  if (action.type === FETCH_MORE_ROLLBACK) {
+    const { lnOrQt } = action.meta;
+    return {
+      ...state,
+      fetchingMoreLnOrQts: state.fetchingMoreLnOrQts.filter(el => el !== lnOrQt),
+    };
   }
 
   if (action.type === REFRESH_FETCHED) {
-    const { shouldDispatchFetch } = action.payload;
+    const { doShowLoading, doScrollTop, doFetch } = action.payload;
 
-    const newState = { ...state, listChangedCount: state.listChangedCount + 1 };
-    if (shouldDispatchFetch) {
-      newState.didFetchSettings = false;
-      newState.fetchedListNames = [];
+    const newState = { ...state };
+    if (doShowLoading) newState.showingLinkIds = null;
+    if (doScrollTop) newState.listChangedCount = state.listChangedCount + 1;
+    if (doFetch) newState.didFetchSettings = false;
+
+    return newState;
+  }
+
+  if (action.type === ADD_FETCHING_LN_OR_QT) {
+    return { ...state, fetchingLnOrQt: [...state.fetchingLnOrQts, action.payload] };
+  }
+
+  if (action.type === DELETE_FETCHING_LN_OR_QT) {
+    return {
+      ...state,
+      fetchingLnOrQt: state.fetchingLnOrQts.filter(el => el !== action.payload),
+    };
+  }
+
+  if (action.type === ADD_FETCHING_MORE_LN_OR_QT) {
+    return {
+      ...state, fetchingMoreLnOrQt: [...state.fetchingMoreLnOrQts, action.payload],
+    };
+  }
+
+  if (action.type === DELETE_FETCHING_MORE_LN_OR_QT) {
+    return {
+      ...state,
+      fetchingMoreLnOrQt: state.fetchingMoreLnOrQts.filter(el => el !== action.payload),
+    };
+  }
+
+  if (action.type === ADD_LINKS) {
+    const { links, doPrependShowingLinkIds, doAppendShowingLinkIds } = action.payload;
+
+    const linkIds = links.map(link => link.id);
+
+    const newState = { ...state };
+    if (doPrependShowingLinkIds) {
+      newState.showingLinkIds = [...linkIds, ...newState.showingLinkIds];
     }
+    if (doAppendShowingLinkIds) {
+      newState.showingLinkIds = [...newState.showingLinkIds, ...linkIds];
+    }
+    return newState;
+  }
 
+  if (
+    action.type === MOVE_LINKS_DELETE_STEP_COMMIT ||
+    action.type === DELETE_LINKS_COMMIT
+  ) {
+    const { successIds } = action.payload;
+    return {
+      ...state,
+      showingLinkIds: _filterIfNotNull(state.showingLinkIds, successIds),
+    };
+  }
+
+  if (action.type === CANCEL_DIED_LINKS) {
+    const { infos } = action.payload;
+
+    const newState = { ...state };
+    for (const info of infos) {
+      const { id, status } = info;
+      if ([DIED_ADDING, DIED_MOVING].includes(status)) {
+        newState.showingLinkIds = _filterIfNotNull(state.showingLinkIds, [id]);
+      }
+    }
     return newState;
   }
 
@@ -361,7 +452,13 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT) {
-    return { ...state, statuses: [...state.statuses, DELETE_OLD_LINKS_IN_TRASH_COMMIT] };
+    const { ids } = action.payload;
+
+    const newState = {
+      ...state, statuses: [...state.statuses, DELETE_OLD_LINKS_IN_TRASH_COMMIT],
+    };
+    newState.showingLinkIds = _filterIfNotNull(state.showingLinkIds, ids);
+    return newState;
   }
 
   if (action.type === DELETE_OLD_LINKS_IN_TRASH_ROLLBACK) {
@@ -469,7 +566,7 @@ const displayReducer = (state = initialState, action) => {
       statuses: [...state.statuses, UPDATE_SETTINGS_COMMIT],
       settingsStatus: null,
     };
-    if (doFetch) newState.fetchedListNames = [];
+    if (doFetch) newState.showingLinkIds = null;
     return newState;
   }
 
@@ -498,7 +595,7 @@ const displayReducer = (state = initialState, action) => {
       statuses: isActive ? [...state.statuses, null] : [],
       settingsStatus: null,
     };
-    if (doFetch) newState.fetchedListNames = [];
+    if (doFetch) newState.showingLinkIds = null;
     return newState;
   }
 
@@ -508,14 +605,6 @@ const displayReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_LIST_NAMES_MODE) {
     return { ...state, ...action.payload };
-  }
-
-  if (action.type === REHYDRATE_STATIC_FILES) {
-    const { listName } = action.payload;
-    return {
-      ...state,
-      rehydratedListNames: [...state.rehydratedListNames, listName],
-    };
   }
 
   if (action.type === UPDATE_PAYWALL_FEATURE) {
@@ -563,7 +652,7 @@ const displayReducer = (state = initialState, action) => {
     if (isObject(progress) && progress.total && progress.done) {
       if (progress.total === progress.done) {
         newState.didFetchSettings = false;
-        newState.fetchedListNames = [];
+        newState.showingLinkIds = null;
       }
     }
     return newState;
@@ -582,8 +671,7 @@ const displayReducer = (state = initialState, action) => {
   if (action.type === DELETE_ALL_DATA) {
     return {
       ...initialState,
-      rehydratedListNames: [MY_LIST],
-      didFetch: true, didFetchSettings: true, fetchedListNames: [MY_LIST],
+      didFetch: true, didFetchSettings: true, showingLinkIds: [],
     };
   }
 
@@ -592,6 +680,11 @@ const displayReducer = (state = initialState, action) => {
   }
 
   return state;
+};
+
+const _filterIfNotNull = (arr, excludingElems) => {
+  if (!Array.isArray(arr)) return arr;
+  return arr.filter(el => !excludingElems.includes(el));
 };
 
 export default displayReducer;

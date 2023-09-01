@@ -13,29 +13,27 @@ const fetchedMoreReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_FETCHED) {
-    const { listName } = action.payload;
+    const { lnOrQt } = action.payload;
 
     const newState = {};
     for (const k in state) {
-      if (k !== listName) newState[k] = state[k];
+      if (k !== lnOrQt) newState[k] = state[k];
     }
 
     return newState;
   }
 
   if (action.type === CACHE_FETCHED_MORE) {
-    const { payload, theMeta: meta } = action;
-    return { ...state, [payload.listName]: { payload, meta } };
+    const { payload } = action;
+    return { ...state, [payload.lnOrQt]: { payload } };
   }
 
-  // If dispatch CACHE_FETCHED_MORE, CANCEL_FETCHED_MORE won't be dispatched
-  //  so no need to reset value for CANCEL_FETCHED_MORE here.
   if (action.type === UPDATE_FETCHED_MORE) {
-    const { listName } = action.theMeta;
+    const { lnOrQt } = action.payload;
 
     const newState = {};
     for (const k in state) {
-      if (k !== listName) newState[k] = state[k];
+      if (k !== lnOrQt) newState[k] = state[k];
     }
 
     return newState;

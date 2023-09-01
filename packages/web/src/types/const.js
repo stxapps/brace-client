@@ -39,6 +39,8 @@ export const LOCK_EDITOR_POPUP = 'LOCK_EDITOR_POPUP';
 
 export const IS_POPUP_SHOWN = 'isPopupShown';
 export const POPUP_ANCHOR_POSITION = 'popupAnchorPosition';
+export const FROM_LIST_NAME = 'fromListName';
+export const FROM_ID = 'fromId';
 export const FROM_LINK = 'fromLink';
 
 export const CD_ROOT = 'cdroot';
@@ -76,6 +78,12 @@ export const DIED_MOVING = 'DIED_MOVING';
 export const DIED_DELETING = 'DIED_DELETING';
 export const DIED_REMOVING = 'DIED_REMOVING';
 export const DIED_MERGING = 'DIED_MERGING';
+export const PENDING_REMOVING = 'PENDING_REMOVING';
+
+export const SHOWING_STATUSES = [
+  ADDED, MOVED, ADDING, MOVING, UPDATING, DIED_ADDING, DIED_MOVING, DIED_REMOVING,
+  DIED_DELETING, DIED_UPDATING,
+];
 
 export const COPY_LINK = 'Copy link';
 //export const ARCHIVE = 'Archive';
@@ -284,3 +292,7 @@ export const PASSWORD_MSGS = {
 export const APP_STATE_ACTIVE = 'active';
 export const APP_STATE_INACTIVE = 'inactive';
 export const APP_STATE_BACKGROUND = 'background';
+
+export const LOCAL_LINK_ATTRS = [
+  STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LIST_NAME, FROM_ID, FROM_LINK
+];

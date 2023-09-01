@@ -19,7 +19,7 @@ const snapshotReducer = (state = initialState, action) => {
   }
 
   if (action.type === FETCH_COMMIT) {
-    const { listNames, doFetchStgsAndInfo, settings, info } = action.payload;
+    const { doFetchStgsAndInfo, settings, info, listNames } = action.payload;
     if (!doFetchStgsAndInfo) return state;
 
     const derivedSettings = deriveSettingsState(

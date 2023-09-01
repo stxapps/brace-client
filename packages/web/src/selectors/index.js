@@ -5,14 +5,14 @@ import {
   UPDATE_SETTINGS_COMMIT,
 } from '../types/actionTypes';
 import {
-  IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, PINNED, WHT_MODE, BLK_MODE, SYSTEM_MODE,
-  CUSTOM_MODE, FROM_LINK, LOCKED, UNLOCKED, MY_LIST,
+  IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, SHOWING_STATUSES, PINNED, WHT_MODE, BLK_MODE,
+  SYSTEM_MODE, CUSTOM_MODE, LOCKED, UNLOCKED, MY_LIST,
 } from '../types/const';
 import {
   isStringIn, isObject, isString, isArrayEqual, isEqual, getListNameObj, getStatusCounts,
   getMainId, getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
-  getFilteredLinks, getSortedLinks, sortWithPins, getPinFPaths, getPins,
-  doEnableExtraFeatures, isNumber, isMobile as _isMobile,
+  getFilteredLinks, getPinFPaths, getPins, doEnableExtraFeatures, isNumber,
+  isMobile as _isMobile, getLink,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { tailwind } from '../stylesheets/tailwind';
@@ -87,72 +87,38 @@ export const getStatus = createSelector(
   }
 );
 
+export const getIsShowingLinkIdsNull = createSelector(
+  state => state.display.showingLinkIds,
+  (showingLinkIds) => {
+    return showingLinkIds === null;
+  }
+);
+
 const createSelectorLinks = createSelectorCreator(
   defaultMemoize,
   (prevVal, val) => {
-
-    if (prevVal['settings'].doDescendingOrder !== val['settings'].doDescendingOrder) {
-      return false;
-    }
-
-    if (prevVal['display'].listName !== val['display'].listName) return false;
-    if (prevVal['display'].searchString !== val['display'].searchString) return false;
-
-    if (prevVal['cachedFPaths'].fpaths !== val['cachedFPaths'].fpaths) {
-      if (!prevVal['cachedFPaths'].fpaths || !val['cachedFPaths'].fpaths) return false;
-      if (!isArrayEqual(
-        prevVal['cachedFPaths'].fpaths.pinFPaths,
-        val['cachedFPaths'].fpaths.pinFPaths
-      )) return false;
-    }
-
-    if (prevVal['pendingPins'] !== val['pendingPins']) return false;
-
-    if (prevVal['links'] === val['links']) return true;
-    if (!isArrayEqual(Object.keys(prevVal['links']).sort(), Object.keys(val['links']).sort())) {
-      return false;
-    }
-
-    for (const key in val['links']) {
-
-      if (!prevVal['links'][key] || !val['links'][key]) {
-        if (prevVal['links'][key] !== val['links'][key]) return false;
-        continue;
-      }
-
-      // Deep equal without attributes: popup and popupAnchorPosition.
-      const res = isEqual(
-        _.ignore(
-          prevVal['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK],
-        ),
-        _.ignore(
-          val['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK],
-        )
-      );
-      if (!res) return false;
-    }
-
+    if (prevVal.links !== val.links) return false;
+    if (!isEqual(prevVal.showingLinkIds, val.showingLinkIds)) return false;
+    if (prevVal.searchString !== val.searchString) return false;
     return true;
   }
 );
 
 export const getLinks = createSelectorLinks(
-  state => state,
-  (state) => {
+  state => state.links,
+  state => state.display.showingLinkIds,
+  state => state.display.searchString,
+  (links, showingLinkIds, searchString) => {
+    if (!Array.isArray(showingLinkIds)) return null;
 
-    const links = state.links;
-    const listName = state.display.listName;
-    const searchString = state.display.searchString;
-    const doDescendingOrder = state.settings.doDescendingOrder;
-    const pinFPaths = getPinFPaths(state);
-    const pendingPins = state.pendingPins;
+    const sortedLinks = [];
+    for (const linkId of showingLinkIds) {
+      const link = getLink(linkId, links);
+      if (!isObject(link)) continue;
+      if (!SHOWING_STATUSES.includes(link.status)) continue;
 
-    let sortedLinks = getSortedLinks(links, listName, doDescendingOrder);
-    if (!sortedLinks) return null;
-
-    sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
-      return getMainId(link.id);
-    });
+      sortedLinks.push(link);
+    }
 
     if (searchString === '') return sortedLinks;
 
@@ -229,12 +195,38 @@ export const getPopupLink = createSelectorPopupLink(
   }
 );
 
+export const getHasMoreLinks = createSelector(
+  state => state.display.hasMoreLinks,
+  (hasMoreLinks) => {
+    return hasMoreLinks;
+  },
+);
+
 export const getIsFetchingMore = createSelector(
   state => state.display.listName,
-  state => state.isFetchMoreInterrupted,
-  (listName, isFetchMoreInterrupted) => {
-    const obj = isFetchMoreInterrupted[listName];
+  state => state.display.queryString,
+  state => state.display.fetchingMoreLnOrQts,
+  (listName, queryString, fetchingMoreLnOrQts) => {
+    if (queryString && fetchingMoreLnOrQts.includes(queryString)) return true;
+    if (fetchingMoreLnOrQts.includes(listName)) return true;
+    return false;
+  }
+);
+
+export const getHasFetchedMore = createSelector(
+  state => state.display.listName,
+  state => state.display.queryString,
+  state => state.fetchedMore,
+  (listName, queryString, fetchedMore) => {
+    let obj;
+    if (queryString) {
+      obj = fetchedMore[queryString];
+      if (isObject(obj) && !isEqual(obj, {})) return true;
+    }
+
+    obj = fetchedMore[listName];
     if (isObject(obj) && !isEqual(obj, {})) return true;
+
     return false;
   }
 );

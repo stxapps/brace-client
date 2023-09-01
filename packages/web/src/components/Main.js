@@ -1,19 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import {
-  updateHistoryPosition, fetch, rehydrateStaticFiles, endIapConnection,
-} from '../actions';
+import { updateHistoryPosition, fetch, endIapConnection } from '../actions';
 import {
   BACK_DECIDER, BACK_POPUP, PC_100, PC_50, PC_33, SHOW_BLANK, SHOW_COMMANDS,
   SM_WIDTH, LG_WIDTH, LAYOUT_LIST, LOCKED,
 } from '../types/const';
 import {
-  getLinks, getLayoutType, getThemeMode, getSafeAreaWidth, getCurrentLockListStatus,
+  getIsShowingLinkIdsNull, getLayoutType, getThemeMode, getSafeAreaWidth,
+  getCurrentLockListStatus,
 } from '../selectors';
 
 import { withTailwind } from '.';
-import Loading from './Loading';
 import TopBar from './TopBar';
 import BottomBar from './BottomBar';
 import CardPanel from './CardPanel';
@@ -47,15 +45,17 @@ class Main extends React.PureComponent {
       window.history.pushState(BACK_POPUP, '', window.location.href);
     }
 
-    this.fetch();
+    this.props.fetch();
   }
 
   componentDidUpdate(prevProps) {
     if (
-      prevProps.listName !== this.props.listName ||
-      prevProps.rehydratedListNames !== this.props.rehydratedListNames ||
-      prevProps.fetchedListNames !== this.props.fetchedListNames
-    ) this.fetch();
+      (prevProps.listName !== this.props.listName) ||
+      (prevProps.queryString !== this.props.queryString) ||
+      (prevProps.didFetch && !this.props.didFetch) ||
+      (prevProps.didFetchSettings && !this.props.didFetchSettings) ||
+      (!prevProps.isShowingLinkIdsNull && this.props.isShowingLinkIdsNull)
+    ) this.props.fetch();
   }
 
   componentWillUnmount() {
@@ -70,24 +70,8 @@ class Main extends React.PureComponent {
     return columnWidth;
   }
 
-  fetch = () => {
-    const { listName, rehydratedListNames, fetchedListNames } = this.props;
-
-    if (!rehydratedListNames.includes(listName)) {
-      this.props.rehydrateStaticFiles();
-      return;
-    }
-
-    if (!fetchedListNames.includes(listName)) this.props.fetch();
-  }
-
   render() {
-    const {
-      listName, links, rehydratedListNames, layoutType, safeAreaWidth, tailwind,
-      lockStatus,
-    } = this.props;
-
-    if (links === null) return <Loading />;
+    const { layoutType, safeAreaWidth, tailwind, lockStatus } = this.props;
 
     const columnWidth = this.getColumnWidth(safeAreaWidth);
     const topBarRightPane = [PC_50, PC_33].includes(columnWidth) ?
@@ -97,9 +81,7 @@ class Main extends React.PureComponent {
     //   and if not rehydrated yet, loading is shown
     //   so if not rehydrated, show loading under Settings.
     let contentPanel;
-    if (!rehydratedListNames.includes(listName)) {
-      contentPanel = <Loading />;
-    } else if (lockStatus === LOCKED) {
+    if (lockStatus === LOCKED) {
       contentPanel = (
         <React.Fragment>
           <LockPanel columnWidth={columnWidth} />
@@ -148,9 +130,10 @@ class Main extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
-    links: getLinks(state),
-    rehydratedListNames: state.display.rehydratedListNames,
-    fetchedListNames: state.display.fetchedListNames,
+    queryString: state.display.queryString,
+    didFetch: state.display.didFetch,
+    didFetchSettings: state.display.didFetchSettings,
+    isShowingLinkIdsNull: getIsShowingLinkIdsNull(state),
     layoutType: getLayoutType(state),
     themeMode: getThemeMode(state),
     safeAreaWidth: getSafeAreaWidth(state),
@@ -158,8 +141,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = {
-  updateHistoryPosition, fetch, rehydrateStaticFiles, endIapConnection,
-};
+const mapDispatchToProps = { updateHistoryPosition, fetch, endIapConnection };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(Main));

@@ -10,13 +10,13 @@ import {
   MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
 } from '../types/actionTypes';
 import {
-  HTTP, HTTPS, WWW, STATUS, ID, LINKS, IMAGES, SETTINGS, INFO, PINS, DOT_JSON, ADDED,
-  MOVED, ADDING, MOVING, UPDATING, DIED_ADDING, DIED_UPDATING, DIED_MOVING,
-  DIED_REMOVING, DIED_DELETING, COLOR, PATTERN, IMAGE, BG_COLOR_STYLES, PATTERNS,
-  VALID_URL, NO_URL, ASK_CONFIRM_URL, VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME,
-  DUPLICATE_LIST_NAME, COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD,
-  PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, MAX_TRY, EXTRACT_INVALID_URL, VALID_PASSWORD,
-  NO_PASSWORD, CONTAIN_SPACES_PASSWORD, TOO_LONG_PASSWORD,
+  HTTP, HTTPS, WWW, STATUS, LINKS, IMAGES, SETTINGS, INFO, PINS, DOT_JSON, DIED_ADDING,
+  DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING, SHOWING_STATUSES, COLOR,
+  PATTERN, IMAGE, BG_COLOR_STYLES, PATTERNS, VALID_URL, NO_URL, ASK_CONFIRM_URL,
+  VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME,
+  COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, UNKNOWN, CD_ROOT,
+  MODE_EDIT, MAX_TRY, EXTRACT_INVALID_URL, VALID_PASSWORD, NO_PASSWORD,
+  CONTAIN_SPACES_PASSWORD, TOO_LONG_PASSWORD, N_LINKS,
 } from '../types/const';
 import { IMAGE_PATHS } from '../types/imagePaths';
 import { _ } from './obj';
@@ -1524,27 +1524,8 @@ export const isPinningStatus = (pinStatus) => {
 
 export const getFilteredLinks = (links, listName) => {
   if (!links || !links[listName]) return null;
-
-  const selectedLinks = _.select(
-    links[listName],
-    STATUS,
-    [
-      ADDED, MOVED, ADDING, MOVING, UPDATING,
-      DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING,
-    ]
-  );
-
-  const moving_ids = [];
-  for (const key in links) {
-    if (key === listName || !links[key]) continue;
-
-    moving_ids.push(..._.extract(_.select(
-      links[key], STATUS, [MOVED, MOVING, DIED_MOVING]
-    ), ID));
-  }
-
-  const filteredLinks = excludeWithMainIds(selectedLinks, moving_ids);
-  return filteredLinks;
+  const selectedLinks = _.select(links[listName], STATUS, SHOWING_STATUSES);
+  return selectedLinks;
 };
 
 export const sortLinks = (links, doDescendingOrder) => {
@@ -1962,4 +1943,111 @@ export const doListContainUnlocks = (state) => {
   }
 
   return false;
+};
+
+export const getLink = (id, links) => {
+  for (const listName in links) {
+    if (isObject(links[listName]) && isObject(links[listName][id])) {
+      return links[listName][id];
+    }
+  }
+  return null;
+};
+
+export const getListNameAndLink = (id, links) => {
+  for (const listName in links) {
+    if (isObject(links[listName]) && isObject(links[listName][id])) {
+      return { listName, link: links[listName][id] };
+    }
+  }
+  return { listName: null, link: null };
+};
+
+export const getNLinkObjs = (params) => {
+  const { links, listName, doDescendingOrder, pinFPaths, pendingPins } = params;
+
+  let excludingIds = [], excludingMainIds = [];
+  if (Array.isArray(params.excludingIds)) excludingIds = params.excludingIds;
+  if (Array.isArray(params.excludingMainIds)) {
+    excludingMainIds = params.excludingMainIds;
+  }
+
+  let sortedLinks = getSortedLinks(links, listName, doDescendingOrder);
+  if (!Array.isArray(sortedLinks)) sortedLinks = [];
+
+  sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
+    return getMainId(link.id);
+  });
+
+  // With pins, can't fetch further from the current point
+  let objs = [], hasDisorder = false, objsWithExcl = [];
+  for (let i = 0; i < sortedLinks.length; i++) {
+    const link = sortedLinks[i];
+    const { id } = link;
+
+    if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
+      objsWithExcl.push(link);
+      continue;
+    }
+
+    if (objs.length < N_LINKS) {
+      if (i < excludingIds.length) hasDisorder = true;
+      objs.push(link);
+      objsWithExcl.push(link);
+    }
+  }
+
+  const hasMore = objsWithExcl.length < sortedLinks.length;
+
+  return { objs, hasMore, hasDisorder, objsWithExcl };
+};
+
+export const getNLinkFPaths = (params) => {
+  const { linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins } = params;
+
+  let excludingIds = [], excludingMainIds = [];
+  if (Array.isArray(params.excludingIds)) excludingIds = params.excludingIds;
+  if (Array.isArray(params.excludingMainIds)) {
+    excludingMainIds = params.excludingMainIds;
+  }
+
+  const namedLinkFPaths = linkFPaths[listName] || [];
+  let sortedLinkFPaths = [...namedLinkFPaths].sort();
+  if (doDescendingOrder) sortedLinkFPaths.reverse();
+
+  sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, pendingPins, (fpath) => {
+    const { id } = extractLinkFPath(fpath);
+    return getMainId(id);
+  });
+
+  // With pins, can't fetch further from the current point
+  let fpaths = [], hasDisorder = false, fpathsWithExcl = [];
+  for (let i = 0; i < sortedLinkFPaths.length; i++) {
+    const fpath = sortedLinkFPaths[i];
+    const { id } = extractLinkFPath(fpath);
+
+    if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
+      fpathsWithExcl.push(fpath);
+      continue;
+    }
+
+    if (fpaths.length < N_LINKS) {
+      if (i < excludingIds.length) hasDisorder = true;
+      fpaths.push(fpath);
+      fpathsWithExcl.push(fpath);
+    }
+  }
+
+  const hasMore = fpathsWithExcl.length < sortedLinkFPaths.length;
+
+  return { fpaths, hasMore, hasDisorder, fpathsWithExcl };
+};
+
+export const newObject = (object, ignoreAttrs) => {
+  const newObject = {};
+  for (const attr in object) {
+    if (ignoreAttrs.includes(attr)) continue;
+    newObject[attr] = object[attr];
+  }
+  return newObject;
 };

@@ -6,11 +6,15 @@ import {
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
   MD_WIDTH, PC_100,
 } from '../types/const';
-import { getLinks, getIsFetchingMore } from '../selectors';
+import {
+  getLinks, getHasMoreLinks, getIsFetchingMore, getHasFetchedMore,
+} from '../selectors';
 import { addRem, getWindowHeight, getWindowScrollHeight, throttle } from '../utils';
 import vars from '../vars';
 
 import { useSafeAreaFrame, useTailwind } from '.';
+
+import ListLoadingContent from './ListLoadingContent';
 import ListItem from './ListItem';
 import EmptyContent from './EmptyContent';
 
@@ -18,24 +22,16 @@ const ListPanel = (props) => {
 
   const { columnWidth } = props;
   const { width: safeAreaWidth } = useSafeAreaFrame();
-  const listName = useSelector(state => state.display.listName);
-  const hasMore = useSelector(state => state.hasMoreLinks[listName]);
-  const hasFetchedMore = useSelector(
-    state => state.fetchedMore[listName] ? true : false
-  );
+  const links = useSelector(state => getLinks(state));
+  const hasMore = useSelector(state => getHasMoreLinks(state));
   const isFetchingMore = useSelector(state => getIsFetchingMore(state));
+  const hasFetchedMore = useSelector(state => getHasFetchedMore(state));
   const listChangedCount = useSelector(state => state.display.listChangedCount);
   const hasMoreRef = useRef(hasMore);
   const hasFetchedMoreRef = useRef(hasFetchedMore);
   const isFetchingMoreRef = useRef(isFetchingMore);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
-
-  let links = useSelector(getLinks);
-  if (!links) {
-    console.log(`Invalid links: ${links}. Links cannot be undefined as in LinkSelector and if links is null, it should be handled in Main, not in ListPanel.`);
-    links = [];
-  }
 
   const updateScrollY = useCallback(() => {
     // https://gist.github.com/enqtran/25c6b222a73dc497cc3a64c090fb6700
@@ -61,6 +57,11 @@ const ListPanel = (props) => {
 
   const onUpdateFetchedBtnClick = () => {
     dispatch(updateFetchedMore());
+  };
+
+  const renderLoading = () => {
+    vars.scrollPanel.pageYOffset = 0;
+    return <ListLoadingContent />;
   };
 
   const renderEmpty = () => {
@@ -152,8 +153,9 @@ const ListPanel = (props) => {
   return (
     <div style={style} className={tailwind('relative mx-auto max-w-6xl px-4 md:px-6 lg:px-8')}>
       <div className={tailwind('pt-6')}>
-        {links.length === 0 && renderEmpty()}
-        {links.length > 0 && renderItems()}
+        {!Array.isArray(links) && renderLoading()}
+        {(Array.isArray(links) && links.length === 0) && renderEmpty()}
+        {(Array.isArray(links) && links.length > 0) && renderItems()}
         {fetchMoreBtn}
       </div>
     </div>

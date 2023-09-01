@@ -7,10 +7,10 @@ import {
 } from '../types/actionTypes';
 import {
   isObject, isString, randomString, createLinkFPath, extractLinkFPath, createPinFPath,
-  addFPath, getMainId, sortWithPins, getStaticFPath, deriveFPaths, createDataFName,
-  getLastSettingsFPaths, createSettingsFPath, excludeNotObjContents,
-  batchGetFileWithRetry, batchPutFileWithRetry, batchDeleteFileWithRetry,
-  deriveUnknownErrorLink,
+  addFPath, getStaticFPath, deriveFPaths, createDataFName, getLastSettingsFPaths,
+  createSettingsFPath, excludeNotObjContents, batchGetFileWithRetry,
+  batchPutFileWithRetry, batchDeleteFileWithRetry, deriveUnknownErrorLink, getLinkFPaths,
+  getPinFPaths, getMainId, getNLinkFPaths,
 } from '../utils';
 import vars from '../vars';
 
@@ -83,129 +83,75 @@ const listFPaths = async (doForce = false) => {
   return serverApi.cachedFPaths.fpaths;
 };
 
-const fetch = async (params) => {
-
-  let { listName, doDescendingOrder, doFetchStgsAndInfo, pendingPins } = params;
-  const {
-    linkFPaths, settingsFPaths: _settingsFPaths, infoFPath, pinFPaths,
-  } = await listFPaths(doFetchStgsAndInfo);
-
+const fetchStgsAndInfo = async (_settingsFPaths, infoFPath) => {
   let settings, conflictedSettings = [], info;
-  if (doFetchStgsAndInfo) {
-    const {
-      fpaths: settingsFPaths, ids: settingsIds,
-    } = getLastSettingsFPaths(_settingsFPaths);
+  const {
+    fpaths: settingsFPaths, ids: settingsIds,
+  } = getLastSettingsFPaths(_settingsFPaths);
 
-    if (settingsFPaths.length > 0) {
-      const files = await serverApi.getFiles(settingsFPaths, true);
+  if (settingsFPaths.length > 0) {
+    const files = await serverApi.getFiles(settingsFPaths, true);
 
-      // content can be null if dangerouslyIgnoreError is true.
-      const { fpaths, contents } = excludeNotObjContents(files.fpaths, files.contents);
-      for (let i = 0; i < fpaths.length; i++) {
-        const [fpath, content] = [fpaths[i], contents[i]];
-        if (fpaths.length === 1) {
-          settings = content;
-          doDescendingOrder = settings.doDescendingOrder;
-          continue;
-        }
-        conflictedSettings.push({
-          ...content, id: settingsIds[settingsFPaths.indexOf(fpath)], fpath,
-        });
+    // content can be null if dangerouslyIgnoreError is true.
+    const { fpaths, contents } = excludeNotObjContents(files.fpaths, files.contents);
+    for (let i = 0; i < fpaths.length; i++) {
+      const [fpath, content] = [fpaths[i], contents[i]];
+      if (fpaths.length === 1) {
+        settings = content;
+        continue;
       }
+      conflictedSettings.push({
+        ...content, id: settingsIds[settingsFPaths.indexOf(fpath)], fpath,
+      });
     }
+  }
 
-    if (infoFPath) {
-      const { contents } = await serverApi.getFiles([infoFPath], true);
-      if (isObject(contents[0])) info = contents[0];
-    }
+  if (infoFPath) {
+    const { contents } = await serverApi.getFiles([infoFPath], true);
+    if (isObject(contents[0])) info = contents[0];
+  }
 
-    // Transition from purchases in settings to info.
-    if (isObject(settings) && !isObject(info)) {
-      if ('purchases' in settings) {
-        info = { purchases: settings.purchases, checkPurchasesDT: null };
-        if ('checkPurchasesDT' in settings) {
-          info.checkPurchasesDT = settings.checkPurchasesDT;
-        }
+  // Transition from purchases in settings to info.
+  if (isObject(settings) && !isObject(info)) {
+    if ('purchases' in settings) {
+      info = { purchases: settings.purchases, checkPurchasesDT: null };
+      if ('checkPurchasesDT' in settings) {
+        info.checkPurchasesDT = settings.checkPurchasesDT;
       }
     }
   }
 
-  const namedLinkFPaths = linkFPaths[listName] || [];
-  let sortedLinkFPaths = [...namedLinkFPaths].sort();
-  if (doDescendingOrder) sortedLinkFPaths.reverse();
-
-  sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, pendingPins, (fpath) => {
-    const { id } = extractLinkFPath(fpath);
-    return getMainId(id);
-  });
-  const selectedLinkFPaths = sortedLinkFPaths.slice(0, N_LINKS);
-
-  const responses = await batchGetFileWithRetry(
-    serverApi.getFile, selectedLinkFPaths, 0, true
-  );
-  const links = [];
-  for (const { success, fpath, content } of responses) {
-    if (success) links.push(content);
-    else links.push(deriveUnknownErrorLink(fpath));
-  }
-  const hasMore = namedLinkFPaths.length > N_LINKS;
-
-  // List names should be retrieve from settings
-  //   but also retrive from file paths in case the settings is gone.
-  const listNames = Object.keys(linkFPaths);
-
-  const { images } = await fetchStaticFiles(links);
-
-  return {
-    listName, doDescendingOrder, links, hasMore, listNames, doFetchStgsAndInfo, settings,
-    conflictedSettings, info, images,
-  };
+  return { settings, conflictedSettings, info };
 };
 
-const fetchMore = async (params) => {
+const fetchLinks = async (_fpaths) => {
+  const responses = await batchGetFileWithRetry(serverApi.getFile, _fpaths, 0, true);
 
-  const { listName, ids, doDescendingOrder, pendingPins } = params;
-  const { linkFPaths, pinFPaths } = await listFPaths();
-
-  const namedLinkFPaths = linkFPaths[listName] || [];
-  let sortedLinkFPaths = [...namedLinkFPaths].sort();
-  if (doDescendingOrder) sortedLinkFPaths.reverse();
-
-  sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, pendingPins, (fpath) => {
-    const { id } = extractLinkFPath(fpath);
-    return getMainId(id);
-  });
-
-  // With pins, can't fetch further from the current point
-  let filteredLinkFPaths = [], hasDisorder = false;
-  for (let i = 0; i < sortedLinkFPaths.length; i++) {
-    const fpath = sortedLinkFPaths[i];
-    const { id } = extractLinkFPath(fpath);
-    if (!ids.includes(id)) {
-      if (i < ids.length) hasDisorder = true;
-      filteredLinkFPaths.push(fpath);
-    }
-  }
-  const selectedLinkFPaths = filteredLinkFPaths.slice(0, N_LINKS);
-
-  const responses = await batchGetFileWithRetry(
-    serverApi.getFile, selectedLinkFPaths, 0, true
-  );
-  const links = [];
+  const fpaths = [], linkObjs = []; // No order guarantee btw _fpaths and responses
   for (const { success, fpath, content } of responses) {
-    if (success) links.push(content);
-    else links.push(deriveUnknownErrorLink(fpath));
+    fpaths.push(fpath);
+
+    if (success) linkObjs.push(content);
+    else linkObjs.push(deriveUnknownErrorLink(fpath));
   }
-  const hasMore = filteredLinkFPaths.length > N_LINKS;
 
-  const { images } = await fetchStaticFiles(links);
+  await fetchStaticFiles(linkObjs);
 
-  return { listName, doDescendingOrder, links, hasMore, hasDisorder, images };
+  const links = {};
+  for (let i = 0; i < fpaths.length; i++) {
+    const fpath = fpaths[i], link = linkObjs[i];
+
+    const { listName } = extractLinkFPath(fpath);
+    if (!isObject(links[listName])) links[listName] = {};
+    links[listName][link.id] = link;
+  }
+
+  return { links };
 };
 
-const fetchStaticFiles = async (links) => {
+const fetchStaticFiles = async (linkObjs) => {
   const fpaths = [];
-  for (const link of links) {
+  for (const link of linkObjs) {
     if (isObject(link.custom)) {
       const { image } = link.custom;
       if (isString(image) && image.startsWith(CD_ROOT + '/')) {
@@ -216,11 +162,11 @@ const fetchStaticFiles = async (links) => {
 
   const files = await fileApi.getFiles(fpaths); // Check if already exists locally
 
-  const images = {}, remainedFPaths = [];
+  const remainedFPaths = [];
   for (let i = 0; i < files.fpaths.length; i++) {
     const fpath = files.fpaths[i], contentUrl = files.contentUrls[i];
-    if (isString(contentUrl)) images[fpath] = contentUrl;
-    else remainedFPaths.push(fpath);
+    if (isString(contentUrl)) continue;
+    remainedFPaths.push(fpath);
   }
 
   const fpathMap = {}, remainedStaticFPaths = [];
@@ -236,16 +182,157 @@ const fetchStaticFiles = async (links) => {
   );
   const responses = _responses.filter(r => r.success);
 
-  const results = await fileApi.putFiles(
+  await fileApi.putFiles(
     responses.map(r => r.fpath).map(fpath => fpathMap[fpath]),
     responses.map(r => r.content)
   );
+};
 
-  for (let i = 0; i < results.fpaths.length; i++) {
-    images[results.fpaths[i]] = results.contentUrls[i];
+const fetch = async (params) => {
+  const { getState, listName, queryString, lnOrQt } = params;
+
+  const didFetch = getState().display.didFetch;
+  const didFetchSettings = getState().display.didFetchSettings;
+  const pendingPins = getState().pendingPins;
+
+  let doDescendingOrder = getState().settings.doDescendingOrder;
+
+  const linkFPaths = getLinkFPaths(getState());
+  const pinFPaths = getPinFPaths(getState());
+
+  // Need to do it again in case fetch list1 and fetch list2,
+  //   the second fetch, settings are changes.
+  const bin = { fetchedLinkFPaths: [], unfetchedLinkFPaths: [], hasMore: false };
+  let fpaths;
+  if (queryString) {
+    // Loop on tagFPaths, get linkIds with tag === queryString
+    [fpaths, bin.hasMore] = [[], false];
+  } else {
+    const _result = getNLinkFPaths({
+      linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
+    });
+    [fpaths, bin.hasMore] = [_result.fpaths, _result.hasMore];
+  }
+  for (const linkFPath of fpaths) {
+    const { id } = extractLinkFPath(linkFPath);
+    if (vars.fetch.fetchedLinkMainIds.includes(getMainId(id))) {
+      bin.fetchedLinkFPaths.push(linkFPath);
+    } else {
+      bin.unfetchedLinkFPaths.push(linkFPath);
+    }
   }
 
-  return { images };
+  const result = { lnOrQt };
+  if (!didFetch || !didFetchSettings) {
+    const {
+      linkFPaths, settingsFPaths, infoFPath, pinFPaths,
+    } = await listFPaths(true);
+
+    const sResult = await fetchStgsAndInfo(settingsFPaths, infoFPath);
+    result.doFetchStgsAndInfo = true;
+    result.settings = sResult.settings;
+    result.conflictedSettings = sResult.conflictedSettings;
+    result.info = sResult.info;
+    // List names should be retrieve from settings
+    //   but also retrive from file paths in case the settings is gone.
+    result.listNames = Object.keys(linkFPaths);
+
+    if (result.settings) doDescendingOrder = result.settings.doDescendingOrder;
+
+    let fpaths;
+    if (queryString) {
+      // Loop on tagFPaths, get linkIds with tag === queryString
+      [fpaths, bin.hasMore] = [[], false];
+    } else {
+      const _result = getNLinkFPaths({
+        linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
+      });
+      [fpaths, bin.hasMore] = [_result.fpaths, _result.hasMore];
+    }
+    for (const linkFPath of fpaths) bin.unfetchedLinkFPaths.push(linkFPath);
+
+    vars.fetch.dt = Date.now();
+  }
+
+  const lResult = await fetchLinks(bin.unfetchedLinkFPaths);
+  result.fetchedLinkFPaths = bin.fetchedLinkFPaths;
+  result.unfetchedLinkFPaths = bin.unfetchedLinkFPaths;
+  result.hasMore = bin.hasMore;
+  result.links = lResult.links;
+
+  return result;
+};
+
+const fetchMore = async (params) => {
+  const {
+    getState, doForCompare, listName, queryString, lnOrQt, showingLinkIds,
+  } = params;
+
+  const pendingPins = getState().pendingPins;
+
+  const doDescendingOrder = getState().settings.doDescendingOrder;
+
+  const linkFPaths = getLinkFPaths(getState());
+  const pinFPaths = getPinFPaths(getState());
+
+  // Need to do it again in case settings are changes.
+  const bin = {
+    fetchedLinkFPaths: [], unfetchedLinkFPaths: [], hasMore: false, hasDisorder: false,
+  };
+  if (!doForCompare) {
+    let fpaths;
+    if (queryString) {
+
+      // Loop on tagFPaths, get linkIds with tag === queryString
+      // excluding already showing
+      [fpaths, bin.hasMore, bin.hasDisorder] = [[], false, false];
+    } else {
+      const _result = getNLinkFPaths({
+        linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
+        excludingIds: showingLinkIds,
+      });
+      fpaths = _result.fpaths;
+      [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
+    }
+    for (const linkFPath of fpaths) {
+      const { id } = extractLinkFPath(linkFPath);
+      if (vars.fetch.fetchedLinkMainIds.includes(getMainId(id))) {
+        bin.fetchedLinkFPaths.push(linkFPath);
+      } else {
+        bin.unfetchedLinkFPaths.push(linkFPath);
+      }
+    }
+  }
+
+  const result = { lnOrQt };
+  if (doForCompare) {
+    let fpaths;
+    if (queryString) {
+      console.log(
+        'In fetchMore, invalid doForCompare:', doForCompare,
+        'with queryString:', queryString
+      );
+      [fpaths, bin.hasMore] = [[], false];
+    } else {
+      const _result = getNLinkFPaths({
+        linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
+        excludingMainIds: vars.fetch.fetchedLinkMainIds,
+      });
+      fpaths = _result.fpaths;
+      [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
+    }
+    for (const linkFPath of fpaths) bin.unfetchedLinkFPaths.push(linkFPath);
+  }
+
+  const lResult = await fetchLinks(bin.unfetchedLinkFPaths);
+  result.doForCompare = doForCompare;
+  result.fetchedLinkFPaths = bin.fetchedLinkFPaths;
+  result.unfetchedLinkFPaths = bin.unfetchedLinkFPaths;
+  result.hasMore = bin.hasMore;
+  result.hasDisorder = bin.hasDisorder;
+  result.links = lResult.links;
+
+  return result;
 };
 
 const putLinks = async (params) => {

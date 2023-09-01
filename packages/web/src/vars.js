@@ -20,6 +20,8 @@ const scrollPanel = {
 
 const fetch = {
   dt: 0,
+  fetchedLinkMainIds: [],
+  doShowLoading: false,
 };
 
 const randomHouseworkTasks = {

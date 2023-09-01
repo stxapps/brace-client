@@ -28,7 +28,7 @@ class FetchedPopup extends React.PureComponent {
   }*/
 
   onUpdateBtnClick = () => {
-    this.props.updateFetched(null, null, null, true);
+    this.props.updateFetched(null, true);
   }
 
   onCloseBtnClick = () => {

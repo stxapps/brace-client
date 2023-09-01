@@ -1,9 +1,9 @@
 import { REHYDRATE } from 'redux-persist/constants';
 
 import {
-  REHYDRATE_STATIC_FILES, FETCH_COMMIT, FETCH_MORE_COMMIT, UPDATE_IMAGES,
-  UPDATE_CUSTOM_DATA_COMMIT, DELETE_LINKS_COMMIT, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
-  CLEAN_UP_STATIC_FILES_COMMIT, DELETE_ALL_DATA, RESET_STATE,
+  UPDATE_FETCHED, UPDATE_FETCHED_MORE, SET_SHOWING_LINK_IDS, DELETE_LINKS_COMMIT,
+  DELETE_OLD_LINKS_IN_TRASH_COMMIT, UPDATE_IMAGES, UPDATE_CUSTOM_DATA_COMMIT,
+  DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import { CD_ROOT } from '../types/const';
 import { getMainId, extractStaticFPath, getStaticFPath } from '../utils';
@@ -16,13 +16,20 @@ const imagesReducer = (state = initialState, action) => {
     return { ...initialState };
   }
 
-  if (
-    action.type === REHYDRATE_STATIC_FILES ||
-    action.type === FETCH_COMMIT ||
-    action.type === FETCH_MORE_COMMIT
-  ) {
-    const { images } = action.payload;
-    return { ...state, ...images };
+  if (action.type === UPDATE_FETCHED || action.type === SET_SHOWING_LINK_IDS) {
+    // Check images from CustomEditor?
+    // Possible remove images for customEditor? E.g., fetching and open CustomEditor?
+    if ('images' in action.payload) {
+      return { ...action.payload.images };
+    }
+    return state;
+  }
+
+  if (action.type === UPDATE_FETCHED_MORE) {
+    if ('images' in action.payload) {
+      return { ...state, ...action.payload.images };
+    }
+    return state;
   }
 
   if (action.type === UPDATE_IMAGES) {
@@ -46,8 +53,7 @@ const imagesReducer = (state = initialState, action) => {
 
   if (
     action.type === DELETE_LINKS_COMMIT ||
-    action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT ||
-    action.type === CLEAN_UP_STATIC_FILES_COMMIT
+    action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT
   ) {
     let { ids } = action.payload;
     if (action.type === DELETE_LINKS_COMMIT) ids = action.payload.successIds;

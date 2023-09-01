@@ -626,7 +626,7 @@ This and CI/CD are very important!
 - yarn add @tailwindcss/forms @tailwindcss/typography @tailwindcss/aspect-ratio @tailwindcss/line-clamp
 - no need for dev dependencies as this's not a node app
 - yarn add redux redux-loop react-redux reselect
-- yarn add https://github.com/stxapps/redux-offline#4969cde61cd97a9f317f158cade8c96374871a6d
+- yarn add https://github.com/stxapps/redux-offline#028205cec27dcf1ae05e310fc7e45779ee908949
 - yarn add @stacks/auth @stacks/storage @stacks/wallet-sdk @stacks/connect @stacks/encryption
 - Make sure history works:
   + Address bar i.e. change path, change hash!

@@ -15,6 +15,10 @@ import './stylesheets/patterns.css';
 import reducers from './reducers';
 import { init } from './actions';
 import { queue, discard, effect } from './apis/customOffline';
+import {
+  FETCH, FETCH_MORE, EXTRACT_CONTENTS, DELETE_OLD_LINKS_IN_TRASH,
+} from './types/actionTypes';
+import { isObject } from './utils';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 
@@ -28,6 +32,21 @@ offlineConfig.persistCallback = () => {
 };
 offlineConfig.dispatch = (...args) => {
   store.dispatch(...args);
+};
+offlineConfig.persistOptions = {
+  blacklist: [
+    'user', 'stacksAccess', 'hasMoreLinks', 'images', 'fetched', 'fetchedMore',
+    'isFetchMoreInterrupted', 'refreshFetched', 'linkEditor', 'customEditor',
+    'listNameEditors', 'timePick', 'lockEditor', 'iap', 'migrateHub',
+  ],
+};
+offlineConfig.filterOutboxRehydrate = (outbox) => {
+  return outbox.filter(action => {
+    if (!isObject(action)) return false;
+    return ![
+      FETCH, FETCH_MORE, EXTRACT_CONTENTS, DELETE_OLD_LINKS_IN_TRASH,
+    ].includes(action.type);
+  });
 };
 
 /** @ts-expect-error */
