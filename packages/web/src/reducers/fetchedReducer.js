@@ -1,12 +1,12 @@
 import { REHYDRATE } from 'redux-persist/constants';
 
 import {
-  CACHE_FETCHED, UPDATE_FETCHED, REFRESH_FETCHED, ADD_LINKS_COMMIT, DELETE_LINKS_COMMIT,
-  MOVE_LINKS_DELETE_STEP_COMMIT, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
+  CACHE_FETCHED, UPDATE_FETCHED, REFRESH_FETCHED, ADD_LINKS_COMMIT,
+  MOVE_LINKS_DELETE_STEP_COMMIT, DELETE_LINKS_COMMIT, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   EXTRACT_CONTENTS_COMMIT, PIN_LINK_COMMIT, UPDATE_CUSTOM_DATA_COMMIT, DELETE_ALL_DATA,
   RESET_STATE,
 } from '../types/actionTypes';
-import { getLinkFPaths, extractLinkFPath } from '../utils';
+import { getLinkFPaths, extractLinkFPath, createLinkFPath } from '../utils';
 import { getCachedFPaths } from '../vars';
 
 const initialState = {};
@@ -38,35 +38,46 @@ const fetchedReducer = (state = initialState, action) => {
     if (!state[listName]) return state;
 
     const { payload } = state[listName];
-    const newPayload = { ...payload, links: [...payload.links, ...successLinks] };
+
+    const fpaths = successLinks.map(link => createLinkFPath(listName, link.id));
+    const newLinks = { ...payload.links };
+    newLinks[listName] = { ...newLinks[listName] };
+    for (const link of successLinks) newLinks[listName][link.id] = { ...link };
+
+    const newPayload = { ...payload };
+    newPayload.unfetchedLinkFPaths = [...newPayload.unfetchedLinkFPaths, ...fpaths];
+    newPayload.links = newLinks;
 
     return { ...state, [listName]: { payload: newPayload } };
   }
 
   if (
-    action.type === DELETE_LINKS_COMMIT || action.type === MOVE_LINKS_DELETE_STEP_COMMIT
+    action.type === MOVE_LINKS_DELETE_STEP_COMMIT ||
+    action.type === DELETE_LINKS_COMMIT ||
+    action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT
   ) {
-    const { listName, successIds } = action.payload;
+    let { listName, successIds } = action.payload;
+    if (action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT) {
+      successIds = action.payload.ids;
+    }
+
     if (!state[listName]) return state;
 
     const { payload } = state[listName];
-    const newPayload = {
-      ...payload,
-      links: payload.links.filter(l => !successIds.includes(l.id)),
-    };
 
-    return { ...state, [listName]: { payload: newPayload } };
-  }
+    const fpaths = successIds.map(id => createLinkFPath(listName, id));
+    const newLinks = { ...payload.links };
+    newLinks[listName] = {};
+    for (const id in payload.links[listName]) {
+      if (successIds.includes(id)) continue;
+      newLinks[listName][id] = { ...payload.links[listName][id] };
+    }
 
-  if (action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT) {
-    const { listName, ids } = action.payload;
-    if (!state[listName]) return state;
-
-    const { payload } = state[listName];
-    const newPayload = {
-      ...payload,
-      links: payload.links.filter(l => !ids.includes(l.id)),
-    };
+    const newPayload = { ...payload };
+    newPayload.unfetchedLinkFPaths = newPayload.unfetchedLinkFPaths.filter(fpath => {
+      return !fpaths.includes(fpath);
+    });
+    newPayload.links = newLinks;
 
     return { ...state, [listName]: { payload: newPayload } };
   }
@@ -75,20 +86,14 @@ const fetchedReducer = (state = initialState, action) => {
     const { listName, successLinks } = action.payload;
     if (!state[listName]) return state;
 
-    const linkObjs = {};
-    for (const link of successLinks) {
-      linkObjs[link.id] = link;
-    }
-
     const { payload } = state[listName];
 
-    const newPayload = {
-      ...payload,
-      links: payload.links.map(l => {
-        if (l.id in linkObjs) return linkObjs[l.id];
-        return l;
-      }),
-    };
+    const newLinks = { ...payload.links };
+    newLinks[listName] = { ...newLinks[listName] };
+    for (const link of successLinks) newLinks[listName][link.id] = { ...link };
+
+    const newPayload = { ...payload };
+    newPayload.links = newLinks;
 
     return { ...state, [listName]: { payload: newPayload } };
   }
@@ -96,6 +101,8 @@ const fetchedReducer = (state = initialState, action) => {
   if (action.type === PIN_LINK_COMMIT) {
     const { listName, links } = action.meta;
     if (!state[listName]) return state;
+
+    const { payload } = state[listName];
 
     // Add to the fetched only if also exists in fpaths to prevent pin on a link
     //   that was already moved/removed/deleted.
@@ -110,8 +117,14 @@ const fetchedReducer = (state = initialState, action) => {
 
     const filteredLinks = links.filter(link => linkIds.includes(link.id));
 
-    const { payload } = state[listName];
-    const newPayload = { ...payload, links: [...payload.links, ...filteredLinks] };
+    const fpaths = filteredLinks.map(link => createLinkFPath(listName, link.id));
+    const newLinks = { ...payload.links };
+    newLinks[listName] = { ...newLinks[listName] };
+    for (const link of filteredLinks) newLinks[listName][link.id] = { ...link };
+
+    const newPayload = { ...payload };
+    newPayload.unfetchedLinkFPaths = [...newPayload.unfetchedLinkFPaths, ...fpaths];
+    newPayload.links = newLinks;
 
     return { ...state, [listName]: { payload: newPayload } };
   }
@@ -122,13 +135,12 @@ const fetchedReducer = (state = initialState, action) => {
 
     const { payload } = state[listName];
 
-    const newPayload = {
-      ...payload,
-      links: payload.links.map(l => {
-        if (l.id === toLink.id) return toLink;
-        return l;
-      }),
-    };
+    const newLinks = { ...payload.links };
+    newLinks[listName] = { ...newLinks[listName] };
+    newLinks[listName][toLink.id] = { ...toLink };
+
+    const newPayload = { ...payload };
+    newPayload.links = newLinks;
 
     return { ...state, [listName]: { payload: newPayload } };
   }

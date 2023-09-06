@@ -17,8 +17,6 @@ const imagesReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_FETCHED || action.type === SET_SHOWING_LINK_IDS) {
-    // Check images from CustomEditor?
-    // Possible remove images for customEditor? E.g., fetching and open CustomEditor?
     if ('images' in action.payload) {
       return { ...action.payload.images };
     }
@@ -55,10 +53,12 @@ const imagesReducer = (state = initialState, action) => {
     action.type === DELETE_LINKS_COMMIT ||
     action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT
   ) {
-    let { ids } = action.payload;
-    if (action.type === DELETE_LINKS_COMMIT) ids = action.payload.successIds;
+    let { successIds } = action.payload;
+    if (action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT) {
+      successIds = action.payload.ids;
+    }
 
-    const mainIds = ids.map(id => getMainId(id));
+    const mainIds = successIds.map(id => getMainId(id));
 
     const newState = {};
     for (const fpath in state) {

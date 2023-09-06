@@ -8,8 +8,8 @@ import {
 } from '../actions';
 import {
   MY_LIST, TRASH, ADDING, MOVING, UPDATING, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
-  MOVE_TO, CHANGE, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP,
-  PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
+  MOVE_TO, CHANGE, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, CARD_ITEM_MENU_POPUP,
+  LIST_NAMES_POPUP, PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
   DELETE_ACTION_LINK_ITEM_MENU, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
 import {
@@ -110,7 +110,7 @@ class CardItemMenuPopup extends React.PureComponent {
   onMenuPopupClick = (text) => {
     if (!text || this.didClick) return;
 
-    const { popupAnchorPosition } = this.props;
+    const { anchorPosition } = this.props;
     const { id, url } = this.props.popupLink;
 
     if (text === COPY_LINK) {
@@ -131,10 +131,10 @@ class CardItemMenuPopup extends React.PureComponent {
         LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
       );
 
-      const newX = popupAnchorPosition.x + 8;
-      const newY = popupAnchorPosition.y + 12;
-      const newWidth = popupAnchorPosition.width - 8 - 12;
-      const newHeight = popupAnchorPosition.height - 12 - 0;
+      const newX = anchorPosition.x + 8;
+      const newY = anchorPosition.y + 12;
+      const newWidth = anchorPosition.width - 8 - 12;
+      const newHeight = anchorPosition.height - 12 - 0;
       const rect = {
         x: newX, y: newY, width: newWidth, height: newHeight,
         top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
@@ -145,10 +145,10 @@ class CardItemMenuPopup extends React.PureComponent {
     } else if (text === MANAGE_PIN) {
       this.props.updateSelectingLinkId(id);
 
-      const newX = popupAnchorPosition.x + 8;
-      const newY = popupAnchorPosition.y + 12;
-      const newWidth = popupAnchorPosition.width - 8 - 12;
-      const newHeight = popupAnchorPosition.height - 12 - 0;
+      const newX = anchorPosition.x + 8;
+      const newY = anchorPosition.y + 12;
+      const newWidth = anchorPosition.width - 8 - 12;
+      const newHeight = anchorPosition.height - 12 - 0;
       const rect = {
         x: newX, y: newY, width: newWidth, height: newHeight,
         top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
@@ -160,14 +160,14 @@ class CardItemMenuPopup extends React.PureComponent {
       console.log(`In CardItemMenuPopup, invalid text: ${text}`);
     }
 
-    this.props.updatePopup(CARD_ITEM_POPUP_MENU, false);
+    this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
     this.didClick = true;
   };
 
   onCancelBtnClick = () => {
     // In Chrome desktop, touch mode,
     //   double clicks on menu popup, the second click is on cancelBtn.
-    this.props.updatePopup(CARD_ITEM_POPUP_MENU, false);
+    this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
   };
 
   renderMenu() {

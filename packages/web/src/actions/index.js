@@ -59,11 +59,11 @@ import {
   CUSTOM_EDITOR_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP,
   SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP,
   DISCARD_ACTION_UPDATE_LIST_NAME, ID, LOCAL_LINK_ATTRS, MY_LIST, TRASH, N_LINKS,
-  N_DAYS, CD_ROOT, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
-  DIED_UPDATING, BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT,
-  EXTRACT_EXCEEDING_N_URLS, IAP_VERIFY_URL, IAP_STATUS_URL, PADDLE, COM_BRACEDOTTO,
-  COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, ACTIVE, UNKNOWN,
-  SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE, FEATURE_PIN,
+  N_DAYS, CD_ROOT, ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
+  DIED_UPDATING, NEW_LINK_FPATH_STATUSES, BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL,
+  EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, IAP_VERIFY_URL, IAP_STATUS_URL, PADDLE,
+  COM_BRACEDOTTO, COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, ACTIVE,
+  UNKNOWN, SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE, FEATURE_PIN,
   FEATURE_APPEARANCE, FEATURE_CUSTOM, FEATURE_LOCK, PADDLE_RANDOM_ID, VALID_PASSWORD,
   PASSWORD_MSGS,
 } from '../types/const';
@@ -77,7 +77,7 @@ import {
   getRawPins, getFormattedTime, get24HFormattedTime, extractStaticFPath, getWindowSize,
   getEditingListNameEditors, validatePassword, doContainListName, sleep, sample,
   extractLinkFPath, getLink, getListNameAndLink, getNLinkObjs, getNLinkFPaths,
-  newObject,
+  newObject, addFetchedLinkMainIds, addFetchedLinkMainIdsWithArray, createLinkFPath,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -406,17 +406,26 @@ export const updatePopup = (id, isShown, anchorPosition = null) => {
   };
 };
 
-export const changeListName = (listName) => async (dispatch, getState) => {
+export const changeListName = (newListName) => async (dispatch, getState) => {
+  const listName = getState().display.listName;
+  const queryString = getState().display.queryString;
+  const lnOrQt = queryString ? queryString : listName;
 
-  //const _listName = getState().display.listName;
-  // make sure dispatch updateFetched finishes before dispatch updateFetchedMore
-  // dispatch SET LINKS and APPEND LINKS, not updateFetched!
-  // update before so links are ready.
+  const fetched = getState().fetched[lnOrQt];
+  if (isObject(fetched) && isObject(fetched.payload)) {
+    const { lnOrQt, links } = fetched.payload;
+    dispatch({ type: SET_LINKS, payload: { lnOrQt, links } });
+    addFetchedLinkMainIds(links, vars.fetch.fetchedLinkMainIds);
+  }
 
-  dispatch({ type: UPDATE_LIST_NAME, payload: listName });
+  const fetchedMore = getState().fetchedMore[lnOrQt];
+  if (isObject(fetchedMore) && isObject(fetchedMore.payload)) {
+    const { links } = fetchedMore.payload;
+    dispatch({ type: APPEND_LINKS, payload: { links } });
+    addFetchedLinkMainIds(links, vars.fetch.fetchedLinkMainIds);
+  }
 
-  //await updateFetched(null, _listName)(dispatch, getState);
-  //await updateFetchedMore(null, _listName)(dispatch, getState);
+  dispatch({ type: UPDATE_LIST_NAME, payload: newListName });
 };
 
 export const updateSearchString = (searchString) => {
@@ -486,7 +495,7 @@ const _getIdsAndImages = async (linkObjsOrFPaths, links) => {
       console.log('In _getIdsAndImages: invalid objOrFPath:', objOrFPath);
       continue;
     }
-    if (isObject(link)) continue;
+    if (!isObject(link)) continue;
 
     ids.push(link.id);
     if (isObject(link.custom)) {
@@ -524,10 +533,10 @@ export const fetch = () => async (dispatch, getState) => {
   const lnOrQt = queryString ? queryString : listName;
   if (fetchingLnOrQts.includes(lnOrQt) || lnOrQt in cachedFetched) {
     if (!queryString) { // For queryString, continue showing loading.
-      const { objs, hasMore } = getNLinkObjs({
+      const { hasMore, objsWithPcEc } = getNLinkObjs({
         links, listName, doDescendingOrder, pinFPaths, pendingPins,
       });
-      const { ids, images } = await _getIdsAndImages(objs, links);
+      const { ids, images } = await _getIdsAndImages(objsWithPcEc, links);
       dispatch({ type: SET_SHOWING_LINK_IDS, payload: { ids, hasMore, images } });
     }
     return;
@@ -537,15 +546,16 @@ export const fetch = () => async (dispatch, getState) => {
 
   const bin = { fetchedLinkFPaths: [], unfetchedLinkFPaths: [], hasMore: false };
   if (didFetch && didFetchSettings) {
-    let fpaths;
+    let fpaths, fpathsWithPcEc;
     if (queryString) {
       // Loop on tagFPaths, get linkIds with tag === queryString
-      [fpaths, bin.hasMore] = [[], false];
+      [fpaths, fpathsWithPcEc, bin.hasMore] = [[], [], false];
     } else {
       const _result = getNLinkFPaths({
-        linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
+        linkFPaths, links, listName, doDescendingOrder, pinFPaths, pendingPins,
       });
-      [fpaths, bin.hasMore] = [_result.fpaths, _result.hasMore];
+      [fpaths, fpathsWithPcEc] = [_result.fpaths, _result.fpathsWithPcEc];
+      bin.hasMore = _result.hasMore;
     }
     for (const linkFPath of fpaths) {
       const { id } = extractLinkFPath(linkFPath);
@@ -556,7 +566,7 @@ export const fetch = () => async (dispatch, getState) => {
       }
     }
     if (bin.unfetchedLinkFPaths.length === 0) {
-      const { ids, images } = await _getIdsAndImages(bin.fetchedLinkFPaths, links);
+      const { ids, images } = await _getIdsAndImages(fpathsWithPcEc, links);
       dispatch({
         type: SET_SHOWING_LINK_IDS, payload: { ids, hasMore: bin.hasMore, images },
       });
@@ -566,10 +576,10 @@ export const fetch = () => async (dispatch, getState) => {
   }
   // For queryString, continue showing loading.
   if (!queryString && !vars.fetch.doShowLoading) {
-    const { objs, hasMore } = getNLinkObjs({
+    const { hasMore, objsWithPcEc } = getNLinkObjs({
       links, listName, doDescendingOrder, pinFPaths, pendingPins,
     });
-    const { ids, images } = await _getIdsAndImages(objs, links);
+    const { ids, images } = await _getIdsAndImages(objsWithPcEc, links);
     dispatch({ type: SET_SHOWING_LINK_IDS, payload: { ids, hasMore, images } });
   }
   vars.fetch.doShowLoading = false;
@@ -606,6 +616,24 @@ const _poolLinks = (linkFPaths, payloadLinks, stateLinks) => {
   });
 };
 
+const _poolListNameAndLinks = (linkFPaths, payloadLinks, stateLinks) => {
+  return linkFPaths.map(fpath => {
+    const { listName, id } = extractLinkFPath(fpath);
+
+    let links = payloadLinks;
+    if (isObject(links[listName]) && isObject(links[listName][id])) {
+      return { listName, link: links[listName][id] };
+    }
+
+    links = stateLinks;
+    if (isObject(links[listName]) && isObject(links[listName][id])) {
+      return { listName, link: links[listName][id] };
+    }
+
+    return { listName: null, link: null };
+  });
+};
+
 const _getUpdateFetchedAction = (getState, payload) => {
   /*
     updateAction
@@ -619,26 +647,28 @@ const _getUpdateFetchedAction = (getState, payload) => {
   const showingLinkIds = getState().display.showingLinkIds;
   const pendingPins = getState().display.pendingPins;
   const cachedFetchedMore = getState().fetchedMore;
-
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
   const pinFPaths = getPinFPaths(getState());
 
-  const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
-  const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
-
   if (!Array.isArray(showingLinkIds) || showingLinkIds.length === 0) return 0;
 
   if (
-    showingLinkIds.length < updatingLinkFPaths.length ||
-    fetchingMoreLnOrQts.includes(payload.lnOrQt) || // Try to prevent
-    payload.lnOrQt in cachedFetchedMore // differences in the fetchMore.
+    fetchingMoreLnOrQts.includes(`${payload.lnOrQt}:false`) ||
+    fetchingMoreLnOrQts.includes(`${payload.lnOrQt}:true`) ||
+    payload.lnOrQt in cachedFetchedMore
   ) {
-    return 3;
+    return 3; // Try to prevent differences in the fetchMore.
   }
 
   let showingLinks = showingLinkIds.map(linkId => getLink(linkId, getState().links));
   showingLinks = showingLinks.filter(link => isObject(link));
+  showingLinks = showingLinks.filter(link => {
+    return !NEW_LINK_FPATH_STATUSES.includes(link.status);
+  });
+
+  const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
+  const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
 
   let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, getState().links)
   updatingLinks = updatingLinks.filter(link => isObject(link));
@@ -673,6 +703,7 @@ export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
     dispatch({
       type: SET_LINKS, payload: { lnOrQt: payload.lnOrQt, links: payload.links },
     });
+    addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
     dispatch(deleteFetchingLnOrQt(payload.lnOrQt));
     return;
   }
@@ -689,13 +720,15 @@ export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
 
   if (updateAction === 1) {
     dispatch({ type: SET_SHOWING_LINK_IDS, payload: { hasMore: payload.hasMore } });
-    dispatch(deleteFetchingLnOrQt(lnOrQt));
+    addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
+    dispatch(deleteFetchingLnOrQt(payload.lnOrQt));
     return;
   }
 
   if (updateAction === 2) {
+    addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
+    dispatch(deleteFetchingLnOrQt(payload.lnOrQt));
     dispatch(fetchMore(true));
-    dispatch(deleteFetchingLnOrQt(lnOrQt));
     return;
   }
 
@@ -704,18 +737,19 @@ export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
     const scrollY = vars.scrollPanel.scrollY;
     if (scrollY < 32 && !isPopupShown(getState())) {
       dispatch(updateFetched(payload));
-      dispatch(deleteFetchingLnOrQt(lnOrQt));
+      dispatch(deleteFetchingLnOrQt(payload.lnOrQt));
       return;
     }
   }
 
   dispatch({ type: CACHE_FETCHED, payload });
-  dispatch(deleteFetchingLnOrQt(lnOrQt));
+  dispatch(deleteFetchingLnOrQt(payload.lnOrQt));
 };
 
 export const updateFetched = (payload, doChangeListCount = false) => async (
   dispatch, getState
 ) => {
+  const links = getState().links;
   const pendingPins = getState().pendingPins;
   const doDescendingOrder = getState().settings.doDescendingOrder;
   const pinFPaths = getPinFPaths(getState());
@@ -730,17 +764,28 @@ export const updateFetched = (payload, doChangeListCount = false) => async (
   }
   if (!payload) return;
 
+  const processingLinks = [];
+  if (isObject(links[payload.lnOrQt])) {
+    for (const link of Object.values(links[payload.lnOrQt])) {
+      if (link.status === ADDED) continue;
+      processingLinks.push(link);
+    }
+  }
+
   const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
   const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
 
   let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, getState().links)
   updatingLinks = updatingLinks.filter(link => isObject(link));
-  updatingLinks = sortLinks(updatingLinks, doDescendingOrder);
-  updatingLinks = sortWithPins(updatingLinks, pinFPaths, pendingPins, (link) => {
+
+  let sortedLinks = [...updatingLinks, ...processingLinks];
+  sortedLinks = Object.values(_.mapKeys(sortedLinks, ID));
+  sortedLinks = sortLinks(sortedLinks, doDescendingOrder);
+  sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
     return getMainId(link.id);
   });
 
-  const { ids, images } = await _getIdsAndImages(updatingLinks, null);
+  const { ids, images } = await _getIdsAndImages(sortedLinks, null);
 
   // Need to update in one render, if not jumpy!
   //   - update links
@@ -753,6 +798,7 @@ export const updateFetched = (payload, doChangeListCount = false) => async (
       ids, hasMore: payload.hasMore, images, doChangeListCount,
     },
   });
+  addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
 };
 
 export const fetchMore = (doForCompare) => async (dispatch, getState) => {
@@ -778,57 +824,65 @@ export const fetchMore = (doForCompare) => async (dispatch, getState) => {
   }
 
   const lnOrQt = queryString ? queryString : listName;
-  if (fetchingMoreLnOrQts.includes(lnOrQt) || lnOrQt in cachedFetchedMore) {
+  if (
+    fetchingMoreLnOrQts.includes(`${lnOrQt}:${doForCompare}`) ||
+    lnOrQt in cachedFetchedMore
+  ) {
     return;
   }
 
-  dispatch(addFetchingMoreLnOrQt(lnOrQt));
+  dispatch(addFetchingMoreLnOrQt(lnOrQt, doForCompare));
 
   let isStale = false;
-  if (fetchingLnOrQts.includes(lnOrQt) || lnOrQt in cachedFetched) {
-    isStale = true;
-  }
-  if (
-    showingLinkIds.some(id => !vars.fetch.fetchedLinkMainIds.includes(getMainId(id)))
-  ) {
-    isStale = true;
+  if (!doForCompare) {
+    if (fetchingLnOrQts.includes(lnOrQt) || lnOrQt in cachedFetched) {
+      isStale = true;
+    }
+    if (fetchingMoreLnOrQts.includes(`${lnOrQt}:true`)) {
+      isStale = true;
+    }
+    if (
+      showingLinkIds.some(id => !vars.fetch.fetchedLinkMainIds.includes(getMainId(id)))
+    ) {
+      isStale = true;
+    }
   }
 
   const bin = {
     fetchedLinkFPaths: [], unfetchedLinkFPaths: [], hasMore: false, hasDisorder: false,
   };
   if (!doForCompare) {
-    let fpaths, fpathsWithExcl;
+    let fpaths, fpathsWithPcEc;
     if (queryString) {
       if (isStale) {
         // Impossible case, just return.
-        dispatch(deleteFetchingMoreLnOrQt(lnOrQt));
+        dispatch(deleteFetchingMoreLnOrQt(lnOrQt, doForCompare));
         return;
       }
 
       // Loop on tagFPaths, get linkIds with tag === queryString
       // excluding already showing
-      [fpaths, bin.hasMore, bin.hasDisorder, fpathsWithExcl] = [[], false, false, []];
+      [fpaths, fpathsWithPcEc, bin.hasMore, bin.hasDisorder] = [[], [], false, false];
     } else {
       if (isStale) {
-        const { hasMore, hasDisorder, objsWithExcl } = getNLinkObjs({
+        const { hasMore, hasDisorder, objsWithPcEc } = getNLinkObjs({
           links, listName, doDescendingOrder, pinFPaths, pendingPins,
           excludingIds: showingLinkIds,
         });
         if (hasDisorder) {
           console.log('No cache for now. Maybe fast enough to not jumpy.');
         }
-        const { ids, images } = await _getIdsAndImages(objsWithExcl, links);
+        const { ids, images } = await _getIdsAndImages(objsWithPcEc, links);
         dispatch({ type: SET_SHOWING_LINK_IDS, payload: { ids, hasMore, images } });
-        dispatch(deleteFetchingMoreLnOrQt(lnOrQt));
+        dispatch(deleteFetchingMoreLnOrQt(lnOrQt, doForCompare));
         return;
       }
 
       const _result = getNLinkFPaths({
-        linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
+        linkFPaths, links, listName, doDescendingOrder, pinFPaths, pendingPins,
         excludingIds: showingLinkIds,
       });
-      [fpaths, fpathsWithExcl] = [_result.fpaths, _result.fpathsWithExcl];
+      [fpaths, fpathsWithPcEc] = [_result.fpaths, _result.fpathsWithPcEc];
       [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
     }
     for (const linkFPath of fpaths) {
@@ -843,11 +897,11 @@ export const fetchMore = (doForCompare) => async (dispatch, getState) => {
       if (bin.hasDisorder) {
         console.log('No cache for now. Maybe fast enough to not jumpy.');
       }
-      const { ids, images } = await _getIdsAndImages(fpathsWithExcl, links);
+      const { ids, images } = await _getIdsAndImages(fpathsWithPcEc, links);
       dispatch({
         type: SET_SHOWING_LINK_IDS, payload: { ids, hasMore: bin.hasMore, images },
       });
-      dispatch(deleteFetchingMoreLnOrQt(lnOrQt));
+      dispatch(deleteFetchingMoreLnOrQt(lnOrQt, doForCompare));
       return;
     }
   }
@@ -866,8 +920,92 @@ export const fetchMore = (doForCompare) => async (dispatch, getState) => {
   });
 };
 
-const _getForCompareAction = (getState, payload) => {
+const _getLinksForCompareAction = (getState, payload) => {
+  const showingLinkIds = getState().display.showingLinkIds;
+  const pendingPins = getState().display.pendingPins;
+  const doDescendingOrder = getState().settings.doDescendingOrder;
 
+  const pinFPaths = getPinFPaths(getState());
+
+  let showingLinks = [], toLnMap = {};
+  if (Array.isArray(showingLinkIds)) {
+    const showingLnAndLks = showingLinkIds.map(linkId => {
+      return getListNameAndLink(linkId, getState().links);
+    });
+    for (const { listName, link } of showingLnAndLks) {
+      if (listName === null || link === null) continue;
+      if (NEW_LINK_FPATH_STATUSES.includes(link.status)) continue;
+      showingLinks.push(link);
+      toLnMap[link.id] = listName;
+    }
+  }
+
+  const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
+  const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
+  const updatingLnAndLks = _poolListNameAndLinks(
+    updatingLinkFPaths, payload.links, getState().links
+  );
+
+  let updatingLinks = [];
+  for (const { listName, link } of updatingLnAndLks) {
+    if (listName === null || link === null) continue;
+    updatingLinks.push(link);
+    toLnMap[link.id] = listName;
+  }
+  for (const link of showingLinks) {
+    if (vars.fetch.fetchedLinkMainIds.includes(getMainId(link.id))) {
+      updatingLinks.push(link);
+    }
+  }
+  updatingLinks = Object.values(_.mapKeys(updatingLinks, ID));
+  updatingLinks = sortLinks(updatingLinks, doDescendingOrder);
+  updatingLinks = sortWithPins(updatingLinks, pinFPaths, pendingPins, (link) => {
+    return getMainId(link.id);
+  });
+
+  return { showingLinks, updatingLinks, toLnMap };
+};
+
+const _getForCompareAction = (showingLinks, updatingLinks) => {
+  /*
+    updateAction
+    0. justUpdate: showingLinkIds is null or empty, can just update
+    1. noNew: exactly the same, nothing new, update only hasMore
+    2. limitedSame: partially the same, first N links are the same
+    3. haveNew: not the same for sure, something new, update if not scroll or popup else show fetchedPopup
+  */
+  if (!Array.isArray(showingLinks) || showingLinks.length === 0) return 0;
+
+  if (showingLinks.length < updatingLinks.length) return 3;
+
+  for (let i = 0; i < updatingLinks.length; i++) {
+    const [showingLink, updatingLink] = [showingLinks[i], updatingLinks[i]];
+    if (
+      showingLink.id !== updatingLink.id ||
+      !isEqual(showingLink.extractedResult, updatingLink.extractedResult) ||
+      !isEqual(showingLink.custom, updatingLink.custom)
+    ) {
+      return 3;
+    }
+  }
+
+  if (showingLinks.length > updatingLinks.length) return 2;
+  return 1;
+};
+
+const _getFpsAndLksPerLn = (links, toLnMap) => {
+  const fpaths = [], lksPerLn = {};
+  for (const link of links) {
+    if (link.status !== ADDED) continue;
+
+    const listName = toLnMap[link.id];
+    const fpath = createLinkFPath(listName, link.id);
+    fpaths.push(fpath);
+
+    if (!isObject(lksPerLn[listName])) lksPerLn[listName] = {};
+    lksPerLn[listName][link.id] = link;
+  }
+  return { fpaths, lksPerLn };
 };
 
 export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
@@ -876,27 +1014,58 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
   const showingLinkIds = getState().display.showingLinkIds;
 
   const lnOrQt = queryString ? queryString : listName;
-
-  // Already changed lnOrQt or chose refreshFetched
   if (payload.lnOrQt !== lnOrQt || !Array.isArray(showingLinkIds)) {
+    // Already changed lnOrQt or chose refreshFetched
     dispatch({ type: APPEND_LINKS, payload: { links: payload.links } });
-    dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt));
+    addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
+    dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
     return;
   }
 
   if (payload.doForCompare) {
-    // not the same, show fetchedPopup
+    const {
+      showingLinks, updatingLinks, toLnMap,
+    } = _getLinksForCompareAction(getState, payload)
 
-    // same but has more, call fetchMore(true)
+    const updateAction = _getForCompareAction(showingLinks, updatingLinks);
+    if (updateAction === 0) {
+      dispatch(updateFetchedMore(payload));
+      dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
+      return;
+    }
 
-    // same, update hasMore
+    if (updateAction === 1) {
+      dispatch({ type: SET_SHOWING_LINK_IDS, payload: { hasMore: payload.hasMore } });
+      addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
+      dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
+      return;
+    }
 
+    if (updateAction === 2) {
+      addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
+      dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
+      dispatch(fetchMore(true));
+      return;
+    }
+
+    const { fpaths, lksPerLn } = _getFpsAndLksPerLn(updatingLinks, toLnMap);
+    dispatch({
+      type: CACHE_FETCHED,
+      payload: {
+        lnOrQt: payload.lnOrQt,
+        fetchedLinkFPaths: [],
+        unfetchedLinkFPaths: fpaths,
+        hasMore: payload.hasMore,
+        links: lksPerLn,
+      }
+    });
+    dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
     return;
   }
 
   if (!payload.hasDisorder) {
     dispatch(updateFetchedMore(payload));
-    dispatch(deleteFetchingMoreLnOrQt(lnOrQt));
+    dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
     return;
   }
 
@@ -908,16 +1077,17 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
 
     if (windowBottom > (scrollHeight * 0.96) && !isPopupShown(getState())) {
       dispatch(updateFetchedMore(payload));
-      dispatch(deleteFetchingMoreLnOrQt(lnOrQt));
+      dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
       return;
     }
   }
 
   dispatch({ type: CACHE_FETCHED_MORE, payload });
-  dispatch(deleteFetchingMoreLnOrQt(lnOrQt));
+  dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
 };
 
 export const updateFetchedMore = (payload) => async (dispatch, getState) => {
+  const links = getState().links;
   const showingLinkIds = getState().display.showingLinkIds;
   const pendingPins = getState().pendingPins;
   const doDescendingOrder = getState().settings.doDescendingOrder;
@@ -935,22 +1105,31 @@ export const updateFetchedMore = (payload) => async (dispatch, getState) => {
   }
   if (!payload) return;
 
-  const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
-  const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
+  const processingLinks = [];
+  if (isObject(links[payload.lnOrQt])) {
+    for (const link of Object.values(links[payload.lnOrQt])) {
+      if (link.status === ADDED) continue;
+      processingLinks.push(link);
+    }
+  }
 
   let showingLinks = showingLinkIds.map(linkId => getLink(linkId, getState().links));
   showingLinks = showingLinks.filter(link => isObject(link));
 
+  const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
+  const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
+
   let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, getState().links)
   updatingLinks = updatingLinks.filter(link => isObject(link));
 
-  updatingLinks = Object.values(_.mapKeys([...showingLinks, ...updatingLinks], ID));
-  updatingLinks = sortLinks(updatingLinks, doDescendingOrder);
-  updatingLinks = sortWithPins(updatingLinks, pinFPaths, pendingPins, (link) => {
+  let sortedLinks = [...showingLinks, ...updatingLinks, ...processingLinks];
+  sortedLinks = Object.values(_.mapKeys(sortedLinks, ID));
+  sortedLinks = sortLinks(sortedLinks, doDescendingOrder);
+  sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
     return getMainId(link.id);
   });
 
-  const { ids, images } = await _getIdsAndImages(updatingLinks, null);
+  const { ids, images } = await _getIdsAndImages(sortedLinks, null);
 
   // Need to update in one render, if not jumpy!
   //   - update links
@@ -963,6 +1142,7 @@ export const updateFetchedMore = (payload) => async (dispatch, getState) => {
       ids, hasMore: payload.hasMore, images,
     },
   });
+  addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
 };
 
 export const refreshFetched = (doShowLoading = false, doScrollTop = false) => async (
@@ -1024,12 +1204,12 @@ const deleteFetchingLnOrQt = (lnOrQt) => {
   return { type: DELETE_FETCHING_LN_OR_QT, payload: lnOrQt };
 };
 
-const addFetchingMoreLnOrQt = (lnOrQt) => {
-  return { type: ADD_FETCHING_MORE_LN_OR_QT, payload: lnOrQt };
+const addFetchingMoreLnOrQt = (lnOrQt, doForCompare) => {
+  return { type: ADD_FETCHING_MORE_LN_OR_QT, payload: `${lnOrQt}:${doForCompare}` };
 };
 
-const deleteFetchingMoreLnOrQt = (lnOrQt) => {
-  return { type: DELETE_FETCHING_MORE_LN_OR_QT, payload: lnOrQt };
+const deleteFetchingMoreLnOrQt = (lnOrQt, doForCompare) => {
+  return { type: DELETE_FETCHING_MORE_LN_OR_QT, payload: `${lnOrQt}:${doForCompare}` };
 };
 
 export const addLink = (url, listName, doExtractContents) => async (
@@ -1083,6 +1263,7 @@ export const addLink = (url, listName, doExtractContents) => async (
       },
     },
   });
+  addFetchedLinkMainIdsWithArray([link], vars.fetch.fetchedLinkMainIds);
 };
 
 export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
@@ -1136,6 +1317,7 @@ export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
       },
     },
   });
+  addFetchedLinkMainIdsWithArray(toLinks, vars.fetch.fetchedLinkMainIds);
 };
 
 export const moveLinksDeleteStep = (toListName, toIds) => async (

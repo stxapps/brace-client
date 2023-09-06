@@ -73,7 +73,7 @@ class CardPanel extends React.PureComponent {
 
   renderLoading() {
     vars.scrollPanel.scrollY = 0;
-    return <CardLoadingContent />;
+    return <CardLoadingContent columnWidth={this.props.columnWidth} />;
   }
 
   renderEmtpy() {

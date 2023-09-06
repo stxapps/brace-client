@@ -380,10 +380,12 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === FETCH_MORE_ROLLBACK) {
-    const { lnOrQt } = action.meta;
+    const { lnOrQt, doForCompare } = action.meta;
     return {
       ...state,
-      fetchingMoreLnOrQts: state.fetchingMoreLnOrQts.filter(el => el !== lnOrQt),
+      fetchingMoreLnOrQts: state.fetchingMoreLnOrQts.filter(el => {
+        return el !== `${lnOrQt}:${doForCompare}`;
+      }),
     };
   }
 
@@ -687,7 +689,7 @@ const displayReducer = (state = initialState, action) => {
   if (action.type === DELETE_ALL_DATA) {
     return {
       ...initialState,
-      didFetch: true, didFetchSettings: true, showingLinkIds: [],
+      didFetch: true, didFetchSettings: true, showingLinkIds: [], hasMoreLinks: false,
     };
   }
 

@@ -13,7 +13,6 @@ import {
   getMainId, getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
   getPinFPaths, getPins, doEnableExtraFeatures, isNumber, isMobile as _isMobile, getLink,
 } from '../utils';
-import { _ } from '../utils/obj';
 import { tailwind } from '../stylesheets/tailwind';
 import { initialListNameEditorState } from '../types/initialStates';
 
@@ -97,17 +96,21 @@ const createSelectorLinks = createSelectorCreator(
   defaultMemoize,
   (prevVal, val) => {
     if (prevVal.links !== val.links) return false;
-    if (!isEqual(prevVal.showingLinkIds, val.showingLinkIds)) return false;
-    if (prevVal.searchString !== val.searchString) return false;
+    if (prevVal.display.searchString !== val.display.searchString) return false;
+    if (!isEqual(prevVal.display.showingLinkIds, val.display.showingLinkIds)) {
+      return false;
+    }
     return true;
   }
 );
 
 export const getLinks = createSelectorLinks(
-  state => state.links,
-  state => state.display.showingLinkIds,
-  state => state.display.searchString,
-  (links, showingLinkIds, searchString) => {
+  state => state,
+  (state) => {
+    const links = state.links;
+    const showingLinkIds = state.display.showingLinkIds;
+    const searchString = state.display.searchString;
+
     if (!Array.isArray(showingLinkIds)) return null;
 
     const sortedLinks = [];
@@ -141,8 +144,8 @@ export const getIsFetchingMore = createSelector(
   state => state.display.queryString,
   state => state.display.fetchingMoreLnOrQts,
   (listName, queryString, fetchingMoreLnOrQts) => {
-    if (queryString && fetchingMoreLnOrQts.includes(queryString)) return true;
-    if (fetchingMoreLnOrQts.includes(listName)) return true;
+    if (queryString && fetchingMoreLnOrQts.includes(`${queryString}:false`)) return true;
+    if (fetchingMoreLnOrQts.includes(`${listName}:false`)) return true;
     return false;
   }
 );

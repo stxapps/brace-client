@@ -203,22 +203,24 @@ const fetch = async (params) => {
   // Need to do it again in case fetch list1 and fetch list2,
   //   the second fetch, settings are changes.
   const bin = { fetchedLinkFPaths: [], unfetchedLinkFPaths: [], hasMore: false };
-  let fpaths;
-  if (queryString) {
-    // Loop on tagFPaths, get linkIds with tag === queryString
-    [fpaths, bin.hasMore] = [[], false];
-  } else {
-    const _result = getNLinkFPaths({
-      linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
-    });
-    [fpaths, bin.hasMore] = [_result.fpaths, _result.hasMore];
-  }
-  for (const linkFPath of fpaths) {
-    const { id } = extractLinkFPath(linkFPath);
-    if (vars.fetch.fetchedLinkMainIds.includes(getMainId(id))) {
-      bin.fetchedLinkFPaths.push(linkFPath);
+  if (didFetch && didFetchSettings) {
+    let fpaths;
+    if (queryString) {
+      // Loop on tagFPaths, get linkIds with tag === queryString
+      [fpaths, bin.hasMore] = [[], false];
     } else {
-      bin.unfetchedLinkFPaths.push(linkFPath);
+      const _result = getNLinkFPaths({
+        linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
+      });
+      [fpaths, bin.hasMore] = [_result.fpaths, _result.hasMore];
+    }
+    for (const linkFPath of fpaths) {
+      const { id } = extractLinkFPath(linkFPath);
+      if (vars.fetch.fetchedLinkMainIds.includes(getMainId(id))) {
+        bin.fetchedLinkFPaths.push(linkFPath);
+      } else {
+        bin.unfetchedLinkFPaths.push(linkFPath);
+      }
     }
   }
 

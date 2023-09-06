@@ -1,7 +1,8 @@
 import { REHYDRATE } from 'redux-persist/constants';
 
 import {
-  UPDATE_FETCHED, CACHE_FETCHED_MORE, UPDATE_FETCHED_MORE, DELETE_ALL_DATA, RESET_STATE,
+  UPDATE_FETCHED, CACHE_FETCHED_MORE, UPDATE_FETCHED_MORE, REFRESH_FETCHED,
+  DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 
 const initialState = {};
@@ -28,7 +29,7 @@ const fetchedMoreReducer = (state = initialState, action) => {
     return { ...state, [payload.lnOrQt]: { payload } };
   }
 
-  if (action.type === UPDATE_FETCHED_MORE) {
+  if (action.type === UPDATE_FETCHED_MORE || action.type === REFRESH_FETCHED) {
     const { lnOrQt } = action.payload;
 
     const newState = {};
