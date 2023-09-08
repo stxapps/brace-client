@@ -27,7 +27,9 @@ import {
   MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING, SETTINGS_VIEW_ACCOUNT,
   DELETE_ACTION_LIST_NAME, DIED_ADDING, DIED_MOVING,
 } from '../types/const';
-import { doContainListName, getStatusCounts, isObject, isString } from '../utils';
+import {
+  doContainListName, getStatusCounts, isObject, isString, isNumber,
+} from '../utils';
 
 const initialState = {
   listName: MY_LIST,
@@ -425,17 +427,18 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === ADD_LINKS) {
-    const { links, doPrependShowingLinkIds, doAppendShowingLinkIds } = action.payload;
+    const { links, insertIndex } = action.payload;
+    if (!isNumber(insertIndex)) return state;
 
-    const linkIds = links.map(link => link.id);
+    let linkIds = links.map(link => link.id);
+    linkIds = linkIds.filter(id => !state.showingLinkIds.includes(id));
 
     const newState = { ...state };
-    if (doPrependShowingLinkIds) {
-      newState.showingLinkIds = [...linkIds, ...newState.showingLinkIds];
-    }
-    if (doAppendShowingLinkIds) {
-      newState.showingLinkIds = [...newState.showingLinkIds, ...linkIds];
-    }
+    newState.showingLinkIds = [
+      ...newState.showingLinkIds.slice(0, insertIndex),
+      ...linkIds,
+      ...newState.showingLinkIds.slice(insertIndex),
+    ];
     return newState;
   }
 

@@ -672,6 +672,7 @@ const _getUpdateFetchedAction = (getState, payload) => {
 
   let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, getState().links)
   updatingLinks = updatingLinks.filter(link => isObject(link));
+  updatingLinks = Object.values(_.mapKeys(updatingLinks, ID));
   updatingLinks = sortLinks(updatingLinks, doDescendingOrder);
   updatingLinks = sortWithPins(updatingLinks, pinFPaths, pendingPins, (link) => {
     return getMainId(link.id);
@@ -1225,6 +1226,26 @@ const deleteFetchingMoreLnOrQt = (lnOrQt, doForCompare) => {
   return { type: DELETE_FETCHING_MORE_LN_OR_QT, payload: `${lnOrQt}:${doForCompare}` };
 };
 
+const _getAddLinkInsertIndex = (getState) => {
+  const showingLinkIds = getState().display.showingLinkIds;
+  const doDescendingOrder = getState().settings.doDescendingOrder;
+
+  if (!doDescendingOrder) return showingLinkIds.length;
+
+  const pinFPaths = getPinFPaths(getState());
+  const pendingPins = getState().pendingPins;
+
+  const pins = getPins(pinFPaths, pendingPins, true);
+
+  for (let i = 0; i < showingLinkIds.length; i++) {
+    const linkMainId = getMainId(showingLinkIds[i]);
+    if (linkMainId in pins) continue;
+    return i;
+  }
+
+  return showingLinkIds.length;
+};
+
 export const addLink = (url, listName, doExtractContents) => async (
   dispatch, getState
 ) => {
@@ -1248,13 +1269,12 @@ export const addLink = (url, listName, doExtractContents) => async (
   const link = { id, url, addedDT, decor };
   const links = [link];
 
-  let doPrependShowingLinkIds = false, doAppendShowingLinkIds = false;
+  let insertIndex;
   if (!queryString && listName === getState().display.listName) {
-    if (getState().settings.doDescendingOrder) doPrependShowingLinkIds = true;
-    else doAppendShowingLinkIds = true;
+    insertIndex = _getAddLinkInsertIndex(getState);
   }
 
-  const payload = { listName, links, doPrependShowingLinkIds, doAppendShowingLinkIds };
+  const payload = { listName, links, insertIndex };
 
   // If doExtractContents is false but from settings is true, send pre-extract to server
   if (doExtractContents === false && getState().settings.doExtractContents === true) {

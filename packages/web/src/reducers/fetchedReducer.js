@@ -45,7 +45,7 @@ const fetchedReducer = (state = initialState, action) => {
     for (const link of successLinks) newLinks[listName][link.id] = { ...link };
 
     const newPayload = { ...payload };
-    newPayload.unfetchedLinkFPaths = [...newPayload.unfetchedLinkFPaths, ...fpaths];
+    newPayload.unfetchedLinkFPaths = _append(newPayload.unfetchedLinkFPaths, fpaths);
     newPayload.links = newLinks;
 
     return { ...state, [listName]: { payload: newPayload } };
@@ -123,7 +123,7 @@ const fetchedReducer = (state = initialState, action) => {
     for (const link of filteredLinks) newLinks[listName][link.id] = { ...link };
 
     const newPayload = { ...payload };
-    newPayload.unfetchedLinkFPaths = [...newPayload.unfetchedLinkFPaths, ...fpaths];
+    newPayload.unfetchedLinkFPaths = _append(newPayload.unfetchedLinkFPaths, fpaths);
     newPayload.links = newLinks;
 
     return { ...state, [listName]: { payload: newPayload } };
@@ -150,6 +150,15 @@ const fetchedReducer = (state = initialState, action) => {
   }
 
   return state;
+};
+
+const _append = (arr, elems) => {
+  const newArr = [...arr];
+  for (const elem of elems) {
+    if (newArr.includes(elem)) continue;
+    newArr.push(elem);
+  }
+  return newArr;
 };
 
 export default fetchedReducer;
