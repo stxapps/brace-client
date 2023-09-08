@@ -401,26 +401,26 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === ADD_FETCHING_LN_OR_QT) {
-    return { ...state, fetchingLnOrQt: [...state.fetchingLnOrQts, action.payload] };
+    return { ...state, fetchingLnOrQts: [...state.fetchingLnOrQts, action.payload] };
   }
 
   if (action.type === DELETE_FETCHING_LN_OR_QT) {
     return {
       ...state,
-      fetchingLnOrQt: state.fetchingLnOrQts.filter(el => el !== action.payload),
+      fetchingLnOrQts: state.fetchingLnOrQts.filter(el => el !== action.payload),
     };
   }
 
   if (action.type === ADD_FETCHING_MORE_LN_OR_QT) {
     return {
-      ...state, fetchingMoreLnOrQt: [...state.fetchingMoreLnOrQts, action.payload],
+      ...state, fetchingMoreLnOrQts: [...state.fetchingMoreLnOrQts, action.payload],
     };
   }
 
   if (action.type === DELETE_FETCHING_MORE_LN_OR_QT) {
     return {
       ...state,
-      fetchingMoreLnOrQt: state.fetchingMoreLnOrQts.filter(el => el !== action.payload),
+      fetchingMoreLnOrQts: state.fetchingMoreLnOrQts.filter(el => el !== action.payload),
     };
   }
 

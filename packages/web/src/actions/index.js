@@ -719,7 +719,13 @@ export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
   }
 
   if (updateAction === 1) {
-    dispatch({ type: SET_SHOWING_LINK_IDS, payload: { hasMore: payload.hasMore } });
+    const showingLinkIds = getState().display.showingLinkIds;
+    dispatch({
+      type: SET_SHOWING_LINK_IDS,
+      payload: {
+        lnOrQt: payload.lnOrQt, keepIds: showingLinkIds, hasMore: payload.hasMore,
+      },
+    });
     addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
     dispatch(deleteFetchingLnOrQt(payload.lnOrQt));
     return;
@@ -801,7 +807,7 @@ export const updateFetched = (payload, doChangeListCount = false) => async (
   addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
 };
 
-export const fetchMore = (doForCompare) => async (dispatch, getState) => {
+export const fetchMore = (doForCompare = false) => async (dispatch, getState) => {
   const links = getState().links;
   const listName = getState().display.listName;
   const queryString = getState().display.queryString;
@@ -1029,13 +1035,20 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
 
     const updateAction = _getForCompareAction(showingLinks, updatingLinks);
     if (updateAction === 0) {
+      // Empty e.g., user deletes all showing links
       dispatch(updateFetchedMore(payload));
       dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
       return;
     }
 
     if (updateAction === 1) {
-      dispatch({ type: SET_SHOWING_LINK_IDS, payload: { hasMore: payload.hasMore } });
+      const showingLinkIds = getState().display.showingLinkIds;
+      dispatch({
+        type: SET_SHOWING_LINK_IDS,
+        payload: {
+          lnOrQt: payload.lnOrQt, keepIds: showingLinkIds, hasMore: payload.hasMore,
+        },
+      });
       addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
       dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
       return;
