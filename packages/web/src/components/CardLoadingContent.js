@@ -5,14 +5,28 @@ import { sample } from '../utils';
 
 import { useTailwind } from '.';
 
-const heights = ['224px', '248px', '272px'];
+const widths = [
+  '20%', '25%', '30%', '35%', '40%', '45%', '50%', '55%', '60%', '65%', '70%', '75%',
+  '80%', '85%', '90%', '95%',
+];
 
 const CardLoadingContentItem = () => {
   const tailwind = useTailwind();
 
-  const style = { height: sample(heights) };
+  const hostStyle = { width: sample(widths.slice(0, 8)) };
+  const nLines = sample([1, 2, 3]);
+
   return (
-    <div style={style} className={tailwind('relative mx-auto max-w-md overflow-hidden rounded-lg border border-gray-200 bg-gray-200 shadow-sm blk:border-gray-700 blk:bg-gray-700 sm:max-w-none')}></div>
+    <div className={tailwind('relative mx-auto max-w-md overflow-hidden pb-2 sm:max-w-none')}>
+      <div className={tailwind('h-44 rounded-t-lg bg-gray-200 blk:bg-gray-700')} />
+      <div className={tailwind('flex items-center justify-start py-3')}>
+        <div className={tailwind('h-3 w-3 rounded-full bg-gray-200 blk:bg-gray-700')} />
+        <div style={hostStyle} className={tailwind('ml-1 h-3 rounded bg-gray-200 blk:bg-gray-700')} />
+      </div>
+      <div style={{ width: sample(widths.slice(8)) }} className={tailwind('h-4 rounded bg-gray-200 blk:bg-gray-700')}></div>
+      {nLines >= 2 && <div style={{ width: sample(widths.slice(8)) }} className={tailwind('mt-1.5 h-4 rounded bg-gray-200 blk:bg-gray-700')}></div>}
+      {nLines >= 3 && <div style={{ width: sample(widths.slice(8)) }} className={tailwind('mt-1.5 h-4 rounded bg-gray-200 blk:bg-gray-700')}></div>}
+    </div>
   );
 };
 

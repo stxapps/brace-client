@@ -645,7 +645,7 @@ const _getUpdateFetchedAction = (getState, payload) => {
 
   const fetchingMoreLnOrQts = getState().display.fetchingMoreLnOrQts;
   const showingLinkIds = getState().display.showingLinkIds;
-  const pendingPins = getState().display.pendingPins;
+  const pendingPins = getState().pendingPins;
   const cachedFetchedMore = getState().fetchedMore;
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
@@ -928,7 +928,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
 
 const _getLinksForCompareAction = (getState, payload) => {
   const showingLinkIds = getState().display.showingLinkIds;
-  const pendingPins = getState().display.pendingPins;
+  const pendingPins = getState().pendingPins;
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
   const pinFPaths = getPinFPaths(getState());
@@ -1190,7 +1190,7 @@ export const refreshFetched = (doShowLoading = false, doScrollTop = false) => as
 const sortShowingLinkIds = async (dispatch, getState) => {
   const links = getState().links;
   const showingLinkIds = getState().display.showingLinkIds;
-  const pendingPins = getState().display.pendingPins;
+  const pendingPins = getState().pendingPins;
 
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
