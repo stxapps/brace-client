@@ -705,7 +705,7 @@ export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
   if (updateAction === 1) {
     const showingLinkIds = getState().display.showingLinkIds;
     dispatch({
-      type: SET_SHOWING_LINK_IDS,
+      type: UPDATE_FETCHED,
       payload: {
         lnOrQt: payload.lnOrQt, keepIds: showingLinkIds, hasMore: payload.hasMore,
       },
@@ -1054,7 +1054,7 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
     if (updateAction === 1) {
       const showingLinkIds = getState().display.showingLinkIds;
       dispatch({
-        type: SET_SHOWING_LINK_IDS,
+        type: UPDATE_FETCHED_MORE,
         payload: {
           lnOrQt: payload.lnOrQt, keepIds: showingLinkIds, hasMore: payload.hasMore,
         },

@@ -6,10 +6,9 @@ import {
   tryUpdateExtractedContents, runAfterFetchTask, unpinLinks, updateCustomDataDeleteStep,
 } from '../actions';
 import {
-  FETCH_COMMIT, UPDATE_FETCHED, FETCH_MORE_COMMIT, UPDATE_FETCHED_MORE,
-  SET_SHOWING_LINK_IDS, ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
-  MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
-  MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT,
+  FETCH_COMMIT, UPDATE_FETCHED, FETCH_MORE_COMMIT, UPDATE_FETCHED_MORE, ADD_LINKS,
+  ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT,
+  MOVE_LINKS_ADD_STEP_ROLLBACK, MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT,
   MOVE_LINKS_DELETE_STEP_ROLLBACK, DELETE_LINKS, DELETE_LINKS_COMMIT,
   DELETE_LINKS_ROLLBACK, CANCEL_DIED_LINKS, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   EXTRACT_CONTENTS_COMMIT, UPDATE_EXTRACTED_CONTENTS, UPDATE_CUSTOM_DATA,
@@ -20,7 +19,7 @@ import {
   ADDING, MOVING, REMOVING, DELETING, UPDATING, DIED_ADDING, DIED_MOVING, DIED_REMOVING,
   DIED_DELETING, DIED_UPDATING, PENDING_REMOVING,
 } from '../types/const';
-import { isObject, isString } from '../utils';
+import { isObject } from '../utils';
 import { _ } from '../utils/obj';
 
 const initialState = {};
@@ -55,17 +54,35 @@ const linksReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_FETCHED) {
-    const { lnOrQt, links } = action.payload;
+    const { lnOrQt, links, keepIds } = action.payload;
 
     const newState = { ...state };
-    for (const listName in links) {
-      const processingLinks = _.exclude(state[listName], STATUS, ADDED);
-      const fetchedLinks = _.update(links[listName], null, null, STATUS, ADDED);
+    if (isObject(links)) {
+      for (const listName in links) {
+        const processingLinks = _.exclude(state[listName], STATUS, ADDED);
+        const fetchedLinks = _.update(links[listName], null, null, STATUS, ADDED);
 
-      if (lnOrQt === listName) {
-        newState[listName] = { ...fetchedLinks, ...processingLinks };
-      } else {
-        newState[listName] = { ...state[listName], ...fetchedLinks, ...processingLinks };
+        if (lnOrQt === listName) {
+          newState[listName] = { ...fetchedLinks, ...processingLinks };
+        } else {
+          newState[listName] = {
+            ...state[listName], ...fetchedLinks, ...processingLinks,
+          };
+        }
+      }
+    }
+    if (Array.isArray(keepIds)) {
+      for (const listName in state) {
+        if (lnOrQt !== listName) continue;
+
+        newState[listName] = {};
+        for (const id in state[listName]) {
+          if (!keepIds.includes(id)) continue;
+          newState[listName][id] = { ...state[listName][id] };
+        }
+
+        const processingLinks = _.exclude(state[listName], STATUS, ADDED);
+        newState[listName] = { ...newState[listName], ...processingLinks };
       }
     }
 
@@ -85,42 +102,35 @@ const linksReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_FETCHED_MORE) {
-    const { links } = action.payload;
+    const { lnOrQt, links, keepIds } = action.payload;
 
     const newState = { ...state };
-    for (const listName in links) {
-      const processingLinks = _.exclude(state[listName], STATUS, ADDED);
-      const fetchedLinks = _.update(links[listName], null, null, STATUS, ADDED);
+    if (isObject(links)) {
+      for (const listName in links) {
+        const processingLinks = _.exclude(state[listName], STATUS, ADDED);
+        const fetchedLinks = _.update(links[listName], null, null, STATUS, ADDED);
 
-      newState[listName] = { ...state[listName], ...fetchedLinks, ...processingLinks };
+        newState[listName] = { ...state[listName], ...fetchedLinks, ...processingLinks };
+      }
+    }
+    if (Array.isArray(keepIds)) {
+      for (const listName in state) {
+        if (lnOrQt !== listName) continue;
+
+        newState[listName] = {};
+        for (const id in state[listName]) {
+          if (!keepIds.includes(id)) continue;
+          newState[listName][id] = { ...state[listName][id] };
+        }
+
+        const processingLinks = _.exclude(state[listName], STATUS, ADDED);
+        newState[listName] = { ...newState[listName], ...processingLinks };
+      }
     }
 
     return loop(
       newState, Cmd.run(extractContents(), { args: [Cmd.dispatch, Cmd.getState] })
     );
-  }
-
-  if (action.type === SET_SHOWING_LINK_IDS) {
-    const { lnOrQt, keepIds } = action.payload;
-    if (!isString(lnOrQt) || !Array.isArray(keepIds)) return state;
-
-    const newState = {};
-    for (const listName in state) {
-      if (lnOrQt !== listName) {
-        newState[listName] = state[listName];
-        continue;
-      }
-
-      newState[listName] = {};
-      for (const id in state[listName]) {
-        if (!keepIds.includes(id)) continue;
-        newState[listName][id] = { ...state[listName][id] };
-      }
-
-      const processingLinks = _.exclude(state[listName], STATUS, ADDED);
-      newState[listName] = { ...newState[listName], ...processingLinks };
-    }
-    return newState;
   }
 
   if (action.type === ADD_LINKS) {
