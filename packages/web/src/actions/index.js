@@ -1011,8 +1011,6 @@ const _getForCompareAction = (showingLinks, updatingLinks, updatingHasMore) => {
 const _getFpsAndLksPerLn = (links, toLnMap) => {
   const fpaths = [], lksPerLn = {};
   for (const link of links) {
-    if (link.status !== ADDED) continue;
-
     const listName = toLnMap[link.id];
     const fpath = createLinkFPath(listName, link.id);
     fpaths.push(fpath);
@@ -1657,7 +1655,7 @@ export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
     payload,
     meta: {
       offline: {
-        effect: { method: DELETE_LINKS, payload },
+        effect: { method: DELETE_LINKS, params: payload },
         commit: { type: DELETE_OLD_LINKS_IN_TRASH_COMMIT },
         rollback: { type: DELETE_OLD_LINKS_IN_TRASH_ROLLBACK },
       },
