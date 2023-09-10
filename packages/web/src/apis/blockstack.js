@@ -1,6 +1,6 @@
 import serverApi from './server';
 import fileApi from './localFile';
-import { N_LINKS, N_DAYS, TRASH, CD_ROOT, DOT_JSON, INFO } from '../types/const';
+import { CD_ROOT, DOT_JSON, INFO } from '../types/const';
 import {
   FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, UPDATE_SETTINGS,
   UPDATE_INFO, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA,
