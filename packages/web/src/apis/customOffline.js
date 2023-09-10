@@ -2,8 +2,8 @@ import defaultQueue from '@redux-offline/redux-offline/lib/defaults/queue';
 
 import userSession from '../userSession';
 import {
-  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
-  UPDATE_SETTINGS, UPDATE_INFO, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA,
+  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, UPDATE_SETTINGS,
+  UPDATE_INFO, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA,
 } from '../types/actionTypes';
 import { isObject, isString, isNumber } from '../utils';
 
@@ -92,8 +92,8 @@ export const effect = async (effectObj, _action) => {
   const { method } = effectObj;
 
   if ([
-    FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
-    UPDATE_SETTINGS, UPDATE_INFO, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA,
+    FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, UPDATE_SETTINGS,
+    UPDATE_INFO, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA,
   ].includes(method)) {
     return await blockstackEffect(effectObj, _action);
   }

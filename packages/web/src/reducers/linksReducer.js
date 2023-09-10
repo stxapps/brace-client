@@ -7,9 +7,9 @@ import {
 } from '../actions';
 import {
   FETCH_COMMIT, UPDATE_FETCHED, FETCH_MORE_COMMIT, UPDATE_FETCHED_MORE,
-  SET_SHOWING_LINK_IDS, SET_LINKS, APPEND_LINKS, ADD_LINKS, ADD_LINKS_COMMIT,
-  ADD_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT,
-  MOVE_LINKS_ADD_STEP_ROLLBACK, MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT,
+  SET_SHOWING_LINK_IDS, ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK,
+  MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK,
+  MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT,
   MOVE_LINKS_DELETE_STEP_ROLLBACK, DELETE_LINKS, DELETE_LINKS_COMMIT,
   DELETE_LINKS_ROLLBACK, CANCEL_DIED_LINKS, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   EXTRACT_CONTENTS_COMMIT, UPDATE_EXTRACTED_CONTENTS, UPDATE_CUSTOM_DATA,
@@ -119,36 +119,6 @@ const linksReducer = (state = initialState, action) => {
 
       const processingLinks = _.exclude(state[listName], STATUS, ADDED);
       newState[listName] = { ...newState[listName], ...processingLinks };
-    }
-    return newState;
-  }
-
-  if (action.type === SET_LINKS) {
-    const { lnOrQt, links } = action.payload;
-
-    const newState = { ...state };
-    for (const listName in links) {
-      const processingLinks = _.exclude(state[listName], STATUS, ADDED);
-      const fetchedLinks = _.update(links[listName], null, null, STATUS, ADDED);
-
-      if (lnOrQt === listName) {
-        newState[listName] = { ...fetchedLinks, ...processingLinks };
-      } else {
-        newState[listName] = { ...state[listName], ...fetchedLinks, ...processingLinks };
-      }
-    }
-    return newState;
-  }
-
-  if (action.type === APPEND_LINKS) {
-    const { links } = action.payload;
-
-    const newState = { ...state };
-    for (const listName in links) {
-      const processingLinks = _.exclude(state[listName], STATUS, ADDED);
-      const fetchedLinks = _.update(links[listName], null, null, STATUS, ADDED);
-
-      newState[listName] = { ...state[listName], ...fetchedLinks, ...processingLinks };
     }
     return newState;
   }
@@ -419,12 +389,12 @@ const linksReducer = (state = initialState, action) => {
   }
 
   if (action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT) {
-    const { listName, ids } = action.payload;
+    const { listName, successIds } = action.payload;
 
     let newState = state;
     if (state[listName]) {
       newState = { ...state };
-      newState[listName] = _.exclude(state[listName], ID, ids);
+      newState[listName] = _.exclude(state[listName], ID, successIds);
     }
 
     return newState;

@@ -2,8 +2,8 @@ import serverApi from './server';
 import fileApi from './localFile';
 import { N_LINKS, N_DAYS, TRASH, CD_ROOT, DOT_JSON, INFO } from '../types/const';
 import {
-  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, DELETE_OLD_LINKS_IN_TRASH,
-  UPDATE_SETTINGS, UPDATE_INFO, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA,
+  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, UPDATE_SETTINGS,
+  UPDATE_INFO, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA,
 } from '../types/actionTypes';
 import {
   isObject, isString, randomString, createLinkFPath, extractLinkFPath, createPinFPath,
@@ -32,10 +32,6 @@ export const effect = async (effectObj, _action) => {
 
   if (method === DELETE_LINKS) {
     return deleteLinks(params);
-  }
-
-  if (method === DELETE_OLD_LINKS_IN_TRASH) {
-    return deleteOldLinksInTrash();
   }
 
   if (method === UPDATE_SETTINGS) {
@@ -281,7 +277,24 @@ const fetchMore = async (params) => {
   const bin = {
     fetchedLinkFPaths: [], unfetchedLinkFPaths: [], hasMore: false, hasDisorder: false,
   };
-  if (!doForCompare) {
+  if (doForCompare) {
+    let fpaths;
+    if (queryString) {
+      console.log(
+        'In blockstack.fetchMore, invalid doForCompare:', doForCompare,
+        'with queryString:', queryString
+      );
+      [fpaths, bin.hasMore] = [[], false];
+    } else {
+      const _result = getNLinkFPaths({
+        linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
+        excludingMainIds: vars.fetch.fetchedLinkMainIds,
+      });
+      fpaths = _result.fpaths;
+      [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
+    }
+    for (const linkFPath of fpaths) bin.unfetchedLinkFPaths.push(linkFPath);
+  } else {
     let fpaths;
     if (queryString) {
 
@@ -306,34 +319,16 @@ const fetchMore = async (params) => {
     }
   }
 
-  const result = { lnOrQt };
-  if (doForCompare) {
-    let fpaths;
-    if (queryString) {
-      console.log(
-        'In fetchMore, invalid doForCompare:', doForCompare,
-        'with queryString:', queryString
-      );
-      [fpaths, bin.hasMore] = [[], false];
-    } else {
-      const _result = getNLinkFPaths({
-        linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
-        excludingMainIds: vars.fetch.fetchedLinkMainIds,
-      });
-      fpaths = _result.fpaths;
-      [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
-    }
-    for (const linkFPath of fpaths) bin.unfetchedLinkFPaths.push(linkFPath);
-  }
-
   const lResult = await fetchLinks(bin.unfetchedLinkFPaths);
-  result.doForCompare = doForCompare;
-  result.fetchedLinkFPaths = bin.fetchedLinkFPaths;
-  result.unfetchedLinkFPaths = bin.unfetchedLinkFPaths;
-  result.hasMore = bin.hasMore;
-  result.hasDisorder = bin.hasDisorder;
-  result.links = lResult.links;
-
+  const result = {
+    lnOrQt,
+    doForCompare,
+    fetchedLinkFPaths: bin.fetchedLinkFPaths,
+    unfetchedLinkFPaths: bin.unfetchedLinkFPaths,
+    hasMore: bin.hasMore,
+    hasDisorder: bin.hasDisorder,
+    links: lResult.links,
+  }
   return result;
 };
 
@@ -383,30 +378,6 @@ const deleteLinks = async (params) => {
   }
 
   return { listName, successIds, errorIds, errors };
-};
-
-const deleteOldLinksInTrash = async () => {
-  const { linkFPaths } = await listFPaths();
-
-  const trashLinkFPaths = linkFPaths[TRASH] || [];
-  let oldFPaths = trashLinkFPaths.filter(fpath => {
-    const { id } = extractLinkFPath(fpath);
-    const removedDT = id.split('-')[3];
-    const interval = Date.now() - Number(removedDT);
-    const days = interval / 1000 / 60 / 60 / 24;
-
-    return days > N_DAYS;
-  });
-
-  oldFPaths = oldFPaths.slice(0, N_LINKS);
-  const ids = oldFPaths.map(fpath => {
-    const { id } = extractLinkFPath(fpath);
-    return id;
-  });
-
-  await serverApi.deleteFiles(oldFPaths);
-
-  return { listName: TRASH, ids };
 };
 
 const canDeleteListNames = async (listNames) => {

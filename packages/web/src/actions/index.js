@@ -21,29 +21,29 @@ import {
   UPDATE_FETCHED, FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
   CACHE_FETCHED_MORE, UPDATE_FETCHED_MORE, REFRESH_FETCHED, ADD_FETCHING_LN_OR_QT,
   DELETE_FETCHING_LN_OR_QT, ADD_FETCHING_MORE_LN_OR_QT, DELETE_FETCHING_MORE_LN_OR_QT,
-  SET_SHOWING_LINK_IDS, SET_LINKS, APPEND_LINKS, ADD_LINKS, ADD_LINKS_COMMIT,
-  ADD_LINKS_ROLLBACK, UPDATE_LINKS, DELETE_LINKS, DELETE_LINKS_COMMIT,
-  DELETE_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT,
-  MOVE_LINKS_ADD_STEP_ROLLBACK, MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT,
-  MOVE_LINKS_DELETE_STEP_ROLLBACK, CANCEL_DIED_LINKS, DELETE_OLD_LINKS_IN_TRASH,
-  DELETE_OLD_LINKS_IN_TRASH_COMMIT, DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
-  EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
-  UPDATE_EXTRACTED_CONTENTS, UPDATE_LIST_NAME_EDITORS, ADD_LIST_NAMES,
-  UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME, DELETE_LIST_NAMES,
-  UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME, UPDATE_DO_EXTRACT_CONTENTS,
-  UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH, UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS,
-  UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK, UPDATE_INFO, UPDATE_INFO_COMMIT,
-  UPDATE_INFO_ROLLBACK, CANCEL_DIED_SETTINGS, MERGE_SETTINGS, MERGE_SETTINGS_COMMIT,
-  MERGE_SETTINGS_ROLLBACK, UPDATE_SETTINGS_VIEW_ID, UPDATE_DO_USE_LOCAL_LAYOUT,
-  UPDATE_DEFAULT_LAYOUT_TYPE, UPDATE_LOCAL_LAYOUT_TYPE, UPDATE_DELETE_ACTION,
-  UPDATE_DISCARD_ACTION, UPDATE_LIST_NAMES_MODE, GET_PRODUCTS, GET_PRODUCTS_COMMIT,
-  GET_PRODUCTS_ROLLBACK, REQUEST_PURCHASE, REQUEST_PURCHASE_COMMIT,
-  REQUEST_PURCHASE_ROLLBACK, RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT,
-  RESTORE_PURCHASES_ROLLBACK, REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT,
-  REFRESH_PURCHASES_ROLLBACK, UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS,
-  UPDATE_IAP_PURCHASE_STATUS, UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
-  PIN_LINK, PIN_LINK_COMMIT, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_COMMIT,
-  UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
+  SET_SHOWING_LINK_IDS, ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK, UPDATE_LINKS,
+  DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP,
+  MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK, MOVE_LINKS_DELETE_STEP,
+  MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK, CANCEL_DIED_LINKS,
+  DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
+  DELETE_OLD_LINKS_IN_TRASH_ROLLBACK, EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT,
+  EXTRACT_CONTENTS_ROLLBACK, UPDATE_EXTRACTED_CONTENTS, UPDATE_LIST_NAME_EDITORS,
+  ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME,
+  DELETE_LIST_NAMES, UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME,
+  UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
+  UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
+  UPDATE_SETTINGS_ROLLBACK, UPDATE_INFO, UPDATE_INFO_COMMIT, UPDATE_INFO_ROLLBACK,
+  CANCEL_DIED_SETTINGS, MERGE_SETTINGS, MERGE_SETTINGS_COMMIT, MERGE_SETTINGS_ROLLBACK,
+  UPDATE_SETTINGS_VIEW_ID, UPDATE_DO_USE_LOCAL_LAYOUT, UPDATE_DEFAULT_LAYOUT_TYPE,
+  UPDATE_LOCAL_LAYOUT_TYPE, UPDATE_DELETE_ACTION, UPDATE_DISCARD_ACTION,
+  UPDATE_LIST_NAMES_MODE, GET_PRODUCTS, GET_PRODUCTS_COMMIT, GET_PRODUCTS_ROLLBACK,
+  REQUEST_PURCHASE, REQUEST_PURCHASE_COMMIT, REQUEST_PURCHASE_ROLLBACK,
+  RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
+  REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
+  UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS, UPDATE_IAP_PURCHASE_STATUS,
+  UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS, PIN_LINK, PIN_LINK_COMMIT,
+  PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_COMMIT, UNPIN_LINK_ROLLBACK,
+  MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
   MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, CANCEL_DIED_PINS, UPDATE_SYSTEM_THEME_MODE,
   UPDATE_DO_USE_LOCAL_THEME, UPDATE_DEFAULT_THEME, UPDATE_LOCAL_THEME,
   UPDATE_UPDATING_THEME_MODE, UPDATE_TIME_PICK, UPDATE_IS_24H_FORMAT,
@@ -407,23 +407,8 @@ export const updatePopup = (id, isShown, anchorPosition = null) => {
 };
 
 export const changeListName = (newListName) => async (dispatch, getState) => {
-  const listName = getState().display.listName;
-  const queryString = getState().display.queryString;
-  const lnOrQt = queryString ? queryString : listName;
-
-  const fetched = getState().fetched[lnOrQt];
-  if (isObject(fetched) && isObject(fetched.payload)) {
-    const { lnOrQt, links } = fetched.payload;
-    dispatch({ type: SET_LINKS, payload: { lnOrQt, links } });
-    addFetchedLinkMainIds(links, vars.fetch.fetchedLinkMainIds);
-  }
-
-  const fetchedMore = getState().fetchedMore[lnOrQt];
-  if (isObject(fetchedMore) && isObject(fetchedMore.payload)) {
-    const { links } = fetchedMore.payload;
-    dispatch({ type: APPEND_LINKS, payload: { links } });
-    addFetchedLinkMainIds(links, vars.fetch.fetchedLinkMainIds);
-  }
+  dispatch(updateFetched(null, false, true));
+  dispatch(updateFetchedMore(null, true));
 
   dispatch({ type: UPDATE_LIST_NAME, payload: newListName });
 };
@@ -679,6 +664,7 @@ const _getUpdateFetchedAction = (getState, payload) => {
   });
 
   if (showingLinks.length < updatingLinks.length) return 3;
+  if (showingLinks.length > updatingLinks.length && !payload.hasMore) return 3;
 
   for (let i = 0; i < updatingLinks.length; i++) {
     const [showingLink, updatingLink] = [showingLinks[i], updatingLinks[i]];
@@ -701,10 +687,7 @@ export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
 
   const lnOrQt = queryString ? queryString : listName;
   if (payload.lnOrQt !== lnOrQt) {
-    dispatch({
-      type: SET_LINKS, payload: { lnOrQt: payload.lnOrQt, links: payload.links },
-    });
-    addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
+    dispatch(updateFetched(payload, false, true));
     dispatch(deleteFetchingLnOrQt(payload.lnOrQt));
     return;
   }
@@ -753,9 +736,10 @@ export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
   dispatch(deleteFetchingLnOrQt(payload.lnOrQt));
 };
 
-export const updateFetched = (payload, doChangeListCount = false) => async (
-  dispatch, getState
-) => {
+export const updateFetched = (
+  payload, doChangeListCount = false, noDisplay = false
+) => async (dispatch, getState) => {
+
   const links = getState().links;
   const pendingPins = getState().pendingPins;
   const doDescendingOrder = getState().settings.doDescendingOrder;
@@ -771,6 +755,14 @@ export const updateFetched = (payload, doChangeListCount = false) => async (
   }
   if (!payload) return;
 
+  if (noDisplay) {
+    dispatch({
+      type: UPDATE_FETCHED, payload: { lnOrQt: payload.lnOrQt, links: payload.links },
+    });
+    addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
+    return;
+  }
+
   const processingLinks = [];
   if (isObject(links[payload.lnOrQt])) {
     for (const link of Object.values(links[payload.lnOrQt])) {
@@ -782,7 +774,7 @@ export const updateFetched = (payload, doChangeListCount = false) => async (
   const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
   const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
 
-  let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, getState().links)
+  let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, links)
   updatingLinks = updatingLinks.filter(link => isObject(link));
 
   let sortedLinks = [...updatingLinks, ...processingLinks];
@@ -858,7 +850,22 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
   const bin = {
     fetchedLinkFPaths: [], unfetchedLinkFPaths: [], hasMore: false, hasDisorder: false,
   };
-  if (!doForCompare) {
+  if (doForCompare) {
+    if (queryString) {
+      // Impossible case, just return.
+      dispatch(deleteFetchingMoreLnOrQt(lnOrQt, doForCompare));
+      return;
+    } else {
+      const _result = getNLinkFPaths({
+        linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
+        excludingMainIds: vars.fetch.fetchedLinkMainIds,
+      });
+      if (_result.fpaths.length === 0) {
+        dispatch(deleteFetchingMoreLnOrQt(lnOrQt, doForCompare));
+        return;
+      }
+    }
+  } else {
     let fpaths, fpathsWithPcEc;
     if (queryString) {
       if (isStale) {
@@ -973,7 +980,7 @@ const _getLinksForCompareAction = (getState, payload) => {
   return { showingLinks, updatingLinks, toLnMap };
 };
 
-const _getForCompareAction = (showingLinks, updatingLinks) => {
+const _getForCompareAction = (showingLinks, updatingLinks, updatingHasMore) => {
   /*
     updateAction
     0. justUpdate: showingLinkIds is null or empty, can just update
@@ -984,6 +991,7 @@ const _getForCompareAction = (showingLinks, updatingLinks) => {
   if (!Array.isArray(showingLinks) || showingLinks.length === 0) return 0;
 
   if (showingLinks.length < updatingLinks.length) return 3;
+  if (showingLinks.length > updatingLinks.length && !updatingHasMore) return 3;
 
   for (let i = 0; i < updatingLinks.length; i++) {
     const [showingLink, updatingLink] = [showingLinks[i], updatingLinks[i]];
@@ -1023,8 +1031,7 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
   const lnOrQt = queryString ? queryString : listName;
   if (payload.lnOrQt !== lnOrQt || !Array.isArray(showingLinkIds)) {
     // Already changed lnOrQt or chose refreshFetched
-    dispatch({ type: APPEND_LINKS, payload: { links: payload.links } });
-    addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
+    dispatch(updateFetchedMore(payload, true));
     dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
     return;
   }
@@ -1034,7 +1041,9 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
       showingLinks, updatingLinks, toLnMap,
     } = _getLinksForCompareAction(getState, payload)
 
-    const updateAction = _getForCompareAction(showingLinks, updatingLinks);
+    const updateAction = _getForCompareAction(
+      showingLinks, updatingLinks, payload.hasMore
+    );
     if (updateAction === 0) {
       // Empty e.g., user deletes all showing links
       dispatch(updateFetchedMore(payload));
@@ -1100,7 +1109,10 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
   dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
 };
 
-export const updateFetchedMore = (payload) => async (dispatch, getState) => {
+export const updateFetchedMore = (
+  payload, noDisplay = false
+) => async (dispatch, getState) => {
+
   const links = getState().links;
   const showingLinkIds = getState().display.showingLinkIds;
   const pendingPins = getState().pendingPins;
@@ -1119,6 +1131,15 @@ export const updateFetchedMore = (payload) => async (dispatch, getState) => {
   }
   if (!payload) return;
 
+  if (noDisplay) {
+    dispatch({
+      type: UPDATE_FETCHED_MORE,
+      payload: { lnOrQt: payload.lnOrQt, links: payload.links },
+    });
+    addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
+    return;
+  }
+
   const processingLinks = [];
   if (isObject(links[payload.lnOrQt])) {
     for (const link of Object.values(links[payload.lnOrQt])) {
@@ -1127,13 +1148,13 @@ export const updateFetchedMore = (payload) => async (dispatch, getState) => {
     }
   }
 
-  let showingLinks = showingLinkIds.map(linkId => getLink(linkId, getState().links));
+  let showingLinks = showingLinkIds.map(linkId => getLink(linkId, links));
   showingLinks = showingLinks.filter(link => isObject(link));
 
   const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
   const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
 
-  let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, getState().links)
+  let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, links)
   updatingLinks = updatingLinks.filter(link => isObject(link));
 
   let sortedLinks = [...showingLinks, ...updatingLinks, ...processingLinks];
@@ -1608,15 +1629,35 @@ export const randomHouseworkTasks = () => async (dispatch, getState) => {
 };
 
 export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
-
   const doDeleteOldLinksInTrash = getState().settings.doDeleteOldLinksInTrash;
   if (!doDeleteOldLinksInTrash) return;
 
+  const listName = TRASH, ids = [];
+
+  const linkFPaths = getLinkFPaths(getState());
+  const trashLinkFPaths = linkFPaths[listName] || [];
+
+  for (const fpath of trashLinkFPaths) {
+    const { id } = extractLinkFPath(fpath);
+    const removedDT = id.split('-')[3];
+    const interval = Date.now() - Number(removedDT);
+    const days = interval / 1000 / 60 / 60 / 24;
+
+    if (days <= N_DAYS) continue;
+
+    ids.push(id);
+    if (ids.length >= N_LINKS) break;
+  }
+
+  if (ids.length === 0) return;
+
+  const payload = { listName, ids, manuallyManageError: true };
   dispatch({
     type: DELETE_OLD_LINKS_IN_TRASH,
+    payload,
     meta: {
       offline: {
-        effect: { method: DELETE_OLD_LINKS_IN_TRASH },
+        effect: { method: DELETE_LINKS, payload },
         commit: { type: DELETE_OLD_LINKS_IN_TRASH_COMMIT },
         rollback: { type: DELETE_OLD_LINKS_IN_TRASH_ROLLBACK },
       },
@@ -1657,6 +1698,11 @@ export const updateSettingsPopup = (isShown, doCheckEditing = false) => async (
   }
 
   dispatch(updatePopup(SETTINGS_POPUP, isShown));
+
+  if (isShown) {
+    dispatch(updateFetched(null, false, false));
+    dispatch(updateFetchedMore(null, false));
+  }
 };
 
 export const updateSettingsViewId = (

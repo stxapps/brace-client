@@ -56,11 +56,7 @@ const fetchedReducer = (state = initialState, action) => {
     action.type === DELETE_LINKS_COMMIT ||
     action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT
   ) {
-    let { listName, successIds } = action.payload;
-    if (action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT) {
-      successIds = action.payload.ids;
-    }
-
+    const { listName, successIds } = action.payload;
     if (!state[listName]) return state;
 
     const { payload } = state[listName];

@@ -471,12 +471,12 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT) {
-    const { ids } = action.payload;
+    const { successIds } = action.payload;
 
     const newState = {
       ...state, statuses: [...state.statuses, DELETE_OLD_LINKS_IN_TRASH_COMMIT],
     };
-    newState.showingLinkIds = _filterIfNotNull(state.showingLinkIds, ids);
+    newState.showingLinkIds = _filterIfNotNull(state.showingLinkIds, successIds);
     return newState;
   }
 
