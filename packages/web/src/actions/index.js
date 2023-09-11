@@ -60,12 +60,12 @@ import {
   SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP,
   DISCARD_ACTION_UPDATE_LIST_NAME, ID, LOCAL_LINK_ATTRS, MY_LIST, TRASH, N_LINKS,
   N_DAYS, CD_ROOT, ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
-  DIED_UPDATING, NEW_LINK_FPATH_STATUSES, BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL,
-  EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, IAP_VERIFY_URL, IAP_STATUS_URL, PADDLE,
-  COM_BRACEDOTTO, COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, ACTIVE,
-  UNKNOWN, SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE, FEATURE_PIN,
-  FEATURE_APPEARANCE, FEATURE_CUSTOM, FEATURE_LOCK, PADDLE_RANDOM_ID, VALID_PASSWORD,
-  PASSWORD_MSGS,
+  DIED_UPDATING, SHOWING_STATUSES, NEW_LINK_FPATH_STATUSES, BRACE_EXTRACT_URL,
+  BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, IAP_VERIFY_URL,
+  IAP_STATUS_URL, PADDLE, COM_BRACEDOTTO, COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING,
+  VALID, INVALID, ACTIVE, UNKNOWN, SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE,
+  CUSTOM_MODE, FEATURE_PIN, FEATURE_APPEARANCE, FEATURE_CUSTOM, FEATURE_LOCK,
+  PADDLE_RANDOM_ID, VALID_PASSWORD, PASSWORD_MSGS,
 } from '../types/const';
 import {
   isEqual, isString, isObject, isNumber, throttle, randomString, rerandomRandomTerm,
@@ -73,8 +73,8 @@ import {
   extractUrl, getUserImageUrl, randomDecor, getListNameObj, getAllListNames,
   doOutboxContainMethods, getLatestPurchase, getValidPurchase, doEnableExtraFeatures,
   createDataFName, getLinkFPaths, getStaticFPaths, createSettingsFPath, extractPinFPath,
-  getSortedLinks, getPinFPaths, getPins, separatePinnedValues, sortLinks, sortWithPins,
-  getRawPins, getFormattedTime, get24HFormattedTime, extractStaticFPath, getWindowSize,
+  getPinFPaths, getPins, separatePinnedValues, sortLinks, sortWithPins, getRawPins,
+  getFormattedTime, get24HFormattedTime, extractStaticFPath, getWindowSize,
   getEditingListNameEditors, validatePassword, doContainListName, sleep, sample,
   extractLinkFPath, getLink, getListNameAndLink, getNLinkObjs, getNLinkFPaths,
   newObject, addFetchedLinkMainIds, addFetchedLinkMainIdsWithArray, createLinkFPath,
@@ -622,12 +622,12 @@ const _poolListNameAndLinks = (linkFPaths, payloadLinks, stateLinks) => {
 const _getUpdateFetchedAction = (getState, payload) => {
   /*
     updateAction
-    0. justUpdate: showingLinkIds is null or empty, can just update
+    0. justUpdate: no links showing, can just update
     1. noNew: exactly the same, nothing new, update only hasMore
     2. limitedSame: partially the same, first N links are the same
-    3. haveNew: not the same for sure, something new, update if not scroll or popup else show fetchedPopup
+    3. haveNew: not the same for sure, something new, update if not scroll or popup
+         else show fetchedPopup
   */
-
   const fetchingMoreLnOrQts = getState().display.fetchingMoreLnOrQts;
   const showingLinkIds = getState().display.showingLinkIds;
   const pendingPins = getState().pendingPins;
@@ -646,11 +646,17 @@ const _getUpdateFetchedAction = (getState, payload) => {
     return 3; // Try to prevent differences in the fetchMore.
   }
 
-  let showingLinks = showingLinkIds.map(linkId => getLink(linkId, getState().links));
-  showingLinks = showingLinks.filter(link => isObject(link));
-  showingLinks = showingLinks.filter(link => {
-    return !NEW_LINK_FPATH_STATUSES.includes(link.status);
-  });
+  // Only showing status links, no new fpath links.
+  const ossLinks = [], nnfLinks = [];
+  const showingLinks = showingLinkIds.map(linkId => getLink(linkId, getState().links));
+  for (const link of showingLinks) {
+    if (link === null) continue;
+
+    if (SHOWING_STATUSES.includes(link.status)) ossLinks.push(link);
+    if (!NEW_LINK_FPATH_STATUSES.includes(link.status)) nnfLinks.push(link);
+  }
+
+  if (ossLinks.length === 0) return 0;
 
   const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
   const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
@@ -663,21 +669,21 @@ const _getUpdateFetchedAction = (getState, payload) => {
     return getMainId(link.id);
   });
 
-  if (showingLinks.length < updatingLinks.length) return 3;
-  if (showingLinks.length > updatingLinks.length && !payload.hasMore) return 3;
+  if (nnfLinks.length < updatingLinks.length) return 3;
+  if (nnfLinks.length > updatingLinks.length && !payload.hasMore) return 3;
 
   for (let i = 0; i < updatingLinks.length; i++) {
-    const [showingLink, updatingLink] = [showingLinks[i], updatingLinks[i]];
+    const [nnfLink, updatingLink] = [nnfLinks[i], updatingLinks[i]];
     if (
-      showingLink.id !== updatingLink.id ||
-      !isEqual(showingLink.extractedResult, updatingLink.extractedResult) ||
-      !isEqual(showingLink.custom, updatingLink.custom)
+      nnfLink.id !== updatingLink.id ||
+      !isEqual(nnfLink.extractedResult, updatingLink.extractedResult) ||
+      !isEqual(nnfLink.custom, updatingLink.custom)
     ) {
       return 3;
     }
   }
 
-  if (showingLinks.length > updatingLinks.length) return 2;
+  if (nnfLinks.length > updatingLinks.length) return 2;
   return 1;
 };
 
@@ -834,17 +840,21 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
 
   let isStale = false;
   if (!doForCompare) {
-    if (fetchingLnOrQts.includes(lnOrQt) || lnOrQt in cachedFetched) {
-      isStale = true;
-    }
-    if (fetchingMoreLnOrQts.includes(`${lnOrQt}:true`)) {
-      isStale = true;
-    }
-    if (
-      showingLinkIds.some(id => !vars.fetch.fetchedLinkMainIds.includes(getMainId(id)))
-    ) {
-      isStale = true;
-    }
+    if (fetchingLnOrQts.includes(lnOrQt) || lnOrQt in cachedFetched) isStale = true;
+    if (fetchingMoreLnOrQts.includes(`${lnOrQt}:true`)) isStale = true;
+
+    // In case reload/reopen and there are adding/moving links,
+    //   they are not in vars.fetch.fetchedLinkMainIds.
+    let nnfLinks = showingLinkIds.map(linkId => getLink(linkId, getState().links));
+    nnfLinks = nnfLinks.filter(link => isObject(link));
+    nnfLinks = nnfLinks.filter(link => {
+      return !NEW_LINK_FPATH_STATUSES.includes(link.status);
+    });
+
+    const found = nnfLinks.some(link => {
+      return !vars.fetch.fetchedLinkMainIds.includes(getMainId(link.id))
+    });
+    if (found) isStale = true;
   }
 
   const bin = {
@@ -941,15 +951,17 @@ const _getLinksForCompareAction = (getState, payload) => {
 
   const pinFPaths = getPinFPaths(getState());
 
-  let showingLinks = [], toLnMap = {};
+  // Only showing status links, no new fpath links, to listName map.
+  const ossLinks = [], nnfLinks = [], toLnMap = {};
   if (Array.isArray(showingLinkIds)) {
     const showingLnAndLks = showingLinkIds.map(linkId => {
       return getListNameAndLink(linkId, getState().links);
     });
     for (const { listName, link } of showingLnAndLks) {
       if (listName === null || link === null) continue;
-      if (NEW_LINK_FPATH_STATUSES.includes(link.status)) continue;
-      showingLinks.push(link);
+
+      if (SHOWING_STATUSES.includes(link.status)) ossLinks.push(link);
+      if (!NEW_LINK_FPATH_STATUSES.includes(link.status)) nnfLinks.push(link);
       toLnMap[link.id] = listName;
     }
   }
@@ -966,7 +978,7 @@ const _getLinksForCompareAction = (getState, payload) => {
     updatingLinks.push(link);
     toLnMap[link.id] = listName;
   }
-  for (const link of showingLinks) {
+  for (const link of nnfLinks) {
     if (vars.fetch.fetchedLinkMainIds.includes(getMainId(link.id))) {
       updatingLinks.push(link);
     }
@@ -977,34 +989,37 @@ const _getLinksForCompareAction = (getState, payload) => {
     return getMainId(link.id);
   });
 
-  return { showingLinks, updatingLinks, toLnMap };
+  return { ossLinks, nnfLinks, updatingLinks, toLnMap };
 };
 
-const _getForCompareAction = (showingLinks, updatingLinks, updatingHasMore) => {
+const _getForCompareAction = (
+  ossLinks, nnfLinks, updatingLinks, updatingHasMore,
+) => {
   /*
     updateAction
-    0. justUpdate: showingLinkIds is null or empty, can just update
+    0. justUpdate: no links showing, can just update
     1. noNew: exactly the same, nothing new, update only hasMore
     2. limitedSame: partially the same, first N links are the same
-    3. haveNew: not the same for sure, something new, update if not scroll or popup else show fetchedPopup
+    3. haveNew: not the same for sure, something new, update if not scroll or popup
+         else show fetchedPopup
   */
-  if (!Array.isArray(showingLinks) || showingLinks.length === 0) return 0;
+  if (ossLinks.length === 0) return 0;
 
-  if (showingLinks.length < updatingLinks.length) return 3;
-  if (showingLinks.length > updatingLinks.length && !updatingHasMore) return 3;
+  if (nnfLinks.length < updatingLinks.length) return 3;
+  if (nnfLinks.length > updatingLinks.length && !updatingHasMore) return 3;
 
   for (let i = 0; i < updatingLinks.length; i++) {
-    const [showingLink, updatingLink] = [showingLinks[i], updatingLinks[i]];
+    const [nnfLink, updatingLink] = [nnfLinks[i], updatingLinks[i]];
     if (
-      showingLink.id !== updatingLink.id ||
-      !isEqual(showingLink.extractedResult, updatingLink.extractedResult) ||
-      !isEqual(showingLink.custom, updatingLink.custom)
+      nnfLink.id !== updatingLink.id ||
+      !isEqual(nnfLink.extractedResult, updatingLink.extractedResult) ||
+      !isEqual(nnfLink.custom, updatingLink.custom)
     ) {
       return 3;
     }
   }
 
-  if (showingLinks.length > updatingLinks.length) return 2;
+  if (nnfLinks.length > updatingLinks.length) return 2;
   return 1;
 };
 
@@ -1036,11 +1051,11 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
 
   if (payload.doForCompare) {
     const {
-      showingLinks, updatingLinks, toLnMap,
+      ossLinks, nnfLinks, updatingLinks, toLnMap,
     } = _getLinksForCompareAction(getState, payload)
 
     const updateAction = _getForCompareAction(
-      showingLinks, updatingLinks, payload.hasMore
+      ossLinks, nnfLinks, updatingLinks, payload.hasMore
     );
     if (updateAction === 0) {
       // Empty e.g., user deletes all showing links
@@ -1050,7 +1065,6 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
     }
 
     if (updateAction === 1) {
-      const showingLinkIds = getState().display.showingLinkIds;
       dispatch({
         type: UPDATE_FETCHED_MORE,
         payload: {
@@ -1146,8 +1160,8 @@ export const updateFetchedMore = (
     }
   }
 
-  let showingLinks = showingLinkIds.map(linkId => getLink(linkId, links));
-  showingLinks = showingLinks.filter(link => isObject(link));
+  let fsgLinks = showingLinkIds.map(linkId => getLink(linkId, links));
+  fsgLinks = fsgLinks.filter(link => isObject(link));
 
   const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
   const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
@@ -1155,7 +1169,7 @@ export const updateFetchedMore = (
   let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, links)
   updatingLinks = updatingLinks.filter(link => isObject(link));
 
-  let sortedLinks = [...showingLinks, ...updatingLinks, ...processingLinks];
+  let sortedLinks = [...fsgLinks, ...updatingLinks, ...processingLinks];
   sortedLinks = Object.values(_.mapKeys(sortedLinks, ID));
   sortedLinks = sortLinks(sortedLinks, doDescendingOrder);
   sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
@@ -1220,6 +1234,7 @@ const sortShowingLinkIds = async (dispatch, getState) => {
 
   let sortedLinks = showingLinkIds.map(linkId => getLink(linkId, links));
   sortedLinks = sortedLinks.filter(link => isObject(link));
+  sortedLinks = Object.values(_.mapKeys(sortedLinks, ID));
   sortedLinks = sortLinks(sortedLinks, doDescendingOrder);
   sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
     return getMainId(link.id);
@@ -2383,22 +2398,21 @@ export const unpinLinks = (ids) => async (dispatch, getState) => {
 
 export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
   const links = getState().links;
-  const listName = getState().display.listName;
-  const doDescendingOrder = getState().settings.doDescendingOrder;
+  const showingLinkIds = getState().display.showingLinkIds;
   const pinFPaths = getPinFPaths(getState());
   const pendingPins = getState().pendingPins;
 
-  const sortedLinks = getSortedLinks(links, listName, doDescendingOrder);
-  if (!sortedLinks) {
-    console.log('No links found for link id: ', id);
+  if (!Array.isArray(showingLinkIds)) {
+    console.log('No showingLinkIds found for link id: ', id);
     return;
   }
 
-  let [pinnedValues] = separatePinnedValues(
-    sortedLinks,
-    pinFPaths,
-    pendingPins,
-    (link) => {
+  let ossLinks = showingLinkIds.map(linkId => getLink(linkId, links));
+  ossLinks = ossLinks.filter(link => isObject(link));
+  ossLinks = ossLinks.filter(link => SHOWING_STATUSES.includes(link.status));
+
+  const [pinnedValues] = separatePinnedValues(
+    ossLinks, pinFPaths, pendingPins, (link) => {
       return getMainId(link.id);
     }
   );

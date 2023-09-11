@@ -428,7 +428,9 @@ const displayReducer = (state = initialState, action) => {
 
   if (action.type === ADD_LINKS) {
     const { links, insertIndex } = action.payload;
-    if (!isNumber(insertIndex)) return state;
+    if (!Array.isArray(links) || !isNumber(insertIndex)) return state;
+
+    if (!Array.isArray(state.showingLinkIds)) return state;
 
     let linkIds = links.map(link => link.id);
     linkIds = linkIds.filter(id => !state.showingLinkIds.includes(id));

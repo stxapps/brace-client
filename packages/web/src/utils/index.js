@@ -12,14 +12,13 @@ import {
 import {
   HTTP, HTTPS, WWW, STATUS, LINKS, IMAGES, SETTINGS, INFO, PINS, DOT_JSON, ADDED,
   DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
-  SHOWING_STATUSES, NEW_LINK_FPATH_STATUSES, COLOR, PATTERN, IMAGE, BG_COLOR_STYLES,
-  PATTERNS, VALID_URL, NO_URL, ASK_CONFIRM_URL, VALID_LIST_NAME, NO_LIST_NAME,
-  TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME, COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW,
-  GRACE, ON_HOLD, PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, MAX_TRY, EXTRACT_INVALID_URL,
-  VALID_PASSWORD, NO_PASSWORD, CONTAIN_SPACES_PASSWORD, TOO_LONG_PASSWORD, N_LINKS,
+  NEW_LINK_FPATH_STATUSES, COLOR, PATTERN, IMAGE, BG_COLOR_STYLES, PATTERNS, VALID_URL,
+  NO_URL, ASK_CONFIRM_URL, VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME,
+  DUPLICATE_LIST_NAME, COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD,
+  PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, MAX_TRY, EXTRACT_INVALID_URL, VALID_PASSWORD,
+  NO_PASSWORD, CONTAIN_SPACES_PASSWORD, TOO_LONG_PASSWORD, N_LINKS,
 } from '../types/const';
 import { IMAGE_PATHS } from '../types/imagePaths';
-import { _ } from './obj';
 
 const shortMonths = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
@@ -1522,30 +1521,12 @@ export const isPinningStatus = (pinStatus) => {
   ].includes(pinStatus);
 };
 
-export const getFilteredLinks = (links, listName) => {
-  if (!links || !links[listName]) return null;
-  const selectedLinks = _.select(links[listName], STATUS, SHOWING_STATUSES);
-  return selectedLinks;
-};
-
 export const sortLinks = (links, doDescendingOrder) => {
   const sortedLinks = [...links].sort((a, b) => {
     return b.addedDT - a.addedDT;
   });
   if (!doDescendingOrder) sortedLinks.reverse();
 
-  return sortedLinks;
-};
-
-export const sortFilteredLinks = (filteredLinks, doDescendingOrder) => {
-  return sortLinks(Object.values(filteredLinks), doDescendingOrder);
-};
-
-export const getSortedLinks = (links, listName, doDescendingOrder) => {
-  const filteredLinks = getFilteredLinks(links, listName);
-  if (!filteredLinks) return null;
-
-  const sortedLinks = sortFilteredLinks(filteredLinks, doDescendingOrder);
   return sortedLinks;
 };
 
@@ -1972,8 +1953,10 @@ export const getNLinkObjs = (params) => {
     excludingMainIds = params.excludingMainIds;
   }
 
-  let sortedLinks = getSortedLinks(links, listName, doDescendingOrder);
-  if (!Array.isArray(sortedLinks)) sortedLinks = [];
+  let namedLinks = [];
+  if (isObject(links[listName])) namedLinks = Object.values(links[listName]);
+
+  let sortedLinks = sortLinks(namedLinks, doDescendingOrder);
   sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
     return getMainId(link.id);
   });
