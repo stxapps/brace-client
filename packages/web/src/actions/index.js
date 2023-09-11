@@ -71,13 +71,13 @@ import {
   isEqual, isString, isObject, isNumber, throttle, randomString, rerandomRandomTerm,
   deleteRemovedDT, getMainId, getLinkMainIds, getUrlFirstChar, separateUrlAndParam,
   extractUrl, getUserImageUrl, randomDecor, getListNameObj, getAllListNames,
-  doOutboxContainMethods, getLatestPurchase, getValidPurchase, doEnableExtraFeatures,
-  createDataFName, getLinkFPaths, getStaticFPaths, createSettingsFPath, extractPinFPath,
-  getPinFPaths, getPins, separatePinnedValues, sortLinks, sortWithPins, getRawPins,
-  getFormattedTime, get24HFormattedTime, extractStaticFPath, getWindowSize,
-  getEditingListNameEditors, validatePassword, doContainListName, sleep, sample,
-  extractLinkFPath, getLink, getListNameAndLink, getNLinkObjs, getNLinkFPaths,
-  newObject, addFetchedLinkMainIds, addFetchedLinkMainIdsWithArray, createLinkFPath,
+  getLatestPurchase, getValidPurchase, doEnableExtraFeatures, createDataFName,
+  getLinkFPaths, getStaticFPaths, createSettingsFPath, extractPinFPath, getPinFPaths,
+  getPins, separatePinnedValues, sortLinks, sortWithPins, getRawPins, getFormattedTime,
+  get24HFormattedTime, extractStaticFPath, getWindowSize, getEditingListNameEditors,
+  validatePassword, doContainListName, sleep, sample, extractLinkFPath, getLink,
+  getListNameAndLink, getNLinkObjs, getNLinkFPaths, newObject, addFetchedLinkMainIds,
+  addFetchedLinkMainIdsWithArray, createLinkFPath,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -147,10 +147,15 @@ export const init = async (store) => {
     if (isUserSignedIn) {
       const { busy, online, outbox, retryScheduled } = store.getState().offline;
       if ((busy || (online && outbox.length > 0)) && !retryScheduled) {
-        if (doOutboxContainMethods(outbox, [
-          ADD_LINKS, DELETE_LINKS, UPDATE_SETTINGS, PIN_LINK, UNPIN_LINK,
-          UPDATE_CUSTOM_DATA,
-        ])) {
+        const found = outbox.some(action => {
+          if (!isObject(action)) return false;
+          return [
+            ADD_LINKS, MOVE_LINKS_ADD_STEP, MOVE_LINKS_DELETE_STEP, DELETE_LINKS,
+            UPDATE_CUSTOM_DATA, UPDATE_SETTINGS, MERGE_SETTINGS, PIN_LINK, UNPIN_LINK,
+            MOVE_PINNED_LINK_ADD_STEP,
+          ].includes(action.type);
+        });
+        if (found) {
           e.preventDefault();
           return e.returnValue = 'It looks like your changes are being saved to the server. Do you want to leave immediately and save your changes later?';
         }
