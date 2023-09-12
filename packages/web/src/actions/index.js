@@ -655,7 +655,7 @@ const _getUpdateFetchedAction = (getState, payload) => {
   const ossLinks = [], nnfLinks = [];
   const showingLinks = showingLinkIds.map(linkId => getLink(linkId, getState().links));
   for (const link of showingLinks) {
-    if (link === null) continue;
+    if (!isObject(link)) continue;
 
     if (SHOWING_STATUSES.includes(link.status)) ossLinks.push(link);
     if (!NEW_LINK_FPATH_STATUSES.includes(link.status)) nnfLinks.push(link);
@@ -766,9 +766,25 @@ export const updateFetched = (
   }
   if (!payload) return;
 
+  const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
+  const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
+  const updatingLnAndLks = _poolListNameAndLinks(
+    updatingLinkFPaths, payload.links, links
+  );
+
+  const lksPerLn = {}, updatingLinks = [];
+  for (const { listName, link } of updatingLnAndLks) {
+    if (!isString(listName) || !isObject(link)) continue;
+
+    if (!isObject(lksPerLn[listName])) lksPerLn[listName] = {};
+    lksPerLn[listName][link.id] = link;
+
+    updatingLinks.push(link);
+  }
+
   if (noDisplay) {
     dispatch({
-      type: UPDATE_FETCHED, payload: { lnOrQt: payload.lnOrQt, links: payload.links },
+      type: UPDATE_FETCHED, payload: { lnOrQt: payload.lnOrQt, links: lksPerLn },
     });
     addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
     return;
@@ -781,12 +797,6 @@ export const updateFetched = (
       processingLinks.push(link);
     }
   }
-
-  const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
-  const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
-
-  let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, links)
-  updatingLinks = updatingLinks.filter(link => isObject(link));
 
   let sortedLinks = [...updatingLinks, ...processingLinks];
   sortedLinks = Object.values(_.mapKeys(sortedLinks, ID));
@@ -804,7 +814,7 @@ export const updateFetched = (
   dispatch({
     type: UPDATE_FETCHED,
     payload: {
-      lnOrQt: payload.lnOrQt, links: payload.links,
+      lnOrQt: payload.lnOrQt, links: lksPerLn,
       ids, hasMore: payload.hasMore, images, doChangeListCount,
     },
   });
@@ -850,6 +860,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
 
     // In case reload/reopen and there are adding/moving links,
     //   they are not in vars.fetch.fetchedLinkMainIds.
+    // Need to use fetchedLinkMainIds with getNLinkFPaths or nnfLinks only.
     let nnfLinks = showingLinkIds.map(linkId => getLink(linkId, getState().links));
     nnfLinks = nnfLinks.filter(link => isObject(link));
     nnfLinks = nnfLinks.filter(link => {
@@ -963,7 +974,7 @@ const _getLinksForCompareAction = (getState, payload) => {
       return getListNameAndLink(linkId, getState().links);
     });
     for (const { listName, link } of showingLnAndLks) {
-      if (listName === null || link === null) continue;
+      if (!isString(listName) || !isObject(link)) continue;
 
       if (SHOWING_STATUSES.includes(link.status)) ossLinks.push(link);
       if (!NEW_LINK_FPATH_STATUSES.includes(link.status)) nnfLinks.push(link);
@@ -979,7 +990,7 @@ const _getLinksForCompareAction = (getState, payload) => {
 
   let updatingLinks = [];
   for (const { listName, link } of updatingLnAndLks) {
-    if (listName === null || link === null) continue;
+    if (!isString(listName) || !isObject(link)) continue;
     updatingLinks.push(link);
     toLnMap[link.id] = listName;
   }
@@ -1288,7 +1299,7 @@ const _getAddLinkInsertIndex = (getState) => {
 export const addLink = (url, listName, doExtractContents) => async (
   dispatch, getState
 ) => {
-  if (listName === null) listName = getState().display.listName;
+  if (!isString(listName)) listName = getState().display.listName;
   if (listName === TRASH) listName = MY_LIST;
 
   const queryString = getState().display.queryString;
@@ -1544,6 +1555,7 @@ const getToExtractLinks = (listName, ids, getState) => {
   const _links = _.ignore(obj, LOCAL_LINK_ATTRS);
   const links = Object.values(_links)
     .filter(link => {
+      if (link.status !== ADDED) return false;
       if ('custom' in link) return false;
       return !link.extractedResult || link.extractedResult.status === EXTRACT_INIT;
     })
