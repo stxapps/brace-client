@@ -2,8 +2,10 @@ import { REHYDRATE } from 'redux-persist/constants';
 
 import {
   UPDATE_FETCHED, CACHE_FETCHED_MORE, UPDATE_FETCHED_MORE, REFRESH_FETCHED,
-  DELETE_ALL_DATA, RESET_STATE,
+  MOVE_LINKS_DELETE_STEP_COMMIT, DELETE_LINKS_COMMIT, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
+  UPDATE_CUSTOM_DATA_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
+import { createLinkFPath } from '../utils';
 
 const initialState = {};
 
@@ -38,6 +40,52 @@ const fetchedMoreReducer = (state = initialState, action) => {
     }
 
     return newState;
+  }
+
+  // Died links are always shown, so need to apply to cached links here too.
+  if (
+    action.type === MOVE_LINKS_DELETE_STEP_COMMIT ||
+    action.type === DELETE_LINKS_COMMIT ||
+    action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT
+  ) {
+    const { listName, successIds } = action.payload;
+    if (!state[listName]) return state;
+
+    const { payload } = state[listName];
+
+    const fpaths = successIds.map(id => createLinkFPath(listName, id));
+    const newLinks = { ...payload.links };
+    newLinks[listName] = {};
+    for (const id in payload.links[listName]) {
+      if (successIds.includes(id)) continue;
+      newLinks[listName][id] = { ...payload.links[listName][id] };
+    }
+
+    const newPayload = { ...payload };
+    newPayload.unfetchedLinkFPaths = newPayload.unfetchedLinkFPaths.filter(fpath => {
+      return !fpaths.includes(fpath);
+    });
+    newPayload.links = newLinks;
+
+    return { ...state, [listName]: { payload: newPayload } };
+  }
+
+  if (action.type === UPDATE_CUSTOM_DATA_COMMIT) {
+    const { listName, toLink } = action.payload;
+    if (!state[listName]) return state;
+
+    const { payload } = state[listName];
+
+    const newLinks = { ...payload.links };
+    newLinks[listName] = { ...newLinks[listName] };
+    if (toLink.id in newLinks[listName]) {
+      newLinks[listName][toLink.id] = { ...toLink };
+    }
+
+    const newPayload = { ...payload };
+    newPayload.links = newLinks;
+
+    return { ...state, [listName]: { payload: newPayload } };
   }
 
   if (action.type === DELETE_ALL_DATA || action.type === RESET_STATE) {

@@ -3,7 +3,7 @@ import { REHYDRATE } from 'redux-persist/constants';
 import {
   CACHE_FETCHED, UPDATE_FETCHED, REFRESH_FETCHED, ADD_LINKS_COMMIT,
   MOVE_LINKS_DELETE_STEP_COMMIT, DELETE_LINKS_COMMIT, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
-  EXTRACT_CONTENTS_COMMIT, PIN_LINK_COMMIT, UPDATE_CUSTOM_DATA_COMMIT, DELETE_ALL_DATA,
+  UPDATE_EXTRACTED_CONTENTS, PIN_LINK_COMMIT, UPDATE_CUSTOM_DATA_COMMIT, DELETE_ALL_DATA,
   RESET_STATE,
 } from '../types/actionTypes';
 import { getLinkFPaths, extractLinkFPath, createLinkFPath } from '../utils';
@@ -78,7 +78,7 @@ const fetchedReducer = (state = initialState, action) => {
     return { ...state, [listName]: { payload: newPayload } };
   }
 
-  if (action.type === EXTRACT_CONTENTS_COMMIT) {
+  if (action.type === UPDATE_EXTRACTED_CONTENTS) {
     const { listName, successLinks } = action.payload;
     if (!state[listName]) return state;
 
@@ -86,7 +86,10 @@ const fetchedReducer = (state = initialState, action) => {
 
     const newLinks = { ...payload.links };
     newLinks[listName] = { ...newLinks[listName] };
-    for (const link of successLinks) newLinks[listName][link.id] = { ...link };
+    for (const link of successLinks) {
+      if (!(link.id in newLinks[listName])) continue;
+      newLinks[listName][link.id] = { ...link };
+    }
 
     const newPayload = { ...payload };
     newPayload.links = newLinks;
@@ -133,7 +136,9 @@ const fetchedReducer = (state = initialState, action) => {
 
     const newLinks = { ...payload.links };
     newLinks[listName] = { ...newLinks[listName] };
-    newLinks[listName][toLink.id] = { ...toLink };
+    if (toLink.id in newLinks[listName]) {
+      newLinks[listName][toLink.id] = { ...toLink };
+    }
 
     const newPayload = { ...payload };
     newPayload.links = newLinks;
