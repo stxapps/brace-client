@@ -858,6 +858,11 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
     isStale = !vars.fetch.fetchedLnOrQts.includes(listName);
   }
 
+  // Showing and fetched link ids.
+  const safLinkIds = showingLinkIds.filter(id => {
+    return vars.fetch.fetchedLinkMainIds.includes(getMainId(id));
+  });
+
   const bin = {
     fetchedLinkFPaths: [], unfetchedLinkFPaths: [], hasMore: false, hasDisorder: false,
   };
@@ -870,7 +875,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
     } else {
       const _result = getNLinkFPaths({
         linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
-        excludingMainIds: vars.fetch.fetchedLinkMainIds,
+        excludingIds: safLinkIds,
       });
       if (_result.fpaths.length === 0) {
         addFetchedToVars(lnOrQt, null, vars);
@@ -907,7 +912,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
 
       const _result = getNLinkFPaths({
         linkFPaths, links, listName, doDescendingOrder, pinFPaths, pendingPins,
-        excludingIds: showingLinkIds,
+        excludingIds: safLinkIds,
       });
       [fpaths, fpathsWithPcEc] = [_result.fpaths, _result.fpathsWithPcEc];
       [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
@@ -933,7 +938,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
     }
   }
 
-  const payload = { doForCompare, listName, queryString, lnOrQt, showingLinkIds };
+  const payload = { doForCompare, listName, queryString, lnOrQt, safLinkIds };
   dispatch({
     type: FETCH_MORE,
     payload,

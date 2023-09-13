@@ -262,9 +262,7 @@ const fetch = async (params) => {
 };
 
 const fetchMore = async (params) => {
-  const {
-    getState, doForCompare, listName, queryString, lnOrQt, showingLinkIds,
-  } = params;
+  const { getState, doForCompare, listName, queryString, lnOrQt, safLinkIds } = params;
 
   const pendingPins = getState().pendingPins;
   const doDescendingOrder = getState().settings.doDescendingOrder;
@@ -273,11 +271,11 @@ const fetchMore = async (params) => {
   const pinFPaths = getPinFPaths(getState());
 
   // Need to do it again in case settings are changes.
+  let fpaths;
   const bin = {
     fetchedLinkFPaths: [], unfetchedLinkFPaths: [], hasMore: false, hasDisorder: false,
   };
   if (doForCompare) {
-    let fpaths;
     if (queryString) {
       console.log(
         'In blockstack.fetchMore, invalid doForCompare:', doForCompare,
@@ -287,14 +285,12 @@ const fetchMore = async (params) => {
     } else {
       const _result = getNLinkFPaths({
         linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
-        excludingMainIds: vars.fetch.fetchedLinkMainIds,
+        excludingIds: safLinkIds,
       });
       fpaths = _result.fpaths;
       [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
     }
-    for (const linkFPath of fpaths) bin.unfetchedLinkFPaths.push(linkFPath);
   } else {
-    let fpaths;
     if (queryString) {
 
       // Loop on tagFPaths, get linkIds with tag === queryString
@@ -303,18 +299,18 @@ const fetchMore = async (params) => {
     } else {
       const _result = getNLinkFPaths({
         linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
-        excludingIds: showingLinkIds,
+        excludingIds: safLinkIds,
       });
       fpaths = _result.fpaths;
       [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
     }
-    for (const linkFPath of fpaths) {
-      const { id } = extractLinkFPath(linkFPath);
-      if (vars.fetch.fetchedLinkMainIds.includes(getMainId(id))) {
-        bin.fetchedLinkFPaths.push(linkFPath);
-      } else {
-        bin.unfetchedLinkFPaths.push(linkFPath);
-      }
+  }
+  for (const linkFPath of fpaths) {
+    const { id } = extractLinkFPath(linkFPath);
+    if (vars.fetch.fetchedLinkMainIds.includes(getMainId(id))) {
+      bin.fetchedLinkFPaths.push(linkFPath);
+    } else {
+      bin.unfetchedLinkFPaths.push(linkFPath);
     }
   }
 
