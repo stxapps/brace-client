@@ -2087,16 +2087,24 @@ export const newObject = (object, ignoreAttrs) => {
   return newObject;
 };
 
-export const addFetchedLinkMainIds = (links, fetchedLinkMainIds) => {
-  for (const listName in links) {
-    for (const id in links[listName]) {
-      fetchedLinkMainIds.push(getMainId(id));
-    }
-  }
-};
+export const addFetchedToVars = (lnOrQt, links, vars) => {
+  const { fetchedLnOrQts, fetchedLinkMainIds } = vars.fetch;
 
-export const addFetchedLinkMainIdsWithArray = (links, fetchedLinkMainIds) => {
-  for (const link of links) {
-    fetchedLinkMainIds.push(getMainId(link.id));
+  if (isString(lnOrQt) && !fetchedLnOrQts.includes(lnOrQt)) {
+    fetchedLnOrQts.push(lnOrQt);
+  }
+
+  if (isObject(links) && !Array.isArray(links)) {
+    for (const listName in links) {
+      for (const id in links[listName]) {
+        const mainId = getMainId(id);
+        if (!fetchedLinkMainIds.includes(mainId)) fetchedLinkMainIds.push(mainId);
+      }
+    }
+  } else if (Array.isArray(links)) {
+    for (const link of links) {
+      const mainId = getMainId(link.id)
+      if (!fetchedLinkMainIds.includes(mainId)) fetchedLinkMainIds.push(mainId);
+    }
   }
 };

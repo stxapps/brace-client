@@ -383,12 +383,13 @@ const displayReducer = (state = initialState, action) => {
 
   if (action.type === FETCH_MORE_ROLLBACK) {
     const { lnOrQt, doForCompare } = action.meta;
-    return {
-      ...state,
-      fetchingMoreLnOrQts: state.fetchingMoreLnOrQts.filter(el => {
-        return el !== `${lnOrQt}:${doForCompare}`;
-      }),
-    };
+
+    const newState = { ...state };
+    if (doForCompare) newState.statuses = [...state.statuses, FETCH, FETCH_ROLLBACK];
+    newState.fetchingMoreLnOrQts = state.fetchingMoreLnOrQts.filter(el => {
+      return el !== `${lnOrQt}:${doForCompare}`;
+    });
+    return newState;
   }
 
   if (action.type === REFRESH_FETCHED) {
@@ -429,7 +430,6 @@ const displayReducer = (state = initialState, action) => {
   if (action.type === ADD_LINKS) {
     const { links, insertIndex } = action.payload;
     if (!Array.isArray(links) || !isNumber(insertIndex)) return state;
-
     if (!Array.isArray(state.showingLinkIds)) return state;
 
     let linkIds = links.map(link => link.id);

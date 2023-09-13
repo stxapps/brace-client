@@ -20,6 +20,7 @@ const scrollPanel = {
 
 const fetch = {
   dt: 0,
+  fetchedLnOrQts: [],
   fetchedLinkMainIds: [],
   doShowLoading: false,
 };

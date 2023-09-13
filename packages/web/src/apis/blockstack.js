@@ -267,7 +267,6 @@ const fetchMore = async (params) => {
   } = params;
 
   const pendingPins = getState().pendingPins;
-
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
   const linkFPaths = getLinkFPaths(getState());

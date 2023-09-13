@@ -76,8 +76,8 @@ import {
   getPins, separatePinnedValues, sortLinks, sortWithPins, getRawPins, getFormattedTime,
   get24HFormattedTime, extractStaticFPath, getWindowSize, getEditingListNameEditors,
   validatePassword, doContainListName, sleep, sample, extractLinkFPath, getLink,
-  getListNameAndLink, getNLinkObjs, getNLinkFPaths, newObject, addFetchedLinkMainIds,
-  addFetchedLinkMainIdsWithArray, createLinkFPath,
+  getListNameAndLink, getNLinkObjs, getNLinkFPaths, newObject, addFetchedToVars,
+  createLinkFPath,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -393,6 +393,7 @@ const resetState = async (dispatch) => {
 
   // clear vars
   vars.fetch.dt = 0;
+  vars.fetch.fetchedLnOrQts = [];
   vars.fetch.fetchedLinkMainIds = [];
   vars.randomHouseworkTasks.dt = 0;
 
@@ -714,6 +715,8 @@ export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
   }
 
   if (updateAction === 1) {
+    // As updateAction is not 0, showingLinkIds should be an array.
+    // There is also a check on keepId if it's an array or not.
     const showingLinkIds = getState().display.showingLinkIds;
     dispatch({
       type: UPDATE_FETCHED,
@@ -721,13 +724,13 @@ export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
         lnOrQt: payload.lnOrQt, keepIds: showingLinkIds, hasMore: payload.hasMore,
       },
     });
-    addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
+    addFetchedToVars(payload.lnOrQt, payload.links, vars)
     dispatch(deleteFetchingLnOrQt(payload.lnOrQt));
     return;
   }
 
   if (updateAction === 2) {
-    addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
+    addFetchedToVars(null, payload.links, vars)
     dispatch(deleteFetchingLnOrQt(payload.lnOrQt));
     dispatch(fetchMore(true));
     return;
@@ -786,7 +789,7 @@ export const updateFetched = (
     dispatch({
       type: UPDATE_FETCHED, payload: { lnOrQt: payload.lnOrQt, links: lksPerLn },
     });
-    addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
+    addFetchedToVars(payload.lnOrQt, payload.links, vars);
     return;
   }
 
@@ -818,14 +821,13 @@ export const updateFetched = (
       ids, hasMore: payload.hasMore, images, doChangeListCount,
     },
   });
-  addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
+  addFetchedToVars(payload.lnOrQt, payload.links, vars);
 };
 
 export const fetchMore = (doForCompare = false) => async (dispatch, getState) => {
   const links = getState().links;
   const listName = getState().display.listName;
   const queryString = getState().display.queryString;
-  const fetchingLnOrQts = getState().display.fetchingLnOrQts;
   const fetchingMoreLnOrQts = getState().display.fetchingMoreLnOrQts;
   const showingLinkIds = getState().display.showingLinkIds;
   const cachedFetchedMore = getState().fetchedMore;
@@ -835,8 +837,6 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
 
   const linkFPaths = getLinkFPaths(getState());
   const pinFPaths = getPinFPaths(getState());
-
-  const cachedFetched = getState().fetched;
 
   if (!Array.isArray(showingLinkIds)) {
     console.log('In fetchMore, showingLinkIds is not an array!');
@@ -854,23 +854,8 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
   dispatch(addFetchingMoreLnOrQt(lnOrQt, doForCompare));
 
   let isStale = false;
-  if (!doForCompare) {
-    if (fetchingLnOrQts.includes(lnOrQt) || lnOrQt in cachedFetched) isStale = true;
-    if (fetchingMoreLnOrQts.includes(`${lnOrQt}:true`)) isStale = true;
-
-    // In case reload/reopen and there are adding/moving links,
-    //   they are not in vars.fetch.fetchedLinkMainIds.
-    // Need to use fetchedLinkMainIds with getNLinkFPaths or nnfLinks only.
-    let nnfLinks = showingLinkIds.map(linkId => getLink(linkId, getState().links));
-    nnfLinks = nnfLinks.filter(link => isObject(link));
-    nnfLinks = nnfLinks.filter(link => {
-      return !NEW_LINK_FPATH_STATUSES.includes(link.status);
-    });
-
-    const found = nnfLinks.some(link => {
-      return !vars.fetch.fetchedLinkMainIds.includes(getMainId(link.id))
-    });
-    if (found) isStale = true;
+  if (!doForCompare && !queryString) {
+    isStale = !vars.fetch.fetchedLnOrQts.includes(listName);
   }
 
   const bin = {
@@ -879,6 +864,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
   if (doForCompare) {
     if (queryString) {
       // Impossible case, just return.
+      addFetchedToVars(lnOrQt, null, vars);
       dispatch(deleteFetchingMoreLnOrQt(lnOrQt, doForCompare));
       return;
     } else {
@@ -887,6 +873,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
         excludingMainIds: vars.fetch.fetchedLinkMainIds,
       });
       if (_result.fpaths.length === 0) {
+        addFetchedToVars(lnOrQt, null, vars);
         dispatch(deleteFetchingMoreLnOrQt(lnOrQt, doForCompare));
         return;
       }
@@ -1087,13 +1074,13 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
           lnOrQt: payload.lnOrQt, keepIds: showingLinkIds, hasMore: payload.hasMore,
         },
       });
-      addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
+      addFetchedToVars(payload.lnOrQt, payload.links, vars);
       dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
       return;
     }
 
     if (updateAction === 2) {
-      addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
+      addFetchedToVars(null, payload.links, vars);
       dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
       dispatch(fetchMore(true));
       return;
@@ -1147,8 +1134,6 @@ export const updateFetchedMore = (
   const doDescendingOrder = getState().settings.doDescendingOrder;
   const pinFPaths = getPinFPaths(getState());
 
-  if (!Array.isArray(showingLinkIds)) return;
-
   if (!payload) {
     const listName = getState().display.listName;
     const queryString = getState().display.queryString;
@@ -1159,12 +1144,12 @@ export const updateFetchedMore = (
   }
   if (!payload) return;
 
-  if (noDisplay) {
+  if (noDisplay || !Array.isArray(showingLinkIds)) {
     dispatch({
       type: UPDATE_FETCHED_MORE,
       payload: { lnOrQt: payload.lnOrQt, links: payload.links },
     });
-    addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
+    addFetchedToVars(payload.lnOrQt, payload.links, vars);
     return;
   }
 
@@ -1205,7 +1190,7 @@ export const updateFetchedMore = (
       ids, hasMore: payload.hasMore, images,
     },
   });
-  addFetchedLinkMainIds(payload.links, vars.fetch.fetchedLinkMainIds);
+  addFetchedToVars(payload.lnOrQt, payload.links, vars);
 };
 
 export const refreshFetched = (doShowLoading = false, doScrollTop = false) => async (
@@ -1229,6 +1214,7 @@ export const refreshFetched = (doShowLoading = false, doScrollTop = false) => as
 
   // If no fetching with the same list name, dispatch a new one.
   if (!fetchingLnOrQts.includes(lnOrQt)) {
+    vars.fetch.fetchedLnOrQts = [];
     vars.fetch.fetchedLinkMainIds = [];
     payload.doFetch = true;
   }
@@ -1241,9 +1227,7 @@ const sortShowingLinkIds = async (dispatch, getState) => {
   const links = getState().links;
   const showingLinkIds = getState().display.showingLinkIds;
   const pendingPins = getState().pendingPins;
-
   const doDescendingOrder = getState().settings.doDescendingOrder;
-
   const pinFPaths = getPinFPaths(getState());
 
   if (!Array.isArray(showingLinkIds)) return;
@@ -1280,6 +1264,7 @@ const _getAddLinkInsertIndex = (getState) => {
   const showingLinkIds = getState().display.showingLinkIds;
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
+  if (!Array.isArray(showingLinkIds)) return null;
   if (!doDescendingOrder) return showingLinkIds.length;
 
   const pinFPaths = getPinFPaths(getState());
@@ -1346,7 +1331,7 @@ export const addLink = (url, listName, doExtractContents) => async (
       },
     },
   });
-  addFetchedLinkMainIdsWithArray([link], vars.fetch.fetchedLinkMainIds);
+  addFetchedToVars(null, [link], vars);
 };
 
 export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
@@ -1400,7 +1385,7 @@ export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
       },
     },
   });
-  addFetchedLinkMainIdsWithArray(toLinks, vars.fetch.fetchedLinkMainIds);
+  addFetchedToVars(null, toLinks, vars);
 };
 
 export const moveLinksDeleteStep = (toListName, toIds) => async (
