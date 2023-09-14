@@ -320,7 +320,6 @@ const displayReducer = (state = initialState, action) => {
 
     newState.didFetch = true;
     newState.didFetchSettings = true;
-    newState.settingsStatus = null;
 
     // Make sure listName is in listNameMap, if not, set to My List.
     if (listNames.includes(newState.listName)) return newState;

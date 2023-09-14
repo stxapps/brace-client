@@ -16,8 +16,12 @@ import {
   NO_URL, ASK_CONFIRM_URL, VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME,
   DUPLICATE_LIST_NAME, COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD,
   PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, MAX_TRY, EXTRACT_INVALID_URL, VALID_PASSWORD,
-  NO_PASSWORD, CONTAIN_SPACES_PASSWORD, TOO_LONG_PASSWORD, N_LINKS,
+  NO_PASSWORD, CONTAIN_SPACES_PASSWORD, TOO_LONG_PASSWORD, N_LINKS, MY_LIST, TRASH,
+  ARCHIVE,
 } from '../types/const';
+import {
+  myListListNameObj, trashListNameObj, archiveListNameObj,
+} from '../types/initialStates';
 import { IMAGE_PATHS } from '../types/imagePaths';
 
 const shortMonths = [
@@ -970,6 +974,16 @@ export const isListNameObjsValid = (listNameObjs) => {
 export const deriveSettingsState = (listNames, settings, initialState) => {
   const state = settings ? { ...initialState, ...settings } : { ...initialState };
   state.listNameMap = copyListNameObjs(state.listNameMap);
+
+  if (!doContainListName(MY_LIST, state.listNameMap)) {
+    state.listNameMap.push({ ...myListListNameObj });
+  }
+  if (!doContainListName(TRASH, state.listNameMap)) {
+    state.listNameMap.push({ ...trashListNameObj });
+  }
+  if (!doContainListName(ARCHIVE, state.listNameMap)) {
+    state.listNameMap.push({ ...archiveListNameObj });
+  }
 
   let i = 1;
   for (const listName of listNames) {
