@@ -2102,7 +2102,7 @@ export const newObject = (object, ignoreAttrs) => {
 };
 
 export const addFetchedToVars = (lnOrQt, links, vars) => {
-  const { fetchedLnOrQts, fetchedLinkMainIds } = vars.fetch;
+  const { fetchedLnOrQts, fetchedLinkIds } = vars.fetch;
 
   if (isString(lnOrQt) && !fetchedLnOrQts.includes(lnOrQt)) {
     fetchedLnOrQts.push(lnOrQt);
@@ -2111,14 +2111,23 @@ export const addFetchedToVars = (lnOrQt, links, vars) => {
   if (isObject(links) && !Array.isArray(links)) {
     for (const listName in links) {
       for (const id in links[listName]) {
-        const mainId = getMainId(id);
-        if (!fetchedLinkMainIds.includes(mainId)) fetchedLinkMainIds.push(mainId);
+        if (!fetchedLinkIds.includes(id)) fetchedLinkIds.push(id);
       }
     }
   } else if (Array.isArray(links)) {
     for (const link of links) {
-      const mainId = getMainId(link.id)
-      if (!fetchedLinkMainIds.includes(mainId)) fetchedLinkMainIds.push(mainId);
+      if (!fetchedLinkIds.includes(link.id)) fetchedLinkIds.push(link.id);
     }
   }
+};
+
+export const isFetchedLinkId = (fetchedLinkIds, links, listName, id) => {
+  if (!fetchedLinkIds.includes(id)) return false;
+
+  // Beware, in fetchedLinkIds but might not in links!
+  //   e.g. delete by UPDATE_FETCHED or UPDATE_FETCHED_MORE
+  //   so need to check still in the links.
+  // The flow should be like showingLinkIds/fpaths -> links -> filtered by fetched.
+  if (!isObject(links[listName]) || !isObject(links[listName][id])) return false;
+  return true;
 };

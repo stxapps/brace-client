@@ -10,7 +10,7 @@ import {
   addFPath, getStaticFPath, deriveFPaths, createDataFName, getLastSettingsFPaths,
   createSettingsFPath, excludeNotObjContents, batchGetFileWithRetry,
   batchPutFileWithRetry, batchDeleteFileWithRetry, deriveUnknownErrorLink, getLinkFPaths,
-  getPinFPaths, getMainId, getNLinkFPaths,
+  getPinFPaths, getNLinkFPaths, isFetchedLinkId,
 } from '../utils';
 import vars from '../vars';
 
@@ -187,6 +187,7 @@ const fetchStaticFiles = async (linkObjs) => {
 const fetch = async (params) => {
   const { getState, listName, queryString, lnOrQt } = params;
 
+  const links = getState().links;
   const didFetch = getState().display.didFetch;
   const didFetchSettings = getState().display.didFetchSettings;
   const pendingPins = getState().pendingPins;
@@ -211,8 +212,8 @@ const fetch = async (params) => {
       [fpaths, bin.hasMore] = [_result.fpaths, _result.hasMore];
     }
     for (const linkFPath of fpaths) {
-      const { id } = extractLinkFPath(linkFPath);
-      if (vars.fetch.fetchedLinkMainIds.includes(getMainId(id))) {
+      const etRs = extractLinkFPath(linkFPath);
+      if (isFetchedLinkId(vars.fetch.fetchedLinkIds, links, etRs.listName, etRs.id)) {
         bin.fetchedLinkFPaths.push(linkFPath);
       } else {
         bin.unfetchedLinkFPaths.push(linkFPath);
@@ -264,6 +265,7 @@ const fetch = async (params) => {
 const fetchMore = async (params) => {
   const { getState, doForCompare, listName, queryString, lnOrQt, safLinkIds } = params;
 
+  const links = getState().links;
   const pendingPins = getState().pendingPins;
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
@@ -306,8 +308,8 @@ const fetchMore = async (params) => {
     }
   }
   for (const linkFPath of fpaths) {
-    const { id } = extractLinkFPath(linkFPath);
-    if (vars.fetch.fetchedLinkMainIds.includes(getMainId(id))) {
+    const etRs = extractLinkFPath(linkFPath);
+    if (isFetchedLinkId(vars.fetch.fetchedLinkIds, links, etRs.listName, etRs.id)) {
       bin.fetchedLinkFPaths.push(linkFPath);
     } else {
       bin.unfetchedLinkFPaths.push(linkFPath);

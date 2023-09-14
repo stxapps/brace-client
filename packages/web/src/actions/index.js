@@ -77,7 +77,7 @@ import {
   get24HFormattedTime, extractStaticFPath, getWindowSize, getEditingListNameEditors,
   validatePassword, doContainListName, sleep, sample, extractLinkFPath, getLink,
   getListNameAndLink, getNLinkObjs, getNLinkFPaths, newObject, addFetchedToVars,
-  createLinkFPath,
+  createLinkFPath, isFetchedLinkId,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -394,7 +394,7 @@ const resetState = async (dispatch) => {
   // clear vars
   vars.fetch.dt = 0;
   vars.fetch.fetchedLnOrQts = [];
-  vars.fetch.fetchedLinkMainIds = [];
+  vars.fetch.fetchedLinkIds = [];
   vars.randomHouseworkTasks.dt = 0;
 
   // clear all user data!
@@ -549,8 +549,8 @@ export const fetch = () => async (dispatch, getState) => {
       bin.hasMore = _result.hasMore;
     }
     for (const linkFPath of fpaths) {
-      const { id } = extractLinkFPath(linkFPath);
-      if (vars.fetch.fetchedLinkMainIds.includes(getMainId(id))) {
+      const etRs = extractLinkFPath(linkFPath);
+      if (isFetchedLinkId(vars.fetch.fetchedLinkIds, links, etRs.listName, etRs.id)) {
         bin.fetchedLinkFPaths.push(linkFPath);
       } else {
         bin.unfetchedLinkFPaths.push(linkFPath);
@@ -858,10 +858,15 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
     isStale = !vars.fetch.fetchedLnOrQts.includes(listName);
   }
 
-  // Showing and fetched link ids.
-  const safLinkIds = showingLinkIds.filter(id => {
-    return vars.fetch.fetchedLinkMainIds.includes(getMainId(id));
-  });
+  const safLinkIds = []; // Showing and fetched link ids.
+  const showingLinks = showingLinkIds.map(linkId => getLink(linkId, links));
+  for (const link of showingLinks) {
+    if (!isObject(link)) continue;
+    // In fetchedLinkIds but might not in links
+    //   e.g. delete by UPDATE_FETCHED or UPDATE_FETCHED_MORE.
+    // Though, here should be fine as fsgLinks are from links.
+    if (vars.fetch.fetchedLinkIds.includes(link.id)) safLinkIds.push(link.id);
+  }
 
   const bin = {
     fetchedLinkFPaths: [], unfetchedLinkFPaths: [], hasMore: false, hasDisorder: false,
@@ -918,8 +923,8 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
       [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
     }
     for (const linkFPath of fpaths) {
-      const { id } = extractLinkFPath(linkFPath);
-      if (vars.fetch.fetchedLinkMainIds.includes(getMainId(id))) {
+      const etRs = extractLinkFPath(linkFPath);
+      if (isFetchedLinkId(vars.fetch.fetchedLinkIds, links, etRs.listName, etRs.id)) {
         bin.fetchedLinkFPaths.push(linkFPath);
       } else {
         bin.unfetchedLinkFPaths.push(linkFPath);
@@ -987,7 +992,10 @@ const _getLinksForCompareAction = (getState, payload) => {
     toLnMap[link.id] = listName;
   }
   for (const link of nnfLinks) {
-    if (vars.fetch.fetchedLinkMainIds.includes(getMainId(link.id))) {
+    // In fetchedLinkIds but might not in links
+    //   e.g. delete by UPDATE_FETCHED or UPDATE_FETCHED_MORE.
+    // Though, here should be fine as nnfLinks are from links.
+    if (vars.fetch.fetchedLinkIds.includes(link.id)) {
       updatingLinks.push(link);
     }
   }
@@ -1220,7 +1228,7 @@ export const refreshFetched = (doShowLoading = false, doScrollTop = false) => as
   // If no fetching with the same list name, dispatch a new one.
   if (!fetchingLnOrQts.includes(lnOrQt)) {
     vars.fetch.fetchedLnOrQts = [];
-    vars.fetch.fetchedLinkMainIds = [];
+    vars.fetch.fetchedLinkIds = [];
     payload.doFetch = true;
   }
 
