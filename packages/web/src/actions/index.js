@@ -521,7 +521,8 @@ export const fetch = () => async (dispatch, getState) => {
 
   const lnOrQt = queryString ? queryString : listName;
   if (fetchingLnOrQts.includes(lnOrQt) || lnOrQt in cachedFetched) {
-    if (!queryString) { // For queryString, continue showing loading.
+    // For queryString, continue showing loading.
+    if (!queryString && !vars.fetch.doShowLoading) {
       const { hasMore, objsWithPcEc } = getNLinkObjs({
         links, listName, doDescendingOrder, pinFPaths, pendingPins,
       });
@@ -531,6 +532,7 @@ export const fetch = () => async (dispatch, getState) => {
         payload: { ids, hasMore, images, doClearSelectedLinkIds: true },
       });
     }
+    vars.fetch.doShowLoading = false;
     return;
   }
 
