@@ -393,8 +393,6 @@ const resetState = async (dispatch) => {
 
   // clear vars
   vars.fetch.dt = 0;
-  vars.fetch.fetchedLnOrQts = [];
-  vars.fetch.fetchedLinkIds = [];
   vars.randomHouseworkTasks.dt = 0;
 
   // clear all user data!
@@ -528,7 +526,10 @@ export const fetch = () => async (dispatch, getState) => {
         links, listName, doDescendingOrder, pinFPaths, pendingPins,
       });
       const { ids, images } = await _getIdsAndImages(objsWithPcEc, links);
-      dispatch({ type: SET_SHOWING_LINK_IDS, payload: { ids, hasMore, images } });
+      dispatch({
+        type: SET_SHOWING_LINK_IDS,
+        payload: { ids, hasMore, images, doClearSelectedLinkIds: true },
+      });
     }
     return;
   }
@@ -559,8 +560,12 @@ export const fetch = () => async (dispatch, getState) => {
     if (bin.unfetchedLinkFPaths.length === 0) {
       const { ids, images } = await _getIdsAndImages(fpathsWithPcEc, links);
       dispatch({
-        type: SET_SHOWING_LINK_IDS, payload: { ids, hasMore: bin.hasMore, images },
+        type: SET_SHOWING_LINK_IDS,
+        payload: { ids, hasMore: bin.hasMore, images, doClearSelectedLinkIds: true },
       });
+      // E.g., in settings commit, reset fetchedLnOrQts but not fetchedLinkIds,
+      //   need to add lnOrQt for calculate isStale correctly.
+      addFetchedToVars(lnOrQt, null, vars)
       dispatch(deleteFetchingLnOrQt(lnOrQt));
       return;
     }
@@ -571,7 +576,10 @@ export const fetch = () => async (dispatch, getState) => {
       links, listName, doDescendingOrder, pinFPaths, pendingPins,
     });
     const { ids, images } = await _getIdsAndImages(objsWithPcEc, links);
-    dispatch({ type: SET_SHOWING_LINK_IDS, payload: { ids, hasMore, images } });
+    dispatch({
+      type: SET_SHOWING_LINK_IDS,
+      payload: { ids, hasMore, images, doClearSelectedLinkIds: true },
+    });
   }
   vars.fetch.doShowLoading = false;
 
@@ -819,6 +827,7 @@ export const updateFetched = (
     payload: {
       lnOrQt: payload.lnOrQt, links: lksPerLn,
       ids, hasMore: payload.hasMore, images, doChangeListCount,
+      doClearSelectedLinkIds: true,
     },
   });
   addFetchedToVars(payload.lnOrQt, payload.links, vars);
@@ -1057,9 +1066,11 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
   const queryString = getState().display.queryString;
   const showingLinkIds = getState().display.showingLinkIds;
 
+  // If chose refreshFetched, just return so don't override any variables.
+  if (!Array.isArray(showingLinkIds)) return;
+
   const lnOrQt = queryString ? queryString : listName;
-  if (payload.lnOrQt !== lnOrQt || !Array.isArray(showingLinkIds)) {
-    // Already changed lnOrQt or chose refreshFetched
+  if (payload.lnOrQt !== lnOrQt) {
     dispatch(updateFetchedMore(payload, true));
     dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
     return;
@@ -1147,6 +1158,11 @@ export const updateFetchedMore = (
   const doDescendingOrder = getState().settings.doDescendingOrder;
   const pinFPaths = getPinFPaths(getState());
 
+  if (!Array.isArray(showingLinkIds)) {
+    console.log('In updateFetchedMore, showingLinkIds is not an array!');
+    return;
+  }
+
   if (!payload) {
     const listName = getState().display.listName;
     const queryString = getState().display.queryString;
@@ -1157,7 +1173,7 @@ export const updateFetchedMore = (
   }
   if (!payload) return;
 
-  if (noDisplay || !Array.isArray(showingLinkIds)) {
+  if (noDisplay) {
     dispatch({
       type: UPDATE_FETCHED_MORE,
       payload: { lnOrQt: payload.lnOrQt, links: payload.links },
@@ -1219,20 +1235,9 @@ export const refreshFetched = (doShowLoading = false, doScrollTop = false) => as
 
   const listName = getState().display.listName;
   const queryString = getState().display.queryString;
-  const fetchingLnOrQts = getState().display.fetchingLnOrQts;
-
   const lnOrQt = queryString ? queryString : listName;
 
-  const payload = { lnOrQt, doShowLoading, doScrollTop, doFetch: false };
-
-  // If no fetching with the same list name, dispatch a new one.
-  if (!fetchingLnOrQts.includes(lnOrQt)) {
-    vars.fetch.fetchedLnOrQts = [];
-    vars.fetch.fetchedLinkIds = [];
-    payload.doFetch = true;
-  }
-
-  vars.fetch.doShowLoading = doShowLoading;
+  const payload = { lnOrQt, doShowLoading, doScrollTop };
   dispatch({ type: REFRESH_FETCHED, payload });
 };
 
@@ -2926,6 +2931,7 @@ const cleanUpLocks = async (dispatch, getState) => {
   for (const listName in lockSettings.lockedLists) {
     if (!doContainListName(listName, listNameMap)) listNames.push(listName);
   }
+  if (listNames.length === 0) return;
 
   dispatch({ type: CLEAN_UP_LOCKS, payload: { listNames } });
 };

@@ -19,17 +19,21 @@ const snapshotReducer = (state = initialState, action) => {
   }
 
   if (action.type === FETCH_COMMIT) {
-    const { doFetchStgsAndInfo, settings, info, listNames } = action.payload;
+    const {
+      doFetchStgsAndInfo, settings, conflictedSettings, info, listNames,
+    } = action.payload;
     if (!doFetchStgsAndInfo) return state;
 
-    const derivedSettings = deriveSettingsState(
-      listNames, settings, initialSettingsState
-    );
+    let derivedSettings = deriveSettingsState(listNames, settings, initialSettingsState);
+    if (Array.isArray(conflictedSettings) && conflictedSettings.length > 0) {
+      derivedSettings = { ...state.settings };
+    }
+
     const derivedInfo = deriveInfoState(info, initialInfoState);
+
     const newState = {
       ...state, settings: { ...derivedSettings }, info: { ...derivedInfo },
     };
-
     return newState;
   }
 

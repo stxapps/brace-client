@@ -30,6 +30,7 @@ import {
 import {
   doContainListName, getStatusCounts, isObject, isString, isNumber,
 } from '../utils';
+import vars from '../vars';
 
 const initialState = {
   listName: MY_LIST,
@@ -161,8 +162,8 @@ const displayReducer = (state = initialState, action) => {
     return {
       ...state,
       listName: action.payload,
-      listChangedCount: state.listChangedCount + 1,
       selectedLinkIds: [],
+      listChangedCount: state.listChangedCount + 1,
     };
   }
 
@@ -366,7 +367,7 @@ const displayReducer = (state = initialState, action) => {
     action.type === UPDATE_FETCHED_MORE ||
     action.type === SET_SHOWING_LINK_IDS
   ) {
-    const newState = { ...state, selectedLinkIds: [] };
+    const newState = { ...state };
     if ('ids' in action.payload) {
       const { ids } = action.payload;
       newState.showingLinkIds = Array.isArray(ids) ? [...ids] : ids;
@@ -376,6 +377,9 @@ const displayReducer = (state = initialState, action) => {
     }
     if ('doChangeListCount' in action.payload) {
       if (action.payload.doChangeListCount) newState.listChangedCount += 1;
+    }
+    if ('doClearSelectedLinkIds' in action.payload) {
+      if (action.payload.doClearSelectedLinkIds) newState.selectedLinkIds = [];
     }
     return newState;
   }
@@ -392,12 +396,19 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === REFRESH_FETCHED) {
-    const { doShowLoading, doScrollTop, doFetch } = action.payload;
+    const { doShowLoading, doScrollTop } = action.payload;
 
     const newState = { ...state };
-    if (doShowLoading) newState.showingLinkIds = null;
-    if (doScrollTop) newState.listChangedCount = state.listChangedCount + 1;
-    if (doFetch) newState.didFetchSettings = false;
+    if (doShowLoading && Array.isArray(newState.showingLinkIds)) {
+      newState.selectedLinkIds = [];
+      [newState.showingLinkIds, newState.hasMoreLinks] = [null, null];
+      vars.fetch.doShowLoading = true;
+    }
+    if (doScrollTop) newState.listChangedCount += 1;
+    if (newState.didFetchSettings) {
+      newState.didFetchSettings = false;
+      [vars.fetch.fetchedLnOrQts, vars.fetch.fetchedLinkIds] = [[], []];
+    }
 
     return newState;
   }
@@ -586,7 +597,12 @@ const displayReducer = (state = initialState, action) => {
       statuses: [...state.statuses, UPDATE_SETTINGS_COMMIT],
       settingsStatus: null,
     };
-    if (doFetch) newState.showingLinkIds = null;
+    if (doFetch && Array.isArray(newState.showingLinkIds)) {
+      newState.selectedLinkIds = [];
+      [newState.showingLinkIds, newState.hasMoreLinks] = [null, null];
+      newState.listChangedCount += 1;
+      [vars.fetch.fetchedLnOrQts, vars.fetch.doShowLoading] = [[], true];
+    }
     return newState;
   }
 
@@ -615,7 +631,12 @@ const displayReducer = (state = initialState, action) => {
       statuses: isActive ? [...state.statuses, null] : [],
       settingsStatus: null,
     };
-    if (doFetch) newState.showingLinkIds = null;
+    if (doFetch && Array.isArray(newState.showingLinkIds)) {
+      newState.selectedLinkIds = [];
+      [newState.showingLinkIds, newState.hasMoreLinks] = [null, null];
+      newState.listChangedCount += 1;
+      [vars.fetch.fetchedLnOrQts, vars.fetch.doShowLoading] = [[], true];
+    }
     return newState;
   }
 
@@ -672,9 +693,13 @@ const displayReducer = (state = initialState, action) => {
     const progress = isObject(action.payload) ? { ...action.payload } : action.payload;
     const newState = { ...state, importAllDataProgress: progress };
     if (isObject(progress) && progress.total && progress.done) {
-      if (progress.total === progress.done) {
+      if (progress.total === progress.done && newState.didFetchSettings) {
+        newState.selectedLinkIds = [];
         newState.didFetchSettings = false;
-        newState.showingLinkIds = null;
+        [newState.showingLinkIds, newState.hasMoreLinks] = [null, null];
+        newState.listChangedCount += 1;
+        [vars.fetch.fetchedLnOrQts, vars.fetch.fetchedLinkIds] = [[], []];
+        vars.fetch.doShowLoading = true;
       }
     }
     return newState;
@@ -691,13 +716,16 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === DELETE_ALL_DATA) {
-    return {
+    const newState = {
       ...initialState,
       didFetch: true, didFetchSettings: true, showingLinkIds: [], hasMoreLinks: false,
     };
+    [vars.fetch.fetchedLnOrQts, vars.fetch.fetchedLinkIds] = [[MY_LIST], []];
+    return newState;
   }
 
   if (action.type === RESET_STATE) {
+    [vars.fetch.fetchedLnOrQts, vars.fetch.fetchedLinkIds] = [[], []];
     return { ...initialState };
   }
 

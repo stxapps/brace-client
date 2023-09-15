@@ -680,8 +680,6 @@ export const deleteAllData = () => async (dispatch, getState) => {
     }
     await fileApi.deleteAllFiles();
 
-    vars.fetch.fetchedLnOrQts = [MY_LIST];
-    vars.fetch.fetchedLinkIds = [];
     dispatch({ type: DELETE_ALL_DATA });
   } catch (error) {
     dispatch(updateDeleteAllDataProgress({ total: -1, done: -1, error: `${error}` }));

@@ -33,10 +33,15 @@ const settingsReducer = (state = initialState, action) => {
   }
 
   if (action.type === FETCH_COMMIT) {
-    const { doFetchStgsAndInfo, settings, listNames } = action.payload;
+    const {
+      doFetchStgsAndInfo, settings, conflictedSettings, listNames,
+    } = action.payload;
     if (!doFetchStgsAndInfo) return state;
 
-    const newState = deriveSettingsState(listNames, settings, initialState);
+    let newState = deriveSettingsState(listNames, settings, initialState);
+    if (Array.isArray(conflictedSettings) && conflictedSettings.length > 0) {
+      newState = { ...state };
+    }
 
     if (didChange.doExtractContents) {
       newState.doExtractContents = state.doExtractContents;
