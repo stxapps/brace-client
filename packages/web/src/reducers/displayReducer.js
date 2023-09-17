@@ -3,8 +3,7 @@ import { REHYDRATE } from 'redux-persist/constants';
 import {
   UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING, FETCH, FETCH_COMMIT,
   FETCH_ROLLBACK, UPDATE_FETCHED, FETCH_MORE_ROLLBACK, UPDATE_FETCHED_MORE,
-  REFRESH_FETCHED, ADD_FETCHING_LN_OR_QT, DELETE_FETCHING_LN_OR_QT,
-  ADD_FETCHING_MORE_LN_OR_QT, DELETE_FETCHING_MORE_LN_OR_QT, SET_SHOWING_LINK_IDS,
+  REFRESH_FETCHED, ADD_FETCHING_INFO, DELETE_FETCHING_INFO, SET_SHOWING_LINK_IDS,
   ADD_LINKS, MOVE_LINKS_DELETE_STEP_COMMIT, DELETE_LINKS_COMMIT, CANCEL_DIED_LINKS,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK, EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK,
@@ -68,8 +67,7 @@ const initialState = {
   rehydratedListNames: [], // Unused but keep it for diff with old versions
   didFetch: false,
   didFetchSettings: false,
-  fetchingLnOrQts: [],
-  fetchingMoreLnOrQts: [],
+  fetchingInfos: [],
   fetchedListNames: [], // Unused but keep it for diff with old versions
   showingLinkIds: null,
   hasMoreLinks: null,
@@ -132,8 +130,7 @@ const displayReducer = (state = initialState, action) => {
       rehydratedListNames: [],
       didFetch: false,
       didFetchSettings: false,
-      fetchingLnOrQts: [],
-      fetchingMoreLnOrQts: [],
+      fetchingInfos: [],
       fetchedListNames: [],
       showingLinkIds: null,
       hasMoreLinks: null,
@@ -338,10 +335,10 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === FETCH_ROLLBACK) {
-    const { lnOrQt } = action.meta;
+    const { fthId } = action.meta;
 
     const newState = { ...state, statuses: [...state.statuses, FETCH_ROLLBACK] };
-    newState.fetchingLnOrQts = state.fetchingLnOrQts.filter(el => el !== lnOrQt);
+    newState.fetchingInfos = state.fetchingInfos.filter(info => info.fthId !== fthId);
     if (
       (
         isObject(action.payload) &&
@@ -385,13 +382,11 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === FETCH_MORE_ROLLBACK) {
-    const { lnOrQt, doForCompare } = action.meta;
+    const { doForCompare, fthId } = action.meta;
 
     const newState = { ...state };
     if (doForCompare) newState.statuses = [...state.statuses, FETCH, FETCH_ROLLBACK];
-    newState.fetchingMoreLnOrQts = state.fetchingMoreLnOrQts.filter(el => {
-      return el !== `${lnOrQt}:${doForCompare}`;
-    });
+    newState.fetchingInfos = state.fetchingInfos.filter(info => info.fthId !== fthId);
     return newState;
   }
 
@@ -407,33 +402,25 @@ const displayReducer = (state = initialState, action) => {
     if (doScrollTop) newState.listChangedCount += 1;
     if (newState.didFetchSettings) {
       newState.didFetchSettings = false;
+      newState.fetchingInfos = newState.fetchingInfos.map(info => {
+        return { ...info, isInterrupted: true };
+      });
+
       [vars.fetch.fetchedLnOrQts, vars.fetch.fetchedLinkIds] = [[], []];
+      vars.fetch.doForce = true;
     }
 
     return newState;
   }
 
-  if (action.type === ADD_FETCHING_LN_OR_QT) {
-    return { ...state, fetchingLnOrQts: [...state.fetchingLnOrQts, action.payload] };
+  if (action.type === ADD_FETCHING_INFO) {
+    return { ...state, fetchingInfos: [...state.fetchingInfos, { ...action.payload }] };
   }
 
-  if (action.type === DELETE_FETCHING_LN_OR_QT) {
+  if (action.type === DELETE_FETCHING_INFO) {
     return {
       ...state,
-      fetchingLnOrQts: state.fetchingLnOrQts.filter(el => el !== action.payload),
-    };
-  }
-
-  if (action.type === ADD_FETCHING_MORE_LN_OR_QT) {
-    return {
-      ...state, fetchingMoreLnOrQts: [...state.fetchingMoreLnOrQts, action.payload],
-    };
-  }
-
-  if (action.type === DELETE_FETCHING_MORE_LN_OR_QT) {
-    return {
-      ...state,
-      fetchingMoreLnOrQts: state.fetchingMoreLnOrQts.filter(el => el !== action.payload),
+      fetchingInfos: state.fetchingInfos.filter(info => info.fthId !== action.payload),
     };
   }
 

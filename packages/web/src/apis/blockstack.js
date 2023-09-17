@@ -185,7 +185,7 @@ const fetchStaticFiles = async (linkObjs) => {
 };
 
 const fetch = async (params) => {
-  const { getState, listName, queryString, lnOrQt } = params;
+  const { getState, listName, queryString, lnOrQt, fthId } = params;
 
   const links = getState().links;
   const didFetch = getState().display.didFetch;
@@ -221,7 +221,7 @@ const fetch = async (params) => {
     }
   }
 
-  const result = { lnOrQt };
+  const result = { lnOrQt, fthId };
   if (!didFetch || !didFetchSettings) {
     const {
       linkFPaths, settingsFPaths, infoFPath, pinFPaths,
@@ -263,7 +263,9 @@ const fetch = async (params) => {
 };
 
 const fetchMore = async (params) => {
-  const { getState, doForCompare, listName, queryString, lnOrQt, safLinkIds } = params;
+  const {
+    getState, doForCompare, listName, queryString, lnOrQt, fthId, safLinkIds,
+  } = params;
 
   const links = getState().links;
   const pendingPins = getState().pendingPins;
@@ -318,8 +320,9 @@ const fetchMore = async (params) => {
 
   const lResult = await fetchLinks(bin.unfetchedLinkFPaths);
   const result = {
-    lnOrQt,
     doForCompare,
+    lnOrQt,
+    fthId,
     fetchedLinkFPaths: bin.fetchedLinkFPaths,
     unfetchedLinkFPaths: bin.unfetchedLinkFPaths,
     hasMore: bin.hasMore,

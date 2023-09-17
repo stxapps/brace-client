@@ -12,6 +12,7 @@ import {
   isStringIn, isObject, isString, isArrayEqual, isEqual, getListNameObj, getStatusCounts,
   getMainId, getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
   getPinFPaths, getPins, doEnableExtraFeatures, isNumber, isMobile as _isMobile, getLink,
+  doesIncludeFetchingMore,
 } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 import { initialListNameEditorState } from '../types/initialStates';
@@ -142,10 +143,10 @@ export const getHasMoreLinks = createSelector(
 export const getIsFetchingMore = createSelector(
   state => state.display.listName,
   state => state.display.queryString,
-  state => state.display.fetchingMoreLnOrQts,
-  (listName, queryString, fetchingMoreLnOrQts) => {
-    if (queryString && fetchingMoreLnOrQts.includes(`${queryString}:false`)) return true;
-    if (fetchingMoreLnOrQts.includes(`${listName}:false`)) return true;
+  state => state.display.fetchingInfos,
+  (listName, queryString, fetchingInfos) => {
+    const lnOrQt = queryString ? queryString : listName;
+    if (doesIncludeFetchingMore(lnOrQt, false, fetchingInfos)) return true;
     return false;
   }
 );

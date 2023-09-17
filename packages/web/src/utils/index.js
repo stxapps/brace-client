@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import Url from 'url-parse';
 
 import {
-  FETCH, FETCH_COMMIT, FETCH_ROLLBACK, DELETE_OLD_LINKS_IN_TRASH,
+  FETCH, FETCH_COMMIT, FETCH_ROLLBACK, FETCH_MORE, DELETE_OLD_LINKS_IN_TRASH,
   DELETE_OLD_LINKS_IN_TRASH_COMMIT, DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
   UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
@@ -2130,4 +2130,30 @@ export const isFetchedLinkId = (fetchedLinkIds, links, listName, id) => {
   // The flow should be like showingLinkIds/fpaths -> links -> filtered by fetched.
   if (!isObject(links[listName]) || !isObject(links[listName][id])) return false;
   return true;
+};
+
+export const doesIncludeFetching = (lnOrQt, doForce, fetchingInfos) => {
+  for (const info of fetchingInfos) {
+    if (info.type !== FETCH) continue;
+    if (info.lnOrQt === lnOrQt) {
+      if (!doForce) return true;
+      if (info.doForce === doForce) return true;
+    }
+  }
+  return false;
+};
+
+export const doesIncludeFetchingMore = (lnOrQt, doForCompare, fetchingInfos) => {
+  for (const info of fetchingInfos) {
+    if (info.type !== FETCH_MORE) continue;
+    if (info.lnOrQt === lnOrQt && info.doForCompare === doForCompare) return true;
+  }
+  return false;
+};
+
+export const isFetchingInterrupted = (fthId, fetchingInfos) => {
+  for (const info of fetchingInfos) {
+    if (info.fthId === fthId) return !!info.isInterrupted;
+  }
+  return false;
 };

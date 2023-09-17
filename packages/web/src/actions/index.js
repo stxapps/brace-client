@@ -19,31 +19,30 @@ import {
   UPDATE_BULK_EDITING, ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS,
   UPDATE_SELECTING_LINK_ID, FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED,
   UPDATE_FETCHED, FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
-  CACHE_FETCHED_MORE, UPDATE_FETCHED_MORE, REFRESH_FETCHED, ADD_FETCHING_LN_OR_QT,
-  DELETE_FETCHING_LN_OR_QT, ADD_FETCHING_MORE_LN_OR_QT, DELETE_FETCHING_MORE_LN_OR_QT,
-  SET_SHOWING_LINK_IDS, ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK, UPDATE_LINKS,
-  DELETE_LINKS, DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP,
-  MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK, MOVE_LINKS_DELETE_STEP,
-  MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK, CANCEL_DIED_LINKS,
-  DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
-  DELETE_OLD_LINKS_IN_TRASH_ROLLBACK, EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT,
-  EXTRACT_CONTENTS_ROLLBACK, UPDATE_EXTRACTED_CONTENTS, UPDATE_LIST_NAME_EDITORS,
-  ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME,
-  DELETE_LIST_NAMES, UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME,
-  UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
-  UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
-  UPDATE_SETTINGS_ROLLBACK, UPDATE_INFO, UPDATE_INFO_COMMIT, UPDATE_INFO_ROLLBACK,
-  CANCEL_DIED_SETTINGS, MERGE_SETTINGS, MERGE_SETTINGS_COMMIT, MERGE_SETTINGS_ROLLBACK,
-  UPDATE_SETTINGS_VIEW_ID, UPDATE_DO_USE_LOCAL_LAYOUT, UPDATE_DEFAULT_LAYOUT_TYPE,
-  UPDATE_LOCAL_LAYOUT_TYPE, UPDATE_DELETE_ACTION, UPDATE_DISCARD_ACTION,
-  UPDATE_LIST_NAMES_MODE, GET_PRODUCTS, GET_PRODUCTS_COMMIT, GET_PRODUCTS_ROLLBACK,
-  REQUEST_PURCHASE, REQUEST_PURCHASE_COMMIT, REQUEST_PURCHASE_ROLLBACK,
-  RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
-  REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
-  UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS, UPDATE_IAP_PURCHASE_STATUS,
-  UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS, PIN_LINK, PIN_LINK_COMMIT,
-  PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_COMMIT, UNPIN_LINK_ROLLBACK,
-  MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
+  CACHE_FETCHED_MORE, UPDATE_FETCHED_MORE, REFRESH_FETCHED, ADD_FETCHING_INFO,
+  DELETE_FETCHING_INFO, SET_SHOWING_LINK_IDS, ADD_LINKS, ADD_LINKS_COMMIT,
+  ADD_LINKS_ROLLBACK, UPDATE_LINKS, DELETE_LINKS, DELETE_LINKS_COMMIT,
+  DELETE_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT,
+  MOVE_LINKS_ADD_STEP_ROLLBACK, MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT,
+  MOVE_LINKS_DELETE_STEP_ROLLBACK, CANCEL_DIED_LINKS, DELETE_OLD_LINKS_IN_TRASH,
+  DELETE_OLD_LINKS_IN_TRASH_COMMIT, DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
+  EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
+  UPDATE_EXTRACTED_CONTENTS, UPDATE_LIST_NAME_EDITORS, ADD_LIST_NAMES,
+  UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME, DELETE_LIST_NAMES,
+  UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME, UPDATE_DO_EXTRACT_CONTENTS,
+  UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH, UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS,
+  UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK, UPDATE_INFO, UPDATE_INFO_COMMIT,
+  UPDATE_INFO_ROLLBACK, CANCEL_DIED_SETTINGS, MERGE_SETTINGS, MERGE_SETTINGS_COMMIT,
+  MERGE_SETTINGS_ROLLBACK, UPDATE_SETTINGS_VIEW_ID, UPDATE_DO_USE_LOCAL_LAYOUT,
+  UPDATE_DEFAULT_LAYOUT_TYPE, UPDATE_LOCAL_LAYOUT_TYPE, UPDATE_DELETE_ACTION,
+  UPDATE_DISCARD_ACTION, UPDATE_LIST_NAMES_MODE, GET_PRODUCTS, GET_PRODUCTS_COMMIT,
+  GET_PRODUCTS_ROLLBACK, REQUEST_PURCHASE, REQUEST_PURCHASE_COMMIT,
+  REQUEST_PURCHASE_ROLLBACK, RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT,
+  RESTORE_PURCHASES_ROLLBACK, REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT,
+  REFRESH_PURCHASES_ROLLBACK, UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS,
+  UPDATE_IAP_PURCHASE_STATUS, UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
+  PIN_LINK, PIN_LINK_COMMIT, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_COMMIT,
+  UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
   MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, CANCEL_DIED_PINS, UPDATE_SYSTEM_THEME_MODE,
   UPDATE_DO_USE_LOCAL_THEME, UPDATE_DEFAULT_THEME, UPDATE_LOCAL_THEME,
   UPDATE_UPDATING_THEME_MODE, UPDATE_TIME_PICK, UPDATE_IS_24H_FORMAT,
@@ -77,7 +76,8 @@ import {
   get24HFormattedTime, extractStaticFPath, getWindowSize, getEditingListNameEditors,
   validatePassword, doContainListName, sleep, sample, extractLinkFPath, getLink,
   getListNameAndLink, getNLinkObjs, getNLinkFPaths, newObject, addFetchedToVars,
-  createLinkFPath, isFetchedLinkId,
+  createLinkFPath, isFetchedLinkId, doesIncludeFetching, doesIncludeFetchingMore,
+  isFetchingInterrupted,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -505,12 +505,15 @@ const _getIdsAndImages = async (linkObjsOrFPaths, links) => {
 };
 
 export const fetch = () => async (dispatch, getState) => {
+  const doForce = vars.fetch.doForce;
+  vars.fetch.doForce = false;
+
   const links = getState().links;
   const listName = getState().display.listName;
   const queryString = getState().display.queryString;
   const didFetch = getState().display.didFetch;
   const didFetchSettings = getState().display.didFetchSettings;
-  const fetchingLnOrQts = getState().display.fetchingLnOrQts;
+  const fetchingInfos = getState().display.fetchingInfos;
   const cachedFetched = getState().fetched;
   const pendingPins = getState().pendingPins;
 
@@ -520,7 +523,7 @@ export const fetch = () => async (dispatch, getState) => {
   const pinFPaths = getPinFPaths(getState());
 
   const lnOrQt = queryString ? queryString : listName;
-  if (fetchingLnOrQts.includes(lnOrQt) || lnOrQt in cachedFetched) {
+  if (doesIncludeFetching(lnOrQt, doForce, fetchingInfos) || lnOrQt in cachedFetched) {
     // For queryString, continue showing loading.
     if (!queryString && !vars.fetch.doShowLoading) {
       const { hasMore, objsWithPcEc } = getNLinkObjs({
@@ -536,7 +539,8 @@ export const fetch = () => async (dispatch, getState) => {
     return;
   }
 
-  dispatch(addFetchingLnOrQt(lnOrQt));
+  const fthId = `${Date.now()}${randomString(4)}`;
+  dispatch(addFetchingInfo({ type: FETCH, doForce, lnOrQt, fthId }));
 
   const bin = { fetchedLinkFPaths: [], unfetchedLinkFPaths: [], hasMore: false };
   if (didFetch && didFetchSettings) {
@@ -568,7 +572,7 @@ export const fetch = () => async (dispatch, getState) => {
       // E.g., in settings commit, reset fetchedLnOrQts but not fetchedLinkIds,
       //   need to add lnOrQt for calculate isStale correctly.
       addFetchedToVars(lnOrQt, null, vars)
-      dispatch(deleteFetchingLnOrQt(lnOrQt));
+      dispatch(deleteFetchingInfo(fthId));
       return;
     }
   }
@@ -585,7 +589,7 @@ export const fetch = () => async (dispatch, getState) => {
   }
   vars.fetch.doShowLoading = false;
 
-  const payload = { listName, queryString, lnOrQt };
+  const payload = { listName, queryString, lnOrQt, fthId };
   dispatch({
     type: FETCH,
     payload,
@@ -644,7 +648,7 @@ const _getUpdateFetchedAction = (getState, payload) => {
     3. haveNew: not the same for sure, something new, update if not scroll or popup
          else show fetchedPopup
   */
-  const fetchingMoreLnOrQts = getState().display.fetchingMoreLnOrQts;
+  const fetchingInfos = getState().display.fetchingInfos;
   const showingLinkIds = getState().display.showingLinkIds;
   const pendingPins = getState().pendingPins;
   const cachedFetchedMore = getState().fetchedMore;
@@ -655,8 +659,8 @@ const _getUpdateFetchedAction = (getState, payload) => {
   if (!Array.isArray(showingLinkIds) || showingLinkIds.length === 0) return 0;
 
   if (
-    fetchingMoreLnOrQts.includes(`${payload.lnOrQt}:false`) ||
-    fetchingMoreLnOrQts.includes(`${payload.lnOrQt}:true`) ||
+    doesIncludeFetchingMore(payload.lnOrQt, false, fetchingInfos) ||
+    doesIncludeFetchingMore(payload.lnOrQt, true, fetchingInfos) ||
     payload.lnOrQt in cachedFetchedMore
   ) {
     return 3; // Try to prevent differences in the fetchMore.
@@ -706,11 +710,19 @@ const _getUpdateFetchedAction = (getState, payload) => {
 export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
   const listName = getState().display.listName;
   const queryString = getState().display.queryString;
+  const fetchingInfos = getState().display.fetchingInfos;
+
+  // If interrupted e.g. by refreshFetched,
+  //   don't updateFetched so don't override any variables.
+  if (isFetchingInterrupted(payload.fthId, fetchingInfos)) {
+    dispatch(deleteFetchingInfo(payload.fthId));
+    return;
+  }
 
   const lnOrQt = queryString ? queryString : listName;
   if (payload.lnOrQt !== lnOrQt) {
     dispatch(updateFetched(payload, false, true));
-    dispatch(deleteFetchingLnOrQt(payload.lnOrQt));
+    dispatch(deleteFetchingInfo(payload.fthId));
     return;
   }
 
@@ -720,7 +732,7 @@ export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
   const updateAction = _getUpdateFetchedAction(getState, payload);
   if (updateAction === 0) {
     dispatch(updateFetched(payload));
-    dispatch(deleteFetchingLnOrQt(payload.lnOrQt));
+    dispatch(deleteFetchingInfo(payload.fthId));
     return;
   }
 
@@ -735,13 +747,13 @@ export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
       },
     });
     addFetchedToVars(payload.lnOrQt, payload.links, vars)
-    dispatch(deleteFetchingLnOrQt(payload.lnOrQt));
+    dispatch(deleteFetchingInfo(payload.fthId));
     return;
   }
 
   if (updateAction === 2) {
     addFetchedToVars(null, payload.links, vars)
-    dispatch(deleteFetchingLnOrQt(payload.lnOrQt));
+    dispatch(deleteFetchingInfo(payload.fthId));
     dispatch(fetchMore(true));
     return;
   }
@@ -751,13 +763,13 @@ export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
     const scrollY = vars.scrollPanel.scrollY;
     if (scrollY < 32 && !isPopupShown(getState())) {
       dispatch(updateFetched(payload));
-      dispatch(deleteFetchingLnOrQt(payload.lnOrQt));
+      dispatch(deleteFetchingInfo(payload.fthId));
       return;
     }
   }
 
   dispatch({ type: CACHE_FETCHED, payload });
-  dispatch(deleteFetchingLnOrQt(payload.lnOrQt));
+  dispatch(deleteFetchingInfo(payload.fthId));
 };
 
 export const updateFetched = (
@@ -839,7 +851,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
   const links = getState().links;
   const listName = getState().display.listName;
   const queryString = getState().display.queryString;
-  const fetchingMoreLnOrQts = getState().display.fetchingMoreLnOrQts;
+  const fetchingInfos = getState().display.fetchingInfos;
   const showingLinkIds = getState().display.showingLinkIds;
   const cachedFetchedMore = getState().fetchedMore;
   const pendingPins = getState().pendingPins;
@@ -856,13 +868,14 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
 
   const lnOrQt = queryString ? queryString : listName;
   if (
-    fetchingMoreLnOrQts.includes(`${lnOrQt}:${doForCompare}`) ||
+    doesIncludeFetchingMore(lnOrQt, doForCompare, fetchingInfos) ||
     lnOrQt in cachedFetchedMore
   ) {
     return;
   }
 
-  dispatch(addFetchingMoreLnOrQt(lnOrQt, doForCompare));
+  const fthId = `${Date.now()}${randomString(4)}`;
+  dispatch(addFetchingInfo({ type: FETCH_MORE, doForCompare, lnOrQt, fthId }));
 
   let isStale = false;
   if (!doForCompare && !queryString) {
@@ -886,7 +899,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
     if (queryString) {
       // Impossible case, just return.
       addFetchedToVars(lnOrQt, null, vars);
-      dispatch(deleteFetchingMoreLnOrQt(lnOrQt, doForCompare));
+      dispatch(deleteFetchingInfo(fthId));
       return;
     } else {
       const _result = getNLinkFPaths({
@@ -895,7 +908,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
       });
       if (_result.fpaths.length === 0) {
         addFetchedToVars(lnOrQt, null, vars);
-        dispatch(deleteFetchingMoreLnOrQt(lnOrQt, doForCompare));
+        dispatch(deleteFetchingInfo(fthId));
         return;
       }
     }
@@ -904,7 +917,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
     if (queryString) {
       if (isStale) {
         // Impossible case, just return.
-        dispatch(deleteFetchingMoreLnOrQt(lnOrQt, doForCompare));
+        dispatch(deleteFetchingInfo(fthId));
         return;
       }
 
@@ -922,7 +935,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
         }
         const { ids, images } = await _getIdsAndImages(objsWithPcEc, links);
         dispatch({ type: SET_SHOWING_LINK_IDS, payload: { ids, hasMore, images } });
-        dispatch(deleteFetchingMoreLnOrQt(lnOrQt, doForCompare));
+        dispatch(deleteFetchingInfo(fthId));
         return;
       }
 
@@ -949,12 +962,12 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
       dispatch({
         type: SET_SHOWING_LINK_IDS, payload: { ids, hasMore: bin.hasMore, images },
       });
-      dispatch(deleteFetchingMoreLnOrQt(lnOrQt, doForCompare));
+      dispatch(deleteFetchingInfo(fthId));
       return;
     }
   }
 
-  const payload = { doForCompare, listName, queryString, lnOrQt, safLinkIds };
+  const payload = { doForCompare, listName, queryString, lnOrQt, fthId, safLinkIds };
   dispatch({
     type: FETCH_MORE,
     payload,
@@ -1066,15 +1079,23 @@ const _getFpsAndLksPerLn = (links, toLnMap) => {
 export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
   const listName = getState().display.listName;
   const queryString = getState().display.queryString;
+  const fetchingInfos = getState().display.fetchingInfos;
   const showingLinkIds = getState().display.showingLinkIds;
 
-  // If chose refreshFetched, just return so don't override any variables.
-  if (!Array.isArray(showingLinkIds)) return;
+  // If interrupted e.g. by refreshFetched,
+  //   don't updateFetchedMore so don't override any variables.
+  if (
+    isFetchingInterrupted(payload.fthId, fetchingInfos) ||
+    !Array.isArray(showingLinkIds)
+  ) {
+    dispatch(deleteFetchingInfo(payload.fthId));
+    return;
+  }
 
   const lnOrQt = queryString ? queryString : listName;
   if (payload.lnOrQt !== lnOrQt) {
     dispatch(updateFetchedMore(payload, true));
-    dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
+    dispatch(deleteFetchingInfo(payload.fthId));
     return;
   }
 
@@ -1089,7 +1110,7 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
     if (updateAction === 0) {
       // Empty e.g., user deletes all showing links
       dispatch(updateFetchedMore(payload));
-      dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
+      dispatch(deleteFetchingInfo(payload.fthId));
       return;
     }
 
@@ -1101,13 +1122,13 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
         },
       });
       addFetchedToVars(payload.lnOrQt, payload.links, vars);
-      dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
+      dispatch(deleteFetchingInfo(payload.fthId));
       return;
     }
 
     if (updateAction === 2) {
       addFetchedToVars(null, payload.links, vars);
-      dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
+      dispatch(deleteFetchingInfo(payload.fthId));
       dispatch(fetchMore(true));
       return;
     }
@@ -1123,13 +1144,13 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
         links: lksPerLn,
       }
     });
-    dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
+    dispatch(deleteFetchingInfo(payload.fthId));
     return;
   }
 
   if (!payload.hasDisorder) {
     dispatch(updateFetchedMore(payload));
-    dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
+    dispatch(deleteFetchingInfo(payload.fthId));
     return;
   }
 
@@ -1141,13 +1162,13 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
 
     if (windowBottom > (scrollHeight * 0.96) && !isPopupShown(getState())) {
       dispatch(updateFetchedMore(payload));
-      dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
+      dispatch(deleteFetchingInfo(payload.fthId));
       return;
     }
   }
 
   dispatch({ type: CACHE_FETCHED_MORE, payload });
-  dispatch(deleteFetchingMoreLnOrQt(payload.lnOrQt, payload.doForCompare));
+  dispatch(deleteFetchingInfo(payload.fthId));
 };
 
 export const updateFetchedMore = (
@@ -1160,11 +1181,6 @@ export const updateFetchedMore = (
   const doDescendingOrder = getState().settings.doDescendingOrder;
   const pinFPaths = getPinFPaths(getState());
 
-  if (!Array.isArray(showingLinkIds)) {
-    console.log('In updateFetchedMore, showingLinkIds is not an array!');
-    return;
-  }
-
   if (!payload) {
     const listName = getState().display.listName;
     const queryString = getState().display.queryString;
@@ -1174,6 +1190,14 @@ export const updateFetchedMore = (
     if (fetchedMore) ({ payload } = fetchedMore);
   }
   if (!payload) return;
+
+  if (!Array.isArray(showingLinkIds)) {
+    // Need to dispatch UPDATE_FETCHED_MORE to make sure clear fetchedMoreReducer.
+    dispatch({
+      type: UPDATE_FETCHED_MORE, payload: { lnOrQt: payload.lnOrQt },
+    });
+    return;
+  }
 
   if (noDisplay) {
     dispatch({
@@ -1264,20 +1288,12 @@ const sortShowingLinkIds = async (dispatch, getState) => {
   dispatch({ type: SET_SHOWING_LINK_IDS, payload: { ids } });
 };
 
-const addFetchingLnOrQt = (lnOrQt) => {
-  return { type: ADD_FETCHING_LN_OR_QT, payload: lnOrQt };
+const addFetchingInfo = (payload) => {
+  return { type: ADD_FETCHING_INFO, payload };
 };
 
-const deleteFetchingLnOrQt = (lnOrQt) => {
-  return { type: DELETE_FETCHING_LN_OR_QT, payload: lnOrQt };
-};
-
-const addFetchingMoreLnOrQt = (lnOrQt, doForCompare) => {
-  return { type: ADD_FETCHING_MORE_LN_OR_QT, payload: `${lnOrQt}:${doForCompare}` };
-};
-
-const deleteFetchingMoreLnOrQt = (lnOrQt, doForCompare) => {
-  return { type: DELETE_FETCHING_MORE_LN_OR_QT, payload: `${lnOrQt}:${doForCompare}` };
+const deleteFetchingInfo = (fthId) => {
+  return { type: DELETE_FETCHING_INFO, payload: fthId };
 };
 
 const _getAddLinkInsertIndex = (getState) => {

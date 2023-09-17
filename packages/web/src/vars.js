@@ -23,6 +23,7 @@ const fetch = {
   fetchedLnOrQts: [],
   fetchedLinkIds: [],
   doShowLoading: false,
+  doForce: false,
 };
 
 const randomHouseworkTasks = {
