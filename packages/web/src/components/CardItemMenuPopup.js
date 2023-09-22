@@ -4,17 +4,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import {
   updatePopup, updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction,
-  updateListNamesMode, updateCustomEditorPopup,
+  updateListNamesMode, updateCustomEditorPopup, updateTagEditorPopup,
 } from '../actions';
 import {
   MY_LIST, TRASH, ADDING, MOVING, UPDATING, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
   MOVE_TO, CHANGE, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, CARD_ITEM_MENU_POPUP,
   LIST_NAMES_POPUP, PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
   DELETE_ACTION_LINK_ITEM_MENU, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
+  ADD_TAGS, MANAGE_TAGS, TAGGED,
 } from '../types/const';
 import {
   getListNameMap, getPopupLink, getLayoutType, makeGetPinStatus, getThemeMode,
-  getSafeAreaWidth, getSafeAreaHeight,
+  getSafeAreaWidth, getSafeAreaHeight, makeGetTagStatus,
 } from '../selectors';
 import {
   copyTextToClipboard, getListNameDisplayName, getAllListNames, isEqual,
@@ -73,7 +74,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
   populateMenu() {
     const {
-      listName, listNameMap, popupLink, pinStatus, layoutType, safeAreaWidth,
+      listName, listNameMap, popupLink, pinStatus, tagStatus, layoutType, safeAreaWidth,
     } = this.props;
 
     let menu = null;
@@ -89,13 +90,17 @@ class CardItemMenuPopup extends React.PureComponent {
 
     if (
       [ADDING, MOVING, UPDATING].includes(popupLink.status) ||
-      ![null, PINNED].includes(pinStatus)
+      ![null, PINNED].includes(pinStatus) ||
+      ![null, TAGGED].includes(tagStatus)
     ) {
       menu = menu.slice(0, 1);
     } else if (listName !== TRASH) {
       // Only when no other pending actions and list name is not TRASH
       if (pinStatus === PINNED) menu = [...menu, MANAGE_PIN];
       else if (pinStatus === null) menu = [...menu, PIN];
+
+      if (tagStatus === TAGGED) menu = [...menu, MANAGE_TAGS];
+      else if (tagStatus === null) menu = [...menu, ADD_TAGS];
 
       menu = [...menu, CHANGE];
     }
@@ -154,6 +159,8 @@ class CardItemMenuPopup extends React.PureComponent {
         top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
       };
       this.props.updatePopup(PIN_MENU_POPUP, true, rect);
+    } else if (text === ADD_TAGS || text === MANAGE_TAGS) {
+      this.props.updateTagEditorPopup(true, id, text === ADD_TAGS);
     } else if (text === CHANGE) {
       this.props.updateCustomEditorPopup(true, id);
     } else {
@@ -240,10 +247,12 @@ class CardItemMenuPopup extends React.PureComponent {
 const makeMapStateToProps = () => {
 
   const getPinStatus = makeGetPinStatus();
+  const getTagStatus = makeGetTagStatus();
 
   const mapStateToProps = (state, props) => {
     const popupLink = getPopupLink(state);
     const pinStatus = getPinStatus(state, popupLink);
+    const tagStatus = getTagStatus(state, popupLink);
 
     return {
       isShown: state.display.isCardItemMenuPopupShown,
@@ -252,6 +261,7 @@ const makeMapStateToProps = () => {
       listNameMap: getListNameMap(state),
       popupLink,
       pinStatus,
+      tagStatus,
       layoutType: getLayoutType(state),
       themeMode: getThemeMode(state),
       safeAreaWidth: getSafeAreaWidth(state),
@@ -264,7 +274,7 @@ const makeMapStateToProps = () => {
 
 const mapDispatchToProps = {
   updatePopup, updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction,
-  updateListNamesMode, updateCustomEditorPopup,
+  updateListNamesMode, updateCustomEditorPopup, updateTagEditorPopup,
 };
 
 export default connect(makeMapStateToProps, mapDispatchToProps)(withTailwind(CardItemMenuPopup));

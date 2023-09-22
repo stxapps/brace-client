@@ -3,8 +3,10 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
 import { ADDING, MOVING, UPDATING, SM_WIDTH, PINNED } from '../types/const';
-import { makeGetPinStatus } from '../selectors';
-import { ensureContainUrlProtocol, isDiedStatus, isPinningStatus } from '../utils';
+import { makeGetPinStatus, makeGetTagStatus } from '../selectors';
+import {
+  ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isTaggingStatus,
+} from '../utils';
 
 import { useSafeAreaFrame, useTailwind } from '.';
 import ListItemContent from './ListItemContent';
@@ -15,7 +17,9 @@ const ListItem = (props) => {
   const { link } = props;
   const { width: safeAreaWidth } = useSafeAreaFrame();
   const getPinStatus = useMemo(makeGetPinStatus, []);
+  const getTagStatus = useMemo(makeGetTagStatus, []);
   const pinStatus = useSelector(state => getPinStatus(state, link));
+  const tagStatus = useSelector(state => getTagStatus(state, link));
   const didClick = useRef(false);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
@@ -108,13 +112,17 @@ const ListItem = (props) => {
   const { status } = link;
 
   const isPinning = isPinningStatus(pinStatus);
-  const canSelect = ![ADDING, MOVING, UPDATING].includes(status) && !isPinning;
+  const isTagging = isTaggingStatus(tagStatus);
+  const canSelect = (
+    ![ADDING, MOVING, UPDATING].includes(status) && !isPinning && !isTagging
+  );
 
   return (
     <li className={tailwind('relative bg-white blk:bg-gray-900')}>
       <ListItemContent link={link} pinStatus={pinStatus} />
       {[ADDING, MOVING, UPDATING].includes(status) && renderBusy()}
       {isPinning && renderPinning()}
+      {isTagging && renderBusy()}
       {[PINNED].includes(pinStatus) && renderPin()}
       {canSelect && <ListItemSelector linkId={link.id} />}
       {isDiedStatus(status) && renderRetry()}

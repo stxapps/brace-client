@@ -2,7 +2,7 @@ import { REHYDRATE } from 'redux-persist/constants';
 
 import {
   FETCH_COMMIT, UPDATE_SETTINGS_COMMIT, MERGE_SETTINGS_COMMIT, UPDATE_INFO_COMMIT,
-  DELETE_ALL_DATA, RESET_STATE,
+  UPDATE_TAG_DATA_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import { deriveSettingsState, deriveInfoState } from '../utils';
 import { initialSettingsState, initialInfoState } from '../types/initialStates';
@@ -20,11 +20,13 @@ const snapshotReducer = (state = initialState, action) => {
 
   if (action.type === FETCH_COMMIT) {
     const {
-      doFetchStgsAndInfo, settings, conflictedSettings, info, listNames,
+      doFetchStgsAndInfo, settings, conflictedSettings, info, listNames, tagNames
     } = action.payload;
     if (!doFetchStgsAndInfo) return state;
 
-    let derivedSettings = deriveSettingsState(listNames, settings, initialSettingsState);
+    let derivedSettings = deriveSettingsState(
+      listNames, tagNames, settings, initialSettingsState
+    );
     if (Array.isArray(conflictedSettings) && conflictedSettings.length > 0) {
       derivedSettings = { ...state.settings };
     }
@@ -43,6 +45,13 @@ const snapshotReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_INFO_COMMIT) {
     return { ...state, info: { ...action.payload.info } };
+  }
+
+  if (action.type === UPDATE_TAG_DATA_COMMIT) {
+    const { doUpdateSettings, settings } = action.payload;
+    if (!doUpdateSettings) return state;
+
+    return { ...state, settings: { ...settings } };
   }
 
   if (action.type === DELETE_ALL_DATA || action.type === RESET_STATE) {

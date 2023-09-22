@@ -4,9 +4,11 @@ import { connect } from 'react-redux';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
 import { ADDING, MOVING, UPDATING, PINNED } from '../types/const';
-import { makeGetPinStatus, getSafeAreaWidth, getThemeMode } from '../selectors';
 import {
-  ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isEqual,
+  makeGetPinStatus, makeGetTagStatus, getSafeAreaWidth, getThemeMode,
+} from '../selectors';
+import {
+  ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isTaggingStatus, isEqual,
 } from '../utils';
 
 import { withTailwind } from '.';
@@ -36,6 +38,7 @@ class CardItem extends React.Component {
       !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
       !isEqual(this.props.link.custom, nextProps.link.custom) ||
       this.props.pinStatus !== nextProps.pinStatus ||
+      this.props.tagStatus !== nextProps.tagStatus ||
       this.props.tailwind !== nextProps.tailwind
     ) {
       return true;
@@ -119,17 +122,21 @@ class CardItem extends React.Component {
   }
 
   render() {
-    const { link, pinStatus, tailwind } = this.props;
+    const { link, pinStatus, tagStatus, tailwind } = this.props;
     const { status } = link;
 
     const isPinning = isPinningStatus(pinStatus);
-    const canSelect = ![ADDING, MOVING, UPDATING].includes(status) && !isPinning;
+    const isTagging = isTaggingStatus(tagStatus);
+    const canSelect = (
+      ![ADDING, MOVING, UPDATING].includes(status) && !isPinning && !isTagging
+    );
 
     return (
       <div className={tailwind('relative mx-auto max-w-md overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm blk:border-gray-700 blk:bg-gray-800 sm:max-w-none')}>
         <CardItemContent link={link} />
         {[ADDING, MOVING, UPDATING].includes(status) && this.renderBusy()}
         {isPinning && this.renderPinning()}
+        {isTagging && this.renderBusy()}
         {[PINNED].includes(pinStatus) && this.renderPin()}
         {canSelect && <CardItemSelector linkId={link.id} />}
         {isDiedStatus(status) && this.renderRetry()}
@@ -145,12 +152,15 @@ CardItem.propTypes = {
 const makeMapStateToProps = () => {
 
   const getPinStatus = makeGetPinStatus();
+  const getTagStatus = makeGetTagStatus();
 
   const mapStateToProps = (state, props) => {
     const pinStatus = getPinStatus(state, props.link);
+    const tagStatus = getTagStatus(state, props.link);
 
     return {
       pinStatus,
+      tagStatus,
       themeMode: getThemeMode(state),
       safeAreaWidth: getSafeAreaWidth(state),
     };

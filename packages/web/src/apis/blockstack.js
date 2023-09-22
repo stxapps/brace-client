@@ -3,14 +3,14 @@ import fileApi from './localFile';
 import { CD_ROOT, DOT_JSON, INFO } from '../types/const';
 import {
   FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, UPDATE_SETTINGS,
-  UPDATE_INFO, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA,
+  UPDATE_INFO, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA, UPDATE_TAG_DATA,
 } from '../types/actionTypes';
 import {
   isObject, isString, randomString, createLinkFPath, extractLinkFPath, createPinFPath,
   addFPath, getStaticFPath, deriveFPaths, createDataFName, getLastSettingsFPaths,
   createSettingsFPath, excludeNotObjContents, batchGetFileWithRetry,
   batchPutFileWithRetry, batchDeleteFileWithRetry, deriveUnknownErrorLink, getLinkFPaths,
-  getPinFPaths, getNLinkFPaths, isFetchedLinkId,
+  getPinFPaths, getNLinkFPaths, isFetchedLinkId, getInUseTagNames, copyTagNameObjs,
 } from '../utils';
 import vars from '../vars';
 
@@ -54,6 +54,10 @@ export const effect = async (effectObj, _action) => {
     return updateCustomData(params);
   }
 
+  if (method === UPDATE_TAG_DATA) {
+    return updateTagData(params);
+  }
+
   throw new Error(`${method} is invalid for blockstack effect.`);
 };
 
@@ -62,7 +66,8 @@ const _listFPaths = async (listFiles) => {
   // Even though aws, az, gc sorts a-z but on Gaia local machine, it's arbitrary
   //   so need to fetch all and sort locally.
   const fpaths = {
-    linkFPaths: {}, staticFPaths: [], settingsFPaths: [], infoFPath: null, pinFPaths: [],
+    linkFPaths: {}, staticFPaths: [], settingsFPaths: [], infoFPath: null,
+    pinFPaths: [], tagFPaths: [],
   };
   await listFiles((fpath) => {
     addFPath(fpaths, fpath);
@@ -224,7 +229,7 @@ const fetch = async (params) => {
   const result = { lnOrQt, fthId };
   if (!didFetch || !didFetchSettings) {
     const {
-      linkFPaths, settingsFPaths, infoFPath, pinFPaths,
+      linkFPaths, settingsFPaths, infoFPath, pinFPaths, tagFPaths,
     } = await listFPaths(true);
 
     const sResult = await fetchStgsAndInfo(settingsFPaths, infoFPath);
@@ -235,6 +240,7 @@ const fetch = async (params) => {
     // List names should be retrieve from settings
     //   but also retrive from file paths in case the settings is gone.
     result.listNames = Object.keys(linkFPaths);
+    result.tagNames = getInUseTagNames(linkFPaths, tagFPaths);
 
     if (result.settings) doDescendingOrder = result.settings.doDescendingOrder;
 
@@ -392,6 +398,10 @@ const canDeleteListNames = async (listNames) => {
   return canDeletes;
 };
 
+const canDeleteTagNames = async (tagNames) => {
+
+};
+
 const putSettings = async (params) => {
   const { settings } = params;
   const { settingsFPaths } = await listFPaths();
@@ -465,6 +475,43 @@ const updateCustomData = async (params) => {
   return { listName, fromLink, toLink, serverUnusedFPaths, localUnusedFPaths };
 };
 
-const blockstack = { canDeleteListNames, deletePins };
+const updateTagData = async (params) => {
+  const { getState, id, values, newTagNameObjs } = params;
+
+  const isSettingsPopupShown = getState().display.isSettingsPopupShown;
+
+  const result = { id };
+  if (!isSettingsPopupShown && newTagNameObjs.length > 0) {
+    const sResult = await putSettings({ settings: getState().settings });
+    result.doPutSettings = true;
+    result.settings = sResult._settings;
+    result._settingsFPaths = sResult._settingsFPaths;
+  }
+
+
+
+
+  /*const dResult = diff(aTags, bTags);
+  for (const dObj of dResult) {
+
+  }*/
+
+
+
+
+
+  // which the same, to add, and which to delete
+  // Manage rank for each tag
+
+  // Add new tag fpaths
+  // Delete untag fpaths
+
+  // can be no change, just return e.g. only tagNameMap?
+
+  // Clean up obsolete tags -> can do in cleanUpTags
+  return result;
+};
+
+const blockstack = { canDeleteListNames, canDeleteTagNames, deletePins };
 
 export default blockstack;

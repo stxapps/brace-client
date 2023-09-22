@@ -5,6 +5,7 @@ export const didChange = {
   doDeleteOldLinksInTrash: false,
   doDescendingOrder: false,
   listNameMap: false,
+  tagNameMap: false,
   purchases: false,
 };
 

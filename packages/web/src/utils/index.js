@@ -7,17 +7,18 @@ import {
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
   UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
   PIN_LINK, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_ROLLBACK,
-  MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
+  MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, UPDATE_TAG_DATA,
+  UPDATE_TAG_DATA_ROLLBACK,
 } from '../types/actionTypes';
 import {
-  HTTP, HTTPS, WWW, STATUS, LINKS, IMAGES, SETTINGS, INFO, PINS, DOT_JSON, ADDED,
+  HTTP, HTTPS, WWW, STATUS, LINKS, IMAGES, SETTINGS, INFO, PINS, TAGS, DOT_JSON, ADDED,
   DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
   NEW_LINK_FPATH_STATUSES, COLOR, PATTERN, IMAGE, BG_COLOR_STYLES, PATTERNS, VALID_URL,
   NO_URL, ASK_CONFIRM_URL, VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME,
   DUPLICATE_LIST_NAME, COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD,
   PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, MAX_TRY, EXTRACT_INVALID_URL, VALID_PASSWORD,
   NO_PASSWORD, CONTAIN_SPACES_PASSWORD, TOO_LONG_PASSWORD, N_LINKS, MY_LIST, TRASH,
-  ARCHIVE,
+  ARCHIVE, NO_TAG_NAME, TOO_LONG_TAG_NAME, DUPLICATE_TAG_NAME, VALID_TAG_NAME,
 } from '../types/const';
 import {
   myListListNameObj, trashListNameObj, archiveListNameObj,
@@ -372,10 +373,9 @@ export const doDuplicateDisplayName = (listName, displayName, listNameMap) => {
 };
 
 export const validateListNameDisplayName = (listName, displayName, listNameMap) => {
-
   // Validate:
-  //   1. Empty 2. Contain space at the begining or the end 3. Contain invalid characters
-  //   4. Too long 5. Duplicate
+  //   1. Empty 2. Contain space at the begining or the end
+  //   3. Contain invalid characters 4. Too long 5. Duplicate
   //
   // 2 and 3 are not the problem because this is display name!
 
@@ -971,9 +971,25 @@ export const isListNameObjsValid = (listNameObjs) => {
   return true;
 };
 
-export const deriveSettingsState = (listNames, settings, initialState) => {
+export const isTagNameObjsValid = (tagNameObjs) => {
+  if (tagNameObjs === undefined || tagNameObjs === null) return true;
+  if (!Array.isArray(tagNameObjs)) return false;
+
+  for (const tagNameObj of tagNameObjs) {
+    if (!('tagName' in tagNameObj && 'displayName' in tagNameObj)) return false;
+    if (!(isString(tagNameObj.tagName) && isString(tagNameObj.displayName))) {
+      return false;
+    }
+    // color can be optional
+  }
+
+  return true;
+};
+
+export const deriveSettingsState = (listNames, tagNames, settings, initialState) => {
   const state = settings ? { ...initialState, ...settings } : { ...initialState };
   state.listNameMap = copyListNameObjs(state.listNameMap);
+  state.tagNameMap = copyTagNameObjs(state.tagNameMap);
 
   if (!doContainListName(MY_LIST, state.listNameMap)) {
     state.listNameMap.push({ ...myListListNameObj });
@@ -990,6 +1006,14 @@ export const deriveSettingsState = (listNames, settings, initialState) => {
     if (!doContainListName(listName, state.listNameMap)) {
       state.listNameMap.push(
         { listName: listName, displayName: `<missing-name-${i}>` }
+      );
+      i += 1;
+    }
+  }
+  for (const tagName of tagNames) {
+    if (!doContainTagName(tagName, state.tagNameMap)) {
+      state.tagNameMap.push(
+        { tagName: tagName, displayName: `<missing-name-${i}>`, color: '' }
       );
       i += 1;
     }
@@ -1132,6 +1156,31 @@ export const extractPinFPath = (fpath) => {
   return { rank, updatedDT, addedDT, id, ext };
 };
 
+export const createTagFPath = (tagName, rank, updatedDT, addedDT, id) => {
+  return `${TAGS}/${tagName}/${rank}/${updatedDT}/${addedDT}/${id}${DOT_JSON}`;
+};
+
+export const extractTagFPath = (fpath) => {
+  const arr = fpath.split('/');
+  if (arr.length !== 6) console.log(`In extractTagFPath, invalid fpath: ${fpath}`);
+
+  let id, ext;
+  const [tagName, rank, fname] = [arr[1] || '', arr[2] || '', arr[5] || ''];
+  const [updatedDTStr, addedDTStr] = [arr[3] || '', arr[4] || ''];
+
+  const updatedDT = parseInt(updatedDTStr, 10);
+  const addedDT = parseInt(addedDTStr, 10);
+
+  const dotIndex = fname.lastIndexOf('.');
+  if (dotIndex === -1) {
+    [id, ext] = [fname, ''];
+  } else {
+    [id, ext] = [fname.substring(0, dotIndex), fname.substring(dotIndex + 1)];
+  }
+
+  return { tagName, rank, updatedDT, addedDT, id, ext };
+};
+
 export const addFPath = (fpaths, fpath) => {
   if (fpath.startsWith('file://')) fpath = fpath.slice('file://'.length);
 
@@ -1156,6 +1205,8 @@ export const addFPath = (fpaths, fpath) => {
     }
   } else if (fpath.startsWith(PINS)) {
     if (!fpaths.pinFPaths.includes(fpath)) fpaths.pinFPaths.push(fpath);
+  } else if (fpath.startsWith(TAGS)) {
+    if (!fpaths.tagFPaths.includes(fpath)) fpaths.tagFPaths.push(fpath);
   } else {
     console.log(`Invalid file path: ${fpath}`);
   }
@@ -1178,6 +1229,8 @@ export const deleteFPath = (fpaths, fpath) => {
     if (fpaths.infoFPath === fpath) fpaths.infoFPath = null;
   } else if (fpath.startsWith(PINS)) {
     fpaths.pinFPaths = fpaths.pinFPaths.filter(el => el !== fpath);
+  } else if (fpath.startsWith(TAGS)) {
+    fpaths.tagFPaths = fpaths.tagFPaths.filter(el => el !== fpath);
   } else {
     console.log(`Invalid file path: ${fpath}`);
   }
@@ -1204,12 +1257,16 @@ export const copyFPaths = (fpaths) => {
   let newPinFPaths = [];
   if (Array.isArray(fpaths.pinFPaths)) newPinFPaths = [...fpaths.pinFPaths];
 
+  let newTagFPaths = [];
+  if (Array.isArray(fpaths.tagFPaths)) newTagFPaths = [...fpaths.tagFPaths];
+
   return {
     ...fpaths,
     linkFPaths: newLinkFPaths,
     staticFPaths: newStaticFPaths,
     settingsFPaths: newSettingsFPaths,
     pinFPaths: newPinFPaths,
+    tagFPaths: newTagFPaths,
   };
 };
 
@@ -1485,7 +1542,6 @@ const _getPins = (pinFPaths, pendingPins, doExcludeUnpinning) => {
   return pins;
 };
 
-/** @type {function(any, any, any): any} */
 export const getPins = createSelector(
   (...args) => args[0],
   (...args) => args[1],
@@ -2156,4 +2212,184 @@ export const isFetchingInterrupted = (fthId, fetchingInfos) => {
     if (info.fthId === fthId) return !!info.isInterrupted;
   }
   return false;
+};
+
+export const getTagFPaths = (state) => {
+  if (
+    isObject(state.cachedFPaths) &&
+    isObject(state.cachedFPaths.fpaths) &&
+    Array.isArray(state.cachedFPaths.fpaths.tagFPaths)
+  ) {
+    return state.cachedFPaths.fpaths.tagFPaths;
+  }
+  return [];
+};
+
+export const getRawTags = (tagFPaths) => {
+  const tags = {};
+  for (const fpath of tagFPaths) {
+    const { tagName, rank, updatedDT, addedDT, id } = extractTagFPath(fpath);
+    const mainId = getMainId(id);
+
+    if (!isObject(tags[mainId])) tags[mainId] = { values: [] };
+
+    const { values } = tags[mainId]
+
+    const i = values.findIndex(tag => tag.tagName === tagName);
+    if (i < 0) {
+      values.push({ tagName, rank, updatedDT, addedDT, id });
+      continue;
+    }
+
+    if (values[i].updatedDT > updatedDT) continue;
+
+    tags[mainId].values = [
+      ...values.slice(0, i),
+      ...values.slice(i + 1),
+      { tagName, rank, updatedDT, addedDT, id },
+    ];
+  }
+
+  for (const mainId in tags) {
+    tags[mainId].values.sort((a, b) => { // Beware sort in place
+      if (a.rank < b.rank) return -1;
+      if (a.rank > b.rank) return 1;
+      return 0;
+    });
+  }
+
+  return tags;
+};
+
+const _getTags = (tagFPaths, pendingTags) => {
+  const tags = getRawTags(tagFPaths);
+
+  for (const id in pendingTags) {
+    const { values } = pendingTags[id];
+
+    const mainId = getMainId(id);
+    tags[mainId] = { ...tags[mainId], ...pendingTags[id] };
+
+    tags[mainId].values = [];
+    for (const value of values) tags[mainId].values.push({ ...value });
+  }
+
+  return tags
+};
+
+export const getTags = createSelector(
+  (...args) => args[0],
+  (...args) => args[1],
+  _getTags,
+);
+
+export const getTagNameObj = (tagName, tagNameObjs) => {
+  if (!tagName || !tagNameObjs) return { tagNameObj: null };
+
+  for (const tagNameObj of tagNameObjs) {
+    if (tagNameObj.tagName === tagName) return { tagNameObj };
+  }
+
+  return { tagNameObj: null };
+};
+
+export const getTagNameObjFromDisplayName = (displayName, tagNameObjs) => {
+  if (!displayName || !tagNameObjs) return { tagNameObj: null };
+
+  for (const tagNameObj of tagNameObjs) {
+    if (tagNameObj.displayName === displayName) return { tagNameObj };
+  }
+
+  return { tagNameObj: null };
+};
+
+export const doContainTagName = (tagName, tagNameObjs) => {
+  const { tagNameObj } = getTagNameObj(tagName, tagNameObjs);
+  if (tagNameObj) return true;
+
+  return false;
+};
+
+export const doDuplicateTagNameDisplayName = (tagName, displayName, tagNameMap) => {
+  for (const obj of tagNameMap) {
+    if (obj.tagName === tagName) continue;
+    if (obj.displayName === displayName) return true;
+  }
+  return false;
+};
+
+export const validateTagNameDisplayName = (tagName, displayName, tagNameMap) => {
+  // Validate:
+  //   1. Empty 2. Contain space at the begining or the end
+  //   3. Contain invalid characters 4. Too long 5. Duplicate
+  //
+  // 2 and 3 are not the problem because this is display name!
+
+  if (!displayName || !isString(displayName) || displayName === '') return NO_TAG_NAME;
+  if (displayName.length > 256) return TOO_LONG_TAG_NAME;
+
+  if (doDuplicateTagNameDisplayName(tagName, displayName, tagNameMap)) {
+    return DUPLICATE_TAG_NAME;
+  }
+
+  return VALID_TAG_NAME;
+};
+
+export const copyTagNameObjs = (tagNameObjs, excludedTagNames = []) => {
+  const objs = tagNameObjs.filter(tagNameObj => {
+    return !excludedTagNames.includes(tagNameObj.tagName);
+  }).map(tagNameObj => {
+    const obj = { ...tagNameObj };
+    return obj;
+  });
+  return objs;
+};
+
+export const getInUseTagNames = (linkFPaths, tagFPaths) => {
+  const mainIdToTagNames = {};
+  for (const fpath of tagFPaths) {
+    const { tagName, id } = extractTagFPath(fpath);
+
+    const mainId = getMainId(id);
+    if (!Array.isArray(mainIdToTagNames[mainId])) mainIdToTagNames[mainId] = [];
+    mainIdToTagNames[mainId].push(tagName);
+  }
+
+  const inUseTagNames = [];
+  for (const listName in linkFPaths) {
+    for (const fpath of linkFPaths[listName]) {
+      const { id } = extractLinkFPath(fpath);
+
+      const mainId = getMainId(id);
+      if (!Array.isArray(mainIdToTagNames[mainId])) continue;
+
+      for (const tagName of mainIdToTagNames[mainId]) {
+        if (!inUseTagNames.includes(tagName)) inUseTagNames.push(tagName);
+      }
+    }
+  }
+
+  return inUseTagNames;
+};
+
+export const getEditingTagNameEditors = (tagNameEditors, tagNameObjs) => {
+  let editingTNEs = null;
+  for (const k in tagNameEditors) {
+    if (tagNameEditors[k].mode !== MODE_EDIT) continue;
+    if (!isString(tagNameEditors[k].value)) continue;
+
+    let displayName = ''; // Empty string and no tagNameObj for newTagNameEditor
+    const { tagNameObj } = getTagNameObj(k, tagNameObjs);
+    if (isObject(tagNameObj)) displayName = tagNameObj.displayName;
+
+    if (tagNameEditors[k].value === displayName) continue;
+
+    if (!isObject(editingTNEs)) editingTNEs = {};
+    editingTNEs[k] = { ...tagNameEditors[k] };
+  }
+  return editingTNEs;
+};
+
+export const isTaggingStatus = (tagStatus) => {
+  return [UPDATE_TAG_DATA, UPDATE_TAG_DATA_ROLLBACK].includes(tagStatus);
 };

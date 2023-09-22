@@ -4,15 +4,16 @@ import { loop, Cmd } from 'redux-loop';
 import { updateSettingsDeleteStep, mergeSettingsDeleteStep } from '../actions';
 import {
   FETCH_COMMIT, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME,
-  DELETE_LIST_NAMES, UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
-  UPDATE_DO_DESCENDING_ORDER, UPDATE_DEFAULT_LAYOUT_TYPE, UPDATE_DEFAULT_THEME,
-  UPDATE_SETTINGS_COMMIT, CANCEL_DIED_SETTINGS, MERGE_SETTINGS_COMMIT,
-  DELETE_ALL_DATA, RESET_STATE,
+  DELETE_LIST_NAMES, UPDATE_TAG_DATA, CANCEL_DIED_TAGS, ADD_TAG_NAMES, UPDATE_TAG_NAMES,
+  MOVE_TAG_NAME, DELETE_TAG_NAMES, UPDATE_DO_EXTRACT_CONTENTS,
+  UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH, UPDATE_DO_DESCENDING_ORDER,
+  UPDATE_DEFAULT_LAYOUT_TYPE, UPDATE_DEFAULT_THEME, UPDATE_SETTINGS_COMMIT,
+  CANCEL_DIED_SETTINGS, MERGE_SETTINGS_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import { MY_LIST, TRASH, ARCHIVE, SWAP_LEFT, SWAP_RIGHT } from '../types/const';
 import {
   getListNameObj, doContainListName, copyListNameObjs, swapArrayElements,
-  deriveSettingsState,
+  deriveSettingsState, getTagNameObj, copyTagNameObjs,
 } from '../utils';
 import {
   initialSettingsState as initialState,
@@ -34,11 +35,11 @@ const settingsReducer = (state = initialState, action) => {
 
   if (action.type === FETCH_COMMIT) {
     const {
-      doFetchStgsAndInfo, settings, conflictedSettings, listNames,
+      doFetchStgsAndInfo, settings, conflictedSettings, listNames, tagNames,
     } = action.payload;
     if (!doFetchStgsAndInfo) return state;
 
-    let newState = deriveSettingsState(listNames, settings, initialState);
+    let newState = deriveSettingsState(listNames, tagNames, settings, initialState);
     if (Array.isArray(conflictedSettings) && conflictedSettings.length > 0) {
       newState = { ...state };
     }
@@ -55,6 +56,15 @@ const settingsReducer = (state = initialState, action) => {
     if (didChange.listNameMap) {
       newState.listNameMap = state.listNameMap;
     }
+    if (didChange.tagNameMap) {
+      newState.tagNameMap = state.tagNameMap;
+    }
+
+    /*
+    if (didChange.newTagNameObjs.length > 0) {
+      newState.tagNameMap = [...newState.tagNameMap, ...didChange.newTagNameObjs]
+    }
+     */
 
     return newState;
   }
@@ -195,6 +205,93 @@ const settingsReducer = (state = initialState, action) => {
     return newState;
   }
 
+  if (action.type === UPDATE_TAG_DATA) {
+    const { newTagNameObjs } = action.payload;
+    if (newTagNameObjs.length === 0) return state;
+
+    const newState = { ...state };
+    newState.tagNameMap = [...state.tagNameMap, ...newTagNameObjs];
+
+    didChange.tagNameMap = true;
+
+    return newState;
+  }
+
+  if (action.type === CANCEL_DIED_TAGS) {
+
+
+
+  }
+
+  if (action.type === ADD_TAG_NAMES) {
+    const newState = { ...state };
+    newState.tagNameMap = [...state.tagNameMap, ...action.payload];
+
+    didChange.tagNameMap = true;
+
+    return newState;
+  }
+
+  if (action.type === UPDATE_TAG_NAMES) {
+    const { tagNames, newNames } = action.payload;
+
+    const newState = { ...state };
+    newState.tagNameMap = copyTagNameObjs(newState.tagNameMap);
+
+    for (let i = 0; i < tagNames.length; i++) {
+      const { tagNameObj } = getTagNameObj(tagNames[i], newState.tagNameMap);
+      if (!tagNameObj) {
+        console.log(`settingsReducer - UPDATE_TAG_NAMES, not found tagName: ${tagNames[i]}, in tagNameMap: `, newState.tagNameMap);
+        continue;
+      }
+      tagNameObj.displayName = newNames[i];
+    }
+
+    didChange.tagNameMap = true;
+
+    return newState;
+  }
+
+  if (action.type === MOVE_TAG_NAME) {
+    const { tagName, direction } = action.payload;
+
+    const newState = { ...state };
+    newState.tagNameMap = copyTagNameObjs(newState.tagNameMap);
+
+    const _tagNameMap = newState.tagNameMap;
+    const i = _tagNameMap.findIndex(obj => obj.tagName === tagName);
+    if (i < 0) {
+      console.log(`settingsReducer - MOVE_TAG_NAME, not found tagName: ${tagName} in tagNameMap: `, _tagNameMap);
+      return state;
+    }
+
+    let newTagNameMap;
+    if (direction === SWAP_LEFT) {
+      newTagNameMap = swapArrayElements(_tagNameMap, i - 1, i);
+    } else if (direction === SWAP_RIGHT) {
+      newTagNameMap = swapArrayElements(_tagNameMap, i, i + 1);
+    } else {
+      throw new Error(`Invalid direction: ${direction}`);
+    }
+
+    newState.tagNameMap = newTagNameMap;
+
+    didChange.tagNameMap = true;
+
+    return newState;
+  }
+
+  if (action.type === DELETE_TAG_NAMES) {
+    const { tagNames } = action.payload;
+
+    const newState = { ...state };
+    newState.tagNameMap = copyTagNameObjs(newState.tagNameMap, tagNames);
+
+    didChange.tagNameMap = true;
+
+    return newState;
+  }
+
   if (action.type === UPDATE_DO_EXTRACT_CONTENTS) {
     didChange.doExtractContents = true;
     return { ...state, doExtractContents: action.payload };
@@ -225,6 +322,7 @@ const settingsReducer = (state = initialState, action) => {
     didChange.doDeleteOldLinksInTrash = false;
     didChange.doDescendingOrder = false;
     didChange.listNameMap = false;
+    didChange.tagNameMap = false;
     return loop(
       state,
       Cmd.run(
@@ -234,22 +332,24 @@ const settingsReducer = (state = initialState, action) => {
   }
 
   if (action.type === CANCEL_DIED_SETTINGS) {
-    const { listNames, settings } = action.payload;
+    const { listNames, tagNames, settings } = action.payload;
     didChange.doExtractContents = false;
     didChange.doDeleteOldLinksInTrash = false;
     didChange.doDescendingOrder = false;
     didChange.listNameMap = false;
-    return deriveSettingsState(listNames, settings, initialState);
+    didChange.tagNameMap = false;
+    return deriveSettingsState(listNames, tagNames, settings, initialState);
   }
 
   if (action.type === MERGE_SETTINGS_COMMIT) {
-    const { listNames, settings, _settingsFPaths } = action.meta;
+    const { listNames, tagNames, settings, _settingsFPaths } = action.meta;
     didChange.doExtractContents = false;
     didChange.doDeleteOldLinksInTrash = false;
     didChange.doDescendingOrder = false;
     didChange.listNameMap = false;
+    didChange.tagNameMap = false;
     return loop(
-      deriveSettingsState(listNames, settings, initialState),
+      deriveSettingsState(listNames, tagNames, settings, initialState),
       Cmd.run(
         mergeSettingsDeleteStep(_settingsFPaths), { args: [Cmd.dispatch, Cmd.getState] }
       )
@@ -261,6 +361,7 @@ const settingsReducer = (state = initialState, action) => {
     didChange.doDeleteOldLinksInTrash = false;
     didChange.doDescendingOrder = false;
     didChange.listNameMap = false;
+    didChange.tagNameMap = false;
     return { ...initialState };
   }
 

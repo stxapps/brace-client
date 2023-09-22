@@ -6,41 +6,26 @@ import {
 } from '../types/actionTypes';
 import {
   SHOWING_STATUSES, PINNED, WHT_MODE, BLK_MODE, SYSTEM_MODE, CUSTOM_MODE, LOCKED,
-  UNLOCKED, MY_LIST,
+  UNLOCKED, MY_LIST, TAGGED,
 } from '../types/const';
 import {
-  isStringIn, isObject, isString, isArrayEqual, isEqual, getListNameObj, getStatusCounts,
-  getMainId, getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
+  isStringIn, isObject, isString, isEqual, getListNameObj, getStatusCounts, getMainId,
+  getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
   getPinFPaths, getPins, doEnableExtraFeatures, isNumber, isMobile as _isMobile, getLink,
-  doesIncludeFetchingMore,
+  doesIncludeFetchingMore, getTagFPaths, getTags, getTagNameObj,
 } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
-import { initialListNameEditorState } from '../types/initialStates';
+import {
+  initialListNameEditorState, initialTagNameEditorState,
+} from '../types/initialStates';
 
-const createSelectorListNameMap = createSelectorCreator(
-  defaultMemoize,
-  (prevVal, val) => {
-    if (!isObject(prevVal['links']) || !isObject(val['links'])) {
-      if (prevVal['links'] !== val['links']) return false;
-    }
-
-    if (!isArrayEqual(
-      Object.keys(prevVal['links']).sort(),
-      Object.keys(val['links']).sort()
-    )) return false;
-
-    return isEqual(prevVal['settings']['listNameMap'], val['settings']['listNameMap']);
+export const getListNameMap = createSelector(
+  state => state.settings.listNameMap,
+  (listNameMap) => {
+    return listNameMap;
   }
 );
 
-export const getListNameMap = createSelectorListNameMap(
-  state => state,
-  (state) => {
-    return [...state.settings.listNameMap];
-  }
-);
-
-/** @return {function(any, any): any} */
 export const makeIsLinkIdSelected = () => {
   return createSelector(
     state => state.display.selectedLinkIds,
@@ -177,7 +162,6 @@ export const getPopupLink = createSelector(
   }
 );
 
-/** @return {function(any, any): initialListNameEditorState} */
 export const makeGetListNameEditor = () => {
   return createSelector(
     state => state.settings.listNameMap,
@@ -260,7 +244,6 @@ export const getDoEnableExtraFeatures = createSelector(
   purchases => doEnableExtraFeatures(purchases),
 );
 
-/** @return {function(any, any): any} */
 export const makeGetPinStatus = () => {
   return createSelector(
     state => getPinFPaths(state),
@@ -376,7 +359,6 @@ export const getThemeMode = createSelector(
   },
 );
 
-/** @type {function(any, any): any} */
 export const getTailwind = createSelector(
   safeAreaWidth => safeAreaWidth,
   (__, themeMode) => themeMode,
@@ -387,7 +369,6 @@ export const getTailwind = createSelector(
   },
 );
 
-/** @return {function(any, any): any} */
 export const makeIsTimePickHourItemSelected = () => {
   return createSelector(
     state => state.timePick.hour,
@@ -398,7 +379,6 @@ export const makeIsTimePickHourItemSelected = () => {
   );
 };
 
-/** @return {function(any, any): any} */
 export const makeIsTimePickMinuteItemSelected = () => {
   return createSelector(
     state => state.timePick.minute,
@@ -440,7 +420,6 @@ export const getCustomEditor = createSelector(
   { memoizeOptions: { resultEqualityCheck: isEqual } },
 );
 
-/** @return {function(any, any): any} */
 export const makeGetCustomImage = () => {
   return createSelector(
     state => state.images,
@@ -495,3 +474,137 @@ export const getCanChangeListNames = createSelector(
     return true;
   },
 );
+
+export const makeGetTagStatus = () => {
+  return createSelector(
+    state => getTagFPaths(state),
+    state => state.pendingTags,
+    (__, linkIdOrObj) => isObject(linkIdOrObj) ? linkIdOrObj.id : linkIdOrObj,
+    (tagFPaths, pendingTags, linkId) => {
+      if (!isString(linkId)) return null;
+
+      const tags = getTags(tagFPaths, pendingTags);
+      const linkMainId = getMainId(linkId);
+      if (linkMainId in tags) {
+        if ('status' in tags[linkMainId]) return tags[linkMainId].status;
+        return TAGGED;
+      }
+
+      return null;
+    }
+  );
+};
+
+export const makeGetTnAndDns = () => {
+  return createSelector(
+    state => getTagFPaths(state),
+    state => state.pendingTags,
+    state => state.settings.tagNameMap,
+    (__, link) => isObject(link) ? link.id : null,
+    (tagFPaths, pendingTags, tagNameMap, linkId) => {
+      if (!isString(linkId)) return [];
+
+      const tags = getTags(tagFPaths, pendingTags);
+      const mainId = getMainId(linkId);
+      if (!isObject(tags[mainId])) return [];
+
+      const tnAndDns = [];
+      for (const { tagName } of tags[mainId].values) {
+        const { tagNameObj } = getTagNameObj(tagName, tagNameMap);
+        if (!isObject(tagNameObj)) continue;
+        tnAndDns.push({
+          tagName, displayName: tagNameObj.displayName, color: tagNameObj.color,
+        });
+      }
+      return tnAndDns;
+    },
+    {
+      memoizeOptions: {
+        resultEqualityCheck: (x, y) => {
+          if (x.length !== y.length) return false;
+          for (let i = 0; i < x.length; i++) {
+            if (!isEqual(x[i], y[i])) return false;
+          }
+          return true;
+        },
+      },
+    },
+  );
+};
+
+export const getTagEditor = createSelector(
+  state => getTagFPaths(state),
+  state => state.pendingTags,
+  state => state.settings.tagNameMap,
+  state => state.display.selectingLinkId,
+  state => state.tagEditor,
+  (tagFPaths, pendingTags, tagNameMap, selectingLinkId, tagEditor) => {
+    const editor = { ...tagEditor };
+    if (!editor.didValuesEdit && isString(selectingLinkId)) {
+      const tags = getTags(tagFPaths, pendingTags);
+      const mainId = getMainId(selectingLinkId);
+
+      if (mainId in tags) {
+        const { values } = tags[mainId];
+
+        editor.values = [];
+        for (const { tagName } of values) {
+          const { tagNameObj } = getTagNameObj(tagName, tagNameMap);
+          if (!isObject(tagNameObj)) continue;
+          editor.values.push({
+            displayName: tagNameObj.displayName, color: tagNameObj.color,
+          });
+        }
+      }
+    }
+    if (!editor.didHintsEdit) {
+      editor.hints = [];
+      for (const tagNameObj of tagNameMap) {
+        editor.hints.push({
+          displayName: tagNameObj.displayName, color: tagNameObj.color, isBlur: false,
+        });
+      }
+    }
+    return editor;
+  },
+  {
+    memoizeOptions: {
+      resultEqualityCheck: (x, y) => {
+        const [xKeys, yKeys] = [Object.keys(x), Object.keys(y)];
+        const keys = [...new Set([...xKeys, ...yKeys])];
+
+        for (const key of keys) {
+          if (!(key in x) || !(key in y)) return false;
+          if (key === 'values') {
+            const [xValues, yValues] = [x[key], y[key]];
+            if (!Array.isArray(xValues) || !Array.isArray(yValues)) return false;
+            if (xValues.length !== yValues.length) return false;
+            for (let i = 0; i < xValues.length; i++) {
+              if (!isEqual(xValues[i], yValues[i])) return false;
+            }
+            continue;
+          }
+          if (x[key] !== y[key]) return false;
+        }
+        return true;
+      },
+    }
+  },
+);
+
+export const makeGetTagNameEditor = () => {
+  return createSelector(
+    state => state.settings.tagNameMap,
+    state => state.tagNameEditors,
+    (__, key) => key,
+    (tagNameMap, tagNameEditors, key) => {
+      const state = { ...initialTagNameEditorState };
+
+      const { tagNameObj } = getTagNameObj(key, tagNameMap);
+      if (tagNameObj) state.value = tagNameObj.displayName;
+
+      return { ...state, ...tagNameEditors[key] };
+    },
+    { memoizeOptions: { resultEqualityCheck: isEqual } },
+  );
+};

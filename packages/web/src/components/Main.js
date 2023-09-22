@@ -21,6 +21,7 @@ import FetchedPopup from './FetchedPopup';
 import CardItemMenuPopup from './CardItemMenuPopup';
 import PinMenuPopup from './PinMenuPopup';
 import CustomEditorPopup from './CustomEditorPopup';
+import TagEditorPopup from './TagEditorPopup';
 import SettingsPopup from './SettingsPopup';
 import SettingsListsMenuPopup from './SettingsListsMenuPopup';
 import PinErrorPopup from './PinErrorPopup';
@@ -103,6 +104,7 @@ class Main extends React.PureComponent {
           <CardItemMenuPopup />
           <PinMenuPopup />
           <CustomEditorPopup />
+          <TagEditorPopup />
         </React.Fragment>
       );
     }

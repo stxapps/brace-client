@@ -16,9 +16,9 @@ import {
 import {
   isEqual, isString, isObject, isNumber, sleep, randomString, getUrlFirstChar,
   randomDecor, isDecorValid, isExtractedResultValid, isCustomValid, isListNameObjsValid,
-  createDataFName, createLinkFPath, createSettingsFPath, getLastSettingsFPaths,
-  batchGetFileWithRetry, extractFPath, getPins, getMainId, getFormattedTimeStamp,
-  extractLinkFPath, extractPinFPath, getStaticFPath,
+  isTagNameObjsValid, createDataFName, createLinkFPath, createSettingsFPath,
+  getLastSettingsFPaths, batchGetFileWithRetry, extractFPath, getPins, getMainId,
+  getFormattedTimeStamp, extractLinkFPath, extractPinFPath, getStaticFPath,
 } from '../utils';
 import {
   isUint8Array, isBlob, convertBlobToDataUrl, convertDataUrlToBlob,
@@ -177,6 +177,9 @@ const _parseBraceSettings = async (settingsFPaths, settingsEntries) => {
     }
     if ('listNameMap' in content && isListNameObjsValid(content.listNameMap)) {
       settings.listNameMap = content.listNameMap;
+    }
+    if ('tagNameMap' in content && isTagNameObjsValid(content.tagNameMap)) {
+      settings.tagNameMap = content.tagNameMap;
     }
     if ([LAYOUT_CARD, LAYOUT_LIST].includes(content.layoutType)) {
       settings.layoutType = content.layoutType;

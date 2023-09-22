@@ -29,6 +29,7 @@ export const CARD_ITEM_MENU_POPUP = 'CARD_ITEM_MENU_POPUP';
 export const LIST_NAMES_POPUP = 'LIST_NAMES_POPUP';
 export const PIN_MENU_POPUP = 'PIN_MENU_POPUP';
 export const CUSTOM_EDITOR_POPUP = 'CUSTOM_EDITOR_POPUP';
+export const TAG_EDITOR_POPUP = 'TAG_EDITOR_POPUP';
 export const CONFIRM_DELETE_POPUP = 'CONFIRM_DELETE_POPUP';
 export const CONFIRM_DISCARD_POPUP = 'CONFIRM_DISCARD_POPUP';
 export const SETTINGS_POPUP = 'SETTINGS_POPUP';
@@ -50,6 +51,7 @@ export const IMAGES = 'images';
 export const SETTINGS = 'settings';
 export const INFO = 'info';
 export const PINS = 'pins';
+export const TAGS = 'tags';
 export const DOT_JSON = '.json';
 export const BASE64 = 'base64';
 export const UTF8 = 'utf8';
@@ -193,8 +195,10 @@ export const EDGE_TRIGGER = 'EDGE_TRIGGER'; // bottom or right of the trigger
 export const DELETE_ACTION_LINK_COMMANDS = 0;
 export const DELETE_ACTION_LINK_ITEM_MENU = 1;
 export const DELETE_ACTION_LIST_NAME = 2;
+export const DELETE_ACTION_TAG_NAME = 3;
 
 export const DISCARD_ACTION_UPDATE_LIST_NAME = 0;
+export const DISCARD_ACTION_UPDATE_TAG_NAME = 1;
 
 export const APP_GROUP_SHARE = 'group.bracedotto.share';
 export const APP_GROUP_SHARE_UKEY = 'uKey';
@@ -268,6 +272,7 @@ export const FEATURE_PIN = 'FEATURE_PIN';
 export const FEATURE_APPEARANCE = 'FEATURE_APPEARANCE';
 export const FEATURE_CUSTOM = 'FEATURE_CUSTOM';
 export const FEATURE_LOCK = 'FEATURE_LOCK';
+export const FEATURE_TAG = 'FEATURE_TAG';
 
 export const LOCK_ACTION_ADD_LOCK_LIST = 'LOCK_ACTION_ADD_LOCK_LIST';
 export const LOCK_ACTION_REMOVE_LOCK_LIST = 'LOCK_ACTION_REMOVE_LOCK_LIST';
@@ -299,3 +304,22 @@ export const APP_STATE_BACKGROUND = 'background';
 export const LOCAL_LINK_ATTRS = [
   STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LIST_NAME, FROM_ID, FROM_LINK
 ];
+
+export const ADD_TAGS = 'Add tags';
+export const MANAGE_TAGS = 'Manage tags';
+
+export const TAGGED = 'TAGGED'
+
+export const VALID_TAG_NAME = 'VALID_TAG_NAME';
+export const NO_TAG_NAME = 'NO_TAG_NAME';
+export const TOO_LONG_TAG_NAME = 'TOO_LONG_TAG_NAME';
+export const DUPLICATE_TAG_NAME = 'DUPLICATE_TAG_NAME';
+export const IN_USE_TAG_NAME = 'IN_USE_TAG_NAME';
+
+export const TAG_NAME_MSGS = {
+  [VALID_TAG_NAME]: '',
+  [NO_TAG_NAME]: 'Tag is blank',
+  [TOO_LONG_TAG_NAME]: 'Tag is too long',
+  [DUPLICATE_TAG_NAME]: 'Tag already exists',
+  [IN_USE_TAG_NAME]: 'Tag is in use',
+};

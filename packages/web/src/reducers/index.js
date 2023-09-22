@@ -16,12 +16,15 @@ import localSettingsReducer from './localSettingsReducer';
 import infoReducer from './infoReducer';
 import linkEditorReducer from './linkEditorReducer';
 import customEditorReducer from './customEditorReducer';
+import tagEditorReducer from './tagEditorReducer';
 import stacksAccessReducer from './stacksAccessReducer';
 import snapshotReducer from './snapshotReducer';
 import listNameEditorsReducer from './listNameEditorsReducer';
+import tagNameEditorsReducer from './tagNameEditorsReducer';
 import iapReducer from './iapReducer';
 import cachedFPathsReducer from './cachedFPathsReducer';
 import pendingPinsReducer from './pendingPinsReducer';
+import pendingTagsReducer from './pendingTagsReducer';
 import timePickReducer from './timePickReducer';
 import lockSettingsReducer from './lockSettingsReducer';
 import lockEditorReducer from './lockEditorReducer';
@@ -44,12 +47,15 @@ export default combineReducers({
   info: infoReducer,
   linkEditor: linkEditorReducer,
   customEditor: customEditorReducer,
+  tagEditor: tagEditorReducer,
   stacksAccess: stacksAccessReducer,
   snapshot: snapshotReducer,
   listNameEditors: listNameEditorsReducer,
+  tagNameEditors: tagNameEditorsReducer,
   iap: iapReducer,
   cachedFPaths: cachedFPathsReducer,
   pendingPins: pendingPinsReducer,
+  pendingTags: pendingTagsReducer,
   timePick: timePickReducer,
   lockSettings: lockSettingsReducer,
   lockEditor: lockEditorReducer,

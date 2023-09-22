@@ -5,9 +5,12 @@ import GracefulImage from 'react-graceful-image';
 
 import {
   updatePopup, updateSelectingLinkId, updateBulkEdit, addSelectedLinkIds,
+  updateQueryString,
 } from '../actions';
 import { CARD_ITEM_MENU_POPUP, COLOR, PATTERN, IMAGE } from '../types/const';
-import { makeGetCustomImage, getSafeAreaWidth, getThemeMode } from '../selectors';
+import {
+  makeGetCustomImage, getSafeAreaWidth, getThemeMode, makeGetTnAndDns,
+} from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
   extractUrl, isEqual, isDecorValid,
@@ -188,6 +191,22 @@ class CardItemContent extends React.Component {
     return <GracefulImage key="favicon-graceful-image-ico" className={tailwind('h-4 w-4 flex-shrink-0 flex-grow-0 overflow-hidden')} src={favicon} alt={`Favicon of ${url}`} customPlaceholder={placeholder} retry={{ count: 2, delay: 3, accumulate: 'multiply' }} />;
   }
 
+  renderTags() {
+    const { tnAndDns, tailwind } = this.props;
+
+    if (tnAndDns.length === 0) return null;
+
+    return (
+      <div className={tailwind('flex justify-start items-center')}>
+        {tnAndDns.map(tnAndDn => {
+          return (
+            <button key={tnAndDn.tagName} onClick={() => this.props.updateQueryString(tnAndDn.tagName)} className={tailwind('block text-sm text-gray-600 font-medium border border-gray-200 rounded-full')}>{tnAndDn.displayName}</button>
+          );
+        })}
+      </div>
+    );
+  }
+
   render() {
     const { tailwind } = this.props;
     const { url, extractedResult, custom } = this.props.link;
@@ -238,6 +257,7 @@ class CardItemContent extends React.Component {
             {title}
           </h4>
         </a>
+        {this.renderTags()}
       </React.Fragment>
     );
   }
@@ -250,12 +270,15 @@ CardItemContent.propTypes = {
 const makeMapStateToProps = () => {
 
   const getCustomImage = makeGetCustomImage();
+  const getTnAndDns = makeGetTnAndDns();
 
   const mapStateToProps = (state, props) => {
     const customImage = getCustomImage(state, props.link);
+    const tnAndDns = getTnAndDns(state, props.link);
 
     return {
       customImage,
+      tnAndDns,
       themeMode: getThemeMode(state),
       safeAreaWidth: getSafeAreaWidth(state),
     };
@@ -266,6 +289,7 @@ const makeMapStateToProps = () => {
 
 const mapDispatchToProps = {
   updatePopup, updateSelectingLinkId, updateBulkEdit, addSelectedLinkIds,
+  updateQueryString,
 };
 
 export default connect(makeMapStateToProps, mapDispatchToProps)(withTailwind(CardItemContent));

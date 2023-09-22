@@ -1,8 +1,8 @@
 import { REHYDRATE } from 'redux-persist/constants';
 
 import {
-  UPDATE_LIST_NAME, UPDATE_POPUP, UPDATE_SEARCH_STRING, FETCH, FETCH_COMMIT,
-  FETCH_ROLLBACK, UPDATE_FETCHED, FETCH_MORE_ROLLBACK, UPDATE_FETCHED_MORE,
+  UPDATE_LIST_NAME, UPDATE_QUERY_STRING, UPDATE_SEARCH_STRING, UPDATE_POPUP, FETCH,
+  FETCH_COMMIT, FETCH_ROLLBACK, UPDATE_FETCHED, FETCH_MORE_ROLLBACK, UPDATE_FETCHED_MORE,
   REFRESH_FETCHED, ADD_FETCHING_INFO, DELETE_FETCHING_INFO, SET_SHOWING_LINK_IDS,
   ADD_LINKS, MOVE_LINKS_DELETE_STEP_COMMIT, DELETE_LINKS_COMMIT, CANCEL_DIED_LINKS,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
@@ -21,10 +21,10 @@ import {
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP,
-  PAYWALL_POPUP, CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP,
-  SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP, ACCESS_ERROR_POPUP,
-  MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING, SETTINGS_VIEW_ACCOUNT,
-  DELETE_ACTION_LIST_NAME, DIED_ADDING, DIED_MOVING,
+  TAG_EDITOR_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP,
+  SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP,
+  ACCESS_ERROR_POPUP, MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING,
+  SETTINGS_VIEW_ACCOUNT, DELETE_ACTION_LIST_NAME, DIED_ADDING, DIED_MOVING,
 } from '../types/const';
 import {
   doContainListName, getStatusCounts, isObject, isString, isNumber,
@@ -47,6 +47,7 @@ const initialState = {
   isPinMenuPopupShown: false,
   pinMenuPopupPosition: null,
   isCustomEditorPopupShown: false,
+  isTagEditorPopupShown: false,
   isPaywallPopupShown: false,
   isConfirmDeletePopupShown: false,
   isConfirmDiscardPopupShown: false,
@@ -110,6 +111,7 @@ const displayReducer = (state = initialState, action) => {
       isPinMenuPopupShown: false,
       pinMenuPopupPosition: null,
       isCustomEditorPopupShown: false,
+      isTagEditorPopupShown: false,
       isPaywallPopupShown: false,
       isConfirmDeletePopupShown: false,
       isConfirmDiscardPopupShown: false,
@@ -164,6 +166,15 @@ const displayReducer = (state = initialState, action) => {
     };
   }
 
+  if (action.type === UPDATE_QUERY_STRING) {
+    return {
+      ...state,
+      queryString: action.payload,
+      selectedLinkIds: [],
+      listChangedCount: state.listChangedCount + 1,
+    };
+  }
+
   if (action.type === UPDATE_SEARCH_STRING) {
     return { ...state, searchString: action.payload };
   }
@@ -180,6 +191,7 @@ const displayReducer = (state = initialState, action) => {
         isSearchPopupShown: isShown,
         isProfilePopupShown: isShown,
         isCustomEditorPopupShown: isShown,
+        isTagEditorPopupShown: isShown,
         isPaywallPopupShown: isShown,
         isConfirmDeletePopupShown: isShown,
         isConfirmDiscardPopupShown: isShown,
@@ -250,6 +262,10 @@ const displayReducer = (state = initialState, action) => {
 
     if (id === CUSTOM_EDITOR_POPUP) {
       return { ...state, isCustomEditorPopupShown: isShown };
+    }
+
+    if (id === TAG_EDITOR_POPUP) {
+      return { ...state, isTagEditorPopupShown: isShown };
     }
 
     if (id === PAYWALL_POPUP) {
@@ -671,6 +687,7 @@ const displayReducer = (state = initialState, action) => {
       //   so no need to force close it.
       // And can't because ImagePicker makes app inactive!
       //isCustomEditorPopupShown: false,
+      //isTagEditorPopupShown: false,
       isLockEditorPopupShown: false, // Force close in case of already filling password.
       isConfirmDeletePopupShown: false,
     };
