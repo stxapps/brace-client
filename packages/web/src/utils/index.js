@@ -2265,13 +2265,8 @@ const _getTags = (tagFPaths, pendingTags) => {
   const tags = getRawTags(tagFPaths);
 
   for (const id in pendingTags) {
-    const { values } = pendingTags[id];
-
     const mainId = getMainId(id);
     tags[mainId] = { ...tags[mainId], ...pendingTags[id] };
-
-    tags[mainId].values = [];
-    for (const value of values) tags[mainId].values.push({ ...value });
   }
 
   return tags

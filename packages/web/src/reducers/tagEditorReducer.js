@@ -6,8 +6,8 @@ import {
 import { ALL, TAG_EDITOR_POPUP } from '../types/const';
 
 const initialState = {
-  values: [], // [{ displayName, color },...]
-  hints: [], // [{ displayName, color, isShown },...]
+  values: [], // [{ tagName, displayName, color }, ...]
+  hints: [], // [{ tagName, displayName, color, isShown }, ...]
   displayName: '',
   color: '',
   didValuesEdit: false,

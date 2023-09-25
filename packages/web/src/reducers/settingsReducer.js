@@ -4,11 +4,12 @@ import { loop, Cmd } from 'redux-loop';
 import { updateSettingsDeleteStep, mergeSettingsDeleteStep } from '../actions';
 import {
   FETCH_COMMIT, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME,
-  DELETE_LIST_NAMES, UPDATE_TAG_DATA, CANCEL_DIED_TAGS, ADD_TAG_NAMES, UPDATE_TAG_NAMES,
-  MOVE_TAG_NAME, DELETE_TAG_NAMES, UPDATE_DO_EXTRACT_CONTENTS,
-  UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH, UPDATE_DO_DESCENDING_ORDER,
-  UPDATE_DEFAULT_LAYOUT_TYPE, UPDATE_DEFAULT_THEME, UPDATE_SETTINGS_COMMIT,
-  CANCEL_DIED_SETTINGS, MERGE_SETTINGS_COMMIT, DELETE_ALL_DATA, RESET_STATE,
+  DELETE_LIST_NAMES, UPDATE_TAG_DATA, UPDATE_TAG_DATA_COMMIT, CANCEL_DIED_TAGS,
+  ADD_TAG_NAMES, UPDATE_TAG_NAMES, MOVE_TAG_NAME, DELETE_TAG_NAMES,
+  UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
+  UPDATE_DO_DESCENDING_ORDER, UPDATE_DEFAULT_LAYOUT_TYPE, UPDATE_DEFAULT_THEME,
+  UPDATE_SETTINGS_COMMIT, UPDATE_UNCHANGED_SETTINGS, CANCEL_DIED_SETTINGS,
+  MERGE_SETTINGS_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import { MY_LIST, TRASH, ARCHIVE, SWAP_LEFT, SWAP_RIGHT } from '../types/const';
 import {
@@ -59,12 +60,9 @@ const settingsReducer = (state = initialState, action) => {
     if (didChange.tagNameMap) {
       newState.tagNameMap = state.tagNameMap;
     }
-
-    /*
     if (didChange.newTagNameObjs.length > 0) {
       newState.tagNameMap = [...newState.tagNameMap, ...didChange.newTagNameObjs]
     }
-     */
 
     return newState;
   }
@@ -212,15 +210,29 @@ const settingsReducer = (state = initialState, action) => {
     const newState = { ...state };
     newState.tagNameMap = [...state.tagNameMap, ...newTagNameObjs];
 
-    didChange.tagNameMap = true;
+    didChange.newTagNameObjs = [...newTagNameObjs];
 
     return newState;
   }
 
+  if (action.type === UPDATE_TAG_DATA_COMMIT) {
+    didChange.newTagNameObjs = [];
+
+    const { doUpdateSettings, _settingsFPaths } = action.payload;
+    if (!doUpdateSettings) return state;
+
+    return loop(
+      state,
+      Cmd.run(
+        updateSettingsDeleteStep(_settingsFPaths), { args: [Cmd.dispatch, Cmd.getState] }
+      )
+    );
+  }
+
   if (action.type === CANCEL_DIED_TAGS) {
-
-
-
+    const { listNames, tagNames, settings } = action.payload;
+    didChange.newTagNameObjs = [];
+    return deriveSettingsState(listNames, tagNames, settings, initialState);
   }
 
   if (action.type === ADD_TAG_NAMES) {
@@ -331,6 +343,15 @@ const settingsReducer = (state = initialState, action) => {
     );
   }
 
+  if (action.type === UPDATE_UNCHANGED_SETTINGS) {
+    didChange.doExtractContents = false;
+    didChange.doDeleteOldLinksInTrash = false;
+    didChange.doDescendingOrder = false;
+    didChange.listNameMap = false;
+    didChange.tagNameMap = false;
+    return state;
+  }
+
   if (action.type === CANCEL_DIED_SETTINGS) {
     const { listNames, tagNames, settings } = action.payload;
     didChange.doExtractContents = false;
@@ -362,6 +383,7 @@ const settingsReducer = (state = initialState, action) => {
     didChange.doDescendingOrder = false;
     didChange.listNameMap = false;
     didChange.tagNameMap = false;
+    didChange.newTagNameObjs = [];
     return { ...initialState };
   }
 

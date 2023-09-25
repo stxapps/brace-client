@@ -30,19 +30,20 @@ import {
   UPDATE_EXTRACTED_CONTENTS, UPDATE_LIST_NAME_EDITORS, ADD_LIST_NAMES,
   UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME, DELETE_LIST_NAMES,
   UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME, UPDATE_DO_EXTRACT_CONTENTS,
-  UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH, UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS,
-  UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK, UPDATE_INFO, UPDATE_INFO_COMMIT,
-  UPDATE_INFO_ROLLBACK, CANCEL_DIED_SETTINGS, MERGE_SETTINGS, MERGE_SETTINGS_COMMIT,
-  MERGE_SETTINGS_ROLLBACK, UPDATE_SETTINGS_VIEW_ID, UPDATE_DO_USE_LOCAL_LAYOUT,
-  UPDATE_DEFAULT_LAYOUT_TYPE, UPDATE_LOCAL_LAYOUT_TYPE, UPDATE_DELETE_ACTION,
-  UPDATE_DISCARD_ACTION, UPDATE_LIST_NAMES_MODE, GET_PRODUCTS, GET_PRODUCTS_COMMIT,
-  GET_PRODUCTS_ROLLBACK, REQUEST_PURCHASE, REQUEST_PURCHASE_COMMIT,
-  REQUEST_PURCHASE_ROLLBACK, RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT,
-  RESTORE_PURCHASES_ROLLBACK, REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT,
-  REFRESH_PURCHASES_ROLLBACK, UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS,
-  UPDATE_IAP_PURCHASE_STATUS, UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
-  PIN_LINK, PIN_LINK_COMMIT, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_COMMIT,
-  UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
+  UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH, UPDATE_DO_DESCENDING_ORDER, TRY_UPDATE_SETTINGS,
+  TRY_UPDATE_SETTINGS_COMMIT, TRY_UPDATE_SETTINGS_ROLLBACK, UPDATE_SETTINGS,
+  TRY_UPDATE_INFO, TRY_UPDATE_INFO_COMMIT, TRY_UPDATE_INFO_ROLLBACK,
+  CANCEL_DIED_SETTINGS, MERGE_SETTINGS, MERGE_SETTINGS_COMMIT, MERGE_SETTINGS_ROLLBACK,
+  UPDATE_SETTINGS_VIEW_ID, UPDATE_DO_USE_LOCAL_LAYOUT, UPDATE_DEFAULT_LAYOUT_TYPE,
+  UPDATE_LOCAL_LAYOUT_TYPE, UPDATE_DELETE_ACTION, UPDATE_DISCARD_ACTION,
+  UPDATE_LIST_NAMES_MODE, GET_PRODUCTS, GET_PRODUCTS_COMMIT, GET_PRODUCTS_ROLLBACK,
+  REQUEST_PURCHASE, REQUEST_PURCHASE_COMMIT, REQUEST_PURCHASE_ROLLBACK,
+  RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
+  REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
+  UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS, UPDATE_IAP_PURCHASE_STATUS,
+  UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS, PIN_LINK, PIN_LINK_COMMIT,
+  PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_COMMIT, UNPIN_LINK_ROLLBACK,
+  MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
   MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, CANCEL_DIED_PINS, UPDATE_SYSTEM_THEME_MODE,
   UPDATE_DO_USE_LOCAL_THEME, UPDATE_DEFAULT_THEME, UPDATE_LOCAL_THEME,
   UPDATE_UPDATING_THEME_MODE, UPDATE_TIME_PICK, UPDATE_IS_24H_FORMAT,
@@ -67,7 +68,7 @@ import {
   COM_BRACEDOTTO, COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, ACTIVE,
   UNKNOWN, SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE, FEATURE_PIN,
   FEATURE_APPEARANCE, FEATURE_CUSTOM, FEATURE_LOCK, FEATURE_TAG, PADDLE_RANDOM_ID,
-  VALID_PASSWORD, PASSWORD_MSGS,
+  VALID_PASSWORD, PASSWORD_MSGS, VALID_TAG_NAME, DUPLICATE_TAG_NAME, TAG_NAME_MSGS
 } from '../types/const';
 import {
   isEqual, isArrayEqual, isString, isObject, isNumber, throttle, randomString,
@@ -81,7 +82,7 @@ import {
   sample, extractLinkFPath, getLink, getListNameAndLink, getNLinkObjs, getNLinkFPaths,
   newObject, addFetchedToVars, createLinkFPath, isFetchedLinkId, doesIncludeFetching,
   doesIncludeFetchingMore, isFetchingInterrupted, getTagFPaths, getInUseTagNames,
-  getEditingTagNameEditors, getTags, getTagNameObjFromDisplayName,
+  getEditingTagNameEditors, getTags, getTagNameObj, validateTagNameDisplayName,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -155,8 +156,8 @@ export const init = async (store) => {
           if (!isObject(action)) return false;
           return [
             ADD_LINKS, MOVE_LINKS_ADD_STEP, MOVE_LINKS_DELETE_STEP, DELETE_LINKS,
-            UPDATE_CUSTOM_DATA, UPDATE_SETTINGS, MERGE_SETTINGS, PIN_LINK, UNPIN_LINK,
-            MOVE_PINNED_LINK_ADD_STEP,
+            UPDATE_CUSTOM_DATA, TRY_UPDATE_SETTINGS, MERGE_SETTINGS, PIN_LINK,
+            UNPIN_LINK, MOVE_PINNED_LINK_ADD_STEP,
           ].includes(action.type);
         });
         if (found) {
@@ -612,7 +613,7 @@ export const fetch = () => async (dispatch, getState) => {
     payload,
     meta: {
       offline: {
-        effect: { method: FETCH, params: { getState, ...payload } },
+        effect: { method: FETCH, params: { ...payload, getState } },
         commit: { type: FETCH_COMMIT },
         rollback: { type: FETCH_ROLLBACK, meta: payload },
       },
@@ -990,7 +991,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
     payload,
     meta: {
       offline: {
-        effect: { method: FETCH_MORE, params: { getState, ...payload } },
+        effect: { method: FETCH_MORE, params: { ...payload, getState } },
         commit: { type: FETCH_MORE_COMMIT },
         rollback: { type: FETCH_MORE_ROLLBACK, meta: payload },
       },
@@ -1889,25 +1890,19 @@ export const updateDeletingListName = (listName) => {
 };
 
 const updateSettings = async (dispatch, getState) => {
+  // Can't check with snapshot here as the snapshot might not be the latest version
+  //   if there are already other updating settings.
   const settings = getState().settings;
-  const snapshotSettings = getState().snapshot.settings;
-
-  if (isEqual(settings, snapshotSettings)) {
-    dispatch(cancelDiedSettings());
-    return;
-  }
-
-  const doFetch = settings.doDescendingOrder !== snapshotSettings.doDescendingOrder;
-  const payload = { settings, doFetch };
+  const payload = { settings };
 
   dispatch({
-    type: UPDATE_SETTINGS,
-    payload: payload,
+    type: TRY_UPDATE_SETTINGS,
+    payload,
     meta: {
       offline: {
-        effect: { method: UPDATE_SETTINGS, params: payload },
-        commit: { type: UPDATE_SETTINGS_COMMIT, meta: payload },
-        rollback: { type: UPDATE_SETTINGS_ROLLBACK, meta: payload },
+        effect: { method: TRY_UPDATE_SETTINGS, params: { dispatch, getState } },
+        commit: { type: TRY_UPDATE_SETTINGS_COMMIT },
+        rollback: { type: TRY_UPDATE_SETTINGS_ROLLBACK },
       },
     },
   });
@@ -1927,21 +1922,15 @@ export const updateSettingsDeleteStep = (_settingsFPaths) => async (
 };
 
 const updateInfo = async (dispatch, getState) => {
-  const info = getState().info;
-  const snapshotInfo = getState().snapshot.info;
-
-  // It's ok if IAP in progess as when complete, it'll update again.
-  if (isEqual(info, snapshotInfo)) return;
-
-  const payload = { info };
+  // Can't check with snapshot here as the snapshot might not be the latest version
+  //   if there are already other updating infos.
   dispatch({
-    type: UPDATE_INFO,
-    payload: payload,
+    type: TRY_UPDATE_INFO,
     meta: {
       offline: {
-        effect: { method: UPDATE_INFO, params: payload },
-        commit: { type: UPDATE_INFO_COMMIT, meta: payload },
-        rollback: { type: UPDATE_INFO_ROLLBACK, meta: payload },
+        effect: { method: TRY_UPDATE_INFO, params: { dispatch, getState } },
+        commit: { type: TRY_UPDATE_INFO_COMMIT },
+        rollback: { type: TRY_UPDATE_INFO_ROLLBACK },
       },
     },
   });
@@ -3090,13 +3079,11 @@ export const updateTagEditorPopup = (isShown, id, isAddTags) => async (
 export const updateTagEditor = (values, hints, displayName, color, msg) => {
   const payload = {};
   if (Array.isArray(values)) {
-    payload.values = [];
-    for (const value of values) payload.values.push({ ...value });
+    payload.values = values;
     payload.didValuesEdit = true;
   }
   if (Array.isArray(hints)) {
-    payload.hints = [];
-    for (const hint of hints) payload.hints.push({ ...hint });
+    payload.hints = hints;
     payload.didHintsEdit = true;
   }
 
@@ -3109,41 +3096,70 @@ export const updateTagEditor = (values, hints, displayName, color, msg) => {
   return { type: UPDATE_TAG_EDITOR, payload };
 };
 
-const _updateTagData = async (dispatch, getState, id, values) => {
-  const tagNameMap = getState().settings.tagNameMap;
+export const addTagEditorTagName = (values, hints, displayName, color) => async (
+  dispatch, getState
+) => {
 
-  let addedDT = Date.now();
+  displayName = displayName.trim();
+
+  const result = validateTagNameDisplayName(null, displayName, []);
+  if (result !== VALID_TAG_NAME) {
+    dispatch(updateTagEditor(null, null, null, null, TAG_NAME_MSGS[result]));
+    return;
+  }
+
+  const found = values.some(value => value.displayName === displayName);
+  if (found) {
+    dispatch(
+      updateTagEditor(null, null, null, null, TAG_NAME_MSGS[DUPLICATE_TAG_NAME])
+    );
+    return;
+  }
+
+  let tagName, newHints = [];
+  for (const hint of hints) {
+    if (hint.displayName !== displayName || isString(tagName)) {
+      newHints.push(hint);
+      continue;
+    }
+
+    tagName = hint.tagName;
+    newHints.push({ ...hint, isBlur: true });
+  }
+  if (!isString(tagName)) tagName = `${Date.now()}-${randomString(4)}`;
+
+  const newValues = [...values, { tagName, displayName, color }];
+  dispatch(updateTagEditor(newValues, newHints, '', null, ''));
+};
+
+export const updateTagData = (id, values) => async (dispatch, getState) => {
+  if (!isString(id)) {
+    console.log('UpdateTagData: Invalid id: ', id);
+    return;
+  }
+
+  const tagNameMap = getState().settings.tagNameMap;
 
   const newTagNameObjs = [];
   for (const value of values) {
-    const { tagNameObj } = getTagNameObjFromDisplayName(value.displayName, tagNameMap);
+    const { tagNameObj } = getTagNameObj(value.tagName, tagNameMap);
     if (isObject(tagNameObj)) continue;
 
-    const tagName = `${addedDT}-${randomString(4)}`;
-    newTagNameObjs.push({
-      tagName, displayName: value.displayName, color: value.color,
-    });
-
-    addedDT += 1;
+    newTagNameObjs.push(value);
   }
 
   if (newTagNameObjs.length === 0) {
     const tagFPaths = getTagFPaths(getState());
-    const pendingTags = getState().pendingTags;
-    const tags = getTags(tagFPaths, pendingTags);
+    const solvedTags = getTags(tagFPaths, {});
     const mainId = getMainId(id);
 
-    const aTags = [], bTags = [];
-    if (isObject(tags[mainId])) {
-      for (const value of tags[mainId].values) {
-        aTags.push(`${value.displayName}${value.color}`);
-      }
+    const aTns = [], bTns = [];
+    if (isObject(solvedTags[mainId])) {
+      for (const value of solvedTags[mainId].values) aTns.push(value.tagName);
     }
-    for (const value of values) {
-      bTags.push(`${value.display}${value.color}`);
-    }
+    for (const value of values) bTns.push(value.tagName);
 
-    if (isArrayEqual(aTags, bTags)) return;
+    if (isArrayEqual(aTns, bTns)) return;
   }
 
   const payload = { id, values, newTagNameObjs };
@@ -3152,34 +3168,23 @@ const _updateTagData = async (dispatch, getState, id, values) => {
     payload,
     meta: {
       offline: {
-        effect: { method: UPDATE_TAG_DATA, params: { getState, ...payload } },
+        effect: { method: UPDATE_TAG_DATA, params: { ...payload, getState } },
         commit: { type: UPDATE_TAG_DATA_COMMIT },
         rollback: { type: UPDATE_TAG_DATA_ROLLBACK, meta: payload },
       },
     },
   });
-}
-
-export const updateTagData = () => async (dispatch, getState) => {
-  const selectingLinkId = getState().display.selectingLinkId;
-  const tagEditor = getState().tagEditor;
-
-  if (!isString(selectingLinkId)) {
-    console.log('UpdateTagData: Invalid selectingLinkId: ', selectingLinkId);
-    return;
-  }
-
-  const values = [];
-  for (const value of tagEditor.values) values.push({ ...value });
-
-  await _updateTagData(dispatch, getState, selectingLinkId, values);
 };
 
-const retryDiedTags = () => {
+const retryDiedTags = (dispatch, getState, id) => {
+  // called by retryDiedLinks with linkId
 
+  // get values from pendingTags
+
+  // call _updateTagData
 };
 
-const cancelDiedTags = () => {
+const cancelDiedTags = (dispatch, getState, id) => {
 
   // start from newTagNameObjs
 
@@ -3187,18 +3192,17 @@ const cancelDiedTags = () => {
   // check with tagFPaths and pendingTags if in use
 
 
-  // if not, dispatch to detete in settings
+  // if not, dispatch to detete some unused newTagNameObjs in settings
 
 
-  // reset didChange or not?
-
-  // Use a new one: didChange.tagNameMapByUTD?
-
+  // reset didChange or not? reset didChange.newTagNameObjs = []?
 
 };
 
 export const cleanUpTags = () => async (dispatch, getState) => {
+  // Clean up tags that links are already deleted
 
+  // Not the latest ones
 };
 
 export const updateTagNameEditors = (tagNameEditors) => {

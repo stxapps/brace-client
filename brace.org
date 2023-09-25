@@ -652,6 +652,7 @@ This and CI/CD are very important!
   + install all polyfills: yarn add assert buffer crypto-browserify process stream-browserify util
 - yarn add blueimp-load-image
 - yarn add idb-keyval
+- yarn add jest-diff
 ** attribution
 - tailwindcss, postcss, purgecss
 - uirefactoring

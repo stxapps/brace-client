@@ -7,6 +7,7 @@ export const didChange = {
   listNameMap: false,
   tagNameMap: false,
   purchases: false,
+  newTagNameObjs: [],
 };
 
 export const cachedServerFPaths = {

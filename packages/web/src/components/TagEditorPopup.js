@@ -2,13 +2,11 @@ import React, { useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { updatePopup, updateTagEditor, updateTagData } from '../actions';
 import {
-  TAG_EDITOR_POPUP, VALID_TAG_NAME, DUPLICATE_TAG_NAME, TAG_NAME_MSGS, TAGGED, ADD_TAGS,
-  MANAGE_TAGS,
-} from '../types/const';
+  updatePopup, updateTagEditor, addTagEditorTagName, updateTagData,
+} from '../actions';
+import { TAG_EDITOR_POPUP, TAGGED, ADD_TAGS, MANAGE_TAGS } from '../types/const';
 import { makeGetTagStatus, getTagEditor } from '../selectors';
-import { validateTagNameDisplayName } from '../utils';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
 import { useSafeAreaFrame, useTailwind } from '.';
@@ -36,37 +34,41 @@ const TagEditorPopup = () => {
     didClick.current = true;
 
     dispatch(updatePopup(TAG_EDITOR_POPUP, false));
-    dispatch(updateTagData());
+    dispatch(updateTagData(selectingLinkId, tagEditor.values));
   };
 
-  const onHintSelect = (displayName, color) => {
+  const onHintSelect = (hint) => {
     if (didClick.current) return;
     didClick.current = true;
 
     const { values, hints } = tagEditor;
 
-    const found = values.some(value => value.displayName === displayName);
-    if (found) return;
+    const found = values.some(value => value.tagName === hint.tagName);
+    if (found && hint.isBlur) return;
 
-    const newValues = [...values, { displayName, color }];
-    const newHints = hints.map(hint => {
-      if (hint.displayName !== displayName) return hint;
-      return { ...hint, isBlur: true };
+    const newValues = [
+      ...values,
+      { tagName: hint.tagName, displayName: hint.displayName, color: hint.color },
+    ];
+    const newHints = hints.map(_hint => {
+      if (_hint.tagName !== hint.tagName) return _hint;
+      return { ..._hint, isBlur: true };
     });
-    dispatch(updateTagEditor(newValues, newHints, null, null, null));
+    dispatch(updateTagEditor(newValues, newHints, null, null, ''));
   };
 
-  const onValueDeselect = (displayName) => {
+  const onValueDeselect = (value) => {
     if (didClick.current) return;
     didClick.current = true;
 
     const { values, hints } = tagEditor;
-    const newValues = values.filter(value => value.displayName !== displayName);
+
+    const newValues = values.filter(_value => _value.tagName !== value.tagName);
     const newHints = hints.map(hint => {
-      if (hint.displayName !== displayName) return hint;
+      if (hint.tagName !== value.tagName) return hint;
       return { ...hint, isBlur: false };
     });
-    dispatch(updateTagEditor(newValues, newHints, null, null, null));
+    dispatch(updateTagEditor(newValues, newHints, null, null, ''));
   };
 
   const onDnInputChange = (e) => {
@@ -81,29 +83,8 @@ const TagEditorPopup = () => {
     if (didClick.current) return;
     didClick.current = true;
 
-    const { values, hints, displayName: _displayName, color } = tagEditor;
-
-    const displayName = _displayName.trim();
-    const result = validateTagNameDisplayName(null, displayName, []);
-    if (result !== VALID_TAG_NAME) {
-      dispatch(updateTagEditor(null, null, null, null, TAG_NAME_MSGS[result]));
-      return;
-    }
-
-    const found = values.some(value => value.displayName === displayName);
-    if (found) {
-      dispatch(
-        updateTagEditor(null, null, null, null, TAG_NAME_MSGS[DUPLICATE_TAG_NAME])
-      );
-      return;
-    }
-
-    const newValues = [...values, { displayName, color }];
-    const newHints = hints.map(hint => {
-      if (hint.displayName !== displayName) return hint;
-      return { ...hint, isBlur: true };
-    });
-    dispatch(updateTagEditor(newValues, newHints, '', null, ''));
+    const { values, hints, displayName, color } = tagEditor;
+    dispatch(addTagEditorTagName(values, hints, displayName, color));
   };
 
   useEffect(() => {
@@ -160,9 +141,9 @@ const TagEditorPopup = () => {
                 {tagEditor.values.length > 0 && <div className={tailwind('flex justify-start items-center flex-wrap min-h-[4rem] pt-5')}>
                   {tagEditor.values.map((value, i) => {
                     return (
-                      <div key={`TagEditorValue-${value.displayName}`} className={tailwind(`mb-2 flex items-center rounded-full bg-gray-100 pl-3 blk:bg-gray-800 ${i === 0 ? '' : 'ml-2'}`)}>
+                      <div key={`TagEditorValue-${value.tagName}`} className={tailwind(`mb-2 flex items-center rounded-full bg-gray-100 pl-3 blk:bg-gray-800 ${i === 0 ? '' : 'ml-2'}`)}>
                         <div className={tailwind('text-sm text-gray-600 blk:text-gray-300')}>{value.displayName}</div>
-                        <button onClick={() => onValueDeselect(value.displayName)} className={tailwind('group ml-1 items-center justify-center rounded-full py-1.5 pr-1.5 hover:bg-gray-100 focus:outline-none blk:hover:bg-gray-700')} type="button">
+                        <button onClick={() => onValueDeselect(value)} className={tailwind('group ml-1 items-center justify-center rounded-full py-1.5 pr-1.5 hover:bg-gray-100 focus:outline-none blk:hover:bg-gray-700')} type="button">
                           <svg className={tailwind('h-5 w-5 cursor-pointer rounded-full text-gray-400 group-hover:text-gray-500 group-focus:ring blk:text-gray-400 blk:group-hover:text-gray-300')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM8.70711 7.29289C8.31658 6.90237 7.68342 6.90237 7.29289 7.29289C6.90237 7.68342 6.90237 8.31658 7.29289 8.70711L8.58579 10L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L10 11.4142L11.2929 12.7071C11.6834 13.0976 12.3166 13.0976 12.7071 12.7071C13.0976 12.3166 13.0976 11.6834 12.7071 11.2929L11.4142 10L12.7071 8.70711C13.0976 8.31658 13.0976 7.68342 12.7071 7.29289C12.3166 6.90237 11.6834 6.90237 11.2929 7.29289L10 8.58579L8.70711 7.29289Z" />
                           </svg>
@@ -186,7 +167,7 @@ const TagEditorPopup = () => {
                   <div className={tailwind('mb-2 text-sm text-gray-500 blk:text-gray-400')}>Hint:</div>
                   {tagEditor.hints.map(hint => {
                     return (
-                      <button key={`TagEditorHint-${hint.displayName}`} onClick={() => onHintSelect(hint.displayName, hint.color)} className={tailwind('ml-2 mb-2 group block rounded-full bg-gray-100 px-3 py-1.5 hover:bg-gray-200 focus:outline-none focus:ring blk:bg-gray-800 blk:hover:bg-gray-700')} type="button" disabled={hint.isBlur}>
+                      <button key={`TagEditorHint-${hint.tagName}`} onClick={() => onHintSelect(hint)} className={tailwind('ml-2 mb-2 group block rounded-full bg-gray-100 px-3 py-1.5 hover:bg-gray-200 focus:outline-none focus:ring blk:bg-gray-800 blk:hover:bg-gray-700')} type="button" disabled={hint.isBlur}>
                         <div className={tailwind(`text-sm ${hint.isBlur ? 'text-gray-400 blk:text-gray-500' : 'text-gray-600 group-hover:text-gray-700 blk:text-gray-300 blk:group-hover:text-gray-200'}`)}>{hint.displayName}</div>
                       </button>
                     );

@@ -10,13 +10,13 @@ import {
   EXTRACT_CONTENTS_COMMIT, UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
   UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME, DELETE_LIST_NAMES,
-  UPDATE_DELETE_ACTION, UPDATE_DISCARD_ACTION, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
-  UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, MERGE_SETTINGS_COMMIT,
-  UPDATE_SETTINGS_VIEW_ID, UPDATE_LIST_NAMES_MODE, UPDATE_PAYWALL_FEATURE,
-  UPDATE_LOCK_ACTION, ADD_LOCK_LIST, LOCK_LIST, UPDATE_LOCKS_FOR_ACTIVE_APP,
-  UPDATE_LOCKS_FOR_INACTIVE_APP, UPDATE_IMPORT_ALL_DATA_PROGRESS,
-  UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA,
-  RESET_STATE,
+  UPDATE_DELETE_ACTION, UPDATE_DISCARD_ACTION, TRY_UPDATE_SETTINGS, UPDATE_SETTINGS,
+  UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS,
+  MERGE_SETTINGS_COMMIT, UPDATE_SETTINGS_VIEW_ID, UPDATE_LIST_NAMES_MODE,
+  UPDATE_PAYWALL_FEATURE, UPDATE_LOCK_ACTION, ADD_LOCK_LIST, LOCK_LIST,
+  UPDATE_LOCKS_FOR_ACTIVE_APP, UPDATE_LOCKS_FOR_INACTIVE_APP, UPDATE_TAG_DATA_COMMIT,
+  UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
+  UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
@@ -580,20 +580,26 @@ const displayReducer = (state = initialState, action) => {
     return { ...state, discardAction: action.payload };
   }
 
-  if (action.type === UPDATE_SETTINGS) {
+  if (action.type === TRY_UPDATE_SETTINGS) {
     const { settings } = action.payload;
     const doContain = doContainListName(state.listName, settings.listNameMap);
 
     return {
       ...state,
       listName: doContain ? state.listName : MY_LIST,
+    };
+  }
+
+  if (action.type === UPDATE_SETTINGS) {
+    return {
+      ...state,
       statuses: [...state.statuses, UPDATE_SETTINGS],
       settingsStatus: UPDATING,
     };
   }
 
   if (action.type === UPDATE_SETTINGS_COMMIT) {
-    const { doFetch } = action.meta;
+    const { doFetch } = action.payload;
 
     const newState = {
       ...state,
@@ -691,6 +697,18 @@ const displayReducer = (state = initialState, action) => {
       isLockEditorPopupShown: false, // Force close in case of already filling password.
       isConfirmDeletePopupShown: false,
     };
+  }
+
+  if (action.type === UPDATE_TAG_DATA_COMMIT) {
+    const { doFetch } = action.payload;
+    if (!doFetch || !Array.isArray(state.showingLinkIds)) return state;
+
+    const newState = { ...state };
+    newState.selectedLinkIds = [];
+    [newState.showingLinkIds, newState.hasMoreLinks] = [null, null];
+    newState.listChangedCount += 1;
+    [vars.fetch.fetchedLnOrQts, vars.fetch.doShowLoading] = [[], true];
+    return newState;
   }
 
   if (action.type === UPDATE_IMPORT_ALL_DATA_PROGRESS) {

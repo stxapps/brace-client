@@ -552,7 +552,7 @@ export const getTagEditor = createSelector(
           const { tagNameObj } = getTagNameObj(tagName, tagNameMap);
           if (!isObject(tagNameObj)) continue;
           editor.values.push({
-            displayName: tagNameObj.displayName, color: tagNameObj.color,
+            tagName, displayName: tagNameObj.displayName, color: tagNameObj.color,
           });
         }
       }
@@ -561,7 +561,10 @@ export const getTagEditor = createSelector(
       editor.hints = [];
       for (const tagNameObj of tagNameMap) {
         editor.hints.push({
-          displayName: tagNameObj.displayName, color: tagNameObj.color, isBlur: false,
+          tagName: tagNameObj.tagName,
+          displayName: tagNameObj.displayName,
+          color: tagNameObj.color,
+          isBlur: false,
         });
       }
     }

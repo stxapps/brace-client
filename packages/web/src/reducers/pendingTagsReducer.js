@@ -27,19 +27,24 @@ const pendingTagsReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_TAG_DATA) {
-    const { id, values } = action.payload;
+    const { id, values, newTagNameObjs } = action.payload;
 
     const newValues = [];
     for (const value of values) newValues.push({ ...value });
 
+    const newNewTagNameObjs = [];
+    for (const obj of newTagNameObjs) newNewTagNameObjs.push({ ...obj });
+
     const newState = { ...state };
-    newState[id] = { status: action.type, values: newValues };
+    newState[id] = {
+      status: action.type, values: newValues, newTagNameObjs: newNewTagNameObjs,
+    };
 
     return newState;
   }
 
   if (action.type === UPDATE_TAG_DATA_COMMIT) {
-    const { id } = action.meta;
+    const { id } = action.payload;
 
     const newState = { ...state };
     delete newState[id];

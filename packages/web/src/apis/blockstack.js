@@ -1,18 +1,27 @@
+import { diffLinesRaw, DIFF_EQUAL, DIFF_DELETE, DIFF_INSERT } from 'jest-diff';
+import { LexoRank } from '@wewatch/lexorank';
+
 import serverApi from './server';
 import fileApi from './localFile';
 import { CD_ROOT, DOT_JSON, INFO } from '../types/const';
 import {
-  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, UPDATE_SETTINGS,
-  UPDATE_INFO, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA, UPDATE_TAG_DATA,
+  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, TRY_UPDATE_SETTINGS,
+  UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
+  UPDATE_UNCHANGED_SETTINGS, TRY_UPDATE_INFO, UPDATE_INFO, UPDATE_INFO_COMMIT,
+  UPDATE_INFO_ROLLBACK, UPDATE_UNCHANGED_INFO, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA,
+  UPDATE_TAG_DATA,
 } from '../types/actionTypes';
 import {
-  isObject, isString, randomString, createLinkFPath, extractLinkFPath, createPinFPath,
-  addFPath, getStaticFPath, deriveFPaths, createDataFName, getLastSettingsFPaths,
-  createSettingsFPath, excludeNotObjContents, batchGetFileWithRetry,
-  batchPutFileWithRetry, batchDeleteFileWithRetry, deriveUnknownErrorLink, getLinkFPaths,
-  getPinFPaths, getNLinkFPaths, isFetchedLinkId, getInUseTagNames, copyTagNameObjs,
+  isEqual, isObject, isString, isNumber, randomString, createLinkFPath, extractLinkFPath,
+  createPinFPath, addFPath, getStaticFPath, deriveFPaths, createDataFName,
+  getLastSettingsFPaths, createSettingsFPath, excludeNotObjContents,
+  batchGetFileWithRetry, batchPutFileWithRetry, batchDeleteFileWithRetry,
+  deriveUnknownErrorLink, getLinkFPaths, getPinFPaths, getNLinkFPaths, isFetchedLinkId,
+  getInUseTagNames, getTagFPaths, getTags, getMainId, createTagFPath, extractTagFPath,
 } from '../utils';
 import vars from '../vars';
+
+const DIFF_UPDATE = 'DIFF_UPDATE';
 
 export const effect = async (effectObj, _action) => {
 
@@ -34,8 +43,16 @@ export const effect = async (effectObj, _action) => {
     return deleteLinks(params);
   }
 
+  if (method === TRY_UPDATE_SETTINGS) {
+    return tryPutSettings(params);
+  }
+
   if (method === UPDATE_SETTINGS) {
     return putSettings(params);
+  }
+
+  if (method === TRY_UPDATE_INFO) {
+    return tryPutInfo(params);
   }
 
   if (method === UPDATE_INFO) {
@@ -402,6 +419,32 @@ const canDeleteTagNames = async (tagNames) => {
 
 };
 
+const tryPutSettings = async (params) => {
+  const { dispatch, getState } = params;
+
+  const settings = getState().settings;
+  const snapshotSettings = getState().snapshot.settings;
+
+  // Need to compare with the snapshot here to have the latest version.
+  //   e.g., change settings -> close the popup -> open it and change again.
+  if (isEqual(settings, snapshotSettings)) {
+    dispatch({ type: UPDATE_UNCHANGED_SETTINGS })
+    return {};
+  }
+
+  const doFetch = settings.doDescendingOrder !== snapshotSettings.doDescendingOrder;
+
+  dispatch({ type: UPDATE_SETTINGS });
+  try {
+    const res = await putSettings({ settings });
+    dispatch({ type: UPDATE_SETTINGS_COMMIT, payload: { ...res, doFetch } });
+  } catch (error) {
+    dispatch({ type: UPDATE_SETTINGS_ROLLBACK, payload: { error } });
+  }
+
+  return {};
+};
+
 const putSettings = async (params) => {
   const { settings } = params;
   const { settingsFPaths } = await listFPaths();
@@ -416,6 +459,29 @@ const putSettings = async (params) => {
 
   await serverApi.putFiles([settingsFPath], [settings]);
   return { settings, _settingsFPaths };
+};
+
+const tryPutInfo = async (params) => {
+  const { dispatch, getState } = params;
+
+  const info = getState().info;
+  const snapshotInfo = getState().snapshot.info;
+
+  // Need to compare with the snapshot here to have the latest version.
+  if (isEqual(info, snapshotInfo)) {
+    dispatch({ type: UPDATE_UNCHANGED_INFO })
+    return {};
+  }
+
+  dispatch({ type: UPDATE_INFO });
+  try {
+    const res = await putInfo({ info });
+    dispatch({ type: UPDATE_INFO_COMMIT, payload: { ...res } });
+  } catch (error) {
+    dispatch({ type: UPDATE_INFO_ROLLBACK, payload: { error } });
+  }
+
+  return {};
 };
 
 const putInfo = async (params) => {
@@ -476,39 +542,138 @@ const updateCustomData = async (params) => {
 };
 
 const updateTagData = async (params) => {
-  const { getState, id, values, newTagNameObjs } = params;
+  const { getState, id, values } = params;
 
-  const isSettingsPopupShown = getState().display.isSettingsPopupShown;
+  const settings = getState().settings;
+  const snapshotSettings = getState().snapshot.settings;
 
   const result = { id };
-  if (!isSettingsPopupShown && newTagNameObjs.length > 0) {
-    const sResult = await putSettings({ settings: getState().settings });
-    result.doPutSettings = true;
+  if (!isEqual(settings, snapshotSettings)) {
+    const doFetch = settings.doDescendingOrder !== snapshotSettings.doDescendingOrder;
+
+    const sResult = await putSettings({ settings });
+    result.doUpdateSettings = true;
     result.settings = sResult._settings;
     result._settingsFPaths = sResult._settingsFPaths;
+    result.doFetch = doFetch;
   }
 
+  const tagFPaths = getTagFPaths(getState());
+  const solvedTags = getTags(tagFPaths, {});
+  const mainId = getMainId(id);
 
+  const combinedValues = {}, aTns = [], bTns = [];
+  if (isObject(solvedTags[mainId])) {
+    for (const value of solvedTags[mainId].values) {
+      combinedValues[value.tagName] = { ...value, diffs: [] };
+      aTns.push(value.tagName);
+    }
+  }
+  for (const value of values) {
+    combinedValues[value.tagName] = { ...combinedValues[value.tagName], diffs: [] };
+    bTns.push(value.tagName);
+  }
 
+  const diffs = diffLinesRaw(aTns, bTns);
+  for (const diff of diffs) {
+    const [diffType, tn] = [diff[0], diff[1]];
+    combinedValues[tn].diffs.push(diffType);
+  }
+  for (const tn in combinedValues) {
+    const tDiffs = combinedValues[tn].diffs;
+    if (tDiffs.length === 1 && tDiffs.includes(DIFF_EQUAL)) {
+      combinedValues[tn].diffType = DIFF_EQUAL;
+    } else if (tDiffs.length === 1 && tDiffs.includes(DIFF_DELETE)) {
+      combinedValues[tn].diffType = DIFF_DELETE;
+    } else if (tDiffs.length === 1 && tDiffs.includes(DIFF_INSERT)) {
+      combinedValues[tn].diffType = DIFF_INSERT;
+    } else if (
+      tDiffs.length === 2 &&
+      tDiffs.includes(DIFF_INSERT) &&
+      tDiffs.includes(DIFF_DELETE)
+    ) {
+      combinedValues[tn].diffType = DIFF_UPDATE;
+    } else {
+      console.log('Found invalid diffs for tn:', tn, tDiffs);
+    }
+  }
 
-  /*const dResult = diff(aTags, bTags);
-  for (const dObj of dResult) {
+  const bRanks = [];
+  for (const tn of bTns) {
+    const diffType = combinedValues[tn].diffType;
+    if (diffType === DIFF_EQUAL) {
+      bRanks.push(combinedValues[tn].rank);
+      continue;
+    }
+    bRanks.push(null);
+  }
+  for (let i = 0; i < bRanks.length; i++) {
+    if (isString(bRanks[i])) continue;
 
-  }*/
+    let prevRank, nextRank;
+    for (let j = i - 1; j >= 0; j--) {
+      if (isString(bRanks[j])) {
+        prevRank = bRanks[j];
+        break;
+      }
+    }
+    for (let j = i + 1; j < bRanks.length; j++) {
+      if (isString(bRanks[j])) {
+        nextRank = bRanks[j];
+        break;
+      }
+    }
 
+    let lexoRank;
+    if (isString(prevRank) && isString(nextRank)) {
+      const pLexoRank = LexoRank.parse(`0|${prevRank.replace('_', ':')}`);
+      const nLexoRank = LexoRank.parse(`0|${nextRank.replace('_', ':')}`);
+      lexoRank = pLexoRank.between(nLexoRank);
+    } else if (isString(prevRank)) {
+      lexoRank = LexoRank.parse(`0|${prevRank.replace('_', ':')}`).genNext();
+    } else if (isString(nextRank)) {
+      lexoRank = LexoRank.parse(`0|${nextRank.replace('_', ':')}`).genPrev();
+    } else {
+      lexoRank = LexoRank.middle();
+    }
+    bRanks[i] = lexoRank.toString().slice(2).replace(':', '_');
+  }
+  for (let i = 0; i < bTns.length; i++) {
+    combinedValues[bTns[i]].rank = bRanks[i];
+  }
 
+  let now = Date.now();
 
+  const fpaths = [], contents = [], deleteTagNames = [];
+  for (const tagName in combinedValues) {
+    const value = combinedValues[tagName];
 
+    if (value.diffType === DIFF_EQUAL) continue;
+    if (value.diffType === DIFF_DELETE) {
+      deleteTagNames.push(tagName);
+      continue;
+    }
 
-  // which the same, to add, and which to delete
-  // Manage rank for each tag
+    const addedDT = isNumber(value.addedDT) ? value.addedDT : now;
+    fpaths.push(createTagFPath(tagName, value.rank, now, addedDT, id));
+    contents.push({});
+    now += 1;
+  }
+  await serverApi.putFiles(fpaths, contents);
 
-  // Add new tag fpaths
-  // Delete untag fpaths
+  // MainId is the same, but id can be different.
+  // Old paths might not be deleted, need to delete them all.
+  const deleteFPaths = [];
+  for (const fpath of tagFPaths) {
+    const eResult = extractTagFPath(fpath);
+    if (getMainId(eResult.id) === mainId && deleteTagNames.includes(eResult.tagName)) {
+      deleteFPaths.push(createTagFPath(
+        eResult.tagName, eResult.rank, eResult.updatedDT, eResult.addedDT, eResult.id
+      ));
+    }
+  }
+  await serverApi.deleteFiles(deleteFPaths);
 
-  // can be no change, just return e.g. only tagNameMap?
-
-  // Clean up obsolete tags -> can do in cleanUpTags
   return result;
 };
 
