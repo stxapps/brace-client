@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import {
-  updatePopup, updateTagEditor, addTagEditorTagName, updateTagData,
+  updatePopup, updateTagEditor, addTagEditorTagName, updateTagDataSStep,
 } from '../actions';
 import { TAG_EDITOR_POPUP, TAGGED, ADD_TAGS, MANAGE_TAGS } from '../types/const';
 import { makeGetTagStatus, getTagEditor } from '../selectors';
@@ -34,7 +34,7 @@ const TagEditorPopup = () => {
     didClick.current = true;
 
     dispatch(updatePopup(TAG_EDITOR_POPUP, false));
-    dispatch(updateTagData(selectingLinkId, tagEditor.values));
+    dispatch(updateTagDataSStep(selectingLinkId, tagEditor.values));
   };
 
   const onHintSelect = (hint) => {

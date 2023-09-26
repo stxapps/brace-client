@@ -9,7 +9,7 @@ import {
   UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
   UPDATE_UNCHANGED_SETTINGS, TRY_UPDATE_INFO, UPDATE_INFO, UPDATE_INFO_COMMIT,
   UPDATE_INFO_ROLLBACK, UPDATE_UNCHANGED_INFO, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA,
-  UPDATE_TAG_DATA,
+  UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_T_STEP,
 } from '../types/actionTypes';
 import {
   isEqual, isObject, isString, isNumber, randomString, createLinkFPath, extractLinkFPath,
@@ -71,8 +71,12 @@ export const effect = async (effectObj, _action) => {
     return updateCustomData(params);
   }
 
-  if (method === UPDATE_TAG_DATA) {
-    return updateTagData(params);
+  if (method === UPDATE_TAG_DATA_S_STEP) {
+    return updateTagDataSStep(params);
+  }
+
+  if (method === UPDATE_TAG_DATA_T_STEP) {
+    return updateTagDataTStep(params);
   }
 
   throw new Error(`${method} is invalid for blockstack effect.`);
@@ -416,7 +420,20 @@ const canDeleteListNames = async (listNames) => {
 };
 
 const canDeleteTagNames = async (tagNames) => {
+  const { tagFPaths } = await listFPaths();
 
+  const inUseTagNames = [];
+  for (const fpath of tagFPaths) {
+    const { tagName } = extractTagFPath(fpath);
+    if (!inUseTagNames.includes(tagName)) inUseTagNames.push(tagName);
+  }
+
+  const canDeletes = [];
+  for (const tagName of tagNames) {
+    canDeletes.push(!inUseTagNames.includes(tagName));
+  }
+
+  return canDeletes;
 };
 
 const tryPutSettings = async (params) => {
@@ -541,13 +558,13 @@ const updateCustomData = async (params) => {
   return { listName, fromLink, toLink, serverUnusedFPaths, localUnusedFPaths };
 };
 
-const updateTagData = async (params) => {
-  const { getState, id, values } = params;
+const updateTagDataSStep = async (params) => {
+  const { getState } = params;
 
   const settings = getState().settings;
   const snapshotSettings = getState().snapshot.settings;
 
-  const result = { id };
+  const result = {};
   if (!isEqual(settings, snapshotSettings)) {
     const doFetch = settings.doDescendingOrder !== snapshotSettings.doDescendingOrder;
 
@@ -557,6 +574,12 @@ const updateTagData = async (params) => {
     result._settingsFPaths = sResult._settingsFPaths;
     result.doFetch = doFetch;
   }
+
+  return result;
+};
+
+const updateTagDataTStep = async (params) => {
+  const { getState, id, values } = params;
 
   const tagFPaths = getTagFPaths(getState());
   const solvedTags = getTags(tagFPaths, {});
@@ -674,9 +697,15 @@ const updateTagData = async (params) => {
   }
   await serverApi.deleteFiles(deleteFPaths);
 
-  return result;
+  return { id };
 };
 
-const blockstack = { canDeleteListNames, canDeleteTagNames, deletePins };
+const deleteTags = async (params) => {
+  const { tagFPaths } = params;
+  await serverApi.deleteFiles(tagFPaths);
+  return { tagFPaths };
+};
+
+const blockstack = { canDeleteListNames, canDeleteTagNames, deletePins, deleteTags };
 
 export default blockstack;

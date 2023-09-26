@@ -51,9 +51,12 @@ import {
   UPDATE_CUSTOM_DATA_ROLLBACK, CLEAN_UP_STATIC_FILES, CLEAN_UP_STATIC_FILES_COMMIT,
   CLEAN_UP_STATIC_FILES_ROLLBACK, UPDATE_PAYWALL_FEATURE, UPDATE_LOCK_ACTION,
   UPDATE_LOCK_EDITOR, ADD_LOCK_LIST, REMOVE_LOCK_LIST, LOCK_LIST, UNLOCK_LIST,
-  CLEAN_UP_LOCKS, UPDATE_TAG_EDITOR, UPDATE_TAG_DATA, UPDATE_TAG_DATA_COMMIT,
-  UPDATE_TAG_DATA_ROLLBACK, UPDATE_TAG_NAME_EDITORS, ADD_TAG_NAMES, UPDATE_TAG_NAMES,
-  MOVE_TAG_NAME, DELETE_TAG_NAMES, RESET_STATE, UPDATE_MIGRATE_HUB_STATE,
+  CLEAN_UP_LOCKS, UPDATE_TAG_EDITOR, UPDATE_TAG_DATA_S_STEP,
+  UPDATE_TAG_DATA_S_STEP_COMMIT, UPDATE_TAG_DATA_S_STEP_ROLLBACK,
+  UPDATE_TAG_DATA_T_STEP, UPDATE_TAG_DATA_T_STEP_COMMIT,
+  UPDATE_TAG_DATA_T_STEP_ROLLBACK, CANCEL_DIED_TAGS, UPDATE_TAG_NAME_EDITORS,
+  ADD_TAG_NAMES, UPDATE_TAG_NAMES, MOVE_TAG_NAME, DELETE_TAG_NAMES, RESET_STATE,
+  UPDATE_MIGRATE_HUB_STATE,
 } from '../types/actionTypes';
 import {
   BACK_DECIDER, BACK_POPUP, ALL, HASH_BACK, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP,
@@ -82,7 +85,8 @@ import {
   sample, extractLinkFPath, getLink, getListNameAndLink, getNLinkObjs, getNLinkFPaths,
   newObject, addFetchedToVars, createLinkFPath, isFetchedLinkId, doesIncludeFetching,
   doesIncludeFetchingMore, isFetchingInterrupted, getTagFPaths, getInUseTagNames,
-  getEditingTagNameEditors, getTags, getTagNameObj, validateTagNameDisplayName,
+  getEditingTagNameEditors, getTags, getTagNameObj, getTagNameObjFromDisplayName,
+  validateTagNameDisplayName, extractTagFPath,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -157,7 +161,8 @@ export const init = async (store) => {
           return [
             ADD_LINKS, MOVE_LINKS_ADD_STEP, MOVE_LINKS_DELETE_STEP, DELETE_LINKS,
             UPDATE_CUSTOM_DATA, TRY_UPDATE_SETTINGS, MERGE_SETTINGS, PIN_LINK,
-            UNPIN_LINK, MOVE_PINNED_LINK_ADD_STEP,
+            UNPIN_LINK, MOVE_PINNED_LINK_ADD_STEP, UPDATE_TAG_DATA_S_STEP,
+            UPDATE_TAG_DATA_T_STEP,
           ].includes(action.type);
         });
         if (found) {
@@ -233,7 +238,7 @@ const handlePendingSignIn = () => async (dispatch, getState) => {
 
 const getPopupShownId = (state) => {
   // No need these popups here:
-  //   SettingsErrorPopup, PinErrorPopup, AccessErrorPopup, and MigrateHubPopup.
+  //   SettingsErrorPopup, PinErrorPopup, TagErrorPopup, and AccessErrorPopup.
   if (state.display.isLockEditorPopupShown) return LOCK_EDITOR_POPUP;
   if (state.display.isTimePickPopupShown) return TIME_PICK_POPUP;
   if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
@@ -3116,23 +3121,23 @@ export const addTagEditorTagName = (values, hints, displayName, color) => async 
     return;
   }
 
-  let tagName, newHints = [];
-  for (const hint of hints) {
-    if (hint.displayName !== displayName || isString(tagName)) {
-      newHints.push(hint);
-      continue;
-    }
+  const tagNameMap = getState().settings.tagNameMap;
+  const { tagNameObj } = getTagNameObjFromDisplayName(displayName, tagNameMap);
 
-    tagName = hint.tagName;
-    newHints.push({ ...hint, isBlur: true });
-  }
+  let tagName;
+  if (isObject(tagNameObj)) tagName = tagNameObj.tagName;
   if (!isString(tagName)) tagName = `${Date.now()}-${randomString(4)}`;
 
   const newValues = [...values, { tagName, displayName, color }];
+  const newHints = hints.map(hint => {
+    if (hint.tagName !== tagName) return hint;
+    return { ...hint, isBlur: true };
+  });
+
   dispatch(updateTagEditor(newValues, newHints, '', null, ''));
 };
 
-export const updateTagData = (id, values) => async (dispatch, getState) => {
+export const updateTagDataSStep = (id, values) => async (dispatch, getState) => {
   if (!isString(id)) {
     console.log('UpdateTagData: Invalid id: ', id);
     return;
@@ -3164,45 +3169,136 @@ export const updateTagData = (id, values) => async (dispatch, getState) => {
 
   const payload = { id, values, newTagNameObjs };
   dispatch({
-    type: UPDATE_TAG_DATA,
+    type: UPDATE_TAG_DATA_S_STEP,
     payload,
     meta: {
       offline: {
-        effect: { method: UPDATE_TAG_DATA, params: { ...payload, getState } },
-        commit: { type: UPDATE_TAG_DATA_COMMIT },
-        rollback: { type: UPDATE_TAG_DATA_ROLLBACK, meta: payload },
+        effect: { method: UPDATE_TAG_DATA_S_STEP, params: { ...payload, getState } },
+        commit: { type: UPDATE_TAG_DATA_S_STEP_COMMIT, meta: payload },
+        rollback: { type: UPDATE_TAG_DATA_S_STEP_ROLLBACK, meta: payload },
       },
     },
   });
 };
 
-const retryDiedTags = (dispatch, getState, id) => {
-  // called by retryDiedLinks with linkId
-
-  // get values from pendingTags
-
-  // call _updateTagData
+export const updateTagDataTStep = (id, values) => async (dispatch, getState) => {
+  const payload = { id, values };
+  dispatch({
+    type: UPDATE_TAG_DATA_T_STEP,
+    payload,
+    meta: {
+      offline: {
+        effect: { method: UPDATE_TAG_DATA_T_STEP, params: { ...payload, getState } },
+        commit: { type: UPDATE_TAG_DATA_T_STEP_COMMIT },
+        rollback: { type: UPDATE_TAG_DATA_T_STEP_ROLLBACK, meta: payload },
+      },
+    },
+  });
 };
 
-const cancelDiedTags = (dispatch, getState, id) => {
+export const retryDiedTags = () => async (dispatch, getState) => {
+  const pendingTags = getState().pendingTags;
+  for (const id in pendingTags) {
+    const { status, values } = pendingTags[id];
+    if (status === UPDATE_TAG_DATA_S_STEP_ROLLBACK) {
+      await updateTagDataSStep(id, values)(dispatch, getState);
+    } else if (status === UPDATE_TAG_DATA_T_STEP_ROLLBACK) {
+      await updateTagDataTStep(id, values)(dispatch, getState);
+    }
+  }
+};
 
-  // start from newTagNameObjs
+export const cancelDiedTags = () => async (dispatch, getState) => {
+  const settings = getState().settings;
+  const snapshotSettings = getState().snapshot.settings;
+  const pendingTags = getState().pendingTags;
 
+  const isTamEqual = isEqual(settings.tagNameMap, snapshotSettings.tagNameMap);
 
-  // check with tagFPaths and pendingTags if in use
+  const ids = [], newTagNames = [], usedTagNames = [], unusedTagNames = [];
+  for (const id in pendingTags) {
+    const { status, newTagNameObjs } = pendingTags[id];
 
+    if ([
+      UPDATE_TAG_DATA_S_STEP_ROLLBACK, UPDATE_TAG_DATA_T_STEP_ROLLBACK,
+    ].includes(status)) {
+      ids.push(id);
+    }
 
-  // if not, dispatch to detete some unused newTagNameObjs in settings
+    if (status === UPDATE_TAG_DATA_S_STEP_ROLLBACK) {
+      for (const obj of newTagNameObjs) {
+        if (!newTagNames.includes(obj.tagName)) newTagNames.push(obj.tagName);
+      }
+      continue;
+    }
+    for (const obj of newTagNameObjs) {
+      if (!usedTagNames.includes(obj.tagName)) usedTagNames.push(obj.tagName);
+    }
+  }
 
+  if (!isTamEqual && newTagNames.length > 0) {
+    for (const obj of snapshotSettings.tagNameMap) {
+      if (!usedTagNames.includes(obj.tagName)) usedTagNames.push(obj.tagName);
+    }
 
-  // reset didChange or not? reset didChange.newTagNameObjs = []?
+    const tagFPaths = getTagFPaths(getState());
+    for (const fpath of tagFPaths) {
+      const { tagName } = extractTagFPath(fpath);
+      if (!usedTagNames.includes(tagName)) usedTagNames.push(tagName);
+    }
 
+    for (const tagName of newTagNames) {
+      if (usedTagNames.includes(tagName)) continue;
+      unusedTagNames.push(tagName);
+    }
+  }
+
+  dispatch({ type: CANCEL_DIED_TAGS, payload: { ids, unusedTagNames } });
 };
 
 export const cleanUpTags = () => async (dispatch, getState) => {
-  // Clean up tags that links are already deleted
+  const linkFPaths = getLinkFPaths(getState());
+  const tagFPaths = getTagFPaths(getState());
 
-  // Not the latest ones
+  const linkMainIds = getLinkMainIds(linkFPaths);
+  const tags = getTags(tagFPaths, {});
+
+  let unusedTagFPaths = [];
+  for (const fpath of tagFPaths) {
+    const { tagName, rank, updatedDT, addedDT, id } = extractTagFPath(fpath);
+    const tagMainId = getMainId(id);
+
+    if (
+      !isString(tagMainId) ||
+      !linkMainIds.includes(tagMainId) ||
+      !isObject(tags[tagMainId])
+    ) {
+      unusedTagFPaths.push(fpath);
+      continue;
+    }
+
+    const found = tags[tagMainId].values.some(value => {
+      return (
+        value.tagName === tagName &&
+        value.rank === rank &&
+        value.updatedDT === updatedDT &&
+        value.addedDT === addedDT &&
+        value.id === id
+      );
+    });
+    if (!found) unusedTagFPaths.push(fpath);
+  }
+  unusedTagFPaths = unusedTagFPaths.slice(0, N_LINKS);
+
+  if (unusedTagFPaths.length > 0) {
+    // Don't need offline, if no network or get killed, can do it later.
+    try {
+      await dataApi.deleteTags({ tagFPaths: unusedTagFPaths });
+    } catch (error) {
+      console.log('cleanUpTags error: ', error);
+      // error in this step should be fine
+    }
+  }
 };
 
 export const updateTagNameEditors = (tagNameEditors) => {

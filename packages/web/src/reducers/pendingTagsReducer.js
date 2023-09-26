@@ -1,20 +1,23 @@
 import { REHYDRATE } from 'redux-persist/constants';
 import { loop, Cmd } from 'redux-loop';
 
-import { cleanUpTags } from '../actions';
+import { updateTagDataTStep, cleanUpTags } from '../actions';
 import {
-  UPDATE_TAG_DATA, UPDATE_TAG_DATA_COMMIT, UPDATE_TAG_DATA_ROLLBACK, CANCEL_DIED_TAGS,
-  DELETE_ALL_DATA, RESET_STATE,
+  UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_S_STEP_COMMIT, UPDATE_TAG_DATA_S_STEP_ROLLBACK,
+  UPDATE_TAG_DATA_T_STEP, UPDATE_TAG_DATA_T_STEP_COMMIT, UPDATE_TAG_DATA_T_STEP_ROLLBACK,
+  CANCEL_DIED_TAGS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 
 /* {
   [link-id-1]: {
     status,
     values: [{ tagName, rank, addedDT, id }, ...],
+    newTagNameObjs: [],
   },
   [link-id-2]: {
     status,
     values: [{ status, tagName, rank, addedDT, id }, ...],
+    newTagNameObjs: [],
   }
   ...
 } */
@@ -26,7 +29,7 @@ const pendingTagsReducer = (state = initialState, action) => {
     return { ...initialState, ...action.payload.pendingTags };
   }
 
-  if (action.type === UPDATE_TAG_DATA) {
+  if (action.type === UPDATE_TAG_DATA_S_STEP) {
     const { id, values, newTagNameObjs } = action.payload;
 
     const newValues = [];
@@ -43,7 +46,29 @@ const pendingTagsReducer = (state = initialState, action) => {
     return newState;
   }
 
-  if (action.type === UPDATE_TAG_DATA_COMMIT) {
+  if (action.type === UPDATE_TAG_DATA_S_STEP_COMMIT) {
+    const { id, values } = action.meta;
+
+    const newState = { ...state, [id]: { ...state[id], status: action.type } };
+    return loop(
+      newState,
+      Cmd.run(
+        updateTagDataTStep(id, values), { args: [Cmd.dispatch, Cmd.getState] },
+      )
+    );
+  }
+
+  if (action.type === UPDATE_TAG_DATA_S_STEP_ROLLBACK) {
+    const { id } = action.meta;
+    return { ...state, [id]: { ...state[id], status: action.type } };
+  }
+
+  if (action.type === UPDATE_TAG_DATA_T_STEP) {
+    const { id } = action.payload;
+    return { ...state, [id]: { ...state[id], status: action.type } };
+  }
+
+  if (action.type === UPDATE_TAG_DATA_T_STEP_COMMIT) {
     const { id } = action.payload;
 
     const newState = { ...state };
@@ -52,17 +77,19 @@ const pendingTagsReducer = (state = initialState, action) => {
     return loop(newState, Cmd.run(cleanUpTags(), { args: [Cmd.dispatch, Cmd.getState] }));
   }
 
-  if (action.type === UPDATE_TAG_DATA_ROLLBACK) {
+  if (action.type === UPDATE_TAG_DATA_T_STEP_ROLLBACK) {
     const { id } = action.meta;
     return { ...state, [id]: { ...state[id], status: action.type } };
   }
 
   if (action.type === CANCEL_DIED_TAGS) {
-    const { id } = action.payload;
+    const { ids } = action.payload;
 
-    const newState = { ...state };
-    delete newState[id];
-
+    const newState = {};
+    for (const id in state) {
+      if (ids.includes(id)) continue;
+      newState[id] = { ...state[id] };
+    }
     return newState;
   }
 

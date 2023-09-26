@@ -25,6 +25,7 @@ import TagEditorPopup from './TagEditorPopup';
 import SettingsPopup from './SettingsPopup';
 import SettingsListsMenuPopup from './SettingsListsMenuPopup';
 import PinErrorPopup from './PinErrorPopup';
+import TagErrorPopup from './TagErrorPopup';
 import {
   SettingsUpdateErrorPopup, SettingsConflictErrorPopup,
 } from './SettingsErrorPopup';
@@ -115,6 +116,7 @@ class Main extends React.PureComponent {
         <SettingsPopup />
         <SettingsListsMenuPopup />
         <PinErrorPopup />
+        <TagErrorPopup />
         <SettingsConflictErrorPopup />
         <SettingsUpdateErrorPopup />
         <ListNamesPopup />

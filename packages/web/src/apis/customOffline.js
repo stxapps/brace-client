@@ -4,7 +4,7 @@ import userSession from '../userSession';
 import {
   FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, TRY_UPDATE_SETTINGS,
   UPDATE_SETTINGS, TRY_UPDATE_INFO, UPDATE_INFO, PIN_LINK, UNPIN_LINK,
-  UPDATE_CUSTOM_DATA, UPDATE_TAG_DATA,
+  UPDATE_CUSTOM_DATA, UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_T_STEP,
 } from '../types/actionTypes';
 import { isObject, isString, isNumber } from '../utils';
 
@@ -95,7 +95,7 @@ export const effect = async (effectObj, _action) => {
   if ([
     FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, TRY_UPDATE_SETTINGS,
     UPDATE_SETTINGS, TRY_UPDATE_INFO, UPDATE_INFO, PIN_LINK, UNPIN_LINK,
-    UPDATE_CUSTOM_DATA, UPDATE_TAG_DATA,
+    UPDATE_CUSTOM_DATA, UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_T_STEP,
   ].includes(method)) {
     return await blockstackEffect(effectObj, _action);
   }

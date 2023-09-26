@@ -4,8 +4,8 @@ import { loop, Cmd } from 'redux-loop';
 import { updateSettingsDeleteStep, mergeSettingsDeleteStep } from '../actions';
 import {
   FETCH_COMMIT, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME,
-  DELETE_LIST_NAMES, UPDATE_TAG_DATA, UPDATE_TAG_DATA_COMMIT, CANCEL_DIED_TAGS,
-  ADD_TAG_NAMES, UPDATE_TAG_NAMES, MOVE_TAG_NAME, DELETE_TAG_NAMES,
+  DELETE_LIST_NAMES, UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_S_STEP_COMMIT,
+  CANCEL_DIED_TAGS, ADD_TAG_NAMES, UPDATE_TAG_NAMES, MOVE_TAG_NAME, DELETE_TAG_NAMES,
   UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_DO_DESCENDING_ORDER, UPDATE_DEFAULT_LAYOUT_TYPE, UPDATE_DEFAULT_THEME,
   UPDATE_SETTINGS_COMMIT, UPDATE_UNCHANGED_SETTINGS, CANCEL_DIED_SETTINGS,
@@ -203,7 +203,7 @@ const settingsReducer = (state = initialState, action) => {
     return newState;
   }
 
-  if (action.type === UPDATE_TAG_DATA) {
+  if (action.type === UPDATE_TAG_DATA_S_STEP) {
     const { newTagNameObjs } = action.payload;
     if (newTagNameObjs.length === 0) return state;
 
@@ -215,7 +215,7 @@ const settingsReducer = (state = initialState, action) => {
     return newState;
   }
 
-  if (action.type === UPDATE_TAG_DATA_COMMIT) {
+  if (action.type === UPDATE_TAG_DATA_S_STEP_COMMIT) {
     didChange.newTagNameObjs = [];
 
     const { doUpdateSettings, _settingsFPaths } = action.payload;
@@ -230,9 +230,15 @@ const settingsReducer = (state = initialState, action) => {
   }
 
   if (action.type === CANCEL_DIED_TAGS) {
-    const { listNames, tagNames, settings } = action.payload;
+    const { unusedTagNames } = action.payload;
+
+    const newState = { ...state };
+    newState.tagNameMap = newState.tagNameMap.filter(tagNameObj => {
+      return !unusedTagNames.includes(tagNameObj.tagName);
+    });
+
     didChange.newTagNameObjs = [];
-    return deriveSettingsState(listNames, tagNames, settings, initialState);
+    return newState;
   }
 
   if (action.type === ADD_TAG_NAMES) {
