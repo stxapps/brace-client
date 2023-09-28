@@ -15,7 +15,7 @@ import { getListNameDisplayName } from '../utils';
 
 import { getTopBarSizes, withTailwind } from '.';
 
-class ListName extends React.PureComponent {
+class TopBarTitleListName extends React.PureComponent {
 
   onListNameBtnClick = (e) => {
     if (!this.props.canChangeListNames) {
@@ -86,4 +86,4 @@ const mapDispatchToProps = {
   updatePopup, updateListNamesMode, updateSelectingListName, updateLockAction,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(ListName));
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(TopBarTitleListName));

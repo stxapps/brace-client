@@ -61,7 +61,9 @@ const settingsReducer = (state = initialState, action) => {
       newState.tagNameMap = state.tagNameMap;
     }
     if (didChange.newTagNameObjs.length > 0) {
-      newState.tagNameMap = [...newState.tagNameMap, ...didChange.newTagNameObjs]
+      newState.tagNameMap = addTagNameObjs(
+        newState.tagNameMap, didChange.newTagNameObjs
+      );
     }
 
     return newState;
@@ -208,15 +210,20 @@ const settingsReducer = (state = initialState, action) => {
     if (newTagNameObjs.length === 0) return state;
 
     const newState = { ...state };
-    newState.tagNameMap = [...state.tagNameMap, ...newTagNameObjs];
+    newState.tagNameMap = addTagNameObjs(state.tagNameMap, newTagNameObjs);
 
-    didChange.newTagNameObjs = [...newTagNameObjs];
+    didChange.newTagNameObjs = addTagNameObjs(didChange.newTagNameObjs, newTagNameObjs);
 
     return newState;
   }
 
   if (action.type === UPDATE_TAG_DATA_S_STEP_COMMIT) {
-    didChange.newTagNameObjs = [];
+    const { newTagNameObjs } = action.meta;
+
+    const usedTagNames = newTagNameObjs.map(obj => obj.tagName);
+    didChange.newTagNameObjs = didChange.newTagNameObjs.filter(obj => {
+      return !usedTagNames.includes(obj.tagName);
+    });
 
     const { doUpdateSettings, _settingsFPaths } = action.payload;
     if (!doUpdateSettings) return state;
@@ -237,7 +244,10 @@ const settingsReducer = (state = initialState, action) => {
       return !unusedTagNames.includes(tagNameObj.tagName);
     });
 
-    didChange.newTagNameObjs = [];
+    didChange.newTagNameObjs = didChange.newTagNameObjs.filter(obj => {
+      return !unusedTagNames.includes(obj.tagName);
+    });
+
     return newState;
   }
 
@@ -394,6 +404,19 @@ const settingsReducer = (state = initialState, action) => {
   }
 
   return state;
+};
+
+const addTagNameObjs = (tagNameMap, tagNameObjs) => {
+  const tagNames = [];
+
+  const newTagNameMap = [];
+  for (const obj of [...tagNameMap, ...tagNameObjs]) {
+    if (tagNames.includes(obj.tagName)) continue;
+    newTagNameMap.push({ ...obj });
+    tagNames.push(obj.tagName);
+  }
+
+  return newTagNameMap;
 };
 
 export default settingsReducer;

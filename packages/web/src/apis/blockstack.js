@@ -18,6 +18,7 @@ import {
   batchGetFileWithRetry, batchPutFileWithRetry, batchDeleteFileWithRetry,
   deriveUnknownErrorLink, getLinkFPaths, getPinFPaths, getNLinkFPaths, isFetchedLinkId,
   getInUseTagNames, getTagFPaths, getTags, getMainId, createTagFPath, extractTagFPath,
+  getNLinkFPathsByQt,
 } from '../utils';
 import vars from '../vars';
 
@@ -217,11 +218,13 @@ const fetch = async (params) => {
   const didFetch = getState().display.didFetch;
   const didFetchSettings = getState().display.didFetchSettings;
   const pendingPins = getState().pendingPins;
+  const pendingTags = getState().pendingTags;
 
   let doDescendingOrder = getState().settings.doDescendingOrder;
 
   const linkFPaths = getLinkFPaths(getState());
   const pinFPaths = getPinFPaths(getState());
+  const tagFPaths = getTagFPaths(getState());
 
   // Need to do it again in case fetch list1 and fetch list2,
   //   the second fetch, settings are changes.
@@ -229,8 +232,11 @@ const fetch = async (params) => {
   if (didFetch && didFetchSettings) {
     let fpaths;
     if (queryString) {
-      // Loop on tagFPaths, get linkIds with tag === queryString
-      [fpaths, bin.hasMore] = [[], false];
+      const _result = getNLinkFPathsByQt({
+        linkFPaths, doDescendingOrder, pinFPaths, pendingPins, tagFPaths, pendingTags,
+        queryString,
+      });
+      [fpaths, bin.hasMore] = [_result.fpaths, _result.hasMore];
     } else {
       const _result = getNLinkFPaths({
         linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
@@ -296,10 +302,12 @@ const fetchMore = async (params) => {
 
   const links = getState().links;
   const pendingPins = getState().pendingPins;
+  const pendingTags = getState().pendingTags;
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
   const linkFPaths = getLinkFPaths(getState());
   const pinFPaths = getPinFPaths(getState());
+  const tagFPaths = getTagFPaths(getState());
 
   // Need to do it again in case settings are changes.
   let fpaths;
@@ -323,10 +331,12 @@ const fetchMore = async (params) => {
     }
   } else {
     if (queryString) {
-
-      // Loop on tagFPaths, get linkIds with tag === queryString
-      // excluding already showing
-      [fpaths, bin.hasMore, bin.hasDisorder] = [[], false, false];
+      const _result = getNLinkFPathsByQt({
+        linkFPaths, doDescendingOrder, pinFPaths, pendingPins, tagFPaths, pendingTags,
+        queryString, excludingIds: safLinkIds,
+      });
+      fpaths = _result.fpaths;
+      [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
     } else {
       const _result = getNLinkFPaths({
         linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
@@ -570,7 +580,7 @@ const updateTagDataSStep = async (params) => {
 
     const sResult = await putSettings({ settings });
     result.doUpdateSettings = true;
-    result.settings = sResult._settings;
+    result.settings = sResult.settings;
     result._settingsFPaths = sResult._settingsFPaths;
     result.doFetch = doFetch;
   }

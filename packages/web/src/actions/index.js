@@ -86,7 +86,7 @@ import {
   newObject, addFetchedToVars, createLinkFPath, isFetchedLinkId, doesIncludeFetching,
   doesIncludeFetchingMore, isFetchingInterrupted, getTagFPaths, getInUseTagNames,
   getEditingTagNameEditors, getTags, getTagNameObj, getTagNameObjFromDisplayName,
-  validateTagNameDisplayName, extractTagFPath,
+  validateTagNameDisplayName, extractTagFPath, getNLinkFPathsByQt,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -539,11 +539,13 @@ export const fetch = () => async (dispatch, getState) => {
   const fetchingInfos = getState().display.fetchingInfos;
   const cachedFetched = getState().fetched;
   const pendingPins = getState().pendingPins;
+  const pendingTags = getState().pendingTags;
 
   let doDescendingOrder = getState().settings.doDescendingOrder;
 
   const linkFPaths = getLinkFPaths(getState());
   const pinFPaths = getPinFPaths(getState());
+  const tagFPaths = getTagFPaths(getState());
 
   const lnOrQt = queryString ? queryString : listName;
   if (doesIncludeFetching(lnOrQt, doForce, fetchingInfos) || lnOrQt in cachedFetched) {
@@ -569,8 +571,12 @@ export const fetch = () => async (dispatch, getState) => {
   if (didFetch && didFetchSettings) {
     let fpaths, fpathsWithPcEc;
     if (queryString) {
-      // Loop on tagFPaths, get linkIds with tag === queryString
-      [fpaths, fpathsWithPcEc, bin.hasMore] = [[], [], false];
+      const _result = getNLinkFPathsByQt({
+        linkFPaths, doDescendingOrder, pinFPaths, pendingPins, tagFPaths, pendingTags,
+        queryString,
+      });
+      [fpaths, fpathsWithPcEc] = [_result.fpaths, _result.fpathsWithPcEc];
+      bin.hasMore = _result.hasMore;
     } else {
       const _result = getNLinkFPaths({
         linkFPaths, links, listName, doDescendingOrder, pinFPaths, pendingPins,
@@ -878,11 +884,13 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
   const showingLinkIds = getState().display.showingLinkIds;
   const cachedFetchedMore = getState().fetchedMore;
   const pendingPins = getState().pendingPins;
+  const pendingTags = getState().pendingTags;
 
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
   const linkFPaths = getLinkFPaths(getState());
   const pinFPaths = getPinFPaths(getState());
+  const tagFPaths = getTagFPaths(getState());
 
   if (!Array.isArray(showingLinkIds)) {
     console.log('In fetchMore, showingLinkIds is not an array!');
@@ -944,9 +952,12 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
         return;
       }
 
-      // Loop on tagFPaths, get linkIds with tag === queryString
-      // excluding already showing
-      [fpaths, fpathsWithPcEc, bin.hasMore, bin.hasDisorder] = [[], [], false, false];
+      const _result = getNLinkFPathsByQt({
+        linkFPaths, doDescendingOrder, pinFPaths, pendingPins, tagFPaths, pendingTags,
+        queryString, excludingIds: safLinkIds,
+      });
+      [fpaths, fpathsWithPcEc] = [_result.fpaths, _result.fpathsWithPcEc];
+      [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
     } else {
       if (isStale) {
         const { hasMore, hasDisorder, objsWithPcEc } = getNLinkObjs({
@@ -3144,12 +3155,14 @@ export const updateTagDataSStep = (id, values) => async (dispatch, getState) => 
   }
 
   const tagNameMap = getState().settings.tagNameMap;
+  const ssTagNameMap = getState().snapshot.settings.tagNameMap;
 
   const newTagNameObjs = [];
   for (const value of values) {
     const { tagNameObj } = getTagNameObj(value.tagName, tagNameMap);
-    if (isObject(tagNameObj)) continue;
+    const { tagNameObj: ssTagNameObj } = getTagNameObj(value.tagName, ssTagNameMap);
 
+    if (isObject(tagNameObj) && isObject(ssTagNameObj)) continue;
     newTagNameObjs.push(value);
   }
 
