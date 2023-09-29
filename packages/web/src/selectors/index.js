@@ -433,30 +433,41 @@ export const makeGetCustomImage = () => {
   );
 };
 
+const _getLockListStatus = (doForceLock, lockedLists, listName, queryString) => {
+  if (!isString(listName)) return null;
+  if (queryString) return null;
+
+  if (isObject(lockedLists[listName])) {
+    if (isString(lockedLists[listName].password)) {
+      if (doForceLock) return LOCKED;
+      if (isNumber(lockedLists[listName].unlockedDT)) return UNLOCKED;
+      return LOCKED;
+    }
+  }
+  return null;
+};
+
 export const makeGetLockListStatus = () => {
   return createSelector(
     state => state.display.doForceLock,
     state => state.lockSettings.lockedLists,
-    (__, listName) => listName,
-    (doForceLock, lockedLists, listName) => {
-      if (!isString(listName)) return null;
-
-      if (isObject(lockedLists[listName])) {
-        if (isString(lockedLists[listName].password)) {
-          if (doForceLock) return LOCKED;
-          if (isNumber(lockedLists[listName].unlockedDT)) return UNLOCKED;
-          return LOCKED;
-        }
-      }
-      return null;
+    (_, listName) => listName,
+    (_, __, queryString) => queryString,
+    (doForceLock, lockedLists, listName, queryString) => {
+      return _getLockListStatus(doForceLock, lockedLists, listName, queryString);
     },
   );
 };
 
-const _getCurrentLockListStatus = makeGetLockListStatus();
-export const getCurrentLockListStatus = (state) => {
-  return _getCurrentLockListStatus(state, state.display.listName);
-};
+export const getCurrentLockListStatus = createSelector(
+  state => state.display.doForceLock,
+  state => state.lockSettings.lockedLists,
+  state => state.display.listName,
+  state => state.display.queryString,
+  (doForceLock, lockedLists, listName, queryString) => {
+    return _getLockListStatus(doForceLock, lockedLists, listName, queryString);
+  },
+);
 
 export const getCanChangeListNames = createSelector(
   state => state.display.doForceLock,

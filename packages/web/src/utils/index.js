@@ -2418,17 +2418,21 @@ const getLinkFPathsByTagName = (
     if (objs[mainId].updatedDT > updatedDT) continue;
     objs[mainId] = { rank, updatedDT, addedDT, id };
   }
+  for (const id in pendingTags) {
+    const mainId = getMainId(id);
+
+    const found = pendingTags[id].values.some(value => {
+      return value.tagName === selectedTagName;
+    });
+    if (found) {
+      objs[mainId] = { id };
+      continue;
+    }
+
+    if (mainId in objs) delete objs[mainId];
+  }
 
   const mainIds = Object.keys(objs);
-
-  for (const id in pendingTags) {
-    for (const value of pendingTags[id].values) {
-      if (value.tagName !== selectedTagName) continue;
-
-      const mainId = getMainId(id);
-      if (!mainIds.includes(mainId)) mainIds.push(mainId);
-    }
-  }
 
   const linkIds = [], toLinkFPaths = {};
   for (const listName in linkFPaths) {
@@ -2510,4 +2514,14 @@ export const getNLinkFPathsByQt = (params) => {
   }
 
   return { fpaths, hasMore, hasDisorder, fpathsWithPcEc };
+};
+
+export const getArraysPerKey = (keys, values) => {
+  const arraysPerKey = {};
+  for (let i = 0; i < keys.length; i++) {
+    const [key, value] = [keys[i], values[i]];
+    if (!Array.isArray(arraysPerKey[key])) arraysPerKey[key] = [];
+    arraysPerKey[key].push(value);
+  }
+  return arraysPerKey;
 };

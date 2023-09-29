@@ -178,13 +178,13 @@ const ListItemContent = (props) => {
     if (tnAndDns.length === 0) return null;
 
     return (
-      <div className={tailwind('flex items-center -mt-3.5')}>
+      <div className={tailwind('-mt-3.5 flex items-center')}>
         <div className={tailwind('w-16 flex-shrink-0 flex-grow-0 pl-px')} />
         <div className={tailwind('min-w-0 flex-1 pb-3.5 pl-3 sm:pl-4')}>
-          <div className={tailwind('flex items-center justify-start flex-wrap pt-1')}>
+          <div className={tailwind('flex flex-wrap items-center justify-start pt-1')}>
             {tnAndDns.map((tnAndDn, i) => {
               return (
-                <button key={tnAndDn.tagName} onClick={() => updateQueryString(tnAndDn.tagName)} className={tailwind(`mt-2 group block rounded-full bg-gray-100 px-2 py-1 hover:bg-gray-200 focus:outline-none focus:ring blk:bg-gray-800 blk:hover:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
+                <button key={tnAndDn.tagName} onClick={() => updateQueryString(tnAndDn.tagName)} className={tailwind(`group mt-2 block rounded-full bg-gray-100 px-2 py-1 hover:bg-gray-200 focus:outline-none focus:ring blk:bg-gray-800 blk:hover:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
                   <div className={tailwind('text-xs text-gray-500 group-hover:text-gray-700 blk:text-gray-400 blk:group-hover:text-gray-300')}>{tnAndDn.displayName}</div>
                 </button>
               );

@@ -168,12 +168,12 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_QUERY_STRING) {
-    return {
-      ...state,
-      queryString: action.payload,
-      selectedLinkIds: [],
-      listChangedCount: state.listChangedCount + 1,
-    };
+    const newState = { ...state, queryString: action.payload };
+    newState.selectedLinkIds = [];
+    [newState.showingLinkIds, newState.hasMoreLinks] = [null, null];
+    newState.listChangedCount += 1;
+    vars.fetch.doShowLoading = true;
+    return newState;
   }
 
   if (action.type === UPDATE_SEARCH_STRING) {
@@ -470,16 +470,19 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === CANCEL_DIED_LINKS) {
-    const { infos } = action.payload;
+    const { ids, statuses } = action.payload;
 
-    const newState = { ...state };
-    for (const info of infos) {
-      const { id, status } = info;
-      if ([DIED_ADDING, DIED_MOVING].includes(status)) {
-        newState.showingLinkIds = _filterIfNotNull(state.showingLinkIds, [id]);
-      }
+    const selectedIds = [];
+    for (let i = 0; i < ids.length; i++) {
+      const [id, status] = [ids[i], statuses[i]];
+      if (![DIED_ADDING, DIED_MOVING].includes(status)) continue;
+      selectedIds.push(id);
     }
-    return newState;
+
+    return {
+      ...state,
+      showingLinkIds: _filterIfNotNull(state.showingLinkIds, selectedIds),
+    };
   }
 
   if (action.type === DELETE_OLD_LINKS_IN_TRASH) {

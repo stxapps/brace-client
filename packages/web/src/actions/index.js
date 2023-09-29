@@ -64,12 +64,12 @@ import {
   CUSTOM_EDITOR_POPUP, TAG_EDITOR_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP,
   CONFIRM_DISCARD_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP,
   LOCK_EDITOR_POPUP, DISCARD_ACTION_UPDATE_LIST_NAME, DISCARD_ACTION_UPDATE_TAG_NAME,
-  ID, STATUS, LOCAL_LINK_ATTRS, MY_LIST, TRASH, N_LINKS, N_DAYS, CD_ROOT, ADDED,
-  DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING,
-  SHOWING_STATUSES, NEW_LINK_FPATH_STATUSES, BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL,
-  EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, IAP_VERIFY_URL, IAP_STATUS_URL, PADDLE,
-  COM_BRACEDOTTO, COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, ACTIVE,
-  UNKNOWN, SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE, FEATURE_PIN,
+  ID, LOCAL_LINK_ATTRS, MY_LIST, TRASH, N_LINKS, N_DAYS, CD_ROOT, ADDED, DIED_ADDING,
+  DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING, SHOWING_STATUSES,
+  NEW_LINK_FPATH_STATUSES, BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT,
+  EXTRACT_EXCEEDING_N_URLS, IAP_VERIFY_URL, IAP_STATUS_URL, PADDLE, COM_BRACEDOTTO,
+  COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, ACTIVE, UNKNOWN,
+  SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE, FEATURE_PIN,
   FEATURE_APPEARANCE, FEATURE_CUSTOM, FEATURE_LOCK, FEATURE_TAG, PADDLE_RANDOM_ID,
   VALID_PASSWORD, PASSWORD_MSGS, VALID_TAG_NAME, DUPLICATE_TAG_NAME, TAG_NAME_MSGS
 } from '../types/const';
@@ -504,7 +504,7 @@ const _getIdsAndImages = async (linkObjsOrFPaths, links) => {
     } else if (isObject(objOrFPath)) {
       link = objOrFPath;
     } else {
-      console.log('In _getIdsAndImages: invalid objOrFPath:', objOrFPath);
+      console.log('In _getIdsAndImages, invalid objOrFPath:', objOrFPath);
       continue;
     }
     if (!isObject(link)) continue;
@@ -1372,21 +1372,20 @@ export const addLink = (url, listName, doExtractContents) => async (
   const id = `${addedDT}-${randomString(4)}-${randomString(4)}`;
   const decor = randomDecor(getUrlFirstChar(url));
   const link = { id, url, addedDT, decor };
-  const links = [link];
 
   let insertIndex;
   if (!queryString && listName === getState().display.listName) {
     insertIndex = _getAddLinkInsertIndex(getState);
   }
 
-  const payload = { listName, links, insertIndex };
+  const payload = { listNames: [listName], links: [link], insertIndex };
 
   // If doExtractContents is false but from settings is true, send pre-extract to server
   if (doExtractContents === false && getState().settings.doExtractContents === true) {
     axios.post(BRACE_PRE_EXTRACT_URL, { urls: [url] })
       .then(() => { })
       .catch((error) => {
-        console.log('Error when contact Brace server to pre-extract contents with links: ', links, ' Error: ', error);
+        console.log('Error when contact Brace server to pre-extract contents with url: ', url, ' Error: ', error);
       });
   }
 
@@ -1407,43 +1406,42 @@ export const addLink = (url, listName, doExtractContents) => async (
 export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
   if (ids.length === 0) return;
 
-  // No support queryString for now!
-  //   - need to work with several fromListNames
-  //   - need to update component ListNames, can't choose the fromListName per item
-  const queryString = getState().display.queryString;
-  if (queryString) return;
+  const links = getState().links;
+  let removedDT = Date.now();
 
-  const fromListName = getState().display.listName;
+  const toListNames = [], toLinks = [], ridToLinks = [];
+  for (const id of ids) {
+    const { listName, link } = getListNameAndLink(id, links);
+    if (!isString(listName) || !isObject(link)) {
+      console.log('In moveLinks, no found list name or link for id:', id);
+      continue;
+    }
 
-  const links = _.ignore(
-    _.select(getState().links[fromListName], ID, ids), LOCAL_LINK_ATTRS
-  );
-  const fromLinks = Object.values(links);
+    const [fromListName, fromLink] = [listName, newObject(link, LOCAL_LINK_ATTRS)];
+    if (fromListName === toListName) {
+      console.log('In moveLinks, same fromListName and toListName:', fromListName);
+      continue;
+    }
 
-  let toLinks = fromLinks.map(link => {
-    return {
-      ...link, id: rerandomRandomTerm(link.id), fromListName, fromId: link.id,
-    };
-  });
-  if (fromListName === TRASH) {
-    toLinks = toLinks.map(link => {
-      return { ...link, id: deleteRemovedDT(link.id) };
-    });
-  }
-  if (toListName === TRASH) {
-    const removedDT = Date.now();
-    toLinks = toLinks.map(link => {
-      return { ...link, id: `${link.id}-${removedDT}` };
-    });
-  }
+    const toId = rerandomRandomTerm(fromLink.id);
 
-  const ridToLinks = [];
-  for (const toLink of toLinks) {
+    let toLink = { ...fromLink, id: toId, fromListName, fromId: fromLink.id };
+    if (fromListName === TRASH) {
+      toLink = { ...toLink, id: deleteRemovedDT(toLink.id) };
+    }
+    if (toListName === TRASH) {
+      toLink = { ...toLink, id: `${toLink.id}-${removedDT}` };
+      removedDT += 1;
+    }
+
     const ridToLink = newObject(toLink, LOCAL_LINK_ATTRS);
+
+    toListNames.push(toListName);
+    toLinks.push(toLink);
     ridToLinks.push(ridToLink);
   }
 
-  const payload = { listName: toListName, links: toLinks, manuallyManageError: true };
+  const payload = { listNames: toListNames, links: toLinks, manuallyManageError: true };
   dispatch({
     type: MOVE_LINKS_ADD_STEP,
     payload,
@@ -1458,31 +1456,24 @@ export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
   addFetchedToVars(null, toLinks, vars);
 };
 
-export const moveLinksDeleteStep = (toListName, toIds) => async (
+export const moveLinksDeleteStep = (toListNames, toIds) => async (
   dispatch, getState
 ) => {
   if (toIds.length === 0) return; // can happen if all are errorIds.
 
-  const fromIds = {};
-  for (const toId of toIds) {
-    const toLink = getState().links[toListName][toId];
-    if (!isObject(toLink)) continue;
+  const links = getState().links;
 
-    const { fromListName, fromId } = toLink;
-    if (!Array.isArray(fromIds[fromListName])) fromIds[fromListName] = [];
-    fromIds[fromListName].push(fromId);
-  }
-  if (Object.keys(fromIds).length !== 1) {
-    console.log('In moveLinksDeleteStep, invalid fromIds:', fromIds);
-    if (Object.keys(fromIds).length === 0) return;
+  const listNames = [], ids = [];
+  for (let i = 0; i < toListNames.length; i++) {
+    const [toListName, toId] = [toListNames[i], toIds[i]];
+    if (!isObject(links[toListName]) || !isObject(links[toListName][toId])) continue;
+
+    const { fromListName, fromId } = links[toListName][toId];
+    listNames.push(fromListName);
+    ids.push(fromId);
   }
 
-  const [listName, ids] = Object.entries(fromIds)[0];
-  if (ids.length !== toIds.length) {
-    console.log('In moveLinksDeleteStep, invalid ids:', ids, 'or toIds:', toIds);
-  }
-
-  const payload = { listName, ids, manuallyManageError: true, toListName, toIds };
+  const payload = { listNames, ids, manuallyManageError: true, toListNames, toIds };
   dispatch({
     type: MOVE_LINKS_DELETE_STEP,
     payload,
@@ -1497,10 +1488,23 @@ export const moveLinksDeleteStep = (toListName, toIds) => async (
 };
 
 export const deleteLinks = (ids) => async (dispatch, getState) => {
-  const listName = getState().display.listName;
+  if (ids.length === 0) return;
 
-  const payload = { listName, ids, manuallyManageError: true };
+  const links = getState().links;
 
+  const dListNames = [], dIds = [];
+  for (const id of ids) {
+    const { listName, link } = getListNameAndLink(id, links);
+    if (!isString(listName) || !isObject(link)) {
+      console.log('In deleteLinks, no found list name or link for id:', id);
+      continue;
+    }
+
+    dListNames.push(listName);
+    dIds.push(id);
+  }
+
+  const payload = { listNames: dListNames, ids: dIds, manuallyManageError: true };
   dispatch({
     type: DELETE_LINKS,
     payload,
@@ -1515,22 +1519,25 @@ export const deleteLinks = (ids) => async (dispatch, getState) => {
 };
 
 export const retryDiedLinks = (ids) => async (dispatch, getState) => {
+  const links = getState().links;
 
-  const listName = getState().display.listName;
   for (const id of ids) {
     // DIED_ADDING -> try add this link again
     // DIED_MOVING -> try move this link again
     // DIED_REMOVING -> try delete this link again
     // DIED_DELETING  -> try delete this link again
     // DIED_UPDAING -> try update this link again
-    const link = getState().links[listName][id];
+    const { listName, link } = getListNameAndLink(id, links);
+    if (!isString(listName) || !isObject(link)) {
+      console.log('In retryDiedLinks, no found listName or link for id:', id);
+      continue;
+    }
 
     const { status } = link;
     if (status === DIED_ADDING) {
-      const _link = newObject(link, LOCAL_LINK_ATTRS);
-      const links = [_link];
-      const payload = { listName, links };
+      const ridLink = newObject(link, LOCAL_LINK_ATTRS);
 
+      const payload = { listNames: [listName], links: [ridLink] };
       dispatch({
         type: ADD_LINKS,
         payload,
@@ -1543,10 +1550,11 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
         },
       });
     } else if (status === DIED_MOVING) {
-      const toLink = getState().links[listName][id];
-      const ridToLink = newObject(toLink, LOCAL_LINK_ATTRS);
+      const ridToLink = newObject(link, LOCAL_LINK_ATTRS);
 
-      const payload = { listName, links: [toLink], manuallyManageError: true }
+      const payload = {
+        listNames: [listName], links: [link], manuallyManageError: true,
+      }
       dispatch({
         type: MOVE_LINKS_ADD_STEP,
         payload,
@@ -1583,45 +1591,78 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
   }
 };
 
-export const cancelDiedLinks = (ids) => async (dispatch, getState) => {
+export const cancelDiedLinks = (canceledIds) => async (dispatch, getState) => {
   const links = getState().links;
 
-  const infos = [];
-  for (const id of ids) {
+  const listNames = [], ids = [], statuses = [];
+  for (const id of canceledIds) {
     const { listName, link } = getListNameAndLink(id, links);
-    if (!listName || !isObject(link)) continue;
+    if (!isString(listName) || !isObject(link)) {
+      console.log('In cancelDiedLinks, no found listName or link for id:', id);
+      continue;
+    }
 
-    infos.push({ listName, id, status: link.status });
+    listNames.push(listName);
+    ids.push(id);
+    statuses.push(link.status);
   }
 
-  const payload = { infos };
-  dispatch({ type: CANCEL_DIED_LINKS, payload });
+  dispatch({ type: CANCEL_DIED_LINKS, payload: { listNames, ids, statuses } });
 };
 
-const getToExtractLinks = (listName, ids, getState) => {
+const getToExtractLinks = (getState, listNames, ids) => {
+  const links = getState().links;
+  const [isLnsArray, isIdsArray] = [Array.isArray(listNames), Array.isArray(ids)];
 
-  if (listName === TRASH) return [];
+  const toListNames = [], toLinks = [];
+  if (isLnsArray && isIdsArray) {
+    for (let i = 0; i < listNames.length; i++) {
+      const [listName, id] = [listNames[i], ids[i]];
 
-  let obj = getState().links[listName];
-  if (!isObject(obj)) return [];
+      if (listName === TRASH) continue;
+      if (!isObject(links[listName]) || !isObject(links[listName][id])) continue;
 
-  if (Array.isArray(ids)) obj = _.select(obj, ID, ids);
+      const link = links[listName][id];
+      if (link.status !== ADDED) continue;
+      if (isObject(link.custom)) continue;
+      if (
+        isObject(link.extractedResult) && link.extractedResult.status !== EXTRACT_INIT
+      ) continue;
 
-  obj = _.select(obj, STATUS, ADDED);
-  obj = _.ignore(obj, LOCAL_LINK_ATTRS);
+      const [toListName, toLink] = [listName, newObject(link, LOCAL_LINK_ATTRS)];
+      toListNames.push(toListName);
+      toLinks.push(toLink);
+      if (toLinks.length >= N_LINKS) break;
+    }
 
-  const links = Object.values(obj)
-    .filter(link => {
-      if ('custom' in link) return false;
-      return !link.extractedResult || link.extractedResult.status === EXTRACT_INIT;
-    })
-    .sort((a, b) => b.addedDT - a.addedDT)
-    .slice(0, N_LINKS);
+    return { toListNames, toLinks };
+  }
 
-  return links;
+  const listName = getState().display.listName;
+  if (listName === TRASH || !isObject(links[listName])) {
+    return { toListNames, toLinks };
+  }
+
+  const sortedLinks = Object.values(links[listName]).sort((a, b) => {
+    return b.addedDT - a.addedDT;
+  });
+  for (const link of sortedLinks) {
+    if (link.status !== ADDED) continue;
+    if (isObject(link.custom)) continue;
+    if (
+      isObject(link.extractedResult) && link.extractedResult.status !== EXTRACT_INIT
+    ) continue;
+
+    const [toListName, toLink] = [listName, newObject(link, LOCAL_LINK_ATTRS)];
+    toListNames.push(toListName);
+    toLinks.push(toLink);
+    if (toLinks.length >= N_LINKS) break;
+  }
+
+  return { toListNames, toLinks };
 };
 
-export const extractContents = (listName, ids) => async (dispatch, getState) => {
+export const extractContents = (listNames, ids) => async (dispatch, getState) => {
 
   const doExtractContents = getState().settings.doExtractContents;
   if (!doExtractContents) {
@@ -1629,25 +1670,24 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
     return;
   }
 
-  if (!listName) listName = getState().display.listName;
-
-  const links = getToExtractLinks(listName, ids, getState);
-  if (links.length === 0) {
+  const { toListNames, toLinks } = getToExtractLinks(getState, listNames, ids);
+  if (toLinks.length === 0) {
     dispatch(runAfterFetchTask());
     return;
   }
 
   let res;
   try {
-    res = await axios.post(BRACE_EXTRACT_URL, { urls: links.map(link => link.url) });
+    res = await axios.post(BRACE_EXTRACT_URL, { urls: toLinks.map(link => link.url) });
   } catch (error) {
-    console.log('Error when contact Brace server to extract contents with links: ', links, ' Error: ', error);
+    console.log('Error when contact Brace server to extract contents with links: ', toLinks, ' Error: ', error);
     return;
   }
 
+  const links = getState().links;
   const extractedResults = res.data.extractedResults;
 
-  const extractedLinks = [];
+  const extractedListNames = [], extractedLinks = [];
   for (let i = 0; i < extractedResults.length; i++) {
     const extractedResult = extractedResults[i];
     if (
@@ -1655,21 +1695,24 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
       extractedResult.status === EXTRACT_EXCEEDING_N_URLS
     ) continue;
 
+    const [toListName, toLink] = [toListNames[i], toLinks[i]];
+
     // Some links might be moved while extracting.
     // If that the case, ignore them.
-    const obj = getState().links[listName];
-    if (!isObject(obj)) continue;
-    if (!Object.keys(obj).includes(links[i][ID])) continue;
+    if (!isObject(links[toListName]) || !isObject(links[toListName][toLink.id])) {
+      continue;
+    }
 
-    links[i].extractedResult = extractedResult;
-    extractedLinks.push(links[i]);
+    const eLink = { ...toLink, extractedResult };
+    extractedListNames.push(toListName);
+    extractedLinks.push(eLink);
   }
   if (extractedLinks.length === 0) {
     dispatch(runAfterFetchTask());
     return;
   }
 
-  const payload = { listName: listName, links: extractedLinks };
+  const payload = { listNames: extractedListNames, links: extractedLinks };
   dispatch({
     type: EXTRACT_CONTENTS,
     payload,
@@ -1718,11 +1761,11 @@ export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
   const doDeleteOldLinksInTrash = getState().settings.doDeleteOldLinksInTrash;
   if (!doDeleteOldLinksInTrash) return;
 
-  const listName = TRASH, ids = [];
-
+  const listName = TRASH;
   const linkFPaths = getLinkFPaths(getState());
   const trashLinkFPaths = linkFPaths[listName] || [];
 
+  const listNames = [], ids = []
   for (const fpath of trashLinkFPaths) {
     const { id } = extractLinkFPath(fpath);
     const removedDT = id.split('-')[3];
@@ -1731,13 +1774,14 @@ export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
 
     if (days <= N_DAYS) continue;
 
+    listNames.push(listName);
     ids.push(id);
     if (ids.length >= N_LINKS) break;
   }
 
   if (ids.length === 0) return;
 
-  const payload = { listName, ids, manuallyManageError: true };
+  const payload = { listNames, ids, manuallyManageError: true };
   dispatch({
     type: DELETE_OLD_LINKS_IN_TRASH,
     payload,
@@ -2393,13 +2437,20 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
     return;
   }
 
-  const listName = getState().display.listName;
+  const links = getState().links;
 
-  // Object.values() might give diff sequence of links from ids and pins.
-  const _links = _.ignore(
-    _.select(getState().links[listName], ID, ids), LOCAL_LINK_ATTRS
-  );
-  const links = ids.map(id => _links[id]);
+  const pListNames = [], pLinks = [];
+  for (const id of ids) {
+    const { listName, link } = getListNameAndLink(id, links);
+    if (!isString(listName) || !isObject(link)) {
+      console.log('In pinLinks, no found listName or link for id:', id);
+      continue;
+    }
+
+    const [pListName, pLink] = [listName, newObject(link, LOCAL_LINK_ATTRS)];
+    pListNames.push(pListName);
+    pLinks.push(pLink);
+  }
 
   const pinFPaths = getPinFPaths(getState());
   const pendingPins = getState().pendingPins;
@@ -2425,7 +2476,7 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
     now += 1;
   }
 
-  const payload = { listName, links, pins };
+  const payload = { listNames: pListNames, links: pLinks, pins };
   dispatch({
     type: PIN_LINK,
     payload,
@@ -2485,7 +2536,7 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
   const pendingPins = getState().pendingPins;
 
   if (!Array.isArray(showingLinkIds)) {
-    console.log('No showingLinkIds found for link id: ', id);
+    console.log('In movePinnedLink, no showingLinkIds found for link id: ', id);
     return;
   }
 
@@ -2753,23 +2804,20 @@ export const updateImages = (name, content) => {
 
 export const updateCustomData = (title, image) => async (dispatch, getState) => {
   const links = getState().links;
-  const listName = getState().display.listName;
-  const selectingLinkId = getState().display.selectingLinkId;
+  const id = getState().display.selectingLinkId;
 
-  if (!isObject(links[listName]) || !isObject(links[listName][selectingLinkId])) {
-    console.log('UpdateCustomData: No link found with selectingLinkId: ', selectingLinkId);
+  const { listName, link } = getListNameAndLink(id, links);
+  if (!isString(listName) || !isObject(link)) {
+    console.log('In updateCustomData, no found listName or link for id:', id);
     return;
   }
 
-  const _links = _.ignore(
-    _.select(links[listName], ID, [selectingLinkId]), LOCAL_LINK_ATTRS
-  );
-  const link = _links[selectingLinkId];
+  const fromLink = newObject(link, LOCAL_LINK_ATTRS);
 
   const toLink = /** @type any */({});
-  for (const attr in link) {
+  for (const attr in fromLink) {
     if (attr === 'custom') continue;
-    toLink[attr] = link[attr];
+    toLink[attr] = fromLink[attr];
   }
 
   if (isString(title) && title.length > 0) {
@@ -2781,9 +2829,9 @@ export const updateCustomData = (title, image) => async (dispatch, getState) => 
     toLink.custom.image = image;
   }
 
-  if (isEqual(link, toLink)) return;
+  if (isEqual(fromLink, toLink)) return;
 
-  const payload = { listName: listName, fromLink: link, toLink };
+  const payload = { listName, fromLink, toLink };
   dispatch({
     type: UPDATE_CUSTOM_DATA,
     payload,
@@ -3150,7 +3198,7 @@ export const addTagEditorTagName = (values, hints, displayName, color) => async 
 
 export const updateTagDataSStep = (id, values) => async (dispatch, getState) => {
   if (!isString(id)) {
-    console.log('UpdateTagData: Invalid id: ', id);
+    console.log('In updateTagDataSStep, invalid id: ', id);
     return;
   }
 

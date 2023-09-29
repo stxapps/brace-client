@@ -96,11 +96,11 @@ class CardItemMenuPopup extends React.PureComponent {
       menu = menu.slice(0, 1);
     } else if (listName !== TRASH) {
       // Only when no other pending actions and list name is not TRASH
-      if (pinStatus === PINNED) menu = [...menu, MANAGE_PIN];
-      else if (pinStatus === null) menu = [...menu, PIN];
-
       if (tagStatus === TAGGED) menu = [...menu, MANAGE_TAGS];
       else if (tagStatus === null) menu = [...menu, ADD_TAGS];
+
+      if (pinStatus === PINNED) menu = [...menu, MANAGE_PIN];
+      else if (pinStatus === null) menu = [...menu, PIN];
 
       menu = [...menu, CHANGE];
     }
@@ -205,8 +205,7 @@ class CardItemMenuPopup extends React.PureComponent {
     let popupClassNames = 'fixed z-41 min-w-32 max-w-64 overflow-auto rounded-lg bg-white py-2 shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25';
     let menuPopup;
     if (menuPopupSize) {
-
-      const maxHeight = getLastHalfHeight(Math.min(288, safeAreaHeight - 16), 40, 8, 8);
+      const maxHeight = getLastHalfHeight(safeAreaHeight - 16, 40, 8, 0, 0.55);
       const layouts = createLayouts(
         anchorPosition,
         {

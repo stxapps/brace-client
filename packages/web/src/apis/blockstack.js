@@ -370,15 +370,19 @@ const fetchMore = async (params) => {
 };
 
 const putLinks = async (params) => {
-  const { listName, links, manuallyManageError } = params;
+  const { listNames, links, manuallyManageError } = params;
 
-  const fpaths = [], contents = [], linkMap = {}, successLinks = [], errorLinks = [];
-  for (const link of links) {
+  const fpaths = [], contents = [], linkMap = {};
+  for (let i = 0; i < listNames.length; i++) {
+    const [listName, link] = [listNames[i], links[i]];
     const fpath = createLinkFPath(listName, link.id);
     fpaths.push(fpath);
     contents.push(link);
-    linkMap[fpath] = link;
+    linkMap[fpath] = { listName, link };
   }
+
+  const successListNames = [], successLinks = [];
+  const errorListNames = [], errorLinks = [], errors = [];
 
   // Beware size should be max at N_LINKS, so can call batchPutFileWithRetry directly.
   // Use dangerouslyIgnoreError=true to manage which succeeded/failed manually.
@@ -386,35 +390,50 @@ const putLinks = async (params) => {
     serverApi.putFile, fpaths, contents, 0, !!manuallyManageError
   );
   for (const response of responses) {
-    if (response.success) successLinks.push(linkMap[response.fpath]);
-    else errorLinks.push({ ...linkMap[response.fpath], error: response.error });
+    const { listName, link } = linkMap[response.fpath];
+    if (response.success) {
+      successListNames.push(listName);
+      successLinks.push(link);
+    } else {
+      errorListNames.push(listName);
+      errorLinks.push(link);
+      errors.push(response.error);
+    }
   }
 
-  return { listName, successLinks, errorLinks };
+  return { successListNames, successLinks, errorListNames, errorLinks, errors };
 };
 
 const deleteLinks = async (params) => {
-  const { listName, ids, manuallyManageError } = params;
+  const { listNames, ids, manuallyManageError } = params;
 
-  const fpaths = [], idMap = {}, successIds = [], errorIds = [], errors = [];
-  for (const id of ids) {
+  const fpaths = [], idMap = {};
+  for (let i = 0; i < listNames.length; i++) {
+    const [listName, id] = [listNames[i], ids[i]];
     const fpath = createLinkFPath(listName, id);
     fpaths.push(fpath);
-    idMap[fpath] = id;
+    idMap[fpath] = { listName, id };
   }
+
+  const successListNames = [], successIds = [];
+  const errorListNames = [], errorIds = [], errors = [];
 
   const responses = await batchDeleteFileWithRetry(
     serverApi.deleteFile, fpaths, 0, !!manuallyManageError
   );
   for (const response of responses) {
-    if (response.success) successIds.push(idMap[response.fpath]);
-    else {
-      errorIds.push(idMap[response.fpath]);
+    const { listName, id } = idMap[response.fpath];
+    if (response.success) {
+      successListNames.push(listName);
+      successIds.push(id);
+    } else {
+      errorListNames.push(listName);
+      errorIds.push(id);
       errors.push(response.error);
     }
   }
 
-  return { listName, successIds, errorIds, errors };
+  return { successListNames, successIds, errorListNames, errorIds, errors };
 };
 
 const canDeleteListNames = async (listNames) => {

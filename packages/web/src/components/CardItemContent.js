@@ -199,10 +199,10 @@ class CardItemContent extends React.Component {
 
     return (
       <div className={tailwind('-mt-3 mb-3 ml-3.5 mr-2.5 lg:-mt-4 lg:mb-4')}>
-        <div className={tailwind('flex items-center justify-start flex-wrap pt-1')}>
+        <div className={tailwind('flex flex-wrap items-center justify-start pt-1')}>
           {tnAndDns.map((tnAndDn, i) => {
             return (
-              <button key={tnAndDn.tagName} onClick={() => this.props.updateQueryString(tnAndDn.tagName)} className={tailwind(`mt-2 group block rounded-full bg-gray-100 px-2 py-1 hover:bg-gray-200 focus:outline-none focus:ring blk:bg-gray-800 blk:hover:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
+              <button key={tnAndDn.tagName} onClick={() => this.props.updateQueryString(tnAndDn.tagName)} className={tailwind(`group mt-2 block rounded-full bg-gray-100 px-2 py-1 hover:bg-gray-200 focus:outline-none focus:ring blk:bg-gray-800 blk:hover:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
                 <div className={tailwind('text-xs text-gray-500 group-hover:text-gray-700 blk:text-gray-400 blk:group-hover:text-gray-300')}>{tnAndDn.displayName}</div>
               </button>
             );

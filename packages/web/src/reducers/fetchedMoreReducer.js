@@ -5,7 +5,7 @@ import {
   MOVE_LINKS_DELETE_STEP_COMMIT, DELETE_LINKS_COMMIT, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   UPDATE_CUSTOM_DATA_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
-import { createLinkFPath } from '../utils';
+import { createLinkFPath, getArraysPerKey } from '../utils';
 
 const initialState = {};
 
@@ -48,26 +48,34 @@ const fetchedMoreReducer = (state = initialState, action) => {
     action.type === DELETE_LINKS_COMMIT ||
     action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT
   ) {
-    const { listName, successIds } = action.payload;
-    if (!state[listName]) return state;
+    const { successListNames, successIds } = action.payload;
 
-    const { payload } = state[listName];
+    const idsPerLn = getArraysPerKey(successListNames, successIds);
 
-    const fpaths = successIds.map(id => createLinkFPath(listName, id));
-    const newLinks = { ...payload.links };
-    newLinks[listName] = {};
-    for (const id in payload.links[listName]) {
-      if (successIds.includes(id)) continue;
-      newLinks[listName][id] = { ...payload.links[listName][id] };
+    const newState = { ...state };
+    for (const [listName, lnIds] of Object.entries(idsPerLn)) {
+      if (!newState[listName]) continue;
+
+      const { payload } = newState[listName];
+
+      const fpaths = lnIds.map(id => createLinkFPath(listName, id));
+      const newLinks = { ...payload.links };
+      newLinks[listName] = {};
+      for (const id in payload.links[listName]) {
+        if (lnIds.includes(id)) continue;
+        newLinks[listName][id] = { ...payload.links[listName][id] };
+      }
+
+      const newPayload = { ...payload };
+      newPayload.unfetchedLinkFPaths = newPayload.unfetchedLinkFPaths.filter(fpath => {
+        return !fpaths.includes(fpath);
+      });
+      newPayload.links = newLinks;
+
+      newState[listName] = { payload: newPayload };
     }
 
-    const newPayload = { ...payload };
-    newPayload.unfetchedLinkFPaths = newPayload.unfetchedLinkFPaths.filter(fpath => {
-      return !fpaths.includes(fpath);
-    });
-    newPayload.links = newLinks;
-
-    return { ...state, [listName]: { payload: newPayload } };
+    return newState;
   }
 
   if (action.type === UPDATE_CUSTOM_DATA_COMMIT) {
