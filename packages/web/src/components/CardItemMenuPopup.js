@@ -8,8 +8,8 @@ import {
 } from '../actions';
 import {
   MY_LIST, TRASH, ADDING, MOVING, UPDATING, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
-  MOVE_TO, CHANGE, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, CARD_ITEM_MENU_POPUP,
-  LIST_NAMES_POPUP, PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
+  MOVE_TO, CHANGE, PIN, MANAGE_PIN, PINNED, CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP,
+  PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
   DELETE_ACTION_LINK_ITEM_MENU, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
   ADD_TAGS, MANAGE_TAGS, TAGGED,
 } from '../types/const';
@@ -25,6 +25,13 @@ import { popupBgFMV, popupFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
 import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
+
+const CARD_ITEM_POPUP_MENU = {
+  [MY_LIST]: [COPY_LINK, ARCHIVE, REMOVE, MOVE_TO],
+  [TRASH]: [COPY_LINK, RESTORE, DELETE],
+  [ARCHIVE]: [COPY_LINK, REMOVE, MOVE_TO],
+};
+const QUERY_STRING_MENU = [COPY_LINK, REMOVE];
 
 class CardItemMenuPopup extends React.PureComponent {
 
@@ -74,7 +81,8 @@ class CardItemMenuPopup extends React.PureComponent {
 
   populateMenu() {
     const {
-      listName, listNameMap, popupLink, pinStatus, tagStatus, layoutType, safeAreaWidth,
+      listName, queryString, listNameMap, popupLink, pinStatus, tagStatus, layoutType,
+      safeAreaWidth,
     } = this.props;
 
     let menu = null;
@@ -83,10 +91,10 @@ class CardItemMenuPopup extends React.PureComponent {
     } else {
       menu = CARD_ITEM_POPUP_MENU[MY_LIST];
     }
-
     if (listName === MY_LIST && getAllListNames(listNameMap).length === 3) {
       menu = menu.slice(0, -1);
     }
+    if (queryString) menu = QUERY_STRING_MENU;
 
     if (
       [ADDING, MOVING, UPDATING].includes(popupLink.status) ||
@@ -94,8 +102,7 @@ class CardItemMenuPopup extends React.PureComponent {
       ![null, TAGGED].includes(tagStatus)
     ) {
       menu = menu.slice(0, 1);
-    } else if (listName !== TRASH) {
-      // Only when no other pending actions and list name is not TRASH
+    } else if (listName !== TRASH || queryString) {
       if (tagStatus === TAGGED) menu = [...menu, MANAGE_TAGS];
       else if (tagStatus === null) menu = [...menu, ADD_TAGS];
 
@@ -257,6 +264,7 @@ const makeMapStateToProps = () => {
       isShown: state.display.isCardItemMenuPopupShown,
       anchorPosition: state.display.cardItemMenuPopupPosition,
       listName: state.display.listName,
+      queryString: state.display.queryString,
       listNameMap: getListNameMap(state),
       popupLink,
       pinStatus,

@@ -66,9 +66,11 @@ class FetchedPopup extends React.PureComponent {
 const mapStateToProps = (state, props) => {
 
   const listName = state.display.listName;
+  const queryString = state.display.queryString;
+  const lnOrQt = queryString ? queryString : listName;
 
   return {
-    fetched: state.fetched[listName],
+    fetched: state.fetched[lnOrQt],
     themeMode: getThemeMode(state),
     safeAreaWidth: getSafeAreaWidth(state),
   };

@@ -7,7 +7,7 @@ import { getTagNameDisplayName } from '../utils';
 
 import { getTopBarSizes, useSafeAreaFrame, useTailwind } from '.';
 
-const TopBarTitleTagName = () => {
+const TopBarTitleQueryString = () => {
 
   const { width: safeAreaWidth } = useSafeAreaFrame();
   const queryString = useSelector(state => state.display.queryString);
@@ -19,7 +19,9 @@ const TopBarTitleTagName = () => {
     dispatch(updateQueryString(''));
   };
 
-  const displayName = getTagNameDisplayName(queryString, tagNameMap);
+  // Only tag name for now
+  const tagName = queryString.trim();
+  const displayName = getTagNameDisplayName(tagName, tagNameMap);
 
   let textMaxWidth = 160;
   if (safeAreaWidth >= SM_WIDTH) textMaxWidth = 320;
@@ -48,4 +50,4 @@ const TopBarTitleTagName = () => {
   );
 };
 
-export default React.memo(TopBarTitleTagName);
+export default React.memo(TopBarTitleQueryString);

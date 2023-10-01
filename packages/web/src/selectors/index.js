@@ -391,15 +391,14 @@ export const makeIsTimePickMinuteItemSelected = () => {
 
 export const getCustomEditor = createSelector(
   state => state.links,
-  state => state.display.listName,
   state => state.display.selectingLinkId,
   state => state.images,
   state => state.customEditor,
-  (links, listName, selectingLinkId, images, customEditor) => {
+  (links, selectingLinkId, images, customEditor) => {
     const editor = { ...customEditor };
 
-    if (isObject(links[listName]) && isObject(links[listName][selectingLinkId])) {
-      const link = links[listName][selectingLinkId];
+    const link = getLink(selectingLinkId, links);
+    if (isObject(link)) {
       if (isObject(link.custom)) {
         if (!editor.didTitleEdit && isString(link.custom.title)) {
           editor.title = link.custom.title;
@@ -433,9 +432,8 @@ export const makeGetCustomImage = () => {
   );
 };
 
-const _getLockListStatus = (doForceLock, lockedLists, listName, queryString) => {
+const _getLockListStatus = (doForceLock, lockedLists, listName) => {
   if (!isString(listName)) return null;
-  if (queryString) return null;
 
   if (isObject(lockedLists[listName])) {
     if (isString(lockedLists[listName].password)) {
@@ -452,9 +450,8 @@ export const makeGetLockListStatus = () => {
     state => state.display.doForceLock,
     state => state.lockSettings.lockedLists,
     (_, listName) => listName,
-    (_, __, queryString) => queryString,
-    (doForceLock, lockedLists, listName, queryString) => {
-      return _getLockListStatus(doForceLock, lockedLists, listName, queryString);
+    (doForceLock, lockedLists, listName) => {
+      return _getLockListStatus(doForceLock, lockedLists, listName);
     },
   );
 };
@@ -465,15 +462,18 @@ export const getCurrentLockListStatus = createSelector(
   state => state.display.listName,
   state => state.display.queryString,
   (doForceLock, lockedLists, listName, queryString) => {
-    return _getLockListStatus(doForceLock, lockedLists, listName, queryString);
+    if (queryString) return null;
+    return _getLockListStatus(doForceLock, lockedLists, listName);
   },
 );
 
 export const getCanChangeListNames = createSelector(
   state => state.display.doForceLock,
-  state => state.display.listName,
   state => state.lockSettings.lockedLists,
-  (doForceLock, listName, lockedLists) => {
+  state => state.display.listName,
+  state => state.display.queryString,
+  (doForceLock, lockedLists, listName, queryString) => {
+    if (queryString) return true;
     if (listName !== MY_LIST) return true;
 
     if (isObject(lockedLists[listName])) {

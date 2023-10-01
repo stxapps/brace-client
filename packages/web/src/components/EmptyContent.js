@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updatePopup } from '../actions';
 import { ADD_POPUP, MY_LIST, TRASH, ARCHIVE, BLK_MODE } from '../types/const';
 import { getListNameMap, getThemeMode } from '../selectors';
-import { getListNameDisplayName } from '../utils';
+import { getListNameDisplayName, getTagNameDisplayName } from '../utils';
 
 import { useTailwind } from '.';
 
@@ -17,7 +17,9 @@ import saveLinkInUrlBarBlk from '../images/save-link-in-url-bar-get-started-blk.
 const EmptyContent = () => {
 
   const listName = useSelector(state => state.display.listName);
+  const queryString = useSelector(state => state.display.queryString);
   const listNameMap = useSelector(getListNameMap);
+  const tagNameMap = useSelector(state => state.settings.tagNameMap);
   const searchString = useSelector(state => state.display.searchString);
   const themeMode = useSelector(state => getThemeMode(state));
   const dispatch = useDispatch();
@@ -27,8 +29,15 @@ const EmptyContent = () => {
     dispatch(updatePopup(ADD_POPUP, true));
   };
 
-  const displayName = getListNameDisplayName(listName, listNameMap);
-  const textName = listName === ARCHIVE ? `"${displayName}"` : `"Move to -> ${displayName}"`;
+  let displayName = getListNameDisplayName(listName, listNameMap);
+  let textName = `"Move to -> ${displayName}"`;
+  if (listName === ARCHIVE) textName = `"${displayName}"`;
+  if (queryString) {
+    // Only tag name for now
+    const tagName = queryString.trim();
+    displayName = getTagNameDisplayName(tagName, tagNameMap);
+    textName = `"Add tags or Manage tags"`;
+  }
 
   if (searchString !== '') {
     return (
@@ -40,6 +49,16 @@ const EmptyContent = () => {
           <li>Try different keywords.</li>
           <li>Try more general keywords.</li>
         </ul>
+      </React.Fragment>
+    );
+  }
+
+  if (queryString) {
+    return (
+      <React.Fragment>
+        <img className={tailwind('mx-auto mt-10 w-40')} src={emptyBox} alt="An empty box lying down" />
+        <h3 className={tailwind('mt-6 text-center text-lg font-medium text-gray-800 blk:text-gray-200')}>No links in #{displayName}</h3>
+        <p className={tailwind('mx-auto mt-2 max-w-md text-center text-base tracking-wide text-gray-500 blk:text-gray-400')}>Click <span className={tailwind('font-semibold')}>{textName}</span> from the menu to show links here.</p>
       </React.Fragment>
     );
   }

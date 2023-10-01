@@ -8,23 +8,24 @@ import {
 } from '../actions';
 import {
   CARD_ITEM_MENU_POPUP, COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING,
-  UPDATING, LG_WIDTH, REMOVE, RESTORE,
+  UPDATING, LG_WIDTH, REMOVE, RESTORE, PINNED, TAGGED,
 } from '../types/const';
 import { makeGetCustomImage, makeGetTnAndDns } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
-  extractUrl, isPinningStatus, isDecorValid,
+  extractUrl, isDecorValid,
 } from '../utils';
 
 import { useSafeAreaFrame, useTailwind } from '.';
 
 const ListItemContent = (props) => {
 
-  const { link, pinStatus } = props;
+  const { link, pinStatus, tagStatus } = props;
   const { width: safeAreaWidth } = useSafeAreaFrame();
   const getCustomImage = useMemo(makeGetCustomImage, []);
   const getTnAndDns = useMemo(makeGetTnAndDns, []);
   const listName = useSelector(state => state.display.listName);
+  const queryString = useSelector(state => state.display.queryString);
   const customImage = useSelector(state => getCustomImage(state, link));
   const tnAndDns = useSelector(state => getTnAndDns(state, link));
   const [extractedFaviconError, setExtractedFaviconError] = useState(false);
@@ -184,7 +185,7 @@ const ListItemContent = (props) => {
           <div className={tailwind('flex flex-wrap items-center justify-start pt-1')}>
             {tnAndDns.map((tnAndDn, i) => {
               return (
-                <button key={tnAndDn.tagName} onClick={() => updateQueryString(tnAndDn.tagName)} className={tailwind(`group mt-2 block rounded-full bg-gray-100 px-2 py-1 hover:bg-gray-200 focus:outline-none focus:ring blk:bg-gray-800 blk:hover:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
+                <button key={tnAndDn.tagName} onClick={() => dispatch(updateQueryString(tnAndDn.tagName))} className={tailwind(`group mt-2 block rounded-full bg-gray-100 px-2 py-1 hover:bg-gray-200 focus:outline-none focus:ring blk:bg-gray-800 blk:hover:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
                   <div className={tailwind('text-xs text-gray-500 group-hover:text-gray-700 blk:text-gray-400 blk:group-hover:text-gray-300')}>{tnAndDn.displayName}</div>
                 </button>
               );
@@ -206,16 +207,16 @@ const ListItemContent = (props) => {
     classNames = 'break-all';
   }
 
-  const isPinning = isPinningStatus(pinStatus);
   const canSelect = (
     safeAreaWidth >= LG_WIDTH &&
     ![ADDING, MOVING, UPDATING].includes(link.status) &&
-    !isPinning
+    [null, PINNED].includes(pinStatus) &&
+    [null, TAGGED].includes(tagStatus)
   );
 
-  const canArchive = canSelect && ![ARCHIVE, TRASH].includes(listName);
-  const canRemove = canSelect && listName !== TRASH;
-  const canRestore = canSelect && listName === TRASH;
+  const canArchive = canSelect && ![ARCHIVE, TRASH].includes(listName) && !queryString;
+  const canRemove = canSelect && (listName !== TRASH || queryString);
+  const canRestore = canSelect && listName === TRASH && !queryString;
 
   return (
     <React.Fragment>

@@ -97,12 +97,6 @@ export const DELETE = 'Permanently delete';
 export const MOVE_TO = 'Move to';
 export const CHANGE = 'Change';
 
-export const CARD_ITEM_POPUP_MENU = {
-  [MY_LIST]: [COPY_LINK, ARCHIVE, REMOVE, MOVE_TO],
-  [TRASH]: [COPY_LINK, RESTORE, DELETE],
-  [ARCHIVE]: [COPY_LINK, REMOVE, MOVE_TO],
-};
-
 export const HTTP = 'http://';
 export const HTTPS = 'https://';
 export const WWW = 'www.';
