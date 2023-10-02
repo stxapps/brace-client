@@ -5,14 +5,14 @@ import {
   UPDATE_SETTINGS_COMMIT,
 } from '../types/actionTypes';
 import {
-  SHOWING_STATUSES, PINNED, WHT_MODE, BLK_MODE, SYSTEM_MODE, CUSTOM_MODE, LOCKED,
-  UNLOCKED, MY_LIST, TAGGED,
+  SHOWING_STATUSES, PINNED, WHT_MODE, BLK_MODE, SYSTEM_MODE, CUSTOM_MODE, MY_LIST,
+  TAGGED,
 } from '../types/const';
 import {
   isStringIn, isObject, isString, isEqual, getListNameObj, getStatusCounts, getMainId,
   getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
   getPinFPaths, getPins, doEnableExtraFeatures, isNumber, isMobile as _isMobile, getLink,
-  doesIncludeFetchingMore, getTagFPaths, getTags, getTagNameObj,
+  doesIncludeFetchingMore, getTagFPaths, getTags, getTagNameObj, getLockListStatus,
 } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
 import {
@@ -432,26 +432,13 @@ export const makeGetCustomImage = () => {
   );
 };
 
-const _getLockListStatus = (doForceLock, lockedLists, listName) => {
-  if (!isString(listName)) return null;
-
-  if (isObject(lockedLists[listName])) {
-    if (isString(lockedLists[listName].password)) {
-      if (doForceLock) return LOCKED;
-      if (isNumber(lockedLists[listName].unlockedDT)) return UNLOCKED;
-      return LOCKED;
-    }
-  }
-  return null;
-};
-
 export const makeGetLockListStatus = () => {
   return createSelector(
     state => state.display.doForceLock,
     state => state.lockSettings.lockedLists,
     (_, listName) => listName,
     (doForceLock, lockedLists, listName) => {
-      return _getLockListStatus(doForceLock, lockedLists, listName);
+      return getLockListStatus(doForceLock, lockedLists, listName);
     },
   );
 };
@@ -463,7 +450,7 @@ export const getCurrentLockListStatus = createSelector(
   state => state.display.queryString,
   (doForceLock, lockedLists, listName, queryString) => {
     if (queryString) return null;
-    return _getLockListStatus(doForceLock, lockedLists, listName);
+    return getLockListStatus(doForceLock, lockedLists, listName);
   },
 );
 

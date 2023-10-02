@@ -95,67 +95,14 @@ const initialState = {
 const displayReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
-    return {
-      ...state,
-      ...action.payload.display,
-      queryString: '',
-      searchString: '',
-      isSignUpPopupShown: false,
-      isSignInPopupShown: false,
-      isAddPopupShown: false,
-      isSearchPopupShown: false,
-      isProfilePopupShown: false,
-      isCardItemMenuPopupShown: false,
-      cardItemMenuPopupPosition: null,
-      isListNamesPopupShown: false,
-      listNamesPopupPosition: null,
-      isPinMenuPopupShown: false,
-      pinMenuPopupPosition: null,
-      isCustomEditorPopupShown: false,
-      isTagEditorPopupShown: false,
-      isPaywallPopupShown: false,
-      isConfirmDeletePopupShown: false,
-      isConfirmDiscardPopupShown: false,
-      isSettingsPopupShown: false,
-      isSettingsListsMenuPopupShown: false,
-      settingsListsMenuPopupPosition: null,
-      isTimePickPopupShown: false,
-      timePickPopupPosition: null,
-      isLockEditorPopupShown: false,
-      isAccessErrorPopupShown: false,
-      statuses: [],
-      isHandlingSignIn: false,
-      isBulkEditing: false,
-      selectedLinkIds: [],
-      selectingLinkId: null,
-      selectingListName: null,
-      deletingListName: null,
-      rehydratedListNames: [],
-      didFetch: false,
-      didFetchSettings: false,
-      fetchingInfos: [],
-      fetchedListNames: [],
-      showingLinkIds: null,
-      hasMoreLinks: null,
-      listChangedCount: 0,
-      deleteAction: null,
-      discardAction: null,
-      // If in outbox, continue after reload
-      //settingsStatus: null,
-      settingsViewId: SETTINGS_VIEW_ACCOUNT,
-      isSettingsSidebarShown: false,
-      didSettingsCloseAnimEnd: true,
-      didSettingsSidebarAnimEnd: true,
-      updateSettingsViewIdCount: 0,
-      listNamesMode: null,
-      listNamesAnimType: null,
-      paywallFeature: null,
-      lockAction: null,
-      doForceLock: false,
-      importAllDataProgress: null,
-      exportAllDataProgress: null,
-      deleteAllDataProgress: null,
-    };
+    const newState = { ...initialState };
+    if (
+      isObject(action.payload.display) &&
+      action.payload.display.settingsStatus === UPDATING
+    ) {
+      newState.settingsStatus = UPDATING;
+    }
+    return newState;
   }
 
   if (action.type === UPDATE_LIST_NAME) {
@@ -678,7 +625,14 @@ const displayReducer = (state = initialState, action) => {
 
     const newState = { ...state, doForceLock: false };
     if (isLong) {
+      newState.listName = MY_LIST;
+      newState.queryString = '';
+      newState.searchString = '';
+      newState.isBulkEditing = false;
       newState.selectedLinkIds = [];
+      newState.listChangedCount = newState.listChangedCount + 1;
+      newState.isCustomEditorPopupShown = false;
+      newState.isTagEditorPopupShown = false;
     }
     return newState;
   }

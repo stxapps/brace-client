@@ -217,8 +217,10 @@ const fetch = async (params) => {
   const links = getState().links;
   const didFetch = getState().display.didFetch;
   const didFetchSettings = getState().display.didFetchSettings;
+  const doForceLock = getState().display.doForceLock;
   const pendingPins = getState().pendingPins;
   const pendingTags = getState().pendingTags;
+  const lockedLists = getState().lockSettings.lockedLists;
 
   let doDescendingOrder = getState().settings.doDescendingOrder;
 
@@ -234,7 +236,7 @@ const fetch = async (params) => {
     if (queryString) {
       const _result = getNLinkFPathsByQt({
         linkFPaths, doDescendingOrder, pinFPaths, pendingPins, tagFPaths, pendingTags,
-        queryString,
+        doForceLock, lockedLists, queryString,
       });
       [fpaths, bin.hasMore] = [_result.fpaths, _result.hasMore];
     } else {
@@ -273,8 +275,11 @@ const fetch = async (params) => {
 
     let fpaths;
     if (queryString) {
-      // Loop on tagFPaths, get linkIds with tag === queryString
-      [fpaths, bin.hasMore] = [[], false];
+      const _result = getNLinkFPathsByQt({
+        linkFPaths, doDescendingOrder, pinFPaths, pendingPins, tagFPaths, pendingTags,
+        doForceLock, lockedLists, queryString,
+      });
+      [fpaths, bin.hasMore] = [_result.fpaths, _result.hasMore];
     } else {
       const _result = getNLinkFPaths({
         linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
@@ -301,9 +306,11 @@ const fetchMore = async (params) => {
   } = params;
 
   const links = getState().links;
+  const doForceLock = getState().display.doForceLock;
   const pendingPins = getState().pendingPins;
   const pendingTags = getState().pendingTags;
   const doDescendingOrder = getState().settings.doDescendingOrder;
+  const lockedLists = getState().lockSettings.lockedLists;
 
   const linkFPaths = getLinkFPaths(getState());
   const pinFPaths = getPinFPaths(getState());
@@ -333,7 +340,7 @@ const fetchMore = async (params) => {
     if (queryString) {
       const _result = getNLinkFPathsByQt({
         linkFPaths, doDescendingOrder, pinFPaths, pendingPins, tagFPaths, pendingTags,
-        queryString, excludingIds: safLinkIds,
+        doForceLock, lockedLists, queryString, excludingIds: safLinkIds,
       });
       fpaths = _result.fpaths;
       [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];

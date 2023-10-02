@@ -20,7 +20,8 @@ import {
   DUPLICATE_LIST_NAME, COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD,
   PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, MAX_TRY, EXTRACT_INVALID_URL, VALID_PASSWORD,
   NO_PASSWORD, CONTAIN_SPACES_PASSWORD, TOO_LONG_PASSWORD, N_LINKS, MY_LIST, TRASH,
-  ARCHIVE, NO_TAG_NAME, TOO_LONG_TAG_NAME, DUPLICATE_TAG_NAME, VALID_TAG_NAME,
+  ARCHIVE, NO_TAG_NAME, TOO_LONG_TAG_NAME, DUPLICATE_TAG_NAME, VALID_TAG_NAME, LOCKED,
+  UNLOCKED,
 } from '../types/const';
 import {
   myListListNameObj, trashListNameObj, archiveListNameObj,
@@ -1985,10 +1986,20 @@ export const validatePassword = (password) => {
   return VALID_PASSWORD;
 };
 
-export const doListContainUnlocks = (state) => {
-  const listName = state.display.listName;
-  const { lockedLists } = state.lockSettings;
+export const getLockListStatus = (doForceLock, lockedLists, listName) => {
+  if (!isString(listName)) return null;
 
+  if (isObject(lockedLists[listName])) {
+    if (isString(lockedLists[listName].password)) {
+      if (doForceLock) return LOCKED;
+      if (isNumber(lockedLists[listName].unlockedDT)) return UNLOCKED;
+      return LOCKED;
+    }
+  }
+  return null;
+};
+
+const _doListContainUnlocks = (listName, lockedLists) => {
   if (isObject(lockedLists[listName])) {
     if (isString(lockedLists[listName].password)) {
       if (isNumber(lockedLists[listName].unlockedDT)) return true;
@@ -1996,6 +2007,29 @@ export const doListContainUnlocks = (state) => {
   }
 
   return false;
+};
+
+export const doListContainUnlocks = (state) => {
+  const links = state.links;
+  const listName = state.display.listName;
+  const queryString = state.display.queryString;
+  const showingLinkIds = state.display.showingLinkIds;
+  const lockedLists = state.lockSettings.lockedLists;
+
+  if (queryString) {
+    if (!Array.isArray(showingLinkIds)) return false;
+    for (const id of showingLinkIds) {
+      const { listName } = getListNameAndLink(id, links);
+      if (!isString(listName)) continue;
+
+      const doContain = _doListContainUnlocks(listName, lockedLists);
+      if (doContain) return true;
+    }
+    return false;
+  }
+
+  const doContain = _doListContainUnlocks(listName, lockedLists);
+  return doContain;
 };
 
 export const getLink = (id, links) => {
@@ -2035,8 +2069,7 @@ export const getNLinkObjs = (params) => {
 
   // With pins, can't fetch further from the current point
   let objs = [], objsWithPcEc = [];
-  for (let i = 0; i < sortedLinks.length; i++) {
-    const link = sortedLinks[i];
+  for (const link of sortedLinks) {
     const { id } = link;
 
     if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
@@ -2061,8 +2094,7 @@ export const getNLinkObjs = (params) => {
   const hasMore = objsWithPcEc.length < sortedLinks.length;
 
   let foundNotExcl = false, hasDisorder = false;
-  for (let i = 0; i < objsWithPcEc.length; i++) {
-    const link = objsWithPcEc[i];
+  for (const link of objsWithPcEc) {
     const { id } = link;
 
     if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
@@ -2107,8 +2139,7 @@ export const getNLinkFPaths = (params) => {
 
   // With pins, can't fetch further from the current point
   let fpaths = [], fpathsWithPcEc = [];
-  for (let i = 0; i < sortedLinkFPaths.length; i++) {
-    const fpath = sortedLinkFPaths[i];
+  for (const fpath of sortedLinkFPaths) {
     const { id } = extractLinkFPath(fpath);
 
     if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
@@ -2133,8 +2164,7 @@ export const getNLinkFPaths = (params) => {
   const hasMore = namedLinkFPaths.some(fpath => !fpathsWithPcEc.includes(fpath));
 
   let foundNotExcl = false, hasDisorder = false
-  for (let i = 0; i < fpathsWithPcEc.length; i++) {
-    const fpath = fpathsWithPcEc[i];
+  for (const fpath of fpathsWithPcEc) {
     const { id } = extractLinkFPath(fpath);
 
     if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
@@ -2403,7 +2433,7 @@ export const isTaggingStatus = (tagStatus) => {
 };
 
 const getLinkFPathsByTagName = (
-  linkFPaths, tagFPaths, pendingTags, selectedTagName
+  linkFPaths, tagFPaths, pendingTags, selectedTagName, doForceLock, lockedLists,
 ) => {
   const objs = {};
   for (const fpath of tagFPaths) {
@@ -2438,6 +2468,9 @@ const getLinkFPathsByTagName = (
   for (const listName in linkFPaths) {
     if (listName === TRASH) continue;
 
+    const lockStatus = getLockListStatus(doForceLock, lockedLists, listName);
+    if (lockStatus === LOCKED) continue;
+
     for (const fpath of linkFPaths[listName]) {
       const { id } = extractLinkFPath(fpath);
       const mainId = getMainId(id);
@@ -2454,7 +2487,7 @@ const getLinkFPathsByTagName = (
 export const getNLinkFPathsByQt = (params) => {
   const {
     linkFPaths, doDescendingOrder, pinFPaths, pendingPins, tagFPaths, pendingTags,
-    queryString,
+    doForceLock, lockedLists, queryString,
   } = params;
 
   let excludingIds = [], excludingMainIds = [];
@@ -2464,9 +2497,9 @@ export const getNLinkFPathsByQt = (params) => {
   }
 
   // Only tag name for now
-  const tagName = queryString;
+  const tagName = queryString.trim();
   const { linkIds, toLinkFPaths } = getLinkFPathsByTagName(
-    linkFPaths, tagFPaths, pendingTags, tagName
+    linkFPaths, tagFPaths, pendingTags, tagName, doForceLock, lockedLists,
   );
 
   // Can't sort on the whole link fpaths as list name can be different.
@@ -2481,8 +2514,7 @@ export const getNLinkFPathsByQt = (params) => {
 
   // With pins, can't fetch further from the current point
   let fpaths = [], fpathsWithPcEc = [];
-  for (let i = 0; i < sortedLinkFPaths.length; i++) {
-    const fpath = sortedLinkFPaths[i];
+  for (const fpath of sortedLinkFPaths) {
     const { id } = extractLinkFPath(fpath);
 
     if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
@@ -2499,8 +2531,7 @@ export const getNLinkFPathsByQt = (params) => {
   const hasMore = namedLinkFPaths.some(fpath => !fpathsWithPcEc.includes(fpath));
 
   let foundNotExcl = false, hasDisorder = false
-  for (let i = 0; i < fpathsWithPcEc.length; i++) {
-    const fpath = fpathsWithPcEc[i];
+  for (const fpath of fpathsWithPcEc) {
     const { id } = extractLinkFPath(fpath);
 
     if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {

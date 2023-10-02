@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { updatePopup, updateSettingsPopup, updateSettingsViewId } from '../actions';
 import {
   PAYWALL_POPUP, SETTINGS_VIEW_IAP, FEATURE_PIN, FEATURE_APPEARANCE, FEATURE_CUSTOM,
-  FEATURE_LOCK, SM_WIDTH,
+  FEATURE_LOCK, FEATURE_TAG, SM_WIDTH,
 } from '../types/const';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
@@ -54,6 +54,8 @@ const PaywallPopup = () => {
     featureText = 'Change title & image are an extra feature.';
   } else if (feature === FEATURE_LOCK) {
     featureText = 'Lock lists are an extra feature.';
+  } else if (feature === FEATURE_TAG) {
+    featureText = 'Tags are an extra feature.';
   }
 
   const spanStyle = {};

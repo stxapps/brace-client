@@ -298,8 +298,10 @@ const updatePopupAsBackPressed = (dispatch, getState) => {
 export const popHistoryState = (store) => {
 
   let historyPosition = window.history.state;
-  if (historyPosition === BACK_DECIDER &&
-    store.getState().window.historyPosition === BACK_POPUP) {
+  if (
+    historyPosition === BACK_DECIDER &&
+    store.getState().window.historyPosition === BACK_POPUP
+  ) {
 
     // if back button pressed and there is a popup shown
     if (isPopupShown(store.getState())) {
@@ -537,9 +539,11 @@ export const fetch = () => async (dispatch, getState) => {
   const didFetch = getState().display.didFetch;
   const didFetchSettings = getState().display.didFetchSettings;
   const fetchingInfos = getState().display.fetchingInfos;
+  const doForceLock = getState().display.doForceLock;
   const cachedFetched = getState().fetched;
   const pendingPins = getState().pendingPins;
   const pendingTags = getState().pendingTags;
+  const lockedLists = getState().lockSettings.lockedLists;
 
   let doDescendingOrder = getState().settings.doDescendingOrder;
 
@@ -573,7 +577,7 @@ export const fetch = () => async (dispatch, getState) => {
     if (queryString) {
       const _result = getNLinkFPathsByQt({
         linkFPaths, doDescendingOrder, pinFPaths, pendingPins, tagFPaths, pendingTags,
-        queryString,
+        doForceLock, lockedLists, queryString,
       });
       [fpaths, fpathsWithPcEc] = [_result.fpaths, _result.fpathsWithPcEc];
       bin.hasMore = _result.hasMore;
@@ -602,6 +606,7 @@ export const fetch = () => async (dispatch, getState) => {
       //   need to add lnOrQt for calculate isStale correctly.
       addFetchedToVars(lnOrQt, null, vars)
       dispatch(deleteFetchingInfo(fthId));
+      vars.fetch.doShowLoading = false;
       return;
     }
   }
@@ -882,9 +887,11 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
   const queryString = getState().display.queryString;
   const fetchingInfos = getState().display.fetchingInfos;
   const showingLinkIds = getState().display.showingLinkIds;
+  const doForceLock = getState().display.doForceLock;
   const cachedFetchedMore = getState().fetchedMore;
   const pendingPins = getState().pendingPins;
   const pendingTags = getState().pendingTags;
+  const lockedLists = getState().lockSettings.lockedLists;
 
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
@@ -954,7 +961,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
 
       const _result = getNLinkFPathsByQt({
         linkFPaths, doDescendingOrder, pinFPaths, pendingPins, tagFPaths, pendingTags,
-        queryString, excludingIds: safLinkIds,
+        doForceLock, lockedLists, queryString, excludingIds: safLinkIds,
       });
       [fpaths, fpathsWithPcEc] = [_result.fpaths, _result.fpathsWithPcEc];
       [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
