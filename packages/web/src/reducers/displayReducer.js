@@ -621,15 +621,17 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_LOCKS_FOR_ACTIVE_APP) {
-    const { isLong } = action.payload;
+    const { doForceLock, isLong, doNoChangeMyList } = action.payload;
 
     const newState = { ...state, doForceLock: false };
     if (isLong) {
+      newState.selectedLinkIds = [];
+    }
+    if (!doForceLock && isLong && doNoChangeMyList) {
       newState.listName = MY_LIST;
       newState.queryString = '';
       newState.searchString = '';
       newState.isBulkEditing = false;
-      newState.selectedLinkIds = [];
       newState.listChangedCount = newState.listChangedCount + 1;
       newState.isCustomEditorPopupShown = false;
       newState.isTagEditorPopupShown = false;

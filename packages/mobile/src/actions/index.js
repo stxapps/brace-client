@@ -182,13 +182,21 @@ const handlePendingSignIn = (url) => async (dispatch, getState) => {
 
 const handleAppStateChange = (nextAppState) => async (dispatch, getState) => {
   const isUserSignedIn = await userSession.isUserSignedIn();
-  const now = Date.now();
 
   if (nextAppState === APP_STATE_ACTIVE) {
-    if (getState().display.doForceLock) {
+    const doForceLock = getState().display.doForceLock;
+    const isLong = (Date.now() - vars.appState.lastChangeDT) > 21 * 60 * 1000;
+    const lockedLists = getState().lockSettings.lockedLists;
+    const doNoChangeMyList = (
+      isObject(lockedLists[MY_LIST]) &&
+      lockedLists[MY_LIST].canChangeListNames === false
+    );
+    if (doForceLock || (isUserSignedIn && isLong && doNoChangeMyList)) {
       if (Platform.OS === 'android') FlagSecure.deactivate();
-      const isLong = (now - vars.appState.lastChangeDT) > 21 * 60 * 1000;
-      dispatch({ type: UPDATE_LOCKS_FOR_ACTIVE_APP, payload: { isLong } });
+      dispatch({
+        type: UPDATE_LOCKS_FOR_ACTIVE_APP,
+        payload: { doForceLock, isLong, doNoChangeMyList },
+      });
     }
 
     if (isUserSignedIn) {
