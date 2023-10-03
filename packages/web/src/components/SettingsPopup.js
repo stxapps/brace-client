@@ -6,7 +6,7 @@ import { updateSettingsPopup, updateSettingsViewId } from '../actions';
 import {
   SETTINGS_VIEW_ACCOUNT, SETTINGS_VIEW_IAP, SETTINGS_VIEW_IAP_RESTORE,
   SETTINGS_VIEW_DATA, SETTINGS_VIEW_DATA_IMPORT, SETTINGS_VIEW_DATA_EXPORT,
-  SETTINGS_VIEW_DATA_DELETE, SETTINGS_VIEW_LISTS, SETTINGS_VIEW_MISC,
+  SETTINGS_VIEW_DATA_DELETE, SETTINGS_VIEW_LISTS, SETTINGS_VIEW_TAGS, SETTINGS_VIEW_MISC,
   SETTINGS_VIEW_ABOUT, HASH_SUPPORT, LG_WIDTH, MERGING, DIED_MERGING,
 } from '../types/const';
 import {
@@ -20,6 +20,7 @@ import {
   SettingsPopupDataDelete,
 } from './SettingsPopupData';
 import SettingsPopupLists from './SettingsPopupLists';
+import SettingsPopupTags from './SettingsPopupTags';
 import SettingsPopupMisc from './SettingsPopupMisc';
 import SettingsPopupAbout from './SettingsPopupAbout';
 import SettingsPopupConflict from './SettingsPopupConflict';
@@ -34,6 +35,7 @@ const VIEW_DATA_IMPORT = SETTINGS_VIEW_DATA_IMPORT;
 const VIEW_DATA_EXPORT = SETTINGS_VIEW_DATA_EXPORT;
 const VIEW_DATA_DELETE = SETTINGS_VIEW_DATA_DELETE;
 const VIEW_LISTS = SETTINGS_VIEW_LISTS;
+const VIEW_TAGS = SETTINGS_VIEW_TAGS;
 const VIEW_MISC = SETTINGS_VIEW_MISC;
 const VIEW_ABOUT = SETTINGS_VIEW_ABOUT;
 
@@ -86,6 +88,10 @@ const SettingsPopup = () => {
 
   const onListsBtnClick = () => {
     dispatch(updateSettingsViewId(VIEW_LISTS, false));
+  };
+
+  const onTagsBtnClick = () => {
+    dispatch(updateSettingsViewId(VIEW_TAGS, false));
   };
 
   const onMiscBtnClick = () => {
@@ -216,6 +222,12 @@ const SettingsPopup = () => {
                       </svg>
                       Lists
                     </button>
+                    <button onClick={onTagsBtnClick} className={tailwind(`group flex w-full items-center rounded-md px-2 py-2 text-sm font-medium leading-5 focus:outline-none ${isViewSelected(VIEW_TAGS) ? selectedMenuTextStyleClasses : menuTextStyleClasses}`)}>
+                      <svg className={tailwind(`mr-3 h-5 w-5 ${isViewSelected(VIEW_TAGS) ? selectedMenuSvgStyleClasses : menuSvgStyleClasses}`)} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fillRule="evenodd" clipRule="evenodd" d="M17.707 9.293C17.8945 9.48053 17.9998 9.73484 17.9998 10C17.9998 10.2652 17.8945 10.5195 17.707 10.707L10.707 17.707C10.5195 17.8945 10.2652 17.9998 10 17.9998C9.73484 17.9998 9.48053 17.8945 9.293 17.707L2.293 10.707C2.2 10.6143 2.12624 10.5041 2.07596 10.3827C2.02568 10.2614 1.99986 10.1313 2 10V5C2 4.20435 2.31607 3.44129 2.87868 2.87868C3.44129 2.31607 4.20435 2 5 2H10C10.256 2 10.512 2.098 10.707 2.293L17.707 9.293ZM5 6C5.26522 6 5.51957 5.89464 5.70711 5.70711C5.89464 5.51957 6 5.26522 6 5C6 4.73478 5.89464 4.48043 5.70711 4.29289C5.51957 4.10536 5.26522 4 5 4C4.73478 4 4.48043 4.10536 4.29289 4.29289C4.10536 4.48043 4 4.73478 4 5C4 5.26522 4.10536 5.51957 4.29289 5.70711C4.48043 5.89464 4.73478 6 5 6Z" />
+                      </svg>
+                      Tags
+                    </button>
                     <button onClick={onMiscBtnClick} className={tailwind(`group flex w-full items-center rounded-md px-2 py-2 text-sm font-medium leading-5 focus:outline-none ${isViewSelected(VIEW_MISC) ? selectedMenuTextStyleClasses : menuTextStyleClasses}`)}>
                       <svg className={tailwind(`mr-3 h-5 w-5 ${isViewSelected(VIEW_MISC) ? selectedMenuSvgStyleClasses : menuSvgStyleClasses}`)} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                         <path d="M5 4C5 3.44772 4.55228 3 4 3C3.44772 3 3 3.44772 3 4V11.2676C2.4022 11.6134 2 12.2597 2 13C2 13.7403 2.4022 14.3866 3 14.7324V16C3 16.5523 3.44772 17 4 17C4.55228 17 5 16.5523 5 16V14.7324C5.5978 14.3866 6 13.7403 6 13C6 12.2597 5.5978 11.6134 5 11.2676V4Z" />
@@ -286,6 +298,12 @@ const SettingsPopup = () => {
                       <path d="M2 6C2 4.89543 2.89543 4 4 4H9L11 6H16C17.1046 6 18 6.89543 18 8V14C18 15.1046 17.1046 16 16 16H4C2.89543 16 2 15.1046 2 14V6Z" />
                     </svg>
                     Lists
+                  </button>
+                  <button onClick={onTagsBtnClick} className={tailwind('group flex w-full items-center rounded-md px-2 py-2.5 text-base font-medium leading-5 text-gray-500 hover:bg-gray-50 hover:text-gray-700 focus:bg-gray-50 focus:text-gray-700 focus:outline-none blk:text-gray-400 blk:hover:bg-gray-800 blk:hover:text-gray-100 blk:focus:bg-gray-800 blk:focus:text-gray-100')}>
+                    <svg className={tailwind('mr-2 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 blk:text-gray-400 blk:group-hover:text-gray-200 blk:group-focus:text-gray-200')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path fillRule="evenodd" clipRule="evenodd" d="M17.707 9.293C17.8945 9.48053 17.9998 9.73484 17.9998 10C17.9998 10.2652 17.8945 10.5195 17.707 10.707L10.707 17.707C10.5195 17.8945 10.2652 17.9998 10 17.9998C9.73484 17.9998 9.48053 17.8945 9.293 17.707L2.293 10.707C2.2 10.6143 2.12624 10.5041 2.07596 10.3827C2.02568 10.2614 1.99986 10.1313 2 10V5C2 4.20435 2.31607 3.44129 2.87868 2.87868C3.44129 2.31607 4.20435 2 5 2H10C10.256 2 10.512 2.098 10.707 2.293L17.707 9.293ZM5 6C5.26522 6 5.51957 5.89464 5.70711 5.70711C5.89464 5.51957 6 5.26522 6 5C6 4.73478 5.89464 4.48043 5.70711 4.29289C5.51957 4.10536 5.26522 4 5 4C4.73478 4 4.48043 4.10536 4.29289 4.29289C4.10536 4.48043 4 4.73478 4 5C4 5.26522 4.10536 5.51957 4.29289 5.70711C4.48043 5.89464 4.73478 6 5 6Z" />
+                    </svg>
+                    Tags
                   </button>
                   <button onClick={onMiscBtnClick} className={tailwind('group flex w-full items-center rounded-md px-2 py-2.5 text-base font-medium leading-5 text-gray-500 hover:bg-gray-50 hover:text-gray-700 focus:bg-gray-50 focus:text-gray-700 focus:outline-none blk:text-gray-400 blk:hover:bg-gray-800 blk:hover:text-gray-100 blk:focus:bg-gray-800 blk:focus:text-gray-100')}>
                     <svg className={tailwind('mr-2 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500 blk:text-gray-400 blk:group-hover:text-gray-200 blk:group-focus:text-gray-200')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -379,6 +397,13 @@ const SettingsPopup = () => {
     return _render(content);
   };
 
+  const renderTagsView = () => {
+    const content = (
+      <SettingsPopupTags onSidebarOpenBtnClick={onSidebarOpenBtnClick} />
+    );
+    return _render(content);
+  };
+
   const renderMiscView = () => {
     const content = (
       <SettingsPopupMisc onSidebarOpenBtnClick={onSidebarOpenBtnClick} />
@@ -463,6 +488,7 @@ const SettingsPopup = () => {
   else if (viewId === VIEW_DATA_EXPORT) return renderExportAllDataView();
   else if (viewId === VIEW_DATA_DELETE) return renderDeleteAllDataView();
   else if (viewId === VIEW_LISTS) return renderListsView();
+  else if (viewId === VIEW_TAGS) return renderTagsView();
   else if (viewId === VIEW_MISC) return renderMiscView();
   else if (viewId === VIEW_ABOUT) return renderAboutView();
   else throw new Error(`Invalid viewId: ${viewId}`);

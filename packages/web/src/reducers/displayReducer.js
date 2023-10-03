@@ -6,16 +6,16 @@ import {
   REFRESH_FETCHED, ADD_FETCHING_INFO, DELETE_FETCHING_INFO, SET_SHOWING_LINK_IDS,
   ADD_LINKS, MOVE_LINKS_DELETE_STEP_COMMIT, DELETE_LINKS_COMMIT, CANCEL_DIED_LINKS,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
-  DELETE_OLD_LINKS_IN_TRASH_ROLLBACK, EXTRACT_CONTENTS, EXTRACT_CONTENTS_ROLLBACK,
-  EXTRACT_CONTENTS_COMMIT, UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
+  DELETE_OLD_LINKS_IN_TRASH_ROLLBACK, EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT,
+  EXTRACT_CONTENTS_ROLLBACK, UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
-  UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME, DELETE_LIST_NAMES,
-  UPDATE_DELETE_ACTION, UPDATE_DISCARD_ACTION, TRY_UPDATE_SETTINGS, UPDATE_SETTINGS,
-  UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS,
-  MERGE_SETTINGS_COMMIT, UPDATE_SETTINGS_VIEW_ID, UPDATE_LIST_NAMES_MODE,
-  UPDATE_PAYWALL_FEATURE, UPDATE_LOCK_ACTION, ADD_LOCK_LIST, LOCK_LIST,
-  UPDATE_LOCKS_FOR_ACTIVE_APP, UPDATE_LOCKS_FOR_INACTIVE_APP,
-  UPDATE_TAG_DATA_S_STEP_COMMIT, UPDATE_IMPORT_ALL_DATA_PROGRESS,
+  UPDATE_SELECTING_LIST_NAME, DELETE_LIST_NAMES, UPDATE_DELETE_ACTION,
+  UPDATE_DISCARD_ACTION, TRY_UPDATE_SETTINGS, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
+  UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, MERGE_SETTINGS_COMMIT,
+  UPDATE_SETTINGS_VIEW_ID, UPDATE_LIST_NAMES_MODE, UPDATE_PAYWALL_FEATURE,
+  UPDATE_LOCK_ACTION, ADD_LOCK_LIST, LOCK_LIST, UPDATE_LOCKS_FOR_ACTIVE_APP,
+  UPDATE_LOCKS_FOR_INACTIVE_APP, UPDATE_TAG_DATA_S_STEP_COMMIT,
+  UPDATE_SELECTING_TAG_NAME, UPDATE_IMPORT_ALL_DATA_PROGRESS,
   UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA,
   RESET_STATE,
 } from '../types/actionTypes';
@@ -23,9 +23,9 @@ import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
   CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP,
   TAG_EDITOR_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP,
-  SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP,
-  ACCESS_ERROR_POPUP, MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING,
-  SETTINGS_VIEW_ACCOUNT, DELETE_ACTION_LIST_NAME, DIED_ADDING, DIED_MOVING,
+  SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP, SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP,
+  LOCK_EDITOR_POPUP, ACCESS_ERROR_POPUP, MY_LIST, TRASH, ARCHIVE, UPDATING,
+  DIED_UPDATING, SETTINGS_VIEW_ACCOUNT, DIED_ADDING, DIED_MOVING,
 } from '../types/const';
 import {
   doContainListName, getStatusCounts, isObject, isString, isNumber,
@@ -55,6 +55,8 @@ const initialState = {
   isSettingsPopupShown: false,
   isSettingsListsMenuPopupShown: false,
   settingsListsMenuPopupPosition: null,
+  isSettingsTagsMenuPopupShown: false,
+  settingsTagsMenuPopupPosition: null,
   isTimePickPopupShown: false,
   timePickPopupPosition: null,
   isLockEditorPopupShown: false,
@@ -65,12 +67,10 @@ const initialState = {
   selectedLinkIds: [],
   selectingLinkId: null,
   selectingListName: null,
-  deletingListName: null,
-  rehydratedListNames: [], // Unused but keep it for diff with old versions
+  selectingTagName: null,
   didFetch: false,
   didFetchSettings: false,
   fetchingInfos: [],
-  fetchedListNames: [], // Unused but keep it for diff with old versions
   showingLinkIds: null,
   hasMoreLinks: null,
   listChangedCount: 0,
@@ -156,6 +156,8 @@ const displayReducer = (state = initialState, action) => {
         newState.pinMenuPopupPosition = null;
         newState.isSettingsListsMenuPopupShown = false;
         newState.settingsListsMenuPopupPosition = null;
+        newState.isSettingsTagsMenuPopupShown = false;
+        newState.settingsTagsMenuPopupPosition = null;
         newState.isTimePickPopupShown = false;
         newState.timePickPopupPosition = null;
       }
@@ -244,6 +246,14 @@ const displayReducer = (state = initialState, action) => {
         ...state,
         isSettingsListsMenuPopupShown: isShown,
         settingsListsMenuPopupPosition: anchorPosition,
+      };
+    }
+
+    if (id === SETTINGS_TAGS_MENU_POPUP) {
+      return {
+        ...state,
+        isSettingsTagsMenuPopupShown: isShown,
+        settingsTagsMenuPopupPosition: anchorPosition,
       };
     }
 
@@ -511,12 +521,6 @@ const displayReducer = (state = initialState, action) => {
     return { ...state, selectingListName: action.payload };
   }
 
-  if (action.type === UPDATE_DELETING_LIST_NAME) {
-    return {
-      ...state, deletingListName: action.payload, deleteAction: DELETE_ACTION_LIST_NAME,
-    };
-  }
-
   if (action.type === DELETE_LIST_NAMES) {
     const { listNames } = action.payload;
     if (!listNames.includes(state.listName)) return state;
@@ -669,6 +673,10 @@ const displayReducer = (state = initialState, action) => {
     newState.listChangedCount += 1;
     [vars.fetch.fetchedLnOrQts, vars.fetch.doShowLoading] = [[], true];
     return newState;
+  }
+
+  if (action.type === UPDATE_SELECTING_TAG_NAME) {
+    return { ...state, selectingTagName: action.payload };
   }
 
   if (action.type === UPDATE_IMPORT_ALL_DATA_PROGRESS) {

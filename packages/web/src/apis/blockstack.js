@@ -703,13 +703,13 @@ const updateTagDataTStep = async (params) => {
 
   let now = Date.now();
 
-  const fpaths = [], contents = [], deleteTagNames = [];
+  const fpaths = [], contents = [], deletedTagNames = [];
   for (const tagName in combinedValues) {
     const value = combinedValues[tagName];
 
     if (value.diffType === DIFF_EQUAL) continue;
     if (value.diffType === DIFF_DELETE) {
-      deleteTagNames.push(tagName);
+      deletedTagNames.push(tagName);
       continue;
     }
 
@@ -725,7 +725,7 @@ const updateTagDataTStep = async (params) => {
   const deleteFPaths = [];
   for (const fpath of tagFPaths) {
     const eResult = extractTagFPath(fpath);
-    if (getMainId(eResult.id) === mainId && deleteTagNames.includes(eResult.tagName)) {
+    if (getMainId(eResult.id) === mainId && deletedTagNames.includes(eResult.tagName)) {
       deleteFPaths.push(createTagFPath(
         eResult.tagName, eResult.rank, eResult.updatedDT, eResult.addedDT, eResult.id
       ));

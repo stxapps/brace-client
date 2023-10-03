@@ -2,10 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { updatePopup, deleteLinks, updateBulkEdit, deleteListNames } from '../actions';
+import {
+  updatePopup, deleteLinks, updateBulkEdit, deleteListNames, deleteTagNames,
+} from '../actions';
 import {
   CARD_ITEM_MENU_POPUP, CONFIRM_DELETE_POPUP, DELETE_ACTION_LINK_COMMANDS,
-  DELETE_ACTION_LINK_ITEM_MENU, DELETE_ACTION_LIST_NAME, SM_WIDTH,
+  DELETE_ACTION_LINK_ITEM_MENU, DELETE_ACTION_LIST_NAME, DELETE_ACTION_TAG_NAME,
+  SM_WIDTH,
 } from '../types/const';
 import { getSafeAreaWidth, getSafeAreaHeight, getThemeMode } from '../selectors';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
@@ -43,9 +46,8 @@ class ConfirmDeletePopup extends React.Component {
     if (this.didClick) return;
     this.didClick = true;
 
-    const {
-      deleteAction, selectedLinkIds, selectingLinkId, deletingListName,
-    } = this.props;
+    const { deleteAction, selectedLinkIds } = this.props;
+    const { selectingLinkId, selectingListName, selectingTagName } = this.props;
 
     if (deleteAction === DELETE_ACTION_LINK_COMMANDS) {
       this.props.deleteLinks(selectedLinkIds);
@@ -56,7 +58,10 @@ class ConfirmDeletePopup extends React.Component {
       this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
       this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
     } else if (deleteAction === DELETE_ACTION_LIST_NAME) {
-      this.props.deleteListNames([deletingListName]);
+      this.props.deleteListNames([selectingListName]);
+      this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
+    } else if (deleteAction === DELETE_ACTION_TAG_NAME) {
+      this.props.deleteTagNames([selectingTagName]);
       this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
     } else {
       console.log('In ConfirmDeletePopup, invalid deleteAction: ', deleteAction);
@@ -123,7 +128,8 @@ const mapStateToProps = (state, props) => {
     deleteAction: state.display.deleteAction,
     selectedLinkIds: state.display.selectedLinkIds,
     selectingLinkId: state.display.selectingLinkId,
-    deletingListName: state.display.deletingListName,
+    selectingListName: state.display.selectingListName,
+    selectingTagName: state.display.selectingTagName,
     themeMode: getThemeMode(state),
     safeAreaWidth: getSafeAreaWidth(state),
     safeAreaHeight: getSafeAreaHeight(state),
@@ -131,7 +137,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
-  updatePopup, deleteLinks, updateBulkEdit, deleteListNames
+  updatePopup, deleteLinks, updateBulkEdit, deleteListNames, deleteTagNames,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(ConfirmDeletePopup));
