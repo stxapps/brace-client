@@ -28,7 +28,6 @@ import pendingTagsReducer from './pendingTagsReducer';
 import timePickReducer from './timePickReducer';
 import lockSettingsReducer from './lockSettingsReducer';
 import lockEditorReducer from './lockEditorReducer';
-import migrateHubReducer from './migrateHubReducer';
 
 export default combineReducers({
   window: windowReducer,
@@ -59,5 +58,4 @@ export default combineReducers({
   timePick: timePickReducer,
   lockSettings: lockSettingsReducer,
   lockEditor: lockEditorReducer,
-  migrateHub: migrateHubReducer,
 });

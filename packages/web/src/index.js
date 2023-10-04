@@ -38,7 +38,6 @@ offlineConfig.persistOptions = {
     'user', 'stacksAccess', 'hasMoreLinks', 'images', 'fetched', 'fetchedMore',
     'isFetchMoreInterrupted', 'refreshFetched', 'linkEditor', 'customEditor',
     'tagEditor', 'listNameEditors', 'tagNameEditors', 'timePick', 'lockEditor', 'iap',
-    'migrateHub',
   ],
 };
 offlineConfig.filterOutboxRehydrate = (outbox) => {

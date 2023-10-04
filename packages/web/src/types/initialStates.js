@@ -56,13 +56,6 @@ export const initialListNameEditorState = {
   blurCount: 0,
 };
 
-export const initialMigrateHubState = {
-  hubUrl: null,
-  hubUrlInProfile: false,
-  didWarn: false,
-  progress: null,
-};
-
 export const initialLockSettingsState = {
   lockedLists: {},
 };
