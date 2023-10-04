@@ -958,15 +958,14 @@ export const isCustomValid = (data) => {
 };
 
 export const isListNameObjsValid = (listNameObjs) => {
-  if (listNameObjs === undefined || listNameObjs === null) return true;
   if (!Array.isArray(listNameObjs)) return false;
 
   for (const listNameObj of listNameObjs) {
-    if (!('listName' in listNameObj && 'displayName' in listNameObj)) return false;
-    if (!(isString(listNameObj.listName) && isString(listNameObj.displayName))) {
+    if (!isObject(listNameObj)) return false;
+    if (!isString(listNameObj.listName) || !isString(listNameObj.displayName)) {
       return false;
     }
-    if ('children' in listNameObj) {
+    if (![undefined, null].includes(listNameObj.children)) {
       if (!isListNameObjsValid(listNameObj.children)) return false;
     }
   }
@@ -975,12 +974,11 @@ export const isListNameObjsValid = (listNameObjs) => {
 };
 
 export const isTagNameObjsValid = (tagNameObjs) => {
-  if (tagNameObjs === undefined || tagNameObjs === null) return true;
   if (!Array.isArray(tagNameObjs)) return false;
 
   for (const tagNameObj of tagNameObjs) {
-    if (!('tagName' in tagNameObj && 'displayName' in tagNameObj)) return false;
-    if (!(isString(tagNameObj.tagName) && isString(tagNameObj.displayName))) {
+    if (!isObject(tagNameObj)) return false;
+    if (!isString(tagNameObj.tagName) || !isString(tagNameObj.displayName)) {
       return false;
     }
     // color can be optional
