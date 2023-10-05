@@ -87,9 +87,7 @@ const _TagNameEditor = (props) => {
     // Event is reused and will be nullified after the event handler has been called.
     // https://reactjs.org/docs/legacy-event-pooling.html
     const text = e.target.value;
-    dispatch(updateTagNameEditors({
-      [key]: { value: text, msg: '' },
-    }));
+    dispatch(updateTagNameEditors({ [key]: { value: text, msg: '' } }));
   };
 
   const onInputKeyPress = (e) => {
@@ -128,7 +126,8 @@ const _TagNameEditor = (props) => {
   };
 
   const onAddOkBtnClick = () => {
-    const tagNameValidatedResult = validateDisplayName(null, state.value);
+    const value = state.value.trim();
+    const tagNameValidatedResult = validateDisplayName(null, value);
     if (tagNameValidatedResult !== VALID_TAG_NAME) {
       dispatch(updateTagNameEditors({
         [key]: {
@@ -140,7 +139,7 @@ const _TagNameEditor = (props) => {
       return;
     }
 
-    dispatch(addTagNames([state.value], [state.color]));
+    dispatch(addTagNames([value], [state.color]));
     dispatch(updateTagNameEditors({
       [key]: { ...initialTagNameEditorState, focusCount: state.focusCount },
     }));
@@ -148,11 +147,10 @@ const _TagNameEditor = (props) => {
   };
 
   const onEditOkBtnClick = () => {
-    if (state.value === tagNameObj.displayName) return onCancelBtnClick();
+    const value = state.value.trim();
+    if (value === tagNameObj.displayName) return onCancelBtnClick();
 
-    const tagNameValidatedResult = validateDisplayName(
-      tagNameObj.tagName, state.value
-    );
+    const tagNameValidatedResult = validateDisplayName(tagNameObj.tagName, value);
     if (tagNameValidatedResult !== VALID_TAG_NAME) {
       dispatch(updateTagNameEditors({
         [key]: {
@@ -164,11 +162,11 @@ const _TagNameEditor = (props) => {
       return;
     }
 
-    dispatch(updateTagNames([tagNameObj.tagName], [state.value]));
+    dispatch(updateTagNames([tagNameObj.tagName], [value]));
     dispatch(updateTagNameEditors({
       [key]: {
         ...initialTagNameEditorState,
-        value: state.value,
+        value: value,
         focusCount: state.focusCount,
       },
     }));

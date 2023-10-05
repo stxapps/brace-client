@@ -88,9 +88,7 @@ const _ListNameEditor = (props) => {
     // Event is reused and will be nullified after the event handler has been called.
     // https://reactjs.org/docs/legacy-event-pooling.html
     const text = e.target.value;
-    dispatch(updateListNameEditors({
-      [key]: { value: text, msg: '' },
-    }));
+    dispatch(updateListNameEditors({ [key]: { value: text, msg: '' } }));
   };
 
   const onInputKeyPress = (e) => {
@@ -129,7 +127,8 @@ const _ListNameEditor = (props) => {
   };
 
   const onAddOkBtnClick = () => {
-    const listNameValidatedResult = validateDisplayName(null, state.value);
+    const value = state.value.trimEnd();
+    const listNameValidatedResult = validateDisplayName(null, value);
     if (listNameValidatedResult !== VALID_LIST_NAME) {
       dispatch(updateListNameEditors({
         [key]: {
@@ -141,7 +140,7 @@ const _ListNameEditor = (props) => {
       return;
     }
 
-    dispatch(addListNames([state.value]));
+    dispatch(addListNames([value]));
     dispatch(updateListNameEditors({
       [key]: { ...initialListNameEditorState, focusCount: state.focusCount },
     }));
@@ -149,11 +148,10 @@ const _ListNameEditor = (props) => {
   };
 
   const onEditOkBtnClick = () => {
-    if (state.value === listNameObj.displayName) return onCancelBtnClick();
+    const value = state.value.trimEnd();
+    if (value === listNameObj.displayName) return onCancelBtnClick();
 
-    const listNameValidatedResult = validateDisplayName(
-      listNameObj.listName, state.value
-    );
+    const listNameValidatedResult = validateDisplayName(listNameObj.listName, value);
     if (listNameValidatedResult !== VALID_LIST_NAME) {
       dispatch(updateListNameEditors({
         [key]: {
@@ -165,11 +163,11 @@ const _ListNameEditor = (props) => {
       return;
     }
 
-    dispatch(updateListNames([listNameObj.listName], [state.value]));
+    dispatch(updateListNames([listNameObj.listName], [value]));
     dispatch(updateListNameEditors({
       [key]: {
         ...initialListNameEditorState,
-        value: state.value,
+        value: value,
         doExpand: state.doExpand,
         focusCount: state.focusCount,
       },
