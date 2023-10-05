@@ -82,6 +82,8 @@ const createSelectorLinks = createSelectorCreator(
   defaultMemoize,
   (prevVal, val) => {
     if (prevVal.links !== val.links) return false;
+    if (prevVal.display.queryString !== val.display.queryString) return false;
+    if (prevVal.pendingTags !== val.pendingTags) return false;
     if (prevVal.display.searchString !== val.display.searchString) return false;
     if (!isEqual(prevVal.display.showingLinkIds, val.display.showingLinkIds)) {
       return false;
@@ -94,13 +96,23 @@ export const getLinks = createSelectorLinks(
   state => state,
   (state) => {
     const links = state.links;
-    const showingLinkIds = state.display.showingLinkIds;
+    const queryString = state.display.queryString;
+    const pendingTags = state.pendingTags;
     const searchString = state.display.searchString;
+    const showingLinkIds = state.display.showingLinkIds;
 
     if (!Array.isArray(showingLinkIds)) return null;
 
     const sortedLinks = [];
     for (const linkId of showingLinkIds) {
+      if (queryString && isObject(pendingTags[linkId])) {
+        // Only tag name for now
+        const tagName = queryString.trim();
+        const values = pendingTags[linkId].values;
+        const found = values.some(value => value.tagName === tagName);
+        if (!found) continue;
+      }
+
       const link = getLink(linkId, links);
       if (!isObject(link)) continue;
       if (!SHOWING_STATUSES.includes(link.status)) continue;

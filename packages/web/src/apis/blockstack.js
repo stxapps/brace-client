@@ -733,7 +733,7 @@ const updateTagDataTStep = async (params) => {
   }
   await serverApi.deleteFiles(deleteFPaths);
 
-  return { id };
+  return { id, values };
 };
 
 const deleteTags = async (params) => {
