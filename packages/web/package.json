@@ -47,7 +47,7 @@
     "framer-motion": "^10.12.16",
     "idb-keyval": "^6.2.1",
     "jest-diff": "^29.7.0",
-    "postcss": "^8.4.24",
+    "postcss": "^8.4.31",
     "process": "^0.11.10",
     "react": "^18.2.0",
     "react-app-rewired": "^2.2.1",
