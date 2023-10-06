@@ -6,148 +6,84 @@ import {
   tryUpdateExtractedContents, runAfterFetchTask, unpinLinks, updateCustomDataDeleteStep,
 } from '../actions';
 import {
-  UPDATE_POPUP, FETCH_COMMIT, UPDATE_FETCHED, FETCH_MORE_COMMIT, UPDATE_FETCHED_MORE,
-  ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP,
-  MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK, MOVE_LINKS_DELETE_STEP,
-  MOVE_LINKS_DELETE_STEP_COMMIT, MOVE_LINKS_DELETE_STEP_ROLLBACK, DELETE_LINKS,
-  DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK, CANCEL_DIED_LINKS,
-  DELETE_OLD_LINKS_IN_TRASH_COMMIT, EXTRACT_CONTENTS_COMMIT, UPDATE_EXTRACTED_CONTENTS,
-  UPDATE_SETTINGS, CANCEL_DIED_SETTINGS, MERGE_SETTINGS_COMMIT, UPDATE_CUSTOM_DATA,
-  UPDATE_CUSTOM_DATA_COMMIT, UPDATE_CUSTOM_DATA_ROLLBACK, UPDATE_LOCKS_FOR_INACTIVE_APP,
-  DELETE_ALL_DATA, RESET_STATE,
+  FETCH_COMMIT, UPDATE_FETCHED, FETCH_MORE_COMMIT, UPDATE_FETCHED_MORE, ADD_LINKS,
+  ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT,
+  MOVE_LINKS_ADD_STEP_ROLLBACK, MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT,
+  MOVE_LINKS_DELETE_STEP_ROLLBACK, DELETE_LINKS, DELETE_LINKS_COMMIT,
+  DELETE_LINKS_ROLLBACK, CANCEL_DIED_LINKS, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
+  EXTRACT_CONTENTS_COMMIT, UPDATE_EXTRACTED_CONTENTS, UPDATE_CUSTOM_DATA,
+  UPDATE_CUSTOM_DATA_COMMIT, UPDATE_CUSTOM_DATA_ROLLBACK, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
-  ALL, ADD_POPUP, PROFILE_POPUP, LIST_NAMES_POPUP, IS_POPUP_SHOWN,
-  POPUP_ANCHOR_POSITION, MY_LIST, TRASH, ARCHIVE, ID, STATUS, N_LINKS,
-  ADDED, MOVED, ADDING, MOVING, REMOVING, DELETING, UPDATING,
-  DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING,
+  IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, TRASH, ARCHIVE, ID, STATUS, ADDED, MOVED,
+  ADDING, MOVING, REMOVING, DELETING, UPDATING, DIED_ADDING, DIED_MOVING, DIED_REMOVING,
+  DIED_DELETING, DIED_UPDATING, PENDING_REMOVING,
 } from '../types/const';
-import {
-  isEqual, isObject, getAllListNames, getMainId, getPinFPaths, sortFilteredLinks,
-  sortWithPins,
-} from '../utils';
-import { initialSettingsState } from '../types/initialStates';
+import { isObject, getArraysPerKey } from '../utils';
 import { _ } from '../utils/obj';
 
-const initialState = {
-  [MY_LIST]: null,
-  [TRASH]: null,
-  [ARCHIVE]: null,
-};
+const initialState = {};
 
-const toObjAndAddAttrs = (links, status, isPopupShown, popupAnchorPosition) => {
+const toObjAndAddAttrs = (links, status) => {
   let obj = _.mapKeys(links, ID);
-
-  obj = _.update(
-    obj,
-    null,
-    null,
-    [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION],
-    [status, isPopupShown, popupAnchorPosition]
-  );
-
+  obj = _.update(obj, null, null, STATUS, status);
   return obj;
 };
 
 const linksReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
-
-    let doDescendingOrder = initialSettingsState.doDescendingOrder;
-    if (
-      isObject(action.payload.settings) &&
-      'doDescendingOrder' in action.payload.settings
-    ) {
-      doDescendingOrder = action.payload.settings.doDescendingOrder;
-    }
-    const pinFPaths = getPinFPaths(action.payload);
-    const pendingPins = action.payload.pendingPins;
-
-    const newState = { ...state };
+    const newState = { ...initialState };
     for (const listName in action.payload.links) {
-
-      const processingLinks = _.update(
-        _.exclude(action.payload.links[listName], STATUS, ADDED),
-        null,
-        null,
-        [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION],
-        [false, null]
+      const ridLinks = _.ignore(
+        action.payload.links[listName], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]
       );
-      const fetchedLinks = _.update(
-        _.select(action.payload.links[listName], STATUS, ADDED),
-        null,
-        null,
-        [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION],
-        [false, null]
-      );
-
-      // Care only status ADDED.
-      // Sort and get just first N based on doDescendingOrder
-      //   so be able to compare and do update or not.
-      let sortedLinks = sortFilteredLinks(fetchedLinks, doDescendingOrder);
-      if (!sortedLinks) continue;
-
-      sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
-        return getMainId(link.id);
-      });
-
-      const selectedLinks = sortedLinks.slice(0, N_LINKS);
-
-      newState[listName] = {
-        ...processingLinks,
-        ...toObjAndAddAttrs(selectedLinks, ADDED, false, null),
-      };
+      newState[listName] = ridLinks;
     }
-
     return newState;
   }
 
   if (action.type === FETCH_COMMIT) {
-    const { listNames, doFetchStgsAndInfo, settings } = action.payload;
-
-    const newState = {};
-    if (doFetchStgsAndInfo) {
-      if (settings) {
-        for (const k of getAllListNames(settings.listNameMap)) {
-          newState[k] = state[k] || null;
-        }
-      } else {
-        for (const k of [MY_LIST, TRASH, ARCHIVE]) newState[k] = state[k];
-      }
-    } else {
-      for (const k in state) newState[k] = state[k];
-    }
-
-    for (const name of listNames) {
-      if (!(name in newState)) newState[name] = null;
-    }
-    for (const name of [MY_LIST, TRASH, ARCHIVE]) { // In case of invalid settings.
-      if (!(name in newState)) newState[name] = null;
-    }
-
     return loop(
-      newState,
+      state,
       Cmd.run(
-        tryUpdateFetched(action.payload, action.meta),
+        tryUpdateFetched(action.payload),
         { args: [Cmd.dispatch, Cmd.getState] }
       )
     );
   }
 
   if (action.type === UPDATE_FETCHED) {
-    const { listName, links } = action.payload;
+    const { lnOrQt, links, keepIds } = action.payload;
 
-    let newState = state;
-    if (listName in newState) { // Check here to not add already removed list name back
-      const processingLinks = _.exclude(state[listName], STATUS, ADDED);
-      const fetchedLinks = _.copyAttr(
-        toObjAndAddAttrs(links, ADDED, false, null),
-        state[listName],
-        [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]
-      );
+    const newState = { ...state };
+    if (isObject(links)) {
+      for (const listName in links) {
+        const processingLinks = _.exclude(state[listName], STATUS, ADDED);
+        const fetchedLinks = _.update(links[listName], null, null, STATUS, ADDED);
 
-      newState = { ...state };
-      newState[listName] = { ...processingLinks, ...fetchedLinks };
+        if (lnOrQt === listName) {
+          newState[listName] = { ...fetchedLinks, ...processingLinks };
+        } else {
+          newState[listName] = {
+            ...state[listName], ...fetchedLinks, ...processingLinks,
+          };
+        }
+      }
+    }
+    if (Array.isArray(keepIds)) {
+      for (const listName in state) {
+        if (lnOrQt !== listName) continue;
+
+        newState[listName] = {};
+        for (const id in state[listName]) {
+          if (!keepIds.includes(id)) continue;
+          newState[listName][id] = { ...state[listName][id] };
+        }
+
+        const processingLinks = _.exclude(state[listName], STATUS, ADDED);
+        newState[listName] = { ...newState[listName], ...processingLinks };
+      }
     }
 
     return loop(
@@ -159,20 +95,38 @@ const linksReducer = (state = initialState, action) => {
     return loop(
       state,
       Cmd.run(
-        tryUpdateFetchedMore(action.payload, action.meta),
+        tryUpdateFetchedMore(action.payload),
         { args: [Cmd.dispatch, Cmd.getState] }
       )
     );
   }
 
   if (action.type === UPDATE_FETCHED_MORE) {
-    const { listName, links } = action.payload;
+    const { lnOrQt, links, keepIds } = action.payload;
 
     const newState = { ...state };
-    newState[listName] = {
-      ...state[listName],
-      ...toObjAndAddAttrs(links, ADDED, false, null),
-    };
+    if (isObject(links)) {
+      for (const listName in links) {
+        const processingLinks = _.exclude(state[listName], STATUS, ADDED);
+        const fetchedLinks = _.update(links[listName], null, null, STATUS, ADDED);
+
+        newState[listName] = { ...state[listName], ...fetchedLinks, ...processingLinks };
+      }
+    }
+    if (Array.isArray(keepIds)) {
+      for (const listName in state) {
+        if (lnOrQt !== listName) continue;
+
+        newState[listName] = {};
+        for (const id in state[listName]) {
+          if (!keepIds.includes(id)) continue;
+          newState[listName][id] = { ...state[listName][id] };
+        }
+
+        const processingLinks = _.exclude(state[listName], STATUS, ADDED);
+        newState[listName] = { ...newState[listName], ...processingLinks };
+      }
+    }
 
     return loop(
       newState, Cmd.run(extractContents(), { args: [Cmd.dispatch, Cmd.getState] })
@@ -180,197 +134,291 @@ const linksReducer = (state = initialState, action) => {
   }
 
   if (action.type === ADD_LINKS) {
-    const { listName, links } = action.payload;
+    const { listNames, links } = action.payload;
+
+    const linksPerLn = getArraysPerKey(listNames, links);
 
     const newState = { ...state };
-    newState[listName] = {
-      ...state[listName],
-      ...toObjAndAddAttrs(links, ADDING, false, null),
-    };
+    for (const [listName, lnLinks] of Object.entries(linksPerLn)) {
+      newState[listName] = {
+        ...newState[listName], ...toObjAndAddAttrs(lnLinks, ADDING),
+      };
+    }
 
     return newState;
   }
 
   if (action.type === ADD_LINKS_COMMIT) {
-    const { listName, successLinks } = action.payload;
+    const { successListNames, successLinks } = action.payload;
+
+    const linksPerLn = getArraysPerKey(successListNames, successLinks);
 
     const newState = { ...state };
-    newState[listName] = _.update(
-      state[listName], ID, _.extract(successLinks, ID), STATUS, ADDED
-    );
+    for (const [listName, lnLinks] of Object.entries(linksPerLn)) {
+      newState[listName] = _.update(
+        newState[listName], ID, _.extract(lnLinks, ID), STATUS, ADDED
+      );
+    }
 
     return loop(
       newState,
       Cmd.run(
-        extractContents(listName, _.extract(successLinks, ID)),
+        extractContents(successListNames, _.extract(successLinks, ID)),
         { args: [Cmd.dispatch, Cmd.getState] }
       )
     );
   }
 
   if (action.type === ADD_LINKS_ROLLBACK) {
-    const { listName, links } = action.meta;
+    const { listNames, links } = action.meta;
+
+    const linksPerLn = getArraysPerKey(listNames, links);
 
     const newState = { ...state };
-    newState[listName] = _.update(
-      state[listName], ID, _.extract(links, ID), STATUS, DIED_ADDING
-    );
+    for (const [listName, lnLinks] of Object.entries(linksPerLn)) {
+      newState[listName] = _.update(
+        newState[listName], ID, _.extract(lnLinks, ID), STATUS, DIED_ADDING
+      );
+    }
 
     return newState;
   }
 
   if (action.type === MOVE_LINKS_ADD_STEP) {
-    const { listName, links } = action.payload;
+    const { listNames, links } = action.payload;
+
+    const fromIdsPerLn = {};
+    for (const link of links) {
+      const { fromListName, fromId } = link;
+      if (!Array.isArray(fromIdsPerLn[fromListName])) fromIdsPerLn[fromListName] = [];
+      fromIdsPerLn[fromListName].push(fromId);
+    }
+
+    const linksPerLn = getArraysPerKey(listNames, links);
 
     const newState = { ...state };
-    newState[listName] = {
-      ...state[listName],
-      ...toObjAndAddAttrs(links, MOVING, false, null),
-    };
+    for (const [fromListName, fromIds] of Object.entries(fromIdsPerLn)) {
+      newState[fromListName] = _.update(
+        newState[fromListName], ID, fromIds, STATUS, PENDING_REMOVING
+      );
+    }
+    for (const [listName, lnLinks] of Object.entries(linksPerLn)) {
+      newState[listName] = {
+        ...newState[listName], ...toObjAndAddAttrs(lnLinks, MOVING),
+      };
+    }
 
     return newState;
   }
 
   if (action.type === MOVE_LINKS_ADD_STEP_COMMIT) {
-    const { listName, successLinks, errorLinks } = action.payload;
+    const {
+      successListNames, successLinks, errorListNames, errorLinks,
+    } = action.payload;
 
     const successIds = _.extract(successLinks, ID);
+    const errorIds = _.extract(errorLinks, ID);
 
+    const successIdsPerLn = getArraysPerKey(successListNames, successIds);
+    const errorIdsPerLn = getArraysPerKey(errorListNames, errorIds);
+
+    // Doesn't remove fromListName and fromId here
+    //   so need to exclude this attr elsewhere if not needed.
     const newState = { ...state };
-    newState[listName] = _.update(
-      newState[listName], ID, successIds, STATUS, MOVED
-    );
-    newState[listName] = _.update(
-      newState[listName], ID, _.extract(errorLinks, ID), STATUS, DIED_MOVING
-    );
-
-    const { fromListName, fromIdMap } = action.meta;
-    const fromIds = successIds.map(id => fromIdMap[id]);
+    for (const [listName, lnIds] of Object.entries(successIdsPerLn)) {
+      newState[listName] = _.update(
+        newState[listName], ID, lnIds, STATUS, MOVED
+      );
+    }
+    for (const [listName, lnIds] of Object.entries(errorIdsPerLn)) {
+      newState[listName] = _.update(
+        newState[listName], ID, lnIds, STATUS, DIED_MOVING
+      );
+    }
 
     return loop(
       newState,
       Cmd.run(
-        moveLinksDeleteStep(fromListName, fromIds, listName, successIds),
+        moveLinksDeleteStep(successListNames, successIds),
         { args: [Cmd.dispatch, Cmd.getState] }
       )
     );
   }
 
   if (action.type === MOVE_LINKS_ADD_STEP_ROLLBACK) {
-    const { listName, links } = action.meta;
+    const { listNames, links } = action.meta;
+
+    const linksPerLn = getArraysPerKey(listNames, links);
 
     const newState = { ...state };
-    newState[listName] = _.update(
-      state[listName], ID, _.extract(links, ID), STATUS, DIED_MOVING
-    );
+    for (const [listName, lnLinks] of Object.entries(linksPerLn)) {
+      newState[listName] = _.update(
+        newState[listName], ID, _.extract(lnLinks, ID), STATUS, DIED_MOVING
+      );
+    }
 
     return newState;
   }
 
   if (action.type === MOVE_LINKS_DELETE_STEP) {
-    const { listName, ids, toListName, toIds } = action.payload;
+    const { listNames, ids, toListNames, toIds } = action.payload;
+
+    const idsPerLn = getArraysPerKey(listNames, ids);
+    const toIdsPerLn = getArraysPerKey(toListNames, toIds);
 
     const newState = { ...state };
-    newState[listName] = _.update(
-      newState[listName], ID, ids, STATUS, REMOVING
-    );
-    newState[toListName] = _.update(
-      newState[toListName], ID, toIds, STATUS, ADDED
-    );
+    for (const [listName, lnIds] of Object.entries(idsPerLn)) {
+      newState[listName] = _.update(
+        newState[listName], ID, lnIds, STATUS, REMOVING
+      );
+    }
+    for (const [listName, lnIds] of Object.entries(toIdsPerLn)) {
+      newState[listName] = _.update(
+        newState[listName], ID, lnIds, STATUS, ADDED
+      );
+    }
 
     return newState;
   }
 
   if (action.type === MOVE_LINKS_DELETE_STEP_COMMIT) {
-    const { listName, successIds, errorIds } = action.payload;
+    const { successListNames, successIds, errorListNames, errorIds } = action.payload;
+
+    const successIdsPerLn = getArraysPerKey(successListNames, successIds);
+    const errorIdsPerLn = getArraysPerKey(errorListNames, errorIds);
 
     const newState = { ...state };
-    newState[listName] = _.exclude(newState[listName], ID, successIds);
-    newState[listName] = _.update(
-      newState[listName], ID, errorIds, STATUS, DIED_REMOVING
-    );
+    for (const [listName, lnIds] of Object.entries(successIdsPerLn)) {
+      newState[listName] = _.exclude(newState[listName], ID, lnIds);
+    }
+    for (const [listName, lnIds] of Object.entries(errorIdsPerLn)) {
+      newState[listName] = _.update(
+        newState[listName], ID, lnIds, STATUS, DIED_REMOVING
+      );
+    }
 
-    const { toListName } = action.meta;
+    const { toListNames, toIds } = action.meta;
 
-    if ([ARCHIVE, TRASH].includes(toListName)) {
+    const toUnpinIds = [];
+    for (let i = 0; i < toListNames.length; i++) {
+      const [toListName, toId] = [toListNames[i], toIds[i]];
+
+      if (![ARCHIVE, TRASH].includes(toListName)) continue;
+      if (!successIds.includes(toId)) continue;
+
+      toUnpinIds.push(toId);
+    }
+
+    if (toUnpinIds.length > 0) {
       return loop(
-        newState, Cmd.run(unpinLinks(successIds), { args: [Cmd.dispatch, Cmd.getState] })
+        newState, Cmd.run(unpinLinks(toUnpinIds), { args: [Cmd.dispatch, Cmd.getState] })
       );
     }
     return newState;
   }
 
   if (action.type === MOVE_LINKS_DELETE_STEP_ROLLBACK) {
-    const { listName, ids } = action.meta;
+    const { listNames, ids } = action.meta;
+
+    const idsPerLn = getArraysPerKey(listNames, ids);
 
     const newState = { ...state };
-    newState[listName] = _.update(
-      state[listName], ID, ids, STATUS, DIED_REMOVING
-    );
+    for (const [listName, lnIds] of Object.entries(idsPerLn)) {
+      newState[listName] = _.update(
+        newState[listName], ID, lnIds, STATUS, DIED_REMOVING
+      );
+    }
 
     return newState;
   }
 
   if (action.type === DELETE_LINKS) {
-    const { listName, ids } = action.payload;
+    const { listNames, ids } = action.payload;
+
+    const idsPerLn = getArraysPerKey(listNames, ids);
 
     const newState = { ...state };
-    newState[listName] = _.update(
-      state[listName], ID, ids, STATUS, DELETING
-    );
+    for (const [listName, lnIds] of Object.entries(idsPerLn)) {
+      newState[listName] = _.update(
+        newState[listName], ID, lnIds, STATUS, DELETING
+      );
+    }
 
     return newState;
   }
 
   if (action.type === DELETE_LINKS_COMMIT) {
-    const { listName, successIds, errorIds } = action.payload;
+    const { successListNames, successIds, errorListNames, errorIds } = action.payload;
+
+    const successIdsPerLn = getArraysPerKey(successListNames, successIds);
+    const errorIdsPerLn = getArraysPerKey(errorListNames, errorIds);
 
     const newState = { ...state };
-    newState[listName] = _.exclude(newState[listName], ID, successIds);
-    newState[listName] = _.update(
-      newState[listName], ID, errorIds, STATUS, DIED_DELETING
-    );
+    for (const [listName, lnIds] of Object.entries(successIdsPerLn)) {
+      newState[listName] = _.exclude(newState[listName], ID, lnIds);
+    }
+    for (const [listName, lnIds] of Object.entries(errorIdsPerLn)) {
+      newState[listName] = _.update(
+        newState[listName], ID, lnIds, STATUS, DIED_DELETING
+      );
+    }
 
     return newState;
   }
 
   if (action.type === DELETE_LINKS_ROLLBACK) {
-    const { listName, ids } = action.meta;
+    const { listNames, ids } = action.meta;
+
+    const idsPerLn = getArraysPerKey(listNames, ids);
 
     const newState = { ...state };
-    newState[listName] = _.update(
-      state[listName], ID, ids, STATUS, DIED_DELETING
-    );
+    for (const [listName, lnIds] of Object.entries(idsPerLn)) {
+      newState[listName] = _.update(
+        newState[listName], ID, lnIds, STATUS, DIED_DELETING
+      );
+    }
 
     return newState;
   }
 
   if (action.type === CANCEL_DIED_LINKS) {
-    const { listName, ids } = action.payload;
+    const { listNames, ids } = action.payload;
+
+    const idsPerLn = getArraysPerKey(listNames, ids);
 
     const newState = { ...state };
-    newState[listName] = _.exclude(state[listName], ID, ids);
+    for (const [listName, lnIds] of Object.entries(idsPerLn)) {
+      newState[listName] = _.exclude(state[listName], ID, lnIds);
+    }
 
-    for (const id of ids) {
+    for (let i = 0; i < listNames.length; i++) {
+      const [listName, id] = [listNames[i], ids[i]];
+
       // DIED_ADDING -> remove this link
-      // DIED_MOVING -> remove this link
+      // DIED_MOVING -> remove this link and set fromLink status to ADDED
       // DIED_REMOVING -> just set status to ADDED
       // DIED_DELETING -> just set status to ADDED
       // DIED_UPDATING -> replace with fromLink
-      const status = state[listName][id].status;
-      if ([DIED_ADDING, DIED_MOVING].includes(status)) {
+      if (!isObject(state[listName][id])) continue;
+
+      const { status } = state[listName][id];
+      if ([DIED_ADDING].includes(status)) {
         continue;
+      } else if ([DIED_MOVING].includes(status)) {
+        const { fromListName, fromId } = state[listName][id];
+
+        if (
+          isObject(state[fromListName]) && isObject(state[fromListName][fromId])
+        ) {
+          const fromLink = state[fromListName][fromId];
+          newState[fromListName][fromId] = { ...fromLink, status: ADDED };
+        }
       } else if ([DIED_REMOVING, DIED_DELETING].includes(status)) {
         newState[listName][id] = { ...state[listName][id], status: ADDED };
       } else if ([DIED_UPDATING]) {
-        newState[listName][id] = {
-          ...state[listName][id].fromLink,
-          [STATUS]: ADDED,
-          [IS_POPUP_SHOWN]: false,
-          [POPUP_ANCHOR_POSITION]: null,
-        };
+        newState[listName][id] = { ...state[listName][id].fromLink, status: ADDED };
       } else {
-        throw new Error(`Invalid status: ${status} of link id: ${id}`);
+        console.log(`Invalid status: ${status} of link id: ${id}`);
       }
     }
 
@@ -388,32 +436,35 @@ const linksReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_EXTRACTED_CONTENTS) {
-    const { listName, successLinks, canRerender } = action.payload;
+    const { successListNames, successLinks, canRerender } = action.payload;
 
-    // Possible that the links and their listName are already deleted.
-    // If that the case, ignore them.
-    if (!(listName in state)) return state;
+    const linksPerLn = getArraysPerKey(successListNames, successLinks);
 
-    let newState = state;
-    if (canRerender) {
-      newState = { ...state };
-      newState[listName] = { ...newState[listName] };
-      for (const link of successLinks) {
-        // Some links might be moved while extracting.
-        // If that the case, ignore them.
-        if (!(link.id in newState[listName])) continue;
-        newState[listName][link.id] = { ...newState[listName][link.id] };
-        for (const key of ['extractedResult']) {
-          newState[listName][link.id][key] = link[key];
+    const newState = canRerender ? { ...state } : state;
+    for (const [listName, lnLinks] of Object.entries(linksPerLn)) {
+      // Possible that the links and their listName are already deleted.
+      // If that the case, ignore them.
+      if (!(listName in newState)) continue;
+
+      if (canRerender) {
+        newState[listName] = { ...newState[listName] };
+        for (const link of lnLinks) {
+          // Some links might be moved while extracting.
+          // If that the case, ignore them.
+          if (!(link.id in newState[listName])) continue;
+          newState[listName][link.id] = { ...newState[listName][link.id] };
+          for (const key of ['extractedResult']) {
+            newState[listName][link.id][key] = link[key];
+          }
         }
-      }
-    } else {
-      // If should not update views (re-render), just update the state.
-      for (const link of successLinks) {
-        // Some links might be moved while extracting.
-        // If that the case, ignore them.
-        if (!(link.id in newState[listName])) continue;
-        newState[listName][link.id].extractedResult = link.extractedResult;
+      } else {
+        // If should not update views (re-render), just update the state.
+        for (const link of lnLinks) {
+          // Some links might be moved while extracting.
+          // If that the case, ignore them.
+          if (!(link.id in newState[listName])) continue;
+          newState[listName][link.id].extractedResult = link.extractedResult;
+        }
       }
     }
 
@@ -423,76 +474,13 @@ const linksReducer = (state = initialState, action) => {
   }
 
   if (action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT) {
-    const { listName, ids } = action.payload;
+    const { successListNames, successIds } = action.payload;
 
-    let newState = state;
-    if (state[listName]) {
-      newState = { ...state };
-      newState[listName] = _.exclude(state[listName], ID, ids);
-    }
+    const idsPerLn = getArraysPerKey(successListNames, successIds);
 
-    return newState;
-  }
-
-  if (action.type === UPDATE_POPUP) {
-    const { id, isShown, anchorPosition } = action.payload;
-    if ([ADD_POPUP, PROFILE_POPUP, LIST_NAMES_POPUP].includes(id)) return state;
-
-    const newState = {};
-    for (const listName in state) {
-      // BUG ALERT
-      // _.update return {} if links is null, maybe it's ok, maybe it's not.
-      if (id === ALL) {
-        newState[listName] = _.update(
-          state[listName], null, null, IS_POPUP_SHOWN, isShown
-        );
-      } else {
-        newState[listName] = _.update(
-          state[listName],
-          ID,
-          id,
-          [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION],
-          [isShown, anchorPosition]
-        );
-      }
-    }
-
-    return newState;
-  }
-
-  if (
-    action.type === UPDATE_SETTINGS ||
-    action.type === CANCEL_DIED_SETTINGS ||
-    action.type === MERGE_SETTINGS_COMMIT
-  ) {
-    const { settings } = action.payload;
-
-    const listNames = getAllListNames(settings.listNameMap);
-    if (action.type === CANCEL_DIED_SETTINGS) {
-      listNames.push(...action.payload.listNames);
-    } else if (action.type === MERGE_SETTINGS_COMMIT) {
-      listNames.push(...action.meta.listNames);
-    }
-
-    const newState = {};
-    for (const listName in state) {
-      if (!listNames.includes(listName)) {
-        if (
-          state[listName] === undefined ||
-          state[listName] === null ||
-          isEqual(state[listName], {})
-        ) continue;
-
-        console.log(`links: ${listName} should be undefined, null, or an empty object.`);
-      }
-      newState[listName] = state[listName];
-    }
-
-    for (const name of listNames) {
-      if (!(name in newState)) newState[name] = null;
-    }
-    for (const name of [MY_LIST, TRASH, ARCHIVE]) { // Just to be safe.
-      if (!(name in newState)) newState[name] = null;
+    const newState = { ...state };
+    for (const [listName, lnIds] of Object.entries(idsPerLn)) {
+      newState[listName] = _.exclude(newState[listName], ID, lnIds);
     }
 
     return newState;
@@ -504,7 +492,7 @@ const linksReducer = (state = initialState, action) => {
     const newState = { ...state };
     newState[listName] = {
       ...state[listName],
-      ...toObjAndAddAttrs([{ ...toLink, fromLink }], UPDATING, false, null),
+      ...toObjAndAddAttrs([{ ...toLink, fromLink }], UPDATING),
     };
 
     return newState;
@@ -537,20 +525,6 @@ const linksReducer = (state = initialState, action) => {
       state[listName], ID, _.extract([toLink], ID), STATUS, DIED_UPDATING
     );
 
-    return newState;
-  }
-
-  if (action.type === UPDATE_LOCKS_FOR_INACTIVE_APP) {
-    const newState = {};
-    for (const listName in state) {
-      newState[listName] = _.update(
-        state[listName],
-        null,
-        null,
-        [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION],
-        [false, null]
-      );
-    }
     return newState;
   }
 

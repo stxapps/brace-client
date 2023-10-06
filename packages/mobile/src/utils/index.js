@@ -2,24 +2,31 @@ import { createSelector } from 'reselect';
 import Url from 'url-parse';
 
 import {
-  FETCH, FETCH_COMMIT, FETCH_ROLLBACK, DELETE_OLD_LINKS_IN_TRASH,
+  FETCH, FETCH_COMMIT, FETCH_ROLLBACK, FETCH_MORE, DELETE_OLD_LINKS_IN_TRASH,
   DELETE_OLD_LINKS_IN_TRASH_COMMIT, DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
   UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
   PIN_LINK, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_ROLLBACK,
   MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
+  UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_S_STEP_COMMIT,
+  UPDATE_TAG_DATA_S_STEP_ROLLBACK, UPDATE_TAG_DATA_T_STEP,
+  UPDATE_TAG_DATA_T_STEP_ROLLBACK,
 } from '../types/actionTypes';
 import {
-  HTTP, HTTPS, WWW, STATUS, ID, LINKS, IMAGES, SETTINGS, INFO, PINS, DOT_JSON, ADDED,
-  MOVED, ADDING, MOVING, UPDATING, DIED_ADDING, DIED_UPDATING, DIED_MOVING,
-  DIED_REMOVING, DIED_DELETING, COLOR, PATTERN, IMAGE, BG_COLOR_STYLES, PATTERNS,
-  VALID_URL, NO_URL, ASK_CONFIRM_URL, VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME,
+  HTTP, HTTPS, WWW, STATUS, LINKS, IMAGES, SETTINGS, INFO, PINS, TAGS, DOT_JSON, ADDED,
+  DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
+  NEW_LINK_FPATH_STATUSES, COLOR, PATTERN, IMAGE, BG_COLOR_STYLES, PATTERNS, VALID_URL,
+  NO_URL, ASK_CONFIRM_URL, VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME,
   DUPLICATE_LIST_NAME, COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD,
   PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, MAX_TRY, EXTRACT_INVALID_URL, VALID_PASSWORD,
-  NO_PASSWORD, CONTAIN_SPACES_PASSWORD, TOO_LONG_PASSWORD,
+  NO_PASSWORD, CONTAIN_SPACES_PASSWORD, TOO_LONG_PASSWORD, N_LINKS, MY_LIST, TRASH,
+  ARCHIVE, NO_TAG_NAME, TOO_LONG_TAG_NAME, DUPLICATE_TAG_NAME, VALID_TAG_NAME, LOCKED,
+  UNLOCKED,
 } from '../types/const';
+import {
+  myListListNameObj, trashListNameObj, archiveListNameObj,
+} from '../types/initialStates';
 import { IMAGE_PATHS } from '../types/imagePaths';
-import { _ } from './obj';
 
 const shortMonths = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
@@ -369,10 +376,9 @@ export const doDuplicateDisplayName = (listName, displayName, listNameMap) => {
 };
 
 export const validateListNameDisplayName = (listName, displayName, listNameMap) => {
-
   // Validate:
-  //   1. Empty 2. Contain space at the begining or the end 3. Contain invalid characters
-  //   4. Too long 5. Duplicate
+  //   1. Empty 2. Contain space at the begining or the end
+  //   3. Contain invalid characters 4. Too long 5. Duplicate
   //
   // 2 and 3 are not the problem because this is display name!
 
@@ -952,15 +958,14 @@ export const isCustomValid = (data) => {
 };
 
 export const isListNameObjsValid = (listNameObjs) => {
-  if (listNameObjs === undefined || listNameObjs === null) return true;
   if (!Array.isArray(listNameObjs)) return false;
 
   for (const listNameObj of listNameObjs) {
-    if (!('listName' in listNameObj && 'displayName' in listNameObj)) return false;
-    if (!(isString(listNameObj.listName) && isString(listNameObj.displayName))) {
+    if (!isObject(listNameObj)) return false;
+    if (!isString(listNameObj.listName) || !isString(listNameObj.displayName)) {
       return false;
     }
-    if ('children' in listNameObj) {
+    if (![undefined, null].includes(listNameObj.children)) {
       if (!isListNameObjsValid(listNameObj.children)) return false;
     }
   }
@@ -968,15 +973,48 @@ export const isListNameObjsValid = (listNameObjs) => {
   return true;
 };
 
-export const deriveSettingsState = (listNames, settings, initialState) => {
+export const isTagNameObjsValid = (tagNameObjs) => {
+  if (!Array.isArray(tagNameObjs)) return false;
+
+  for (const tagNameObj of tagNameObjs) {
+    if (!isObject(tagNameObj)) return false;
+    if (!isString(tagNameObj.tagName) || !isString(tagNameObj.displayName)) {
+      return false;
+    }
+    // color can be optional
+  }
+
+  return true;
+};
+
+export const deriveSettingsState = (listNames, tagNames, settings, initialState) => {
   const state = settings ? { ...initialState, ...settings } : { ...initialState };
   state.listNameMap = copyListNameObjs(state.listNameMap);
+  state.tagNameMap = copyTagNameObjs(state.tagNameMap);
+
+  if (!doContainListName(MY_LIST, state.listNameMap)) {
+    state.listNameMap.push({ ...myListListNameObj });
+  }
+  if (!doContainListName(TRASH, state.listNameMap)) {
+    state.listNameMap.push({ ...trashListNameObj });
+  }
+  if (!doContainListName(ARCHIVE, state.listNameMap)) {
+    state.listNameMap.push({ ...archiveListNameObj });
+  }
 
   let i = 1;
   for (const listName of listNames) {
     if (!doContainListName(listName, state.listNameMap)) {
       state.listNameMap.push(
         { listName: listName, displayName: `<missing-name-${i}>` }
+      );
+      i += 1;
+    }
+  }
+  for (const tagName of tagNames) {
+    if (!doContainTagName(tagName, state.tagNameMap)) {
+      state.tagNameMap.push(
+        { tagName: tagName, displayName: `<missing-name-${i}>`, color: '' }
       );
       i += 1;
     }
@@ -1119,6 +1157,31 @@ export const extractPinFPath = (fpath) => {
   return { rank, updatedDT, addedDT, id, ext };
 };
 
+export const createTagFPath = (tagName, rank, updatedDT, addedDT, id) => {
+  return `${TAGS}/${tagName}/${rank}/${updatedDT}/${addedDT}/${id}${DOT_JSON}`;
+};
+
+export const extractTagFPath = (fpath) => {
+  const arr = fpath.split('/');
+  if (arr.length !== 6) console.log(`In extractTagFPath, invalid fpath: ${fpath}`);
+
+  let id, ext;
+  const [tagName, rank, fname] = [arr[1] || '', arr[2] || '', arr[5] || ''];
+  const [updatedDTStr, addedDTStr] = [arr[3] || '', arr[4] || ''];
+
+  const updatedDT = parseInt(updatedDTStr, 10);
+  const addedDT = parseInt(addedDTStr, 10);
+
+  const dotIndex = fname.lastIndexOf('.');
+  if (dotIndex === -1) {
+    [id, ext] = [fname, ''];
+  } else {
+    [id, ext] = [fname.substring(0, dotIndex), fname.substring(dotIndex + 1)];
+  }
+
+  return { tagName, rank, updatedDT, addedDT, id, ext };
+};
+
 export const addFPath = (fpaths, fpath) => {
   if (fpath.startsWith('file://')) fpath = fpath.slice('file://'.length);
 
@@ -1143,6 +1206,8 @@ export const addFPath = (fpaths, fpath) => {
     }
   } else if (fpath.startsWith(PINS)) {
     if (!fpaths.pinFPaths.includes(fpath)) fpaths.pinFPaths.push(fpath);
+  } else if (fpath.startsWith(TAGS)) {
+    if (!fpaths.tagFPaths.includes(fpath)) fpaths.tagFPaths.push(fpath);
   } else {
     console.log(`Invalid file path: ${fpath}`);
   }
@@ -1165,6 +1230,8 @@ export const deleteFPath = (fpaths, fpath) => {
     if (fpaths.infoFPath === fpath) fpaths.infoFPath = null;
   } else if (fpath.startsWith(PINS)) {
     fpaths.pinFPaths = fpaths.pinFPaths.filter(el => el !== fpath);
+  } else if (fpath.startsWith(TAGS)) {
+    fpaths.tagFPaths = fpaths.tagFPaths.filter(el => el !== fpath);
   } else {
     console.log(`Invalid file path: ${fpath}`);
   }
@@ -1191,12 +1258,16 @@ export const copyFPaths = (fpaths) => {
   let newPinFPaths = [];
   if (Array.isArray(fpaths.pinFPaths)) newPinFPaths = [...fpaths.pinFPaths];
 
+  let newTagFPaths = [];
+  if (Array.isArray(fpaths.tagFPaths)) newTagFPaths = [...fpaths.tagFPaths];
+
   return {
     ...fpaths,
     linkFPaths: newLinkFPaths,
     staticFPaths: newStaticFPaths,
     settingsFPaths: newSettingsFPaths,
     pinFPaths: newPinFPaths,
+    tagFPaths: newTagFPaths,
   };
 };
 
@@ -1472,7 +1543,6 @@ const _getPins = (pinFPaths, pendingPins, doExcludeUnpinning) => {
   return pins;
 };
 
-/** @type {function(any, any, any): any} */
 export const getPins = createSelector(
   (...args) => args[0],
   (...args) => args[1],
@@ -1522,49 +1592,12 @@ export const isPinningStatus = (pinStatus) => {
   ].includes(pinStatus);
 };
 
-export const getFilteredLinks = (links, listName) => {
-  if (!links || !links[listName]) return null;
-
-  const selectedLinks = _.select(
-    links[listName],
-    STATUS,
-    [
-      ADDED, MOVED, ADDING, MOVING, UPDATING,
-      DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING,
-    ]
-  );
-
-  const moving_ids = [];
-  for (const key in links) {
-    if (key === listName || !links[key]) continue;
-
-    moving_ids.push(..._.extract(_.select(
-      links[key], STATUS, [MOVED, MOVING, DIED_MOVING]
-    ), ID));
-  }
-
-  const filteredLinks = excludeWithMainIds(selectedLinks, moving_ids);
-  return filteredLinks;
-};
-
 export const sortLinks = (links, doDescendingOrder) => {
   const sortedLinks = [...links].sort((a, b) => {
     return b.addedDT - a.addedDT;
   });
   if (!doDescendingOrder) sortedLinks.reverse();
 
-  return sortedLinks;
-};
-
-export const sortFilteredLinks = (filteredLinks, doDescendingOrder) => {
-  return sortLinks(Object.values(filteredLinks), doDescendingOrder);
-};
-
-export const getSortedLinks = (links, listName, doDescendingOrder) => {
-  const filteredLinks = getFilteredLinks(links, listName);
-  if (!filteredLinks) return null;
-
-  const sortedLinks = sortFilteredLinks(filteredLinks, doDescendingOrder);
   return sortedLinks;
 };
 
@@ -1951,10 +1984,20 @@ export const validatePassword = (password) => {
   return VALID_PASSWORD;
 };
 
-export const doListContainUnlocks = (state) => {
-  const listName = state.display.listName;
-  const { lockedLists } = state.lockSettings;
+export const getLockListStatus = (doForceLock, lockedLists, listName) => {
+  if (!isString(listName)) return null;
 
+  if (isObject(lockedLists[listName])) {
+    if (isString(lockedLists[listName].password)) {
+      if (doForceLock) return LOCKED;
+      if (isNumber(lockedLists[listName].unlockedDT)) return UNLOCKED;
+      return LOCKED;
+    }
+  }
+  return null;
+};
+
+const _doListContainUnlocks = (listName, lockedLists) => {
   if (isObject(lockedLists[listName])) {
     if (isString(lockedLists[listName].password)) {
       if (isNumber(lockedLists[listName].unlockedDT)) return true;
@@ -1962,4 +2005,552 @@ export const doListContainUnlocks = (state) => {
   }
 
   return false;
+};
+
+export const doListContainUnlocks = (state) => {
+  const links = state.links;
+  const listName = state.display.listName;
+  const queryString = state.display.queryString;
+  const showingLinkIds = state.display.showingLinkIds;
+  const lockedLists = state.lockSettings.lockedLists;
+
+  if (queryString) {
+    if (!Array.isArray(showingLinkIds)) return false;
+    for (const id of showingLinkIds) {
+      const { listName } = getListNameAndLink(id, links);
+      if (!isString(listName)) continue;
+
+      const doContain = _doListContainUnlocks(listName, lockedLists);
+      if (doContain) return true;
+    }
+    return false;
+  }
+
+  const doContain = _doListContainUnlocks(listName, lockedLists);
+  return doContain;
+};
+
+export const getLink = (id, links) => {
+  for (const listName in links) {
+    if (isObject(links[listName]) && isObject(links[listName][id])) {
+      return links[listName][id];
+    }
+  }
+  return null;
+};
+
+export const getListNameAndLink = (id, links) => {
+  for (const listName in links) {
+    if (isObject(links[listName]) && isObject(links[listName][id])) {
+      return { listName, link: links[listName][id] };
+    }
+  }
+  return { listName: null, link: null };
+};
+
+export const getNLinkObjs = (params) => {
+  const { links, listName, doDescendingOrder, pinFPaths, pendingPins } = params;
+
+  let excludingIds = [], excludingMainIds = [];
+  if (Array.isArray(params.excludingIds)) excludingIds = params.excludingIds;
+  if (Array.isArray(params.excludingMainIds)) {
+    excludingMainIds = params.excludingMainIds;
+  }
+
+  let namedLinks = [];
+  if (isObject(links[listName])) namedLinks = Object.values(links[listName]);
+
+  let sortedLinks = sortLinks(namedLinks, doDescendingOrder);
+  sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
+    return getMainId(link.id);
+  });
+
+  // With pins, can't fetch further from the current point
+  let objs = [], objsWithPcEc = [];
+  for (const link of sortedLinks) {
+    const { id } = link;
+
+    if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
+      objsWithPcEc.push(link);
+      continue;
+    }
+    if (NEW_LINK_FPATH_STATUSES.includes(link.status)) {
+      objsWithPcEc.push(link);
+      continue;
+    }
+    if (link.status !== ADDED) {
+      if (objs.length < N_LINKS) objs.push(link);
+      objsWithPcEc.push(link);
+      continue;
+    }
+    if (objs.length < N_LINKS) {
+      objs.push(link);
+      objsWithPcEc.push(link);
+    }
+  }
+
+  const hasMore = objsWithPcEc.length < sortedLinks.length;
+
+  let foundNotExcl = false, hasDisorder = false;
+  for (const link of objsWithPcEc) {
+    const { id } = link;
+
+    if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
+      if (foundNotExcl) {
+        hasDisorder = true;
+        break;
+      }
+      continue;
+    }
+    foundNotExcl = true;
+  }
+
+  return { hasMore, hasDisorder, objsWithPcEc };
+};
+
+export const getNLinkFPaths = (params) => {
+  const { linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins } = params;
+
+  let excludingIds = [], excludingMainIds = [];
+  if (Array.isArray(params.excludingIds)) excludingIds = params.excludingIds;
+  if (Array.isArray(params.excludingMainIds)) {
+    excludingMainIds = params.excludingMainIds;
+  }
+
+  const processingLinkFPaths = [];
+  if (isObject(params.links) && isObject(params.links[listName])) {
+    for (const link of Object.values(params.links[listName])) {
+      if (link.status === ADDED) continue;
+      processingLinkFPaths.push(createLinkFPath(listName, link.id));
+    }
+  }
+
+  const namedLinkFPaths = linkFPaths[listName] || [];
+
+  let sortedLinkFPaths = [...new Set([...namedLinkFPaths, ...processingLinkFPaths])];
+  sortedLinkFPaths = sortedLinkFPaths.sort();
+  if (doDescendingOrder) sortedLinkFPaths.reverse();
+  sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, pendingPins, (fpath) => {
+    const { id } = extractLinkFPath(fpath);
+    return getMainId(id);
+  });
+
+  // With pins, can't fetch further from the current point
+  let fpaths = [], fpathsWithPcEc = [];
+  for (const fpath of sortedLinkFPaths) {
+    const { id } = extractLinkFPath(fpath);
+
+    if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
+      fpathsWithPcEc.push(fpath);
+      continue;
+    }
+    if (processingLinkFPaths.includes(fpath) && !namedLinkFPaths.includes(fpath)) {
+      fpathsWithPcEc.push(fpath);
+      continue;
+    }
+    if (processingLinkFPaths.includes(fpath)) {
+      if (fpaths.length < N_LINKS) fpaths.push(fpath);
+      fpathsWithPcEc.push(fpath);
+      continue;
+    }
+    if (fpaths.length < N_LINKS) {
+      fpaths.push(fpath);
+      fpathsWithPcEc.push(fpath);
+    }
+  }
+
+  const hasMore = namedLinkFPaths.some(fpath => !fpathsWithPcEc.includes(fpath));
+
+  let foundNotExcl = false, hasDisorder = false
+  for (const fpath of fpathsWithPcEc) {
+    const { id } = extractLinkFPath(fpath);
+
+    if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
+      if (foundNotExcl) {
+        hasDisorder = true;
+        break;
+      }
+      continue;
+    }
+    foundNotExcl = true;
+  }
+
+  return { fpaths, hasMore, hasDisorder, fpathsWithPcEc };
+};
+
+export const newObject = (object, ignoreAttrs) => {
+  const newObject = {};
+  for (const attr in object) {
+    if (ignoreAttrs.includes(attr)) continue;
+    newObject[attr] = object[attr];
+  }
+  return newObject;
+};
+
+export const addFetchedToVars = (lnOrQt, links, vars) => {
+  const { fetchedLnOrQts, fetchedLinkIds } = vars.fetch;
+
+  if (isString(lnOrQt) && !fetchedLnOrQts.includes(lnOrQt)) {
+    fetchedLnOrQts.push(lnOrQt);
+  }
+
+  if (isObject(links) && !Array.isArray(links)) {
+    for (const listName in links) {
+      for (const id in links[listName]) {
+        if (!fetchedLinkIds.includes(id)) fetchedLinkIds.push(id);
+      }
+    }
+  } else if (Array.isArray(links)) {
+    for (const link of links) {
+      if (!fetchedLinkIds.includes(link.id)) fetchedLinkIds.push(link.id);
+    }
+  }
+};
+
+export const isFetchedLinkId = (fetchedLinkIds, links, listName, id) => {
+  if (!fetchedLinkIds.includes(id)) return false;
+
+  // Beware, in fetchedLinkIds but might not in links!
+  //   e.g. delete by UPDATE_FETCHED or UPDATE_FETCHED_MORE
+  //   so need to check still in the links.
+  // The flow should be like showingLinkIds/fpaths -> links -> filtered by fetched.
+  if (!isObject(links[listName]) || !isObject(links[listName][id])) return false;
+  return true;
+};
+
+export const doesIncludeFetching = (lnOrQt, doForce, fetchingInfos) => {
+  for (const info of fetchingInfos) {
+    if (info.type !== FETCH) continue;
+    if (info.lnOrQt === lnOrQt) {
+      if (!doForce) return true;
+      if (info.doForce === doForce) return true;
+    }
+  }
+  return false;
+};
+
+export const doesIncludeFetchingMore = (lnOrQt, doForCompare, fetchingInfos) => {
+  for (const info of fetchingInfos) {
+    if (info.type !== FETCH_MORE) continue;
+    if (info.lnOrQt === lnOrQt && info.doForCompare === doForCompare) return true;
+  }
+  return false;
+};
+
+export const isFetchingInterrupted = (fthId, fetchingInfos) => {
+  for (const info of fetchingInfos) {
+    if (info.fthId === fthId) return !!info.isInterrupted;
+  }
+  return false;
+};
+
+export const getTagFPaths = (state) => {
+  if (
+    isObject(state.cachedFPaths) &&
+    isObject(state.cachedFPaths.fpaths) &&
+    Array.isArray(state.cachedFPaths.fpaths.tagFPaths)
+  ) {
+    return state.cachedFPaths.fpaths.tagFPaths;
+  }
+  return [];
+};
+
+export const getRawTags = (tagFPaths) => {
+  const tags = {};
+  for (const fpath of tagFPaths) {
+    const { tagName, rank, updatedDT, addedDT, id } = extractTagFPath(fpath);
+    const mainId = getMainId(id);
+
+    if (!isObject(tags[mainId])) tags[mainId] = { values: [] };
+
+    const { values } = tags[mainId]
+
+    const i = values.findIndex(tag => tag.tagName === tagName);
+    if (i < 0) {
+      values.push({ tagName, rank, updatedDT, addedDT, id });
+      continue;
+    }
+
+    if (values[i].updatedDT > updatedDT) continue;
+
+    tags[mainId].values = [
+      ...values.slice(0, i),
+      ...values.slice(i + 1),
+      { tagName, rank, updatedDT, addedDT, id },
+    ];
+  }
+
+  for (const mainId in tags) {
+    tags[mainId].values.sort((a, b) => { // Beware sort in place
+      if (a.rank < b.rank) return -1;
+      if (a.rank > b.rank) return 1;
+      return 0;
+    });
+  }
+
+  return tags;
+};
+
+const _getTags = (tagFPaths, pendingTags) => {
+  const tags = getRawTags(tagFPaths);
+
+  for (const id in pendingTags) {
+    const mainId = getMainId(id);
+    tags[mainId] = { ...tags[mainId], ...pendingTags[id] };
+  }
+
+  return tags
+};
+
+export const getTags = createSelector(
+  (...args) => args[0],
+  (...args) => args[1],
+  _getTags,
+);
+
+export const getTagNameObj = (tagName, tagNameObjs) => {
+  if (!tagName || !tagNameObjs) return { tagNameObj: null };
+
+  for (const tagNameObj of tagNameObjs) {
+    if (tagNameObj.tagName === tagName) return { tagNameObj };
+  }
+
+  return { tagNameObj: null };
+};
+
+export const getTagNameObjFromDisplayName = (displayName, tagNameObjs) => {
+  if (!displayName || !tagNameObjs) return { tagNameObj: null };
+
+  for (const tagNameObj of tagNameObjs) {
+    if (tagNameObj.displayName === displayName) return { tagNameObj };
+  }
+
+  return { tagNameObj: null };
+};
+
+export const getTagNameDisplayName = (tagName, tagNameMap) => {
+  const { tagNameObj } = getTagNameObj(tagName, tagNameMap);
+  if (tagNameObj) return tagNameObj.displayName;
+
+  return tagName;
+};
+
+export const doContainTagName = (tagName, tagNameObjs) => {
+  const { tagNameObj } = getTagNameObj(tagName, tagNameObjs);
+  if (tagNameObj) return true;
+
+  return false;
+};
+
+export const doDuplicateTagNameDisplayName = (tagName, displayName, tagNameMap) => {
+  for (const obj of tagNameMap) {
+    if (obj.tagName === tagName) continue;
+    if (obj.displayName === displayName) return true;
+  }
+  return false;
+};
+
+export const validateTagNameDisplayName = (tagName, displayName, tagNameMap) => {
+  // Validate:
+  //   1. Empty 2. Contain space at the begining or the end
+  //   3. Contain invalid characters 4. Too long 5. Duplicate
+  //
+  // 2 and 3 are not the problem because this is display name!
+
+  if (!displayName || !isString(displayName) || displayName === '') return NO_TAG_NAME;
+  if (displayName.length > 256) return TOO_LONG_TAG_NAME;
+
+  if (doDuplicateTagNameDisplayName(tagName, displayName, tagNameMap)) {
+    return DUPLICATE_TAG_NAME;
+  }
+
+  return VALID_TAG_NAME;
+};
+
+export const copyTagNameObjs = (tagNameObjs, excludedTagNames = []) => {
+  const objs = tagNameObjs.filter(tagNameObj => {
+    return !excludedTagNames.includes(tagNameObj.tagName);
+  }).map(tagNameObj => {
+    const obj = { ...tagNameObj };
+    return obj;
+  });
+  return objs;
+};
+
+export const getInUseTagNames = (linkFPaths, tagFPaths) => {
+  const mainIdToTagNames = {};
+  for (const fpath of tagFPaths) {
+    const { tagName, id } = extractTagFPath(fpath);
+
+    const mainId = getMainId(id);
+    if (!Array.isArray(mainIdToTagNames[mainId])) mainIdToTagNames[mainId] = [];
+    mainIdToTagNames[mainId].push(tagName);
+  }
+
+  const inUseTagNames = [];
+  for (const listName in linkFPaths) {
+    for (const fpath of linkFPaths[listName]) {
+      const { id } = extractLinkFPath(fpath);
+
+      const mainId = getMainId(id);
+      if (!Array.isArray(mainIdToTagNames[mainId])) continue;
+
+      for (const tagName of mainIdToTagNames[mainId]) {
+        if (!inUseTagNames.includes(tagName)) inUseTagNames.push(tagName);
+      }
+    }
+  }
+
+  return inUseTagNames;
+};
+
+export const getEditingTagNameEditors = (tagNameEditors, tagNameObjs) => {
+  let editingTNEs = null;
+  for (const k in tagNameEditors) {
+    if (tagNameEditors[k].mode !== MODE_EDIT) continue;
+    if (!isString(tagNameEditors[k].value)) continue;
+
+    let displayName = ''; // Empty string and no tagNameObj for newTagNameEditor
+    const { tagNameObj } = getTagNameObj(k, tagNameObjs);
+    if (isObject(tagNameObj)) displayName = tagNameObj.displayName;
+
+    if (tagNameEditors[k].value === displayName) continue;
+
+    if (!isObject(editingTNEs)) editingTNEs = {};
+    editingTNEs[k] = { ...tagNameEditors[k] };
+  }
+  return editingTNEs;
+};
+
+export const isTaggingStatus = (tagStatus) => {
+  return [
+    UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_S_STEP_COMMIT,
+    UPDATE_TAG_DATA_S_STEP_ROLLBACK, UPDATE_TAG_DATA_T_STEP,
+    UPDATE_TAG_DATA_T_STEP_ROLLBACK,
+  ].includes(tagStatus);
+};
+
+const getLinkFPathsByTagName = (
+  linkFPaths, tagFPaths, pendingTags, selectedTagName, doForceLock, lockedLists,
+) => {
+  const objs = {};
+  for (const fpath of tagFPaths) {
+    const { tagName, rank, updatedDT, addedDT, id } = extractTagFPath(fpath);
+    if (tagName !== selectedTagName) continue;
+
+    const mainId = getMainId(id);
+    if (!isObject(objs[mainId])) {
+      objs[mainId] = { rank, updatedDT, addedDT, id };
+      continue;
+    }
+    if (objs[mainId].updatedDT > updatedDT) continue;
+    objs[mainId] = { rank, updatedDT, addedDT, id };
+  }
+  for (const id in pendingTags) {
+    const mainId = getMainId(id);
+
+    const found = pendingTags[id].values.some(value => {
+      return value.tagName === selectedTagName;
+    });
+    if (found) {
+      objs[mainId] = { id };
+      continue;
+    }
+
+    if (mainId in objs) delete objs[mainId];
+  }
+
+  const mainIds = Object.keys(objs);
+
+  const linkIds = [], toLinkFPaths = {};
+  for (const listName in linkFPaths) {
+    if (listName === TRASH) continue;
+
+    const lockStatus = getLockListStatus(doForceLock, lockedLists, listName);
+    if (lockStatus === LOCKED) continue;
+
+    for (const fpath of linkFPaths[listName]) {
+      const { id } = extractLinkFPath(fpath);
+      const mainId = getMainId(id);
+      if (!mainIds.includes(mainId)) continue;
+
+      linkIds.push(id);
+      toLinkFPaths[id] = fpath;
+    }
+  }
+
+  return { linkIds, toLinkFPaths };
+};
+
+export const getNLinkFPathsByQt = (params) => {
+  const {
+    linkFPaths, doDescendingOrder, pinFPaths, pendingPins, tagFPaths, pendingTags,
+    doForceLock, lockedLists, queryString,
+  } = params;
+
+  let excludingIds = [], excludingMainIds = [];
+  if (Array.isArray(params.excludingIds)) excludingIds = params.excludingIds;
+  if (Array.isArray(params.excludingMainIds)) {
+    excludingMainIds = params.excludingMainIds;
+  }
+
+  // Only tag name for now
+  const tagName = queryString.trim();
+  const { linkIds, toLinkFPaths } = getLinkFPathsByTagName(
+    linkFPaths, tagFPaths, pendingTags, tagName, doForceLock, lockedLists,
+  );
+
+  // Can't sort on the whole link fpaths as list name can be different.
+  const sortedLinkIds = [...new Set(linkIds)].sort();
+  if (doDescendingOrder) sortedLinkIds.reverse();
+
+  let sortedLinkFPaths = sortedLinkIds.map(linkId => toLinkFPaths[linkId]);
+  sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, pendingPins, (fpath) => {
+    const { id } = extractLinkFPath(fpath);
+    return getMainId(id);
+  });
+
+  // With pins, can't fetch further from the current point
+  let fpaths = [], fpathsWithPcEc = [];
+  for (const fpath of sortedLinkFPaths) {
+    const { id } = extractLinkFPath(fpath);
+
+    if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
+      fpathsWithPcEc.push(fpath);
+      continue;
+    }
+    if (fpaths.length < N_LINKS) {
+      fpaths.push(fpath);
+      fpathsWithPcEc.push(fpath);
+    }
+  }
+
+  const namedLinkFPaths = Object.values(toLinkFPaths);
+  const hasMore = namedLinkFPaths.some(fpath => !fpathsWithPcEc.includes(fpath));
+
+  let foundNotExcl = false, hasDisorder = false
+  for (const fpath of fpathsWithPcEc) {
+    const { id } = extractLinkFPath(fpath);
+
+    if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
+      if (foundNotExcl) {
+        hasDisorder = true;
+        break;
+      }
+      continue;
+    }
+    foundNotExcl = true;
+  }
+
+  return { fpaths, hasMore, hasDisorder, fpathsWithPcEc };
+};
+
+export const getArraysPerKey = (keys, values) => {
+  const arraysPerKey = {};
+  for (let i = 0; i < keys.length; i++) {
+    const [key, value] = [keys[i], values[i]];
+    if (!Array.isArray(arraysPerKey[key])) arraysPerKey[key] = [];
+    arraysPerKey[key].push(value);
+  }
+  return arraysPerKey;
 };

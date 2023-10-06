@@ -3,8 +3,9 @@ import { loop, Cmd } from 'redux-loop';
 
 import { tryUpdateInfo, updateInfoDeleteStep } from '../actions';
 import {
-  FETCH_COMMIT, UPDATE_INFO_COMMIT, UPDATE_INFO_ROLLBACK, REQUEST_PURCHASE_COMMIT,
-  RESTORE_PURCHASES_COMMIT, REFRESH_PURCHASES_COMMIT, DELETE_ALL_DATA, RESET_STATE,
+  FETCH_COMMIT, UPDATE_INFO_COMMIT, UPDATE_INFO_ROLLBACK, UPDATE_UNCHANGED_INFO,
+  REQUEST_PURCHASE_COMMIT, RESTORE_PURCHASES_COMMIT, REFRESH_PURCHASES_COMMIT,
+  DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import { VALID } from '../types/const';
 import { deriveInfoState } from '../utils';
@@ -48,6 +49,11 @@ const infoReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_INFO_ROLLBACK) {
     // No CANCEL_DIED_INFO. Just leave the content as is. Can do another time.
+    didChange.purchases = false;
+    return state;
+  }
+
+  if (action.type === UPDATE_UNCHANGED_INFO) {
     didChange.purchases = false;
     return state;
   }

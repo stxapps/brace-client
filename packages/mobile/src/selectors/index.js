@@ -5,43 +5,27 @@ import {
   UPDATE_SETTINGS_COMMIT,
 } from '../types/actionTypes';
 import {
-  IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, PINNED, WHT_MODE, BLK_MODE, SYSTEM_MODE,
-  CUSTOM_MODE, FROM_LINK, LOCKED, UNLOCKED, MY_LIST,
+  SHOWING_STATUSES, PINNED, WHT_MODE, BLK_MODE, SYSTEM_MODE, CUSTOM_MODE, MY_LIST,
+  TAGGED,
 } from '../types/const';
 import {
-  isStringIn, isObject, isString, isArrayEqual, isEqual, getListNameObj, getStatusCounts,
-  getMainId, getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
-  getFilteredLinks, getSortedLinks, sortWithPins, getPinFPaths, getPins,
-  doEnableExtraFeatures, isNumber, isMobile as _isMobile,
+  isStringIn, isObject, isString, isEqual, getListNameObj, getStatusCounts, getMainId,
+  getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
+  getPinFPaths, getPins, doEnableExtraFeatures, isNumber, isMobile as _isMobile, getLink,
+  doesIncludeFetchingMore, getTagFPaths, getTags, getTagNameObj, getLockListStatus,
 } from '../utils';
-import { _ } from '../utils/obj';
 import { tailwind } from '../stylesheets/tailwind';
-import { initialListNameEditorState } from '../types/initialStates';
+import {
+  initialListNameEditorState, initialTagNameEditorState,
+} from '../types/initialStates';
 
-const createSelectorListNameMap = createSelectorCreator(
-  defaultMemoize,
-  (prevVal, val) => {
-    if (!isObject(prevVal['links']) || !isObject(val['links'])) {
-      if (prevVal['links'] !== val['links']) return false;
-    }
-
-    if (!isArrayEqual(
-      Object.keys(prevVal['links']).sort(),
-      Object.keys(val['links']).sort()
-    )) return false;
-
-    return isEqual(prevVal['settings']['listNameMap'], val['settings']['listNameMap']);
+export const getListNameMap = createSelector(
+  state => state.settings.listNameMap,
+  (listNameMap) => {
+    return listNameMap;
   }
 );
 
-export const getListNameMap = createSelectorListNameMap(
-  state => state,
-  (state) => {
-    return [...state.settings.listNameMap];
-  }
-);
-
-/** @return {function(any, any): any} */
 export const makeIsLinkIdSelected = () => {
   return createSelector(
     state => state.display.selectedLinkIds,
@@ -87,51 +71,23 @@ export const getStatus = createSelector(
   }
 );
 
+export const getIsShowingLinkIdsNull = createSelector(
+  state => state.display.showingLinkIds,
+  (showingLinkIds) => {
+    return showingLinkIds === null;
+  }
+);
+
 const createSelectorLinks = createSelectorCreator(
   defaultMemoize,
   (prevVal, val) => {
-
-    if (prevVal['settings'].doDescendingOrder !== val['settings'].doDescendingOrder) {
+    if (prevVal.links !== val.links) return false;
+    if (prevVal.display.queryString !== val.display.queryString) return false;
+    if (prevVal.pendingTags !== val.pendingTags) return false;
+    if (prevVal.display.searchString !== val.display.searchString) return false;
+    if (!isEqual(prevVal.display.showingLinkIds, val.display.showingLinkIds)) {
       return false;
     }
-
-    if (prevVal['display'].listName !== val['display'].listName) return false;
-    if (prevVal['display'].searchString !== val['display'].searchString) return false;
-
-    if (prevVal['cachedFPaths'].fpaths !== val['cachedFPaths'].fpaths) {
-      if (!prevVal['cachedFPaths'].fpaths || !val['cachedFPaths'].fpaths) return false;
-      if (!isArrayEqual(
-        prevVal['cachedFPaths'].fpaths.pinFPaths,
-        val['cachedFPaths'].fpaths.pinFPaths
-      )) return false;
-    }
-
-    if (prevVal['pendingPins'] !== val['pendingPins']) return false;
-
-    if (prevVal['links'] === val['links']) return true;
-    if (!isArrayEqual(Object.keys(prevVal['links']).sort(), Object.keys(val['links']).sort())) {
-      return false;
-    }
-
-    for (const key in val['links']) {
-
-      if (!prevVal['links'][key] || !val['links'][key]) {
-        if (prevVal['links'][key] !== val['links'][key]) return false;
-        continue;
-      }
-
-      // Deep equal without attributes: popup and popupAnchorPosition.
-      const res = isEqual(
-        _.ignore(
-          prevVal['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK],
-        ),
-        _.ignore(
-          val['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK],
-        )
-      );
-      if (!res) return false;
-    }
-
     return true;
   }
 );
@@ -139,20 +95,30 @@ const createSelectorLinks = createSelectorCreator(
 export const getLinks = createSelectorLinks(
   state => state,
   (state) => {
-
     const links = state.links;
-    const listName = state.display.listName;
+    const queryString = state.display.queryString;
+    const pendingTags = state.pendingTags;
     const searchString = state.display.searchString;
-    const doDescendingOrder = state.settings.doDescendingOrder;
-    const pinFPaths = getPinFPaths(state);
-    const pendingPins = state.pendingPins;
+    const showingLinkIds = state.display.showingLinkIds;
 
-    let sortedLinks = getSortedLinks(links, listName, doDescendingOrder);
-    if (!sortedLinks) return null;
+    if (!Array.isArray(showingLinkIds)) return null;
 
-    sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
-      return getMainId(link.id);
-    });
+    const sortedLinks = [];
+    for (const linkId of showingLinkIds) {
+      if (queryString && isObject(pendingTags[linkId])) {
+        // Only tag name for now
+        const tagName = queryString.trim();
+        const values = pendingTags[linkId].values;
+        const found = values.some(value => value.tagName === tagName);
+        if (!found) continue;
+      }
+
+      const link = getLink(linkId, links);
+      if (!isObject(link)) continue;
+      if (!SHOWING_STATUSES.includes(link.status)) continue;
+
+      sortedLinks.push(link);
+    }
 
     if (searchString === '') return sortedLinks;
 
@@ -164,82 +130,50 @@ export const getLinks = createSelectorLinks(
   }
 );
 
-const createSelectorPopupLink = createSelectorCreator(
-  defaultMemoize,
-  (prevVal, val) => {
-
-    // doDescendingOrder shouldn't change which link its popup shown
-
-    if (prevVal['display'].listName !== val['display'].listName) return false;
-    if (prevVal['display'].searchString !== val['display'].searchString) return false;
-
-    // cachedFPaths shouldn't change which link its popup shown
-    // pendingPins shouldn't change which link its popup shown
-
-    if (prevVal['links'] === val['links']) return true;
-    if (!isArrayEqual(Object.keys(prevVal['links']).sort(), Object.keys(val['links']).sort())) {
-      return false;
-    }
-
-    for (const key in val['links']) {
-
-      if (!prevVal['links'][key] || !val['links'][key]) {
-        if (prevVal['links'][key] !== val['links'][key]) return false;
-        continue;
-      }
-
-      // Deep equal only attributes: popup and popupAnchorPosition.
-      const res = isEqual(
-        _.choose(prevVal['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION]),
-        _.choose(val['links'][key], [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION])
-      );
-      if (!res) return false;
-    }
-
-    return true;
-  }
-);
-
-export const getPopupLink = createSelectorPopupLink(
-  state => state,
-  (state) => {
-
-    const links = state.links;
-    const listName = state.display.listName;
-    const searchString = state.display.searchString;
-
-    const filteredLinks = getFilteredLinks(links, listName);
-    if (!filteredLinks) return null;
-
-    const popupLinks = _.select(filteredLinks, IS_POPUP_SHOWN, true);
-
-    let popupLink = null;
-    for (const key in popupLinks) {
-      popupLink = popupLinks[key];
-      break;
-    }
-
-    if (popupLink && searchString !== '') {
-      if (!isStringIn(popupLink, searchString)) {
-        popupLink = null;
-      }
-    }
-
-    return popupLink;
-  }
+export const getHasMoreLinks = createSelector(
+  state => state.display.hasMoreLinks,
+  (hasMoreLinks) => {
+    return hasMoreLinks;
+  },
 );
 
 export const getIsFetchingMore = createSelector(
   state => state.display.listName,
-  state => state.isFetchMoreInterrupted,
-  (listName, isFetchMoreInterrupted) => {
-    const obj = isFetchMoreInterrupted[listName];
-    if (isObject(obj) && !isEqual(obj, {})) return true;
+  state => state.display.queryString,
+  state => state.display.fetchingInfos,
+  (listName, queryString, fetchingInfos) => {
+    const lnOrQt = queryString ? queryString : listName;
+    if (doesIncludeFetchingMore(lnOrQt, false, fetchingInfos)) return true;
     return false;
   }
 );
 
-/** @return {function(any, any): initialListNameEditorState} */
+export const getHasFetchedMore = createSelector(
+  state => state.display.listName,
+  state => state.display.queryString,
+  state => state.fetchedMore,
+  (listName, queryString, fetchedMore) => {
+    let obj;
+    if (queryString) {
+      obj = fetchedMore[queryString];
+      if (isObject(obj) && !isEqual(obj, {})) return true;
+    }
+
+    obj = fetchedMore[listName];
+    if (isObject(obj) && !isEqual(obj, {})) return true;
+
+    return false;
+  }
+);
+
+export const getPopupLink = createSelector(
+  state => state.links,
+  state => state.display.selectingLinkId,
+  (links, selectingLinkId) => {
+    return getLink(selectingLinkId, links);
+  }
+);
+
 export const makeGetListNameEditor = () => {
   return createSelector(
     state => state.settings.listNameMap,
@@ -322,7 +256,6 @@ export const getDoEnableExtraFeatures = createSelector(
   purchases => doEnableExtraFeatures(purchases),
 );
 
-/** @return {function(any, any): any} */
 export const makeGetPinStatus = () => {
   return createSelector(
     state => getPinFPaths(state),
@@ -438,7 +371,6 @@ export const getThemeMode = createSelector(
   },
 );
 
-/** @type {function(any, any): any} */
 export const getTailwind = createSelector(
   safeAreaWidth => safeAreaWidth,
   (__, themeMode) => themeMode,
@@ -449,7 +381,6 @@ export const getTailwind = createSelector(
   },
 );
 
-/** @return {function(any, any): any} */
 export const makeIsTimePickHourItemSelected = () => {
   return createSelector(
     state => state.timePick.hour,
@@ -460,7 +391,6 @@ export const makeIsTimePickHourItemSelected = () => {
   );
 };
 
-/** @return {function(any, any): any} */
 export const makeIsTimePickMinuteItemSelected = () => {
   return createSelector(
     state => state.timePick.minute,
@@ -473,15 +403,14 @@ export const makeIsTimePickMinuteItemSelected = () => {
 
 export const getCustomEditor = createSelector(
   state => state.links,
-  state => state.display.listName,
   state => state.display.selectingLinkId,
   state => state.images,
   state => state.customEditor,
-  (links, listName, selectingLinkId, images, customEditor) => {
+  (links, selectingLinkId, images, customEditor) => {
     const editor = { ...customEditor };
 
-    if (isObject(links[listName]) && isObject(links[listName][selectingLinkId])) {
-      const link = links[listName][selectingLinkId];
+    const link = getLink(selectingLinkId, links);
+    if (isObject(link)) {
       if (isObject(link.custom)) {
         if (!editor.didTitleEdit && isString(link.custom.title)) {
           editor.title = link.custom.title;
@@ -502,7 +431,6 @@ export const getCustomEditor = createSelector(
   { memoizeOptions: { resultEqualityCheck: isEqual } },
 );
 
-/** @return {function(any, any): any} */
 export const makeGetCustomImage = () => {
   return createSelector(
     state => state.images,
@@ -520,32 +448,31 @@ export const makeGetLockListStatus = () => {
   return createSelector(
     state => state.display.doForceLock,
     state => state.lockSettings.lockedLists,
-    (__, listName) => listName,
+    (_, listName) => listName,
     (doForceLock, lockedLists, listName) => {
-      if (!isString(listName)) return null;
-
-      if (isObject(lockedLists[listName])) {
-        if (isString(lockedLists[listName].password)) {
-          if (doForceLock) return LOCKED;
-          if (isNumber(lockedLists[listName].unlockedDT)) return UNLOCKED;
-          return LOCKED;
-        }
-      }
-      return null;
+      return getLockListStatus(doForceLock, lockedLists, listName);
     },
   );
 };
 
-const _getCurrentLockListStatus = makeGetLockListStatus();
-export const getCurrentLockListStatus = (state) => {
-  return _getCurrentLockListStatus(state, state.display.listName);
-};
+export const getCurrentLockListStatus = createSelector(
+  state => state.display.doForceLock,
+  state => state.lockSettings.lockedLists,
+  state => state.display.listName,
+  state => state.display.queryString,
+  (doForceLock, lockedLists, listName, queryString) => {
+    if (queryString) return null;
+    return getLockListStatus(doForceLock, lockedLists, listName);
+  },
+);
 
 export const getCanChangeListNames = createSelector(
   state => state.display.doForceLock,
-  state => state.display.listName,
   state => state.lockSettings.lockedLists,
-  (doForceLock, listName, lockedLists) => {
+  state => state.display.listName,
+  state => state.display.queryString,
+  (doForceLock, lockedLists, listName, queryString) => {
+    if (queryString) return true;
     if (listName !== MY_LIST) return true;
 
     if (isObject(lockedLists[listName])) {
@@ -557,3 +484,140 @@ export const getCanChangeListNames = createSelector(
     return true;
   },
 );
+
+export const makeGetTagStatus = () => {
+  return createSelector(
+    state => getTagFPaths(state),
+    state => state.pendingTags,
+    (__, linkIdOrObj) => isObject(linkIdOrObj) ? linkIdOrObj.id : linkIdOrObj,
+    (tagFPaths, pendingTags, linkId) => {
+      if (!isString(linkId)) return null;
+
+      const tags = getTags(tagFPaths, pendingTags);
+      const linkMainId = getMainId(linkId);
+      if (linkMainId in tags) {
+        if ('status' in tags[linkMainId]) return tags[linkMainId].status;
+        return TAGGED;
+      }
+
+      return null;
+    }
+  );
+};
+
+export const makeGetTnAndDns = () => {
+  return createSelector(
+    state => getTagFPaths(state),
+    state => state.pendingTags,
+    state => state.settings.tagNameMap,
+    (__, link) => isObject(link) ? link.id : null,
+    (tagFPaths, pendingTags, tagNameMap, linkId) => {
+      if (!isString(linkId)) return [];
+
+      const tags = getTags(tagFPaths, pendingTags);
+      const mainId = getMainId(linkId);
+      if (!isObject(tags[mainId])) return [];
+
+      const tnAndDns = [];
+      for (const { tagName } of tags[mainId].values) {
+        const { tagNameObj } = getTagNameObj(tagName, tagNameMap);
+        if (!isObject(tagNameObj)) continue;
+        tnAndDns.push({
+          tagName, displayName: tagNameObj.displayName, color: tagNameObj.color,
+        });
+      }
+      return tnAndDns;
+    },
+    {
+      memoizeOptions: {
+        resultEqualityCheck: (x, y) => {
+          if (x.length !== y.length) return false;
+          for (let i = 0; i < x.length; i++) {
+            if (!isEqual(x[i], y[i])) return false;
+          }
+          return true;
+        },
+      },
+    },
+  );
+};
+
+export const getTagEditor = createSelector(
+  state => getTagFPaths(state),
+  state => state.pendingTags,
+  state => state.settings.tagNameMap,
+  state => state.display.selectingLinkId,
+  state => state.tagEditor,
+  (tagFPaths, pendingTags, tagNameMap, selectingLinkId, tagEditor) => {
+    const editor = { ...tagEditor };
+    if (!editor.didValuesEdit && isString(selectingLinkId)) {
+      const tags = getTags(tagFPaths, pendingTags);
+      const mainId = getMainId(selectingLinkId);
+
+      if (mainId in tags) {
+        const { values } = tags[mainId];
+
+        editor.values = [];
+        for (const { tagName } of values) {
+          const { tagNameObj } = getTagNameObj(tagName, tagNameMap);
+          if (!isObject(tagNameObj)) continue;
+          editor.values.push({
+            tagName, displayName: tagNameObj.displayName, color: tagNameObj.color,
+          });
+        }
+      }
+    }
+    if (!editor.didHintsEdit) {
+      editor.hints = [];
+      for (const tagNameObj of tagNameMap) {
+        editor.hints.push({
+          tagName: tagNameObj.tagName,
+          displayName: tagNameObj.displayName,
+          color: tagNameObj.color,
+          isBlur: false,
+        });
+      }
+    }
+    return editor;
+  },
+  {
+    memoizeOptions: {
+      resultEqualityCheck: (x, y) => {
+        const [xKeys, yKeys] = [Object.keys(x), Object.keys(y)];
+        const keys = [...new Set([...xKeys, ...yKeys])];
+
+        for (const key of keys) {
+          if (!(key in x) || !(key in y)) return false;
+          if (key === 'values') {
+            const [xValues, yValues] = [x[key], y[key]];
+            if (!Array.isArray(xValues) || !Array.isArray(yValues)) return false;
+            if (xValues.length !== yValues.length) return false;
+            for (let i = 0; i < xValues.length; i++) {
+              if (!isEqual(xValues[i], yValues[i])) return false;
+            }
+            continue;
+          }
+          if (x[key] !== y[key]) return false;
+        }
+        return true;
+      },
+    }
+  },
+);
+
+export const makeGetTagNameEditor = () => {
+  return createSelector(
+    state => state.settings.tagNameMap,
+    state => state.tagNameEditors,
+    (__, key) => key,
+    (tagNameMap, tagNameEditors, key) => {
+      const state = { ...initialTagNameEditorState };
+
+      const { tagNameObj } = getTagNameObj(key, tagNameMap);
+      if (tagNameObj) state.value = tagNameObj.displayName;
+
+      return { ...state, ...tagNameEditors[key] };
+    },
+    { memoizeOptions: { resultEqualityCheck: isEqual } },
+  );
+};

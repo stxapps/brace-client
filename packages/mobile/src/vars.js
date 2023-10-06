@@ -5,7 +5,9 @@ export const didChange = {
   doDeleteOldLinksInTrash: false,
   doDescendingOrder: false,
   listNameMap: false,
+  tagNameMap: false,
   purchases: false,
+  newTagNameObjs: [],
 };
 
 export const cachedServerFPaths = {
@@ -20,6 +22,10 @@ const scrollPanel = {
 
 const fetch = {
   dt: 0,
+  fetchedLnOrQts: [],
+  fetchedLinkIds: [],
+  doShowLoading: false,
+  doForce: false,
 };
 
 const randomHouseworkTasks = {

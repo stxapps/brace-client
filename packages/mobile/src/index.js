@@ -16,8 +16,12 @@ import KeyboardManager from 'react-native-keyboard-manager';
 import reducers from './reducers';
 import { init, updateMenuPopupAsBackPressed } from './actions';
 import { queue, discard, effect } from './apis/customOffline';
+import {
+  FETCH, FETCH_MORE, EXTRACT_CONTENTS, DELETE_OLD_LINKS_IN_TRASH,
+} from './types/actionTypes';
 import { BLK_MODE } from './types/const';
 import { getThemeMode } from './selectors';
+import { isObject } from './utils';
 import cache from './utils/cache';
 
 import App from './components/App';
@@ -37,6 +41,21 @@ offlineConfig.persistCallback = () => {
 };
 offlineConfig.dispatch = (...args) => {
   store.dispatch(...args);
+};
+offlineConfig.persistOptions = {
+  blacklist: [
+    'user', 'stacksAccess', 'hasMoreLinks', 'images', 'fetched', 'fetchedMore',
+    'isFetchMoreInterrupted', 'refreshFetched', 'linkEditor', 'customEditor',
+    'tagEditor', 'listNameEditors', 'tagNameEditors', 'timePick', 'lockEditor', 'iap',
+  ],
+};
+offlineConfig.filterOutboxRehydrate = (outbox) => {
+  return outbox.filter(action => {
+    if (!isObject(action)) return false;
+    return ![
+      FETCH, FETCH_MORE, EXTRACT_CONTENTS, DELETE_OLD_LINKS_IN_TRASH,
+    ].includes(action.type);
+  });
 };
 
 let enhancers;

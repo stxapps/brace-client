@@ -15,16 +15,16 @@ import {
   UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA,
 } from '../types/actionTypes';
 import {
-  MY_LIST, TRASH, ARCHIVE, N_LINKS, LINKS, IMAGES, SETTINGS, PINS, DOT_JSON, BASE64,
-  LAYOUT_CARD, LAYOUT_LIST, CD_ROOT,
-  UTF8,
+  MY_LIST, TRASH, ARCHIVE, N_LINKS, LINKS, IMAGES, SETTINGS, PINS, TAGS, DOT_JSON,
+  BASE64, LAYOUT_CARD, LAYOUT_LIST, CD_ROOT, UTF8,
 } from '../types/const';
 import {
   isEqual, isString, isObject, isNumber, sleep, randomString, getUrlFirstChar,
   randomDecor, isDecorValid, isExtractedResultValid, isCustomValid, isListNameObjsValid,
-  createDataFName, createLinkFPath, createSettingsFPath, getLastSettingsFPaths,
-  batchGetFileWithRetry, extractFPath, getPins, getMainId, getFormattedTimeStamp,
-  extractLinkFPath, extractPinFPath, getStaticFPath,
+  isTagNameObjsValid, createDataFName, createLinkFPath, createSettingsFPath,
+  getLastSettingsFPaths, batchGetFileWithRetry, extractFPath, getPins, getMainId,
+  getFormattedTimeStamp, extractLinkFPath, extractPinFPath, getStaticFPath,
+  extractTagFPath, getTags,
 } from '../utils';
 import { initialSettingsState } from '../types/initialStates';
 import vars from '../vars';
@@ -178,8 +178,11 @@ const _parseBraceSettings = async (settingsFPaths, settingsEntries) => {
     if ([true, false].includes(content.doDescendingOrder)) {
       settings.doDescendingOrder = content.doDescendingOrder;
     }
-    if ('listNameMap' in content && isListNameObjsValid(content.listNameMap)) {
+    if (isListNameObjsValid(content.listNameMap)) {
       settings.listNameMap = content.listNameMap;
+    }
+    if (isTagNameObjsValid(content.tagNameMap)) {
+      settings.tagNameMap = content.tagNameMap;
     }
     if ([LAYOUT_CARD, LAYOUT_LIST].includes(content.layoutType)) {
       settings.layoutType = content.layoutType;
@@ -336,6 +339,9 @@ const parseBracePins = async (dispatch, pins, pinEntries, progress) => {
       if (fpathParts.length !== 5 || fpathParts[0] !== PINS) continue;
       if (fnameParts.length !== 2) continue;
 
+      const rank = fpathParts[1];
+      if (rank.length === 0) continue;
+
       const updatedDT = fpathParts[2], addedDT = fpathParts[3], fname = fpathParts[4];
       if (!(/^\d+$/.test(updatedDT))) continue;
       if (!(/^\d+$/.test(addedDT))) continue;
@@ -343,7 +349,7 @@ const parseBracePins = async (dispatch, pins, pinEntries, progress) => {
 
       const id = fname.slice(0, -5);
       const tokens = id.split('-');
-      if (tokens.length !== 3) continue;
+      if (![3, 4].includes(tokens.length)) continue;
       if (!(/^\d+$/.test(tokens[0]))) continue;
 
       if (getMainId(id) in pins) continue;
@@ -362,20 +368,69 @@ const parseBracePins = async (dispatch, pins, pinEntries, progress) => {
   }
 };
 
+const parseBraceTags = async (dispatch, tags, tagEntries, progress) => {
+  for (let i = 0, j = tagEntries.length; i < j; i += N_LINKS) {
+    const selectedEntries = tagEntries.slice(i, i + N_LINKS);
+
+    const fpaths = [], contents = [];
+    for (const entry of selectedEntries) {
+      const { fpathParts, fnameParts } = extractFPath(entry.path);
+      if (fpathParts.length !== 6 || fpathParts[0] !== TAGS) continue;
+      if (fnameParts.length !== 2) continue;
+
+      const tagName = fpathParts[1], rank = fpathParts[2];
+      if (tagName.length === 0) continue;
+      if (rank.length === 0) continue;
+
+      const updatedDT = fpathParts[3], addedDT = fpathParts[4], fname = fpathParts[5];
+      if (!(/^\d+$/.test(updatedDT))) continue;
+      if (!(/^\d+$/.test(addedDT))) continue;
+      if (!fname.endsWith(DOT_JSON)) continue;
+
+      const id = fname.slice(0, -5);
+      const tokens = id.split('-');
+      if (![3, 4].includes(tokens.length)) continue;
+      if (!(/^\d+$/.test(tokens[0]))) continue;
+
+      const mainId = getMainId(id);
+      if (
+        isObject(tags[mainId]) &&
+        tags[mainId].values.some(value => value.tagName === tagName)
+      ) {
+        continue;
+      }
+
+      const content = entry.data;
+      if (!isEqual(content, {})) continue;
+
+      fpaths.push(fpathParts.join('/'));
+      contents.push(content);
+    }
+
+    await importAllDataLoop(fpaths, contents);
+
+    progress.done += selectedEntries.length;
+    dispatch(updateImportAllDataProgress(progress));
+  }
+};
+
 const parseBraceImportedFile = async (dispatch, getState, json) => {
 
-  const existFPaths = [], settingsFPaths = [], pinFPaths = [];
+  const existFPaths = [], settingsFPaths = [], pinFPaths = [], tagFPaths = [];
   await serverApi.listFiles((fpath) => {
     if (fpath.startsWith(SETTINGS)) settingsFPaths.push(fpath);
     else if (fpath.startsWith(PINS)) pinFPaths.push(fpath);
+    else if (fpath.startsWith(TAGS)) tagFPaths.push(fpath);
 
     existFPaths.push(fpath);
     return true;
   });
 
   const pins = getPins(pinFPaths, {}, false);
+  const tags = getTags(tagFPaths, {});
 
-  const linkEntries = [], pinEntries = [], imgEntries = [], settingsEntries = [];
+  const linkEntries = [], pinEntries = [], tagEntries = [], imgEntries = [];
+  const settingsEntries = [];
   if (Array.isArray(json)) {
     for (const obj of json) {
       if (!isObject(obj) || !isString(obj.path)) continue;
@@ -386,6 +441,10 @@ const parseBraceImportedFile = async (dispatch, getState, json) => {
       }
       if (obj.path.startsWith(PINS)) {
         pinEntries.push(obj);
+        continue;
+      }
+      if (obj.path.startsWith(TAGS)) {
+        tagEntries.push(obj);
         continue;
       }
       if (obj.path.startsWith(IMAGES)) {
@@ -400,7 +459,8 @@ const parseBraceImportedFile = async (dispatch, getState, json) => {
   }
 
   const total = (
-    linkEntries.length + pinEntries.length + imgEntries.length + settingsEntries.length
+    linkEntries.length + pinEntries.length + tagEntries.length + imgEntries.length +
+    settingsEntries.length
   );
   const progress = { total, done: 0 };
   dispatch(updateImportAllDataProgress(progress));
@@ -412,6 +472,7 @@ const parseBraceImportedFile = async (dispatch, getState, json) => {
 
   await parseBraceLinks(dispatch, existFPaths, linkEntries, progress);
   await parseBracePins(dispatch, pins, pinEntries, progress);
+  await parseBraceTags(dispatch, tags, tagEntries, progress);
 };
 
 const parseImportedFile = async (dispatch, getState, text) => {
@@ -560,11 +621,12 @@ export const exportAllData = () => async (dispatch, getState) => {
 
   const lockSettings = getState().lockSettings;
 
-  const _linkFPaths = [], _pinFPaths = [], _settingsFPaths = [];
+  const _linkFPaths = [], _pinFPaths = [], _tagFPaths = [], _settingsFPaths = [];
   try {
     await serverApi.listFiles((fpath) => {
       if (fpath.startsWith(LINKS)) _linkFPaths.push(fpath);
       else if (fpath.startsWith(PINS)) _pinFPaths.push(fpath);
+      else if (fpath.startsWith(TAGS)) _tagFPaths.push(fpath);
       else if (fpath.startsWith(SETTINGS)) _settingsFPaths.push(fpath);
       return true;
     });
@@ -573,7 +635,8 @@ export const exportAllData = () => async (dispatch, getState) => {
     return;
   }
 
-  const linkFPaths = [], pinFPaths = [], settingsFPaths = [], linkMainIds = [];
+  const linkFPaths = [], pinFPaths = [], tagFPaths = [], settingsFPaths = [];
+  const linkMainIds = [];
 
   for (const linkFPath of _linkFPaths) {
     const { listName, id } = extractLinkFPath(linkFPath);
@@ -589,6 +652,13 @@ export const exportAllData = () => async (dispatch, getState) => {
     pinFPaths.push(pinFPath);
   }
 
+  for (const tagFPath of _tagFPaths) {
+    const { id } = extractTagFPath(tagFPath);
+    const tagMainId = getMainId(id);
+    if (!linkMainIds.includes(tagMainId)) continue;
+    tagFPaths.push(tagFPath);
+  }
+
   const lastSettingsFPaths = getLastSettingsFPaths(_settingsFPaths);
   if (lastSettingsFPaths.fpaths.length > 0) {
     const lastSettingsFPath = lastSettingsFPaths.fpaths[0];
@@ -598,9 +668,10 @@ export const exportAllData = () => async (dispatch, getState) => {
     }
   }
 
-  const progress = {
-    total: linkFPaths.length + pinFPaths.length + settingsFPaths.length, done: 0,
-  };
+  const total = (
+    linkFPaths.length + pinFPaths.length + tagFPaths.length + settingsFPaths.length
+  );
+  const progress = { total, done: 0 };
   dispatch(updateExportAllDataProgress(progress));
 
   if (progress.total === 0) return;
@@ -663,8 +734,9 @@ export const exportAllData = () => async (dispatch, getState) => {
       }
     }
 
-    for (let i = 0; i < pinFPaths.length; i += N_LINKS) {
-      const selectedFPaths = pinFPaths.slice(i, i + N_LINKS);
+    const ptFPaths = [...pinFPaths, ...tagFPaths];
+    for (let i = 0; i < ptFPaths.length; i += N_LINKS) {
+      const selectedFPaths = ptFPaths.slice(i, i + N_LINKS);
       for (const fpath of selectedFPaths) {
         const path = fpath, data = {};
         successResponses.push({ path, data });
@@ -742,8 +814,7 @@ export const deleteAllData = () => async (dispatch, getState) => {
     return;
   }
 
-  const total = fpaths.length;
-  const progress = { total, done: 0 };
+  const progress = { total: fpaths.length, done: 0 };
   dispatch(updateDeleteAllDataProgress(progress));
 
   if (progress.total === 0) return;

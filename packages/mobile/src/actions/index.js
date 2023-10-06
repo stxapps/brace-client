@@ -10,19 +10,18 @@ import FlagSecure from 'react-native-flag-secure';
 
 import userSession from '../userSession';
 import axios from '../axiosWrapper';
-import mhApi from '../apis/migrateHub';
 import dataApi from '../apis/blockstack';
 import serverApi from '../apis/server';
 import fileApi from '../apis/localFile';
 import {
-  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_STACKS_ACCESS, UPDATE_LIST_NAME, UPDATE_POPUP,
-  UPDATE_SEARCH_STRING, UPDATE_LINK_EDITOR, UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN,
-  UPDATE_BULK_EDITING, ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS,
-  UPDATE_SELECTING_LINK_ID, FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED,
-  UPDATE_FETCHED, FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
-  CACHE_FETCHED_MORE, UPDATE_FETCHED_MORE, CANCEL_FETCHED_MORE,
-  CLEAR_FETCHED_LIST_NAMES, REFRESH_FETCHED, ADD_LINKS, ADD_LINKS_COMMIT,
-  ADD_LINKS_ROLLBACK, UPDATE_LINKS, DELETE_LINKS, DELETE_LINKS_COMMIT,
+  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_STACKS_ACCESS, UPDATE_LIST_NAME,
+  UPDATE_QUERY_STRING, UPDATE_SEARCH_STRING, UPDATE_POPUP, UPDATE_LINK_EDITOR,
+  UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING, ADD_SELECTED_LINK_IDS,
+  DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID, FETCH, FETCH_COMMIT,
+  FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED, FETCH_MORE, FETCH_MORE_COMMIT,
+  FETCH_MORE_ROLLBACK, CACHE_FETCHED_MORE, UPDATE_FETCHED_MORE, REFRESH_FETCHED,
+  ADD_FETCHING_INFO, DELETE_FETCHING_INFO, SET_SHOWING_LINK_IDS, ADD_LINKS,
+  ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK, UPDATE_LINKS, DELETE_LINKS, DELETE_LINKS_COMMIT,
   DELETE_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT,
   MOVE_LINKS_ADD_STEP_ROLLBACK, MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT,
   MOVE_LINKS_DELETE_STEP_ROLLBACK, CANCEL_DIED_LINKS, DELETE_OLD_LINKS_IN_TRASH,
@@ -30,56 +29,69 @@ import {
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
   UPDATE_EXTRACTED_CONTENTS, UPDATE_LIST_NAME_EDITORS, ADD_LIST_NAMES,
   UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME, DELETE_LIST_NAMES,
-  UPDATE_SELECTING_LIST_NAME, UPDATE_DELETING_LIST_NAME, UPDATE_DO_EXTRACT_CONTENTS,
-  UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH, UPDATE_DO_DESCENDING_ORDER, UPDATE_SETTINGS,
-  UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK, UPDATE_INFO, UPDATE_INFO_COMMIT,
-  UPDATE_INFO_ROLLBACK, CANCEL_DIED_SETTINGS, MERGE_SETTINGS, MERGE_SETTINGS_COMMIT,
-  MERGE_SETTINGS_ROLLBACK, UPDATE_SETTINGS_VIEW_ID, UPDATE_DO_USE_LOCAL_LAYOUT,
-  UPDATE_DEFAULT_LAYOUT_TYPE, UPDATE_LOCAL_LAYOUT_TYPE, UPDATE_DELETE_ACTION,
-  UPDATE_DISCARD_ACTION, UPDATE_LIST_NAMES_MODE, GET_PRODUCTS, GET_PRODUCTS_COMMIT,
-  GET_PRODUCTS_ROLLBACK, REQUEST_PURCHASE, REQUEST_PURCHASE_COMMIT,
-  REQUEST_PURCHASE_ROLLBACK, RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT,
-  RESTORE_PURCHASES_ROLLBACK, REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT,
-  REFRESH_PURCHASES_ROLLBACK, UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS,
-  UPDATE_IAP_PURCHASE_STATUS, UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS,
-  PIN_LINK, PIN_LINK_COMMIT, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_COMMIT,
-  UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
+  UPDATE_SELECTING_LIST_NAME, UPDATE_DO_EXTRACT_CONTENTS,
+  UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH, UPDATE_DO_DESCENDING_ORDER, TRY_UPDATE_SETTINGS,
+  TRY_UPDATE_SETTINGS_COMMIT, TRY_UPDATE_SETTINGS_ROLLBACK, UPDATE_SETTINGS,
+  TRY_UPDATE_INFO, TRY_UPDATE_INFO_COMMIT, TRY_UPDATE_INFO_ROLLBACK,
+  CANCEL_DIED_SETTINGS, MERGE_SETTINGS, MERGE_SETTINGS_COMMIT, MERGE_SETTINGS_ROLLBACK,
+  UPDATE_SETTINGS_VIEW_ID, UPDATE_DO_USE_LOCAL_LAYOUT, UPDATE_DEFAULT_LAYOUT_TYPE,
+  UPDATE_LOCAL_LAYOUT_TYPE, UPDATE_DELETE_ACTION, UPDATE_DISCARD_ACTION,
+  UPDATE_LIST_NAMES_MODE, GET_PRODUCTS, GET_PRODUCTS_COMMIT, GET_PRODUCTS_ROLLBACK,
+  REQUEST_PURCHASE, REQUEST_PURCHASE_COMMIT, REQUEST_PURCHASE_ROLLBACK,
+  RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
+  REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
+  UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS, UPDATE_IAP_PURCHASE_STATUS,
+  UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS, PIN_LINK, PIN_LINK_COMMIT,
+  PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_COMMIT, UNPIN_LINK_ROLLBACK,
+  MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
   MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, CANCEL_DIED_PINS, UPDATE_SYSTEM_THEME_MODE,
   UPDATE_DO_USE_LOCAL_THEME, UPDATE_DEFAULT_THEME, UPDATE_LOCAL_THEME,
   UPDATE_UPDATING_THEME_MODE, UPDATE_TIME_PICK, UPDATE_IS_24H_FORMAT,
   UPDATE_CUSTOM_EDITOR, UPDATE_IMAGES, UPDATE_CUSTOM_DATA, UPDATE_CUSTOM_DATA_COMMIT,
-  UPDATE_CUSTOM_DATA_ROLLBACK, REHYDRATE_STATIC_FILES, CLEAN_UP_STATIC_FILES,
-  CLEAN_UP_STATIC_FILES_COMMIT, CLEAN_UP_STATIC_FILES_ROLLBACK, UPDATE_PAYWALL_FEATURE,
-  UPDATE_LOCK_ACTION, UPDATE_LOCK_EDITOR, ADD_LOCK_LIST, REMOVE_LOCK_LIST, LOCK_LIST,
-  UNLOCK_LIST, CLEAN_UP_LOCKS, UPDATE_LOCKS_FOR_ACTIVE_APP,
-  UPDATE_LOCKS_FOR_INACTIVE_APP, RESET_STATE, UPDATE_MIGRATE_HUB_STATE,
+  UPDATE_CUSTOM_DATA_ROLLBACK, CLEAN_UP_STATIC_FILES, CLEAN_UP_STATIC_FILES_COMMIT,
+  CLEAN_UP_STATIC_FILES_ROLLBACK, UPDATE_PAYWALL_FEATURE, UPDATE_LOCK_ACTION,
+  UPDATE_LOCK_EDITOR, ADD_LOCK_LIST, REMOVE_LOCK_LIST, LOCK_LIST, UNLOCK_LIST,
+  CLEAN_UP_LOCKS, UPDATE_TAG_EDITOR, UPDATE_TAG_DATA_S_STEP,
+  UPDATE_TAG_DATA_S_STEP_COMMIT, UPDATE_TAG_DATA_S_STEP_ROLLBACK,
+  UPDATE_TAG_DATA_T_STEP, UPDATE_TAG_DATA_T_STEP_COMMIT,
+  UPDATE_TAG_DATA_T_STEP_ROLLBACK, CANCEL_DIED_TAGS, UPDATE_TAG_NAME_EDITORS,
+  ADD_TAG_NAMES, UPDATE_TAG_NAMES, MOVE_TAG_NAME, DELETE_TAG_NAMES,
+  UPDATE_SELECTING_TAG_NAME, UPDATE_LOCKS_FOR_ACTIVE_APP, UPDATE_LOCKS_FOR_INACTIVE_APP,
+  RESET_STATE,
 } from '../types/actionTypes';
 import {
   DOMAIN_NAME, APP_URL_SCHEME, APP_DOMAIN_NAME, BLOCKSTACK_AUTH, APP_GROUP_SHARE,
   APP_GROUP_SHARE_UKEY, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP,
-  PROFILE_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP, PAYWALL_POPUP,
-  LOCK_EDITOR_POPUP, CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP,
-  SETTINGS_LISTS_MENU_POPUP, TIME_PICK_POPUP, DISCARD_ACTION_UPDATE_LIST_NAME, ID,
-  STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK, MY_LIST, TRASH, N_LINKS,
-  N_DAYS, CD_ROOT, ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
-  DIED_UPDATING, BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT,
+  PROFILE_POPUP, CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP,
+  CUSTOM_EDITOR_POPUP, TAG_EDITOR_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP,
+  CONFIRM_DISCARD_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
+  SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP,
+  DISCARD_ACTION_UPDATE_LIST_NAME, DISCARD_ACTION_UPDATE_TAG_NAME, ID,
+  LOCAL_LINK_ATTRS, MY_LIST, TRASH, N_LINKS, N_DAYS, CD_ROOT, ADDED, DIED_ADDING,
+  DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING, SHOWING_STATUSES,
+  NEW_LINK_FPATH_STATUSES, BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT,
   EXTRACT_EXCEEDING_N_URLS, IAP_VERIFY_URL, IAP_STATUS_URL, APPSTORE, PLAYSTORE,
   COM_BRACEDOTTO, COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, UNKNOWN,
   ERROR, ACTIVE, SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE, FEATURE_PIN,
-  FEATURE_APPEARANCE, FEATURE_CUSTOM, FEATURE_LOCK, VALID_PASSWORD, PASSWORD_MSGS,
-  APP_STATE_ACTIVE, APP_STATE_INACTIVE, APP_STATE_BACKGROUND,
+  FEATURE_APPEARANCE, FEATURE_CUSTOM, FEATURE_LOCK, FEATURE_TAG, VALID_PASSWORD,
+  PASSWORD_MSGS, VALID_TAG_NAME, DUPLICATE_TAG_NAME, TAG_NAME_MSGS, APP_STATE_ACTIVE,
+  APP_STATE_INACTIVE, APP_STATE_BACKGROUND,
 } from '../types/const';
 import {
-  isEqual, isString, isObject, isNumber, sleep, randomString, rerandomRandomTerm,
-  deleteRemovedDT, getMainId, getLinkMainIds, getUrlFirstChar, separateUrlAndParam,
-  getUserImageUrl, randomDecor, isOfflineActionWithPayload, shouldDispatchFetch,
-  getListNameObj, getAllListNames, getLatestPurchase, getValidPurchase,
-  doEnableExtraFeatures, createDataFName, getLinkFPaths, getStaticFPaths,
-  createSettingsFPath, extractPinFPath, getSortedLinks, getPinFPaths, getPins,
-  separatePinnedValues, sortLinks, sortWithPins, getRawPins, getFormattedTime,
-  get24HFormattedTime, extractStaticFPath, getEditingListNameEditors,
-  applySubscriptionOfferDetails, validatePassword, doContainListName,
-  doListContainUnlocks,
+  isEqual, isArrayEqual, isString, isObject, isNumber, randomString,
+  rerandomRandomTerm, deleteRemovedDT, getMainId, getLinkMainIds, getUrlFirstChar,
+  separateUrlAndParam, getUserImageUrl, randomDecor, getListNameObj,
+  getAllListNames, getLatestPurchase, getValidPurchase, doEnableExtraFeatures,
+  createDataFName, getLinkFPaths, getStaticFPaths, createSettingsFPath,
+  extractPinFPath, getPinFPaths, getPins, separatePinnedValues, sortLinks,
+  sortWithPins, getRawPins, getFormattedTime, get24HFormattedTime, extractStaticFPath,
+  getEditingListNameEditors, validatePassword, doContainListName, sleep,
+  applySubscriptionOfferDetails, doListContainUnlocks, extractLinkFPath, getLink,
+  getListNameAndLink, getNLinkObjs, getNLinkFPaths, newObject, addFetchedToVars,
+  createLinkFPath, isFetchedLinkId, doesIncludeFetching, doesIncludeFetchingMore,
+  isFetchingInterrupted, getTagFPaths, getInUseTagNames, getEditingTagNameEditors,
+  getTags, getTagNameObj, getTagNameObjFromDisplayName, validateTagNameDisplayName,
+  extractTagFPath, getNLinkFPathsByQt,
 } from '../utils';
 import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
@@ -213,7 +225,7 @@ const handleAppStateChange = (nextAppState) => async (dispatch, getState) => {
     if (interval < 0.6) return;
     if (isPopupShown(getState()) && interval < 0.9) return;
 
-    dispatch(clearFetchedListNames());
+    dispatch(refreshFetched());
   }
 
   let isInactive = nextAppState === APP_STATE_INACTIVE;
@@ -234,27 +246,24 @@ const handleAppStateChange = (nextAppState) => async (dispatch, getState) => {
 
 const getPopupShownId = (state) => {
   // No need these popups here:
-  //   SettingsErrorPopup, PinErrorPopup, AccessErrorPopup, and MigrateHubPopup.
+  //   SettingsErrorPopup, PinErrorPopup, TagErrorPopup, and AccessErrorPopup.
   if (state.display.isLockEditorPopupShown) return LOCK_EDITOR_POPUP;
   if (state.display.isTimePickPopupShown) return TIME_PICK_POPUP;
   if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
   if (state.display.isConfirmDiscardPopupShown) return CONFIRM_DISCARD_POPUP;
   if (state.display.isPaywallPopupShown) return PAYWALL_POPUP;
+  if (state.display.isTagEditorPopupShown) return TAG_EDITOR_POPUP;
   if (state.display.isCustomEditorPopupShown) return CUSTOM_EDITOR_POPUP;
   if (state.display.isPinMenuPopupShown) return PIN_MENU_POPUP;
   if (state.display.isListNamesPopupShown) return LIST_NAMES_POPUP;
+  if (state.display.isCardItemMenuPopupShown) return CARD_ITEM_MENU_POPUP;
   if (state.display.isSettingsListsMenuPopupShown) return SETTINGS_LISTS_MENU_POPUP;
+  if (state.display.isSettingsTagsMenuPopupShown) return SETTINGS_TAGS_MENU_POPUP;
   if (state.display.isSettingsPopupShown) return SETTINGS_POPUP;
   if (state.display.isProfilePopupShown) return PROFILE_POPUP;
   if (state.display.isAddPopupShown) return ADD_POPUP;
   if (state.display.isSignUpPopupShown) return SIGN_UP_POPUP;
   if (state.display.isSignInPopupShown) return SIGN_IN_POPUP;
-
-  for (const listName in state.links) {
-    for (const id in state.links[listName]) {
-      if (state.links[listName][id][IS_POPUP_SHOWN]) return id;
-    }
-  }
 
   // IMPORTANT that search is on the last as updatePopupAsBackPressed relies on this
   //   to close other popups before search (search is the last to be closed).
@@ -346,25 +355,22 @@ export const updatePopup = (id, isShown, anchorPosition = null) => {
   };
 };
 
-export const changeListName = (listName) => async (dispatch, getState) => {
+export const changeListName = (newListName) => async (dispatch, getState) => {
+  dispatch(updateFetched(null, false, true));
+  dispatch(updateFetchedMore(null, true));
 
-  const _listName = getState().display.listName;
+  dispatch({ type: UPDATE_LIST_NAME, payload: newListName });
+};
 
-  dispatch({
-    type: UPDATE_LIST_NAME,
-    payload: listName,
-  });
+export const updateQueryString = (queryString) => async (dispatch, getState) => {
+  dispatch(updateFetched(null, false, true));
+  dispatch(updateFetchedMore(null, true));
 
-  // make sure dispatch updateFetched finishes before dispatch updateFetchedMore
-  await updateFetched(null, null, _listName)(dispatch, getState);
-  await updateFetchedMore(null, null, _listName)(dispatch, getState);
+  dispatch({ type: UPDATE_QUERY_STRING, payload: queryString });
 };
 
 export const updateSearchString = (searchString) => {
-  return {
-    type: UPDATE_SEARCH_STRING,
-    payload: searchString,
-  };
+  return { type: UPDATE_SEARCH_STRING, payload: searchString };
 };
 
 export const updateLinkEditor = (values) => {
@@ -413,203 +419,703 @@ export const updateSelectingLinkId = (id) => {
   };
 };
 
+const _getIdsAndImages = async (linkObjsOrFPaths, links) => {
+  const ids = [], imageFPaths = [], images = {};
+
+  for (const objOrFPath of linkObjsOrFPaths) {
+    let link;
+    if (isString(objOrFPath)) {
+      const { listName, id } = extractLinkFPath(objOrFPath);
+      if (isObject(links[listName])) link = links[listName][id];
+    } else if (isObject(objOrFPath)) {
+      link = objOrFPath;
+    } else {
+      console.log('In _getIdsAndImages, invalid objOrFPath:', objOrFPath);
+      continue;
+    }
+    if (!isObject(link)) continue;
+
+    ids.push(link.id);
+    if (isObject(link.custom)) {
+      const { image } = link.custom;
+      if (isString(image) && image.startsWith(CD_ROOT + '/')) {
+        if (!imageFPaths.includes(image)) imageFPaths.push(image);
+      }
+    }
+  }
+  if (imageFPaths.length > 0) {
+    const files = await fileApi.getFiles(imageFPaths);
+    for (let i = 0; i < files.fpaths.length; i++) {
+      images[files.fpaths[i]] = files.contentUrls[i];
+    }
+  }
+
+  return { ids, images };
+};
+
 export const fetch = () => async (dispatch, getState) => {
+  const doForce = vars.fetch.doForce;
+  vars.fetch.doForce = false;
 
+  const links = getState().links;
   const listName = getState().display.listName;
+  const queryString = getState().display.queryString;
+  const didFetch = getState().display.didFetch;
   const didFetchSettings = getState().display.didFetchSettings;
-  const doDescendingOrder = getState().settings.doDescendingOrder;
+  const fetchingInfos = getState().display.fetchingInfos;
+  const doForceLock = getState().display.doForceLock;
+  const cachedFetched = getState().fetched;
   const pendingPins = getState().pendingPins;
+  const pendingTags = getState().pendingTags;
+  const lockedLists = getState().lockSettings.lockedLists;
 
-  const doFetchStgsAndInfo = !didFetchSettings;
+  let doDescendingOrder = getState().settings.doDescendingOrder;
 
-  const payload = { listName, doDescendingOrder, doFetchStgsAndInfo, pendingPins };
+  const linkFPaths = getLinkFPaths(getState());
+  const pinFPaths = getPinFPaths(getState());
+  const tagFPaths = getTagFPaths(getState());
 
-  // If there is already FETCH with the same list name, no need to dispatch a new one.
-  if (!shouldDispatchFetch(getState().offline.outbox, payload)) return;
+  const lnOrQt = queryString ? queryString : listName;
+  if (doesIncludeFetching(lnOrQt, doForce, fetchingInfos) || lnOrQt in cachedFetched) {
+    // For queryString, continue showing loading.
+    if (!queryString && !vars.fetch.doShowLoading) {
+      const { hasMore, objsWithPcEc } = getNLinkObjs({
+        links, listName, doDescendingOrder, pinFPaths, pendingPins,
+      });
+      const { ids, images } = await _getIdsAndImages(objsWithPcEc, links);
+      dispatch({
+        type: SET_SHOWING_LINK_IDS,
+        payload: { ids, hasMore, images, doClearSelectedLinkIds: true },
+      });
+    }
+    vars.fetch.doShowLoading = false;
+    return;
+  }
 
+  const fthId = `${Date.now()}${randomString(4)}`;
+  dispatch(addFetchingInfo({ type: FETCH, doForce, lnOrQt, fthId }));
+
+  const bin = { fetchedLinkFPaths: [], unfetchedLinkFPaths: [], hasMore: false };
+  if (didFetch && didFetchSettings) {
+    let fpaths, fpathsWithPcEc;
+    if (queryString) {
+      const _result = getNLinkFPathsByQt({
+        linkFPaths, doDescendingOrder, pinFPaths, pendingPins, tagFPaths, pendingTags,
+        doForceLock, lockedLists, queryString,
+      });
+      [fpaths, fpathsWithPcEc] = [_result.fpaths, _result.fpathsWithPcEc];
+      bin.hasMore = _result.hasMore;
+    } else {
+      const _result = getNLinkFPaths({
+        linkFPaths, links, listName, doDescendingOrder, pinFPaths, pendingPins,
+      });
+      [fpaths, fpathsWithPcEc] = [_result.fpaths, _result.fpathsWithPcEc];
+      bin.hasMore = _result.hasMore;
+    }
+    for (const linkFPath of fpaths) {
+      const etRs = extractLinkFPath(linkFPath);
+      if (isFetchedLinkId(vars.fetch.fetchedLinkIds, links, etRs.listName, etRs.id)) {
+        bin.fetchedLinkFPaths.push(linkFPath);
+      } else {
+        bin.unfetchedLinkFPaths.push(linkFPath);
+      }
+    }
+    if (bin.unfetchedLinkFPaths.length === 0) {
+      const { ids, images } = await _getIdsAndImages(fpathsWithPcEc, links);
+      dispatch({
+        type: SET_SHOWING_LINK_IDS,
+        payload: { ids, hasMore: bin.hasMore, images, doClearSelectedLinkIds: true },
+      });
+      // E.g., in settings commit, reset fetchedLnOrQts but not fetchedLinkIds,
+      //   need to add lnOrQt for calculate isStale correctly.
+      addFetchedToVars(lnOrQt, null, vars)
+      dispatch(deleteFetchingInfo(fthId));
+      vars.fetch.doShowLoading = false;
+      return;
+    }
+  }
+  // For queryString, continue showing loading.
+  if (!queryString && !vars.fetch.doShowLoading) {
+    const { hasMore, objsWithPcEc } = getNLinkObjs({
+      links, listName, doDescendingOrder, pinFPaths, pendingPins,
+    });
+    const { ids, images } = await _getIdsAndImages(objsWithPcEc, links);
+    dispatch({
+      type: SET_SHOWING_LINK_IDS,
+      payload: { ids, hasMore, images, doClearSelectedLinkIds: true },
+    });
+  }
+  vars.fetch.doShowLoading = false;
+
+  const payload = { listName, queryString, lnOrQt, fthId };
   dispatch({
     type: FETCH,
+    payload,
     meta: {
       offline: {
-        effect: { method: FETCH, params: payload },
+        effect: { method: FETCH, params: { ...payload, getState } },
         commit: { type: FETCH_COMMIT },
-        rollback: { type: FETCH_ROLLBACK },
+        rollback: { type: FETCH_ROLLBACK, meta: payload },
       },
     },
   });
-
-  if (doFetchStgsAndInfo) vars.fetch.dt = Date.now();
 };
 
-export const tryUpdateFetched = (payload, meta) => async (dispatch, getState) => {
+const _poolLinks = (linkFPaths, payloadLinks, stateLinks) => {
+  return linkFPaths.map(fpath => {
+    const { listName, id } = extractLinkFPath(fpath);
 
-  const { listName, doDescendingOrder, links } = payload;
-
-  if (listName !== getState().display.listName) {
-    dispatch(updateFetched(payload, meta));
-    return;
-  }
-
-  if (listName in getState().refreshFetched) {
-    dispatch(updateFetched(payload, meta));
-    return;
-  }
-
-  // If the links in state is undefined, null, or an empty object,
-  //   just update the state as no scrolling or popup shown.
-  let _links = getState().links[listName];
-  if (_links === undefined || _links === null || isEqual(_links, {})) {
-    dispatch(updateFetched(payload, meta));
-    return;
-  }
-  _links = Object.values(_.select(_links, STATUS, ADDED));
-
-  // If no links from fetching, they are all deleted,
-  //   still process of updating is the same.
-
-  /*
-    updateAction
-    0. noNew: exactly the same, nothing new, no need to update
-    1. limitedSame: partially the same, first N links are the same, the rest do not know so maybe can update it right away if it doesn't trigger rerender
-       - In state has more links than fetch
-       - User deletes some links or all links
-    2. haveNew: not the same for sure, something new, update if not scroll or popup else show fetchedPopup
-  */
-  let updateAction;
-  if (links.length > _links.length) updateAction = 2;
-  else {
-    const pinFPaths = getPinFPaths(getState());
-    const pendingPins = getState().pendingPins;
-
-    let sortedLinks = sortLinks(links, doDescendingOrder);
-    sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
-      return getMainId(link.id);
-    });
-
-    let _sortedLinks = sortLinks(_links, doDescendingOrder);
-    _sortedLinks = sortWithPins(_sortedLinks, pinFPaths, pendingPins, (link) => {
-      return getMainId(link.id);
-    });
-
-    let found = false;
-    for (let i = 0; i < sortedLinks.length; i++) {
-      const [link, _link] = [sortedLinks[i], _sortedLinks[i]];
-      if (
-        link.id !== _link.id ||
-        !isEqual(link.extractedResult, _link.extractedResult) ||
-        !isEqual(link.custom, _link.custom)
-      ) {
-        found = true;
-        break;
-      }
+    let links = payloadLinks;
+    if (isObject(links[listName]) && isObject(links[listName][id])) {
+      return links[listName][id];
     }
 
-    updateAction = found ? 2 : links.length < _links.length ? 1 : 0;
+    links = stateLinks;
+    if (isObject(links[listName]) && isObject(links[listName][id])) {
+      return links[listName][id];
+    }
+
+    return null;
+  });
+};
+
+const _poolListNameAndLinks = (linkFPaths, payloadLinks, stateLinks) => {
+  return linkFPaths.map(fpath => {
+    const { listName, id } = extractLinkFPath(fpath);
+
+    let links = payloadLinks;
+    if (isObject(links[listName]) && isObject(links[listName][id])) {
+      return { listName, link: links[listName][id] };
+    }
+
+    links = stateLinks;
+    if (isObject(links[listName]) && isObject(links[listName][id])) {
+      return { listName, link: links[listName][id] };
+    }
+
+    return { listName: null, link: null };
+  });
+};
+
+const _getUpdateFetchedAction = (getState, payload) => {
+  /*
+    updateAction
+    0. justUpdate: no links showing, can just update
+    1. noNew: exactly the same, nothing new, update only hasMore
+    2. limitedSame: partially the same, first N links are the same
+    3. haveNew: not the same for sure, something new, update if not scroll or popup
+         else show fetchedPopup
+  */
+  const fetchingInfos = getState().display.fetchingInfos;
+  const showingLinkIds = getState().display.showingLinkIds;
+  const pendingPins = getState().pendingPins;
+  const cachedFetchedMore = getState().fetchedMore;
+  const doDescendingOrder = getState().settings.doDescendingOrder;
+
+  const pinFPaths = getPinFPaths(getState());
+
+  if (!Array.isArray(showingLinkIds) || showingLinkIds.length === 0) return 0;
+
+  if (
+    doesIncludeFetchingMore(payload.lnOrQt, false, fetchingInfos) ||
+    doesIncludeFetchingMore(payload.lnOrQt, true, fetchingInfos) ||
+    payload.lnOrQt in cachedFetchedMore
+  ) {
+    return 3; // Try to prevent differences in the fetchMore.
   }
 
+  // Only showing status links, no new fpath links.
+  const ossLinks = [], nnfLinks = [];
+  const showingLinks = showingLinkIds.map(linkId => getLink(linkId, getState().links));
+  for (const link of showingLinks) {
+    if (!isObject(link)) continue;
+
+    if (SHOWING_STATUSES.includes(link.status)) ossLinks.push(link);
+    if (!NEW_LINK_FPATH_STATUSES.includes(link.status)) nnfLinks.push(link);
+  }
+
+  if (ossLinks.length === 0) return 0;
+
+  const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
+  const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
+
+  let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, getState().links)
+  updatingLinks = updatingLinks.filter(link => isObject(link));
+  updatingLinks = Object.values(_.mapKeys(updatingLinks, ID));
+  updatingLinks = sortLinks(updatingLinks, doDescendingOrder);
+  updatingLinks = sortWithPins(updatingLinks, pinFPaths, pendingPins, (link) => {
+    return getMainId(link.id);
+  });
+
+  if (nnfLinks.length < updatingLinks.length) return 3;
+  if (nnfLinks.length > updatingLinks.length && !payload.hasMore) return 3;
+
+  for (let i = 0; i < updatingLinks.length; i++) {
+    const [nnfLink, updatingLink] = [nnfLinks[i], updatingLinks[i]];
+    if (
+      nnfLink.id !== updatingLink.id ||
+      !isEqual(nnfLink.extractedResult, updatingLink.extractedResult) ||
+      !isEqual(nnfLink.custom, updatingLink.custom)
+    ) {
+      return 3;
+    }
+  }
+
+  if (nnfLinks.length > updatingLinks.length) return 2;
+  return 1;
+};
+
+export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
+  const listName = getState().display.listName;
+  const queryString = getState().display.queryString;
+  const fetchingInfos = getState().display.fetchingInfos;
+
+  // If interrupted e.g. by refreshFetched,
+  //   don't updateFetched so don't override any variables.
+  if (isFetchingInterrupted(payload.fthId, fetchingInfos)) {
+    dispatch(deleteFetchingInfo(payload.fthId));
+    return;
+  }
+
+  const lnOrQt = queryString ? queryString : listName;
+  if (payload.lnOrQt !== lnOrQt) {
+    dispatch(updateFetched(payload, false, true));
+    dispatch(deleteFetchingInfo(payload.fthId));
+    return;
+  }
+
+  // If no links from fetching, they are all deleted,
+  //   still the process of updating is the same.
+
+  const updateAction = _getUpdateFetchedAction(getState, payload);
   if (updateAction === 0) {
-    dispatch(extractContents());
+    dispatch(updateFetched(payload));
+    dispatch(deleteFetchingInfo(payload.fthId));
+    return;
+  }
+
+  if (updateAction === 1) {
+    // As updateAction is not 0, showingLinkIds should be an array.
+    // There is also a check on keepId if it's an array or not.
+    const showingLinkIds = getState().display.showingLinkIds;
+    dispatch({
+      type: UPDATE_FETCHED,
+      payload: {
+        lnOrQt: payload.lnOrQt, keepIds: showingLinkIds, hasMore: payload.hasMore,
+      },
+    });
+    addFetchedToVars(payload.lnOrQt, payload.links, vars)
+    dispatch(deleteFetchingInfo(payload.fthId));
+    return;
+  }
+
+  if (updateAction === 2) {
+    addFetchedToVars(null, payload.links, vars)
+    dispatch(deleteFetchingInfo(payload.fthId));
+    dispatch(fetchMore(true));
     return;
   }
 
   const isBulkEditing = getState().display.isBulkEditing;
   if (!isBulkEditing) {
     const scrollY = vars.scrollPanel.scrollY;
-    if (
-      (updateAction === 1 && scrollY < 64 / 10 * _links.length) ||
-      (updateAction === 2 && scrollY === 0 && !isPopupShown(getState()))
-    ) {
-      dispatch(updateFetched(payload, meta));
+    if (scrollY < 32 && !isPopupShown(getState())) {
+      dispatch(updateFetched(payload));
+      dispatch(deleteFetchingInfo(payload.fthId));
       return;
     }
   }
 
-  dispatch({ type: CACHE_FETCHED, payload, theMeta: meta });
+  dispatch({ type: CACHE_FETCHED, payload });
+  dispatch(deleteFetchingInfo(payload.fthId));
 };
 
 export const updateFetched = (
-  payload, meta, listName = null, doChangeListCount = false
+  payload, doChangeListCount = false, noDisplay = false
 ) => async (dispatch, getState) => {
 
-  if (!payload) {
-    if (!listName) listName = getState().display.listName;
+  const links = getState().links;
+  const pendingPins = getState().pendingPins;
+  const doDescendingOrder = getState().settings.doDescendingOrder;
+  const pinFPaths = getPinFPaths(getState());
 
-    const fetched = getState().fetched[listName];
-    if (fetched) ({ payload, meta } = fetched);
+  if (!payload) {
+    const listName = getState().display.listName;
+    const queryString = getState().display.queryString;
+    const lnOrQt = queryString ? queryString : listName;
+
+    const fetched = getState().fetched[lnOrQt];
+    if (fetched) ({ payload } = fetched);
   }
   if (!payload) return;
 
-  dispatch({
-    type: UPDATE_FETCHED,
-    payload: { ...payload, doChangeListCount },
-    theMeta: meta,
-  });
-};
+  const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
+  const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
+  const updatingLnAndLks = _poolListNameAndLinks(
+    updatingLinkFPaths, payload.links, links
+  );
 
-export const fetchMore = () => async (dispatch, getState) => {
+  const lksPerLn = {}, updatingLinks = [];
+  for (const { listName, link } of updatingLnAndLks) {
+    if (!isString(listName) || !isObject(link)) continue;
 
-  const addedDT = Date.now();
+    if (!isObject(lksPerLn[listName])) lksPerLn[listName] = {};
+    lksPerLn[listName][link.id] = link;
 
-  const fetchMoreId = `${addedDT}-${randomString(4)}`;
-  const listName = getState().display.listName;
-  const ids = Object.keys(getState().links[listName]);
-  const doDescendingOrder = getState().settings.doDescendingOrder;
-  const pendingPins = getState().pendingPins;
+    updatingLinks.push(link);
+  }
 
-  const payload = { fetchMoreId, listName, ids, doDescendingOrder, pendingPins };
+  if (noDisplay) {
+    dispatch({
+      type: UPDATE_FETCHED, payload: { lnOrQt: payload.lnOrQt, links: lksPerLn },
+    });
+    addFetchedToVars(payload.lnOrQt, payload.links, vars);
+    return;
+  }
 
-  // If there is already cached fetchedMore with the same list name, just return.
-  const fetchedMore = getState().fetchedMore[listName];
-  if (fetchedMore) return;
-
-  // If there is already FETCH with the same list name,
-  //   this fetch more is invalid. Fetch more need to get ids after FETCH_COMMIT.
-  // If there is already FETCH_MORE with the same payload,
-  //   no need to dispatch a new one.
-  const outbox = getState().offline.outbox;
-  if (Array.isArray(outbox)) {
-    for (const action of outbox) {
-      // It's possible that FETCH is cached
-      //   and user wants to fetch more continue from current state.
-      //if (isOfflineAction(action, FETCH, listName)) return;
-      if (isOfflineActionWithPayload(action, FETCH_MORE, payload)) return;
+  const processingLinks = [];
+  if (isObject(links[payload.lnOrQt])) {
+    for (const link of Object.values(links[payload.lnOrQt])) {
+      if (link.status === ADDED) continue;
+      processingLinks.push(link);
     }
   }
 
+  let sortedLinks = [...updatingLinks, ...processingLinks];
+  sortedLinks = Object.values(_.mapKeys(sortedLinks, ID));
+  sortedLinks = sortLinks(sortedLinks, doDescendingOrder);
+  sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
+    return getMainId(link.id);
+  });
+
+  const { ids, images } = await _getIdsAndImages(sortedLinks, null);
+
+  // Need to update in one render, if not jumpy!
+  //   - update links
+  //   - update showingLinkIds, hasMore, images, and scrollTop or not
+  //   - clear payload in fetched
+  dispatch({
+    type: UPDATE_FETCHED,
+    payload: {
+      lnOrQt: payload.lnOrQt, links: lksPerLn,
+      ids, hasMore: payload.hasMore, images, doChangeListCount,
+      doClearSelectedLinkIds: true,
+    },
+  });
+  addFetchedToVars(payload.lnOrQt, payload.links, vars);
+};
+
+export const fetchMore = (doForCompare = false) => async (dispatch, getState) => {
+  const links = getState().links;
+  const listName = getState().display.listName;
+  const queryString = getState().display.queryString;
+  const fetchingInfos = getState().display.fetchingInfos;
+  const showingLinkIds = getState().display.showingLinkIds;
+  const doForceLock = getState().display.doForceLock;
+  const cachedFetchedMore = getState().fetchedMore;
+  const pendingPins = getState().pendingPins;
+  const pendingTags = getState().pendingTags;
+  const lockedLists = getState().lockSettings.lockedLists;
+
+  const doDescendingOrder = getState().settings.doDescendingOrder;
+
+  const linkFPaths = getLinkFPaths(getState());
+  const pinFPaths = getPinFPaths(getState());
+  const tagFPaths = getTagFPaths(getState());
+
+  if (!Array.isArray(showingLinkIds)) {
+    console.log('In fetchMore, showingLinkIds is not an array!');
+    return;
+  }
+
+  const lnOrQt = queryString ? queryString : listName;
+  if (
+    doesIncludeFetchingMore(lnOrQt, doForCompare, fetchingInfos) ||
+    lnOrQt in cachedFetchedMore
+  ) {
+    return;
+  }
+
+  const fthId = `${Date.now()}${randomString(4)}`;
+  dispatch(addFetchingInfo({ type: FETCH_MORE, doForCompare, lnOrQt, fthId }));
+
+  let isStale = false;
+  if (!doForCompare && !queryString) {
+    isStale = !vars.fetch.fetchedLnOrQts.includes(listName);
+  }
+
+  const safLinkIds = []; // Showing and fetched link ids.
+  const showingLinks = showingLinkIds.map(linkId => getLink(linkId, links));
+  for (const link of showingLinks) {
+    if (!isObject(link)) continue;
+    // In fetchedLinkIds but might not in links
+    //   e.g. delete by UPDATE_FETCHED or UPDATE_FETCHED_MORE.
+    // Though, here should be fine as fsgLinks are from links.
+    if (vars.fetch.fetchedLinkIds.includes(link.id)) safLinkIds.push(link.id);
+  }
+
+  const bin = {
+    fetchedLinkFPaths: [], unfetchedLinkFPaths: [], hasMore: false, hasDisorder: false,
+  };
+  if (doForCompare) {
+    if (queryString) {
+      // Impossible case, just return.
+      addFetchedToVars(lnOrQt, null, vars);
+      dispatch(deleteFetchingInfo(fthId));
+      return;
+    } else {
+      const _result = getNLinkFPaths({
+        linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
+        excludingIds: safLinkIds,
+      });
+      if (_result.fpaths.length === 0) {
+        addFetchedToVars(lnOrQt, null, vars);
+        dispatch(deleteFetchingInfo(fthId));
+        return;
+      }
+    }
+  } else {
+    let fpaths, fpathsWithPcEc;
+    if (queryString) {
+      if (isStale) {
+        // Impossible case, just return.
+        dispatch(deleteFetchingInfo(fthId));
+        return;
+      }
+
+      const _result = getNLinkFPathsByQt({
+        linkFPaths, doDescendingOrder, pinFPaths, pendingPins, tagFPaths, pendingTags,
+        doForceLock, lockedLists, queryString, excludingIds: safLinkIds,
+      });
+      [fpaths, fpathsWithPcEc] = [_result.fpaths, _result.fpathsWithPcEc];
+      [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
+    } else {
+      if (isStale) {
+        const { hasMore, hasDisorder, objsWithPcEc } = getNLinkObjs({
+          links, listName, doDescendingOrder, pinFPaths, pendingPins,
+          excludingIds: showingLinkIds,
+        });
+        if (hasDisorder) {
+          console.log('No cache for now. Maybe fast enough to not jumpy.');
+        }
+        const { ids, images } = await _getIdsAndImages(objsWithPcEc, links);
+        dispatch({ type: SET_SHOWING_LINK_IDS, payload: { ids, hasMore, images } });
+        dispatch(deleteFetchingInfo(fthId));
+        return;
+      }
+
+      const _result = getNLinkFPaths({
+        linkFPaths, links, listName, doDescendingOrder, pinFPaths, pendingPins,
+        excludingIds: safLinkIds,
+      });
+      [fpaths, fpathsWithPcEc] = [_result.fpaths, _result.fpathsWithPcEc];
+      [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
+    }
+    for (const linkFPath of fpaths) {
+      const etRs = extractLinkFPath(linkFPath);
+      if (isFetchedLinkId(vars.fetch.fetchedLinkIds, links, etRs.listName, etRs.id)) {
+        bin.fetchedLinkFPaths.push(linkFPath);
+      } else {
+        bin.unfetchedLinkFPaths.push(linkFPath);
+      }
+    }
+    if (bin.unfetchedLinkFPaths.length === 0) {
+      if (bin.hasDisorder) {
+        console.log('No cache for now. Maybe fast enough to not jumpy.');
+      }
+      const { ids, images } = await _getIdsAndImages(fpathsWithPcEc, links);
+      dispatch({
+        type: SET_SHOWING_LINK_IDS, payload: { ids, hasMore: bin.hasMore, images },
+      });
+      dispatch(deleteFetchingInfo(fthId));
+      return;
+    }
+  }
+
+  const payload = { doForCompare, listName, queryString, lnOrQt, fthId, safLinkIds };
   dispatch({
     type: FETCH_MORE,
     payload,
     meta: {
       offline: {
-        effect: { method: FETCH_MORE, params: payload },
-        commit: { type: FETCH_MORE_COMMIT, meta: payload },
+        effect: { method: FETCH_MORE, params: { ...payload, getState } },
+        commit: { type: FETCH_MORE_COMMIT },
         rollback: { type: FETCH_MORE_ROLLBACK, meta: payload },
       },
     },
   });
 };
 
-export const tryUpdateFetchedMore = (payload, meta) => async (dispatch, getState) => {
+const _getLinksForCompareAction = (getState, payload) => {
+  const showingLinkIds = getState().display.showingLinkIds;
+  const pendingPins = getState().pendingPins;
+  const doDescendingOrder = getState().settings.doDescendingOrder;
 
-  const { fetchMoreId, listName } = meta;
+  const pinFPaths = getPinFPaths(getState());
 
-  let isInterrupted = false;
-  for (const id in getState().isFetchMoreInterrupted[listName]) {
-    if (id === fetchMoreId) {
-      isInterrupted = getState().isFetchMoreInterrupted[listName][id];
-      break;
+  // Only showing status links, no new fpath links, to listName map.
+  const ossLinks = [], nnfLinks = [], toLnMap = {};
+  if (Array.isArray(showingLinkIds)) {
+    const showingLnAndLks = showingLinkIds.map(linkId => {
+      return getListNameAndLink(linkId, getState().links);
+    });
+    for (const { listName, link } of showingLnAndLks) {
+      if (!isString(listName) || !isObject(link)) continue;
+
+      if (SHOWING_STATUSES.includes(link.status)) ossLinks.push(link);
+      if (!NEW_LINK_FPATH_STATUSES.includes(link.status)) nnfLinks.push(link);
+      toLnMap[link.id] = listName;
     }
   }
 
-  if (isInterrupted) {
-    dispatch({ type: CANCEL_FETCHED_MORE, payload, theMeta: meta });
+  const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
+  const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
+  const updatingLnAndLks = _poolListNameAndLinks(
+    updatingLinkFPaths, payload.links, getState().links
+  );
+
+  let updatingLinks = [];
+  for (const { listName, link } of updatingLnAndLks) {
+    if (!isString(listName) || !isObject(link)) continue;
+    updatingLinks.push(link);
+    toLnMap[link.id] = listName;
+  }
+  for (const link of nnfLinks) {
+    // In fetchedLinkIds but might not in links
+    //   e.g. delete by UPDATE_FETCHED or UPDATE_FETCHED_MORE.
+    // Though, here should be fine as nnfLinks are from links.
+    if (vars.fetch.fetchedLinkIds.includes(link.id)) {
+      updatingLinks.push(link);
+    }
+  }
+  updatingLinks = Object.values(_.mapKeys(updatingLinks, ID));
+  updatingLinks = sortLinks(updatingLinks, doDescendingOrder);
+  updatingLinks = sortWithPins(updatingLinks, pinFPaths, pendingPins, (link) => {
+    return getMainId(link.id);
+  });
+
+  return { ossLinks, nnfLinks, updatingLinks, toLnMap };
+};
+
+const _getForCompareAction = (
+  ossLinks, nnfLinks, updatingLinks, updatingHasMore,
+) => {
+  /*
+    updateAction
+    0. justUpdate: no links showing, can just update
+    1. noNew: exactly the same, nothing new, update only hasMore
+    2. limitedSame: partially the same, first N links are the same
+    3. haveNew: not the same for sure, something new, update if not scroll or popup
+         else show fetchedPopup
+  */
+  if (ossLinks.length === 0) return 0;
+
+  if (nnfLinks.length < updatingLinks.length) return 3;
+  if (nnfLinks.length > updatingLinks.length && !updatingHasMore) return 3;
+
+  for (let i = 0; i < updatingLinks.length; i++) {
+    const [nnfLink, updatingLink] = [nnfLinks[i], updatingLinks[i]];
+    if (
+      nnfLink.id !== updatingLink.id ||
+      !isEqual(nnfLink.extractedResult, updatingLink.extractedResult) ||
+      !isEqual(nnfLink.custom, updatingLink.custom)
+    ) {
+      return 3;
+    }
+  }
+
+  if (nnfLinks.length > updatingLinks.length) return 2;
+  return 1;
+};
+
+const _getFpsAndLksPerLn = (links, toLnMap) => {
+  const fpaths = [], lksPerLn = {};
+  for (const link of links) {
+    const listName = toLnMap[link.id];
+    const fpath = createLinkFPath(listName, link.id);
+    fpaths.push(fpath);
+
+    if (!isObject(lksPerLn[listName])) lksPerLn[listName] = {};
+    lksPerLn[listName][link.id] = link;
+  }
+  return { fpaths, lksPerLn };
+};
+
+export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
+  const listName = getState().display.listName;
+  const queryString = getState().display.queryString;
+  const fetchingInfos = getState().display.fetchingInfos;
+  const showingLinkIds = getState().display.showingLinkIds;
+
+  // If interrupted e.g. by refreshFetched,
+  //   don't updateFetchedMore so don't override any variables.
+  if (
+    isFetchingInterrupted(payload.fthId, fetchingInfos) ||
+    !Array.isArray(showingLinkIds)
+  ) {
+    dispatch(deleteFetchingInfo(payload.fthId));
     return;
   }
 
-  const { hasDisorder } = payload;
+  const lnOrQt = queryString ? queryString : listName;
+  if (payload.lnOrQt !== lnOrQt) {
+    dispatch(updateFetchedMore(payload, true));
+    dispatch(deleteFetchingInfo(payload.fthId));
+    return;
+  }
 
-  if (listName !== getState().display.listName || !hasDisorder) {
-    dispatch(updateFetchedMore(payload, meta));
+  if (payload.doForCompare) {
+    const {
+      ossLinks, nnfLinks, updatingLinks, toLnMap,
+    } = _getLinksForCompareAction(getState, payload)
+
+    const updateAction = _getForCompareAction(
+      ossLinks, nnfLinks, updatingLinks, payload.hasMore
+    );
+    if (updateAction === 0) {
+      // Empty e.g., user deletes all showing links
+      dispatch(updateFetchedMore(payload));
+      dispatch(deleteFetchingInfo(payload.fthId));
+      return;
+    }
+
+    if (updateAction === 1) {
+      dispatch({
+        type: UPDATE_FETCHED_MORE,
+        payload: {
+          lnOrQt: payload.lnOrQt, keepIds: showingLinkIds, hasMore: payload.hasMore,
+        },
+      });
+      addFetchedToVars(payload.lnOrQt, payload.links, vars);
+      dispatch(deleteFetchingInfo(payload.fthId));
+      return;
+    }
+
+    if (updateAction === 2) {
+      addFetchedToVars(null, payload.links, vars);
+      dispatch(deleteFetchingInfo(payload.fthId));
+      dispatch(fetchMore(true));
+      return;
+    }
+
+    const { fpaths, lksPerLn } = _getFpsAndLksPerLn(updatingLinks, toLnMap);
+    dispatch({
+      type: CACHE_FETCHED,
+      payload: {
+        lnOrQt: payload.lnOrQt,
+        fetchedLinkFPaths: [],
+        unfetchedLinkFPaths: fpaths,
+        hasMore: payload.hasMore,
+        links: lksPerLn,
+      }
+    });
+    dispatch(deleteFetchingInfo(payload.fthId));
+    return;
+  }
+
+  if (!payload.hasDisorder) {
+    dispatch(updateFetchedMore(payload));
+    dispatch(deleteFetchingInfo(payload.fthId));
     return;
   }
 
@@ -620,55 +1126,170 @@ export const tryUpdateFetchedMore = (payload, meta) => async (dispatch, getState
     const windowBottom = windowHeight + vars.scrollPanel.scrollY;
 
     if (windowBottom > (scrollHeight * 0.96) && !isPopupShown(getState())) {
-      dispatch(updateFetchedMore(payload, meta));
+      dispatch(updateFetchedMore(payload));
+      dispatch(deleteFetchingInfo(payload.fthId));
       return;
     }
   }
 
-  dispatch({ type: CACHE_FETCHED_MORE, payload, theMeta: meta });
+  dispatch({ type: CACHE_FETCHED_MORE, payload });
+  dispatch(deleteFetchingInfo(payload.fthId));
 };
 
-export const updateFetchedMore = (payload, meta, listName = null) => async (
-  dispatch, getState
-) => {
+export const updateFetchedMore = (
+  payload, noDisplay = false
+) => async (dispatch, getState) => {
+
+  const links = getState().links;
+  const showingLinkIds = getState().display.showingLinkIds;
+  const pendingPins = getState().pendingPins;
+  const doDescendingOrder = getState().settings.doDescendingOrder;
+  const pinFPaths = getPinFPaths(getState());
 
   if (!payload) {
-    if (!listName) listName = getState().display.listName;
+    const listName = getState().display.listName;
+    const queryString = getState().display.queryString;
+    const lnOrQt = queryString ? queryString : listName;
 
-    const fetchedMore = getState().fetchedMore[listName];
-    if (fetchedMore) ({ payload, meta } = fetchedMore);
+    const fetchedMore = getState().fetchedMore[lnOrQt];
+    if (fetchedMore) ({ payload } = fetchedMore);
   }
   if (!payload) return;
 
-  dispatch({
-    type: UPDATE_FETCHED_MORE,
-    payload,
-    theMeta: meta,
-  });
-};
-
-export const clearFetchedListNames = () => {
-  return { type: CLEAR_FETCHED_LIST_NAMES };
-};
-
-export const refreshFetched = () => async (dispatch, getState) => {
-  const listName = getState().display.listName;
-  const payload = { listName, shouldDispatchFetch: true };
-
-  // If there is already FETCH with the same list name, no need to dispatch a new one.
-  if (!shouldDispatchFetch(getState().offline.outbox, payload)) {
-    payload.shouldDispatchFetch = false;
+  if (!Array.isArray(showingLinkIds)) {
+    // Need to dispatch UPDATE_FETCHED_MORE to make sure clear fetchedMoreReducer.
+    dispatch({
+      type: UPDATE_FETCHED_MORE, payload: { lnOrQt: payload.lnOrQt },
+    });
+    return;
   }
 
+  if (noDisplay) {
+    dispatch({
+      type: UPDATE_FETCHED_MORE,
+      payload: { lnOrQt: payload.lnOrQt, links: payload.links },
+    });
+    addFetchedToVars(payload.lnOrQt, payload.links, vars);
+    return;
+  }
+
+  const processingLinks = [];
+  if (isObject(links[payload.lnOrQt])) {
+    for (const link of Object.values(links[payload.lnOrQt])) {
+      if (link.status === ADDED) continue;
+      processingLinks.push(link);
+    }
+  }
+
+  let fsgLinks = showingLinkIds.map(linkId => getLink(linkId, links));
+  fsgLinks = fsgLinks.filter(link => isObject(link));
+
+  const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
+  const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
+
+  let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, links)
+  updatingLinks = updatingLinks.filter(link => isObject(link));
+
+  let sortedLinks = [...fsgLinks, ...updatingLinks, ...processingLinks];
+  sortedLinks = Object.values(_.mapKeys(sortedLinks, ID));
+  sortedLinks = sortLinks(sortedLinks, doDescendingOrder);
+  sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
+    return getMainId(link.id);
+  });
+
+  const { ids, images } = await _getIdsAndImages(sortedLinks, null);
+
+  // Need to update in one render, if not jumpy!
+  //   - update links
+  //   - update showingLinkIds, hasMore, images
+  //   - clear payload in fetchedMore
+  dispatch({
+    type: UPDATE_FETCHED_MORE,
+    payload: {
+      lnOrQt: payload.lnOrQt, links: payload.links,
+      ids, hasMore: payload.hasMore, images,
+    },
+  });
+  addFetchedToVars(payload.lnOrQt, payload.links, vars);
+};
+
+export const refreshFetched = (doShowLoading = false, doScrollTop = false) => async (
+  dispatch, getState
+) => {
+  // No show loading refresh e.g., inactive to active
+  //   - no show loading, no scroll top
+  //   - fetch settings, fetch links, check and show fetchedPopup
+
+  // Show loading refresh e.g., press refresh button
+  //   - show loading, scroll top
+  //   - fetch settings, fetch links, force update no cache
+
+  const listName = getState().display.listName;
+  const queryString = getState().display.queryString;
+  const lnOrQt = queryString ? queryString : listName;
+
+  const payload = { lnOrQt, doShowLoading, doScrollTop };
   dispatch({ type: REFRESH_FETCHED, payload });
+};
+
+const sortShowingLinkIds = async (dispatch, getState) => {
+  const links = getState().links;
+  const showingLinkIds = getState().display.showingLinkIds;
+  const pendingPins = getState().pendingPins;
+  const doDescendingOrder = getState().settings.doDescendingOrder;
+  const pinFPaths = getPinFPaths(getState());
+
+  if (!Array.isArray(showingLinkIds)) return;
+
+  let sortedLinks = showingLinkIds.map(linkId => getLink(linkId, links));
+  sortedLinks = sortedLinks.filter(link => isObject(link));
+  sortedLinks = Object.values(_.mapKeys(sortedLinks, ID));
+  sortedLinks = sortLinks(sortedLinks, doDescendingOrder);
+  sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
+    return getMainId(link.id);
+  });
+
+  const ids = sortedLinks.map(link => link.id);
+  dispatch({ type: SET_SHOWING_LINK_IDS, payload: { ids } });
+};
+
+const addFetchingInfo = (payload) => {
+  return { type: ADD_FETCHING_INFO, payload };
+};
+
+const deleteFetchingInfo = (fthId) => {
+  return { type: DELETE_FETCHING_INFO, payload: fthId };
+};
+
+const _getAddLinkInsertIndex = (getState) => {
+  const showingLinkIds = getState().display.showingLinkIds;
+  const doDescendingOrder = getState().settings.doDescendingOrder;
+
+  if (!Array.isArray(showingLinkIds)) return null;
+  if (!doDescendingOrder) return showingLinkIds.length;
+
+  const pinFPaths = getPinFPaths(getState());
+  const pendingPins = getState().pendingPins;
+
+  const pins = getPins(pinFPaths, pendingPins, true);
+
+  for (let i = 0; i < showingLinkIds.length; i++) {
+    const linkMainId = getMainId(showingLinkIds[i]);
+    if (linkMainId in pins) continue;
+    return i;
+  }
+
+  return showingLinkIds.length;
 };
 
 export const addLink = (url, listName, doExtractContents) => async (
   dispatch, getState
 ) => {
-
-  if (listName === null) listName = getState().display.listName;
+  if (!isString(listName)) listName = getState().display.listName;
   if (listName === TRASH) listName = MY_LIST;
+
+  const queryString = getState().display.queryString;
+  if (queryString) listName = MY_LIST;
 
   // First 2 terms are main of an id, should always be unique.
   // The third term is changed when move around
@@ -682,15 +1303,20 @@ export const addLink = (url, listName, doExtractContents) => async (
   const id = `${addedDT}-${randomString(4)}-${randomString(4)}`;
   const decor = randomDecor(getUrlFirstChar(url));
   const link = { id, url, addedDT, decor };
-  const links = [link];
-  const payload = { listName, links };
+
+  let insertIndex;
+  if (!queryString && listName === getState().display.listName) {
+    insertIndex = _getAddLinkInsertIndex(getState);
+  }
+
+  const payload = { listNames: [listName], links: [link], insertIndex };
 
   // If doExtractContents is false but from settings is true, send pre-extract to server
   if (doExtractContents === false && getState().settings.doExtractContents === true) {
     axios.post(BRACE_PRE_EXTRACT_URL, { urls: [url] })
       .then(() => { })
       .catch((error) => {
-        console.log('Error when contact Brace server to pre-extract contents with links: ', links, ' Error: ', error);
+        console.log('Error when contact Brace server to pre-extract contents with url: ', url, ' Error: ', error);
       });
   }
 
@@ -705,65 +1331,80 @@ export const addLink = (url, listName, doExtractContents) => async (
       },
     },
   });
+  addFetchedToVars(null, [link], vars);
 };
 
-export const moveLinks = (toListName, ids, fromListName = null) => async (
-  dispatch, getState
-) => {
+export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
+  if (ids.length === 0) return;
 
-  if (!fromListName) fromListName = getState().display.listName;
+  const links = getState().links;
+  let removedDT = Date.now();
 
-  const links = _.ignore(
-    _.select(getState().links[fromListName], ID, ids),
-    [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
-  );
-  const fromLinks = Object.values(links);
+  const toListNames = [], toLinks = [], ridToLinks = [];
+  for (const id of ids) {
+    const { listName, link } = getListNameAndLink(id, links);
+    if (!isString(listName) || !isObject(link)) {
+      console.log('In moveLinks, no found list name or link for id:', id);
+      continue;
+    }
 
-  const payload = { listName: toListName, links: fromLinks, manuallyManageError: true };
-  payload.links = payload.links.map(link => {
-    return { ...link, id: rerandomRandomTerm(link.id) };
-  });
-  if (fromListName === TRASH) {
-    payload.links = payload.links.map(link => {
-      return { ...link, id: deleteRemovedDT(link.id) };
-    });
+    const [fromListName, fromLink] = [listName, newObject(link, LOCAL_LINK_ATTRS)];
+    if (fromListName === toListName) {
+      console.log('In moveLinks, same fromListName and toListName:', fromListName);
+      continue;
+    }
+
+    const toId = rerandomRandomTerm(fromLink.id);
+
+    let toLink = { ...fromLink, id: toId, fromListName, fromId: fromLink.id };
+    if (fromListName === TRASH) {
+      toLink = { ...toLink, id: deleteRemovedDT(toLink.id) };
+    }
+    if (toListName === TRASH) {
+      toLink = { ...toLink, id: `${toLink.id}-${removedDT}` };
+      removedDT += 1;
+    }
+
+    const ridToLink = newObject(toLink, LOCAL_LINK_ATTRS);
+
+    toListNames.push(toListName);
+    toLinks.push(toLink);
+    ridToLinks.push(ridToLink);
   }
-  if (toListName === TRASH) {
-    const removedDT = Date.now();
-    payload.links = payload.links.map(link => {
-      return { ...link, id: `${link.id}-${removedDT}` };
-    });
-  }
 
-  const fromIdMap = {};
-  for (let i = 0; i < fromLinks.length; i++) {
-    fromIdMap[payload.links[i].id] = fromLinks[i].id;
-  }
-
+  const payload = { listNames: toListNames, links: toLinks, manuallyManageError: true };
   dispatch({
     type: MOVE_LINKS_ADD_STEP,
     payload,
     meta: {
       offline: {
-        effect: { method: ADD_LINKS, params: payload },
-        commit: {
-          type: MOVE_LINKS_ADD_STEP_COMMIT, meta: { fromListName, fromIdMap },
-        },
+        effect: { method: ADD_LINKS, params: { ...payload, links: ridToLinks } },
+        commit: { type: MOVE_LINKS_ADD_STEP_COMMIT, meta: payload },
         rollback: { type: MOVE_LINKS_ADD_STEP_ROLLBACK, meta: payload },
       },
     },
   });
+  addFetchedToVars(null, toLinks, vars);
 };
 
-export const moveLinksDeleteStep = (listName, ids, toListName, toIds) => async (
+export const moveLinksDeleteStep = (toListNames, toIds) => async (
   dispatch, getState
 ) => {
-  if (ids.length !== toIds.length) {
-    console.log('In moveLinksDeleteStep, invalid ids:', ids, 'or toIds:', toIds);
-  }
-  if (ids.length === 0) return; // can happen if all are errorIds.
+  if (toIds.length === 0) return; // can happen if all are errorIds.
 
-  const payload = { listName, ids, manuallyManageError: true, toListName, toIds };
+  const links = getState().links;
+
+  const listNames = [], ids = [];
+  for (let i = 0; i < toListNames.length; i++) {
+    const [toListName, toId] = [toListNames[i], toIds[i]];
+    if (!isObject(links[toListName]) || !isObject(links[toListName][toId])) continue;
+
+    const { fromListName, fromId } = links[toListName][toId];
+    listNames.push(fromListName);
+    ids.push(fromId);
+  }
+
+  const payload = { listNames, ids, manuallyManageError: true, toListNames, toIds };
   dispatch({
     type: MOVE_LINKS_DELETE_STEP,
     payload,
@@ -778,9 +1419,23 @@ export const moveLinksDeleteStep = (listName, ids, toListName, toIds) => async (
 };
 
 export const deleteLinks = (ids) => async (dispatch, getState) => {
-  const listName = getState().display.listName;
+  if (ids.length === 0) return;
 
-  const payload = { listName, ids, manuallyManageError: true };
+  const links = getState().links;
+
+  const dListNames = [], dIds = [];
+  for (const id of ids) {
+    const { listName, link } = getListNameAndLink(id, links);
+    if (!isString(listName) || !isObject(link)) {
+      console.log('In deleteLinks, no found list name or link for id:', id);
+      continue;
+    }
+
+    dListNames.push(listName);
+    dIds.push(id);
+  }
+
+  const payload = { listNames: dListNames, ids: dIds, manuallyManageError: true };
   dispatch({
     type: DELETE_LINKS,
     payload,
@@ -795,28 +1450,25 @@ export const deleteLinks = (ids) => async (dispatch, getState) => {
 };
 
 export const retryDiedLinks = (ids) => async (dispatch, getState) => {
+  const links = getState().links;
 
-  const listName = getState().display.listName;
   for (const id of ids) {
     // DIED_ADDING -> try add this link again
     // DIED_MOVING -> try move this link again
     // DIED_REMOVING -> try delete this link again
     // DIED_DELETING  -> try delete this link again
     // DIED_UPDAING -> try update this link again
-    const link = getState().links[listName][id];
+    const { listName, link } = getListNameAndLink(id, links);
+    if (!isString(listName) || !isObject(link)) {
+      console.log('In retryDiedLinks, no found listName or link for id:', id);
+      continue;
+    }
 
     const { status } = link;
     if (status === DIED_ADDING) {
-      const _link = {};
-      for (const attr in link) {
-        if ([
-          STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK,
-        ].includes(attr)) continue;
-        _link[attr] = link[attr];
-      }
-      const links = [_link];
-      const payload = { listName, links };
+      const ridLink = newObject(link, LOCAL_LINK_ATTRS);
 
+      const payload = { listNames: [listName], links: [ridLink] };
       dispatch({
         type: ADD_LINKS,
         payload,
@@ -829,45 +1481,30 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
         },
       });
     } else if (status === DIED_MOVING) {
+      const ridToLink = newObject(link, LOCAL_LINK_ATTRS);
 
-      const payload = { listName, ids: [id] };
+      const payload = {
+        listNames: [listName], links: [link], manuallyManageError: true,
+      }
       dispatch({
-        type: CANCEL_DIED_LINKS,
+        type: MOVE_LINKS_ADD_STEP,
         payload,
+        meta: {
+          offline: {
+            effect: { method: ADD_LINKS, params: { ...payload, links: [ridToLink] } },
+            commit: { type: MOVE_LINKS_ADD_STEP_COMMIT, meta: payload },
+            rollback: { type: MOVE_LINKS_ADD_STEP_ROLLBACK, meta: payload },
+          },
+        },
       });
-
-      let fromListName = null, fromId = null;
-      for (const _listName in getState().links) {
-        if (_listName === listName) continue;
-        for (const _id in getState().links[_listName]) {
-          if (getMainId(id) === getMainId(_id)) {
-            [fromListName, fromId] = [_listName, _id];
-            break;
-          }
-        }
-        if (fromId !== null) break;
-      }
-      if (fromId === null) {
-        console.log(`In retryDiedLinks, could not find fromId for id: ${id}`);
-        continue;
-      }
-
-      dispatch(moveLinks(listName, [fromId], fromListName));
-
     } else if (status === DIED_REMOVING) {
       dispatch(deleteLinks([id]));
     } else if (status === DIED_DELETING) {
       dispatch(deleteLinks([id]));
     } else if (status === DIED_UPDATING) {
-      const toLink = {};
-      for (const attr in link) {
-        if ([
-          STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK,
-        ].includes(attr)) continue;
-        toLink[attr] = link[attr];
-      }
-      const payload = { listName, fromLink: link.fromLink, toLink };
+      const toLink = newObject(link, LOCAL_LINK_ATTRS);
 
+      const payload = { listName, fromLink: link.fromLink, toLink };
       dispatch({
         type: UPDATE_CUSTOM_DATA,
         payload,
@@ -885,37 +1522,78 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
   }
 };
 
-export const cancelDiedLinks = (ids, listName = null) => async (dispatch, getState) => {
-  if (!listName) listName = getState().display.listName;
+export const cancelDiedLinks = (canceledIds) => async (dispatch, getState) => {
+  const links = getState().links;
 
-  const payload = { listName, ids };
-  dispatch({ type: CANCEL_DIED_LINKS, payload });
+  const listNames = [], ids = [], statuses = [];
+  for (const id of canceledIds) {
+    const { listName, link } = getListNameAndLink(id, links);
+    if (!isString(listName) || !isObject(link)) {
+      console.log('In cancelDiedLinks, no found listName or link for id:', id);
+      continue;
+    }
+
+    listNames.push(listName);
+    ids.push(id);
+    statuses.push(link.status);
+  }
+
+  dispatch({ type: CANCEL_DIED_LINKS, payload: { listNames, ids, statuses } });
 };
 
-const getToExtractLinks = (listName, ids, getState) => {
+const getToExtractLinks = (getState, listNames, ids) => {
+  const links = getState().links;
+  const [isLnsArray, isIdsArray] = [Array.isArray(listNames), Array.isArray(ids)];
 
-  if (listName === TRASH) return [];
+  const toListNames = [], toLinks = [];
+  if (isLnsArray && isIdsArray) {
+    for (let i = 0; i < listNames.length; i++) {
+      const [listName, id] = [listNames[i], ids[i]];
 
-  let obj = getState().links[listName];
-  if (!isObject(obj)) return [];
+      if (listName === TRASH) continue;
+      if (!isObject(links[listName]) || !isObject(links[listName][id])) continue;
 
-  if (Array.isArray(ids)) obj = _.select(obj, ID, ids);
+      const link = links[listName][id];
+      if (link.status !== ADDED) continue;
+      if (isObject(link.custom)) continue;
+      if (
+        isObject(link.extractedResult) && link.extractedResult.status !== EXTRACT_INIT
+      ) continue;
 
-  const _links = _.ignore(
-    obj, [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
-  );
-  const links = Object.values(_links)
-    .filter(link => {
-      if ('custom' in link) return false;
-      return !link.extractedResult || link.extractedResult.status === EXTRACT_INIT;
-    })
-    .sort((a, b) => b.addedDT - a.addedDT)
-    .slice(0, N_LINKS);
+      const [toListName, toLink] = [listName, newObject(link, LOCAL_LINK_ATTRS)];
+      toListNames.push(toListName);
+      toLinks.push(toLink);
+      if (toLinks.length >= N_LINKS) break;
+    }
 
-  return links;
+    return { toListNames, toLinks };
+  }
+
+  const listName = getState().display.listName;
+  if (listName === TRASH || !isObject(links[listName])) {
+    return { toListNames, toLinks };
+  }
+
+  const sortedLinks = Object.values(links[listName]).sort((a, b) => {
+    return b.addedDT - a.addedDT;
+  });
+  for (const link of sortedLinks) {
+    if (link.status !== ADDED) continue;
+    if (isObject(link.custom)) continue;
+    if (
+      isObject(link.extractedResult) && link.extractedResult.status !== EXTRACT_INIT
+    ) continue;
+
+    const [toListName, toLink] = [listName, newObject(link, LOCAL_LINK_ATTRS)];
+    toListNames.push(toListName);
+    toLinks.push(toLink);
+    if (toLinks.length >= N_LINKS) break;
+  }
+
+  return { toListNames, toLinks };
 };
 
-export const extractContents = (listName, ids) => async (dispatch, getState) => {
+export const extractContents = (listNames, ids) => async (dispatch, getState) => {
 
   const doExtractContents = getState().settings.doExtractContents;
   if (!doExtractContents) {
@@ -923,25 +1601,24 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
     return;
   }
 
-  if (!listName) listName = getState().display.listName;
-
-  const links = getToExtractLinks(listName, ids, getState);
-  if (links.length === 0) {
+  const { toListNames, toLinks } = getToExtractLinks(getState, listNames, ids);
+  if (toLinks.length === 0) {
     dispatch(runAfterFetchTask());
     return;
   }
 
   let res;
   try {
-    res = await axios.post(BRACE_EXTRACT_URL, { urls: links.map(link => link.url) });
+    res = await axios.post(BRACE_EXTRACT_URL, { urls: toLinks.map(link => link.url) });
   } catch (error) {
-    console.log('Error when contact Brace server to extract contents with links: ', links, ' Error: ', error);
+    console.log('Error when contact Brace server to extract contents with links: ', toLinks, ' Error: ', error);
     return;
   }
 
+  const links = getState().links;
   const extractedResults = res.data.extractedResults;
 
-  const extractedLinks = [];
+  const extractedListNames = [], extractedLinks = [];
   for (let i = 0; i < extractedResults.length; i++) {
     const extractedResult = extractedResults[i];
     if (
@@ -949,21 +1626,24 @@ export const extractContents = (listName, ids) => async (dispatch, getState) => 
       extractedResult.status === EXTRACT_EXCEEDING_N_URLS
     ) continue;
 
+    const [toListName, toLink] = [toListNames[i], toLinks[i]];
+
     // Some links might be moved while extracting.
     // If that the case, ignore them.
-    const obj = getState().links[listName];
-    if (!isObject(obj)) continue;
-    if (!Object.keys(obj).includes(links[i][ID])) continue;
+    if (!isObject(links[toListName]) || !isObject(links[toListName][toLink.id])) {
+      continue;
+    }
 
-    links[i].extractedResult = extractedResult;
-    extractedLinks.push(links[i]);
+    const eLink = { ...toLink, extractedResult };
+    extractedListNames.push(toListName);
+    extractedLinks.push(eLink);
   }
   if (extractedLinks.length === 0) {
     dispatch(runAfterFetchTask());
     return;
   }
 
-  const payload = { listName: listName, links: extractedLinks };
+  const payload = { listNames: extractedListNames, links: extractedLinks };
   dispatch({
     type: EXTRACT_CONTENTS,
     payload,
@@ -997,9 +1677,6 @@ export const randomHouseworkTasks = () => async (dispatch, getState) => {
   const now = Date.now();
   if (now - vars.randomHouseworkTasks.dt < 24 * 60 * 60 * 1000) return;
 
-  //Disable migrate hub for now.
-  //await checkObsoleteHub(dispatch, getState);
-
   const rand = Math.random();
   if (rand < 0.33) dispatch(deleteOldLinksInTrash());
   else if (rand < 0.66) dispatch(checkPurchases());
@@ -1009,15 +1686,36 @@ export const randomHouseworkTasks = () => async (dispatch, getState) => {
 };
 
 export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
-
   const doDeleteOldLinksInTrash = getState().settings.doDeleteOldLinksInTrash;
   if (!doDeleteOldLinksInTrash) return;
 
+  const listName = TRASH;
+  const linkFPaths = getLinkFPaths(getState());
+  const trashLinkFPaths = linkFPaths[listName] || [];
+
+  const listNames = [], ids = []
+  for (const fpath of trashLinkFPaths) {
+    const { id } = extractLinkFPath(fpath);
+    const removedDT = id.split('-')[3];
+    const interval = Date.now() - Number(removedDT);
+    const days = interval / 1000 / 60 / 60 / 24;
+
+    if (days <= N_DAYS) continue;
+
+    listNames.push(listName);
+    ids.push(id);
+    if (ids.length >= N_LINKS) break;
+  }
+
+  if (ids.length === 0) return;
+
+  const payload = { listNames, ids, manuallyManageError: true };
   dispatch({
     type: DELETE_OLD_LINKS_IN_TRASH,
+    payload,
     meta: {
       offline: {
-        effect: { method: DELETE_OLD_LINKS_IN_TRASH },
+        effect: { method: DELETE_LINKS, params: payload },
         commit: { type: DELETE_OLD_LINKS_IN_TRASH_COMMIT },
         rollback: { type: DELETE_OLD_LINKS_IN_TRASH_ROLLBACK },
       },
@@ -1053,11 +1751,31 @@ export const updateSettingsPopup = (isShown, doCheckEditing = false) => async (
         dispatch(updatePopup(CONFIRM_DISCARD_POPUP, true));
         return;
       }
+
+      const tagNameEditors = getState().tagNameEditors;
+      const tagNameMap = getState().settings.tagNameMap;
+      const editingTNEs = getEditingTagNameEditors(tagNameEditors, tagNameMap);
+      if (isObject(editingTNEs)) {
+        for (const k in editingTNEs) {
+          if (!isNumber(editingTNEs[k].blurCount)) editingTNEs[k].blurCount = 0;
+          editingTNEs[k].blurCount += 1;
+        }
+        dispatch(updateTagNameEditors(editingTNEs));
+
+        dispatch(updateDiscardAction(DISCARD_ACTION_UPDATE_TAG_NAME));
+        dispatch(updatePopup(CONFIRM_DISCARD_POPUP, true));
+        return;
+      }
     }
     dispatch(updateStgsAndInfo());
   }
 
   dispatch(updatePopup(SETTINGS_POPUP, isShown));
+
+  if (isShown) {
+    dispatch(updateFetched(null, false, false));
+    dispatch(updateFetchedMore(null, false));
+  }
 };
 
 export const updateSettingsViewId = (
@@ -1088,7 +1806,6 @@ export const updateListNameEditors = (listNameEditors) => {
 };
 
 export const addListNames = (newNames) => {
-
   let i = 0;
   const addedDT = Date.now();
 
@@ -1146,39 +1863,23 @@ export const updateDoDescendingOrder = (doDescendingOrder) => {
 };
 
 export const updateSelectingListName = (listName) => {
-  return {
-    type: UPDATE_SELECTING_LIST_NAME,
-    payload: listName,
-  };
-};
-
-export const updateDeletingListName = (listName) => {
-  return {
-    type: UPDATE_DELETING_LIST_NAME,
-    payload: listName,
-  };
+  return { type: UPDATE_SELECTING_LIST_NAME, payload: listName };
 };
 
 const updateSettings = async (dispatch, getState) => {
+  // Can't check with snapshot here as the snapshot might not be the latest version
+  //   if there are already other updating settings.
   const settings = getState().settings;
-  const snapshotSettings = getState().snapshot.settings;
-
-  if (isEqual(settings, snapshotSettings)) {
-    dispatch(cancelDiedSettings());
-    return;
-  }
-
-  const doFetch = settings.doDescendingOrder !== snapshotSettings.doDescendingOrder;
-  const payload = { settings, doFetch };
+  const payload = { settings };
 
   dispatch({
-    type: UPDATE_SETTINGS,
-    payload: payload,
+    type: TRY_UPDATE_SETTINGS,
+    payload,
     meta: {
       offline: {
-        effect: { method: UPDATE_SETTINGS, params: payload },
-        commit: { type: UPDATE_SETTINGS_COMMIT, meta: payload },
-        rollback: { type: UPDATE_SETTINGS_ROLLBACK, meta: payload },
+        effect: { method: TRY_UPDATE_SETTINGS, params: { dispatch, getState } },
+        commit: { type: TRY_UPDATE_SETTINGS_COMMIT },
+        rollback: { type: TRY_UPDATE_SETTINGS_ROLLBACK },
       },
     },
   });
@@ -1198,21 +1899,15 @@ export const updateSettingsDeleteStep = (_settingsFPaths) => async (
 };
 
 const updateInfo = async (dispatch, getState) => {
-  const info = getState().info;
-  const snapshotInfo = getState().snapshot.info;
-
-  // It's ok if IAP in progess as when complete, it'll update again.
-  if (isEqual(info, snapshotInfo)) return;
-
-  const payload = { info };
+  // Can't check with snapshot here as the snapshot might not be the latest version
+  //   if there are already other updating infos.
   dispatch({
-    type: UPDATE_INFO,
-    payload: payload,
+    type: TRY_UPDATE_INFO,
     meta: {
       offline: {
-        effect: { method: UPDATE_INFO, params: payload },
-        commit: { type: UPDATE_INFO_COMMIT, meta: payload },
-        rollback: { type: UPDATE_INFO_ROLLBACK, meta: payload },
+        effect: { method: TRY_UPDATE_INFO, params: { dispatch, getState } },
+        commit: { type: TRY_UPDATE_INFO_COMMIT },
+        rollback: { type: TRY_UPDATE_INFO_ROLLBACK },
       },
     },
   });
@@ -1242,13 +1937,12 @@ export const cancelDiedSettings = () => async (dispatch, getState) => {
   const snapshotSettings = getState().snapshot.settings;
 
   const linkFPaths = getLinkFPaths(getState());
+  const tagFPaths = getTagFPaths(getState());
 
   const listNames = Object.keys(linkFPaths);
-  const doFetch = (
-    settings.sortOn !== snapshotSettings.sortOn ||
-    settings.doDescendingOrder !== snapshotSettings.doDescendingOrder
-  );
-  const payload = { listNames, settings: snapshotSettings, doFetch };
+  const tagNames = getInUseTagNames(linkFPaths, tagFPaths);
+  const doFetch = settings.doDescendingOrder !== snapshotSettings.doDescendingOrder;
+  const payload = { listNames, tagNames, settings: snapshotSettings, doFetch };
 
   dispatch({ type: CANCEL_DIED_SETTINGS, payload: payload });
 };
@@ -1279,10 +1973,14 @@ export const mergeSettings = (selectedId) => async (dispatch, getState) => {
   }
 
   const linkFPaths = getLinkFPaths(getState());
+  const tagFPaths = getTagFPaths(getState());
 
   const listNames = Object.keys(linkFPaths);
+  const tagNames = getInUseTagNames(linkFPaths, tagFPaths);
   const doFetch = settings.doDescendingOrder !== currentSettings.doDescendingOrder;
-  const payload = { settingsFPath, listNames, settings, doFetch, _settingsFPaths };
+  const payload = {
+    settingsFPath, listNames, tagNames, settings, doFetch, _settingsFPaths,
+  };
 
   dispatch({
     type: MERGE_SETTINGS,
@@ -1698,14 +2396,20 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
     return;
   }
 
-  const listName = getState().display.listName;
+  const links = getState().links;
 
-  // Object.values() might give diff sequence of links from ids and pins.
-  const _links = _.ignore(
-    _.select(getState().links[listName], ID, ids),
-    [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
-  );
-  const links = ids.map(id => _links[id]);
+  const pListNames = [], pLinks = [];
+  for (const id of ids) {
+    const { listName, link } = getListNameAndLink(id, links);
+    if (!isString(listName) || !isObject(link)) {
+      console.log('In pinLinks, no found listName or link for id:', id);
+      continue;
+    }
+
+    const [pListName, pLink] = [listName, newObject(link, LOCAL_LINK_ATTRS)];
+    pListNames.push(pListName);
+    pLinks.push(pLink);
+  }
 
   const pinFPaths = getPinFPaths(getState());
   const pendingPins = getState().pendingPins;
@@ -1731,7 +2435,7 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
     now += 1;
   }
 
-  const payload = { listName, links, pins };
+  const payload = { listNames: pListNames, links: pLinks, pins };
   dispatch({
     type: PIN_LINK,
     payload,
@@ -1743,6 +2447,8 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
       },
     },
   });
+
+  await sortShowingLinkIds(dispatch, getState);
 };
 
 export const unpinLinks = (ids) => async (dispatch, getState) => {
@@ -1778,26 +2484,27 @@ export const unpinLinks = (ids) => async (dispatch, getState) => {
       },
     },
   });
+
+  await sortShowingLinkIds(dispatch, getState);
 };
 
 export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
   const links = getState().links;
-  const listName = getState().display.listName;
-  const doDescendingOrder = getState().settings.doDescendingOrder;
+  const showingLinkIds = getState().display.showingLinkIds;
   const pinFPaths = getPinFPaths(getState());
   const pendingPins = getState().pendingPins;
 
-  const sortedLinks = getSortedLinks(links, listName, doDescendingOrder);
-  if (!sortedLinks) {
-    console.log('No links found for link id: ', id);
+  if (!Array.isArray(showingLinkIds)) {
+    console.log('In movePinnedLink, no showingLinkIds found for link id: ', id);
     return;
   }
 
-  let [pinnedValues] = separatePinnedValues(
-    sortedLinks,
-    pinFPaths,
-    pendingPins,
-    (link) => {
+  let ossLinks = showingLinkIds.map(linkId => getLink(linkId, links));
+  ossLinks = ossLinks.filter(link => isObject(link));
+  ossLinks = ossLinks.filter(link => SHOWING_STATUSES.includes(link.status));
+
+  const [pinnedValues] = separatePinnedValues(
+    ossLinks, pinFPaths, pendingPins, (link) => {
       return getMainId(link.id);
     }
   );
@@ -1863,10 +2570,13 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
       },
     },
   });
+
+  await sortShowingLinkIds(dispatch, getState);
 };
 
-export const cancelDiedPins = () => {
-  return { type: CANCEL_DIED_PINS };
+export const cancelDiedPins = () => async (dispatch, getState) => {
+  dispatch({ type: CANCEL_DIED_PINS });
+  await sortShowingLinkIds(dispatch, getState);
 };
 
 export const cleanUpPins = () => async (dispatch, getState) => {
@@ -2053,24 +2763,20 @@ export const updateImages = (name, content) => {
 
 export const updateCustomData = (title, image) => async (dispatch, getState) => {
   const links = getState().links;
-  const listName = getState().display.listName;
-  const selectingLinkId = getState().display.selectingLinkId;
+  const id = getState().display.selectingLinkId;
 
-  if (!isObject(links[listName]) || !isObject(links[listName][selectingLinkId])) {
-    console.log('UpdateCustomData: No link found with selectingLinkId: ', selectingLinkId);
+  const { listName, link } = getListNameAndLink(id, links);
+  if (!isString(listName) || !isObject(link)) {
+    console.log('In updateCustomData, no found listName or link for id:', id);
     return;
   }
 
-  const _links = _.ignore(
-    _.select(links[listName], ID, [selectingLinkId]),
-    [STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LINK]
-  );
-  const link = _links[selectingLinkId];
+  const fromLink = newObject(link, LOCAL_LINK_ATTRS);
 
   const toLink = /** @type any */({});
-  for (const attr in link) {
+  for (const attr in fromLink) {
     if (attr === 'custom') continue;
-    toLink[attr] = link[attr];
+    toLink[attr] = fromLink[attr];
   }
 
   if (isString(title) && title.length > 0) {
@@ -2082,9 +2788,9 @@ export const updateCustomData = (title, image) => async (dispatch, getState) => 
     toLink.custom.image = image;
   }
 
-  if (isEqual(link, toLink)) return;
+  if (isEqual(fromLink, toLink)) return;
 
-  const payload = { listName: listName, fromLink: link, toLink };
+  const payload = { listName, fromLink, toLink };
   dispatch({
     type: UPDATE_CUSTOM_DATA,
     payload,
@@ -2108,33 +2814,6 @@ export const updateCustomDataDeleteStep = (
     console.log('updateCustomData error: ', error);
     // error in this step should be fine
   }
-};
-
-export const rehydrateStaticFiles = () => async (dispatch, getState) => {
-  const listName = getState().display.listName;
-  const links = getState().links;
-
-  let fpaths = [];
-  for (const id in links[listName]) {
-    const link = links[listName][id];
-    if (isObject(link.custom)) {
-      const { image } = link.custom;
-      if (isString(image) && image.startsWith(CD_ROOT + '/')) {
-        if (!fpaths.includes(image)) fpaths.push(image);
-      }
-    }
-  }
-
-  const files = await fileApi.getFiles(fpaths);
-
-  const images = {};
-  for (let i = 0; i < files.fpaths.length; i++) {
-    images[files.fpaths[i]] = files.contentUrls[i];
-  }
-
-  dispatch({
-    type: REHYDRATE_STATIC_FILES, payload: { listName, images },
-  });
 };
 
 const _cleanUpStaticFiles = async (getState) => {
@@ -2320,82 +2999,289 @@ const cleanUpLocks = async (dispatch, getState) => {
   for (const listName in lockSettings.lockedLists) {
     if (!doContainListName(listName, listNameMap)) listNames.push(listName);
   }
+  if (listNames.length === 0) return;
 
   dispatch({ type: CLEAN_UP_LOCKS, payload: { listNames } });
 };
 
-export const checkObsoleteHub = async (dispatch, getState) => {
-  const userData = await userSession.loadUserData();
+export const updateTagEditorPopup = (isShown, id, isAddTags) => async (
+  dispatch, getState
+) => {
+  if (isShown) {
+    if (isAddTags) {
+      const purchases = getState().info.purchases;
+      if (!doEnableExtraFeatures(purchases)) {
+        dispatch(updatePaywallFeature(FEATURE_TAG));
+        dispatch(updatePopup(PAYWALL_POPUP, true));
+        return;
+      }
+    }
 
-  const { hubUrl, profile } = userData;
-  if (!hubUrl.includes('hub.blockstack.org')) return;
+    dispatch(updateSelectingLinkId(id));
+  }
 
-  const hubUrlInProfile = profile && profile.api && profile.api.gaiaHubUrl;
-  dispatch(updateMigrateHubState({ hubUrl, hubUrlInProfile }));
+  dispatch(updatePopup(TAG_EDITOR_POPUP, isShown));
 };
 
-export const updateMigrateHubState = (data) => {
-  return { type: UPDATE_MIGRATE_HUB_STATE, payload: data };
+export const updateTagEditor = (values, hints, displayName, color, msg) => {
+  const payload = {};
+  if (Array.isArray(values)) {
+    payload.values = values;
+    payload.didValuesEdit = true;
+  }
+  if (Array.isArray(hints)) {
+    payload.hints = hints;
+    payload.didHintsEdit = true;
+  }
+
+  if (isString(displayName)) payload.displayName = displayName;
+  if (isString(color)) payload.color = color;
+
+  if (isString(msg)) payload.msg = msg;
+  else payload.msg = '';
+
+  return { type: UPDATE_TAG_EDITOR, payload };
 };
 
-export const updateMigrateHubProgress = (progress) => {
-  return { type: UPDATE_MIGRATE_HUB_STATE, payload: { progress } };
-};
+export const addTagEditorTagName = (values, hints, displayName, color) => async (
+  dispatch, getState
+) => {
 
-const _migrateHub = async (dispatch, getState) => {
-  let doneCount = 0;
-  dispatch(updateMigrateHubProgress({ total: 'calculating...', done: doneCount }));
+  displayName = displayName.trim();
 
-  const userData = await userSession.loadUserData();
-  const sdHubConfig = await mhApi.createSdHubConfig(
-    userData.appPrivateKey, userData.gaiaAssociationToken
-  );
-
-  const fpaths = [], sdFPaths = [], ftdFPaths = [];
-  await serverApi.listFiles((fpath) => {
-    fpaths.push(fpath);
-    return true;
-  });
-  if (fpaths.length === 0) {
-    await mhApi.storeInfoFile(sdHubConfig, userData.appPrivateKey);
-    await mhApi.revokeAuth(userData.gaiaHubConfig);
-    dispatch(updateMigrateHubProgress({ total: 0, done: doneCount }));
+  const result = validateTagNameDisplayName(null, displayName, []);
+  if (result !== VALID_TAG_NAME) {
+    dispatch(updateTagEditor(null, null, null, null, TAG_NAME_MSGS[result]));
     return;
   }
 
-  sdFPaths.push(...(await mhApi.listFiles(sdHubConfig)));
-
-  for (const fpath of fpaths) {
-    if (sdFPaths.includes(fpath)) continue;
-    ftdFPaths.push(fpath);
+  const found = values.some(value => value.displayName === displayName);
+  if (found) {
+    dispatch(
+      updateTagEditor(null, null, null, null, TAG_NAME_MSGS[DUPLICATE_TAG_NAME])
+    );
+    return;
   }
 
-  const total = ftdFPaths.length;
-  if (total > doneCount) {
-    dispatch(updateMigrateHubProgress({ total, done: doneCount }));
+  const tagNameMap = getState().settings.tagNameMap;
+  const { tagNameObj } = getTagNameObjFromDisplayName(displayName, tagNameMap);
+
+  let tagName;
+  if (isObject(tagNameObj)) tagName = tagNameObj.tagName;
+  if (!isString(tagName)) tagName = `${Date.now()}-${randomString(4)}`;
+
+  const newValues = [...values, { tagName, displayName, color }];
+  const newHints = hints.map(hint => {
+    if (hint.tagName !== tagName) return hint;
+    return { ...hint, isBlur: true };
+  });
+
+  dispatch(updateTagEditor(newValues, newHints, '', null, ''));
+};
+
+export const updateTagDataSStep = (id, values) => async (dispatch, getState) => {
+  if (!isString(id)) {
+    console.log('In updateTagDataSStep, invalid id: ', id);
+    return;
   }
 
-  for (let i = 0, j = ftdFPaths.length; i < j; i += N_LINKS) {
-    const _fpaths = ftdFPaths.slice(i, i + N_LINKS);
-    await Promise.all(_fpaths.map(fpath => mhApi.migrateFile(
-      userData.gaiaHubConfig, sdHubConfig, fpath
-    )));
+  const tagNameMap = getState().settings.tagNameMap;
+  const ssTagNameMap = getState().snapshot.settings.tagNameMap;
 
-    doneCount += _fpaths.length;
-    if (total > doneCount) {
-      dispatch(updateMigrateHubProgress({ total, done: doneCount }));
+  const newTagNameObjs = [];
+  for (const value of values) {
+    const { tagNameObj } = getTagNameObj(value.tagName, tagNameMap);
+    const { tagNameObj: ssTagNameObj } = getTagNameObj(value.tagName, ssTagNameMap);
+
+    if (isObject(tagNameObj) && isObject(ssTagNameObj)) continue;
+    newTagNameObjs.push(value);
+  }
+
+  if (newTagNameObjs.length === 0) {
+    const tagFPaths = getTagFPaths(getState());
+    const solvedTags = getTags(tagFPaths, {});
+    const mainId = getMainId(id);
+
+    const aTns = [], bTns = [];
+    if (isObject(solvedTags[mainId])) {
+      for (const value of solvedTags[mainId].values) aTns.push(value.tagName);
+    }
+    for (const value of values) bTns.push(value.tagName);
+
+    if (isArrayEqual(aTns, bTns)) return;
+  }
+
+  const payload = { id, values, newTagNameObjs };
+  dispatch({
+    type: UPDATE_TAG_DATA_S_STEP,
+    payload,
+    meta: {
+      offline: {
+        effect: { method: UPDATE_TAG_DATA_S_STEP, params: { ...payload, getState } },
+        commit: { type: UPDATE_TAG_DATA_S_STEP_COMMIT, meta: payload },
+        rollback: { type: UPDATE_TAG_DATA_S_STEP_ROLLBACK, meta: payload },
+      },
+    },
+  });
+};
+
+export const updateTagDataTStep = (id, values) => async (dispatch, getState) => {
+  const payload = { id, values };
+  dispatch({
+    type: UPDATE_TAG_DATA_T_STEP,
+    payload,
+    meta: {
+      offline: {
+        effect: { method: UPDATE_TAG_DATA_T_STEP, params: { ...payload, getState } },
+        commit: { type: UPDATE_TAG_DATA_T_STEP_COMMIT },
+        rollback: { type: UPDATE_TAG_DATA_T_STEP_ROLLBACK, meta: payload },
+      },
+    },
+  });
+};
+
+export const retryDiedTags = () => async (dispatch, getState) => {
+  const pendingTags = getState().pendingTags;
+  for (const id in pendingTags) {
+    const { status, values } = pendingTags[id];
+    if (status === UPDATE_TAG_DATA_S_STEP_ROLLBACK) {
+      await updateTagDataSStep(id, values)(dispatch, getState);
+    } else if (status === UPDATE_TAG_DATA_T_STEP_ROLLBACK) {
+      await updateTagDataTStep(id, values)(dispatch, getState);
+    }
+  }
+};
+
+export const cancelDiedTags = () => async (dispatch, getState) => {
+  const settings = getState().settings;
+  const snapshotSettings = getState().snapshot.settings;
+  const pendingTags = getState().pendingTags;
+
+  const isTamEqual = isEqual(settings.tagNameMap, snapshotSettings.tagNameMap);
+
+  const ids = [], newTagNames = [], usedTagNames = [], unusedTagNames = [];
+  for (const id in pendingTags) {
+    const { status, newTagNameObjs } = pendingTags[id];
+
+    if ([
+      UPDATE_TAG_DATA_S_STEP_ROLLBACK, UPDATE_TAG_DATA_T_STEP_ROLLBACK,
+    ].includes(status)) {
+      ids.push(id);
+    }
+
+    if (status === UPDATE_TAG_DATA_S_STEP_ROLLBACK) {
+      for (const obj of newTagNameObjs) {
+        if (!newTagNames.includes(obj.tagName)) newTagNames.push(obj.tagName);
+      }
+      continue;
+    }
+    for (const obj of newTagNameObjs) {
+      if (!usedTagNames.includes(obj.tagName)) usedTagNames.push(obj.tagName);
     }
   }
 
-  await mhApi.revokeAuth(userData.gaiaHubConfig);
-  dispatch(updateMigrateHubProgress({ total, done: doneCount }));
+  if (!isTamEqual && newTagNames.length > 0) {
+    for (const obj of snapshotSettings.tagNameMap) {
+      if (!usedTagNames.includes(obj.tagName)) usedTagNames.push(obj.tagName);
+    }
+
+    const tagFPaths = getTagFPaths(getState());
+    for (const fpath of tagFPaths) {
+      const { tagName } = extractTagFPath(fpath);
+      if (!usedTagNames.includes(tagName)) usedTagNames.push(tagName);
+    }
+
+    for (const tagName of newTagNames) {
+      if (usedTagNames.includes(tagName)) continue;
+      unusedTagNames.push(tagName);
+    }
+  }
+
+  dispatch({ type: CANCEL_DIED_TAGS, payload: { ids, unusedTagNames } });
 };
 
-export const migrateHub = () => async (dispatch, getState) => {
-  try {
-    await _migrateHub(dispatch, getState);
-  } catch (error) {
-    dispatch(updateMigrateHubProgress({ total: -1, done: -1, error: `${error}` }));
-    return;
+export const cleanUpTags = () => async (dispatch, getState) => {
+  const linkFPaths = getLinkFPaths(getState());
+  const tagFPaths = getTagFPaths(getState());
+
+  const linkMainIds = getLinkMainIds(linkFPaths);
+  const tags = getTags(tagFPaths, {});
+
+  let unusedTagFPaths = [];
+  for (const fpath of tagFPaths) {
+    const { tagName, rank, updatedDT, addedDT, id } = extractTagFPath(fpath);
+    const tagMainId = getMainId(id);
+
+    if (
+      !isString(tagMainId) ||
+      !linkMainIds.includes(tagMainId) ||
+      !isObject(tags[tagMainId])
+    ) {
+      unusedTagFPaths.push(fpath);
+      continue;
+    }
+
+    const found = tags[tagMainId].values.some(value => {
+      return (
+        value.tagName === tagName &&
+        value.rank === rank &&
+        value.updatedDT === updatedDT &&
+        value.addedDT === addedDT &&
+        value.id === id
+      );
+    });
+    if (!found) unusedTagFPaths.push(fpath);
   }
+  unusedTagFPaths = unusedTagFPaths.slice(0, N_LINKS);
+
+  if (unusedTagFPaths.length > 0) {
+    // Don't need offline, if no network or get killed, can do it later.
+    try {
+      await dataApi.deleteTags({ tagFPaths: unusedTagFPaths });
+    } catch (error) {
+      console.log('cleanUpTags error: ', error);
+      // error in this step should be fine
+    }
+  }
+};
+
+export const updateTagNameEditors = (tagNameEditors) => {
+  return { type: UPDATE_TAG_NAME_EDITORS, payload: tagNameEditors };
+};
+
+export const addTagNames = (newNames, newColors) => {
+  let addedDT = Date.now();
+
+  const tagNameObjs = [];
+  for (let i = 0; i < newNames.length; i++) {
+    const [newName, newColor] = [newNames[i], newColors[i]];
+
+    const tagName = `${addedDT}-${randomString(4)}`;
+    const tagNameObj = { tagName, displayName: newName, color: newColor };
+    tagNameObjs.push(tagNameObj);
+
+    addedDT += 1;
+  }
+
+  return { type: ADD_TAG_NAMES, payload: tagNameObjs };
+};
+
+export const updateTagNames = (tagNames, newNames) => {
+  return { type: UPDATE_TAG_NAMES, payload: { tagNames, newNames } };
+};
+
+export const moveTagName = (tagName, direction) => {
+  return { type: MOVE_TAG_NAME, payload: { tagName, direction } };
+};
+
+export const updateTagNameColor = (tagName, newColor) => {
+
+};
+
+export const deleteTagNames = (tagNames) => {
+  return { type: DELETE_TAG_NAMES, payload: { tagNames } };
+};
+
+export const updateSelectingTagName = (tagName) => {
+  return { type: UPDATE_SELECTING_TAG_NAME, payload: tagName };
 };

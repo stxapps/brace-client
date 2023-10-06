@@ -20,6 +20,7 @@ export const initialSettingsState = {
   listNameMap: [
     { ...myListListNameObj }, { ...trashListNameObj }, { ...archiveListNameObj },
   ],
+  tagNameMap: [],
   purchases: null, // No need anymore but keep it for comparing
   checkPurchasesDT: null, // No need anymore but keep it for comparing
   layoutType: LAYOUT_CARD,
@@ -55,13 +56,16 @@ export const initialListNameEditorState = {
   blurCount: 0,
 };
 
-export const initialMigrateHubState = {
-  hubUrl: null,
-  hubUrlInProfile: false,
-  didWarn: false,
-  progress: null,
-};
-
 export const initialLockSettingsState = {
   lockedLists: {},
+};
+
+export const initialTagNameEditorState = {
+  mode: MODE_VIEW,
+  value: '',
+  color: '',
+  msg: '',
+  isCheckingCanDelete: false,
+  focusCount: 0,
+  blurCount: 0,
 };

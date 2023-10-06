@@ -20,7 +20,7 @@ const snapshotReducer = (state = initialState, action) => {
 
   if (action.type === FETCH_COMMIT) {
     const {
-      doFetchStgsAndInfo, settings, conflictedSettings, info, listNames, tagNames
+      doFetchStgsAndInfo, settings, conflictedSettings, info, listNames, tagNames,
     } = action.payload;
     if (!doFetchStgsAndInfo) return state;
 

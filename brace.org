@@ -763,7 +763,7 @@ This and CI/CD are very important!
 - npx react-native init Bracedotto
 - yarn add redux react-redux redux-loop reselect
 - yarn add url-parse axios@0.27.2 @react-native-community/clipboard
-- yarn add https://github.com/stxapps/redux-offline#4969cde61cd97a9f317f158cade8c96374871a6d
+- yarn add https://github.com/stxapps/redux-offline#028205cec27dcf1ae05e310fc7e45779ee908949
 - yarn add @react-native-async-storage/async-storage @react-native-community/netinfo
 - yarn add 'https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?509b207c1f9090e07faefe4bbbc7b130672654e6'
 - yarn add https://github.com/stxapps/tailwind-rn#96848a8d2c2370e4f5e57a773ace172c4073157d
@@ -788,6 +788,7 @@ This and CI/CD are very important!
 - yarn add react-native-document-picker react-native-share
 - yarn add --dev redux-flipper react-native-flipper@0.164.0
 - yarn add react-native-flag-secure
+- yarn add jest-diff
 - ios
   + Edit PodFile: ios target 12.0, pod 'Blockstack'
   + In Xcode, Bracedotto General -> Target iOS 12.0

@@ -25,13 +25,16 @@ export const SIGN_IN_POPUP = 'SIGN_IN_POPUP';
 export const ADD_POPUP = 'ADD_POPUP';
 export const SEARCH_POPUP = 'SEARCH_POPUP';
 export const PROFILE_POPUP = 'PROFILE_POPUP';
+export const CARD_ITEM_MENU_POPUP = 'CARD_ITEM_MENU_POPUP';
 export const LIST_NAMES_POPUP = 'LIST_NAMES_POPUP';
 export const PIN_MENU_POPUP = 'PIN_MENU_POPUP';
 export const CUSTOM_EDITOR_POPUP = 'CUSTOM_EDITOR_POPUP';
+export const TAG_EDITOR_POPUP = 'TAG_EDITOR_POPUP';
 export const CONFIRM_DELETE_POPUP = 'CONFIRM_DELETE_POPUP';
 export const CONFIRM_DISCARD_POPUP = 'CONFIRM_DISCARD_POPUP';
 export const SETTINGS_POPUP = 'SETTINGS_POPUP';
 export const SETTINGS_LISTS_MENU_POPUP = 'SETTINGS_LISTS_MENU_POPUP';
+export const SETTINGS_TAGS_MENU_POPUP = 'SETTINGS_TAGS_MENU_POPUP';
 export const TIME_PICK_POPUP = 'TIME_PICK_POPUP';
 export const PAYWALL_POPUP = 'PAYWALL_POPUP';
 export const ACCESS_ERROR_POPUP = 'ACCESS_ERROR_POPUP';
@@ -39,6 +42,8 @@ export const LOCK_EDITOR_POPUP = 'LOCK_EDITOR_POPUP';
 
 export const IS_POPUP_SHOWN = 'isPopupShown';
 export const POPUP_ANCHOR_POSITION = 'popupAnchorPosition';
+export const FROM_LIST_NAME = 'fromListName';
+export const FROM_ID = 'fromId';
 export const FROM_LINK = 'fromLink';
 
 export const CD_ROOT = 'cdroot';
@@ -47,6 +52,7 @@ export const IMAGES = 'images';
 export const SETTINGS = 'settings';
 export const INFO = 'info';
 export const PINS = 'pins';
+export const TAGS = 'tags';
 export const DOT_JSON = '.json';
 export const BASE64 = 'base64';
 export const UTF8 = 'utf8';
@@ -76,6 +82,13 @@ export const DIED_MOVING = 'DIED_MOVING';
 export const DIED_DELETING = 'DIED_DELETING';
 export const DIED_REMOVING = 'DIED_REMOVING';
 export const DIED_MERGING = 'DIED_MERGING';
+export const PENDING_REMOVING = 'PENDING_REMOVING';
+
+export const SHOWING_STATUSES = [
+  ADDED, MOVED, ADDING, MOVING, UPDATING, DIED_ADDING, DIED_MOVING, DIED_REMOVING,
+  DIED_DELETING, DIED_UPDATING,
+];
+export const NEW_LINK_FPATH_STATUSES = [ADDING, MOVING, DIED_ADDING, DIED_MOVING];
 
 export const COPY_LINK = 'Copy link';
 //export const ARCHIVE = 'Archive';
@@ -84,12 +97,6 @@ export const RESTORE = 'Restore';
 export const DELETE = 'Permanently delete';
 export const MOVE_TO = 'Move to';
 export const CHANGE = 'Change';
-
-export const CARD_ITEM_POPUP_MENU = {
-  [MY_LIST]: [COPY_LINK, ARCHIVE, REMOVE, MOVE_TO],
-  [TRASH]: [COPY_LINK, RESTORE, DELETE],
-  [ARCHIVE]: [COPY_LINK, REMOVE, MOVE_TO],
-};
 
 export const HTTP = 'http://';
 export const HTTPS = 'https://';
@@ -169,6 +176,14 @@ export const TOO_LONG_LIST_NAME = 'TOO_LONG_LIST_NAME';
 export const DUPLICATE_LIST_NAME = 'DUPLICATE_LIST_NAME';
 export const IN_USE_LIST_NAME = 'IN_USE_LIST_NAME';
 
+export const LIST_NAME_MSGS = {
+  [VALID_LIST_NAME]: '',
+  [NO_LIST_NAME]: 'List is blank',
+  [TOO_LONG_LIST_NAME]: 'List is too long',
+  [DUPLICATE_LIST_NAME]: 'List already exists',
+  [IN_USE_LIST_NAME]: 'List is in use',
+};
+
 export const SWAP_LEFT = 'SWAP_LEFT';
 export const SWAP_RIGHT = 'SWAP_RIGHT';
 
@@ -181,9 +196,12 @@ export const AT_TRIGGER = 'AT_TRIGGER'; // top or left of the trigger
 export const EDGE_TRIGGER = 'EDGE_TRIGGER'; // bottom or right of the trigger
 
 export const DELETE_ACTION_LINK_COMMANDS = 0;
-export const DELETE_ACTION_LIST_NAME = 1;
+export const DELETE_ACTION_LINK_ITEM_MENU = 1;
+export const DELETE_ACTION_LIST_NAME = 2;
+export const DELETE_ACTION_TAG_NAME = 3;
 
 export const DISCARD_ACTION_UPDATE_LIST_NAME = 0;
+export const DISCARD_ACTION_UPDATE_TAG_NAME = 1;
 
 export const APP_GROUP_SHARE = 'group.bracedotto.share';
 export const APP_GROUP_SHARE_UKEY = 'uKey';
@@ -238,6 +256,7 @@ export const SETTINGS_VIEW_DATA_IMPORT = 7;
 export const SETTINGS_VIEW_DATA_EXPORT = 3;
 export const SETTINGS_VIEW_DATA_DELETE = 4;
 export const SETTINGS_VIEW_LISTS = 5;
+export const SETTINGS_VIEW_TAGS = 11;
 export const SETTINGS_VIEW_MISC = 6;
 export const SETTINGS_VIEW_ABOUT = 8;
 
@@ -257,6 +276,7 @@ export const FEATURE_PIN = 'FEATURE_PIN';
 export const FEATURE_APPEARANCE = 'FEATURE_APPEARANCE';
 export const FEATURE_CUSTOM = 'FEATURE_CUSTOM';
 export const FEATURE_LOCK = 'FEATURE_LOCK';
+export const FEATURE_TAG = 'FEATURE_TAG';
 
 export const LOCK_ACTION_ADD_LOCK_LIST = 'LOCK_ACTION_ADD_LOCK_LIST';
 export const LOCK_ACTION_REMOVE_LOCK_LIST = 'LOCK_ACTION_REMOVE_LOCK_LIST';
@@ -284,3 +304,26 @@ export const PASSWORD_MSGS = {
 export const APP_STATE_ACTIVE = 'active';
 export const APP_STATE_INACTIVE = 'inactive';
 export const APP_STATE_BACKGROUND = 'background';
+
+export const LOCAL_LINK_ATTRS = [
+  STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LIST_NAME, FROM_ID, FROM_LINK
+];
+
+export const ADD_TAGS = 'Add tags';
+export const MANAGE_TAGS = 'Manage tags';
+
+export const TAGGED = 'TAGGED'
+
+export const VALID_TAG_NAME = 'VALID_TAG_NAME';
+export const NO_TAG_NAME = 'NO_TAG_NAME';
+export const TOO_LONG_TAG_NAME = 'TOO_LONG_TAG_NAME';
+export const DUPLICATE_TAG_NAME = 'DUPLICATE_TAG_NAME';
+export const IN_USE_TAG_NAME = 'IN_USE_TAG_NAME';
+
+export const TAG_NAME_MSGS = {
+  [VALID_TAG_NAME]: '',
+  [NO_TAG_NAME]: 'Tag is blank',
+  [TOO_LONG_TAG_NAME]: 'Tag is too long',
+  [DUPLICATE_TAG_NAME]: 'Tag already exists',
+  [IN_USE_TAG_NAME]: 'Tag is in use',
+};
