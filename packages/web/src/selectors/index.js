@@ -601,7 +601,7 @@ export const getTagEditor = createSelector(
         }
         return true;
       },
-    }
+    },
   },
 );
 

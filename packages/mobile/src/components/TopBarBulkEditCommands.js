@@ -73,7 +73,8 @@ class TopBarBulkEditCommands extends React.Component {
       this.state.isEmptyErrorShown === true &&
       (
         nextProps.selectedLinkIds.length > 0 ||
-        this.props.listName !== nextProps.listName
+        this.props.listName !== nextProps.listName ||
+        this.props.queryString !== nextProps.queryString
       )
     ) {
       this.setState({ isEmptyErrorShown: false });
@@ -83,6 +84,7 @@ class TopBarBulkEditCommands extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (
       this.props.listName !== nextProps.listName ||
+      this.props.queryString !== nextProps.queryString ||
       this.props.listNameMap !== nextProps.listNameMap ||
       this.props.tailwind !== nextProps.tailwind ||
       this.state.isEmptyErrorShown !== nextState.isEmptyErrorShown ||
@@ -201,15 +203,22 @@ class TopBarBulkEditCommands extends React.Component {
   }
 
   render() {
-    const { listName, listNameMap, tailwind } = this.props;
+    const { listName, queryString, listNameMap, tailwind } = this.props;
 
     const rListName = [MY_LIST, ARCHIVE, TRASH].includes(listName) ? listName : MY_LIST;
 
-    const isArchiveBtnShown = [MY_LIST].includes(rListName);
-    const isRemoveBtnShown = [MY_LIST, ARCHIVE].includes(rListName);
-    const isRestoreBtnShown = [TRASH].includes(rListName);
-    const isDeleteBtnShown = [TRASH].includes(rListName);
-    const isMoveToBtnShown = [ARCHIVE].includes(rListName) || (rListName === MY_LIST && getAllListNames(listNameMap).length > 3);
+    let isArchiveBtnShown = [MY_LIST].includes(rListName);
+    let isRemoveBtnShown = [MY_LIST, ARCHIVE].includes(rListName);
+    let isRestoreBtnShown = [TRASH].includes(rListName);
+    let isDeleteBtnShown = [TRASH].includes(rListName);
+    let isMoveToBtnShown = (
+      [ARCHIVE].includes(rListName) ||
+      (rListName === MY_LIST && getAllListNames(listNameMap).length > 3)
+    );
+    if (queryString) {
+      [isArchiveBtnShown, isRemoveBtnShown, isRestoreBtnShown] = [false, true, false];
+      [isDeleteBtnShown, isMoveToBtnShown] = [false, false];
+    }
 
     let btnStyle = {
       height: 34,
@@ -219,7 +228,7 @@ class TopBarBulkEditCommands extends React.Component {
     btnStyle = cache('TBBEC_btn', [tailwind('flex-row items-center justify-center rounded-full border border-gray-400 bg-white blk:border-gray-400 blk:bg-gray-900'), btnStyle], [tailwind]);
 
     return (
-      <View style={tailwind('flex-row items-center justify-end')}>
+      <View style={[tailwind('flex-row items-center justify-end'), { minWidth: 272 }]}>
         {isArchiveBtnShown && <View style={tailwind('ml-4')}>
           <TouchableOpacity onPress={this.onBulkEditArchiveBtnClick}>
             <View style={btnStyle}>
@@ -286,6 +295,7 @@ class TopBarBulkEditCommands extends React.Component {
 const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
+    queryString: state.display.queryString,
     listNameMap: getListNameMap(state),
     selectedLinkIds: state.display.selectedLinkIds,
     themeMode: getThemeMode(state),

@@ -23,9 +23,9 @@ const CardLoadingContentItem = () => {
         <div className={tailwind('h-3 w-3 rounded-full bg-gray-200 blk:bg-gray-700')} />
         <div style={hostStyle} className={tailwind('ml-1 h-3 rounded bg-gray-200 blk:bg-gray-700')} />
       </div>
-      <div style={{ width: sample(widths.slice(8)) }} className={tailwind('h-4 rounded bg-gray-200 blk:bg-gray-700')}></div>
-      {nLines >= 2 && <div style={{ width: sample(widths.slice(8)) }} className={tailwind('mt-1.5 h-4 rounded bg-gray-200 blk:bg-gray-700')}></div>}
-      {nLines >= 3 && <div style={{ width: sample(widths.slice(8)) }} className={tailwind('mt-1.5 h-4 rounded bg-gray-200 blk:bg-gray-700')}></div>}
+      <div style={{ width: sample(widths.slice(8)) }} className={tailwind('h-4 rounded bg-gray-200 blk:bg-gray-700')} />
+      {nLines >= 2 && <div style={{ width: sample(widths.slice(8)) }} className={tailwind('mt-1.5 h-4 rounded bg-gray-200 blk:bg-gray-700')} />}
+      {nLines >= 3 && <div style={{ width: sample(widths.slice(8)) }} className={tailwind('mt-1.5 h-4 rounded bg-gray-200 blk:bg-gray-700')} />}
     </div>
   );
 };

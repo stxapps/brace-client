@@ -607,7 +607,7 @@ export const fetch = () => async (dispatch, getState) => {
       });
       // E.g., in settings commit, reset fetchedLnOrQts but not fetchedLinkIds,
       //   need to add lnOrQt for calculate isStale correctly.
-      addFetchedToVars(lnOrQt, null, vars)
+      addFetchedToVars(lnOrQt, null, vars);
       dispatch(deleteFetchingInfo(fthId));
       vars.fetch.doShowLoading = false;
       return;
@@ -718,7 +718,7 @@ const _getUpdateFetchedAction = (getState, payload) => {
   const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
   const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
 
-  let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, getState().links)
+  let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, getState().links);
   updatingLinks = updatingLinks.filter(link => isObject(link));
   updatingLinks = Object.values(_.mapKeys(updatingLinks, ID));
   updatingLinks = sortLinks(updatingLinks, doDescendingOrder);
@@ -783,13 +783,13 @@ export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
         lnOrQt: payload.lnOrQt, keepIds: showingLinkIds, hasMore: payload.hasMore,
       },
     });
-    addFetchedToVars(payload.lnOrQt, payload.links, vars)
+    addFetchedToVars(payload.lnOrQt, payload.links, vars);
     dispatch(deleteFetchingInfo(payload.fthId));
     return;
   }
 
   if (updateAction === 2) {
-    addFetchedToVars(null, payload.links, vars)
+    addFetchedToVars(null, payload.links, vars);
     dispatch(deleteFetchingInfo(payload.fthId));
     dispatch(fetchMore(true));
     return;
@@ -1146,7 +1146,7 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
   if (payload.doForCompare) {
     const {
       ossLinks, nnfLinks, updatingLinks, toLnMap,
-    } = _getLinksForCompareAction(getState, payload)
+    } = _getLinksForCompareAction(getState, payload);
 
     const updateAction = _getForCompareAction(
       ossLinks, nnfLinks, updatingLinks, payload.hasMore
@@ -1186,7 +1186,7 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
         unfetchedLinkFPaths: fpaths,
         hasMore: payload.hasMore,
         links: lksPerLn,
-      }
+      },
     });
     dispatch(deleteFetchingInfo(payload.fthId));
     return;
@@ -1266,7 +1266,7 @@ export const updateFetchedMore = (
   const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
   const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
 
-  let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, links)
+  let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, links);
   updatingLinks = updatingLinks.filter(link => isObject(link));
 
   let sortedLinks = [...fsgLinks, ...updatingLinks, ...processingLinks];
@@ -1564,7 +1564,7 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
 
       const payload = {
         listNames: [listName], links: [link], manuallyManageError: true,
-      }
+      };
       dispatch({
         type: MOVE_LINKS_ADD_STEP,
         payload,
@@ -1772,7 +1772,7 @@ export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
   const linkFPaths = getLinkFPaths(getState());
   const trashLinkFPaths = linkFPaths[listName] || [];
 
-  const listNames = [], ids = []
+  const listNames = [], ids = [];
   for (const fpath of trashLinkFPaths) {
     const { id } = extractLinkFPath(fpath);
     const removedDT = id.split('-')[3];

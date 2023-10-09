@@ -9,13 +9,16 @@ import {
   PC_100, PC_50, PC_33, TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT,
   SEARCH_POPUP_HEIGHT, MD_WIDTH,
 } from '../types/const';
-import { getLinks, getIsFetchingMore, getThemeMode } from '../selectors';
+import {
+  getLinks, getHasMoreLinks, getIsFetchingMore, getHasFetchedMore, getThemeMode,
+} from '../selectors';
 import { toPx, multiplyPercent } from '../utils';
 import cache from '../utils/cache';
 import vars from '../vars';
 
 import { withTailwind } from '.';
 
+import CardLoadingContentItem from './CardLoadingContentItem';
 import CardItem from './CardItem';
 import EmptyContent from './EmptyContent';
 
@@ -72,8 +75,8 @@ class CardPanel extends React.PureComponent {
 
   onEndReached = () => {
     // if has more, not fetching more, and at the bottom
-    const { hasMoreLinks, hasFetchedMore, isFetchingMore } = this.props;
-    if (!hasMoreLinks || hasFetchedMore || isFetchingMore) {
+    const { hasMore, hasFetchedMore, isFetchingMore } = this.props;
+    if (!hasMore || hasFetchedMore || isFetchingMore) {
       return;
     }
 
@@ -148,12 +151,17 @@ class CardPanel extends React.PureComponent {
       classNames += ' pb-7';
     }
 
+    if (item.data.isLoading) {
+      return <CardLoadingContentItem style={tailwind(classNames)} />;
+    }
     return <CardItem style={tailwind(classNames)} link={item.data} />;
   }
 
   renderColumn = ({ item }) => {
     const { columnWidth, safeAreaWidth } = this.props;
-    const width = Math.floor(multiplyPercent(Math.min(safeAreaWidth, 1152), columnWidth));
+    const width = Math.floor(
+      multiplyPercent(Math.min(safeAreaWidth, 1152), columnWidth)
+    );
 
     let initialNumToRender, maxToRenderPerBatch;
     if (columnWidth === PC_100) {
@@ -193,8 +201,17 @@ class CardPanel extends React.PureComponent {
     }
 
     if (item.id === PANEL_BODY) {
+      const { columnWidth } = this.props;
 
-      const { links, columnWidth } = this.props;
+      let links = this.props.links;
+      if (!Array.isArray(links)) {
+        let nLinks = 2;
+        if (columnWidth === PC_50) nLinks = 4;
+        if (columnWidth === PC_33) nLinks = 6;
+
+        links = [];
+        for (let i = 0; i < nLinks; i++) links.push({ id: i, isLoading: true });
+      }
 
       const colData = [];
       if (links.length > 0) {
@@ -261,10 +278,10 @@ class CardPanel extends React.PureComponent {
   }
 
   render() {
-    const { hasMoreLinks, columnWidth, tailwind } = this.props;
+    const { hasMore, columnWidth, tailwind } = this.props;
 
     const panelData = [{ id: PANEL_HEAD }, { id: PANEL_BODY }];
-    if (hasMoreLinks) panelData.push({ id: PANEL_FOOTER });
+    if (hasMore) panelData.push({ id: PANEL_FOOTER });
     if (columnWidth === PC_100) panelData.push({ id: PANEL_PADDING_BOTTOM });
 
     return (
@@ -290,20 +307,11 @@ CardPanel.propTypes = {
 };
 
 const mapStateToProps = (state, props) => {
-
-  const listName = state.display.listName;
-
-  let links = getLinks(state);
-  if (!links) {
-    console.log(`Invalid links: ${links}. Links cannot be undefined as in LinkSelector and if links is null, it should be handled in Main, not in CardPanel.`);
-    links = [];
-  }
-
   return {
-    links: links,
-    hasMoreLinks: state.hasMoreLinks[listName],
-    hasFetchedMore: state.fetchedMore[listName] ? true : false,
+    links: getLinks(state),
+    hasMore: getHasMoreLinks(state),
     isFetchingMore: getIsFetchingMore(state),
+    hasFetchedMore: getHasFetchedMore(state),
     listChangedCount: state.display.listChangedCount,
     themeMode: getThemeMode(state),
   };

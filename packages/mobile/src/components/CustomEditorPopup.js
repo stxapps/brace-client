@@ -224,7 +224,7 @@ const CustomEditorPopup = () => {
           </View>}
           <View style={tailwind('flex-row items-center justify-start px-4 pt-4')}>
             <Text style={tailwind('flex-none text-sm font-normal text-gray-500 blk:text-gray-300')}>Title:</Text>
-            <TextInput onChange={onTitleInputChange} style={tailwind(`ml-3 flex-1 rounded-full border border-gray-400 bg-white px-3.5 text-base font-normal text-gray-700 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 ${inputClassNames}`)} placeholder="Title" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={customEditor.title} />
+            <TextInput onChange={onTitleInputChange} style={tailwind(`ml-3 flex-1 rounded-full border border-gray-400 bg-white px-3.5 text-base font-normal text-gray-700 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 ${inputClassNames}`)} placeholder="Title" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(107, 114, 128)' : 'rgb(156, 163, 175)'} value={customEditor.title} />
           </View>
           <View style={tailwind('flex-row items-center justify-start px-4 pt-3 pb-4')}>
             <TouchableOpacity onPress={onSaveBtnClick} style={[tailwind('items-center justify-center rounded-full bg-gray-800 px-4 blk:bg-gray-100'), { paddingTop: 7, paddingBottom: 7 }]}>

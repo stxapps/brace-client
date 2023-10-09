@@ -2009,7 +2009,6 @@ const _doListContainUnlocks = (listName, lockedLists) => {
 
 export const doListContainUnlocks = (state) => {
   const links = state.links;
-  const listName = state.display.listName;
   const queryString = state.display.queryString;
   const showingLinkIds = state.display.showingLinkIds;
   const lockedLists = state.lockSettings.lockedLists;
@@ -2025,6 +2024,8 @@ export const doListContainUnlocks = (state) => {
     }
     return false;
   }
+
+  const listName = state.display.listName;
 
   const doContain = _doListContainUnlocks(listName, lockedLists);
   return doContain;
@@ -2161,7 +2162,7 @@ export const getNLinkFPaths = (params) => {
 
   const hasMore = namedLinkFPaths.some(fpath => !fpathsWithPcEc.includes(fpath));
 
-  let foundNotExcl = false, hasDisorder = false
+  let foundNotExcl = false, hasDisorder = false;
   for (const fpath of fpathsWithPcEc) {
     const { id } = extractLinkFPath(fpath);
 
@@ -2179,12 +2180,12 @@ export const getNLinkFPaths = (params) => {
 };
 
 export const newObject = (object, ignoreAttrs) => {
-  const newObject = {};
+  const nObject = {};
   for (const attr in object) {
     if (ignoreAttrs.includes(attr)) continue;
-    newObject[attr] = object[attr];
+    nObject[attr] = object[attr];
   }
-  return newObject;
+  return nObject;
 };
 
 export const addFetchedToVars = (lnOrQt, links, vars) => {
@@ -2263,7 +2264,7 @@ export const getRawTags = (tagFPaths) => {
 
     if (!isObject(tags[mainId])) tags[mainId] = { values: [] };
 
-    const { values } = tags[mainId]
+    const { values } = tags[mainId];
 
     const i = values.findIndex(tag => tag.tagName === tagName);
     if (i < 0) {
@@ -2299,7 +2300,7 @@ const _getTags = (tagFPaths, pendingTags) => {
     tags[mainId] = { ...tags[mainId], ...pendingTags[id] };
   }
 
-  return tags
+  return tags;
 };
 
 export const getTags = createSelector(
@@ -2528,7 +2529,7 @@ export const getNLinkFPathsByQt = (params) => {
   const namedLinkFPaths = Object.values(toLinkFPaths);
   const hasMore = namedLinkFPaths.some(fpath => !fpathsWithPcEc.includes(fpath));
 
-  let foundNotExcl = false, hasDisorder = false
+  let foundNotExcl = false, hasDisorder = false;
   for (const fpath of fpathsWithPcEc) {
     const { id } = extractLinkFPath(fpath);
 

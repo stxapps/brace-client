@@ -73,7 +73,8 @@ class BottomBarBulkEditCommands extends React.Component {
       this.state.isEmptyErrorShown === true &&
       (
         nextProps.selectedLinkIds.length > 0 ||
-        this.props.listName !== nextProps.listName
+        this.props.listName !== nextProps.listName ||
+        this.props.queryString !== nextProps.queryString
       )
     ) {
       this.setState({ isEmptyErrorShown: false });
@@ -83,6 +84,7 @@ class BottomBarBulkEditCommands extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     if (
       this.props.listName !== nextProps.listName ||
+      this.props.queryString !== nextProps.queryString ||
       this.props.listNameMap !== nextProps.listNameMap ||
       this.props.safeAreaWidth !== nextProps.safeAreaWidth ||
       this.props.safeAreaHeight !== nextProps.safeAreaHeight ||
@@ -197,14 +199,22 @@ class BottomBarBulkEditCommands extends React.Component {
   }
 
   render() {
-    const { listName, listNameMap, tailwind } = this.props;
+    const { listName, queryString, listNameMap, tailwind } = this.props;
+
     const rListName = [MY_LIST, ARCHIVE, TRASH].includes(listName) ? listName : MY_LIST;
 
-    const isArchiveBtnShown = [MY_LIST].includes(rListName);
-    const isRemoveBtnShown = [MY_LIST, ARCHIVE].includes(rListName);
-    const isRestoreBtnShown = [TRASH].includes(rListName);
-    const isDeleteBtnShown = [TRASH].includes(rListName);
-    const isMoveToBtnShown = [ARCHIVE].includes(rListName) || (rListName === MY_LIST && getAllListNames(listNameMap).length > 3);
+    let isArchiveBtnShown = [MY_LIST].includes(rListName);
+    let isRemoveBtnShown = [MY_LIST, ARCHIVE].includes(rListName);
+    let isRestoreBtnShown = [TRASH].includes(rListName);
+    let isDeleteBtnShown = [TRASH].includes(rListName);
+    let isMoveToBtnShown = (
+      [ARCHIVE].includes(rListName) ||
+      (rListName === MY_LIST && getAllListNames(listNameMap).length > 3)
+    );
+    if (queryString) {
+      [isArchiveBtnShown, isRemoveBtnShown, isRestoreBtnShown] = [false, true, false];
+      [isDeleteBtnShown, isMoveToBtnShown] = [false, false];
+    }
 
     return (
       <React.Fragment>
@@ -280,6 +290,7 @@ class BottomBarBulkEditCommands extends React.Component {
 const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
+    queryString: state.display.queryString,
     listNameMap: getListNameMap(state),
     selectedLinkIds: state.display.selectedLinkIds,
     themeMode: getThemeMode(state),

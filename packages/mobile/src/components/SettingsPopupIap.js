@@ -214,7 +214,7 @@ const IapHome = (props) => {
     <View style={tailwind('mt-6 mb-4 md:mt-0')}>
       <Text style={tailwind('text-base font-medium leading-4 text-gray-800 blk:text-gray-100')}>Purchase subscription</Text>
       <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Brace.to is free and we offer a paid subscription for use of extra features. It's our intention to never show advertisements and we don't rent, sell or share your information with other companies. Our optional paid subscription is the only way we make money.</Text>
-      <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Support us and unlock extra features: pin to the top, dark appearance, change title & image, and lock lists.</Text>
+      <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Support us and unlock extra features: pin to the top, dark appearance, change title & image, lock lists, and tags.</Text>
       <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Start with a 14 day free trial.</Text>
       {actionPanel}
       <Text style={tailwind('mt-6 text-sm font-normal leading-6.5 text-gray-400 blk:text-gray-500')}>By subscribing, you agree to our <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_TERMS)} style={tailwind('text-sm font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Terms of Service</Text> and <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-sm font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Privacy Policy</Text>. Only one free trial per user, the App Store's Terms and Conditions apply.</Text>
@@ -315,7 +315,7 @@ const IapPurchased = (props) => {
     infoText = (
       <React.Fragment>
         <View style={tailwind('mt-4')}>
-          <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>     <Text style={tailwind('text-base font-normal leading-6.5 text-green-600 blk:text-green-500')}>Thank you very much for supporting us.</Text> You've unlocked extra features: pin to the top, dark appearance, change title & image, and lock lists.</Text>
+          <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>     <Text style={tailwind('text-base font-normal leading-6.5 text-green-600 blk:text-green-500')}>Thank you very much for supporting us.</Text> You've unlocked extra features: pin to the top, dark appearance, change title & image, lock lists, and tags.</Text>
           <View style={[tailwind('absolute'), { top: 3, left: 0 }]}>
             <Svg style={tailwind('font-normal text-green-500 blk:text-green-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.7071 8.70711C14.0976 8.31658 14.0976 7.68342 13.7071 7.29289C13.3166 6.90237 12.6834 6.90237 12.2929 7.29289L9 10.5858L7.70711 9.29289C7.31658 8.90237 6.68342 8.90237 6.29289 9.29289C5.90237 9.68342 5.90237 10.3166 6.29289 10.7071L8.29289 12.7071C8.68342 13.0976 9.31658 13.0976 9.70711 12.7071L13.7071 8.70711Z" />
@@ -328,14 +328,14 @@ const IapPurchased = (props) => {
   } else if (purchase.status === NO_RENEW) {
     infoText = (
       <React.Fragment>
-        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra features: pin to the top, dark appearance, change title & image, and lock lists.</Text>
+        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra features: pin to the top, dark appearance, change title & image, lock lists, and tags.</Text>
         <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Your subscription will be expired on {getFormattedDate(new Date(purchase.expiryDate))} and it won't be automatically renewed. If you want to enable automatically renewal, please go to {appStoreLink} to manage your subscription.</Text>
       </React.Fragment>
     );
   } else if (purchase.status === GRACE) {
     infoText = (
       <React.Fragment>
-        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra features: pin to the top, dark appearance, change title & image, and lock lists.</Text>
+        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra features: pin to the top, dark appearance, change title & image, lock lists, and tags.</Text>
         <View style={tailwind('mt-4')}>
           <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>     <Text style={tailwind('text-base font-normal leading-6.5 text-red-600 blk:text-red-500')}>Your subscription has been expired</Text> and you won't be able to use extra features soon. Please go to {appStoreLink} now to renew your subscription to continue supporting us and using extra features.</Text>
           <View style={[tailwind('absolute'), { top: 3, left: 0 }]}>

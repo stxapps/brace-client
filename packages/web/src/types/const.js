@@ -306,13 +306,13 @@ export const APP_STATE_INACTIVE = 'inactive';
 export const APP_STATE_BACKGROUND = 'background';
 
 export const LOCAL_LINK_ATTRS = [
-  STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LIST_NAME, FROM_ID, FROM_LINK
+  STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LIST_NAME, FROM_ID, FROM_LINK,
 ];
 
 export const ADD_TAGS = 'Add tags';
 export const MANAGE_TAGS = 'Manage tags';
 
-export const TAGGED = 'TAGGED'
+export const TAGGED = 'TAGGED';
 
 export const VALID_TAG_NAME = 'VALID_TAG_NAME';
 export const NO_TAG_NAME = 'NO_TAG_NAME';

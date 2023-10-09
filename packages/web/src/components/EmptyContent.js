@@ -36,7 +36,7 @@ const EmptyContent = () => {
     // Only tag name for now
     const tagName = queryString.trim();
     displayName = getTagNameDisplayName(tagName, tagNameMap);
-    textName = `"Add tags or Manage tags"`;
+    textName = '"Add tags or Manage tags"';
   }
 
   if (searchString !== '') {

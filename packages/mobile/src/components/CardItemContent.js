@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { View, Text, TouchableOpacity, Linking, Image } from 'react-native';
 import { connect } from 'react-redux';
 
-import { updateBulkEdit, addSelectedLinkIds } from '../actions';
+import { updateBulkEdit, addSelectedLinkIds, updateQueryString } from '../actions';
 import { DOMAIN_NAME, COLOR, PATTERN, IMAGE } from '../types/const';
-import { makeGetCustomImage, getThemeMode } from '../selectors';
+import { makeGetCustomImage, getThemeMode, makeGetTnAndDns } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
   extractUrl, isEqual, isDecorValid,
@@ -42,6 +42,7 @@ class CardItemContent extends React.Component {
       !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
       !isEqual(this.props.link.custom, nextProps.link.custom) ||
       this.props.customImage !== nextProps.customImage ||
+      this.props.tnAndDns !== nextProps.tnAndDns ||
       this.props.tailwind !== nextProps.tailwind ||
       this.state.extractedFaviconError !== nextState.extractedFaviconError
     ) {
@@ -156,6 +157,26 @@ class CardItemContent extends React.Component {
     return <GracefulImage key="favicon-graceful-image-ico" style={tailwind('h-4 w-4 flex-shrink-0 flex-grow-0')} source={cache(`CI_favicon_${favicon}`, { uri: favicon }, [favicon])} customPlaceholder={placeholder} />;
   }
 
+  renderTags() {
+    const { tnAndDns, tailwind } = this.props;
+
+    if (tnAndDns.length === 0) return null;
+
+    return (
+      <View style={tailwind('-mt-3 mb-3 ml-3.5 mr-2.5 lg:-mt-4 lg:mb-4')}>
+        <View style={tailwind('flex-row flex-wrap items-center justify-start pt-1')}>
+          {tnAndDns.map((tnAndDn, i) => {
+            return (
+              <TouchableOpacity key={tnAndDn.tagName} onPress={() => this.props.updateQueryString(tnAndDn.tagName)} style={tailwind(`mt-2 rounded-full bg-gray-100 px-2 py-1 blk:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
+                <Text style={tailwind('text-xs font-normal text-gray-500 blk:text-gray-300')}>{tnAndDn.displayName}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
+    );
+  }
+
   render() {
     const { link, tailwind } = this.props;
     const { url, extractedResult, custom } = link;
@@ -191,6 +212,7 @@ class CardItemContent extends React.Component {
         <TouchableOpacity onPress={() => Linking.openURL(ensureContainUrlProtocol(url))}>
           <Text style={tailwind('mt-0 mb-3 ml-4 mr-3 text-base font-medium leading-6 text-gray-800 blk:text-gray-100 lg:mb-4')}>{title}</Text>
         </TouchableOpacity>
+        {this.renderTags()}
       </React.Fragment>
     );
   }
@@ -203,12 +225,15 @@ CardItemContent.propTypes = {
 const makeMapStateToProps = () => {
 
   const getCustomImage = makeGetCustomImage();
+  const getTnAndDns = makeGetTnAndDns();
 
   const mapStateToProps = (state, props) => {
     const customImage = getCustomImage(state, props.link);
+    const tnAndDns = getTnAndDns(state, props.link);
 
     return {
       customImage,
+      tnAndDns,
       themeMode: getThemeMode(state),
     };
   };
@@ -216,6 +241,6 @@ const makeMapStateToProps = () => {
   return mapStateToProps;
 };
 
-const mapDispatchToProps = { updateBulkEdit, addSelectedLinkIds };
+const mapDispatchToProps = { updateBulkEdit, addSelectedLinkIds, updateQueryString };
 
 export default connect(makeMapStateToProps, mapDispatchToProps)(withTailwind(CardItemContent));

@@ -8,16 +8,17 @@ import Clipboard from '@react-native-clipboard/clipboard';
 
 import {
   updatePopup, updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction,
-  updateListNamesMode, updateCustomEditorPopup,
+  updateListNamesMode, updateCustomEditorPopup, updateTagEditorPopup,
 } from '../actions';
 import {
   MY_LIST, TRASH, ADDING, MOVING, UPDATING, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
-  MOVE_TO, CHANGE, PIN, MANAGE_PIN, PINNED, CARD_ITEM_POPUP_MENU, LIST_NAMES_POPUP,
+  MOVE_TO, CHANGE, PIN, MANAGE_PIN, PINNED, CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP,
   PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
-  DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
+  DELETE_ACTION_LINK_ITEM_MENU, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
+  ADD_TAGS, MANAGE_TAGS, TAGGED,
 } from '../types/const';
 import {
-  getListNameMap, getLayoutType, makeGetPinStatus, getThemeMode,
+  getListNameMap, getLayoutType, makeGetPinStatus, getThemeMode, makeGetTagStatus,
 } from '../selectors';
 import {
   getListNameDisplayName, getAllListNames, getLastHalfHeight,
@@ -26,6 +27,13 @@ import cache from '../utils/cache';
 
 import { withTailwind } from '.';
 import MenuPopupRenderer from './MenuPopupRenderer';
+
+const CARD_ITEM_POPUP_MENU = {
+  [MY_LIST]: [COPY_LINK, ARCHIVE, REMOVE, MOVE_TO],
+  [TRASH]: [COPY_LINK, RESTORE, DELETE],
+  [ARCHIVE]: [COPY_LINK, REMOVE, MOVE_TO],
+};
+const QUERY_STRING_MENU = [COPY_LINK, REMOVE];
 
 class CardItemMenuPopup extends React.PureComponent {
 
@@ -37,9 +45,9 @@ class CardItemMenuPopup extends React.PureComponent {
   }
 
   populateMenu() {
-
     const {
-      listName, listNameMap, link, pinStatus, layoutType, safeAreaWidth,
+      listName, queryString, listNameMap, link, pinStatus, tagStatus, layoutType,
+      safeAreaWidth,
     } = this.props;
 
     let menu = null;
@@ -48,18 +56,21 @@ class CardItemMenuPopup extends React.PureComponent {
     } else {
       menu = CARD_ITEM_POPUP_MENU[MY_LIST];
     }
-
     if (listName === MY_LIST && getAllListNames(listNameMap).length === 3) {
       menu = menu.slice(0, -1);
     }
+    if (queryString) menu = QUERY_STRING_MENU;
 
     if (
       [ADDING, MOVING, UPDATING].includes(link.status) ||
-      ![null, PINNED].includes(pinStatus)
+      ![null, PINNED].includes(pinStatus) ||
+      ![null, TAGGED].includes(tagStatus)
     ) {
       menu = menu.slice(0, 1);
-    } else if (listName !== TRASH) {
-      // Only when no other pending actions and list name is not TRASH
+    } else if (listName !== TRASH || queryString) {
+      if (tagStatus === TAGGED) menu = [...menu, MANAGE_TAGS];
+      else if (tagStatus === null) menu = [...menu, ADD_TAGS];
+
       if (pinStatus === PINNED) menu = [...menu, MANAGE_PIN];
       else if (pinStatus === null) menu = [...menu, PIN];
 
@@ -74,7 +85,9 @@ class CardItemMenuPopup extends React.PureComponent {
   }
 
   onMenuBtnClick = () => {
-    this.props.updatePopup(this.props.link.id, true, null);
+    this.props.updateSelectingLinkId(this.props.link.id);
+
+    this.props.updatePopup(CARD_ITEM_MENU_POPUP, true, null);
     this.didClick = false;
   }
 
@@ -92,7 +105,7 @@ class CardItemMenuPopup extends React.PureComponent {
     } else if (text === RESTORE) {
       this.props.moveLinks(MY_LIST, [id]);
     } else if (text === DELETE) {
-      this.props.updateDeleteAction(DELETE_ACTION_LINK_COMMANDS);
+      this.props.updateDeleteAction(DELETE_ACTION_LINK_ITEM_MENU);
       this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
       return false;
     } else if (text === MOVE_TO) {
@@ -111,7 +124,7 @@ class CardItemMenuPopup extends React.PureComponent {
           top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
         };
         this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
-        this.props.updatePopup(this.props.link.id, false);
+        this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
       });
 
       this.didClick = true;
@@ -131,24 +144,26 @@ class CardItemMenuPopup extends React.PureComponent {
           top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
         };
         this.props.updatePopup(PIN_MENU_POPUP, true, rect);
-        this.props.updatePopup(this.props.link.id, false);
+        this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
       });
 
       this.didClick = true;
       return true;
+    } else if (text === ADD_TAGS || text === MANAGE_TAGS) {
+      this.props.updateTagEditorPopup(true, id, text === ADD_TAGS);
     } else if (text === CHANGE) {
       this.props.updateCustomEditorPopup(true, id);
     } else {
       console.log(`In CardItemMenuPopup, invalid text: ${text}`);
     }
 
-    this.props.updatePopup(this.props.link.id, false);
+    this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
     this.didClick = true;
     return true;
   }
 
   onMenuBackdropPress = () => {
-    this.props.updatePopup(this.props.link.id, false);
+    this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
   }
 
   renderMenu() {
@@ -173,7 +188,7 @@ class CardItemMenuPopup extends React.PureComponent {
   render() {
     const { layoutType, safeAreaHeight, tailwind } = this.props;
     const popupStyle = {
-      maxHeight: getLastHalfHeight(Math.min(288, safeAreaHeight - 16), 40, 9, 9),
+      maxHeight: getLastHalfHeight(safeAreaHeight - 16, 40, 8, 0, 0.55),
     };
 
     let menuTriggerView;
@@ -218,14 +233,18 @@ CardItemMenuPopup.propTypes = {
 const makeMapStateToProps = () => {
 
   const getPinStatus = makeGetPinStatus();
+  const getTagStatus = makeGetTagStatus();
 
   const mapStateToProps = (state, props) => {
     const pinStatus = getPinStatus(state, props.link);
+    const tagStatus = getTagStatus(state, props.link);
 
     return {
       listName: state.display.listName,
+      queryString: state.display.queryString,
       listNameMap: getListNameMap(state),
       pinStatus,
+      tagStatus,
       layoutType: getLayoutType(state),
       themeMode: getThemeMode(state),
     };
@@ -236,7 +255,7 @@ const makeMapStateToProps = () => {
 
 const mapDispatchToProps = {
   updatePopup, updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction,
-  updateListNamesMode, updateCustomEditorPopup,
+  updateListNamesMode, updateCustomEditorPopup, updateTagEditorPopup,
 };
 
 export default connect(makeMapStateToProps, mapDispatchToProps)(withTailwind(CardItemMenuPopup));

@@ -12,6 +12,7 @@ import {
 } from '../selectors';
 
 import { withTailwind } from '.';
+
 import TopBar from './TopBar';
 import BottomBar from './BottomBar';
 import CardPanel from './CardPanel';

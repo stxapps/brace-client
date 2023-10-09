@@ -9,7 +9,7 @@ import { updatePopup, updateSearchString } from '../actions';
 import {
   SEARCH_POPUP, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT, BLK_MODE,
 } from '../types/const';
-import { getPopupLink, getThemeMode } from '../selectors';
+import { getThemeMode } from '../selectors';
 import { toPx } from '../utils';
 import { bbFMV } from '../types/animConfigs';
 
@@ -91,7 +91,7 @@ class BottomBarSearchPopup extends React.PureComponent {
           'hardwareBackPress',
           () => {
             if (!this.props.isSearchPopupShown) return false;
-            if (this.props.popupLink) return false;
+            if (this.props.isCardItemMenuPopupShown) return false;
 
             this.onSearchCancelBtnClick();
             return true;
@@ -210,16 +210,17 @@ class BottomBarSearchPopup extends React.PureComponent {
 
 const mapStateToProps = (state, props) => {
 
-  const { isListNamesPopupShown, isPinMenuPopupShown } = state.display;
-  const popupLink = getPopupLink(state);
+  const {
+    isCardItemMenuPopupShown, isListNamesPopupShown, isPinMenuPopupShown,
+  } = state.display;
 
   return {
     searchString: state.display.searchString,
     isBottomBarShown: (
-      popupLink === null && !isListNamesPopupShown && !isPinMenuPopupShown
+      !isCardItemMenuPopupShown && !isListNamesPopupShown && !isPinMenuPopupShown
     ),
     isSearchPopupShown: state.display.isSearchPopupShown,
-    popupLink: popupLink,
+    isCardItemMenuPopupShown,
     themeMode: getThemeMode(state),
   };
 };

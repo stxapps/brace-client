@@ -232,7 +232,7 @@ const _TagNameEditor = (props) => {
         }
 
         dispatch(updateSelectingTagName(tagNameObj.tagName));
-        dispatch(updateDeleteAction(DELETE_ACTION_TAG_NAME))
+        dispatch(updateDeleteAction(DELETE_ACTION_TAG_NAME));
         dispatch(updatePopup(CONFIRM_DELETE_POPUP, true));
         dispatch(updateTagNameEditors({
           [key]: { msg: '', isCheckingCanDelete: false },

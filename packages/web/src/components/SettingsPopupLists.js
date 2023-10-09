@@ -241,7 +241,7 @@ const _ListNameEditor = (props) => {
         }
 
         dispatch(updateSelectingListName(listNameObj.listName));
-        dispatch(updateDeleteAction(DELETE_ACTION_LIST_NAME))
+        dispatch(updateDeleteAction(DELETE_ACTION_LIST_NAME));
         dispatch(updatePopup(CONFIRM_DELETE_POPUP, true));
         dispatch(updateListNameEditors({
           [key]: { msg: '', isCheckingCanDelete: false },

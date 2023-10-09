@@ -5,8 +5,10 @@ import Svg, { Path } from 'react-native-svg';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
 import { ADDING, MOVING, UPDATING, SM_WIDTH, PINNED } from '../types/const';
-import { makeGetPinStatus } from '../selectors';
-import { ensureContainUrlProtocol, isDiedStatus, isPinningStatus } from '../utils';
+import { makeGetPinStatus, makeGetTagStatus } from '../selectors';
+import {
+  ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isTaggingStatus,
+} from '../utils';
 
 import { useSafeAreaFrame, useTailwind } from '.';
 import ListItemContent from './ListItemContent';
@@ -17,7 +19,9 @@ const ListItem = (props) => {
   const { link } = props;
   const { width: safeAreaWidth } = useSafeAreaFrame();
   const getPinStatus = useMemo(makeGetPinStatus, []);
+  const getTagStatus = useMemo(makeGetTagStatus, []);
   const pinStatus = useSelector(state => getPinStatus(state, link));
+  const tagStatus = useSelector(state => getTagStatus(state, link));
   const didClick = useRef(false);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
@@ -131,13 +135,17 @@ const ListItem = (props) => {
   const { status } = link;
 
   const isPinning = isPinningStatus(pinStatus);
-  const canSelect = ![ADDING, MOVING, UPDATING].includes(status) && !isPinning;
+  const isTagging = isTaggingStatus(tagStatus);
+  const canSelect = (
+    ![ADDING, MOVING, UPDATING].includes(status) && !isPinning && !isTagging
+  );
 
   return (
     <View style={tailwind('border-b border-gray-200 bg-white blk:border-gray-700 blk:bg-gray-900')}>
-      <ListItemContent link={link} pinStatus={pinStatus} />
+      <ListItemContent link={link} pinStatus={pinStatus} tagStatus={tagStatus} />
       {[ADDING, MOVING, UPDATING].includes(status) && renderBusy()}
       {isPinning && renderPinning()}
+      {isTagging && renderBusy()}
       {[PINNED].includes(pinStatus) && renderPin()}
       {canSelect && <ListItemSelector linkId={link.id} />}
       {isDiedStatus(status) && renderRetry()}

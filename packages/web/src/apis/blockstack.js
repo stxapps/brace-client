@@ -224,14 +224,14 @@ const fetch = async (params) => {
 
   let doDescendingOrder = getState().settings.doDescendingOrder;
 
-  const linkFPaths = getLinkFPaths(getState());
-  const pinFPaths = getPinFPaths(getState());
-  const tagFPaths = getTagFPaths(getState());
-
   // Need to do it again in case fetch list1 and fetch list2,
   //   the second fetch, settings are changes.
   const bin = { fetchedLinkFPaths: [], unfetchedLinkFPaths: [], hasMore: false };
   if (didFetch && didFetchSettings) {
+    const linkFPaths = getLinkFPaths(getState());
+    const pinFPaths = getPinFPaths(getState());
+    const tagFPaths = getTagFPaths(getState());
+
     let fpaths;
     if (queryString) {
       const _result = getNLinkFPathsByQt({
@@ -372,7 +372,7 @@ const fetchMore = async (params) => {
     hasMore: bin.hasMore,
     hasDisorder: bin.hasDisorder,
     links: lResult.links,
-  }
+  };
   return result;
 };
 
@@ -481,7 +481,7 @@ const tryPutSettings = async (params) => {
   // Need to compare with the snapshot here to have the latest version.
   //   e.g., change settings -> close the popup -> open it and change again.
   if (isEqual(settings, snapshotSettings)) {
-    dispatch({ type: UPDATE_UNCHANGED_SETTINGS })
+    dispatch({ type: UPDATE_UNCHANGED_SETTINGS });
     return {};
   }
 
@@ -522,7 +522,7 @@ const tryPutInfo = async (params) => {
 
   // Need to compare with the snapshot here to have the latest version.
   if (isEqual(info, snapshotInfo)) {
-    dispatch({ type: UPDATE_UNCHANGED_INFO })
+    dispatch({ type: UPDATE_UNCHANGED_INFO });
     return {};
   }
 

@@ -6,9 +6,11 @@ import Svg, { Path } from 'react-native-svg';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
 import { ADDING, MOVING, UPDATING, SM_WIDTH, PINNED } from '../types/const';
-import { makeGetPinStatus, getThemeMode } from '../selectors';
 import {
-  ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isEqual,
+  makeGetPinStatus, makeGetTagStatus, getThemeMode,
+} from '../selectors';
+import {
+  ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isTaggingStatus, isEqual,
 } from '../utils';
 import cache from '../utils/cache';
 
@@ -41,6 +43,7 @@ class CardItem extends React.Component {
       !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
       !isEqual(this.props.link.custom, nextProps.link.custom) ||
       this.props.pinStatus !== nextProps.pinStatus ||
+      this.props.tagStatus !== nextProps.tagStatus ||
       this.props.safeAreaWidth !== nextProps.safeAreaWidth ||
       this.props.tailwind !== nextProps.tailwind
     ) {
@@ -159,11 +162,14 @@ class CardItem extends React.Component {
   }
 
   render() {
-    const { style, link, pinStatus, safeAreaWidth, tailwind } = this.props;
+    const { style, link, pinStatus, tagStatus, safeAreaWidth, tailwind } = this.props;
     const { status } = link;
 
     const isPinning = isPinningStatus(pinStatus);
-    const canSelect = ![ADDING, MOVING, UPDATING].includes(status) && !isPinning;
+    const isTagging = isTaggingStatus(tagStatus);
+    const canSelect = (
+      ![ADDING, MOVING, UPDATING].includes(status) && !isPinning && !isTagging
+    );
 
     // Need to do this as React Native doesn't support maxWidth: "none"
     //   even though it's in tailwind-rn.
@@ -178,6 +184,7 @@ class CardItem extends React.Component {
           <CardItemContent link={link} />
           {[ADDING, MOVING, UPDATING].includes(status) && this.renderBusy()}
           {isPinning && this.renderPinning()}
+          {isTagging && this.renderBusy()}
           {[PINNED].includes(pinStatus) && this.renderPin()}
           {canSelect && <CardItemSelector linkId={link.id} />}
           {isDiedStatus(status) && this.renderRetry()}
@@ -195,12 +202,15 @@ CardItem.propTypes = {
 const makeMapStateToProps = () => {
 
   const getPinStatus = makeGetPinStatus();
+  const getTagStatus = makeGetTagStatus();
 
   const mapStateToProps = (state, props) => {
     const pinStatus = getPinStatus(state, props.link);
+    const tagStatus = getTagStatus(state, props.link);
 
     return {
       pinStatus,
+      tagStatus,
       themeMode: getThemeMode(state),
     };
   };

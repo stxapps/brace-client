@@ -14,7 +14,7 @@ import { getTopBarSizes, withTailwind } from '.';
 
 import TopBarCommands from './TopBarCommands';
 import TopBarBulkEditCommands from './TopBarBulkEditCommands';
-import ListName from './ListName';
+import TopBarTitle from './TopBarTitle';
 import StatusPopup from './StatusPopup';
 
 import shortLogo from '../images/logo-short.svg';
@@ -72,7 +72,7 @@ class TopBar extends React.PureComponent {
 
     return (
       <Animated.View style={listNameStyle}>
-        <ListName />
+        <TopBarTitle />
       </Animated.View>
     );
   }

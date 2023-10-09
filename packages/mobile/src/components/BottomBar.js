@@ -3,7 +3,7 @@ import { Animated } from 'react-native';
 import { connect } from 'react-redux';
 
 import { BOTTOM_BAR_HEIGHT } from '../types/const';
-import { getPopupLink, getThemeMode } from '../selectors';
+import { getThemeMode } from '../selectors';
 import { toPx } from '../utils';
 import { bbFMV } from '../types/animConfigs';
 
@@ -59,11 +59,12 @@ class BottomBar extends React.PureComponent {
 
 const mapStateToProps = (state, props) => {
 
-  const { isListNamesPopupShown, isPinMenuPopupShown } = state.display;
-  const popupLink = getPopupLink(state);
+  const {
+    isCardItemMenuPopupShown, isListNamesPopupShown, isPinMenuPopupShown,
+  } = state.display;
 
   return {
-    isShown: popupLink === null && !isListNamesPopupShown && !isPinMenuPopupShown,
+    isShown: !isCardItemMenuPopupShown && !isListNamesPopupShown && !isPinMenuPopupShown,
     isBulkEditing: state.display.isBulkEditing,
     themeMode: getThemeMode(state),
   };

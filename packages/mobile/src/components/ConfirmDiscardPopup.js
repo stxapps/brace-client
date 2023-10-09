@@ -7,7 +7,8 @@ import Svg, { Path } from 'react-native-svg';
 
 import { updatePopup, updateSettingsPopup } from '../actions';
 import {
-  CONFIRM_DISCARD_POPUP, DISCARD_ACTION_UPDATE_LIST_NAME, SM_WIDTH,
+  CONFIRM_DISCARD_POPUP, DISCARD_ACTION_UPDATE_LIST_NAME, DISCARD_ACTION_UPDATE_TAG_NAME,
+  SM_WIDTH,
 } from '../types/const';
 import { dialogFMV } from '../types/animConfigs';
 
@@ -36,7 +37,10 @@ const ConfirmDiscardPopup = () => {
   const onConfirmDiscardOkBtnClick = () => {
     if (didClick.current) return;
 
-    if (discardAction === DISCARD_ACTION_UPDATE_LIST_NAME) {
+    if (
+      discardAction === DISCARD_ACTION_UPDATE_LIST_NAME ||
+      discardAction === DISCARD_ACTION_UPDATE_TAG_NAME
+    ) {
       dispatch(updateSettingsPopup(false, false));
     } else throw new Error(`Invalid discard action: ${discardAction}`);
 
@@ -106,6 +110,8 @@ const ConfirmDiscardPopup = () => {
   let msg = 'Are you sure you want to discard your unsaved changes? All of your changes will be permanently deleted. This action cannot be undone.';
   if (discardAction === DISCARD_ACTION_UPDATE_LIST_NAME) {
     msg = 'There are some lists still in editing mode. Are you sure you want to discard them?';
+  } else if (discardAction === DISCARD_ACTION_UPDATE_TAG_NAME) {
+    msg = 'There are some tags still in editing mode. Are you sure you want to discard them?';
   }
 
   return (

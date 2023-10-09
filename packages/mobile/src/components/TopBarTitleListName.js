@@ -16,7 +16,7 @@ import cache from '../utils/cache';
 
 import { getTopBarSizes, withTailwind } from '.';
 
-class ListName extends React.PureComponent {
+class TopBarTitleListName extends React.PureComponent {
 
   constructor(props) {
     super(props);
@@ -90,4 +90,4 @@ const mapDispatchToProps = {
   updatePopup, updateListNamesMode, updateSelectingListName, updateLockAction,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(ListName));
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(TopBarTitleListName));

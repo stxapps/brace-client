@@ -3,16 +3,17 @@ import { Animated } from 'react-native';
 import { connect } from 'react-redux';
 
 import fileApi from '../apis/localFile';
-import { fetch, rehydrateStaticFiles, endIapConnection } from '../actions';
+import { fetch, endIapConnection } from '../actions';
 import {
   PC_100, PC_50, PC_33, SHOW_BLANK, SHOW_COMMANDS, SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
   IMAGES, LOCKED,
 } from '../types/const';
-import { getLinks, getLayoutType, getCurrentLockListStatus } from '../selectors';
+import {
+  getIsShowingLinkIdsNull, getLayoutType, getCurrentLockListStatus,
+} from '../selectors';
 
 import { withSafeAreaContext } from '.';
 
-import Loading from './Loading';
 import TopBar from './TopBar';
 import BottomBar from './BottomBar';
 import CardPanel from './CardPanel';
@@ -21,10 +22,13 @@ import LockPanel from './LockPanel';
 import FetchedPopup from './FetchedPopup';
 import PinMenuPopup from './PinMenuPopup';
 import CustomEditorPopup from './CustomEditorPopup';
+import TagEditorPopup from './TagEditorPopup';
 import SettingsPopup from './SettingsPopup';
 import SettingsListsMenuPopup from './SettingsListsMenuPopup';
+import SettingsTagsMenuPopup from './SettingsTagsMenuPopup';
 import TimePickPopup from './TimePickPopup';
 import PinErrorPopup from './PinErrorPopup';
+import TagErrorPopup from './TagErrorPopup';
 import {
   SettingsUpdateErrorPopup, SettingsConflictErrorPopup,
 } from './SettingsErrorPopup';
@@ -49,10 +53,12 @@ class Main extends React.PureComponent {
 
   componentDidUpdate(prevProps) {
     if (
-      prevProps.listName !== this.props.listName ||
-      prevProps.rehydratedListNames !== this.props.rehydratedListNames ||
-      prevProps.fetchedListNames !== this.props.fetchedListNames
-    ) this.fetch();
+      (prevProps.listName !== this.props.listName) ||
+      (prevProps.queryString !== this.props.queryString) ||
+      (prevProps.didFetch && !this.props.didFetch) ||
+      (prevProps.didFetchSettings && !this.props.didFetchSettings) ||
+      (!prevProps.isShowingLinkIdsNull && this.props.isShowingLinkIdsNull)
+    ) this.props.fetch();
   }
 
   componentWillUnmount() {
@@ -67,17 +73,6 @@ class Main extends React.PureComponent {
     return columnWidth;
   }
 
-  fetch = () => {
-    const { listName, rehydratedListNames, fetchedListNames } = this.props;
-
-    if (!rehydratedListNames.includes(listName)) {
-      this.props.rehydrateStaticFiles();
-      return;
-    }
-
-    if (!fetchedListNames.includes(listName)) this.props.fetch();
-  }
-
   mkDirAndFetch = async () => {
     try {
       const doExist = await fileApi.exists(IMAGES);
@@ -86,15 +81,11 @@ class Main extends React.PureComponent {
       console.log('Can\'t make images dir with error: ', error);
     }
 
-    this.fetch();
+    this.props.fetch();
   }
 
   render() {
-    const {
-      listName, links, rehydratedListNames, layoutType, safeAreaWidth, lockStatus,
-    } = this.props;
-
-    if (links === null) return <Loading />;
+    const { layoutType, safeAreaWidth, lockStatus } = this.props;
 
     const columnWidth = this.getColumnWidth(safeAreaWidth);
     const topBarRightPane = [PC_50, PC_33].includes(columnWidth) ?
@@ -104,9 +95,7 @@ class Main extends React.PureComponent {
     //   and if not rehydrated yet, loading is shown
     //   so if not rehydrated, show loading under Settings.
     let contentPanel;
-    if (!rehydratedListNames.includes(listName)) {
-      contentPanel = <Loading />;
-    } else if (lockStatus === LOCKED) {
+    if (lockStatus === LOCKED) {
       contentPanel = (
         <React.Fragment>
           <LockPanel columnWidth={columnWidth} />
@@ -126,6 +115,7 @@ class Main extends React.PureComponent {
           <FetchedPopup />
           <PinMenuPopup />
           <CustomEditorPopup />
+          <TagEditorPopup />
         </React.Fragment>
       );
     }
@@ -135,10 +125,12 @@ class Main extends React.PureComponent {
         {contentPanel}
         <SettingsPopup />
         <SettingsListsMenuPopup />
+        <SettingsTagsMenuPopup />
         <TimePickPopup />
         <PinErrorPopup />
-        <SettingsUpdateErrorPopup />
+        <TagErrorPopup />
         <SettingsConflictErrorPopup />
+        <SettingsUpdateErrorPopup />
         <ListNamesPopup />
         <LockEditorPopup />
         <ConfirmDeletePopup />
@@ -153,13 +145,15 @@ class Main extends React.PureComponent {
 const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
-    links: getLinks(state),
-    rehydratedListNames: state.display.rehydratedListNames,
-    fetchedListNames: state.display.fetchedListNames,
+    queryString: state.display.queryString,
+    didFetch: state.display.didFetch,
+    didFetchSettings: state.display.didFetchSettings,
+    isShowingLinkIdsNull: getIsShowingLinkIdsNull(state),
     layoutType: getLayoutType(state),
     lockStatus: getCurrentLockListStatus(state),
   };
 };
-const mapDispatchToProps = { fetch, rehydrateStaticFiles, endIapConnection };
+
+const mapDispatchToProps = { fetch, endIapConnection };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(Main));

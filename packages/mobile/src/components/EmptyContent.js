@@ -6,7 +6,7 @@ import Svg, { SvgXml, Path } from 'react-native-svg';
 import { updatePopup } from '../actions';
 import { ADD_POPUP, MY_LIST, TRASH, ARCHIVE, BLK_MODE } from '../types/const';
 import { getListNameMap, getThemeMode } from '../selectors';
-import { getListNameDisplayName } from '../utils';
+import { getListNameDisplayName, getTagNameDisplayName } from '../utils';
 import cache from '../utils/cache';
 
 import { useTailwind } from '.';
@@ -29,7 +29,9 @@ const BORDER_RADIUS = {
 const EmptyContent = () => {
 
   const listName = useSelector(state => state.display.listName);
+  const queryString = useSelector(state => state.display.queryString);
   const listNameMap = useSelector(getListNameMap);
+  const tagNameMap = useSelector(state => state.settings.tagNameMap);
   const searchString = useSelector(state => state.display.searchString);
   const themeMode = useSelector(state => getThemeMode(state));
   const dispatch = useDispatch();
@@ -39,8 +41,15 @@ const EmptyContent = () => {
     dispatch(updatePopup(ADD_POPUP, true));
   };
 
-  const displayName = getListNameDisplayName(listName, listNameMap);
-  const textName = listName === ARCHIVE ? `"${displayName}"` : `"Move to -> ${displayName}"`;
+  let displayName = getListNameDisplayName(listName, listNameMap);
+  let textName = `"Move to -> ${displayName}"`;
+  if (listName === ARCHIVE) textName = `"${displayName}"`;
+  if (queryString) {
+    // Only tag name for now
+    const tagName = queryString.trim();
+    displayName = getTagNameDisplayName(tagName, tagNameMap);
+    textName = '"Add tags or Manage tags"';
+  }
 
   if (searchString !== '') {
     return (
@@ -52,6 +61,16 @@ const EmptyContent = () => {
           <Text style={tailwind('text-base font-normal text-gray-500 blk:text-gray-400')}>{'\u2022'}  Try different keywords.</Text>
           <Text style={tailwind('text-base font-normal text-gray-500 blk:text-gray-400')}>{'\u2022'}  Try more general keywords.</Text>
         </View>
+      </View>
+    );
+  }
+
+  if (queryString) {
+    return (
+      <View style={tailwind('w-full items-center px-4 pb-6 md:px-6 lg:px-8')}>
+        <SvgXml style={tailwind('mt-10')} width={160} height={146.66} xml={emptyBox} />
+        <Text style={tailwind('mt-6 text-center text-lg font-medium text-gray-800 blk:text-gray-200')}>No links in #{displayName}</Text>
+        <Text style={tailwind('mt-2 max-w-md text-center text-base font-normal tracking-wide text-gray-500 blk:text-gray-400')}>Tap <Text style={tailwind('text-base font-semibold tracking-wide text-gray-500 blk:text-gray-400')}>{textName}</Text> from the menu to show links here.</Text>
       </View>
     );
   }

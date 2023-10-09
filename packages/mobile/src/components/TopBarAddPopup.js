@@ -65,8 +65,9 @@ class TopBarAddPopup extends React.PureComponent {
   onAddOkBtnClick = () => {
     if (this.didClick) return;
 
+    const url = this.props.url.trim();
     if (!this.props.isAskingConfirm) {
-      const urlValidatedResult = validateUrl(this.props.url);
+      const urlValidatedResult = validateUrl(url);
       if (urlValidatedResult === NO_URL) {
         this.props.updateLinkEditor(
           { msg: URL_MSGS[urlValidatedResult], isAskingConfirm: false }
@@ -81,7 +82,7 @@ class TopBarAddPopup extends React.PureComponent {
       }
     }
 
-    this.props.addLink(this.props.url, null, null);
+    this.props.addLink(url, null, null);
     this.props.ctx.menuActions.closeMenu();
     this.props.updatePopup(ADD_POPUP, false);
 

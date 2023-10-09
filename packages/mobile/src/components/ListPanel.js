@@ -8,12 +8,16 @@ import {
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
   MD_WIDTH, PC_100,
 } from '../types/const';
-import { getLinks, getIsFetchingMore } from '../selectors';
+import {
+  getLinks, getHasMoreLinks, getIsFetchingMore, getHasFetchedMore,
+} from '../selectors';
 import { toPx } from '../utils';
 import cache from '../utils/cache';
 import vars from '../vars';
 
 import { useSafeAreaFrame, useTailwind } from '.';
+
+import ListLoadingContentItem from './ListLoadingContentItem';
 import ListItem from './ListItem';
 import EmptyContent from './EmptyContent';
 
@@ -26,22 +30,14 @@ const ListPanel = (props) => {
 
   const { columnWidth, scrollY } = props;
   const { width: safeAreaWidth } = useSafeAreaFrame();
-  const listName = useSelector(state => state.display.listName);
-  const hasMore = useSelector(state => state.hasMoreLinks[listName]);
-  const hasFetchedMore = useSelector(
-    state => state.fetchedMore[listName] ? true : false
-  );
+  const links = useSelector(state => getLinks(state));
+  const hasMore = useSelector(state => getHasMoreLinks(state));
   const isFetchingMore = useSelector(state => getIsFetchingMore(state));
+  const hasFetchedMore = useSelector(state => getHasFetchedMore(state));
   const listChangedCount = useSelector(state => state.display.listChangedCount);
   const flatList = useRef(null);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
-
-  let links = useSelector(getLinks);
-  if (!links) {
-    console.log(`Invalid links: ${links}. Links cannot be undefined as in LinkSelector and if links is null, it should be handled in Main, not in ListPanel.`);
-    links = [];
-  }
 
   const getItemId = useCallback((item) => {
     return item.id;
@@ -50,11 +46,11 @@ const ListPanel = (props) => {
   const onScroll = useCallback((e) => {
     const contentHeight = e.nativeEvent.contentSize.height;
     const layoutHeight = e.nativeEvent.layoutMeasurement.height;
-    const scrollY = e.nativeEvent.contentOffset.y;
+    const contentOffsetY = e.nativeEvent.contentOffset.y;
 
     vars.scrollPanel.contentHeight = contentHeight;
     vars.scrollPanel.layoutHeight = layoutHeight;
-    vars.scrollPanel.scrollY = scrollY;
+    vars.scrollPanel.scrollY = contentOffsetY;
   }, []);
 
   const onEndReached = useCallback(() => {
@@ -103,6 +99,9 @@ const ListPanel = (props) => {
   }, [onUpdateFetchedBtnClick, tailwind]);
 
   const renderItem = useCallback(({ item }) => {
+    if (item.isLoading) {
+      return <ListLoadingContentItem />;
+    }
     return <ListItem link={item} />;
   }, []);
 
@@ -116,9 +115,15 @@ const ListPanel = (props) => {
     }
 
     if (item.id === PANEL_BODY) {
+      let derivedLinks = links;
+      if (!Array.isArray(derivedLinks)) {
+        derivedLinks = [];
+        for (let i = 0; i < 7; i++) derivedLinks.push({ id: i, isLoading: true });
+      }
+
       return (
         <FlatList
-          data={links}
+          data={derivedLinks}
           keyExtractor={getItemId}
           renderItem={renderItem}
           ListEmptyComponent={renderEmpty}

@@ -8,7 +8,7 @@ import Svg, { Path } from 'react-native-svg';
 import { updatePopup, updateSettingsPopup, updateSettingsViewId } from '../actions';
 import {
   PAYWALL_POPUP, SETTINGS_VIEW_IAP, FEATURE_PIN, FEATURE_APPEARANCE, FEATURE_CUSTOM,
-  FEATURE_LOCK,
+  FEATURE_LOCK, FEATURE_TAG,
 } from '../types/const';
 import { dialogFMV } from '../types/animConfigs';
 
@@ -95,6 +95,8 @@ const PaywallPopup = () => {
     featureText = 'Change title & image are an extra feature.';
   } else if (feature === FEATURE_LOCK) {
     featureText = 'Lock lists are an extra feature.';
+  } else if (feature === FEATURE_TAG) {
+    featureText = 'Tags are an extra feature.';
   }
 
   const canvasStyle = { paddingLeft: 16 + insets.left, paddingRight: 16 + insets.right };
