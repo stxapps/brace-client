@@ -570,12 +570,10 @@ export const getTagEditor = createSelector(
     if (!editor.didHintsEdit) {
       editor.hints = [];
       for (const tagNameObj of tagNameMap) {
-        editor.hints.push({
-          tagName: tagNameObj.tagName,
-          displayName: tagNameObj.displayName,
-          color: tagNameObj.color,
-          isBlur: false,
-        });
+        const { tagName, displayName, color } = tagNameObj;
+
+        const found = editor.values.some(value => value.tagName === tagName);
+        editor.hints.push({ tagName, displayName, color, isBlur: found });
       }
     }
     return editor;
