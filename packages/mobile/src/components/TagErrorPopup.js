@@ -77,4 +77,4 @@ const TagErrorPopup = () => {
   );
 };
 
-export const SettingsUpdateErrorPopup = React.memo(TagErrorPopup);
+export default React.memo(TagErrorPopup);

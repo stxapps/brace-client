@@ -213,13 +213,13 @@ const TagEditorPopup = () => {
         <ScrollView style={{ maxHeight: panelHeight }} keyboardShouldPersistTaps="handled">
           <View style={tailwind('px-4 pt-8 pb-4 sm:px-6 sm:pb-6')}>
             <Text style={tailwind('text-left text-xl font-semibold text-gray-800 blk:text-gray-100')}>{title}</Text>
-            {tagEditor.values.lenght === 0 && <View style={tailwind('pt-4')}>
+            {tagEditor.values.length === 0 && <View style={tailwind('pt-4')}>
               <Text style={tailwind('text-sm font-normal leading-6 text-gray-500 blk:text-gray-400')}>{desc}</Text>
             </View>}
-            {tagEditor.values.lenght > 0 && <View style={[tailwind('flex-row flex-wrap items-center justify-start pt-5'), { minHeight: 64 }]}>
+            {tagEditor.values.length > 0 && <View style={[tailwind('flex-row flex-wrap items-center justify-start pt-5'), { minHeight: 64 }]}>
               {tagEditor.values.map((value, i) => {
                 return (
-                  <View key={`TagEditorValue-${value.tagName}`} style={tailwind(`mb-2 flex items-center rounded-full bg-gray-100 pl-3 blk:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
+                  <View key={`TagEditorValue-${value.tagName}`} style={tailwind(`mb-2 flex-row items-center rounded-full bg-gray-100 pl-3 blk:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
                     <Text style={tailwind('text-sm font-normal text-gray-600 blk:text-gray-300')}>{value.displayName}</Text>
                     <TouchableOpacity onPress={() => onValueDeselect(value)} style={tailwind('ml-1 items-center justify-center py-1.5 pr-1.5')}>
                       <Svg style={tailwind('font-normal text-gray-400 blk:text-gray-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">

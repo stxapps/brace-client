@@ -25,7 +25,7 @@ const CardLoadingContentItem = (props) => {
 
   return (
     <View style={style}>
-      <View style={tailwind(`self-center rounded-lg ${viewStyle}`)}>
+      <View style={tailwind(`w-full self-center rounded-lg pb-2 ${viewStyle}`)}>
         <View style={tailwind('h-44 rounded-t-lg bg-gray-200 blk:bg-gray-700')} />
         <View style={tailwind('flex-row items-center justify-start py-3')}>
           <View style={tailwind('h-3 w-3 rounded-full bg-gray-200 blk:bg-gray-700')} />

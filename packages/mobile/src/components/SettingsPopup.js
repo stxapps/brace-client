@@ -169,7 +169,7 @@ const SettingsPopup = () => {
   };
 
   const onTagsBtnClick = () => {
-    dispatch(updateSettingsViewId(VIEW_TAGS, false));
+    dispatch(updateSettingsViewId(VIEW_TAGS, false, null, false));
   };
 
   const onMiscBtnClick = () => {

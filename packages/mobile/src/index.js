@@ -45,8 +45,9 @@ offlineConfig.dispatch = (...args) => {
 offlineConfig.persistOptions = {
   blacklist: [
     'user', 'stacksAccess', 'hasMoreLinks', 'images', 'fetched', 'fetchedMore',
-    'isFetchMoreInterrupted', 'refreshFetched', 'linkEditor', 'customEditor',
+    'isFetchMoreInterrupted', 'refreshFetched', 'display', 'linkEditor', 'customEditor',
     'tagEditor', 'listNameEditors', 'tagNameEditors', 'timePick', 'lockEditor', 'iap',
+    'conflictedSettings',
   ],
 };
 offlineConfig.filterOutboxRehydrate = (outbox) => {

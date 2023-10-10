@@ -290,7 +290,7 @@ class TranslucentAdding extends React.PureComponent {
     askedConfirmResults[addingUrls.indexOf(addingUrl)] = CONFIRM_NOT_ADD;
 
     let haveOthers = false;
-    for (let i = 0; i < addingUrls.lenght; i++) {
+    for (let i = 0; i < addingUrls.length; i++) {
       const urlValidatedResult = urlValidatedResults[i];
       const askedConfirmResult = askedConfirmResults[i];
 

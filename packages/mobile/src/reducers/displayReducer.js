@@ -95,14 +95,7 @@ const initialState = {
 const displayReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
-    const newState = { ...initialState };
-    if (
-      isObject(action.payload.display) &&
-      action.payload.display.settingsStatus === UPDATING
-    ) {
-      newState.settingsStatus = UPDATING;
-    }
-    return newState;
+    return { ...initialState };
   }
 
   if (action.type === UPDATE_LIST_NAME) {
@@ -313,6 +306,7 @@ const displayReducer = (state = initialState, action) => {
 
     const newState = { ...state, statuses: [...state.statuses, FETCH_ROLLBACK] };
     newState.fetchingInfos = state.fetchingInfos.filter(info => info.fthId !== fthId);
+    if (!Array.isArray(newState.showingLinkIds)) newState.showingLinkIds = [];
     if (
       (
         isObject(action.payload) &&
