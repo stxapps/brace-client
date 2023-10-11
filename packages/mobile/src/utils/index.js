@@ -472,7 +472,9 @@ export const sample = (arr) => {
 };
 
 export const randomString = (length) => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  // Important - characters can't contain numbers
+  //   as this random string might append to timestamp.
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
   const charactersLength = characters.length;
 
   let result = '';
