@@ -304,8 +304,6 @@ const linksReducer = (state = initialState, action) => {
       const [toListName, toId] = [toListNames[i], toIds[i]];
 
       if (![ARCHIVE, TRASH].includes(toListName)) continue;
-      if (!successIds.includes(toId)) continue;
-
       toUnpinIds.push(toId);
     }
 

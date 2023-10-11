@@ -2568,7 +2568,8 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
       const pLexoRank = LexoRank.parse(`0|${pRank.replace('_', ':')}`);
       const ppLexoRank = LexoRank.parse(`0|${ppRank.replace('_', ':')}`);
 
-      nextRank = ppLexoRank.between(pLexoRank).toString();
+      if (pRank === ppRank) nextRank = ppLexoRank.toString();
+      else nextRank = ppLexoRank.between(pLexoRank).toString();
     }
   } else if (direction === SWAP_RIGHT) {
     if (i === pinnedValues.length - 1) return;
@@ -2585,7 +2586,8 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
       const nLexoRank = LexoRank.parse(`0|${nRank.replace('_', ':')}`);
       const nnLexoRank = LexoRank.parse(`0|${nnRank.replace('_', ':')}`);
 
-      nextRank = nLexoRank.between(nnLexoRank).toString();
+      if (nRank === nnRank) nextRank = nLexoRank.toString();
+      else nextRank = nLexoRank.between(nnLexoRank).toString();
     }
   } else {
     throw new Error(`Invalid direction: ${direction}`);

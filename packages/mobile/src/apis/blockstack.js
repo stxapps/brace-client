@@ -687,7 +687,9 @@ const updateTagDataTStep = async (params) => {
     if (isString(prevRank) && isString(nextRank)) {
       const pLexoRank = LexoRank.parse(`0|${prevRank.replace('_', ':')}`);
       const nLexoRank = LexoRank.parse(`0|${nextRank.replace('_', ':')}`);
-      lexoRank = pLexoRank.between(nLexoRank);
+
+      if (prevRank === nextRank) lexoRank = pLexoRank;
+      else lexoRank = pLexoRank.between(nLexoRank);
     } else if (isString(prevRank)) {
       lexoRank = LexoRank.parse(`0|${prevRank.replace('_', ':')}`).genNext();
     } else if (isString(nextRank)) {
