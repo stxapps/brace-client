@@ -619,13 +619,19 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_LOCKS_FOR_ACTIVE_APP) {
-    const { doForceLock, isLong, doNoChangeMyList } = action.payload;
+    const { isLong, doNoChangeMyList } = action.payload;
+    const { queryString, doForceLock } = state;
 
     const newState = { ...state, doForceLock: false };
     if (isLong) {
       newState.selectedLinkIds = [];
     }
-    if (!doForceLock && isLong && doNoChangeMyList) {
+    if (
+      (!queryString && isLong && doNoChangeMyList && !doForceLock) ||
+      (queryString && isLong && !doNoChangeMyList && doForceLock) ||
+      (queryString && isLong && doNoChangeMyList && !doForceLock) ||
+      (queryString && isLong && doNoChangeMyList && doForceLock)
+    ) {
       newState.listName = MY_LIST;
       newState.queryString = '';
       newState.searchString = '';

@@ -203,11 +203,11 @@ const handleAppStateChange = (nextAppState) => async (dispatch, getState) => {
       isObject(lockedLists[MY_LIST]) &&
       lockedLists[MY_LIST].canChangeListNames === false
     );
-    if (doForceLock || (isUserSignedIn && isLong && doNoChangeMyList)) {
+    if (doForceLock || (isUserSignedIn && isLong)) {
       if (Platform.OS === 'android') FlagSecure.deactivate();
       dispatch({
         type: UPDATE_LOCKS_FOR_ACTIVE_APP,
-        payload: { doForceLock, isLong, doNoChangeMyList },
+        payload: { isLong, doNoChangeMyList },
       });
     }
 
