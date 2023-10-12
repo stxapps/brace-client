@@ -177,7 +177,8 @@ const TagEditorPopup = () => {
   }
   const bgStyle = { opacity: popupAnim };
 
-  const inputClassNames = Platform.OS === 'ios' ? 'py-1.5 leading-5' : 'py-px';
+  const inputStyle = { paddingVertical: Platform.OS === 'ios' ? 6 : 1 };
+  if (Platform.OS === 'ios') inputStyle.lineHeight = 18;
 
   let title = 'Tags';
   let desc = (
@@ -236,7 +237,7 @@ const TagEditorPopup = () => {
             </View>}
             {tagEditor.msg && <Text style={tailwind('py-2 text-sm font-normal text-red-500')}>{tagEditor.msg}</Text>}
             <View style={tailwind(`flex-row items-center justify-start ${tagEditor.msg ? '' : 'pt-5'}`)}>
-              <TextInput onChange={onDnInputChange} onSubmitEditing={onDnInputKeyPress} style={tailwind(`flex-1 rounded-full border border-gray-400 bg-white px-3.5 text-sm font-normal text-gray-700 blk:border-gray-500 blk:bg-gray-800 blk:text-gray-200 ${inputClassNames}`)} placeholder="Add a new tag" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={tagEditor.displayName} />
+              <TextInput onChange={onDnInputChange} onSubmitEditing={onDnInputKeyPress} style={[tailwind('flex-1 rounded-full border border-gray-400 bg-white px-3.5 text-sm font-normal text-gray-700 blk:border-gray-500 blk:bg-gray-800 blk:text-gray-200'), inputStyle]} placeholder="Add a new tag" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={tagEditor.displayName} />
               <TouchableOpacity onPress={onAddBtnClick} style={[tailwind('ml-2 flex-shrink-0 flex-grow-0 flex-row items-center rounded-full border border-gray-400 bg-white pl-1.5 pr-2.5 blk:border-gray-500 blk:bg-gray-800'), { paddingVertical: 5 }]}>
                 <Svg style={tailwind('font-normal text-gray-500 blk:text-gray-400')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
                   <Path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
