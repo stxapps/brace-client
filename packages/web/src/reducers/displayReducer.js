@@ -10,12 +10,12 @@ import {
   EXTRACT_CONTENTS_ROLLBACK, UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
   ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
   UPDATE_SELECTING_LIST_NAME, DELETE_LIST_NAMES, UPDATE_DELETE_ACTION,
-  UPDATE_DISCARD_ACTION, TRY_UPDATE_SETTINGS, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
+  UPDATE_DISCARD_ACTION, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
   UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, MERGE_SETTINGS_COMMIT,
   UPDATE_SETTINGS_VIEW_ID, UPDATE_LIST_NAMES_MODE, UPDATE_PAYWALL_FEATURE,
   UPDATE_LOCK_ACTION, ADD_LOCK_LIST, LOCK_LIST, UPDATE_LOCKS_FOR_ACTIVE_APP,
   UPDATE_LOCKS_FOR_INACTIVE_APP, UPDATE_TAG_DATA_S_STEP_COMMIT,
-  UPDATE_TAG_DATA_T_STEP_COMMIT, UPDATE_SELECTING_TAG_NAME,
+  UPDATE_TAG_DATA_T_STEP_COMMIT, UPDATE_SELECTING_TAG_NAME, DELETE_TAG_NAMES,
   UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
   UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
@@ -28,7 +28,7 @@ import {
   DIED_UPDATING, SETTINGS_VIEW_ACCOUNT, DIED_ADDING, DIED_MOVING,
 } from '../types/const';
 import {
-  doContainListName, getStatusCounts, isObject, isString, isNumber,
+  doContainListName, doContainTagName, getStatusCounts, isObject, isString, isNumber,
 } from '../utils';
 import vars from '../vars';
 
@@ -278,25 +278,30 @@ const displayReducer = (state = initialState, action) => {
       ...state,
       isAccessErrorPopupShown: false,
       statuses: [...state.statuses, FETCH_COMMIT],
+      didFetch: true,
     };
 
-    const { listNames, doFetchStgsAndInfo, settings } = action.payload;
+    const { listNames, tagNames, doFetchStgsAndInfo, settings } = action.payload;
     if (!doFetchStgsAndInfo) return newState;
 
-    newState.didFetch = true;
     newState.didFetchSettings = true;
 
-    // Make sure listName is in listNameMap, if not, set to My List.
-    if (listNames.includes(newState.listName)) return newState;
+    let doCtLn = false;
+    if (listNames.includes(newState.listName)) doCtLn = true;
     if (settings) {
-      if (!doContainListName(newState.listName, settings.listNameMap)) {
-        newState.listName = MY_LIST;
-      }
+      if (doContainListName(newState.listName, settings.listNameMap)) doCtLn = true;
     } else {
-      if (![MY_LIST, TRASH, ARCHIVE].includes(newState.listName)) {
-        newState.listName = MY_LIST;
-      }
+      if ([MY_LIST, TRASH, ARCHIVE].includes(newState.listName)) doCtLn = true;
     }
+    if (!doCtLn) newState.listName = MY_LIST;
+
+    let doCtQt = false;
+    const tagName = newState.queryString.trim(); // Only tag name for now
+    if (tagNames.includes(tagName)) doCtQt = true;
+    if (settings) {
+      if (doContainTagName(tagName, settings.tagNameMap)) doCtQt = true;
+    }
+    if (!doCtQt) newState.queryString = '';
 
     return newState;
   }
@@ -529,16 +534,6 @@ const displayReducer = (state = initialState, action) => {
     return { ...state, discardAction: action.payload };
   }
 
-  if (action.type === TRY_UPDATE_SETTINGS) {
-    const { settings } = action.payload;
-    const doContain = doContainListName(state.listName, settings.listNameMap);
-
-    return {
-      ...state,
-      listName: doContain ? state.listName : MY_LIST,
-    };
-  }
-
   if (action.type === UPDATE_SETTINGS) {
     return {
       ...state,
@@ -574,9 +569,16 @@ const displayReducer = (state = initialState, action) => {
 
   if (action.type === CANCEL_DIED_SETTINGS || action.type === MERGE_SETTINGS_COMMIT) {
     const { settings } = action.payload;
+
     const doFetch = action.type === CANCEL_DIED_SETTINGS ?
       action.payload.doFetch : action.meta.doFetch;
-    const doContain = doContainListName(state.listName, settings.listNameMap);
+
+    let doCtLn = false;
+    if (doContainListName(state.listName, settings.listNameMap)) doCtLn = true;
+
+    let doCtQt = false;
+    const tagName = state.queryString.trim(); // Only tag name for now
+    if (doContainTagName(tagName, settings.tagNameMap)) doCtQt = true;
 
     let isActive = false;
     for (const statusCount of getStatusCounts(state.statuses)) {
@@ -585,7 +587,8 @@ const displayReducer = (state = initialState, action) => {
 
     const newState = {
       ...state,
-      listName: doContain ? state.listName : MY_LIST,
+      listName: doCtLn ? state.listName : MY_LIST,
+      queryString: doCtQt ? state.queryString : '',
       statuses: isActive ? [...state.statuses, null] : [],
       settingsStatus: null,
     };
@@ -696,6 +699,13 @@ const displayReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_SELECTING_TAG_NAME) {
     return { ...state, selectingTagName: action.payload };
+  }
+
+  if (action.type === DELETE_TAG_NAMES) {
+    const { tagNames } = action.payload;
+    // Only tag name for now
+    if (!tagNames.includes(state.queryString)) return state;
+    return { ...state, queryString: '' };
   }
 
   if (action.type === UPDATE_IMPORT_ALL_DATA_PROGRESS) {
