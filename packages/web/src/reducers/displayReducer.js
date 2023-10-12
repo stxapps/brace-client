@@ -628,6 +628,7 @@ const displayReducer = (state = initialState, action) => {
     }
     if (
       (!queryString && isLong && doNoChangeMyList && !doForceLock) ||
+      (!queryString && isLong && doNoChangeMyList && doForceLock) ||
       (queryString && isLong && !doNoChangeMyList && doForceLock) ||
       (queryString && isLong && doNoChangeMyList && !doForceLock) ||
       (queryString && isLong && doNoChangeMyList && doForceLock)
