@@ -6,7 +6,7 @@ import {
 } from '../types/actionTypes';
 import {
   SHOWING_STATUSES, PINNED, WHT_MODE, BLK_MODE, SYSTEM_MODE, CUSTOM_MODE, MY_LIST,
-  TAGGED,
+  TAGGED, LOCKED,
 } from '../types/const';
 import {
   isStringIn, isObject, isString, isEqual, getListNameObj, getStatusCounts, getMainId,
@@ -461,7 +461,10 @@ export const getCurrentLockListStatus = createSelector(
   state => state.display.listName,
   state => state.display.queryString,
   (doForceLock, lockedLists, listName, queryString) => {
-    if (queryString) return null;
+    if (queryString) {
+      if (doForceLock) return LOCKED;
+      return null;
+    }
     return getLockListStatus(doForceLock, lockedLists, listName);
   },
 );
