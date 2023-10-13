@@ -143,6 +143,10 @@ const fetchStgsAndInfo = async (_settingsFPaths, infoFPath) => {
       }
     }
   }
+  if (isObject(settings)) {
+    if ('purchases' in settings) settings.purchases = null;
+    if ('checkPurchasesDT' in settings) settings.checkPurchasesDT = null;
+  }
 
   return { settings, conflictedSettings, info };
 };

@@ -1026,7 +1026,9 @@ export const deriveSettingsState = (listNames, tagNames, settings, initialState)
 };
 
 export const deriveInfoState = (info, initialState) => {
-  return info ? { ...initialState, ...info } : { ...initialState };
+  const state = info ? { ...initialState, ...info } : { ...initialState };
+  state.purchases = getNormalizedPurchases(state.purchases);
+  return state;
 };
 
 export const getValidProduct = (products) => {
@@ -1060,6 +1062,19 @@ export const getValidPurchase = (purchases) => {
     return purchase;
   }
   return null;
+};
+
+export const getNormalizedPurchases = (purchases) => {
+  if (!Array.isArray(purchases)) return null;
+
+  const purchase = getLatestPurchase(purchases);
+  if (!isObject(purchase)) return [];
+
+  // Purchase token from Apple is too big for Redux persist.
+  const nPurchase = { ...purchase };
+  if (isString(nPurchase.token)) nPurchase.token = nPurchase.token.slice(0, 128);
+
+  return [nPurchase];
 };
 
 export const doEnableExtraFeatures = (purchases) => {

@@ -2180,11 +2180,13 @@ const getPurchases = (
 
     if (validPurchases.length > 0) {
       statusResult.status = VALID;
-      for (const purchase of statusResult.purchases) {
-        const found = validPurchases.find(p => {
-          return p.orderId === purchase.orderId;
-        });
-        if (!found) validPurchases.push(purchase);
+      if (Array.isArray(statusResult.purchases)) {
+        for (const purchase of statusResult.purchases) {
+          const found = validPurchases.find(p => {
+            return p.orderId === purchase.orderId;
+          });
+          if (!found) validPurchases.push(purchase);
+        }
       }
       statusResult.purchases = validPurchases;
     }

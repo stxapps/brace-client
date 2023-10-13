@@ -8,7 +8,7 @@ import {
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import { VALID } from '../types/const';
-import { deriveInfoState } from '../utils';
+import { deriveInfoState, getNormalizedPurchases } from '../utils';
 import { initialInfoState as initialState } from '../types/initialStates';
 import { didChange } from '../vars';
 
@@ -64,9 +64,11 @@ const infoReducer = (state = initialState, action) => {
 
     const newState = { ...state, checkPurchasesDT: Date.now() };
 
+    const purchases = [purchase];
     if (Array.isArray(newState.purchases)) {
-      newState.purchases = [...newState.purchases, { ...purchase }];
-    } else newState.purchases = [{ ...purchase }];
+      for (const pc of newState.purchases) purchases.push(pc);
+    }
+    newState.purchases = getNormalizedPurchases(purchases);
 
     didChange.purchases = true;
 
@@ -89,7 +91,7 @@ const infoReducer = (state = initialState, action) => {
     const newState = { ...state, checkPurchasesDT: Date.now() };
 
     if (purchases.length === 0) newState.purchases = null;
-    else newState.purchases = purchases.map(p => ({ ...p }));
+    else newState.purchases = getNormalizedPurchases(purchases);
 
     return loop(
       newState, Cmd.run(tryUpdateInfo(), { args: [Cmd.dispatch, Cmd.getState] })
