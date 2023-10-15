@@ -18,7 +18,7 @@ import {
   batchGetFileWithRetry, batchPutFileWithRetry, batchDeleteFileWithRetry,
   deriveUnknownErrorLink, getLinkFPaths, getPinFPaths, getNLinkFPaths, isFetchedLinkId,
   getInUseTagNames, getTagFPaths, getTags, getMainId, createTagFPath, extractTagFPath,
-  getNLinkFPathsByQt,
+  getNLinkFPathsByQt, getLinkMainIds,
 } from '../utils';
 import vars from '../vars';
 
@@ -146,6 +146,10 @@ const fetchStgsAndInfo = async (_settingsFPaths, infoFPath) => {
   if (isObject(settings)) {
     if ('purchases' in settings) settings.purchases = null;
     if ('checkPurchasesDT' in settings) settings.checkPurchasesDT = null;
+  }
+  for (const cSettings of conflictedSettings) {
+    if ('purchases' in cSettings) cSettings.purchases = null;
+    if ('checkPurchasesDT' in cSettings) cSettings.checkPurchasesDT = null;
   }
 
   return { settings, conflictedSettings, info };
@@ -460,11 +464,17 @@ const canDeleteListNames = async (listNames) => {
 };
 
 const canDeleteTagNames = async (tagNames) => {
-  const { tagFPaths } = await listFPaths();
+  const { linkFPaths, tagFPaths } = await listFPaths();
+
+  const linkMainIds = getLinkMainIds(linkFPaths);
 
   const inUseTagNames = [];
   for (const fpath of tagFPaths) {
-    const { tagName } = extractTagFPath(fpath);
+    const { tagName, id } = extractTagFPath(fpath);
+
+    const tagMainId = getMainId(id);
+    if (!isString(tagMainId) || !linkMainIds.includes(tagMainId)) continue;
+
     if (!inUseTagNames.includes(tagName)) inUseTagNames.push(tagName);
   }
 
