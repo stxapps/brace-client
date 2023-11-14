@@ -16,7 +16,7 @@ import {
   },
   [link-id-2]: {
     status,
-    values: [{ status, tagName, rank, addedDT, id }, ...],
+    values: [{ tagName, rank, addedDT, id }, ...],
     newTagNameObjs: [],
   }
   ...
@@ -74,7 +74,9 @@ const pendingTagsReducer = (state = initialState, action) => {
     const newState = { ...state };
     delete newState[id];
 
-    return loop(newState, Cmd.run(cleanUpTags(), { args: [Cmd.dispatch, Cmd.getState] }));
+    return loop(
+      newState, Cmd.run(cleanUpTags(), { args: [Cmd.dispatch, Cmd.getState] })
+    );
   }
 
   if (action.type === UPDATE_TAG_DATA_T_STEP_ROLLBACK) {

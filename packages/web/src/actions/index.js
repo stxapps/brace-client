@@ -434,11 +434,11 @@ export const updatePopup = (id, isShown, anchorPosition = null) => {
   };
 };
 
-export const changeListName = (newListName) => async (dispatch, getState) => {
+export const changeListName = (listName) => async (dispatch, getState) => {
   dispatch(updateFetched(null, false, true));
   dispatch(updateFetchedMore(null, true));
 
-  dispatch({ type: UPDATE_LIST_NAME, payload: newListName });
+  dispatch({ type: UPDATE_LIST_NAME, payload: listName });
 };
 
 export const updateQueryString = (queryString) => async (dispatch, getState) => {
@@ -813,11 +813,6 @@ export const updateFetched = (
   payload, doChangeListCount = false, noDisplay = false
 ) => async (dispatch, getState) => {
 
-  const links = getState().links;
-  const pendingPins = getState().pendingPins;
-  const doDescendingOrder = getState().settings.doDescendingOrder;
-  const pinFPaths = getPinFPaths(getState());
-
   if (!payload) {
     const listName = getState().display.listName;
     const queryString = getState().display.queryString;
@@ -827,6 +822,11 @@ export const updateFetched = (
     if (fetched) ({ payload } = fetched);
   }
   if (!payload) return;
+
+  const links = getState().links;
+  const pendingPins = getState().pendingPins;
+  const doDescendingOrder = getState().settings.doDescendingOrder;
+  const pinFPaths = getPinFPaths(getState());
 
   const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
   const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
@@ -929,7 +929,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
     if (!isObject(link)) continue;
     // In fetchedLinkIds but might not in links
     //   e.g. delete by UPDATE_FETCHED or UPDATE_FETCHED_MORE.
-    // Though, here should be fine as fsgLinks are from links.
+    // Though, here should be fine as link is from links.
     if (vars.fetch.fetchedLinkIds.includes(link.id)) safLinkIds.push(link.id);
   }
 
@@ -1219,12 +1219,6 @@ export const updateFetchedMore = (
   payload, noDisplay = false
 ) => async (dispatch, getState) => {
 
-  const links = getState().links;
-  const showingLinkIds = getState().display.showingLinkIds;
-  const pendingPins = getState().pendingPins;
-  const doDescendingOrder = getState().settings.doDescendingOrder;
-  const pinFPaths = getPinFPaths(getState());
-
   if (!payload) {
     const listName = getState().display.listName;
     const queryString = getState().display.queryString;
@@ -1234,6 +1228,12 @@ export const updateFetchedMore = (
     if (fetchedMore) ({ payload } = fetchedMore);
   }
   if (!payload) return;
+
+  const links = getState().links;
+  const showingLinkIds = getState().display.showingLinkIds;
+  const pendingPins = getState().pendingPins;
+  const doDescendingOrder = getState().settings.doDescendingOrder;
+  const pinFPaths = getPinFPaths(getState());
 
   if (!Array.isArray(showingLinkIds)) {
     // Need to dispatch UPDATE_FETCHED_MORE to make sure clear fetchedMoreReducer.
@@ -1800,6 +1800,74 @@ export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
       },
     },
   });
+};
+
+const _cleanUpStaticFiles = async (getState) => {
+  const linkFPaths = getLinkFPaths(getState());
+  const mainIds = getLinkMainIds(linkFPaths);
+
+  // Delete unused static files in server
+  let staticFPaths = getStaticFPaths(getState());
+
+  let unusedIds = [], unusedFPaths = [];
+  for (const fpath of staticFPaths) {
+    const { id } = extractStaticFPath(fpath);
+    if (!mainIds.includes(getMainId(id))) {
+      unusedIds.push(id);
+      unusedFPaths.push(fpath);
+    }
+  }
+  unusedFPaths = unusedFPaths.slice(0, N_LINKS);
+
+  if (unusedFPaths.length > 0) {
+    await serverApi.deleteFiles(unusedFPaths);
+    await fileApi.deleteFiles(unusedFPaths);
+  }
+
+  // Delete unused static files in local
+  staticFPaths = await fileApi.getStaticFPaths();
+
+  unusedFPaths = [];
+  for (const fpath of staticFPaths) {
+    const { id } = extractStaticFPath(fpath);
+    if (!mainIds.includes(getMainId(id))) {
+      unusedIds.push(id);
+      unusedFPaths.push(fpath);
+    }
+  }
+  unusedFPaths = unusedFPaths.slice(0, N_LINKS);
+
+  if (unusedFPaths.length > 0) {
+    await fileApi.deleteFiles(unusedFPaths);
+  }
+
+  // If too many static files locally, delete some of them.
+  // If 1 image is around 500 KB, with 500 MB limitation, we can store 1000 images,
+  //   so might not need to do this.
+
+  return unusedIds;
+};
+
+export const cleanUpStaticFiles = () => async (dispatch, getState) => {
+  const { cleanUpStaticFilesDT } = getState().localSettings;
+  if (!cleanUpStaticFilesDT) return;
+
+  const now = Date.now();
+  let p = 1.0 / (N_DAYS * 24 * 60 * 60 * 1000) * Math.abs(now - cleanUpStaticFilesDT);
+  p = Math.max(0.01, Math.min(p, 0.99));
+  const doCheck = p > Math.random();
+
+  if (!doCheck) return;
+
+  // Don't need offline, if no network or get killed, can do it later.
+  dispatch({ type: CLEAN_UP_STATIC_FILES });
+  try {
+    const ids = await _cleanUpStaticFiles(getState);
+    dispatch({ type: CLEAN_UP_STATIC_FILES_COMMIT, payload: { ids } });
+  } catch (error) {
+    console.log('Error when clean up static files: ', error);
+    dispatch({ type: CLEAN_UP_STATIC_FILES_ROLLBACK });
+  }
 };
 
 export const updateSettingsPopup = (isShown, doCheckEditing = false) => async (
@@ -2852,74 +2920,6 @@ export const updateCustomDataDeleteStep = (
   } catch (error) {
     console.log('updateCustomData error: ', error);
     // error in this step should be fine
-  }
-};
-
-const _cleanUpStaticFiles = async (getState) => {
-  const linkFPaths = getLinkFPaths(getState());
-  const mainIds = getLinkMainIds(linkFPaths);
-
-  // Delete unused static files in server
-  let staticFPaths = getStaticFPaths(getState());
-
-  let unusedIds = [], unusedFPaths = [];
-  for (const fpath of staticFPaths) {
-    const { id } = extractStaticFPath(fpath);
-    if (!mainIds.includes(getMainId(id))) {
-      unusedIds.push(id);
-      unusedFPaths.push(fpath);
-    }
-  }
-  unusedFPaths = unusedFPaths.slice(0, N_LINKS);
-
-  if (unusedFPaths.length > 0) {
-    await serverApi.deleteFiles(unusedFPaths);
-    await fileApi.deleteFiles(unusedFPaths);
-  }
-
-  // Delete unused static files in local
-  staticFPaths = await fileApi.getStaticFPaths();
-
-  unusedFPaths = [];
-  for (const fpath of staticFPaths) {
-    const { id } = extractStaticFPath(fpath);
-    if (!mainIds.includes(getMainId(id))) {
-      unusedIds.push(id);
-      unusedFPaths.push(fpath);
-    }
-  }
-  unusedFPaths = unusedFPaths.slice(0, N_LINKS);
-
-  if (unusedFPaths.length > 0) {
-    await fileApi.deleteFiles(unusedFPaths);
-  }
-
-  // If too many static files locally, delete some of them.
-  // If 1 image is around 500 KB, with 500 MB limitation, we can store 1000 images,
-  //   so might not need to do this.
-
-  return unusedIds;
-};
-
-export const cleanUpStaticFiles = () => async (dispatch, getState) => {
-  const { cleanUpStaticFilesDT } = getState().localSettings;
-  if (!cleanUpStaticFilesDT) return;
-
-  const now = Date.now();
-  let p = 1.0 / (N_DAYS * 24 * 60 * 60 * 1000) * Math.abs(now - cleanUpStaticFilesDT);
-  p = Math.max(0.01, Math.min(p, 0.99));
-  const doCheck = p > Math.random();
-
-  if (!doCheck) return;
-
-  // Don't need offline, if no network or get killed, can do it later.
-  dispatch({ type: CLEAN_UP_STATIC_FILES });
-  try {
-    const ids = await _cleanUpStaticFiles(getState);
-    dispatch({ type: CLEAN_UP_STATIC_FILES_COMMIT, payload: { ids } });
-  } catch (error) {
-    console.log('Error when clean up static files: ', error);
-    dispatch({ type: CLEAN_UP_STATIC_FILES_ROLLBACK });
   }
 };
 

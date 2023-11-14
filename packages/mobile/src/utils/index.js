@@ -1428,7 +1428,7 @@ const getDataOldestRootId = (rootIds) => {
   return rootId;
 };
 
-const _listDataIds = (dataFPaths, extractDataFPath, workingSubName) => {
+const _listMetas = (dataFPaths, extractDataFPath, workingSubName) => {
   const ids = [];
   const toFPaths = {};
   const toParents = {};
@@ -1437,21 +1437,28 @@ const _listDataIds = (dataFPaths, extractDataFPath, workingSubName) => {
     const { fname, subName } = extractDataFPath(fpath);
     const { id, parentIds } = extractDataFName(fname);
 
-    if (!toFPaths[id]) toFPaths[id] = [];
-    toFPaths[id].push(fpath);
+    if (!Array.isArray(toFPaths[id])) toFPaths[id] = [];
+    if (!toFPaths[id].includes(fpath)) toFPaths[id].push(fpath);
 
     if (subName !== workingSubName) continue;
-    if (ids.includes(id)) continue;
-    ids.push(id);
 
-    if (parentIds) {
-      toParents[id] = parentIds;
+    if (!ids.includes(id)) ids.push(id);
+
+    if (Array.isArray(parentIds)) {
+      if (Array.isArray(toParents[id])) {
+        for (const pid of parentIds) {
+          if (!toParents[id].includes(pid)) toParents[id].push(pid);
+        }
+      } else toParents[id] = parentIds;
+
       for (const pid of parentIds) {
-        if (!toChildren[pid]) toChildren[pid] = [];
-        toChildren[pid].push(id);
+        if (!Array.isArray(toChildren[pid])) toChildren[pid] = [];
+        if (!toChildren[pid].includes(pid)) toChildren[pid].push(id);
       }
     } else {
-      toParents[id] = null;
+      if (Array.isArray(toParents[id])) {
+        if (toParents[id].length === 0) toParents[id] = null;
+      } else toParents[id] = null;
     }
   }
 
@@ -1478,8 +1485,8 @@ const _listDataIds = (dataFPaths, extractDataFPath, workingSubName) => {
     toLeafIds[rootId].push(id);
   }
 
-  const dataIds = [];
-  const conflictedIds = [];
+  const metas = [];
+  const conflictedMetas = [];
   for (const id of leafIds) {
     const parentIds = toParents[id];
 
@@ -1494,17 +1501,20 @@ const _listDataIds = (dataFPaths, extractDataFPath, workingSubName) => {
     const fpaths = toFPaths[id];
     const { listName } = extractDataFPath(fpaths[0]);
 
-    const dataId = {
+    const meta = {
       parentIds, id, addedDT, updatedDT, isConflicted, conflictWith, fpaths, listName,
     };
 
-    if (isConflicted) conflictedIds.push(dataId);
-    else dataIds.push(dataId);
+    if (isConflicted) conflictedMetas.push(meta);
+    else metas.push(meta);
   }
 
   const conflictWiths = Object.values(toLeafIds).filter(tIds => tIds.length > 1);
 
-  return { dataIds, conflictedIds, conflictWiths, toRootIds, toParents };
+  return {
+    metas, conflictedMetas, conflictWiths, toRootIds, toParents, toFPaths,
+    toLeafIds, allIds: ids,
+  };
 };
 
 export const getPinFPaths = (state) => {
@@ -1618,12 +1628,20 @@ export const sortLinks = (links, doDescendingOrder) => {
   return sortedLinks;
 };
 
-export const _listSettingsIds = (settingsFPaths) => {
+const _listSettingsMetas = (settingsFPaths) => {
   const {
-    dataIds, conflictedIds, conflictWiths, toRootIds, toParents,
-  } = _listDataIds(settingsFPaths, extractSettingsFPath, undefined);
-  return { settingsIds: dataIds, conflictedIds, conflictWiths, toRootIds, toParents };
+    metas, conflictedMetas, conflictWiths, toRootIds, toParents, toFPaths, allIds,
+  } = _listMetas(settingsFPaths, extractSettingsFPath, undefined);
+  return {
+    settingsMetas: metas, conflictedMetas, conflictWiths, toRootIds, toParents,
+    toFPaths, allIds,
+  };
 };
+
+export const listSettingsMetas = createSelector(
+  settingsFPaths => settingsFPaths,
+  _listSettingsMetas,
+);
 
 export const getLastSettingsFPaths = (settingsFPaths) => {
   const _v1FPaths = [], _v2FPaths = [];
@@ -1639,10 +1657,10 @@ export const getLastSettingsFPaths = (settingsFPaths) => {
   const v1FPath = _v1FPaths.length > 0 ? _v1FPaths[0] : null;
 
   let v2FPaths = [];
-  const { settingsIds, conflictedIds } = _listSettingsIds(_v2FPaths);
-  for (const settingsId of [...settingsIds, ...conflictedIds]) {
-    for (const fpath of settingsId.fpaths) {
-      v2FPaths.push({ fpath, id: settingsId.id, dt: settingsId.updatedDT });
+  const { settingsMetas, conflictedMetas } = listSettingsMetas(_v2FPaths);
+  for (const meta of [...settingsMetas, ...conflictedMetas]) {
+    for (const fpath of meta.fpaths) {
+      v2FPaths.push({ fpath, id: meta.id, dt: meta.updatedDT });
     }
   }
   v2FPaths = v2FPaths.sort((a, b) => b.dt - a.dt);
@@ -2396,27 +2414,17 @@ export const copyTagNameObjs = (tagNameObjs, excludedTagNames = []) => {
 };
 
 export const getInUseTagNames = (linkFPaths, tagFPaths) => {
-  const mainIdToTagNames = {};
+
+  const linkMainIds = getLinkMainIds(linkFPaths);
+
+  const inUseTagNames = [];
   for (const fpath of tagFPaths) {
     const { tagName, id } = extractTagFPath(fpath);
 
-    const mainId = getMainId(id);
-    if (!Array.isArray(mainIdToTagNames[mainId])) mainIdToTagNames[mainId] = [];
-    mainIdToTagNames[mainId].push(tagName);
-  }
+    const tagMainId = getMainId(id);
+    if (!isString(tagMainId) || !linkMainIds.includes(tagMainId)) continue;
 
-  const inUseTagNames = [];
-  for (const listName in linkFPaths) {
-    for (const fpath of linkFPaths[listName]) {
-      const { id } = extractLinkFPath(fpath);
-
-      const mainId = getMainId(id);
-      if (!Array.isArray(mainIdToTagNames[mainId])) continue;
-
-      for (const tagName of mainIdToTagNames[mainId]) {
-        if (!inUseTagNames.includes(tagName)) inUseTagNames.push(tagName);
-      }
-    }
+    if (!inUseTagNames.includes(tagName)) inUseTagNames.push(tagName);
   }
 
   return inUseTagNames;

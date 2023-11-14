@@ -300,7 +300,7 @@ const _TagNameEditor = (props) => {
           </Svg>
         </TouchableOpacity>}
         <View style={tailwind('flex-shrink flex-grow')}>
-          <TextInput ref={input} onFocus={onInputFocus} onBlur={onInputBlur} onChange={onInputChange} onSubmitEditing={onInputKeyPress} style={tailwind('w-full border-0 bg-white px-0 py-1 text-base font-normal leading-5 text-gray-600 blk:bg-gray-900 blk:text-gray-300')} placeholder="Create a new tag" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={state.value} editable={!isBusy} />
+          <TextInput ref={input} onFocus={onInputFocus} onBlur={onInputBlur} onChange={onInputChange} onSubmitEditing={onInputKeyPress} style={tailwind('w-full border-0 bg-transparent px-0 py-1 text-base font-normal leading-5 text-gray-600 blk:text-gray-300')} placeholder="Create a new tag" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={state.value} editable={!isBusy} />
           <Text style={[tailwind('absolute left-0 right-0 text-sm font-medium leading-5 text-red-600 blk:text-red-500'), { bottom: Platform.OS === 'ios' ? -12 : -8 }]} numberOfLines={1} ellipsizeMode="tail">{state.msg}</Text>
         </View>
         {state.mode === MODE_EDIT && <TouchableOpacity onPressIn={onOkBtnPress} onPress={onOkBtnClick} style={tailwind('h-10 w-10 flex-shrink-0 flex-grow-0 items-center justify-center')}>

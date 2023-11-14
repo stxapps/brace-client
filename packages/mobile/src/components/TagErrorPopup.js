@@ -42,7 +42,7 @@ const TagErrorPopup = () => {
 
   useEffect(() => {
     didClick.current = false;
-  }, [haveDiedTags]);
+  }, [pendingTags]);
 
   if (!haveDiedTags) return null;
 

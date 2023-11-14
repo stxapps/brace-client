@@ -31,7 +31,7 @@ const fetchedMoreReducer = (state = initialState, action) => {
     return { ...state, [payload.lnOrQt]: { payload } };
   }
 
-  if (action.type === UPDATE_FETCHED_MORE || action.type === REFRESH_FETCHED) {
+  if (action.type === UPDATE_FETCHED_MORE) {
     const { lnOrQt } = action.payload;
 
     const newState = {};
@@ -40,6 +40,10 @@ const fetchedMoreReducer = (state = initialState, action) => {
     }
 
     return newState;
+  }
+
+  if (action.type === REFRESH_FETCHED) {
+    return { ...initialState };
   }
 
   // Died links are always shown, so need to apply to cached links here too.

@@ -24,7 +24,7 @@ const fetchedReducer = (state = initialState, action) => {
     return { ...state, [payload.lnOrQt]: { payload } };
   }
 
-  if (action.type === UPDATE_FETCHED || action.type === REFRESH_FETCHED) {
+  if (action.type === UPDATE_FETCHED) {
     const { lnOrQt } = action.payload;
 
     const newState = {};
@@ -33,6 +33,10 @@ const fetchedReducer = (state = initialState, action) => {
     }
 
     return newState;
+  }
+
+  if (action.type === REFRESH_FETCHED) {
+    return { ...initialState };
   }
 
   if (action.type === ADD_LINKS_COMMIT) {

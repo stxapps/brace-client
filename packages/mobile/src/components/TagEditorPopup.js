@@ -224,10 +224,10 @@ const TagEditorPopup = () => {
             {tagEditor.values.length > 0 && <View style={[tailwind('flex-row flex-wrap items-center justify-start pt-5'), { minHeight: 64 }]}>
               {tagEditor.values.map((value, i) => {
                 return (
-                  <View key={`TagEditorValue-${value.tagName}`} style={tailwind(`mb-2 flex-row items-center rounded-full bg-gray-100 pl-3 blk:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
-                    <Text style={tailwind('text-sm font-normal text-gray-600 blk:text-gray-300')}>{value.displayName}</Text>
-                    <TouchableOpacity onPress={() => onValueDeselect(value)} style={tailwind('ml-1 items-center justify-center py-1.5 pr-1.5')}>
-                      <Svg style={tailwind('font-normal text-gray-400 blk:text-gray-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+                  <View key={`TagEditorValue-${value.tagName}`} style={tailwind(`mb-2 max-w-full flex-row items-center justify-start rounded-full bg-gray-100 pl-3 blk:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
+                    <Text style={tailwind('flex-shrink flex-grow-0 text-sm font-normal text-gray-600 blk:text-gray-300')} numberOfLines={1} ellipsizeMode="tail">{value.displayName}</Text>
+                    <TouchableOpacity onPress={() => onValueDeselect(value)} style={tailwind('ml-1 flex-shrink-0 flex-grow-0 items-center justify-center py-1.5 pr-1.5')}>
+                      <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-gray-400 blk:text-gray-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
                         <Path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM8.70711 7.29289C8.31658 6.90237 7.68342 6.90237 7.29289 7.29289C6.90237 7.68342 6.90237 8.31658 7.29289 8.70711L8.58579 10L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L10 11.4142L11.2929 12.7071C11.6834 13.0976 12.3166 13.0976 12.7071 12.7071C13.0976 12.3166 13.0976 11.6834 12.7071 11.2929L11.4142 10L12.7071 8.70711C13.0976 8.31658 13.0976 7.68342 12.7071 7.29289C12.3166 6.90237 11.6834 6.90237 11.2929 7.29289L10 8.58579L8.70711 7.29289Z" />
                       </Svg>
                     </TouchableOpacity>
@@ -249,8 +249,8 @@ const TagEditorPopup = () => {
               <Text style={tailwind('mb-2 text-sm font-normal text-gray-500 blk:text-gray-400')}>Hint:</Text>
               {tagEditor.hints.map(hint => {
                 return (
-                  <TouchableOpacity key={`TagEditorHint-${hint.tagName}`} onPress={() => onHintSelect(hint)} style={tailwind('ml-2 mb-2 rounded-full bg-gray-100 px-3 py-1.5 blk:bg-gray-700')} disabled={hint.isBlur}>
-                    <Text style={tailwind(`text-sm font-normal ${hint.isBlur ? 'text-gray-400 blk:text-gray-500' : 'text-gray-600 blk:text-gray-300'}`)}>{hint.displayName}</Text>
+                  <TouchableOpacity key={`TagEditorHint-${hint.tagName}`} onPress={() => onHintSelect(hint)} style={tailwind('ml-2 mb-2 max-w-full rounded-full bg-gray-100 px-3 py-1.5 blk:bg-gray-700')} disabled={hint.isBlur}>
+                    <Text style={tailwind(`text-sm font-normal ${hint.isBlur ? 'text-gray-400 blk:text-gray-500' : 'text-gray-600 blk:text-gray-300'}`)} numberOfLines={1} ellipsizeMode="tail">{hint.displayName}</Text>
                   </TouchableOpacity>
                 );
               })}

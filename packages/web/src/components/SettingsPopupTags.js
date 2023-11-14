@@ -274,8 +274,8 @@ const _TagNameEditor = (props) => {
           </svg>
         </button>}
         <div className={tailwind('relative flex-shrink flex-grow')}>
-          <input ref={input} onFocus={onInputFocus} onBlur={onInputBlur} onChange={onInputChange} onKeyDown={onInputKeyPress} className={tailwind('w-full border-0 bg-white px-0 py-2 text-base text-gray-600 placeholder:text-gray-500 focus:outline-none focus:ring-0 blk:bg-gray-900 blk:text-gray-300 blk:placeholder:text-gray-400')} type="text" placeholder="Create a new tag" value={state.value} disabled={isBusy} />
-          <p style={{ bottom: '-0.5rem' }} className={tailwind('absolute left-0 right-0 z-10 truncate text-sm font-medium leading-5 text-red-600 blk:text-red-500')}>{state.msg}</p>
+          <input ref={input} onFocus={onInputFocus} onBlur={onInputBlur} onChange={onInputChange} onKeyDown={onInputKeyPress} className={tailwind('w-full border-0 bg-transparent px-0 py-2 text-base text-gray-600 placeholder:text-gray-500 focus:outline-none focus:ring-0 blk:text-gray-300 blk:placeholder:text-gray-400')} type="text" placeholder="Create a new tag" value={state.value} disabled={isBusy} />
+          <p style={{ bottom: '-0.5rem' }} className={tailwind('absolute left-0 right-0 truncate text-sm font-medium leading-5 text-red-600 blk:text-red-500')}>{state.msg}</p>
         </div>
         {state.mode === MODE_EDIT && <button onTouchStart={onOkBtnPress} onMouseDown={onOkBtnPress} onClick={onOkBtnClick} className={tailwind('group flex h-10 w-10 flex-shrink-0 flex-grow-0 items-center justify-center focus:outline-none')}>
           <svg className={tailwind('w-4 rounded-sm text-gray-500 group-hover:text-gray-600 group-focus:ring group-focus:ring-offset-4 blk:text-gray-400 blk:group-hover:text-gray-200 blk:group-focus:ring-offset-gray-900')} viewBox="0 0 14 10" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

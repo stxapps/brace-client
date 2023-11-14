@@ -413,7 +413,7 @@ const linksReducer = (state = initialState, action) => {
         }
       } else if ([DIED_REMOVING, DIED_DELETING].includes(status)) {
         newState[listName][id] = { ...state[listName][id], status: ADDED };
-      } else if ([DIED_UPDATING]) {
+      } else if ([DIED_UPDATING].includes(status)) {
         newState[listName][id] = { ...state[listName][id].fromLink, status: ADDED };
       } else {
         console.log(`Invalid status: ${status} of link id: ${id}`);

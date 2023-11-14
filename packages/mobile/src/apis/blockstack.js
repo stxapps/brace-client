@@ -18,7 +18,7 @@ import {
   batchGetFileWithRetry, batchPutFileWithRetry, batchDeleteFileWithRetry,
   deriveUnknownErrorLink, getLinkFPaths, getPinFPaths, getNLinkFPaths, isFetchedLinkId,
   getInUseTagNames, getTagFPaths, getTags, getMainId, createTagFPath, extractTagFPath,
-  getNLinkFPathsByQt, getLinkMainIds,
+  getNLinkFPathsByQt,
 } from '../utils';
 import vars from '../vars';
 
@@ -466,17 +466,7 @@ const canDeleteListNames = async (listNames) => {
 const canDeleteTagNames = async (tagNames) => {
   const { linkFPaths, tagFPaths } = await listFPaths();
 
-  const linkMainIds = getLinkMainIds(linkFPaths);
-
-  const inUseTagNames = [];
-  for (const fpath of tagFPaths) {
-    const { tagName, id } = extractTagFPath(fpath);
-
-    const tagMainId = getMainId(id);
-    if (!isString(tagMainId) || !linkMainIds.includes(tagMainId)) continue;
-
-    if (!inUseTagNames.includes(tagName)) inUseTagNames.push(tagName);
-  }
+  const inUseTagNames = getInUseTagNames(linkFPaths, tagFPaths);
 
   const canDeletes = [];
   for (const tagName of tagNames) {
