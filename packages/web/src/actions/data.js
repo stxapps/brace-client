@@ -604,11 +604,11 @@ export const exportAllData = () => async (dispatch, getState) => {
   if (progress.total === 0) return;
 
   try {
-    const successResponses = [], errorResponses = [];
-    for (let i = 0; i < linkFPaths.length; i += N_LINKS) {
+    const successResponses = [], errorResponses = [], nLinks = 1;
+    for (let i = 0; i < linkFPaths.length; i += nLinks) {
       const fileFPaths = [];
 
-      const selectedFPaths = linkFPaths.slice(i, i + N_LINKS);
+      const selectedFPaths = linkFPaths.slice(i, i + nLinks);
       const responses = await batchGetFileWithRetry(
         serverApi.getFile, selectedFPaths, 0, true
       );
@@ -675,8 +675,8 @@ export const exportAllData = () => async (dispatch, getState) => {
       }
     }
 
-    for (let i = 0; i < settingsFPaths.length; i += N_LINKS) {
-      const selectedFPaths = settingsFPaths.slice(i, i + N_LINKS);
+    for (let i = 0; i < settingsFPaths.length; i += nLinks) {
+      const selectedFPaths = settingsFPaths.slice(i, i + nLinks);
       const responses = await batchGetFileWithRetry(
         serverApi.getFile, selectedFPaths, 0, true
       );
@@ -743,8 +743,9 @@ export const deleteAllData = () => async (dispatch, getState) => {
   if (progress.total === 0) return;
 
   try {
-    for (let i = 0, j = fpaths.length; i < j; i += N_LINKS) {
-      const selectedFPaths = fpaths.slice(i, i + N_LINKS);
+    const nLinks = 1;
+    for (let i = 0, j = fpaths.length; i < j; i += nLinks) {
+      const selectedFPaths = fpaths.slice(i, i + nLinks);
       await serverApi.deleteFiles(selectedFPaths);
 
       progress.done += selectedFPaths.length;

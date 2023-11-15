@@ -39,6 +39,7 @@ export const initialLocalSettingsState = {
     { ...whtModeThemeCustomOptions }, { ...blkModeThemeCustomOptions },
   ],
   cleanUpStaticFilesDT: null,
+  signInDT: null,
 };
 
 export const initialInfoState = {

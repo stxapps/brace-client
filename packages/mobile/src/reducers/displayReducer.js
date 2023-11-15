@@ -312,7 +312,7 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === FETCH_ROLLBACK) {
-    const { fthId } = action.meta;
+    const { fthId, signInDT } = action.meta;
 
     const newState = { ...state, statuses: [...state.statuses, FETCH_ROLLBACK] };
     newState.fetchingInfos = state.fetchingInfos.filter(info => info.fthId !== fthId);
@@ -332,7 +332,15 @@ const displayReducer = (state = initialState, action) => {
         action.payload.hubError.statusCode === 401
       )
     ) {
-      newState.isAccessErrorPopupShown = true;
+      if (
+        !isNumber(signInDT) ||
+        (Date.now() - signInDT > 360 * 24 * 60 * 60 * 1000)
+      ) {
+        // Bug alert: Exceed usage rate limit also error 401.
+        // If signed in less than 360 days, less likely the token expires,
+        //   more about rate limit error.
+        newState.isAccessErrorPopupShown = true;
+      }
     }
     return newState;
   }

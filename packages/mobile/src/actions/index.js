@@ -378,45 +378,27 @@ export const updateLinkEditor = (values) => {
 };
 
 export const updateStatus = (status) => {
-  return {
-    type: UPDATE_STATUS,
-    payload: status,
-  };
+  return { type: UPDATE_STATUS, payload: status };
 };
 
 export const updateHref = (href) => {
-  return {
-    type: UPDATE_HREF,
-    payload: href,
-  };
+  return { type: UPDATE_HREF, payload: href };
 };
 
 export const updateBulkEdit = (isBulkEditing) => {
-  return {
-    type: UPDATE_BULK_EDITING,
-    payload: isBulkEditing,
-  };
+  return { type: UPDATE_BULK_EDITING, payload: isBulkEditing };
 };
 
 export const addSelectedLinkIds = (ids) => {
-  return {
-    type: ADD_SELECTED_LINK_IDS,
-    payload: ids,
-  };
+  return { type: ADD_SELECTED_LINK_IDS, payload: ids };
 };
 
 export const deleteSelectedLinkIds = (ids) => {
-  return {
-    type: DELETE_SELECTED_LINK_IDS,
-    payload: ids,
-  };
+  return { type: DELETE_SELECTED_LINK_IDS, payload: ids };
 };
 
 export const updateSelectingLinkId = (id) => {
-  return {
-    type: UPDATE_SELECTING_LINK_ID,
-    payload: id,
-  };
+  return { type: UPDATE_SELECTING_LINK_ID, payload: id };
 };
 
 const _getIdsAndImages = async (linkObjsOrFPaths, links) => {
@@ -555,7 +537,10 @@ export const fetch = () => async (dispatch, getState) => {
       offline: {
         effect: { method: FETCH, params: { ...payload, getState } },
         commit: { type: FETCH_COMMIT },
-        rollback: { type: FETCH_ROLLBACK, meta: payload },
+        rollback: {
+          type: FETCH_ROLLBACK,
+          meta: { ...payload, signInDT: getState().localSettings.signInDT },
+        },
       },
     },
   });
