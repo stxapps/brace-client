@@ -13,7 +13,7 @@ import {
 } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
-  extractUrl, isEqual, isDecorValid,
+  extractUrl, isEqual, isDecorValid, prependDomainName,
 } from '../utils';
 
 import { withTailwind } from '.';
@@ -142,7 +142,7 @@ class CardItemContent extends React.Component {
 
     // Random image
     if (isDecorValid(decor) && decor.image.bg.type === IMAGE) {
-      return <GracefulImage key="image-graceful-image-decor" className={tailwind('absolute h-full w-full object-cover object-center')} src={decor.image.bg.value} alt={`illustration of ${url}`} />;
+      return <GracefulImage key="image-graceful-image-decor" className={tailwind('absolute h-full w-full object-cover object-center')} src={prependDomainName(decor.image.bg.value)} alt={`illustration of ${url}`} />;
     }
 
     console.log(`In CardItemContent.renderImage, invalid decor: ${JSON.stringify(decor)}`);

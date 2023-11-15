@@ -13,7 +13,7 @@ import {
 import { makeGetCustomImage, makeGetTnAndDns } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
-  extractUrl, isDecorValid,
+  extractUrl, isDecorValid, prependDomainName,
 } from '../utils';
 
 import { useSafeAreaFrame, useTailwind } from '.';
@@ -130,7 +130,7 @@ const ListItemContent = (props) => {
 
     // Random image
     if (isDecorValid(decor) && decor.image.bg.type === IMAGE) {
-      return <GracefulImage key="image-graceful-image-decor" className={tailwind('absolute h-full w-full object-cover object-center')} src={decor.image.bg.value} alt={`illustration of ${url}`} />;
+      return <GracefulImage key="image-graceful-image-decor" className={tailwind('absolute h-full w-full object-cover object-center')} src={prependDomainName(decor.image.bg.value)} alt={`illustration of ${url}`} />;
     }
 
     console.log(`In ListItemContent.renderImage, invalid decor: ${JSON.stringify(decor)}`);

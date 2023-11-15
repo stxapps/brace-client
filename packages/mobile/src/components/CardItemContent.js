@@ -4,11 +4,11 @@ import { View, Text, TouchableOpacity, Linking, Image } from 'react-native';
 import { connect } from 'react-redux';
 
 import { updateBulkEdit, addSelectedLinkIds, updateQueryString } from '../actions';
-import { DOMAIN_NAME, COLOR, PATTERN, IMAGE } from '../types/const';
+import { COLOR, PATTERN, IMAGE } from '../types/const';
 import { makeGetCustomImage, getThemeMode, makeGetTnAndDns } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
-  extractUrl, isEqual, isDecorValid,
+  extractUrl, isEqual, isDecorValid, prependDomainName,
 } from '../utils';
 import cache from '../utils/cache';
 import { PATTERN_MAP } from '../types/patternPaths';
@@ -17,11 +17,6 @@ import { withTailwind } from '.';
 import GracefulImage from './GracefulImage';
 
 import CardItemMenuPopup from './CardItemMenuPopup';
-
-const prependDomainName = (/** @type string */ value) => {
-  if (value.startsWith('data:')) return value;
-  return DOMAIN_NAME + value;
-};
 
 class CardItemContent extends React.Component {
 

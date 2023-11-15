@@ -7,13 +7,13 @@ import {
   updateBulkEdit, addSelectedLinkIds, moveLinks, updateQueryString,
 } from '../actions';
 import {
-  DOMAIN_NAME, COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING, UPDATING,
-  LG_WIDTH, PINNED, TAGGED,
+  COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING, UPDATING, LG_WIDTH,
+  PINNED, TAGGED,
 } from '../types/const';
 import { makeGetCustomImage, makeGetTnAndDns } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
-  extractUrl, isDecorValid,
+  extractUrl, isDecorValid, prependDomainName,
 } from '../utils';
 import cache from '../utils/cache';
 import { PATTERN_MAP } from '../types/patternPaths';
@@ -21,11 +21,6 @@ import { PATTERN_MAP } from '../types/patternPaths';
 import { useSafeAreaFrame, useTailwind } from '.';
 import GracefulImage from './GracefulImage';
 import CardItemMenuPopup from './CardItemMenuPopup';
-
-const prependDomainName = (/** @type string */ value) => {
-  if (value.startsWith('data:')) return value;
-  return DOMAIN_NAME + value;
-};
 
 const ListItemContent = (props) => {
 
