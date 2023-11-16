@@ -35,7 +35,7 @@ const MSGS_SHRT = {
   [FETCH_COMMIT]: 'Finished fetching.',
   [FETCH_ROLLBACK]: 'Error fetching!',
   [EXTRACT_CONTENTS]: 'Beautifying...',
-  [EXTRACT_CONTENTS_COMMIT]: 'Finished beautifying.',
+  [EXTRACT_CONTENTS_COMMIT]: 'Finished beautify...',
   [EXTRACT_CONTENTS_ROLLBACK]: 'Error beautifying!',
   [DELETE_OLD_LINKS_IN_TRASH]: 'Deleting old links...',
   [DELETE_OLD_LINKS_IN_TRASH_COMMIT]: 'Finished deleting.',
@@ -83,8 +83,8 @@ class StatusPopup extends React.PureComponent {
     if (window.scrollY > 100) animate += 'NoAnim';
 
     return (
-      <div className={tailwind('w-48 overflow-hidden text-right sm:w-64')}>
-        <motion.span className={tailwind('inline-block rounded-l-full bg-white pl-3 text-sm tracking-wide text-gray-500 blk:bg-gray-900 blk:text-gray-400')} variants={statusPopupFMV} initial={false} animate={animate}>{this.msg}</motion.span>
+      <div className={tailwind('w-36 overflow-hidden text-right sm:w-64')}>
+        <motion.span className={tailwind('inline-block rounded-l-full bg-white text-sm tracking-wide text-gray-500 blk:bg-gray-900 blk:text-gray-400')} variants={statusPopupFMV} initial={false} animate={animate}>{this.msg}</motion.span>
       </div>
     );
   }

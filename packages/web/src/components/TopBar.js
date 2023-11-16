@@ -152,8 +152,8 @@ class TopBar extends React.PureComponent {
             </div>
             {rightPane}
           </header>
-          {isListNameShown && this.renderListName()}
           {isListNameShown && this.renderStatusPopup()}
+          {isListNameShown && this.renderListName()}
         </div>
       </div>
     );

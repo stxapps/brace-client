@@ -65,7 +65,7 @@ class TopBarTitleListName extends React.PureComponent {
     const textStyle = { maxWidth: textMaxWidth };
 
     return (
-      <TouchableOpacity ref={this.listNameBtn} onPress={this.onListNameBtnClick} style={tailwind('flex-row items-center')}>
+      <TouchableOpacity ref={this.listNameBtn} onPress={this.onListNameBtnClick} style={tailwind('flex-row items-center bg-white blk:bg-gray-900')}>
         <Text style={cache('LN_text', [tailwind('mr-1 text-lg font-medium leading-7 text-gray-900 blk:text-gray-50'), textStyle], [updates, safeAreaWidth, tailwind])} numberOfLines={1} ellipsizeMode="tail">{displayName}</Text>
         {listName in updates && <View style={tailwind('h-1.5 w-1.5 self-start rounded-full bg-blue-400')} />}
         <Svg style={tailwind('font-normal text-gray-900 blk:text-white')} width={20} height={20} viewBox="0 0 24 24" stroke="currentColor" fill="none">

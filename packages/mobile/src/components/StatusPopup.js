@@ -37,7 +37,7 @@ const MSGS_SHRT = {
   [FETCH_COMMIT]: 'Finished fetching.',
   [FETCH_ROLLBACK]: 'Error fetching!',
   [EXTRACT_CONTENTS]: 'Beautifying...',
-  [EXTRACT_CONTENTS_COMMIT]: 'Finished beautifying.',
+  [EXTRACT_CONTENTS_COMMIT]: 'Finished beautify...',
   [EXTRACT_CONTENTS_ROLLBACK]: 'Error beautifying!',
   [DELETE_OLD_LINKS_IN_TRASH]: 'Deleting old links...',
   [DELETE_OLD_LINKS_IN_TRASH_COMMIT]: 'Finished deleting.',
@@ -132,9 +132,9 @@ class StatusPopup extends React.PureComponent {
     };
 
     return (
-      <View style={tailwind('w-48 flex-row items-center justify-start overflow-hidden sm:w-64')}>
+      <View style={tailwind('w-36 flex-row items-center justify-start overflow-hidden sm:w-64')}>
         <View style={tailwind('h-full w-full')} />
-        <AnimatedText onLayout={this.onTextLayout} style={[tailwind('rounded-l-full bg-white pl-3 text-sm font-normal tracking-wide text-gray-500 blk:bg-gray-900 blk:text-gray-400'), textStyle]}>{this.msg}</AnimatedText>
+        <AnimatedText onLayout={this.onTextLayout} style={[tailwind('rounded-l-full bg-white text-sm font-normal tracking-wide text-gray-500 blk:bg-gray-900 blk:text-gray-400'), textStyle]}>{this.msg}</AnimatedText>
       </View>
     );
   }
