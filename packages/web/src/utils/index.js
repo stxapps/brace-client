@@ -500,7 +500,11 @@ export const isStringIn = (link, searchString) => {
 
     isIn = searchWords.every(word => text.includes(word));
     if (isIn) return true;
-  } else if (isObject(link.extractedResult) && isString(link.extractedResult.title)) {
+  } else if (
+    isObject(link.extractedResult) &&
+    isString(link.extractedResult.title) &&
+    !link.doIgnoreExtrdRst
+  ) {
     text = link.extractedResult.title;
     if (!hasUppercase) text = text.toLowerCase();
 
@@ -1126,7 +1130,9 @@ export const extractLinkId = (id) => {
     console.log(`In extractLinkId, invalid id: ${id}`);
   }
 
-  return { dt: parseInt(arr[0], 10) };
+  const addedDT = parseInt(arr[0], 10);
+  const updatedDT = parseInt(arr[3], 10);
+  return { addedDT, updatedDT: isNumber(updatedDT) ? updatedDT : addedDT };
 };
 
 export const extractStaticFPath = (fpath) => {
@@ -1302,6 +1308,32 @@ export const getLinkFPaths = (state) => {
     return state.cachedFPaths.fpaths.linkFPaths;
   }
   return {};
+};
+
+export const getLastLinkFPaths = (linkFPaths) => {
+  const infos = {};
+  for (const listName in linkFPaths) {
+    for (const fpath of linkFPaths[listName]) {
+      const { id } = extractLinkFPath(fpath);
+      const { updatedDT } = extractLinkId(id);
+
+      const mainId = getMainId(id);
+      if (isObject(infos[mainId]) && infos[mainId].updatedDT >= updatedDT) {
+        continue;
+      }
+
+      infos[mainId] = { listName, fpath, updatedDT };
+    }
+  }
+
+  const lastFPaths = {};
+  for (const info of Object.values(infos)) {
+    const { listName, fpath } = info;
+    if (!lastFPaths[listName]) lastFPaths[listName] = [];
+    if (!lastFPaths[listName].includes(fpath)) lastFPaths[listName].push(fpath);
+  }
+
+  return lastFPaths;
 };
 
 export const getStaticFPaths = (state) => {
@@ -1935,7 +1967,7 @@ export const batchDeleteFileWithRetry = async (
 
 export const deriveUnknownErrorLink = (fpath) => {
   const { id } = extractLinkFPath(fpath);
-  const { dt } = extractLinkId(id);
+  const { addedDT } = extractLinkId(id);
 
   const url = 'Unknown error';
   const decor = {
@@ -1952,7 +1984,7 @@ export const deriveUnknownErrorLink = (fpath) => {
   };
 
   // Need extractedResult to prevent extractContents to override the link content!
-  return { id, url, addedDT: dt, decor, extractedResult };
+  return { id, url, addedDT, decor, extractedResult };
 };
 
 export const extractFPath = (fpath) => {
@@ -2584,4 +2616,44 @@ export const getArraysPerKey = (keys, values) => {
     arraysPerKey[key].push(value);
   }
   return arraysPerKey;
+};
+
+export const getLinkPrevFPathsPerId = (ids, linkFPaths) => {
+  const mainIds = [], updatedDTs = [];
+  for (const id of ids) {
+    const mainId = getMainId(id);
+    const { updatedDT } = extractLinkId(id);
+    mainIds.push(mainId);
+    updatedDTs.push(updatedDT);
+  }
+
+  const infosPerMainId = {}, prevFPathsPerId = {};
+  for (const listName in linkFPaths) {
+    for (const fpath of linkFPaths[listName]) {
+      const { id } = extractLinkFPath(fpath);
+      const { updatedDT } = extractLinkId(id);
+
+      const mainId = getMainId(id);
+      if (!mainIds.includes(mainId)) continue;
+
+      if (!Array.isArray(infosPerMainId[mainId])) infosPerMainId[mainId] = [];
+      infosPerMainId[mainId].push({ id, updatedDT, fpath });
+    }
+  }
+  for (let i = 0; i < ids.length; i++) {
+    const [id, mainId, updatedDT] = [ids[i], mainIds[i], updatedDTs[i]];
+
+    if (!Array.isArray(infosPerMainId[mainId])) continue;
+    for (const info of infosPerMainId[mainId]) {
+      if (info.id === id) continue;
+      if (info.updatedDT > updatedDT) {
+        console.log('In getLinkPrevInfosPerId, found invalid updatedDT', info);
+      }
+
+      if (!Array.isArray(prevFPathsPerId[id])) prevFPathsPerId[id] = [];
+      prevFPathsPerId[id].push(info.fpath);
+    }
+  }
+
+  return prevFPathsPerId;
 };

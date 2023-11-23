@@ -100,7 +100,7 @@ const ListItemContent = (props) => {
     didClick.current = false;
   }, [link.status]);
 
-  const { url, decor, extractedResult, custom } = link;
+  const { url, decor, extractedResult, custom, doIgnoreExtrdRst } = link;
   const { host, origin } = extractUrl(url);
 
   const renderImage = () => {
@@ -111,7 +111,9 @@ const ListItemContent = (props) => {
       return <img key="img-image-custom" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5')} src={image} alt={`illustration of ${url}`} />;
     }
 
-    if (extractedResult && extractedResult.image) image = extractedResult.image;
+    if (extractedResult && extractedResult.image && !doIgnoreExtrdRst) {
+      image = extractedResult.image;
+    }
     if (image) {
       // This GracefulImage needs to be different from the one below so that it's not just rerender but recreate a new component with a new src and new retry. React knows by using different keys.
       return <GracefulImage key="image-graceful-image-extracted-result" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5')} src={image} alt={`illustration of ${url}`} />;
@@ -159,7 +161,7 @@ const ListItemContent = (props) => {
     };
 
     let favicon;
-    if (extractedResult && extractedResult.favicon) {
+    if (extractedResult && extractedResult.favicon && !doIgnoreExtrdRst) {
       favicon = ensureContainUrlSecureProtocol(extractedResult.favicon);
     }
 
@@ -199,7 +201,7 @@ const ListItemContent = (props) => {
   let title, classNames = '';
   if (custom && custom.title) {
     title = custom.title;
-  } else if (extractedResult && extractedResult.title) {
+  } else if (extractedResult && extractedResult.title && !doIgnoreExtrdRst) {
     title = extractedResult.title;
   }
   if (!title) {

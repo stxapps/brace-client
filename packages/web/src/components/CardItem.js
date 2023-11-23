@@ -37,6 +37,7 @@ class CardItem extends React.Component {
       !isEqual(this.props.link.decor, nextProps.link.decor) ||
       !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
       !isEqual(this.props.link.custom, nextProps.link.custom) ||
+      this.props.link.doIgnoreExtrdRst !== nextProps.link.doIgnoreExtrdRst ||
       this.props.pinStatus !== nextProps.pinStatus ||
       this.props.tagStatus !== nextProps.tagStatus ||
       this.props.tailwind !== nextProps.tailwind

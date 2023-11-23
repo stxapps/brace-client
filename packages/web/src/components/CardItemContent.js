@@ -42,6 +42,7 @@ class CardItemContent extends React.Component {
       !isEqual(this.props.link.decor, nextProps.link.decor) ||
       !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
       !isEqual(this.props.link.custom, nextProps.link.custom) ||
+      this.props.link.doIgnoreExtrdRst !== nextProps.link.doIgnoreExtrdRst ||
       this.props.customImage !== nextProps.customImage ||
       this.props.tnAndDns !== nextProps.tnAndDns ||
       this.props.tailwind !== nextProps.tailwind ||
@@ -90,7 +91,7 @@ class CardItemContent extends React.Component {
   }
 
   renderImage() {
-    const { url, decor, extractedResult } = this.props.link;
+    const { url, decor, extractedResult, doIgnoreExtrdRst } = this.props.link;
     const { customImage, tailwind } = this.props;
 
     let image;
@@ -100,7 +101,9 @@ class CardItemContent extends React.Component {
       return <img key="img-image-custom" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={image} alt={`illustration of ${url}`} />;
     }
 
-    if (extractedResult && extractedResult.image) image = extractedResult.image;
+    if (extractedResult && extractedResult.image && !doIgnoreExtrdRst) {
+      image = extractedResult.image;
+    }
     if (image) {
       // This GracefulImage needs to be different from the one below so that it's not just rerender but recreate a new component with a new src and new retry. React knows by using different keys.
       return <GracefulImage key="image-graceful-image-extracted-result" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={image} alt={`illustration of ${url}`} />;
@@ -172,11 +175,11 @@ class CardItemContent extends React.Component {
       return null;
     };
 
-    const { url, decor, extractedResult } = this.props.link;
+    const { url, decor, extractedResult, doIgnoreExtrdRst } = this.props.link;
     const { extractedFaviconError } = this.state;
 
     let favicon;
-    if (extractedResult && extractedResult.favicon) {
+    if (extractedResult && extractedResult.favicon && !doIgnoreExtrdRst) {
       favicon = ensureContainUrlSecureProtocol(extractedResult.favicon);
     }
 
@@ -214,13 +217,13 @@ class CardItemContent extends React.Component {
 
   render() {
     const { tailwind } = this.props;
-    const { url, extractedResult, custom } = this.props.link;
+    const { url, extractedResult, custom, doIgnoreExtrdRst } = this.props.link;
 
     let title, classNames = '';
     if (custom && custom.title) {
       title = custom.title;
       classNames = 'hyphens-auto';
-    } else if (extractedResult && extractedResult.title) {
+    } else if (extractedResult && extractedResult.title && !doIgnoreExtrdRst) {
       title = extractedResult.title;
       classNames = 'hyphens-auto';
     }

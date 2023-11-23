@@ -83,18 +83,28 @@ const fetchedMoreReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_CUSTOM_DATA_COMMIT) {
-    const { listName, toLink } = action.payload;
+    const { listName, fromLink, toLink } = action.payload;
     if (!state[listName]) return state;
 
     const { payload } = state[listName];
 
     const newLinks = { ...payload.links };
     newLinks[listName] = { ...newLinks[listName] };
-    if (toLink.id in newLinks[listName]) {
+
+    const prevFPaths = [], fpaths = [];
+    if (fromLink.id in newLinks[listName]) {
+      prevFPaths.push(createLinkFPath(listName, fromLink.id));
+      fpaths.push(createLinkFPath(listName, toLink.id));
+
+      delete newLinks[listName][fromLink.id];
       newLinks[listName][toLink.id] = { ...toLink };
     }
 
     const newPayload = { ...payload };
+    newPayload.unfetchedLinkFPaths = newPayload.unfetchedLinkFPaths.filter(fpath => {
+      return !prevFPaths.includes(fpath);
+    });
+    newPayload.unfetchedLinkFPaths = _append(newPayload.unfetchedLinkFPaths, fpaths);
     newPayload.links = newLinks;
 
     return { ...state, [listName]: { payload: newPayload } };
@@ -105,6 +115,15 @@ const fetchedMoreReducer = (state = initialState, action) => {
   }
 
   return state;
+};
+
+const _append = (arr, elems) => {
+  const newArr = [...arr];
+  for (const elem of elems) {
+    if (newArr.includes(elem)) continue;
+    newArr.push(elem);
+  }
+  return newArr;
 };
 
 export default fetchedMoreReducer;

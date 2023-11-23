@@ -3,7 +3,7 @@ import { LexoRank } from '@wewatch/lexorank';
 
 import serverApi from './server';
 import fileApi from './localFile';
-import { CD_ROOT, DOT_JSON, INFO } from '../types/const';
+import { CD_ROOT, DOT_JSON, INFO, LOCAL_LINK_ATTRS } from '../types/const';
 import {
   FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, TRY_UPDATE_SETTINGS,
   UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
@@ -18,7 +18,7 @@ import {
   batchGetFileWithRetry, batchPutFileWithRetry, batchDeleteFileWithRetry,
   deriveUnknownErrorLink, getLinkFPaths, getPinFPaths, getNLinkFPaths, isFetchedLinkId,
   getInUseTagNames, getTagFPaths, getTags, getMainId, createTagFPath, extractTagFPath,
-  getNLinkFPathsByQt,
+  getNLinkFPathsByQt, getLastLinkFPaths, newObject,
 } from '../utils';
 import vars from '../vars';
 
@@ -236,7 +236,7 @@ const fetch = async (params) => {
   //   the second fetch, settings are changes.
   const bin = { fetchedLinkFPaths: [], unfetchedLinkFPaths: [], hasMore: false };
   if (didFetch && didFetchSettings) {
-    const linkFPaths = getLinkFPaths(getState());
+    const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
     const pinFPaths = getPinFPaths(getState());
     const tagFPaths = getTagFPaths(getState());
 
@@ -266,8 +266,10 @@ const fetch = async (params) => {
   const result = { lnOrQt, fthId };
   if (!didFetch || !didFetchSettings) {
     const {
-      linkFPaths, settingsFPaths, infoFPath, pinFPaths, tagFPaths,
+      linkFPaths: _linkFPaths, settingsFPaths, infoFPath, pinFPaths, tagFPaths,
     } = await listFPaths(true);
+
+    const linkFPaths = getLastLinkFPaths(_linkFPaths);
 
     const sResult = await fetchStgsAndInfo(settingsFPaths, infoFPath);
     result.doFetchStgsAndInfo = true;
@@ -320,7 +322,7 @@ const fetchMore = async (params) => {
   const doDescendingOrder = getState().settings.doDescendingOrder;
   const lockedLists = getState().lockSettings.lockedLists;
 
-  const linkFPaths = getLinkFPaths(getState());
+  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
   const pinFPaths = getPinFPaths(getState());
   const tagFPaths = getTagFPaths(getState());
 
@@ -392,7 +394,7 @@ const putLinks = async (params) => {
     const [listName, link] = [listNames[i], links[i]];
     const fpath = createLinkFPath(listName, link.id);
     fpaths.push(fpath);
-    contents.push(link);
+    contents.push(newObject(link, LOCAL_LINK_ATTRS));
     linkMap[fpath] = { listName, link };
   }
 
@@ -420,39 +422,82 @@ const putLinks = async (params) => {
 };
 
 const deleteLinks = async (params) => {
-  const { listNames, ids, manuallyManageError } = params;
+  const { listNames, ids, manuallyManageError, prevFPathsPerId } = params;
 
-  const fpaths = [], idMap = {};
+  const lnMap = {};
   for (let i = 0; i < listNames.length; i++) {
     const [listName, id] = [listNames[i], ids[i]];
-    const fpath = createLinkFPath(listName, id);
-    fpaths.push(fpath);
-    idMap[fpath] = { listName, id };
+    lnMap[id] = listName;
   }
 
+  const idMap = {}, prevFPaths = [], fpaths = [];
+  for (const id in prevFPathsPerId) {
+    const listName = lnMap[id];
+    for (const fpath of prevFPathsPerId[id]) {
+      idMap[fpath] = { listName, id };
+      if (!prevFPaths.includes(fpath)) prevFPaths.push(fpath);
+    }
+  }
+
+  const _successListNames = [], _successIds = [];
   const successListNames = [], successIds = [];
   const errorListNames = [], errorIds = [], errors = [];
 
-  const responses = await batchDeleteFileWithRetry(
+  // try to delete previous fpaths first.
+  let responses = await batchDeleteFileWithRetry(
+    serverApi.deleteFile, prevFPaths, 0, !!manuallyManageError
+  );
+  for (const response of responses) {
+    const { listName, id } = idMap[response.fpath];
+    if (!response.success) {
+      if (!errorIds.includes(id)) {
+        errorListNames.push(listName);
+        errorIds.push(id);
+        errors.push(response.error);
+      }
+    }
+  }
+
+  for (let i = 0; i < listNames.length; i++) {
+    const [listName, id] = [listNames[i], ids[i]];
+    if (errorIds.includes(id)) continue;
+
+    const fpath = createLinkFPath(listName, id);
+    idMap[fpath] = { listName, id };
+    if (!fpaths.includes(fpath)) fpaths.push(fpath);
+  }
+
+  responses = await batchDeleteFileWithRetry(
     serverApi.deleteFile, fpaths, 0, !!manuallyManageError
   );
   for (const response of responses) {
     const { listName, id } = idMap[response.fpath];
     if (response.success) {
-      successListNames.push(listName);
-      successIds.push(id);
+      if (!_successIds.includes(id)) {
+        _successListNames.push(listName);
+        _successIds.push(id);
+      }
     } else {
-      errorListNames.push(listName);
-      errorIds.push(id);
-      errors.push(response.error);
+      if (!errorIds.includes(id)) {
+        errorListNames.push(listName);
+        errorIds.push(id);
+        errors.push(response.error);
+      }
     }
+  }
+  for (let i = 0; i < _successListNames.length; i++) {
+    const [listName, id] = [_successListNames[i], _successIds[i]];
+    if (errorIds.includes(id)) continue;
+    successListNames.push(listName);
+    successIds.push(id);
   }
 
   return { successListNames, successIds, errorListNames, errorIds, errors };
 };
 
 const canDeleteListNames = async (listNames) => {
-  const { linkFPaths } = await listFPaths();
+  const { linkFPaths: allLinkFPaths } = await listFPaths();
+  const linkFPaths = getLastLinkFPaths(allLinkFPaths);
   const inUseListNames = Object.keys(linkFPaths);
 
   const canDeletes = [];
@@ -464,8 +509,8 @@ const canDeleteListNames = async (listNames) => {
 };
 
 const canDeleteTagNames = async (tagNames) => {
-  const { linkFPaths, tagFPaths } = await listFPaths();
-
+  const { linkFPaths: allLinkFPaths, tagFPaths } = await listFPaths();
+  const linkFPaths = getLastLinkFPaths(allLinkFPaths);
   const inUseTagNames = getInUseTagNames(linkFPaths, tagFPaths);
 
   const canDeletes = [];
@@ -593,7 +638,9 @@ const updateCustomData = async (params) => {
 
   // Make sure save static files successfully first
   await serverApi.putFiles(usedFiles.fpaths, usedFiles.contents);
-  await serverApi.putFiles([createLinkFPath(listName, toLink.id)], [toLink]);
+  await serverApi.putFiles(
+    [createLinkFPath(listName, toLink.id)], [newObject(toLink, LOCAL_LINK_ATTRS)]
+  );
 
   return { listName, fromLink, toLink, serverUnusedFPaths, localUnusedFPaths };
 };
