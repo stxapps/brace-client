@@ -501,6 +501,7 @@ const linksReducer = (state = initialState, action) => {
 
     const newState = { ...state };
     for (const [listName, lnLinks] of Object.entries(successLinksPerLn)) {
+      newState[listName] = { ...newState[listName] };
       for (const link of lnLinks) {
         const fromLink = newState[listName][link.fromId];
         delete newState[listName][link.fromId];

@@ -2618,7 +2618,7 @@ export const getArraysPerKey = (keys, values) => {
   return arraysPerKey;
 };
 
-export const getLinkPrevFPathsPerId = (ids, linkFPaths) => {
+export const getLinkPrevFPathsPerId = (ids, allLinkFPaths) => {
   const mainIds = [], updatedDTs = [];
   for (const id of ids) {
     const mainId = getMainId(id);
@@ -2628,8 +2628,8 @@ export const getLinkPrevFPathsPerId = (ids, linkFPaths) => {
   }
 
   const infosPerMainId = {}, prevFPathsPerId = {};
-  for (const listName in linkFPaths) {
-    for (const fpath of linkFPaths[listName]) {
+  for (const listName in allLinkFPaths) {
+    for (const fpath of allLinkFPaths[listName]) {
       const { id } = extractLinkFPath(fpath);
       const { updatedDT } = extractLinkId(id);
 

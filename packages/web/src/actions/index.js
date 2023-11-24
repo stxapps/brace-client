@@ -1709,7 +1709,9 @@ export const extractContents = (listNames, ids) => async (dispatch, getState) =>
     return;
   }
 
-  const payload = { listNames: extractedListNames, links: extractedLinks };
+  const payload = {
+    listNames: extractedListNames, links: extractedLinks, manuallyManageError: true,
+  };
   dispatch({
     type: EXTRACT_CONTENTS,
     payload,
@@ -1790,7 +1792,7 @@ export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
       offline: {
         effect: { method: DELETE_LINKS, params: payload },
         commit: { type: DELETE_OLD_LINKS_IN_TRASH_COMMIT },
-        rollback: { type: DELETE_OLD_LINKS_IN_TRASH_ROLLBACK },
+        rollback: { type: DELETE_OLD_LINKS_IN_TRASH_ROLLBACK, meta: payload },
       },
     },
   });
