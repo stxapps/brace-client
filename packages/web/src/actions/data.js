@@ -265,9 +265,9 @@ const parseBraceLinks = async (
 
     const fpaths = [], contents = [];
     for (const entry of selectedEntries) {
-      const { fpath, fpathParts, fnameParts } = extractFPath(entry.path);
+      const { fpath, fpathParts, fname } = extractFPath(entry.path);
       if (fpathParts.length !== 3 || fpathParts[0] !== LINKS) continue;
-      if (fnameParts.length !== 2 || fnameParts[1] !== DOT_JSON) continue;
+      if (!fname.endsWith(DOT_JSON)) continue;
 
       if (existFPaths.includes(fpath)) continue;
 
@@ -281,7 +281,7 @@ const parseBraceLinks = async (
       if (!(isString(content.id) && isString(content.url))) continue;
       if (!isNumber(content.addedDT)) continue;
 
-      const id = fnameParts[0];
+      const id = fname.slice(0, -5);
       if (id !== content.id) continue;
 
       const listName = fpathParts[1];
@@ -292,7 +292,7 @@ const parseBraceLinks = async (
       } else {
         if (![3, 4].includes(tokens.length)) continue;
         if (!(/^\d+$/.test(tokens[0]))) continue;
-        if (tokens.length === 3 && !(/^\d+$/.test(tokens[3]))) continue;
+        if (tokens.length === 4 && !(/^\d+$/.test(tokens[3]))) continue;
       }
 
       const mainId = getMainId(id);
