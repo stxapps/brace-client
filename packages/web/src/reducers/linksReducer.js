@@ -19,8 +19,9 @@ import {
 } from '../types/actionTypes';
 import {
   IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, TRASH, ARCHIVE, ID, STATUS, ADDED, MOVED,
-  ADDING, MOVING, REMOVING, DELETING, UPDATING, DIED_ADDING, DIED_MOVING, DIED_REMOVING,
-  DIED_DELETING, DIED_UPDATING, PENDING_REMOVING, DO_IGNORE_EXTRD_RST,
+  ADDING, MOVING, REMOVING, DELETING, UPDATING, EXTRD_UPDATING, OLD_DELETING,
+  DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING,
+  PENDING_REMOVING, DO_IGNORE_EXTRD_RST,
 } from '../types/const';
 import { isObject, getArraysPerKey } from '../utils';
 import { _ } from '../utils/obj';
@@ -42,7 +43,9 @@ const linksReducer = (state = initialState, action) => {
         action.payload.links[listName],
         [IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, DO_IGNORE_EXTRD_RST]
       );
-      newState[listName] = ridLinks;
+      newState[listName] = _.update(
+        ridLinks, STATUS, [EXTRD_UPDATING, OLD_DELETING], STATUS, ADDED
+      );
     }
     return newState;
   }
@@ -446,7 +449,7 @@ const linksReducer = (state = initialState, action) => {
     const newState = { ...state };
     for (const [fromListName, fromIds] of Object.entries(fromIdsPerLn)) {
       newState[fromListName] = _.update(
-        newState[fromListName], ID, fromIds, STATUS, UPDATING
+        newState[fromListName], ID, fromIds, STATUS, EXTRD_UPDATING
       );
     }
 
@@ -533,7 +536,7 @@ const linksReducer = (state = initialState, action) => {
     const newState = { ...state };
     for (const [listName, lnIds] of Object.entries(idsPerLn)) {
       newState[listName] = _.update(
-        newState[listName], ID, lnIds, STATUS, DELETING
+        newState[listName], ID, lnIds, STATUS, OLD_DELETING
       );
     }
 

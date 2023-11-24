@@ -8,7 +8,7 @@ import {
 } from '../actions';
 import {
   CARD_ITEM_MENU_POPUP, COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING,
-  UPDATING, LG_WIDTH, REMOVE, RESTORE, PINNED, TAGGED,
+  UPDATING, EXTRD_UPDATING, LG_WIDTH, REMOVE, RESTORE, PINNED, TAGGED,
 } from '../types/const';
 import { makeGetCustomImage, makeGetTnAndDns } from '../selectors';
 import {
@@ -211,7 +211,7 @@ const ListItemContent = (props) => {
 
   const canSelect = (
     safeAreaWidth >= LG_WIDTH &&
-    ![ADDING, MOVING, UPDATING].includes(link.status) &&
+    ![ADDING, MOVING, UPDATING, EXTRD_UPDATING].includes(link.status) &&
     [null, PINNED].includes(pinStatus) &&
     [null, TAGGED].includes(tagStatus)
   );
