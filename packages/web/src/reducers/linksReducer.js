@@ -3,7 +3,8 @@ import { loop, Cmd } from 'redux-loop';
 
 import {
   tryUpdateFetched, tryUpdateFetchedMore, moveLinksDeleteStep, extractContents,
-  tryUpdateExtractedContents, runAfterFetchTask, unpinLinks, updateCustomDataDeleteStep,
+  tryUpdateExtractedContents, extractContentsDeleteStep, unpinLinks,
+  updateCustomDataDeleteStep,
 } from '../actions';
 import {
   UPDATE_LIST_NAME, UPDATE_QUERY_STRING, FETCH_COMMIT, UPDATE_FETCHED,
@@ -99,6 +100,10 @@ const linksReducer = (state = initialState, action) => {
         const processingLinks = _.exclude(state[listName], STATUS, ADDED);
         newState[listName] = { ...newState[listName], ...processingLinks };
       }
+    }
+
+    for (const listName in newState) {
+      newState[listName] = _.ignore(newState[listName], DO_IGNORE_EXTRD_RST);
     }
 
     return loop(
@@ -524,7 +529,11 @@ const linksReducer = (state = initialState, action) => {
     }
 
     return loop(
-      newState, Cmd.run(runAfterFetchTask(), { args: [Cmd.dispatch, Cmd.getState] })
+      newState,
+      Cmd.run(
+        extractContentsDeleteStep(successListNames, successLinks),
+        { args: [Cmd.dispatch, Cmd.getState] }
+      )
     );
   }
 
@@ -590,7 +599,9 @@ const linksReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_CUSTOM_DATA_COMMIT) {
-    const { listName, toLink, serverUnusedFPaths, localUnusedFPaths } = action.payload;
+    const {
+      listName, fromLink, toLink, serverUnusedFPaths, localUnusedFPaths,
+    } = action.payload;
 
     // Doesn't remove fromLink here
     //   so need to exclude this attr elsewhere if not needed.
@@ -600,7 +611,9 @@ const linksReducer = (state = initialState, action) => {
     return loop(
       newState,
       Cmd.run(
-        updateCustomDataDeleteStep(serverUnusedFPaths, localUnusedFPaths),
+        updateCustomDataDeleteStep(
+          listName, fromLink, serverUnusedFPaths, localUnusedFPaths
+        ),
         { args: [Cmd.dispatch, Cmd.getState] }
       )
     );

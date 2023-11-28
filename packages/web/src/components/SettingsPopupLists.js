@@ -1,18 +1,16 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import dataApi from '../apis/blockstack';
 import {
-  addListNames, updateListNames, moveListName, updateSelectingListName,
-  updateDeleteAction, updateListNameEditors, updatePopup,
+  addListNames, updateListNames, moveListName, checkDeleteListName,
+  updateSelectingListName, updateListNameEditors, updatePopup,
 } from '../actions';
 import {
-  VALID_LIST_NAME, IN_USE_LIST_NAME, LIST_NAME_MSGS, SETTINGS_LISTS_MENU_POPUP,
-  CONFIRM_DELETE_POPUP, SWAP_LEFT, SWAP_RIGHT, MODE_VIEW, MODE_EDIT, SM_WIDTH,
-  DELETE_ACTION_LIST_NAME,
+  VALID_LIST_NAME, LIST_NAME_MSGS, SETTINGS_LISTS_MENU_POPUP, SWAP_LEFT, SWAP_RIGHT,
+  MODE_VIEW, MODE_EDIT, SM_WIDTH,
 } from '../types/const';
 import { getListNameMap, makeGetListNameEditor } from '../selectors';
-import { validateListNameDisplayName, getAllListNames } from '../utils';
+import { validateListNameDisplayName } from '../utils';
 import { initialListNameEditorState } from '../types/initialStates';
 
 import { useSafeAreaFrame, useTailwind } from '.';
@@ -227,29 +225,10 @@ const _ListNameEditor = (props) => {
   }, [state.focusCount]);
 
   useEffect(() => {
-    const deleteListName = async () => {
-      if (state.isCheckingCanDelete) {
-        const listNames = [listNameObj.listName];
-        listNames.push(...getAllListNames(listNameObj.children));
-
-        const canDeletes = await dataApi.canDeleteListNames(listNames);
-        if (!canDeletes.every(canDelete => canDelete === true)) {
-          dispatch(updateListNameEditors({
-            [key]: { msg: LIST_NAME_MSGS[IN_USE_LIST_NAME], isCheckingCanDelete: false },
-          }));
-          return;
-        }
-
-        dispatch(updateSelectingListName(listNameObj.listName));
-        dispatch(updateDeleteAction(DELETE_ACTION_LIST_NAME));
-        dispatch(updatePopup(CONFIRM_DELETE_POPUP, true));
-        dispatch(updateListNameEditors({
-          [key]: { msg: '', isCheckingCanDelete: false },
-        }));
-      }
-    };
-    deleteListName();
-  }, [state.isCheckingCanDelete, listNameObj, key, dispatch]);
+    if (state.isCheckingCanDelete) {
+      dispatch(checkDeleteListName(key, listNameObj));
+    }
+  }, [state.isCheckingCanDelete, key, listNameObj, dispatch]);
 
   const isBusy = state.isCheckingCanDelete;
 
