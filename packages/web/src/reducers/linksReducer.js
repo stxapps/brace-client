@@ -24,7 +24,7 @@ import {
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING,
   PENDING_REMOVING, DO_IGNORE_EXTRD_RST,
 } from '../types/const';
-import { isObject, getArraysPerKey } from '../utils';
+import { isObject, getArraysPerKey, extractLinkId, getMainId } from '../utils';
 import { _ } from '../utils/obj';
 
 const initialState = {};
@@ -38,7 +38,7 @@ const toObjAndAddAttrs = (links, status) => {
 const linksReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
-    const newState = { ...initialState };
+    let newState = { ...initialState };
     for (const listName in action.payload.links) {
       const ridLinks = _.ignore(
         action.payload.links[listName],
@@ -48,6 +48,7 @@ const linksReducer = (state = initialState, action) => {
         ridLinks, STATUS, [EXTRD_UPDATING, OLD_DELETING], STATUS, ADDED
       );
     }
+    newState = _getLastLinks(newState);
     return newState;
   }
 
@@ -72,7 +73,7 @@ const linksReducer = (state = initialState, action) => {
   if (action.type === UPDATE_FETCHED) {
     const { lnOrQt, links, keepIds } = action.payload;
 
-    const newState = { ...state };
+    let newState = { ...state };
     if (isObject(links)) {
       for (const listName in links) {
         const processingLinks = _.exclude(state[listName], STATUS, ADDED);
@@ -101,10 +102,10 @@ const linksReducer = (state = initialState, action) => {
         newState[listName] = { ...newState[listName], ...processingLinks };
       }
     }
-
     for (const listName in newState) {
       newState[listName] = _.ignore(newState[listName], DO_IGNORE_EXTRD_RST);
     }
+    newState = _getLastLinks(newState);
 
     return loop(
       newState, Cmd.run(extractContents(), { args: [Cmd.dispatch, Cmd.getState] })
@@ -124,7 +125,7 @@ const linksReducer = (state = initialState, action) => {
   if (action.type === UPDATE_FETCHED_MORE) {
     const { lnOrQt, links, keepIds } = action.payload;
 
-    const newState = { ...state };
+    let newState = { ...state };
     if (isObject(links)) {
       for (const listName in links) {
         const processingLinks = _.exclude(state[listName], STATUS, ADDED);
@@ -147,6 +148,7 @@ const linksReducer = (state = initialState, action) => {
         newState[listName] = { ...newState[listName], ...processingLinks };
       }
     }
+    newState = _getLastLinks(newState);
 
     return loop(
       newState, Cmd.run(extractContents(), { args: [Cmd.dispatch, Cmd.getState] })
@@ -635,6 +637,39 @@ const linksReducer = (state = initialState, action) => {
   }
 
   return state;
+};
+
+const _getLastLinks = (links) => {
+  const infos = {};
+  for (const listName in links) {
+    for (const link of Object.values(links[listName])) {
+      const { id, status } = link;
+      const { updatedDT } = extractLinkId(id);
+
+      const mainId = getMainId(id);
+      if (isObject(infos[mainId])) {
+        if (
+          (infos[mainId].status === ADDED && status === ADDED) ||
+          (infos[mainId].status !== ADDED && status !== ADDED)
+        ) {
+          if (infos[mainId].updatedDT >= updatedDT) continue;
+        } else if (infos[mainId].status !== ADDED && status === ADDED) {
+          continue;
+        }
+      }
+
+      infos[mainId] = { listName, link, updatedDT, status };
+    }
+  }
+
+  const lastLinks = {};
+  for (const info of Object.values(infos)) {
+    const { listName, link } = info;
+    if (!isObject(lastLinks[listName])) lastLinks[listName] = {};
+    lastLinks[listName][link.id] = { ...link };
+  }
+
+  return lastLinks;
 };
 
 export default linksReducer;

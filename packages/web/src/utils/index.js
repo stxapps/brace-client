@@ -2143,32 +2143,6 @@ export const getListNameAndLink = (id, links) => {
   return { listName: null, link: null };
 };
 
-const _getUniqueNamedLinks = (namedLinks) => {
-  // Remove duplicate main ids.
-  const infos = {};
-  for (const link of namedLinks) {
-    const { id, status } = link;
-    const { updatedDT } = extractLinkId(id);
-
-    const mainId = getMainId(id);
-    if (isObject(infos[mainId])) {
-      if (
-        (infos[mainId].status === ADDED && status === ADDED) ||
-        (infos[mainId].status !== ADDED && status !== ADDED)
-      ) {
-        if (infos[mainId].updatedDT >= updatedDT) continue;
-      } else if (infos[mainId].status !== ADDED && status === ADDED) {
-        continue;
-      }
-    }
-
-    infos[mainId] = { link, updatedDT, status };
-  }
-
-  const filteredLinks = Object.values(infos).map(info => info.link);
-  return filteredLinks;
-};
-
 export const getNLinkObjs = (params) => {
   const { links, listName, doDescendingOrder, pinFPaths, pendingPins } = params;
 
@@ -2180,7 +2154,6 @@ export const getNLinkObjs = (params) => {
 
   let namedLinks = [];
   if (isObject(links[listName])) namedLinks = Object.values(links[listName]);
-  namedLinks = _getUniqueNamedLinks(namedLinks);
 
   let sortedLinks = sortLinks(namedLinks, doDescendingOrder);
   sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
