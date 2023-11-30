@@ -18,7 +18,7 @@ import {
   getSafeAreaWidth, getSafeAreaHeight, makeGetTagStatus,
 } from '../selectors';
 import {
-  copyTextToClipboard, getListNameDisplayName, getAllListNames, isEqual,
+  copyTextToClipboard, getListNameDisplayName, getAllListNames, isObject, isEqual,
   getLastHalfHeight,
 } from '../utils';
 import { popupBgFMV, popupFMV } from '../types/animConfigs';
@@ -97,6 +97,7 @@ class CardItemMenuPopup extends React.PureComponent {
     if (queryString) menu = QUERY_STRING_MENU;
 
     if (
+      !isObject(popupLink) ||
       [ADDING, MOVING, UPDATING, EXTRD_UPDATING].includes(popupLink.status) ||
       ![null, PINNED].includes(pinStatus) ||
       ![null, TAGGED].includes(tagStatus)
@@ -120,7 +121,7 @@ class CardItemMenuPopup extends React.PureComponent {
   }
 
   onMenuPopupClick = (text) => {
-    if (!text || this.didClick) return;
+    if (!text || this.didClick || !isObject(this.props.popupLink)) return;
 
     const { anchorPosition } = this.props;
     const { id, url } = this.props.popupLink;

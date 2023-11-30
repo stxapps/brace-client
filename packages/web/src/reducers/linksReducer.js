@@ -424,17 +424,18 @@ const linksReducer = (state = initialState, action) => {
       } else if ([DIED_MOVING].includes(status)) {
         const { fromListName, fromId } = state[listName][id];
 
-        if (
-          isObject(state[fromListName]) && isObject(state[fromListName][fromId])
-        ) {
-          const fromLink = state[fromListName][fromId];
+        let fromLink;
+        if (isObject(state[fromListName])) fromLink = state[fromListName][fromId];
+        if (isObject(fromLink)) {
           newState[fromListName][fromId] = { ...fromLink, status: ADDED };
         }
       } else if ([DIED_REMOVING, DIED_DELETING].includes(status)) {
         newState[listName][id] = { ...state[listName][id], status: ADDED };
       } else if ([DIED_UPDATING].includes(status)) {
         const { fromLink } = state[listName][id];
-        newState[listName][fromLink.id] = { ...fromLink, status: ADDED };
+        if (isObject(fromLink)) {
+          newState[listName][fromLink.id] = { ...fromLink, status: ADDED };
+        }
       } else {
         console.log(`Invalid status: ${status} of link id: ${id}`);
       }
@@ -444,19 +445,14 @@ const linksReducer = (state = initialState, action) => {
   }
 
   if (action.type === EXTRACT_CONTENTS) {
-    const { listNames, links } = action.payload;
+    const { toListNames, toLinks } = action.payload;
 
-    const fromIdsPerLn = {};
-    for (let i = 0; i < listNames.length; i++) {
-      const [fromListName, fromId] = [listNames[i], links[i].fromId];
-      if (!Array.isArray(fromIdsPerLn[fromListName])) fromIdsPerLn[fromListName] = [];
-      fromIdsPerLn[fromListName].push(fromId);
-    }
+    const linksPerLn = getArraysPerKey(toListNames, toLinks);
 
     const newState = { ...state };
-    for (const [fromListName, fromIds] of Object.entries(fromIdsPerLn)) {
-      newState[fromListName] = _.update(
-        newState[fromListName], ID, fromIds, STATUS, EXTRD_UPDATING
+    for (const [listName, lnLinks] of Object.entries(linksPerLn)) {
+      newState[listName] = _.update(
+        newState[listName], ID, _.extract(lnLinks, ID), STATUS, EXTRD_UPDATING
       );
     }
 
@@ -474,19 +470,14 @@ const linksReducer = (state = initialState, action) => {
   }
 
   if (action.type === EXTRACT_CONTENTS_ROLLBACK) {
-    const { listNames, links } = action.meta;
+    const { toListNames, toLinks } = action.meta;
 
-    const fromIdsPerLn = {};
-    for (let i = 0; i < listNames.length; i++) {
-      const [fromListName, fromId] = [listNames[i], links[i].fromId];
-      if (!Array.isArray(fromIdsPerLn[fromListName])) fromIdsPerLn[fromListName] = [];
-      fromIdsPerLn[fromListName].push(fromId);
-    }
+    const linksPerLn = getArraysPerKey(toListNames, toLinks);
 
     const newState = { ...state };
-    for (const [fromListName, fromIds] of Object.entries(fromIdsPerLn)) {
-      newState[fromListName] = _.update(
-        newState[fromListName], ID, fromIds, STATUS, ADDED
+    for (const [listName, lnLinks] of Object.entries(linksPerLn)) {
+      newState[listName] = _.update(
+        newState[listName], ID, _.extract(lnLinks, ID), STATUS, ADDED
       );
     }
 
@@ -495,25 +486,24 @@ const linksReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_EXTRACTED_CONTENTS) {
     const {
-      successListNames, successLinks, errorListNames, errorLinks, canRerender,
+      toListNames, toLinks, successListNames, successLinks, canRerender,
     } = action.payload;
 
+    const linksPerLn = getArraysPerKey(toListNames, toLinks);
     const successLinksPerLn = getArraysPerKey(successListNames, successLinks);
 
-    const errorFromIdsPerLn = {};
-    for (let i = 0; i < errorListNames.length; i++) {
-      const [fromListName, fromId] = [errorListNames[i], errorLinks[i].fromId];
-      if (!Array.isArray(errorFromIdsPerLn[fromListName])) {
-        errorFromIdsPerLn[fromListName] = [];
-      }
-      errorFromIdsPerLn[fromListName].push(fromId);
-    }
-
     const newState = { ...state };
+    for (const [listName, lnLinks] of Object.entries(linksPerLn)) {
+      newState[listName] = _.update(
+        newState[listName], ID, _.extract(lnLinks, ID), STATUS, ADDED
+      );
+    }
     for (const [listName, lnLinks] of Object.entries(successLinksPerLn)) {
       newState[listName] = { ...newState[listName] };
       for (const link of lnLinks) {
         const fromLink = newState[listName][link.fromId];
+        if (!isObject(fromLink)) continue;
+
         delete newState[listName][link.fromId];
         newState[listName][link.id] = {
           ...fromLink,
@@ -523,11 +513,6 @@ const linksReducer = (state = initialState, action) => {
           newState[listName][link.id][DO_IGNORE_EXTRD_RST] = true;
         }
       }
-    }
-    for (const [fromListName, fromIds] of Object.entries(errorFromIdsPerLn)) {
-      newState[fromListName] = _.update(
-        newState[fromListName], ID, fromIds, STATUS, ADDED
-      );
     }
 
     return loop(

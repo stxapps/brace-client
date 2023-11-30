@@ -480,19 +480,27 @@ const displayReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_EXTRACTED_CONTENTS) {
     const { successLinks } = action.payload;
-    if (!Array.isArray(state.showingLinkIds)) return state;
 
     const fromMap = {};
     for (const link of successLinks) fromMap[link.fromId] = link.id
 
     const newState = { ...state };
-    newState.showingLinkIds = [];
-    for (const id of state.showingLinkIds) {
-      if (isString(fromMap[id])) {
-        newState.showingLinkIds.push(fromMap[id]);
-        continue;
+    // If bulk editing, no extract contents. And while extracting, no select.
+    //   So no need update selectedLinkIds here.
+    // If showing menu, no extract contents. But while extracting, can show menu popup.
+    //   So need to update selectingLinkId here.
+    if (isString(fromMap[state.selectingLinkId])) {
+      newState.selectingLinkId = fromMap[state.selectingLinkId];
+    }
+    if (Array.isArray(state.showingLinkIds)) {
+      newState.showingLinkIds = [];
+      for (const id of state.showingLinkIds) {
+        if (isString(fromMap[id])) {
+          newState.showingLinkIds.push(fromMap[id]);
+          continue;
+        }
+        newState.showingLinkIds.push(id);
       }
-      newState.showingLinkIds.push(id);
     }
 
     return newState;

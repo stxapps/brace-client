@@ -20,7 +20,7 @@ import {
   FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED, FETCH_MORE, FETCH_MORE_COMMIT,
   FETCH_MORE_ROLLBACK, CACHE_FETCHED_MORE, UPDATE_FETCHED_MORE, REFRESH_FETCHED,
   ADD_FETCHING_INFO, DELETE_FETCHING_INFO, SET_SHOWING_LINK_IDS, ADD_LINKS,
-  ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK, UPDATE_LINKS, DELETE_LINKS, DELETE_LINKS_COMMIT,
+  ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK, DELETE_LINKS, DELETE_LINKS_COMMIT,
   DELETE_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT,
   MOVE_LINKS_ADD_STEP_ROLLBACK, MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT,
   MOVE_LINKS_DELETE_STEP_ROLLBACK, CANCEL_DIED_LINKS, DELETE_OLD_LINKS_IN_TRASH,
@@ -65,14 +65,14 @@ import {
   SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP,
   DISCARD_ACTION_UPDATE_LIST_NAME, DISCARD_ACTION_UPDATE_TAG_NAME, LOCAL_LINK_ATTRS,
   MY_LIST, TRASH, N_LINKS, N_DAYS, CD_ROOT, ADDED, DIED_ADDING, DIED_MOVING,
-  DIED_REMOVING, DIED_DELETING, DIED_UPDATING, SHOWING_STATUSES, BRACE_EXTRACT_URL,
-  BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, IAP_VERIFY_URL,
-  IAP_STATUS_URL, PADDLE, COM_BRACEDOTTO, COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING,
-  VALID, INVALID, ACTIVE, UNKNOWN, SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE,
-  CUSTOM_MODE, FEATURE_PIN, FEATURE_APPEARANCE, FEATURE_CUSTOM, FEATURE_LOCK,
-  FEATURE_TAG, PADDLE_RANDOM_ID, VALID_PASSWORD, PASSWORD_MSGS, IN_USE_LIST_NAME,
-  LIST_NAME_MSGS, VALID_TAG_NAME, DUPLICATE_TAG_NAME, IN_USE_TAG_NAME, TAG_NAME_MSGS,
-  VALID_URL, DELETE_ACTION_LIST_NAME, DELETE_ACTION_TAG_NAME,
+  DIED_REMOVING, DIED_DELETING, DIED_UPDATING, SHOWING_STATUSES, BRACE_PRE_EXTRACT_URL,
+  EXTRACT_INIT, IAP_VERIFY_URL, IAP_STATUS_URL, PADDLE, COM_BRACEDOTTO,
+  COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, ACTIVE, UNKNOWN,
+  SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE, FEATURE_PIN,
+  FEATURE_APPEARANCE, FEATURE_CUSTOM, FEATURE_LOCK, FEATURE_TAG, PADDLE_RANDOM_ID,
+  VALID_PASSWORD, PASSWORD_MSGS, IN_USE_LIST_NAME, LIST_NAME_MSGS, VALID_TAG_NAME,
+  DUPLICATE_TAG_NAME, IN_USE_TAG_NAME, TAG_NAME_MSGS, VALID_URL,
+  DELETE_ACTION_LIST_NAME, DELETE_ACTION_TAG_NAME,
 } from '../types/const';
 import {
   isEqual, isArrayEqual, isString, isObject, isNumber, throttle, randomString,
@@ -1674,70 +1674,32 @@ export const extractContents = (listNames, ids) => async (dispatch, getState) =>
     return;
   }
 
+  const isBulkEditing = getState().display.isBulkEditing;
+  if (isBulkEditing) return; // likely busy so no after tasks
+
   const { toListNames, toLinks } = getToExtractLinks(getState, listNames, ids);
   if (toLinks.length === 0) {
     dispatch(runAfterFetchTask());
     return;
   }
 
-  let extractedResults;
-  try {
-    const urls = toLinks.map(link => link.url);
-    const res = await axios.post(BRACE_EXTRACT_URL, { urls });
-    extractedResults = res.data.extractedResults;
-  } catch (error) {
-    console.log('Error when contact Brace server to extract contents with links: ', toLinks, ' Error: ', error);
-    return;
-  }
+  const selectingLinkId = getState().display.selectingLinkId;
+  const found = toLinks.some(link => link.id === selectingLinkId);
+  if (found && isPopupShown(getState())) return; // likely busy so no after tasks
 
-  const links = getState().links;
-  let updatedDT = Date.now();
-
-  const extractedListNames = [], extractedLinks = [];
-  for (let i = 0; i < extractedResults.length; i++) {
-    const extractedResult = extractedResults[i];
-    if (
-      extractedResult.status === EXTRACT_INIT ||
-      extractedResult.status === EXTRACT_EXCEEDING_N_URLS
-    ) continue;
-
-    const [toListName, toLink] = [toListNames[i], toLinks[i]];
-
-    // Some links might be moved while extracting.
-    // If that the case, ignore them.
-    if (!isObject(links[toListName]) || !isObject(links[toListName][toLink.id])) {
-      continue;
-    }
-    if (links[toListName][toLink.id].status !== ADDED) continue;
-
-    const eId = `${getMainId(toLink.id)}-${randomString(4)}-${updatedDT}`;
-    const eLink = { ...toLink, id: eId, extractedResult, fromId: toLink.id };
-    updatedDT += 1;
-
-    extractedListNames.push(toListName);
-    extractedLinks.push(eLink);
-  }
-  if (extractedLinks.length === 0) {
-    dispatch(runAfterFetchTask());
-    return;
-  }
-
-  const payload = {
-    listNames: extractedListNames, links: extractedLinks, manuallyManageError: true,
-  };
+  const payload = { toListNames, toLinks };
   dispatch({
     type: EXTRACT_CONTENTS,
     payload,
     meta: {
       offline: {
-        effect: { method: UPDATE_LINKS, params: payload },
+        effect: { method: EXTRACT_CONTENTS, params: payload },
         commit: { type: EXTRACT_CONTENTS_COMMIT },
         rollback: { type: EXTRACT_CONTENTS_ROLLBACK, meta: payload },
       },
     },
   });
-  addFetchedToVars(null, extractedLinks, vars);
-};
+}
 
 export const tryUpdateExtractedContents = (payload) => async (dispatch, getState) => {
   const isBulkEditing = getState().display.isBulkEditing;
@@ -1747,6 +1709,7 @@ export const tryUpdateExtractedContents = (payload) => async (dispatch, getState
   dispatch({
     type: UPDATE_EXTRACTED_CONTENTS, payload: { ...payload, canRerender },
   });
+  addFetchedToVars(null, payload.successLinks, vars);
 };
 
 export const extractContentsDeleteStep = (successListNames, successLinks) => async (

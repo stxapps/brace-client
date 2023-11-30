@@ -3,14 +3,18 @@ import { LexoRank } from '@wewatch/lexorank';
 
 import serverApi from './server';
 import fileApi from './localFile';
-import { CD_ROOT, DOT_JSON, INFO, LOCAL_LINK_ATTRS } from '../types/const';
+import axios from '../axiosWrapper';
 import {
-  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, TRY_UPDATE_SETTINGS,
-  UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
+  FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, DELETE_LINKS, EXTRACT_CONTENTS,
+  TRY_UPDATE_SETTINGS, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK,
   UPDATE_UNCHANGED_SETTINGS, TRY_UPDATE_INFO, UPDATE_INFO, UPDATE_INFO_COMMIT,
   UPDATE_INFO_ROLLBACK, UPDATE_UNCHANGED_INFO, PIN_LINK, UNPIN_LINK, UPDATE_CUSTOM_DATA,
   UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_T_STEP,
 } from '../types/actionTypes';
+import {
+  CD_ROOT, DOT_JSON, INFO, LOCAL_LINK_ATTRS, BRACE_EXTRACT_URL, EXTRACT_INIT,
+  EXTRACT_EXCEEDING_N_URLS,
+} from '../types/const';
 import {
   isEqual, isObject, isString, isNumber, randomString, createLinkFPath, extractLinkFPath,
   createPinFPath, addFPath, getStaticFPath, deriveFPaths, createDataFName,
@@ -42,6 +46,10 @@ export const effect = async (effectObj, _action) => {
 
   if (method === DELETE_LINKS) {
     return deleteLinks(params);
+  }
+
+  if (method === EXTRACT_CONTENTS) {
+    return extractContents(params);
   }
 
   if (method === TRY_UPDATE_SETTINGS) {
@@ -493,6 +501,40 @@ const deleteLinks = async (params) => {
   }
 
   return { successListNames, successIds, errorListNames, errorIds, errors };
+};
+
+const extractContents = async (params) => {
+  const { toListNames, toLinks } = params;
+
+  const urls = toLinks.map(link => link.url);
+  const res = await axios.post(BRACE_EXTRACT_URL, { urls });
+  const extractedResults = res.data.extractedResults;
+
+  let updatedDT = Date.now();
+
+  const extractedListNames = [], extractedLinks = [];
+  for (let i = 0; i < extractedResults.length; i++) {
+    const extractedResult = extractedResults[i];
+    if (
+      extractedResult.status === EXTRACT_INIT ||
+      extractedResult.status === EXTRACT_EXCEEDING_N_URLS
+    ) continue;
+
+    const [toListName, toLink] = [toListNames[i], toLinks[i]];
+
+    const eId = `${getMainId(toLink.id)}-${randomString(4)}-${updatedDT}`;
+    const eLink = { ...toLink, id: eId, extractedResult, fromId: toLink.id };
+    updatedDT += 1;
+
+    extractedListNames.push(toListName);
+    extractedLinks.push(eLink);
+  }
+
+  const pResult = await putLinks({
+    listNames: extractedListNames, links: extractedLinks, manuallyManageError: true,
+  });
+
+  return { toListNames, toLinks, extractedListNames, extractedLinks, ...pResult };
 };
 
 const tryPutSettings = async (params) => {
