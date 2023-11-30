@@ -616,28 +616,29 @@ const putInfo = async (params) => {
 const putPins = async (params) => {
   const { getState, pins } = params;
 
-  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
-  const links = getState().links;
-
   // Add to the fetched only if also exists in fpaths to prevent pin on a link
   //   that was already moved/removed/deleted.
   const pListNames = [], pLinks = [];
-  for (const { id } of pins) {
-    const { listName, link } = getListNameAndLink(id, links);
-    if (!isString(listName) || !isObject(link)) {
-      console.log('In putPins, no found listName or link for id:', id);
-      continue;
-    }
+  if (getState) {
+    const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
+    const links = getState().links;
+    for (const { id } of pins) {
+      const { listName, link } = getListNameAndLink(id, links);
+      if (!isString(listName) || !isObject(link)) {
+        console.log('In putPins, no found listName or link for id:', id);
+        continue;
+      }
 
-    let found = false;
-    if (Array.isArray(linkFPaths[listName])) {
-      if (linkFPaths[listName].includes(createLinkFPath(listName, id))) found = true;
-    }
-    if (!found) continue;
+      let found = false;
+      if (Array.isArray(linkFPaths[listName])) {
+        if (linkFPaths[listName].includes(createLinkFPath(listName, id))) found = true;
+      }
+      if (!found) continue;
 
-    const [pListName, pLink] = [listName, newObject(link, LOCAL_LINK_ATTRS)];
-    pListNames.push(pListName);
-    pLinks.push(pLink);
+      const [pListName, pLink] = [listName, newObject(link, LOCAL_LINK_ATTRS)];
+      pListNames.push(pListName);
+      pLinks.push(pLink);
+    }
   }
 
   const fpaths = [], contents = [];
