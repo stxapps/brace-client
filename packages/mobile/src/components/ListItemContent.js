@@ -7,8 +7,8 @@ import {
   updateBulkEdit, addSelectedLinkIds, moveLinks, updateQueryString,
 } from '../actions';
 import {
-  COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING, UPDATING, LG_WIDTH,
-  PINNED, TAGGED,
+  COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING, UPDATING,
+  EXTRD_UPDATING, LG_WIDTH, PINNED, TAGGED,
 } from '../types/const';
 import { makeGetCustomImage, makeGetTnAndDns } from '../selectors';
 import {
@@ -68,7 +68,7 @@ const ListItemContent = (props) => {
     didClick.current = false;
   }, [link.status]);
 
-  const { url, decor, extractedResult, custom } = link;
+  const { url, decor, extractedResult, custom, doIgnoreExtrdRst } = link;
   const { host, origin } = extractUrl(url);
 
   const renderImage = () => {
@@ -79,7 +79,9 @@ const ListItemContent = (props) => {
       return <Image key="img-image-custom" style={tailwind('w-full rounded bg-white blk:bg-gray-900 aspect-7/12 shadow-xs')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
     }
 
-    if (extractedResult && extractedResult.image) image = extractedResult.image;
+    if (extractedResult && extractedResult.image && !doIgnoreExtrdRst) {
+      image = extractedResult.image;
+    }
     if (image) {
       return <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full rounded bg-white blk:bg-gray-900 aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
     }
@@ -127,7 +129,7 @@ const ListItemContent = (props) => {
     };
 
     let favicon;
-    if (extractedResult && extractedResult.favicon) {
+    if (extractedResult && extractedResult.favicon && !doIgnoreExtrdRst) {
       favicon = ensureContainUrlSecureProtocol(extractedResult.favicon);
     }
 
@@ -165,7 +167,7 @@ const ListItemContent = (props) => {
   let title;
   if (custom && custom.title) {
     title = custom.title;
-  } else if (extractedResult && extractedResult.title) {
+  } else if (extractedResult && extractedResult.title && !doIgnoreExtrdRst) {
     title = extractedResult.title;
   }
   if (!title) {
@@ -174,7 +176,7 @@ const ListItemContent = (props) => {
 
   const canSelect = (
     safeAreaWidth >= LG_WIDTH &&
-    ![ADDING, MOVING, UPDATING].includes(link.status) &&
+    ![ADDING, MOVING, UPDATING, EXTRD_UPDATING].includes(link.status) &&
     [null, PINNED].includes(pinStatus) &&
     [null, TAGGED].includes(tagStatus)
   );

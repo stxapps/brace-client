@@ -45,6 +45,7 @@ export const POPUP_ANCHOR_POSITION = 'popupAnchorPosition';
 export const FROM_LIST_NAME = 'fromListName';
 export const FROM_ID = 'fromId';
 export const FROM_LINK = 'fromLink';
+export const DO_IGNORE_EXTRD_RST = 'doIgnoreExtrdRst';
 
 export const CD_ROOT = 'cdroot';
 export const LINKS = 'links';
@@ -75,6 +76,8 @@ export const MOVING = 'MOVING';
 export const DELETING = 'DELETING';
 export const REMOVING = 'REMOVING';
 export const MERGING = 'MERGING';
+export const EXTRD_UPDATING = 'EXTRD_UPDATING';
+export const OLD_DELETING = 'OLD_DELETING';
 export const MOVED = 'MOVED';
 export const DIED_ADDING = 'DIED_ADDING';
 export const DIED_UPDATING = 'DIED_UPDATING';
@@ -85,10 +88,12 @@ export const DIED_MERGING = 'DIED_MERGING';
 export const PENDING_REMOVING = 'PENDING_REMOVING';
 
 export const SHOWING_STATUSES = [
-  ADDED, MOVED, ADDING, MOVING, UPDATING, DIED_ADDING, DIED_MOVING, DIED_REMOVING,
-  DIED_DELETING, DIED_UPDATING,
+  ADDED, MOVED, ADDING, MOVING, UPDATING, EXTRD_UPDATING, DIED_ADDING, DIED_MOVING,
+  DIED_REMOVING, DIED_DELETING, DIED_UPDATING,
 ];
-export const NEW_LINK_FPATH_STATUSES = [ADDING, MOVING, DIED_ADDING, DIED_MOVING];
+export const NEW_LINK_FPATH_STATUSES = [
+  ADDING, UPDATING, MOVING, DIED_ADDING, DIED_UPDATING, DIED_MOVING,
+];
 
 export const COPY_LINK = 'Copy link';
 //export const ARCHIVE = 'Archive';
@@ -307,6 +312,7 @@ export const APP_STATE_BACKGROUND = 'background';
 
 export const LOCAL_LINK_ATTRS = [
   STATUS, IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, FROM_LIST_NAME, FROM_ID, FROM_LINK,
+  DO_IGNORE_EXTRD_RST,
 ];
 
 export const ADD_TAGS = 'Add tags';

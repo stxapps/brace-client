@@ -7,17 +7,18 @@ import {
   ADD_LINKS, MOVE_LINKS_DELETE_STEP_COMMIT, DELETE_LINKS_COMMIT, CANCEL_DIED_LINKS,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK, EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT,
-  EXTRACT_CONTENTS_ROLLBACK, UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING,
-  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID,
-  UPDATE_SELECTING_LIST_NAME, DELETE_LIST_NAMES, UPDATE_DELETE_ACTION,
-  UPDATE_DISCARD_ACTION, UPDATE_SETTINGS, UPDATE_SETTINGS_COMMIT,
-  UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS, MERGE_SETTINGS_COMMIT,
-  UPDATE_SETTINGS_VIEW_ID, UPDATE_LIST_NAMES_MODE, UPDATE_PAYWALL_FEATURE,
-  UPDATE_LOCK_ACTION, ADD_LOCK_LIST, LOCK_LIST, UPDATE_LOCKS_FOR_ACTIVE_APP,
-  UPDATE_LOCKS_FOR_INACTIVE_APP, UPDATE_TAG_DATA_S_STEP_COMMIT,
-  UPDATE_TAG_DATA_T_STEP_COMMIT, UPDATE_SELECTING_TAG_NAME, DELETE_TAG_NAMES,
-  UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
-  UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
+  EXTRACT_CONTENTS_ROLLBACK, UPDATE_EXTRACTED_CONTENTS, UPDATE_CUSTOM_DATA,
+  UPDATE_STATUS, UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING, ADD_SELECTED_LINK_IDS,
+  DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID, UPDATE_SELECTING_LIST_NAME,
+  DELETE_LIST_NAMES, UPDATE_DELETE_ACTION, UPDATE_DISCARD_ACTION, UPDATE_SETTINGS,
+  UPDATE_SETTINGS_COMMIT, UPDATE_SETTINGS_ROLLBACK, CANCEL_DIED_SETTINGS,
+  MERGE_SETTINGS_COMMIT, UPDATE_SETTINGS_VIEW_ID, UPDATE_LIST_NAMES_MODE,
+  UPDATE_PAYWALL_FEATURE, UPDATE_LOCK_ACTION, ADD_LOCK_LIST, LOCK_LIST,
+  UPDATE_LOCKS_FOR_ACTIVE_APP, UPDATE_LOCKS_FOR_INACTIVE_APP,
+  UPDATE_TAG_DATA_S_STEP_COMMIT, UPDATE_TAG_DATA_T_STEP_COMMIT,
+  UPDATE_SELECTING_TAG_NAME, DELETE_TAG_NAMES, UPDATE_IMPORT_ALL_DATA_PROGRESS,
+  UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA,
+  RESET_STATE,
 } from '../types/actionTypes';
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
@@ -440,19 +441,69 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === CANCEL_DIED_LINKS) {
-    const { ids, statuses } = action.payload;
+    const { ids, statuses, fromIds } = action.payload;
+    if (!Array.isArray(state.showingLinkIds)) return state;
 
-    const selectedIds = [];
-    for (let i = 0; i < ids.length; i++) {
-      const [id, status] = [ids[i], statuses[i]];
-      if (![DIED_ADDING, DIED_MOVING].includes(status)) continue;
-      selectedIds.push(id);
+    const newState = { ...state };
+    newState.showingLinkIds = [];
+    for (const id of state.showingLinkIds) {
+      const i = ids.findIndex(_id => _id === id);
+      if (i < 0) {
+        newState.showingLinkIds.push(id);
+        continue;
+      }
+
+      const [status, fromId] = [statuses[i], fromIds[i]];
+      if ([DIED_ADDING, DIED_MOVING].includes(status)) continue;
+      if ([DIED_UPDATING].includes(status)) {
+        newState.showingLinkIds.push(fromId);
+        continue;
+      }
+
+      newState.showingLinkIds.push(id);
     }
 
-    return {
-      ...state,
-      showingLinkIds: _filterIfNotNull(state.showingLinkIds, selectedIds),
-    };
+    return newState;
+  }
+
+  if (action.type === EXTRACT_CONTENTS) {
+    return { ...state, statuses: [...state.statuses, EXTRACT_CONTENTS] };
+  }
+
+  if (action.type === EXTRACT_CONTENTS_COMMIT) {
+    return { ...state, statuses: [...state.statuses, EXTRACT_CONTENTS_COMMIT] };
+  }
+
+  if (action.type === EXTRACT_CONTENTS_ROLLBACK) {
+    return { ...state, statuses: [...state.statuses, EXTRACT_CONTENTS_ROLLBACK] };
+  }
+
+  if (action.type === UPDATE_EXTRACTED_CONTENTS) {
+    const { successLinks } = action.payload;
+
+    const fromMap = {};
+    for (const link of successLinks) fromMap[link.fromId] = link.id;
+
+    const newState = { ...state };
+    // If bulk editing, no extract contents. And while extracting, no select.
+    //   So no need update selectedLinkIds here.
+    // If showing menu, no extract contents. But while extracting, can show menu popup.
+    //   So need to update selectingLinkId here.
+    if (isString(fromMap[state.selectingLinkId])) {
+      newState.selectingLinkId = fromMap[state.selectingLinkId];
+    }
+    if (Array.isArray(state.showingLinkIds)) {
+      newState.showingLinkIds = [];
+      for (const id of state.showingLinkIds) {
+        if (isString(fromMap[id])) {
+          newState.showingLinkIds.push(fromMap[id]);
+          continue;
+        }
+        newState.showingLinkIds.push(id);
+      }
+    }
+
+    return newState;
   }
 
   if (action.type === DELETE_OLD_LINKS_IN_TRASH) {
@@ -475,16 +526,22 @@ const displayReducer = (state = initialState, action) => {
     };
   }
 
-  if (action.type === EXTRACT_CONTENTS) {
-    return { ...state, statuses: [...state.statuses, EXTRACT_CONTENTS] };
-  }
+  if (action.type === UPDATE_CUSTOM_DATA) {
+    const { fromLink, toLink } = action.payload;
+    if (!isObject(fromLink) || !isObject(toLink)) return state;
+    if (!Array.isArray(state.showingLinkIds)) return state;
 
-  if (action.type === EXTRACT_CONTENTS_COMMIT) {
-    return { ...state, statuses: [...state.statuses, EXTRACT_CONTENTS_COMMIT] };
-  }
+    const newState = { ...state };
+    newState.showingLinkIds = [];
+    for (const id of state.showingLinkIds) {
+      if (id === fromLink.id) {
+        newState.showingLinkIds.push(toLink.id);
+        continue;
+      }
+      newState.showingLinkIds.push(id);
+    }
 
-  if (action.type === EXTRACT_CONTENTS_ROLLBACK) {
-    return { ...state, statuses: [...state.statuses, EXTRACT_CONTENTS_ROLLBACK] };
+    return newState;
   }
 
   if (action.type === UPDATE_STATUS) {

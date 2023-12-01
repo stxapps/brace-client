@@ -1699,7 +1699,7 @@ export const extractContents = (listNames, ids) => async (dispatch, getState) =>
       },
     },
   });
-}
+};
 
 export const tryUpdateExtractedContents = (payload) => async (dispatch, getState) => {
   const isBulkEditing = getState().display.isBulkEditing;
@@ -2951,11 +2951,14 @@ export const updateCustomData = (title, image) => async (dispatch, getState) => 
 };
 
 export const updateCustomDataDeleteStep = (
-  listName, fromLink, serverUnusedFPaths, localUnusedFPaths
+  listName, fromLink, toLink, serverUnusedFPaths, localUnusedFPaths
 ) => async (dispatch, getState) => {
-  const fromLinkFPath = createLinkFPath(listName, fromLink.id);
+
+  const fpaths = [...serverUnusedFPaths];
+  if (fromLink.id !== toLink.id) fpaths.push(createLinkFPath(listName, fromLink.id));
+
   try {
-    await serverApi.deleteFiles([fromLinkFPath, ...serverUnusedFPaths]);
+    await serverApi.deleteFiles(fpaths);
     await fileApi.deleteFiles(localUnusedFPaths);
   } catch (error) {
     console.log('updateCustomData clean up error: ', error);

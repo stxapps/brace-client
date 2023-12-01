@@ -6,7 +6,7 @@ import {
   UPDATE_EXTRACTED_CONTENTS, PIN_LINK_COMMIT, UPDATE_CUSTOM_DATA_COMMIT, DELETE_ALL_DATA,
   RESET_STATE,
 } from '../types/actionTypes';
-import { createLinkFPath, getArraysPerKey } from '../utils';
+import { isObject, createLinkFPath, getArraysPerKey } from '../utils';
 
 const initialState = {};
 
@@ -113,9 +113,8 @@ const fetchedReducer = (state = initialState, action) => {
 
       const prevFPaths = [], fpaths = [];
       for (const link of lnLinks) {
-        if (!(link.fromId in newLinks[listName])) continue;
-
         const fromLink = newLinks[listName][link.fromId];
+        if (!isObject(fromLink)) continue;
 
         prevFPaths.push(createLinkFPath(listName, fromLink.id));
         fpaths.push(createLinkFPath(listName, link.id));
@@ -141,6 +140,7 @@ const fetchedReducer = (state = initialState, action) => {
 
   if (action.type === PIN_LINK_COMMIT) {
     const { listNames, links } = action.payload;
+    if (!Array.isArray(listNames) || !Array.isArray(links)) return state;
 
     const linksPerLn = getArraysPerKey(listNames, links);
 

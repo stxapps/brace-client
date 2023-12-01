@@ -4,7 +4,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
-import { ADDING, MOVING, UPDATING, SM_WIDTH, PINNED } from '../types/const';
+import {
+  ADDING, MOVING, UPDATING, EXTRD_UPDATING, SM_WIDTH, PINNED,
+} from '../types/const';
 import { makeGetPinStatus, makeGetTagStatus } from '../selectors';
 import {
   ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isTaggingStatus,
@@ -137,13 +139,15 @@ const ListItem = (props) => {
   const isPinning = isPinningStatus(pinStatus);
   const isTagging = isTaggingStatus(tagStatus);
   const canSelect = (
-    ![ADDING, MOVING, UPDATING].includes(status) && !isPinning && !isTagging
+    ![ADDING, MOVING, UPDATING, EXTRD_UPDATING].includes(status) &&
+    !isPinning &&
+    !isTagging
   );
 
   return (
     <View style={tailwind('border-b border-gray-200 bg-white blk:border-gray-700 blk:bg-gray-900')}>
       <ListItemContent link={link} pinStatus={pinStatus} tagStatus={tagStatus} />
-      {[ADDING, MOVING, UPDATING].includes(status) && renderBusy()}
+      {[ADDING, MOVING, UPDATING, EXTRD_UPDATING].includes(status) && renderBusy()}
       {isPinning && renderPinning()}
       {isTagging && renderBusy()}
       {[PINNED].includes(pinStatus) && renderPin()}

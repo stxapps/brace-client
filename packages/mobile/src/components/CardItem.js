@@ -5,7 +5,9 @@ import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
 import { retryDiedLinks, cancelDiedLinks } from '../actions';
-import { ADDING, MOVING, UPDATING, SM_WIDTH, PINNED } from '../types/const';
+import {
+  ADDING, MOVING, UPDATING, EXTRD_UPDATING, SM_WIDTH, PINNED,
+} from '../types/const';
 import {
   makeGetPinStatus, makeGetTagStatus, getThemeMode,
 } from '../selectors';
@@ -42,6 +44,7 @@ class CardItem extends React.Component {
       !isEqual(this.props.link.decor, nextProps.link.decor) ||
       !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
       !isEqual(this.props.link.custom, nextProps.link.custom) ||
+      this.props.link.doIgnoreExtrdRst !== nextProps.link.doIgnoreExtrdRst ||
       this.props.pinStatus !== nextProps.pinStatus ||
       this.props.tagStatus !== nextProps.tagStatus ||
       this.props.safeAreaWidth !== nextProps.safeAreaWidth ||
@@ -168,7 +171,9 @@ class CardItem extends React.Component {
     const isPinning = isPinningStatus(pinStatus);
     const isTagging = isTaggingStatus(tagStatus);
     const canSelect = (
-      ![ADDING, MOVING, UPDATING].includes(status) && !isPinning && !isTagging
+      ![ADDING, MOVING, UPDATING, EXTRD_UPDATING].includes(status) &&
+      !isPinning &&
+      !isTagging
     );
 
     // Need to do this as React Native doesn't support maxWidth: "none"
@@ -182,7 +187,7 @@ class CardItem extends React.Component {
       <View style={style}>
         <View style={tailwind(`self-center rounded-lg bg-white blk:border-gray-700 blk:bg-gray-800 ${viewStyle}`)}>
           <CardItemContent link={link} />
-          {[ADDING, MOVING, UPDATING].includes(status) && this.renderBusy()}
+          {[ADDING, MOVING, UPDATING, EXTRD_UPDATING].includes(status) && this.renderBusy()}
           {isPinning && this.renderPinning()}
           {isTagging && this.renderBusy()}
           {[PINNED].includes(pinStatus) && this.renderPin()}

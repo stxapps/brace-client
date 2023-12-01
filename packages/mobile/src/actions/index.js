@@ -21,7 +21,7 @@ import {
   FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED, FETCH_MORE, FETCH_MORE_COMMIT,
   FETCH_MORE_ROLLBACK, CACHE_FETCHED_MORE, UPDATE_FETCHED_MORE, REFRESH_FETCHED,
   ADD_FETCHING_INFO, DELETE_FETCHING_INFO, SET_SHOWING_LINK_IDS, ADD_LINKS,
-  ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK, UPDATE_LINKS, DELETE_LINKS, DELETE_LINKS_COMMIT,
+  ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK, DELETE_LINKS, DELETE_LINKS_COMMIT,
   DELETE_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT,
   MOVE_LINKS_ADD_STEP_ROLLBACK, MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT,
   MOVE_LINKS_DELETE_STEP_ROLLBACK, CANCEL_DIED_LINKS, DELETE_OLD_LINKS_IN_TRASH,
@@ -66,34 +66,33 @@ import {
   CUSTOM_EDITOR_POPUP, TAG_EDITOR_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP,
   CONFIRM_DISCARD_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
   SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP,
-  DISCARD_ACTION_UPDATE_LIST_NAME, DISCARD_ACTION_UPDATE_TAG_NAME, ID,
-  LOCAL_LINK_ATTRS, MY_LIST, TRASH, N_LINKS, N_DAYS, CD_ROOT, ADDED, DIED_ADDING,
-  DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING, SHOWING_STATUSES,
-  NEW_LINK_FPATH_STATUSES, BRACE_EXTRACT_URL, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT,
-  EXTRACT_EXCEEDING_N_URLS, IAP_VERIFY_URL, IAP_STATUS_URL, APPSTORE, PLAYSTORE,
-  COM_BRACEDOTTO, COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, UNKNOWN,
-  ERROR, ACTIVE, SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE, FEATURE_PIN,
+  DISCARD_ACTION_UPDATE_LIST_NAME, DISCARD_ACTION_UPDATE_TAG_NAME, LOCAL_LINK_ATTRS,
+  MY_LIST, TRASH, N_LINKS, N_DAYS, CD_ROOT, ADDED, DIED_ADDING, DIED_MOVING,
+  DIED_REMOVING, DIED_DELETING, DIED_UPDATING, SHOWING_STATUSES, BRACE_PRE_EXTRACT_URL,
+  EXTRACT_INIT, IAP_VERIFY_URL, IAP_STATUS_URL, APPSTORE, PLAYSTORE, COM_BRACEDOTTO,
+  COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, UNKNOWN, ERROR, ACTIVE,
+  SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE, FEATURE_PIN,
   FEATURE_APPEARANCE, FEATURE_CUSTOM, FEATURE_LOCK, FEATURE_TAG, VALID_PASSWORD,
-  PASSWORD_MSGS, VALID_TAG_NAME, DUPLICATE_TAG_NAME, TAG_NAME_MSGS, APP_STATE_ACTIVE,
-  APP_STATE_INACTIVE, APP_STATE_BACKGROUND,
+  PASSWORD_MSGS, IN_USE_LIST_NAME, LIST_NAME_MSGS, VALID_TAG_NAME, DUPLICATE_TAG_NAME,
+  IN_USE_TAG_NAME, TAG_NAME_MSGS, VALID_URL, DELETE_ACTION_LIST_NAME,
+  DELETE_ACTION_TAG_NAME, APP_STATE_ACTIVE, APP_STATE_INACTIVE, APP_STATE_BACKGROUND,
 } from '../types/const';
 import {
-  isEqual, isArrayEqual, isString, isObject, isNumber, randomString,
-  rerandomRandomTerm, deleteRemovedDT, getMainId, getLinkMainIds, getUrlFirstChar,
-  separateUrlAndParam, getUserImageUrl, randomDecor, getListNameObj,
-  getAllListNames, getLatestPurchase, getValidPurchase, doEnableExtraFeatures,
-  createDataFName, getLinkFPaths, getStaticFPaths, createSettingsFPath,
-  extractPinFPath, getPinFPaths, getPins, separatePinnedValues, sortLinks,
-  sortWithPins, getRawPins, getFormattedTime, get24HFormattedTime, extractStaticFPath,
-  getEditingListNameEditors, validatePassword, doContainListName, sleep,
-  applySubscriptionOfferDetails, doListContainUnlocks, extractLinkFPath, getLink,
-  getListNameAndLink, getNLinkObjs, getNLinkFPaths, newObject, addFetchedToVars,
-  createLinkFPath, isFetchedLinkId, doesIncludeFetching, doesIncludeFetchingMore,
-  isFetchingInterrupted, getTagFPaths, getInUseTagNames, getEditingTagNameEditors,
-  getTags, getTagNameObj, getTagNameObjFromDisplayName, validateTagNameDisplayName,
-  extractTagFPath, getNLinkFPathsByQt,
+  isEqual, isArrayEqual, isString, isObject, isNumber, randomString, getMainId,
+  getLinkMainIds, getUrlFirstChar, separateUrlAndParam, getUserImageUrl, validateUrl,
+  randomDecor, getListNameObj, getAllListNames, getLatestPurchase, getValidPurchase,
+  doEnableExtraFeatures, createDataFName, getLinkFPaths, getStaticFPaths,
+  createSettingsFPath, extractPinFPath, getPinFPaths, getPins, separatePinnedValues,
+  sortLinks, sortWithPins, getRawPins, getFormattedTime, get24HFormattedTime,
+  extractStaticFPath, getEditingListNameEditors, validatePassword, doContainListName,
+  sleep, applySubscriptionOfferDetails, doListContainUnlocks, extractLinkFPath,
+  extractLinkId, getLink, getListNameAndLink, getNLinkObjs, getNLinkFPaths, newObject,
+  addFetchedToVars, createLinkFPath, isFetchedLinkId, doesIncludeFetching,
+  doesIncludeFetchingMore, isFetchingInterrupted, getTagFPaths, getInUseTagNames,
+  getEditingTagNameEditors, getTags, getTagNameObj, getTagNameObjFromDisplayName,
+  validateTagNameDisplayName, extractTagFPath, getNLinkFPathsByQt, getLastLinkFPaths,
+  getLinkPrevFPathsPerId,
 } from '../utils';
-import { _ } from '../utils/obj';
 import { initialSettingsState } from '../types/initialStates';
 import vars from '../vars';
 
@@ -453,7 +452,7 @@ export const fetch = () => async (dispatch, getState) => {
 
   let doDescendingOrder = getState().settings.doDescendingOrder;
 
-  const linkFPaths = getLinkFPaths(getState());
+  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
   const pinFPaths = getPinFPaths(getState());
   const tagFPaths = getTagFPaths(getState());
 
@@ -482,8 +481,8 @@ export const fetch = () => async (dispatch, getState) => {
     let fpaths, fpathsWithPcEc;
     if (queryString) {
       const _result = getNLinkFPathsByQt({
-        linkFPaths, doDescendingOrder, pinFPaths, pendingPins, tagFPaths, pendingTags,
-        doForceLock, lockedLists, queryString,
+        linkFPaths, links, doDescendingOrder, pinFPaths, pendingPins, tagFPaths,
+        pendingTags, doForceLock, lockedLists, queryString,
       });
       [fpaths, fpathsWithPcEc] = [_result.fpaths, _result.fpathsWithPcEc];
       bin.hasMore = _result.hasMore;
@@ -582,6 +581,20 @@ const _poolListNameAndLinks = (linkFPaths, payloadLinks, stateLinks) => {
   });
 };
 
+const _getNnAndUqLinks = (nuqLinks) => {
+  const uqLinks = [], usedMainIds = [];
+  for (const link of nuqLinks) {
+    if (!isObject(link)) continue;
+
+    const mainId = getMainId(link.id);
+    if (usedMainIds.includes(mainId)) continue;
+
+    uqLinks.push(link);
+    usedMainIds.push(mainId);
+  }
+  return uqLinks;
+};
+
 const _getUpdateFetchedAction = (getState, payload) => {
   /*
     updateAction
@@ -609,14 +622,14 @@ const _getUpdateFetchedAction = (getState, payload) => {
     return 3; // Try to prevent differences in the fetchMore.
   }
 
-  // Only showing status links, no new fpath links.
-  const ossLinks = [], nnfLinks = [];
+  // Only showing status links, not processing fpath links.
+  const ossLinks = [], npfLinks = [];
   const showingLinks = showingLinkIds.map(linkId => getLink(linkId, getState().links));
   for (const link of showingLinks) {
     if (!isObject(link)) continue;
 
     if (SHOWING_STATUSES.includes(link.status)) ossLinks.push(link);
-    if (!NEW_LINK_FPATH_STATUSES.includes(link.status)) nnfLinks.push(link);
+    if (link.status === ADDED) npfLinks.push(link);
   }
 
   if (ossLinks.length === 0) return 0;
@@ -625,28 +638,28 @@ const _getUpdateFetchedAction = (getState, payload) => {
   const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
 
   let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, getState().links);
-  updatingLinks = updatingLinks.filter(link => isObject(link));
-  updatingLinks = Object.values(_.mapKeys(updatingLinks, ID));
+  updatingLinks = _getNnAndUqLinks(updatingLinks);
   updatingLinks = sortLinks(updatingLinks, doDescendingOrder);
   updatingLinks = sortWithPins(updatingLinks, pinFPaths, pendingPins, (link) => {
     return getMainId(link.id);
   });
 
-  if (nnfLinks.length < updatingLinks.length) return 3;
-  if (nnfLinks.length > updatingLinks.length && !payload.hasMore) return 3;
+  if (npfLinks.length < updatingLinks.length) return 3;
+  if (npfLinks.length > updatingLinks.length && !payload.hasMore) return 3;
 
   for (let i = 0; i < updatingLinks.length; i++) {
-    const [nnfLink, updatingLink] = [nnfLinks[i], updatingLinks[i]];
+    const [npfLink, updatingLink] = [npfLinks[i], updatingLinks[i]];
     if (
-      nnfLink.id !== updatingLink.id ||
-      !isEqual(nnfLink.extractedResult, updatingLink.extractedResult) ||
-      !isEqual(nnfLink.custom, updatingLink.custom)
+      npfLink.id !== updatingLink.id ||
+      !isEqual(npfLink.extractedResult, updatingLink.extractedResult) ||
+      !isEqual(npfLink.custom, updatingLink.custom) ||
+      npfLink.doIgnoreExtrdRst
     ) {
       return 3;
     }
   }
 
-  if (nnfLinks.length > updatingLinks.length) return 2;
+  if (npfLinks.length > updatingLinks.length) return 2;
   return 1;
 };
 
@@ -766,8 +779,8 @@ export const updateFetched = (
     }
   }
 
-  let sortedLinks = [...updatingLinks, ...processingLinks];
-  sortedLinks = Object.values(_.mapKeys(sortedLinks, ID));
+  let sortedLinks = [...processingLinks, ...updatingLinks];
+  sortedLinks = _getNnAndUqLinks(sortedLinks);
   sortedLinks = sortLinks(sortedLinks, doDescendingOrder);
   sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
     return getMainId(link.id);
@@ -804,7 +817,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
 
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
-  const linkFPaths = getLinkFPaths(getState());
+  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
   const pinFPaths = getPinFPaths(getState());
   const tagFPaths = getTagFPaths(getState());
 
@@ -850,7 +863,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
       return;
     } else {
       const _result = getNLinkFPaths({
-        linkFPaths, listName, doDescendingOrder, pinFPaths, pendingPins,
+        linkFPaths, links, listName, doDescendingOrder, pinFPaths, pendingPins,
         excludingIds: safLinkIds,
       });
       if (_result.fpaths.length === 0) {
@@ -869,8 +882,8 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
       }
 
       const _result = getNLinkFPathsByQt({
-        linkFPaths, doDescendingOrder, pinFPaths, pendingPins, tagFPaths, pendingTags,
-        doForceLock, lockedLists, queryString, excludingIds: safLinkIds,
+        linkFPaths, links, doDescendingOrder, pinFPaths, pendingPins, tagFPaths,
+        pendingTags, doForceLock, lockedLists, queryString, excludingIds: safLinkIds,
       });
       [fpaths, fpathsWithPcEc] = [_result.fpaths, _result.fpathsWithPcEc];
       [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
@@ -938,8 +951,8 @@ const _getLinksForCompareAction = (getState, payload) => {
 
   const pinFPaths = getPinFPaths(getState());
 
-  // Only showing status links, no new fpath links, to listName map.
-  const ossLinks = [], nnfLinks = [], toLnMap = {};
+  // Only showing status links, not processing fpath links, to listName map.
+  const ossLinks = [], npfLinks = [], toLnMap = {};
   if (Array.isArray(showingLinkIds)) {
     const showingLnAndLks = showingLinkIds.map(linkId => {
       return getListNameAndLink(linkId, getState().links);
@@ -948,7 +961,7 @@ const _getLinksForCompareAction = (getState, payload) => {
       if (!isString(listName) || !isObject(link)) continue;
 
       if (SHOWING_STATUSES.includes(link.status)) ossLinks.push(link);
-      if (!NEW_LINK_FPATH_STATUSES.includes(link.status)) nnfLinks.push(link);
+      if (link.status === ADDED) npfLinks.push(link);
       toLnMap[link.id] = listName;
     }
   }
@@ -965,25 +978,25 @@ const _getLinksForCompareAction = (getState, payload) => {
     updatingLinks.push(link);
     toLnMap[link.id] = listName;
   }
-  for (const link of nnfLinks) {
+  for (const link of npfLinks) {
     // In fetchedLinkIds but might not in links
     //   e.g. delete by UPDATE_FETCHED or UPDATE_FETCHED_MORE.
-    // Though, here should be fine as nnfLinks are from links.
+    // Though, here should be fine as npfLinks are from links.
     if (vars.fetch.fetchedLinkIds.includes(link.id)) {
       updatingLinks.push(link);
     }
   }
-  updatingLinks = Object.values(_.mapKeys(updatingLinks, ID));
+  updatingLinks = _getNnAndUqLinks(updatingLinks);
   updatingLinks = sortLinks(updatingLinks, doDescendingOrder);
   updatingLinks = sortWithPins(updatingLinks, pinFPaths, pendingPins, (link) => {
     return getMainId(link.id);
   });
 
-  return { ossLinks, nnfLinks, updatingLinks, toLnMap };
+  return { ossLinks, npfLinks, updatingLinks, toLnMap };
 };
 
 const _getForCompareAction = (
-  ossLinks, nnfLinks, updatingLinks, updatingHasMore,
+  ossLinks, npfLinks, updatingLinks, updatingHasMore,
 ) => {
   /*
     updateAction
@@ -995,21 +1008,22 @@ const _getForCompareAction = (
   */
   if (ossLinks.length === 0) return 0;
 
-  if (nnfLinks.length < updatingLinks.length) return 3;
-  if (nnfLinks.length > updatingLinks.length && !updatingHasMore) return 3;
+  if (npfLinks.length < updatingLinks.length) return 3;
+  if (npfLinks.length > updatingLinks.length && !updatingHasMore) return 3;
 
   for (let i = 0; i < updatingLinks.length; i++) {
-    const [nnfLink, updatingLink] = [nnfLinks[i], updatingLinks[i]];
+    const [npfLink, updatingLink] = [npfLinks[i], updatingLinks[i]];
     if (
-      nnfLink.id !== updatingLink.id ||
-      !isEqual(nnfLink.extractedResult, updatingLink.extractedResult) ||
-      !isEqual(nnfLink.custom, updatingLink.custom)
+      npfLink.id !== updatingLink.id ||
+      !isEqual(npfLink.extractedResult, updatingLink.extractedResult) ||
+      !isEqual(npfLink.custom, updatingLink.custom) ||
+      npfLink.doIgnoreExtrdRst
     ) {
       return 3;
     }
   }
 
-  if (nnfLinks.length > updatingLinks.length) return 2;
+  if (npfLinks.length > updatingLinks.length) return 2;
   return 1;
 };
 
@@ -1051,11 +1065,11 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
 
   if (payload.doForCompare) {
     const {
-      ossLinks, nnfLinks, updatingLinks, toLnMap,
+      ossLinks, npfLinks, updatingLinks, toLnMap,
     } = _getLinksForCompareAction(getState, payload);
 
     const updateAction = _getForCompareAction(
-      ossLinks, nnfLinks, updatingLinks, payload.hasMore
+      ossLinks, npfLinks, updatingLinks, payload.hasMore
     );
     if (updateAction === 0) {
       // Empty e.g., user deletes all showing links
@@ -1175,8 +1189,8 @@ export const updateFetchedMore = (
   let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, links);
   updatingLinks = updatingLinks.filter(link => isObject(link));
 
-  let sortedLinks = [...fsgLinks, ...updatingLinks, ...processingLinks];
-  sortedLinks = Object.values(_.mapKeys(sortedLinks, ID));
+  let sortedLinks = [...processingLinks, ...updatingLinks, ...fsgLinks];
+  sortedLinks = _getNnAndUqLinks(sortedLinks);
   sortedLinks = sortLinks(sortedLinks, doDescendingOrder);
   sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
     return getMainId(link.id);
@@ -1227,8 +1241,7 @@ const sortShowingLinkIds = async (dispatch, getState) => {
   if (!Array.isArray(showingLinkIds)) return;
 
   let sortedLinks = showingLinkIds.map(linkId => getLink(linkId, links));
-  sortedLinks = sortedLinks.filter(link => isObject(link));
-  sortedLinks = Object.values(_.mapKeys(sortedLinks, ID));
+  sortedLinks = _getNnAndUqLinks(sortedLinks);
   sortedLinks = sortLinks(sortedLinks, doDescendingOrder);
   sortedLinks = sortWithPins(sortedLinks, pinFPaths, pendingPins, (link) => {
     return getMainId(link.id);
@@ -1323,9 +1336,9 @@ export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
   if (ids.length === 0) return;
 
   const links = getState().links;
-  let removedDT = Date.now();
+  let updatedDT = Date.now();
 
-  const toListNames = [], toLinks = [], ridToLinks = [];
+  const toListNames = [], toLinks = [];
   for (const id of ids) {
     const { listName, link } = getListNameAndLink(id, links);
     if (!isString(listName) || !isObject(link)) {
@@ -1339,22 +1352,12 @@ export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
       continue;
     }
 
-    const toId = rerandomRandomTerm(fromLink.id);
-
-    let toLink = { ...fromLink, id: toId, fromListName, fromId: fromLink.id };
-    if (fromListName === TRASH) {
-      toLink = { ...toLink, id: deleteRemovedDT(toLink.id) };
-    }
-    if (toListName === TRASH) {
-      toLink = { ...toLink, id: `${toLink.id}-${removedDT}` };
-      removedDT += 1;
-    }
-
-    const ridToLink = newObject(toLink, LOCAL_LINK_ATTRS);
+    const toId = `${getMainId(fromLink.id)}-${randomString(4)}-${updatedDT}`;
+    const toLink = { ...fromLink, id: toId, fromListName, fromId: fromLink.id };
+    updatedDT += 1;
 
     toListNames.push(toListName);
     toLinks.push(toLink);
-    ridToLinks.push(ridToLink);
   }
 
   const payload = { listNames: toListNames, links: toLinks, manuallyManageError: true };
@@ -1363,7 +1366,7 @@ export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
     payload,
     meta: {
       offline: {
-        effect: { method: ADD_LINKS, params: { ...payload, links: ridToLinks } },
+        effect: { method: ADD_LINKS, params: payload },
         commit: { type: MOVE_LINKS_ADD_STEP_COMMIT, meta: payload },
         rollback: { type: MOVE_LINKS_ADD_STEP_ROLLBACK, meta: payload },
       },
@@ -1389,7 +1392,9 @@ export const moveLinksDeleteStep = (toListNames, toIds) => async (
     ids.push(fromId);
   }
 
-  const payload = { listNames, ids, manuallyManageError: true, toListNames, toIds };
+  const payload = {
+    listNames, ids, manuallyManageError: true, prevFPathsPerId: {}, toListNames, toIds,
+  };
   dispatch({
     type: MOVE_LINKS_DELETE_STEP,
     payload,
@@ -1407,6 +1412,7 @@ export const deleteLinks = (ids) => async (dispatch, getState) => {
   if (ids.length === 0) return;
 
   const links = getState().links;
+  const allLinkFPaths = getLinkFPaths(getState());
 
   const dListNames = [], dIds = [];
   for (const id of ids) {
@@ -1420,7 +1426,10 @@ export const deleteLinks = (ids) => async (dispatch, getState) => {
     dIds.push(id);
   }
 
-  const payload = { listNames: dListNames, ids: dIds, manuallyManageError: true };
+  const prevFPathsPerId = getLinkPrevFPathsPerId(dIds, allLinkFPaths);
+  const payload = {
+    listNames: dListNames, ids: dIds, manuallyManageError: true, prevFPathsPerId,
+  };
   dispatch({
     type: DELETE_LINKS,
     payload,
@@ -1466,8 +1475,6 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
         },
       });
     } else if (status === DIED_MOVING) {
-      const ridToLink = newObject(link, LOCAL_LINK_ATTRS);
-
       const payload = {
         listNames: [listName], links: [link], manuallyManageError: true,
       };
@@ -1476,7 +1483,7 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
         payload,
         meta: {
           offline: {
-            effect: { method: ADD_LINKS, params: { ...payload, links: [ridToLink] } },
+            effect: { method: ADD_LINKS, params: payload },
             commit: { type: MOVE_LINKS_ADD_STEP_COMMIT, meta: payload },
             rollback: { type: MOVE_LINKS_ADD_STEP_ROLLBACK, meta: payload },
           },
@@ -1487,9 +1494,7 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
     } else if (status === DIED_DELETING) {
       dispatch(deleteLinks([id]));
     } else if (status === DIED_UPDATING) {
-      const toLink = newObject(link, LOCAL_LINK_ATTRS);
-
-      const payload = { listName, fromLink: link.fromLink, toLink };
+      const payload = { listName, fromLink: link.fromLink, toLink: link };
       dispatch({
         type: UPDATE_CUSTOM_DATA,
         payload,
@@ -1510,7 +1515,7 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
 export const cancelDiedLinks = (canceledIds) => async (dispatch, getState) => {
   const links = getState().links;
 
-  const listNames = [], ids = [], statuses = [];
+  const listNames = [], ids = [], statuses = [], fromIds = [];
   for (const id of canceledIds) {
     const { listName, link } = getListNameAndLink(id, links);
     if (!isString(listName) || !isObject(link)) {
@@ -1518,12 +1523,15 @@ export const cancelDiedLinks = (canceledIds) => async (dispatch, getState) => {
       continue;
     }
 
+    const { status, fromId, fromLink } = link;
     listNames.push(listName);
     ids.push(id);
-    statuses.push(link.status);
+    statuses.push(status);
+    fromIds.push(isString(fromId) ? fromId : isObject(fromLink) ? fromLink.id : null);
   }
 
-  dispatch({ type: CANCEL_DIED_LINKS, payload: { listNames, ids, statuses } });
+  const payload = { listNames, ids, statuses, fromIds };
+  dispatch({ type: CANCEL_DIED_LINKS, payload });
 };
 
 const getToExtractLinks = (getState, listNames, ids) => {
@@ -1544,6 +1552,7 @@ const getToExtractLinks = (getState, listNames, ids) => {
       if (
         isObject(link.extractedResult) && link.extractedResult.status !== EXTRACT_INIT
       ) continue;
+      if (validateUrl(link.url) !== VALID_URL) continue;
 
       const [toListName, toLink] = [listName, newObject(link, LOCAL_LINK_ATTRS)];
       toListNames.push(toListName);
@@ -1568,6 +1577,7 @@ const getToExtractLinks = (getState, listNames, ids) => {
     if (
       isObject(link.extractedResult) && link.extractedResult.status !== EXTRACT_INIT
     ) continue;
+    if (validateUrl(link.url) !== VALID_URL) continue;
 
     const [toListName, toLink] = [listName, newObject(link, LOCAL_LINK_ATTRS)];
     toListNames.push(toListName);
@@ -1586,55 +1596,26 @@ export const extractContents = (listNames, ids) => async (dispatch, getState) =>
     return;
   }
 
+  const isBulkEditing = getState().display.isBulkEditing;
+  if (isBulkEditing) return; // likely busy so no after tasks
+
   const { toListNames, toLinks } = getToExtractLinks(getState, listNames, ids);
   if (toLinks.length === 0) {
     dispatch(runAfterFetchTask());
     return;
   }
 
-  let res;
-  try {
-    res = await axios.post(BRACE_EXTRACT_URL, { urls: toLinks.map(link => link.url) });
-  } catch (error) {
-    console.log('Error when contact Brace server to extract contents with links: ', toLinks, ' Error: ', error);
-    return;
-  }
+  const selectingLinkId = getState().display.selectingLinkId;
+  const found = toLinks.some(link => link.id === selectingLinkId);
+  if (found && isPopupShown(getState())) return; // likely busy so no after tasks
 
-  const links = getState().links;
-  const extractedResults = res.data.extractedResults;
-
-  const extractedListNames = [], extractedLinks = [];
-  for (let i = 0; i < extractedResults.length; i++) {
-    const extractedResult = extractedResults[i];
-    if (
-      extractedResult.status === EXTRACT_INIT ||
-      extractedResult.status === EXTRACT_EXCEEDING_N_URLS
-    ) continue;
-
-    const [toListName, toLink] = [toListNames[i], toLinks[i]];
-
-    // Some links might be moved while extracting.
-    // If that the case, ignore them.
-    if (!isObject(links[toListName]) || !isObject(links[toListName][toLink.id])) {
-      continue;
-    }
-
-    const eLink = { ...toLink, extractedResult };
-    extractedListNames.push(toListName);
-    extractedLinks.push(eLink);
-  }
-  if (extractedLinks.length === 0) {
-    dispatch(runAfterFetchTask());
-    return;
-  }
-
-  const payload = { listNames: extractedListNames, links: extractedLinks };
+  const payload = { toListNames, toLinks };
   dispatch({
     type: EXTRACT_CONTENTS,
     payload,
     meta: {
       offline: {
-        effect: { method: UPDATE_LINKS, params: payload },
+        effect: { method: EXTRACT_CONTENTS, params: payload },
         commit: { type: EXTRACT_CONTENTS_COMMIT },
         rollback: { type: EXTRACT_CONTENTS_ROLLBACK, meta: payload },
       },
@@ -1643,15 +1624,33 @@ export const extractContents = (listNames, ids) => async (dispatch, getState) =>
 };
 
 export const tryUpdateExtractedContents = (payload) => async (dispatch, getState) => {
-
   const isBulkEditing = getState().display.isBulkEditing;
   const scrollY = vars.scrollPanel.scrollY;
   const canRerender = !isBulkEditing && scrollY === 0 && !isPopupShown(getState());
 
   dispatch({
-    type: UPDATE_EXTRACTED_CONTENTS,
-    payload: { ...payload, canRerender },
+    type: UPDATE_EXTRACTED_CONTENTS, payload: { ...payload, canRerender },
   });
+  addFetchedToVars(null, payload.successLinks, vars);
+};
+
+export const extractContentsDeleteStep = (successListNames, successLinks) => async (
+  dispatch, getState
+) => {
+  const fpaths = [];
+  for (let i = 0; i < successListNames.length; i++) {
+    const [listName, link] = [successListNames[i], successLinks[i]];
+    fpaths.push(createLinkFPath(listName, link.fromId));
+  }
+
+  try {
+    await serverApi.deleteFiles(fpaths);
+  } catch (error) {
+    console.log('extractContents clean up error: ', error);
+    // error in this step should be fine
+  }
+
+  dispatch(runAfterFetchTask());
 };
 
 export const runAfterFetchTask = () => async (dispatch, getState) => {
@@ -1663,8 +1662,9 @@ export const randomHouseworkTasks = () => async (dispatch, getState) => {
   if (now - vars.randomHouseworkTasks.dt < 24 * 60 * 60 * 1000) return;
 
   const rand = Math.random();
-  if (rand < 0.33) dispatch(deleteOldLinksInTrash());
-  else if (rand < 0.66) dispatch(checkPurchases());
+  if (rand < 0.25) dispatch(deleteOldLinksInTrash());
+  else if (rand < 0.50) dispatch(checkPurchases());
+  else if (rand < 0.75) dispatch(cleanUpLinks());
   else dispatch(cleanUpStaticFiles());
 
   vars.randomHouseworkTasks.dt = now;
@@ -1675,14 +1675,18 @@ export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
   if (!doDeleteOldLinksInTrash) return;
 
   const listName = TRASH;
-  const linkFPaths = getLinkFPaths(getState());
+  if (getState().display.listName === listName) return;
+
+  const allLinkFPaths = getLinkFPaths(getState());
+  const linkFPaths = getLastLinkFPaths(allLinkFPaths);
+
   const trashLinkFPaths = linkFPaths[listName] || [];
 
   const listNames = [], ids = [];
   for (const fpath of trashLinkFPaths) {
     const { id } = extractLinkFPath(fpath);
-    const removedDT = id.split('-')[3];
-    const interval = Date.now() - Number(removedDT);
+    const { updatedDT } = extractLinkId(id);
+    const interval = Date.now() - Number(updatedDT);
     const days = interval / 1000 / 60 / 60 / 24;
 
     if (days <= N_DAYS) continue;
@@ -1694,7 +1698,10 @@ export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
 
   if (ids.length === 0) return;
 
-  const payload = { listNames, ids, manuallyManageError: true };
+  const prevFPathsPerId = getLinkPrevFPathsPerId(ids, allLinkFPaths);
+  const payload = {
+    listNames, ids, manuallyManageError: true, prevFPathsPerId,
+  };
   dispatch({
     type: DELETE_OLD_LINKS_IN_TRASH,
     payload,
@@ -1702,14 +1709,41 @@ export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
       offline: {
         effect: { method: DELETE_LINKS, params: payload },
         commit: { type: DELETE_OLD_LINKS_IN_TRASH_COMMIT },
-        rollback: { type: DELETE_OLD_LINKS_IN_TRASH_ROLLBACK },
+        rollback: { type: DELETE_OLD_LINKS_IN_TRASH_ROLLBACK, meta: payload },
       },
     },
   });
 };
 
+export const cleanUpLinks = () => async (dispatch, getState) => {
+  const allLinkFPaths = getLinkFPaths(getState());
+  const linkFPaths = getLastLinkFPaths(allLinkFPaths);
+
+  const lastFPaths = [];
+  for (const listName in linkFPaths) {
+    for (const fpath of linkFPaths[listName]) lastFPaths.push(fpath);
+  }
+
+  let unusedFPaths = [];
+  for (const listName in allLinkFPaths) {
+    for (const fpath of allLinkFPaths[listName]) {
+      if (!lastFPaths.includes(fpath)) unusedFPaths.push(fpath);
+    }
+  }
+  unusedFPaths = unusedFPaths.slice(0, N_LINKS);
+
+  if (unusedFPaths.length === 0) return;
+
+  try {
+    await serverApi.deleteFiles(unusedFPaths);
+  } catch (error) {
+    console.log('cleanUpLinks error: ', error);
+    // error in this step should be fine
+  }
+};
+
 const _cleanUpStaticFiles = async (getState) => {
-  const linkFPaths = getLinkFPaths(getState());
+  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
   const mainIds = getLinkMainIds(linkFPaths);
 
   // Delete unused static files in server
@@ -1888,6 +1922,37 @@ export const moveToListName = (listName, parent) => {
   return { type: MOVE_TO_LIST_NAME, payload: { listName, parent } };
 };
 
+export const checkDeleteListName = (listNameEditorKey, listNameObj) => async (
+  dispatch, getState
+) => {
+  const listNames = [listNameObj.listName];
+  listNames.push(...getAllListNames(listNameObj.children));
+
+  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
+  const inUseListNames = Object.keys(linkFPaths);
+
+  const canDeletes = [];
+  for (const listName of listNames) {
+    canDeletes.push(!inUseListNames.includes(listName));
+  }
+
+  if (!canDeletes.every(canDelete => canDelete === true)) {
+    dispatch(updateListNameEditors({
+      [listNameEditorKey]: {
+        msg: LIST_NAME_MSGS[IN_USE_LIST_NAME], isCheckingCanDelete: false,
+      },
+    }));
+    return;
+  }
+
+  dispatch(updateSelectingListName(listNameObj.listName));
+  dispatch(updateDeleteAction(DELETE_ACTION_LIST_NAME));
+  dispatch(updatePopup(CONFIRM_DELETE_POPUP, true));
+  dispatch(updateListNameEditors({
+    [listNameEditorKey]: { msg: '', isCheckingCanDelete: false },
+  }));
+};
+
 export const deleteListNames = (listNames) => async (dispatch, getState) => {
   const { listNameMap } = getState().settings;
 
@@ -1989,7 +2054,7 @@ export const cancelDiedSettings = () => async (dispatch, getState) => {
   const settings = getState().settings;
   const snapshotSettings = getState().snapshot.settings;
 
-  const linkFPaths = getLinkFPaths(getState());
+  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
   const tagFPaths = getTagFPaths(getState());
 
   const listNames = Object.keys(linkFPaths);
@@ -2025,7 +2090,7 @@ export const mergeSettings = (selectedId) => async (dispatch, getState) => {
     if (k in _settings) settings[k] = _settings[k];
   }
 
-  const linkFPaths = getLinkFPaths(getState());
+  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
   const tagFPaths = getTagFPaths(getState());
 
   const listNames = Object.keys(linkFPaths);
@@ -2451,21 +2516,6 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
     return;
   }
 
-  const links = getState().links;
-
-  const pListNames = [], pLinks = [];
-  for (const id of ids) {
-    const { listName, link } = getListNameAndLink(id, links);
-    if (!isString(listName) || !isObject(link)) {
-      console.log('In pinLinks, no found listName or link for id:', id);
-      continue;
-    }
-
-    const [pListName, pLink] = [listName, newObject(link, LOCAL_LINK_ATTRS)];
-    pListNames.push(pListName);
-    pLinks.push(pLink);
-  }
-
   const pinFPaths = getPinFPaths(getState());
   const pendingPins = getState().pendingPins;
 
@@ -2490,13 +2540,13 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
     now += 1;
   }
 
-  const payload = { listNames: pListNames, links: pLinks, pins };
+  const payload = { pins };
   dispatch({
     type: PIN_LINK,
     payload,
     meta: {
       offline: {
-        effect: { method: PIN_LINK, params: payload },
+        effect: { method: PIN_LINK, params: { ...payload, getState } },
         commit: { type: PIN_LINK_COMMIT, meta: payload },
         rollback: { type: PIN_LINK_ROLLBACK, meta: payload },
       },
@@ -2637,7 +2687,7 @@ export const cancelDiedPins = () => async (dispatch, getState) => {
 };
 
 export const cleanUpPins = () => async (dispatch, getState) => {
-  const linkFPaths = getLinkFPaths(getState());
+  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
   const pinFPaths = getPinFPaths(getState());
 
   const linkMainIds = getLinkMainIds(linkFPaths);
@@ -2821,6 +2871,7 @@ export const updateImages = (name, content) => {
 export const updateCustomData = (title, image) => async (dispatch, getState) => {
   const links = getState().links;
   const id = getState().display.selectingLinkId;
+  const updatedDT = Date.now();
 
   const { listName, link } = getListNameAndLink(id, links);
   if (!isString(listName) || !isObject(link)) {
@@ -2847,6 +2898,9 @@ export const updateCustomData = (title, image) => async (dispatch, getState) => 
 
   if (isEqual(fromLink, toLink)) return;
 
+  toLink.id = `${getMainId(fromLink.id)}-${randomString(4)}-${updatedDT}`;
+  toLink.fromLink = fromLink;
+
   const payload = { listName, fromLink, toLink };
   dispatch({
     type: UPDATE_CUSTOM_DATA,
@@ -2859,16 +2913,21 @@ export const updateCustomData = (title, image) => async (dispatch, getState) => 
       },
     },
   });
+  addFetchedToVars(null, [toLink], vars);
 };
 
 export const updateCustomDataDeleteStep = (
-  serverUnusedFPaths, localUnusedFPaths
+  listName, fromLink, toLink, serverUnusedFPaths, localUnusedFPaths
 ) => async (dispatch, getState) => {
+
+  const fpaths = [...serverUnusedFPaths];
+  if (fromLink.id !== toLink.id) fpaths.push(createLinkFPath(listName, fromLink.id));
+
   try {
-    await serverApi.deleteFiles(serverUnusedFPaths);
+    await serverApi.deleteFiles(fpaths);
     await fileApi.deleteFiles(localUnusedFPaths);
   } catch (error) {
-    console.log('updateCustomData error: ', error);
+    console.log('updateCustomData clean up error: ', error);
     // error in this step should be fine
   }
 };
@@ -3190,7 +3249,7 @@ export const cancelDiedTags = () => async (dispatch, getState) => {
 };
 
 export const cleanUpTags = () => async (dispatch, getState) => {
-  const linkFPaths = getLinkFPaths(getState());
+  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
   const tagFPaths = getTagFPaths(getState());
 
   const linkMainIds = getLinkMainIds(linkFPaths);
@@ -3265,6 +3324,30 @@ export const moveTagName = (tagName, direction) => {
 
 export const updateTagNameColor = (tagName, newColor) => {
 
+};
+
+export const checkDeleteTagName = (tagNameEditorKey, tagNameObj) => async (
+  dispatch, getState
+) => {
+  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
+  const tagFPaths = getTagFPaths(getState());
+  const inUseTagNames = getInUseTagNames(linkFPaths, tagFPaths);
+
+  if (inUseTagNames.includes(tagNameObj.tagName)) {
+    dispatch(updateTagNameEditors({
+      [tagNameEditorKey]: {
+        msg: TAG_NAME_MSGS[IN_USE_TAG_NAME], isCheckingCanDelete: false,
+      },
+    }));
+    return;
+  }
+
+  dispatch(updateSelectingTagName(tagNameObj.tagName));
+  dispatch(updateDeleteAction(DELETE_ACTION_TAG_NAME));
+  dispatch(updatePopup(CONFIRM_DELETE_POPUP, true));
+  dispatch(updateTagNameEditors({
+    [tagNameEditorKey]: { msg: '', isCheckingCanDelete: false },
+  }));
 };
 
 export const deleteTagNames = (tagNames) => {

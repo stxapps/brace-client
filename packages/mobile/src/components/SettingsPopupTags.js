@@ -7,15 +7,13 @@ import Svg, { Path } from 'react-native-svg';
 import { Circle } from 'react-native-animated-spinkit';
 import KeyboardManager from 'react-native-keyboard-manager';
 
-import dataApi from '../apis/blockstack';
 import {
-  addTagNames, updateTagNames, moveTagName, updateSelectingTagName,
-  updateDeleteAction, updateTagNameEditors, updatePopup,
+  addTagNames, updateTagNames, moveTagName, checkDeleteTagName, updateSelectingTagName,
+  updateTagNameEditors, updatePopup,
 } from '../actions';
 import {
-  VALID_TAG_NAME, IN_USE_TAG_NAME, TAG_NAME_MSGS, SETTINGS_TAGS_MENU_POPUP,
-  CONFIRM_DELETE_POPUP, SWAP_LEFT, SWAP_RIGHT, MODE_VIEW, MODE_EDIT, BLK_MODE,
-  DELETE_ACTION_TAG_NAME,
+  VALID_TAG_NAME, TAG_NAME_MSGS, SETTINGS_TAGS_MENU_POPUP, SWAP_LEFT, SWAP_RIGHT,
+  MODE_VIEW, MODE_EDIT, BLK_MODE,
 } from '../types/const';
 import { makeGetTagNameEditor, getThemeMode } from '../selectors';
 import { validateTagNameDisplayName } from '../utils';
@@ -247,28 +245,10 @@ const _TagNameEditor = (props) => {
   }, [state.blurCount]);
 
   useEffect(() => {
-    const deleteTagName = async () => {
-      if (state.isCheckingCanDelete) {
-        const tagNames = [tagNameObj.tagName];
-
-        const canDeletes = await dataApi.canDeleteTagNames(tagNames);
-        if (!canDeletes.every(canDelete => canDelete === true)) {
-          dispatch(updateTagNameEditors({
-            [key]: { msg: TAG_NAME_MSGS[IN_USE_TAG_NAME], isCheckingCanDelete: false },
-          }));
-          return;
-        }
-
-        dispatch(updateSelectingTagName(tagNameObj.tagName));
-        dispatch(updateDeleteAction(DELETE_ACTION_TAG_NAME));
-        dispatch(updatePopup(CONFIRM_DELETE_POPUP, true));
-        dispatch(updateTagNameEditors({
-          [key]: { msg: '', isCheckingCanDelete: false },
-        }));
-      }
-    };
-    deleteTagName();
-  }, [state.isCheckingCanDelete, tagNameObj, key, dispatch]);
+    if (state.isCheckingCanDelete) {
+      dispatch(checkDeleteTagName(key, tagNameObj));
+    }
+  }, [state.isCheckingCanDelete, key, tagNameObj, dispatch]);
 
   const isBusy = state.isCheckingCanDelete;
 

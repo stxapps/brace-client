@@ -11,9 +11,9 @@ import {
   updateListNamesMode, updateCustomEditorPopup, updateTagEditorPopup,
 } from '../actions';
 import {
-  MY_LIST, TRASH, ADDING, MOVING, UPDATING, COPY_LINK, ARCHIVE, REMOVE, RESTORE, DELETE,
-  MOVE_TO, CHANGE, PIN, MANAGE_PIN, PINNED, CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP,
-  PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
+  MY_LIST, TRASH, ADDING, MOVING, UPDATING, EXTRD_UPDATING, COPY_LINK, ARCHIVE, REMOVE,
+  RESTORE, DELETE, MOVE_TO, CHANGE, PIN, MANAGE_PIN, PINNED, CARD_ITEM_MENU_POPUP,
+  LIST_NAMES_POPUP, PIN_MENU_POPUP, CONFIRM_DELETE_POPUP, LG_WIDTH, LAYOUT_LIST,
   DELETE_ACTION_LINK_ITEM_MENU, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
   ADD_TAGS, MANAGE_TAGS, TAGGED,
 } from '../types/const';
@@ -62,7 +62,7 @@ class CardItemMenuPopup extends React.PureComponent {
     if (queryString) menu = QUERY_STRING_MENU;
 
     if (
-      [ADDING, MOVING, UPDATING].includes(link.status) ||
+      [ADDING, MOVING, UPDATING, EXTRD_UPDATING].includes(link.status) ||
       ![null, PINNED].includes(pinStatus) ||
       ![null, TAGGED].includes(tagStatus)
     ) {

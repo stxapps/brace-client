@@ -482,7 +482,7 @@ const displayReducer = (state = initialState, action) => {
     const { successLinks } = action.payload;
 
     const fromMap = {};
-    for (const link of successLinks) fromMap[link.fromId] = link.id
+    for (const link of successLinks) fromMap[link.fromId] = link.id;
 
     const newState = { ...state };
     // If bulk editing, no extract contents. And while extracting, no select.

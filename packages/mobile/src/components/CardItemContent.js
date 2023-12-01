@@ -36,6 +36,7 @@ class CardItemContent extends React.Component {
       !isEqual(this.props.link.decor, nextProps.link.decor) ||
       !isEqual(this.props.link.extractedResult, nextProps.link.extractedResult) ||
       !isEqual(this.props.link.custom, nextProps.link.custom) ||
+      this.props.link.doIgnoreExtrdRst !== nextProps.link.doIgnoreExtrdRst ||
       this.props.customImage !== nextProps.customImage ||
       this.props.tnAndDns !== nextProps.tnAndDns ||
       this.props.tailwind !== nextProps.tailwind ||
@@ -57,7 +58,7 @@ class CardItemContent extends React.Component {
   }
 
   renderImage() {
-    const { decor, extractedResult } = this.props.link;
+    const { decor, extractedResult, doIgnoreExtrdRst } = this.props.link;
     const { customImage, tailwind } = this.props;
 
     let image;
@@ -67,7 +68,9 @@ class CardItemContent extends React.Component {
       return <Image key="img-image-custom" style={tailwind('w-full rounded-t-lg bg-white blk:bg-gray-900 aspect-7/12 shadow-xs')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
     }
 
-    if (extractedResult && extractedResult.image) image = extractedResult.image;
+    if (extractedResult && extractedResult.image && !doIgnoreExtrdRst) {
+      image = extractedResult.image;
+    }
     if (image) {
       return <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full rounded-t-lg bg-white blk:bg-gray-900 aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
     }
@@ -133,11 +136,11 @@ class CardItemContent extends React.Component {
       return null;
     };
 
-    const { url, decor, extractedResult } = this.props.link;
+    const { url, decor, extractedResult, doIgnoreExtrdRst } = this.props.link;
     const { extractedFaviconError } = this.state;
 
     let favicon;
-    if (extractedResult && extractedResult.favicon) {
+    if (extractedResult && extractedResult.favicon && !doIgnoreExtrdRst) {
       favicon = ensureContainUrlSecureProtocol(extractedResult.favicon);
     }
 
@@ -174,12 +177,12 @@ class CardItemContent extends React.Component {
 
   render() {
     const { link, tailwind } = this.props;
-    const { url, extractedResult, custom } = link;
+    const { url, extractedResult, custom, doIgnoreExtrdRst } = link;
 
     let title;
     if (custom && custom.title) {
       title = custom.title;
-    } else if (extractedResult && extractedResult.title) {
+    } else if (extractedResult && extractedResult.title && !doIgnoreExtrdRst) {
       title = extractedResult.title;
     }
     if (!title) {

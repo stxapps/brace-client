@@ -599,7 +599,7 @@ const linksReducer = (state = initialState, action) => {
       newState,
       Cmd.run(
         updateCustomDataDeleteStep(
-          listName, fromLink, serverUnusedFPaths, localUnusedFPaths
+          listName, fromLink, toLink, serverUnusedFPaths, localUnusedFPaths
         ),
         { args: [Cmd.dispatch, Cmd.getState] }
       )
