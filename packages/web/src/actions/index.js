@@ -62,7 +62,7 @@ import {
   SEARCH_POPUP, PROFILE_POPUP, CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP,
   CUSTOM_EDITOR_POPUP, TAG_EDITOR_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP,
   CONFIRM_DISCARD_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
-  SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP,
+  SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP, SWWU_POPUP,
   DISCARD_ACTION_UPDATE_LIST_NAME, DISCARD_ACTION_UPDATE_TAG_NAME, LOCAL_LINK_ATTRS,
   MY_LIST, TRASH, N_LINKS, N_DAYS, CD_ROOT, ADDED, DIED_ADDING, DIED_MOVING,
   DIED_REMOVING, DIED_DELETING, DIED_UPDATING, SHOWING_STATUSES, BRACE_PRE_EXTRACT_URL,
@@ -241,7 +241,8 @@ const handlePendingSignIn = () => async (dispatch, getState) => {
 
 const getPopupShownId = (state) => {
   // No need these popups here:
-  //   SettingsErrorPopup, PinErrorPopup, TagErrorPopup, and AccessErrorPopup.
+  //   SettingsErrorPopup, PinErrorPopup, TagErrorPopup, AccessErrorPopup,
+  //   and SWWUPopup.
   if (state.display.isLockEditorPopupShown) return LOCK_EDITOR_POPUP;
   if (state.display.isTimePickPopupShown) return TIME_PICK_POPUP;
   if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
@@ -3390,4 +3391,9 @@ export const deleteTagNames = (tagNames) => {
 
 export const updateSelectingTagName = (tagName) => {
   return { type: UPDATE_SELECTING_TAG_NAME, payload: tagName };
+};
+
+
+export const showSWWUPopup = () => async (dispatch, getState) => {
+  dispatch(updatePopup(SWWU_POPUP, true));
 };
