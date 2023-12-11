@@ -2,6 +2,7 @@ import { diffLinesRaw, DIFF_EQUAL, DIFF_DELETE, DIFF_INSERT } from 'jest-diff';
 import { LexoRank } from '@wewatch/lexorank';
 
 import serverApi from './server';
+import cacheApi from './localCache';
 import fileApi from './localFile';
 import axios from '../axiosWrapper';
 import {
@@ -12,8 +13,8 @@ import {
   UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_T_STEP,
 } from '../types/actionTypes';
 import {
-  CD_ROOT, DOT_JSON, INFO, LOCAL_LINK_ATTRS, BRACE_EXTRACT_URL, EXTRACT_INIT,
-  EXTRACT_EXCEEDING_N_URLS,
+  LINKS, SETTINGS, INFO, PINS, TAGS, CD_ROOT, DOT_JSON, LOCAL_LINK_ATTRS,
+  BRACE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, N_LINKS,
 } from '../types/const';
 import {
   isEqual, isObject, isString, isNumber, randomString, createLinkFPath, extractLinkFPath,
@@ -121,7 +122,7 @@ const fetchStgsAndInfo = async (_settingsFPaths, infoFPath) => {
   } = getLastSettingsFPaths(_settingsFPaths);
 
   if (settingsFPaths.length > 0) {
-    const files = await serverApi.getFiles(settingsFPaths, true);
+    const files = await getFiles(settingsFPaths, true);
 
     // content can be null if dangerouslyIgnoreError is true.
     const { fpaths, contents } = excludeNotObjContents(files.fpaths, files.contents);
@@ -138,7 +139,7 @@ const fetchStgsAndInfo = async (_settingsFPaths, infoFPath) => {
   }
 
   if (infoFPath) {
-    const { contents } = await serverApi.getFiles([infoFPath], true);
+    const { contents } = await getFiles([infoFPath], true);
     if (isObject(contents[0])) info = contents[0];
   }
 
@@ -164,7 +165,7 @@ const fetchStgsAndInfo = async (_settingsFPaths, infoFPath) => {
 };
 
 const fetchLinks = async (_fpaths) => {
-  const responses = await batchGetFileWithRetry(serverApi.getFile, _fpaths, 0, true);
+  const { responses } = await getFiles(_fpaths, true);
 
   const fpaths = [], linkObjs = []; // No order guarantee btw _fpaths and responses
   for (const { success, fpath, content } of responses) {
@@ -201,30 +202,27 @@ const fetchStaticFiles = async (linkObjs) => {
 
   const files = await fileApi.getFiles(fpaths); // Check if already exists locally
 
-  const remainedFPaths = [];
+  const remainFPaths = [];
   for (let i = 0; i < files.fpaths.length; i++) {
-    const fpath = files.fpaths[i], contentUrl = files.contentUrls[i];
+    const [fpath, contentUrl] = [files.fpaths[i], files.contentUrls[i]];
     if (isString(contentUrl)) continue;
-    remainedFPaths.push(fpath);
+    remainFPaths.push(fpath);
   }
 
-  const fpathMap = {}, remainedStaticFPaths = [];
-  for (const fpath of remainedFPaths) {
+  const fpathMap = {}, remainStaticFPaths = [];
+  for (const fpath of remainFPaths) {
     let staticFPath = getStaticFPath(fpath);
     if (vars.platform.isReactNative) staticFPath = 'file://' + staticFPath;
 
     fpathMap[staticFPath] = fpath;
-    remainedStaticFPaths.push(staticFPath);
+    remainStaticFPaths.push(staticFPath);
   }
-  const _responses = await batchGetFileWithRetry(
-    serverApi.getFile, remainedStaticFPaths, 0, true
-  );
-  const responses = _responses.filter(r => r.success);
 
-  await fileApi.putFiles(
-    responses.map(r => r.fpath).map(fpath => fpathMap[fpath]),
-    responses.map(r => r.content)
-  );
+  const sFiles = await getFiles(remainStaticFPaths, true);
+  for (let i = 0; i < sFiles.fpaths.length; i++) {
+    if (sFiles.contents[i] === null) continue;
+    await fileApi.putFile(fpathMap[sFiles.fpaths[i]], sFiles.contents[i]);
+  }
 };
 
 const fetch = async (params) => {
@@ -409,11 +407,8 @@ const putLinks = async (params) => {
   const successListNames = [], successLinks = [];
   const errorListNames = [], errorLinks = [], errors = [];
 
-  // Beware size should be max at N_LINKS, so can call batchPutFileWithRetry directly.
   // Use dangerouslyIgnoreError=true to manage which succeeded/failed manually.
-  const responses = await batchPutFileWithRetry(
-    serverApi.putFile, fpaths, contents, 0, !!manuallyManageError
-  );
+  const { responses } = await putFiles(fpaths, contents, !!manuallyManageError);
   for (const response of responses) {
     const { listName, link } = linkMap[response.fpath];
     if (response.success) {
@@ -452,10 +447,8 @@ const deleteLinks = async (params) => {
   const errorListNames = [], errorIds = [], errors = [];
 
   // try to delete previous fpaths first.
-  let responses = await batchDeleteFileWithRetry(
-    serverApi.deleteFile, prevFPaths, 0, !!manuallyManageError
-  );
-  for (const response of responses) {
+  const { responses: pResponses } = await deleteFiles(prevFPaths, !!manuallyManageError);
+  for (const response of pResponses) {
     const { listName, id } = idMap[response.fpath];
     if (!response.success) {
       if (!errorIds.includes(id)) {
@@ -475,9 +468,7 @@ const deleteLinks = async (params) => {
     if (!fpaths.includes(fpath)) fpaths.push(fpath);
   }
 
-  responses = await batchDeleteFileWithRetry(
-    serverApi.deleteFile, fpaths, 0, !!manuallyManageError
-  );
+  const { responses } = await deleteFiles(fpaths, !!manuallyManageError);
   for (const response of responses) {
     const { listName, id } = idMap[response.fpath];
     if (response.success) {
@@ -575,7 +566,7 @@ const putSettings = async (params) => {
   const settingsFName = createDataFName(`${addedDT}${randomString(4)}`, _settingsIds);
   const settingsFPath = createSettingsFPath(settingsFName);
 
-  await serverApi.putFiles([settingsFPath], [settings]);
+  await putFiles([settingsFPath], [settings]);
   return { settings, _settingsFPaths };
 };
 
@@ -609,7 +600,7 @@ const putInfo = async (params) => {
   const addedDT = Date.now();
   const infoFPath = `${INFO}${addedDT}${DOT_JSON}`;
 
-  await serverApi.putFiles([infoFPath], [info]);
+  await putFiles([infoFPath], [info]);
   return { info, _infoFPath };
 };
 
@@ -649,7 +640,7 @@ const putPins = async (params) => {
   // Use dangerouslyIgnoreError=true to manage which succeeded/failed manually.
   // Bug alert: if several pins and error, rollback is incorrect
   //   as some are successful but some aren't.
-  await serverApi.putFiles(fpaths, contents);
+  await putFiles(fpaths, contents);
 
   return { listNames: pListNames, links: pLinks, pins };
 };
@@ -660,7 +651,7 @@ const deletePins = async (params) => {
   const pinFPaths = pins.map(pin => {
     return createPinFPath(pin.rank, pin.updatedDT, pin.addedDT, pin.id);
   });
-  await serverApi.deleteFiles(pinFPaths);
+  await deleteFiles(pinFPaths);
 
   return { pins };
 };
@@ -678,8 +669,8 @@ const updateCustomData = async (params) => {
   }
 
   // Make sure save static files successfully first
-  await serverApi.putFiles(usedFiles.fpaths, usedFiles.contents);
-  await serverApi.putFiles(
+  await putFiles(usedFiles.fpaths, usedFiles.contents);
+  await putFiles(
     [createLinkFPath(listName, toLink.id)], [newObject(toLink, LOCAL_LINK_ATTRS)]
   );
 
@@ -812,7 +803,7 @@ const updateTagDataTStep = async (params) => {
     contents.push({});
     now += 1;
   }
-  await serverApi.putFiles(fpaths, contents);
+  await putFiles(fpaths, contents);
 
   // MainId is the same, but id can be different.
   // Old paths might not be deleted, need to delete them all.
@@ -825,17 +816,105 @@ const updateTagDataTStep = async (params) => {
       ));
     }
   }
-  await serverApi.deleteFiles(deleteFPaths);
+  await deleteFiles(deleteFPaths);
 
   return { id, values };
 };
 
 const deleteTags = async (params) => {
   const { tagFPaths } = params;
-  await serverApi.deleteFiles(tagFPaths);
+  await deleteFiles(tagFPaths);
   return { tagFPaths };
 };
 
-const blockstack = { deletePins, deleteTags };
+const getFiles = async (fpaths, dangerouslyIgnoreError = false) => {
+  const result = { responses: [], fpaths: [], contents: [] };
+
+  const remainFPaths = [];
+  for (const fpath of fpaths) {
+    let content;
+    if ([LINKS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))) {
+      content = await cacheApi.getFile(fpath, true);
+    }
+    if (content === undefined) {
+      remainFPaths.push(fpath);
+      continue;
+    }
+
+    result.responses.push({ content, fpath, success: true });
+    result.fpaths.push(fpath);
+    result.contents.push(content);
+  }
+
+  for (let i = 0, j = remainFPaths.length; i < j; i += N_LINKS) {
+    const selectedFPaths = remainFPaths.slice(i, i + N_LINKS);
+    const responses = await batchGetFileWithRetry(
+      serverApi.getFile, selectedFPaths, 0, dangerouslyIgnoreError
+    );
+    for (const response of responses) {
+      result.responses.push(response);
+      result.fpaths.push(response.fpath);
+      result.contents.push(response.content);
+
+      if (response.success) {
+        const { fpath, content } = response;
+        if ([LINKS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))) {
+          await cacheApi.putFile(fpath, content);
+        }
+      }
+    }
+  }
+
+  return result;
+};
+
+const putFiles = async (fpaths, contents, dangerouslyIgnoreError = false) => {
+  const result = { responses: [] };
+
+  for (let i = 0, j = fpaths.length; i < j; i += N_LINKS) {
+    const selectedFPaths = fpaths.slice(i, i + N_LINKS);
+    const selectedContents = contents.slice(i, i + N_LINKS);
+    const responses = await batchPutFileWithRetry(
+      serverApi.putFile, selectedFPaths, selectedContents, 0, dangerouslyIgnoreError
+    );
+    for (const response of responses) {
+      result.responses.push(response);
+
+      if (response.success) {
+        const { fpath, content } = response;
+        if ([LINKS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))) {
+          await cacheApi.putFile(fpath, content);
+        }
+      }
+    }
+  }
+
+  return result;
+};
+
+const deleteFiles = async (fpaths, dangerouslyIgnoreError = false) => {
+  const result = { responses: [] };
+
+  for (let i = 0, j = fpaths.length; i < j; i += N_LINKS) {
+    const selectedFPaths = fpaths.slice(i, i + N_LINKS);
+    const responses = await batchDeleteFileWithRetry(
+      serverApi.deleteFile, selectedFPaths, 0, dangerouslyIgnoreError
+    );
+    for (const response of responses) {
+      result.responses.push(response);
+
+      if (response.success) {
+        const { fpath } = response;
+        if ([LINKS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))) {
+          await cacheApi.deleteFile(fpath);
+        }
+      }
+    }
+  }
+
+  return result;
+};
+
+const blockstack = { deletePins, deleteTags, getFiles, putFiles, deleteFiles };
 
 export default blockstack;

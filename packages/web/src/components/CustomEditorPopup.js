@@ -10,7 +10,7 @@ import {
 import { CUSTOM_EDITOR_POPUP, IMAGES, CD_ROOT, BLK_MODE } from '../types/const';
 import { getCustomEditor, getThemeMode } from '../selectors';
 import {
-  isObject, isString, isNumber, throttle, rerandomRandomTerm, getFileExt,
+  isObject, isString, isNumber, throttle, randomString, getFileExt, getMainId,
 } from '../utils';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
@@ -78,7 +78,8 @@ const CustomEditorPopup = () => {
   const onCanvasToBlob = async (blob) => {
     const { title, image } = customEditor;
 
-    let fpart = IMAGES + '/' + rerandomRandomTerm(selectingLinkId);
+    const toId = `${getMainId(selectingLinkId)}-${randomString(4)}-${Date.now()}`;
+    let fpart = IMAGES + '/' + toId;
     const ext = getFileExt(image.fileName);
     if (ext) fpart += `.${ext}`;
 

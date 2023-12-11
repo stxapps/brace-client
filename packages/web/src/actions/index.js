@@ -8,7 +8,6 @@ import userSession from '../userSession';
 import axios from '../axiosWrapper';
 import iapApi from '../paddleWrapper';
 import dataApi from '../apis/blockstack';
-import serverApi from '../apis/server';
 import fileApi from '../apis/localFile';
 import lsgApi from '../apis/localSg';
 import {
@@ -1723,7 +1722,7 @@ export const extractContentsDeleteStep = (successListNames, successLinks) => asy
   }
 
   try {
-    await serverApi.deleteFiles(fpaths);
+    await dataApi.deleteFiles(fpaths);
   } catch (error) {
     console.log('extractContents clean up error: ', error);
     // error in this step should be fine
@@ -1814,7 +1813,7 @@ export const cleanUpLinks = () => async (dispatch, getState) => {
   if (unusedFPaths.length === 0) return;
 
   try {
-    await serverApi.deleteFiles(unusedFPaths);
+    await dataApi.deleteFiles(unusedFPaths);
   } catch (error) {
     console.log('cleanUpLinks error: ', error);
     // error in this step should be fine
@@ -1839,7 +1838,7 @@ const _cleanUpStaticFiles = async (getState) => {
   unusedFPaths = unusedFPaths.slice(0, N_LINKS);
 
   if (unusedFPaths.length > 0) {
-    await serverApi.deleteFiles(unusedFPaths);
+    await dataApi.deleteFiles(unusedFPaths);
     await fileApi.deleteFiles(unusedFPaths);
   }
 
@@ -2087,7 +2086,7 @@ export const updateSettingsDeleteStep = (_settingsFPaths) => async (
 ) => {
   if (_settingsFPaths.length === 0) return;
   try {
-    await serverApi.putFiles(_settingsFPaths, _settingsFPaths.map(() => ({})));
+    await dataApi.putFiles(_settingsFPaths, _settingsFPaths.map(() => ({})));
     await cleanUpLocks(dispatch, getState);
   } catch (error) {
     console.log('updateSettings clean up error: ', error);
@@ -2113,7 +2112,7 @@ const updateInfo = async (dispatch, getState) => {
 export const updateInfoDeleteStep = (_infoFPath) => async (dispatch, getState) => {
   if (!isString(_infoFPath)) return;
   try {
-    await serverApi.deleteFiles([_infoFPath]);
+    await dataApi.deleteFiles([_infoFPath]);
   } catch (error) {
     console.log('updateInfo clean up error: ', error);
     // error in this step should be fine
@@ -2196,7 +2195,7 @@ export const mergeSettingsDeleteStep = (_settingsFPaths) => async (
   dispatch, getState
 ) => {
   try {
-    await serverApi.putFiles(_settingsFPaths, _settingsFPaths.map(() => ({})));
+    await dataApi.putFiles(_settingsFPaths, _settingsFPaths.map(() => ({})));
   } catch (error) {
     console.log('mergeSettings clean up error: ', error);
     // error in this step should be fine
@@ -2959,7 +2958,7 @@ export const updateCustomDataDeleteStep = (
   if (fromLink.id !== toLink.id) fpaths.push(createLinkFPath(listName, fromLink.id));
 
   try {
-    await serverApi.deleteFiles(fpaths);
+    await dataApi.deleteFiles(fpaths);
     await fileApi.deleteFiles(localUnusedFPaths);
   } catch (error) {
     console.log('updateCustomData clean up error: ', error);

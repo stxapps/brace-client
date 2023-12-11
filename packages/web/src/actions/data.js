@@ -3,6 +3,7 @@ import {
 } from '@redux-offline/redux-offline/lib/constants';
 import { saveAs } from 'file-saver';
 
+import dataApi from '../apis/blockstack';
 import serverApi from '../apis/server';
 import fileApi from '../apis/localFile';
 import {
@@ -17,9 +18,9 @@ import {
   isEqual, isString, isObject, isNumber, sleep, randomString, getUrlFirstChar,
   randomDecor, isDecorValid, isExtractedResultValid, isCustomValid, isListNameObjsValid,
   isTagNameObjsValid, createDataFName, createLinkFPath, createSettingsFPath,
-  getLastSettingsFPaths, batchGetFileWithRetry, extractFPath, getPins, getMainId,
-  getFormattedTimeStamp, extractLinkFPath, extractPinFPath, getStaticFPath,
-  extractTagFPath, getTags, getLastLinkFPaths,
+  getLastSettingsFPaths, extractFPath, getPins, getMainId, getFormattedTimeStamp,
+  extractLinkFPath, extractPinFPath, getStaticFPath, extractTagFPath, getTags,
+  getLastLinkFPaths,
 } from '../utils';
 import {
   isUint8Array, isBlob, convertBlobToDataUrl, convertDataUrlToBlob,
@@ -33,7 +34,7 @@ const importAllDataLoop = async (fpaths, contents) => {
   for (let i = 0; i < fpaths.length; i += nLinks) {
     const _fpaths = fpaths.slice(i, i + nLinks);
     const _contents = contents.slice(i, i + nLinks);
-    await serverApi.putFiles(_fpaths, _contents);
+    await dataApi.putFiles(_fpaths, _contents);
 
     await sleep(300);
   }
@@ -203,7 +204,7 @@ const _parseBraceSettings = async (settingsFPaths, settingsEntries) => {
   const lastSettingsFPaths = getLastSettingsFPaths(settingsFPaths);
   if (lastSettingsFPaths.fpaths.length > 0) {
     const lastSettingsFPath = lastSettingsFPaths.fpaths[0];
-    const { contents } = await serverApi.getFiles([lastSettingsFPath], true);
+    const { contents } = await dataApi.getFiles([lastSettingsFPath], true);
     if (isEqual(latestSettingsPart.content, contents[0])) {
       return;
     }
@@ -620,7 +621,7 @@ export const exportAllData = () => async (dispatch, getState) => {
   const lastSettingsFPaths = getLastSettingsFPaths(_settingsFPaths);
   if (lastSettingsFPaths.fpaths.length > 0) {
     const lastSettingsFPath = lastSettingsFPaths.fpaths[0];
-    const { contents } = await serverApi.getFiles([lastSettingsFPath], true);
+    const { contents } = await dataApi.getFiles([lastSettingsFPath], true);
     if (!isEqual(initialSettingsState, contents[0])) {
       settingsFPaths.push(lastSettingsFPath);
     }
@@ -640,9 +641,7 @@ export const exportAllData = () => async (dispatch, getState) => {
       const fileFPaths = [];
 
       const selectedFPaths = linkFPaths.slice(i, i + nLinks);
-      const responses = await batchGetFileWithRetry(
-        serverApi.getFile, selectedFPaths, 0, true
-      );
+      const { responses } = await dataApi.getFiles(selectedFPaths, true);
       for (const response of responses) {
         if (response.success) {
           const path = response.fpath, data = response.content;
@@ -661,9 +660,7 @@ export const exportAllData = () => async (dispatch, getState) => {
         }
       }
 
-      const fileResponses = await batchGetFileWithRetry(
-        serverApi.getFile, fileFPaths, 0, true
-      );
+      const { responses: fileResponses } = await dataApi.getFiles(fileFPaths, true);
       for (const response of fileResponses) {
         if (response.success) {
           let path = response.fpath, data = response.content;
@@ -708,9 +705,7 @@ export const exportAllData = () => async (dispatch, getState) => {
 
     for (let i = 0; i < settingsFPaths.length; i += nLinks) {
       const selectedFPaths = settingsFPaths.slice(i, i + nLinks);
-      const responses = await batchGetFileWithRetry(
-        serverApi.getFile, selectedFPaths, 0, true
-      );
+      const { responses } = await dataApi.getFiles(selectedFPaths, true);
       for (const response of responses) {
         if (response.success) {
           const path = response.fpath, data = response.content;
@@ -798,7 +793,7 @@ export const deleteAllData = () => async (dispatch, getState) => {
     const nLinks = 1;
     for (let i = 0, j = fpaths.length; i < j; i += nLinks) {
       const selectedFPaths = fpaths.slice(i, i + nLinks);
-      await serverApi.deleteFiles(selectedFPaths);
+      await dataApi.deleteFiles(selectedFPaths);
 
       progress.done += selectedFPaths.length;
       dispatch(updateDeleteAllDataProgress(progress));
