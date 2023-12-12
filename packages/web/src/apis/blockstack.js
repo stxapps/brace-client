@@ -200,12 +200,10 @@ const fetchStaticFiles = async (linkObjs) => {
     }
   }
 
-  const files = await fileApi.getFiles(fpaths); // Check if already exists locally
-
   const remainFPaths = [];
-  for (let i = 0; i < files.fpaths.length; i++) {
-    const [fpath, contentUrl] = [files.fpaths[i], files.contentUrls[i]];
-    if (isString(contentUrl)) continue;
+  for (const fpath of fpaths) {
+    const { contentUrl } = await fileApi.getFile(fpath);
+    if (isString(contentUrl)) continue; // Check if already exists locally
     remainFPaths.push(fpath);
   }
 
@@ -663,13 +661,20 @@ const updateCustomData = async (params) => {
     usedFPaths, serverUnusedFPaths, localUnusedFPaths,
   } = deriveFPaths(fromLink.custom, toLink.custom);
 
-  const usedFiles = await fileApi.getFiles(usedFPaths);
-  if (vars.platform.isReactNative) {
-    usedFiles.fpaths = usedFiles.fpaths.map(fpath => 'file://' + fpath);
+  const staticFPaths = [], staticContents = [];
+  for (const fpath of usedFPaths) {
+    if (vars.platform.isReactNative) {
+      staticFPaths.push('file://' + fpath);
+      staticContents.push('');
+    } else {
+      const { content } = await fileApi.getFile(fpath);
+      staticFPaths.push(fpath);
+      staticContents.push(content);
+    }
   }
 
   // Make sure save static files successfully first
-  await putFiles(usedFiles.fpaths, usedFiles.contents);
+  await putFiles(staticFPaths, staticContents);
   await putFiles(
     [createLinkFPath(listName, toLink.id)], [newObject(toLink, LOCAL_LINK_ATTRS)]
   );
@@ -915,6 +920,8 @@ const deleteFiles = async (fpaths, dangerouslyIgnoreError = false) => {
   return result;
 };
 
-const blockstack = { deletePins, deleteTags, getFiles, putFiles, deleteFiles };
+const blockstack = {
+  listFPaths, deletePins, deleteTags, getFiles, putFiles, deleteFiles,
+};
 
 export default blockstack;

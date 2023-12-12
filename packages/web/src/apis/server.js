@@ -1,10 +1,9 @@
 import { Storage } from '@stacks/storage/dist/esm';
 
 import userSession from '../userSession';
-import { DOT_JSON, N_LINKS } from '../types/const';
+import { DOT_JSON } from '../types/const';
 import {
-  isObject, copyFPaths, addFPath, deleteFPath, batchGetFileWithRetry,
-  batchPutFileWithRetry, batchDeleteFileWithRetry, sleep, randomString, sample,
+  isObject, copyFPaths, addFPath, deleteFPath, sleep, randomString, sample,
 } from '../utils';
 import { cachedServerFPaths } from '../vars';
 
@@ -71,25 +70,6 @@ const getFile = async (fpath, options = {}) => {
   return content;
 };
 
-const getFiles = async (fpaths, dangerouslyIgnoreError = false) => {
-  // No order guarantee btw fpaths and responses
-  const result = { responses: [], fpaths: [], contents: [] };
-
-  for (let i = 0, j = fpaths.length; i < j; i += N_LINKS) {
-    const selectedFPaths = fpaths.slice(i, i + N_LINKS);
-    const responses = await batchGetFileWithRetry(
-      getFile, selectedFPaths, 0, dangerouslyIgnoreError
-    );
-    for (const response of responses) {
-      result.responses.push(response);
-      result.fpaths.push(response.fpath);
-      result.contents.push(response.content);
-    }
-  }
-
-  return result;
-};
-
 const putFileOptions = { dangerouslyIgnoreEtag: true };
 const putFile = async (fpath, content, options = putFileOptions) => {
   const rId = `${Date.now()}${randomString(4)}`;
@@ -110,23 +90,6 @@ const putFile = async (fpath, content, options = putFileOptions) => {
   return publicUrl;
 };
 
-const putFiles = async (fpaths, contents, dangerouslyIgnoreError = false) => {
-  // No order guarantee btw fpaths and responses
-  const result = { responses: [] };
-
-  for (let i = 0, j = fpaths.length; i < j; i += N_LINKS) {
-    const selectedFPaths = fpaths.slice(i, i + N_LINKS);
-    const selectedContents = contents.slice(i, i + N_LINKS);
-    const responses = await batchPutFileWithRetry(
-      putFile, selectedFPaths, selectedContents, 0, dangerouslyIgnoreError
-    );
-    for (const response of responses) {
-      result.responses.push(response);
-    }
-  }
-
-  return result;
-};
 
 const deleteFile = async (fpath, options = {}) => {
   const rId = `${Date.now()}${randomString(4)}`;
@@ -142,23 +105,6 @@ const deleteFile = async (fpath, options = {}) => {
   }
 
   updateNetworkInfos(rId, 2);
-  return result;
-};
-
-const deleteFiles = async (fpaths, dangerouslyIgnoreError = false) => {
-  // No order guarantee btw fpaths and responses
-  const result = { responses: [] };
-
-  for (let i = 0, j = fpaths.length; i < j; i += N_LINKS) {
-    const selectedFPaths = fpaths.slice(i, i + N_LINKS);
-    const responses = await batchDeleteFileWithRetry(
-      deleteFile, selectedFPaths, 0, dangerouslyIgnoreError
-    );
-    for (const response of responses) {
-      result.responses.push(response);
-    }
-  }
-
   return result;
 };
 
@@ -179,8 +125,7 @@ const listFiles = async (callback) => {
 };
 
 const server = {
-  cachedFPaths: cachedServerFPaths, getFile, getFiles, putFile, putFiles, deleteFile,
-  deleteFiles, listFiles,
+  cachedFPaths: cachedServerFPaths, getFile, putFile, deleteFile, listFiles,
 };
 
 export default server;

@@ -502,11 +502,10 @@ const _getIdsAndImages = async (linkObjsOrFPaths, links) => {
       }
     }
   }
-  if (imageFPaths.length > 0) {
-    const files = await fileApi.getFiles(imageFPaths);
-    for (let i = 0; i < files.fpaths.length; i++) {
-      images[files.fpaths[i]] = files.contentUrls[i];
-    }
+  for (const fpath of imageFPaths) {
+    const { contentUrl } = await fileApi.getFile(fpath);
+    if (!isString(contentUrl)) continue;
+    images[fpath] = contentUrl;
   }
 
   return { ids, images };

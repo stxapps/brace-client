@@ -42,16 +42,6 @@ const getFile = async (fpath, dir = Dirs.DocumentDir) => {
   return cachedContent;
 };
 
-const getFiles = async (fpaths, dir = Dirs.DocumentDir) => {
-  const contents = [], contentUrls = [];
-  for (const fpath of fpaths) {
-    const { content, contentUrl } = await getFile(fpath, dir);
-    contents.push(content);
-    contentUrls.push(contentUrl);
-  }
-  return { fpaths, contents, contentUrls };
-};
-
 const putFile = async (fpath, content, dir = Dirs.DocumentDir) => {
   fpath = deriveFPath(fpath, dir);
   if (isUint8Array(content)) content = new Blob([content]);
@@ -71,16 +61,6 @@ const putFile = async (fpath, content, dir = Dirs.DocumentDir) => {
 
   cachedContents[fpath] = cachedContent;
   return cachedContent;
-};
-
-const putFiles = async (fpaths, _contents, dir = Dirs.DocumentDir) => {
-  const contents = [], contentUrls = [];
-  for (let i = 0; i < fpaths.length; i++) {
-    const { content, contentUrl } = await putFile(fpaths[i], _contents[i], dir);
-    contents.push(content);
-    contentUrls.push(contentUrl);
-  }
-  return { fpaths, contents, contentUrls };
 };
 
 const deleteFile = async (fpath, dir = Dirs.DocumentDir) => {
@@ -140,8 +120,7 @@ const getStaticFPaths = async () => {
 };
 
 const localFile = {
-  getFile, getFiles, putFile, putFiles, deleteFile, deleteFiles, deleteAllFiles,
-  getStaticFPaths,
+  getFile, putFile, deleteFile, deleteFiles, deleteAllFiles, getStaticFPaths,
 };
 
 export default localFile;

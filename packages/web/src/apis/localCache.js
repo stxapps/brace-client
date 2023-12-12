@@ -19,15 +19,6 @@ const getFile = async (fpath, dangerouslyIgnoreUndefined = false) => {
   return content;
 };
 
-const getFiles = async (fpaths, dangerouslyIgnoreUndefined = false) => {
-  const contents = [];
-  for (const fpath of fpaths) {
-    const content = await getFile(fpath, dangerouslyIgnoreUndefined);
-    contents.push(content);
-  }
-  return { fpaths, contents };
-};
-
 const putFile = async (fpath, content) => {
   if (fpath.endsWith(DOT_JSON)) content = JSON.stringify(content);
 
@@ -35,12 +26,6 @@ const putFile = async (fpath, content) => {
     await idb.set(fpath, content);
   } catch (error) {
     console.log('In localCache.putFile, IndexedDB error:', error);
-  }
-};
-
-const putFiles = async (fpaths, contents) => {
-  for (let i = 0; i < fpaths.length; i++) {
-    await putFile(fpaths[i], contents[i]);
   }
 };
 
@@ -52,14 +37,6 @@ const deleteFile = async (fpath) => {
   }
 };
 
-const deleteFiles = async (fpaths) => {
-  for (const fpath of fpaths) {
-    await deleteFile(fpath);
-  }
-};
-
-const localCache = {
-  getFile, getFiles, putFile, putFiles, deleteFile, deleteFiles,
-};
+const localCache = { getFile, putFile, deleteFile };
 
 export default localCache;
