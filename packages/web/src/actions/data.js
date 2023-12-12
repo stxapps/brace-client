@@ -248,6 +248,8 @@ const parseBraceImages = async (dispatch, existFPaths, imgEntries, progress) => 
 
       fpaths.push(fpath);
       contents.push(content);
+
+      await fileApi.putFile(fpath, content);
     }
 
     await importAllDataLoop(fpaths, contents);
@@ -554,6 +556,31 @@ const _canExport = (listName, lockSettings) => {
   return true;
 };
 
+const _getStaticFiles = async (staticFPaths) => {
+  const result = { responses: [] };
+
+  const remainFPaths = [];
+  for (const fpath of staticFPaths) {
+    if (vars.platform.isReactNative) {
+      remainFPaths.push('file://' + fpath);
+      continue;
+    }
+
+    const { content } = await fileApi.getFile(fpath);
+    if (content === undefined) {
+      remainFPaths.push(fpath);
+      continue;
+    }
+
+    result.responses.push({ content, fpath, success: true });
+  }
+
+  const { responses } = await dataApi.getFiles(remainFPaths, true);
+  result.responses.push(...responses);
+
+  return result;
+};
+
 export const exportAllData = () => async (dispatch, getState) => {
   dispatch(updateExportAllDataProgress({ total: 'calculating...', done: 0 }));
 
@@ -615,7 +642,7 @@ export const exportAllData = () => async (dispatch, getState) => {
   try {
     const successResponses = [], errorResponses = [], nLinks = 1;
     for (let i = 0; i < linkFPaths.length; i += nLinks) {
-      const fileFPaths = [];
+      const staticFPaths = [];
 
       const selectedFPaths = linkFPaths.slice(i, i + nLinks);
       const { responses } = await dataApi.getFiles(selectedFPaths, true);
@@ -627,9 +654,8 @@ export const exportAllData = () => async (dispatch, getState) => {
           if (isObject(data.custom)) {
             const { image } = data.custom;
             if (isString(image) && image.startsWith(CD_ROOT + '/')) {
-              let fileFPath = getStaticFPath(image);
-              if (vars.platform.isReactNative) fileFPath = 'file://' + fileFPath;
-              if (!fileFPaths.includes(fileFPath)) fileFPaths.push(fileFPath);
+              const staticFPath = getStaticFPath(image);
+              if (!staticFPaths.includes(staticFPath)) staticFPaths.push(staticFPath);
             }
           }
         } else {
@@ -637,8 +663,8 @@ export const exportAllData = () => async (dispatch, getState) => {
         }
       }
 
-      const { responses: fileResponses } = await dataApi.getFiles(fileFPaths, true);
-      for (const response of fileResponses) {
+      const { responses: sResponses } = await _getStaticFiles(staticFPaths);
+      for (const response of sResponses) {
         if (response.success) {
           let path = response.fpath, data = response.content;
           if (path.startsWith('file://')) {

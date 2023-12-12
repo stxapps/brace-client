@@ -3391,7 +3391,6 @@ export const updateSelectingTagName = (tagName) => {
   return { type: UPDATE_SELECTING_TAG_NAME, payload: tagName };
 };
 
-
 export const showSWWUPopup = () => async (dispatch, getState) => {
   dispatch(updatePopup(SWWU_POPUP, true));
 };
