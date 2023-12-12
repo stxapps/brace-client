@@ -408,6 +408,7 @@ const resetState = async (dispatch) => {
   dispatch({ type: OFFLINE_RESET_STATE });
 
   // clear file storage
+  //await cacheApi.deleteAllFiles();
   await fileApi.deleteAllFiles();
 
   // clear cached fpaths

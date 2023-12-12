@@ -248,11 +248,12 @@ const parseBraceImages = async (dispatch, existFPaths, imgEntries, progress) => 
 
       fpaths.push(fpath);
       contents.push(content);
-
-      await fileApi.putFile(fpath, content);
     }
 
     await importAllDataLoop(fpaths, contents);
+    for (let i = 0; i < fpaths.length; i++) {
+      await fileApi.putFile(fpaths[i], contents[i]);
+    }
 
     progress.done += selectedEntries.length;
     dispatch(updateImportAllDataProgress(progress));
@@ -576,7 +577,15 @@ const _getStaticFiles = async (staticFPaths) => {
   }
 
   const { responses } = await dataApi.getFiles(remainFPaths, true);
-  result.responses.push(...responses);
+  for (const response of responses) {
+    result.responses.push(response);
+
+    if (vars.platform.isReactNative) continue;
+    if (response.success) {
+      const { fpath, content } = response;
+      await fileApi.putFile(fpath, content);
+    }
+  }
 
   return result;
 };
@@ -803,6 +812,7 @@ export const deleteAllData = () => async (dispatch, getState) => {
       progress.done += selectedFPaths.length;
       dispatch(updateDeleteAllDataProgress(progress));
     }
+    //await cacheApi.deleteAllFiles();
     await fileApi.deleteAllFiles();
 
     dispatch({ type: DELETE_ALL_DATA });
