@@ -16,7 +16,7 @@ import {
   CUSTOM_EDITOR_POPUP, IMAGES, CD_ROOT, BLK_MODE, LG_WIDTH,
 } from '../types/const';
 import { getCustomEditor, getThemeMode } from '../selectors';
-import { isObject, isString, rerandomRandomTerm, getFileExt } from '../utils';
+import { isObject, isString, randomString, getFileExt, getMainId } from '../utils';
 import { dialogFMV } from '../types/animConfigs';
 import cache from '../utils/cache';
 
@@ -56,7 +56,8 @@ const CustomEditorPopup = () => {
       return;
     }
 
-    let fpart = IMAGES + '/' + rerandomRandomTerm(selectingLinkId);
+    const toId = `${getMainId(selectingLinkId)}-${randomString(4)}-${Date.now()}`;
+    let fpart = IMAGES + '/' + toId;
     const ext = getFileExt(image.path);
     if (ext) fpart += `.${ext}`;
 

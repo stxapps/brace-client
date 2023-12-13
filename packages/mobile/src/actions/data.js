@@ -8,7 +8,8 @@ import DocumentPicker, {
 } from 'react-native-document-picker';
 import Share from 'react-native-share';
 
-import serverApi from '../apis/server';
+import dataApi from '../apis/blockstack';
+import cacheApi from '../apis/localCache';
 import fileApi from '../apis/localFile';
 import {
   UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
@@ -22,9 +23,9 @@ import {
   isEqual, isString, isObject, isNumber, sleep, randomString, getUrlFirstChar,
   randomDecor, isDecorValid, isExtractedResultValid, isCustomValid, isListNameObjsValid,
   isTagNameObjsValid, createDataFName, createLinkFPath, createSettingsFPath,
-  getLastSettingsFPaths, batchGetFileWithRetry, extractFPath, getPins, getMainId,
-  getFormattedTimeStamp, extractLinkFPath, extractPinFPath, getStaticFPath,
-  extractTagFPath, getTags, getLastLinkFPaths,
+  getLastSettingsFPaths, extractFPath, getPins, getMainId, getFormattedTimeStamp,
+  extractLinkFPath, extractPinFPath, getStaticFPath, extractTagFPath, getTags,
+  getLastLinkFPaths,
 } from '../utils';
 import { initialSettingsState } from '../types/initialStates';
 import vars from '../vars';
@@ -35,7 +36,7 @@ const importAllDataLoop = async (fpaths, contents) => {
   for (let i = 0; i < fpaths.length; i += nLinks) {
     const _fpaths = fpaths.slice(i, i + nLinks);
     const _contents = contents.slice(i, i + nLinks);
-    await serverApi.putFiles(_fpaths, _contents);
+    await dataApi.putFiles(_fpaths, _contents);
 
     await sleep(300);
   }
@@ -205,7 +206,7 @@ const _parseBraceSettings = async (settingsFPaths, settingsEntries) => {
   const lastSettingsFPaths = getLastSettingsFPaths(settingsFPaths);
   if (lastSettingsFPaths.fpaths.length > 0) {
     const lastSettingsFPath = lastSettingsFPaths.fpaths[0];
-    const { contents } = await serverApi.getFiles([lastSettingsFPath], true);
+    const { contents } = await dataApi.getFiles([lastSettingsFPath], true);
     if (isEqual(latestSettingsPart.content, contents[0])) {
       return;
     }
@@ -421,23 +422,12 @@ const parseBraceTags = async (dispatch, tags, tagEntries, progress) => {
 };
 
 const parseBraceImportedFile = async (dispatch, getState, json) => {
+  const {
+    linkFPaths: allLinkFPaths, staticFPaths, settingsFPaths, pinFPaths, tagFPaths,
+  } = await dataApi.listFPaths();
 
-  const allLinkFPaths = {}, settingsFPaths = [], pinFPaths = [], tagFPaths = [];
   const existFPaths = [], existMainIds = [];
-  await serverApi.listFiles((fpath) => {
-    if (fpath.startsWith(LINKS)) {
-      const { listName } = extractLinkFPath(fpath);
-      if (!allLinkFPaths[listName]) allLinkFPaths[listName] = [];
-      if (!allLinkFPaths[listName].includes(fpath)) {
-        allLinkFPaths[listName].push(fpath);
-      }
-    } else if (fpath.startsWith(IMAGES)) existFPaths.push(fpath);
-    else if (fpath.startsWith(SETTINGS)) settingsFPaths.push(fpath);
-    else if (fpath.startsWith(PINS)) pinFPaths.push(fpath);
-    else if (fpath.startsWith(TAGS)) tagFPaths.push(fpath);
-
-    return true;
-  });
+  existFPaths.push(...staticFPaths);
 
   const linkFPaths = getLastLinkFPaths(allLinkFPaths);
   for (const listName in linkFPaths) {
@@ -638,25 +628,47 @@ const _canExport = (listName, lockSettings) => {
   return true;
 };
 
+const _getStaticFiles = async (staticFPaths) => {
+  const result = { responses: [] };
+
+  const remainFPaths = [];
+  for (const fpath of staticFPaths) {
+    if (vars.platform.isReactNative) {
+      remainFPaths.push('file://' + fpath);
+      continue;
+    }
+
+    const { content } = await fileApi.getFile(fpath);
+    if (content === undefined) {
+      remainFPaths.push(fpath);
+      continue;
+    }
+
+    result.responses.push({ content, fpath, success: true });
+  }
+
+  const { responses } = await dataApi.getFiles(remainFPaths, true);
+  for (const response of responses) {
+    result.responses.push(response);
+
+    if (vars.platform.isReactNative) continue;
+    if (response.success) {
+      const { fpath, content } = response;
+      await fileApi.putFile(fpath, content);
+    }
+  }
+
+  return result;
+};
+
 export const exportAllData = () => async (dispatch, getState) => {
   dispatch(updateExportAllDataProgress({ total: 'calculating...', done: 0 }));
 
   const lockSettings = getState().lockSettings;
 
-  const allLinkFPaths = {}, _pinFPaths = [], _tagFPaths = [], _settingsFPaths = [];
+  let lfpRst;
   try {
-    await serverApi.listFiles((fpath) => {
-      if (fpath.startsWith(LINKS)) {
-        const { listName } = extractLinkFPath(fpath);
-        if (!allLinkFPaths[listName]) allLinkFPaths[listName] = [];
-        if (!allLinkFPaths[listName].includes(fpath)) {
-          allLinkFPaths[listName].push(fpath);
-        }
-      } else if (fpath.startsWith(PINS)) _pinFPaths.push(fpath);
-      else if (fpath.startsWith(TAGS)) _tagFPaths.push(fpath);
-      else if (fpath.startsWith(SETTINGS)) _settingsFPaths.push(fpath);
-      return true;
-    });
+    lfpRst = await dataApi.listFPaths();
   } catch (error) {
     dispatch(updateExportAllDataProgress({ total: -1, done: -1, error: `${error}` }));
     return;
@@ -665,9 +677,9 @@ export const exportAllData = () => async (dispatch, getState) => {
   const linkFPaths = [], pinFPaths = [], tagFPaths = [], settingsFPaths = [];
   const linkMainIds = [];
 
-  const _linkFPaths = getLastLinkFPaths(allLinkFPaths);
-  for (const listName in _linkFPaths) {
-    for (const fpath of _linkFPaths[listName]) {
+  const lastLinkFPaths = getLastLinkFPaths(lfpRst.linkFPaths);
+  for (const listName in lastLinkFPaths) {
+    for (const fpath of lastLinkFPaths[listName]) {
       if (!_canExport(listName, lockSettings)) continue;
 
       const { id } = extractLinkFPath(fpath);
@@ -676,24 +688,24 @@ export const exportAllData = () => async (dispatch, getState) => {
     }
   }
 
-  for (const pinFPath of _pinFPaths) {
+  for (const pinFPath of lfpRst.pinFPaths) {
     const { id } = extractPinFPath(pinFPath);
     const pinMainId = getMainId(id);
     if (!linkMainIds.includes(pinMainId)) continue;
     pinFPaths.push(pinFPath);
   }
 
-  for (const tagFPath of _tagFPaths) {
+  for (const tagFPath of lfpRst.tagFPaths) {
     const { id } = extractTagFPath(tagFPath);
     const tagMainId = getMainId(id);
     if (!linkMainIds.includes(tagMainId)) continue;
     tagFPaths.push(tagFPath);
   }
 
-  const lastSettingsFPaths = getLastSettingsFPaths(_settingsFPaths);
+  const lastSettingsFPaths = getLastSettingsFPaths(lfpRst.settingsFPaths);
   if (lastSettingsFPaths.fpaths.length > 0) {
     const lastSettingsFPath = lastSettingsFPaths.fpaths[0];
-    const { contents } = await serverApi.getFiles([lastSettingsFPath], true);
+    const { contents } = await dataApi.getFiles([lastSettingsFPath], true);
     if (!isEqual(initialSettingsState, contents[0])) {
       settingsFPaths.push(lastSettingsFPath);
     }
@@ -710,12 +722,10 @@ export const exportAllData = () => async (dispatch, getState) => {
   try {
     const successResponses = [], errorResponses = [], nLinks = 1;
     for (let i = 0; i < linkFPaths.length; i += nLinks) {
-      const fileFPaths = [];
+      const staticFPaths = [];
 
       const selectedFPaths = linkFPaths.slice(i, i + nLinks);
-      const responses = await batchGetFileWithRetry(
-        serverApi.getFile, selectedFPaths, 0, true
-      );
+      const { responses } = await dataApi.getFiles(selectedFPaths, true);
       for (const response of responses) {
         if (response.success) {
           const path = response.fpath, data = response.content;
@@ -724,9 +734,8 @@ export const exportAllData = () => async (dispatch, getState) => {
           if (isObject(data.custom)) {
             const { image } = data.custom;
             if (isString(image) && image.startsWith(CD_ROOT + '/')) {
-              let fileFPath = getStaticFPath(image);
-              if (vars.platform.isReactNative) fileFPath = 'file://' + fileFPath;
-              if (!fileFPaths.includes(fileFPath)) fileFPaths.push(fileFPath);
+              const staticFPath = getStaticFPath(image);
+              if (!staticFPaths.includes(staticFPath)) staticFPaths.push(staticFPath);
             }
           }
         } else {
@@ -734,10 +743,8 @@ export const exportAllData = () => async (dispatch, getState) => {
         }
       }
 
-      const fileResponses = await batchGetFileWithRetry(
-        serverApi.getFile, fileFPaths, 0, true
-      );
-      for (const response of fileResponses) {
+      const { responses: sResponses } = await _getStaticFiles(staticFPaths);
+      for (const response of sResponses) {
         if (response.success) {
           let path = response.fpath, data = response.content;
           if (path.startsWith('file://')) {
@@ -781,9 +788,7 @@ export const exportAllData = () => async (dispatch, getState) => {
 
     for (let i = 0; i < settingsFPaths.length; i += nLinks) {
       const selectedFPaths = settingsFPaths.slice(i, i + nLinks);
-      const responses = await batchGetFileWithRetry(
-        serverApi.getFile, selectedFPaths, 0, true
-      );
+      const { responses } = await dataApi.getFiles(selectedFPaths, true);
       for (const response of responses) {
         if (response.success) {
           const path = response.fpath, data = response.content;
@@ -834,37 +839,39 @@ export const deleteAllData = () => async (dispatch, getState) => {
   // redux-offline: Empty outbox
   dispatch({ type: OFFLINE_RESET_STATE });
 
-  const allLinkFPaths = {}, prevFPaths = [], lastFPaths = [];
+  let lfpRst;
   try {
-    await serverApi.listFiles((fpath) => {
-      if (fpath.startsWith(LINKS)) {
-        const { listName } = extractLinkFPath(fpath);
-        if (!allLinkFPaths[listName]) allLinkFPaths[listName] = [];
-        if (!allLinkFPaths[listName].includes(fpath)) {
-          allLinkFPaths[listName].push(fpath);
-        }
-      } else {
-        lastFPaths.push(fpath);
-      }
-      return true;
-    });
+    lfpRst = await dataApi.listFPaths();
   } catch (error) {
     dispatch(updateDeleteAllDataProgress({ total: -1, done: -1, error: `${error}` }));
     return;
   }
 
-  const linkFPaths = getLastLinkFPaths(allLinkFPaths);
-  for (const listName in linkFPaths) {
-    for (const fpath of linkFPaths[listName]) lastFPaths.push(fpath);
+  const fpaths = [], lastFPaths = [];
+
+  const lastLinkFPaths = getLastLinkFPaths(lfpRst.linkFPaths);
+  for (const listName in lastLinkFPaths) {
+    for (const fpath of lastLinkFPaths[listName]) lastFPaths.push(fpath);
   }
-  for (const listName in allLinkFPaths) {
-    for (const fpath of allLinkFPaths[listName]) {
+  for (const listName in lfpRst.linkFPaths) {
+    for (const fpath of lfpRst.linkFPaths[listName]) {
       if (lastFPaths.includes(fpath)) continue;
-      prevFPaths.push(fpath);
+      fpaths.push(fpath);
     }
   }
 
-  const fpaths = [...prevFPaths, ...lastFPaths];
+  const lastSettingsFPaths = getLastSettingsFPaths(lfpRst.settingsFPaths);
+  lastFPaths.push(...lastSettingsFPaths.fpaths);
+  for (const fpath of lfpRst.settingsFPaths) {
+    if (lastFPaths.includes(fpath)) continue;
+    fpaths.push(fpath);
+  }
+
+  fpaths.push(...lfpRst.staticFPaths);
+  if (isString(lfpRst.infoFPath)) fpaths.push(lfpRst.infoFPath);
+  fpaths.push(...lfpRst.pinFPaths);
+  fpaths.push(...lfpRst.tagFPaths);
+  fpaths.push(...lastFPaths);
 
   const progress = { total: fpaths.length, done: 0 };
   dispatch(updateDeleteAllDataProgress(progress));
@@ -875,11 +882,12 @@ export const deleteAllData = () => async (dispatch, getState) => {
     const nLinks = 1;
     for (let i = 0, j = fpaths.length; i < j; i += nLinks) {
       const selectedFPaths = fpaths.slice(i, i + nLinks);
-      await serverApi.deleteFiles(selectedFPaths);
+      await dataApi.deleteFiles(selectedFPaths);
 
       progress.done += selectedFPaths.length;
       dispatch(updateDeleteAllDataProgress(progress));
     }
+    await cacheApi.deleteAllFiles();
     await fileApi.deleteAllFiles();
 
     dispatch({ type: DELETE_ALL_DATA });

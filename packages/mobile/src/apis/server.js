@@ -2,10 +2,9 @@
 import RNBlockstackSdk from 'react-native-blockstack';
 import { Dirs } from 'react-native-file-access';
 
-import { DOT_JSON, N_LINKS } from '../types/const';
+import { DOT_JSON } from '../types/const';
 import {
-  isObject, copyFPaths, addFPath, deleteFPath, batchGetFileWithRetry,
-  batchPutFileWithRetry, batchDeleteFileWithRetry, sleep, randomString, sample,
+  isObject, copyFPaths, addFPath, deleteFPath, sleep, randomString, sample,
 } from '../utils';
 import { cachedServerFPaths } from '../vars';
 
@@ -75,21 +74,6 @@ const getFile = async (fpath, options = getFileOptions) => {
   return content;
 };
 
-const getFiles = async (_fpaths, dangerouslyIgnoreError = false) => {
-
-  const fpaths = [], contents = []; // No order guarantee btw _fpaths and responses
-  for (let i = 0, j = _fpaths.length; i < j; i += N_LINKS) {
-    const selectedFPaths = _fpaths.slice(i, i + N_LINKS);
-    const responses = await batchGetFileWithRetry(
-      getFile, selectedFPaths, 0, dangerouslyIgnoreError
-    );
-    fpaths.push(...responses.map(({ fpath }) => fpath));
-    contents.push(...responses.map(({ content }) => content));
-  }
-
-  return { fpaths, contents };
-};
-
 const putFileOptions = { encrypt: true, dir: Dirs.DocumentDir };
 const putFile = async (fpath, content, options = putFileOptions) => {
   const rId = `${Date.now()}${randomString(4)}`;
@@ -108,14 +92,6 @@ const putFile = async (fpath, content, options = putFileOptions) => {
   return fileUrl;
 };
 
-const putFiles = async (fpaths, contents) => {
-  for (let i = 0, j = fpaths.length; i < j; i += N_LINKS) {
-    const _fpaths = fpaths.slice(i, i + N_LINKS);
-    const _contents = contents.slice(i, i + N_LINKS);
-    await batchPutFileWithRetry(putFile, _fpaths, _contents, 0);
-  }
-};
-
 const deleteFile = async (fpath, options = { wasSigned: false }) => {
   const rId = `${Date.now()}${randomString(4)}`;
   await respectLimit(rId, 1);
@@ -130,13 +106,6 @@ const deleteFile = async (fpath, options = { wasSigned: false }) => {
 
   updateNetworkInfos(rId, 1);
   return deleted;
-};
-
-const deleteFiles = async (fpaths) => {
-  for (let i = 0, j = fpaths.length; i < j; i += N_LINKS) {
-    const _fpaths = fpaths.slice(i, i + N_LINKS);
-    await batchDeleteFileWithRetry(deleteFile, _fpaths, 0);
-  }
 };
 
 const listFiles = async (callback) => {
@@ -156,8 +125,7 @@ const listFiles = async (callback) => {
 };
 
 const server = {
-  cachedFPaths: cachedServerFPaths, getFile, getFiles, putFile, putFiles, deleteFile,
-  deleteFiles, listFiles,
+  cachedFPaths: cachedServerFPaths, getFile, putFile, deleteFile, listFiles,
 };
 
 export default server;

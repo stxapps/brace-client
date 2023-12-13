@@ -11,7 +11,7 @@ import FlagSecure from 'react-native-flag-secure';
 import userSession from '../userSession';
 import axios from '../axiosWrapper';
 import dataApi from '../apis/blockstack';
-import serverApi from '../apis/server';
+import cacheApi from '../apis/localCache';
 import fileApi from '../apis/localFile';
 import {
   INIT, UPDATE_USER, UPDATE_HREF, UPDATE_STACKS_ACCESS, UPDATE_LIST_NAME,
@@ -65,7 +65,7 @@ import {
   PROFILE_POPUP, CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP,
   CUSTOM_EDITOR_POPUP, TAG_EDITOR_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP,
   CONFIRM_DISCARD_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
-  SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP,
+  SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP, SWWU_POPUP,
   DISCARD_ACTION_UPDATE_LIST_NAME, DISCARD_ACTION_UPDATE_TAG_NAME, LOCAL_LINK_ATTRS,
   MY_LIST, TRASH, N_LINKS, N_DAYS, CD_ROOT, ADDED, DIED_ADDING, DIED_MOVING,
   DIED_REMOVING, DIED_DELETING, DIED_UPDATING, SHOWING_STATUSES, BRACE_PRE_EXTRACT_URL,
@@ -245,7 +245,8 @@ const handleAppStateChange = (nextAppState) => async (dispatch, getState) => {
 
 const getPopupShownId = (state) => {
   // No need these popups here:
-  //   SettingsErrorPopup, PinErrorPopup, TagErrorPopup, and AccessErrorPopup.
+  //   SettingsErrorPopup, PinErrorPopup, TagErrorPopup, AccessErrorPopup,
+  //   and SWWUPopup.
   if (state.display.isLockEditorPopupShown) return LOCK_EDITOR_POPUP;
   if (state.display.isTimePickPopupShown) return TIME_PICK_POPUP;
   if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;
@@ -330,6 +331,7 @@ const resetState = async (dispatch) => {
   dispatch({ type: OFFLINE_RESET_STATE });
 
   // clear file storage
+  await cacheApi.deleteAllFiles();
   await fileApi.deleteAllFiles();
 
   // clear cached fpaths
@@ -424,11 +426,10 @@ const _getIdsAndImages = async (linkObjsOrFPaths, links) => {
       }
     }
   }
-  if (imageFPaths.length > 0) {
-    const files = await fileApi.getFiles(imageFPaths);
-    for (let i = 0; i < files.fpaths.length; i++) {
-      images[files.fpaths[i]] = files.contentUrls[i];
-    }
+  for (const fpath of imageFPaths) {
+    const { contentUrl } = await fileApi.getFile(fpath);
+    if (!isString(contentUrl)) continue;
+    images[fpath] = contentUrl;
   }
 
   return { ids, images };
@@ -1644,7 +1645,7 @@ export const extractContentsDeleteStep = (successListNames, successLinks) => asy
   }
 
   try {
-    await serverApi.deleteFiles(fpaths);
+    await dataApi.deleteFiles(fpaths);
   } catch (error) {
     console.log('extractContents clean up error: ', error);
     // error in this step should be fine
@@ -1735,7 +1736,7 @@ export const cleanUpLinks = () => async (dispatch, getState) => {
   if (unusedFPaths.length === 0) return;
 
   try {
-    await serverApi.deleteFiles(unusedFPaths);
+    await dataApi.deleteFiles(unusedFPaths);
   } catch (error) {
     console.log('cleanUpLinks error: ', error);
     // error in this step should be fine
@@ -1760,7 +1761,7 @@ const _cleanUpStaticFiles = async (getState) => {
   unusedFPaths = unusedFPaths.slice(0, N_LINKS);
 
   if (unusedFPaths.length > 0) {
-    await serverApi.deleteFiles(unusedFPaths);
+    await dataApi.deleteFiles(unusedFPaths);
     await fileApi.deleteFiles(unusedFPaths);
   }
 
@@ -2008,7 +2009,7 @@ export const updateSettingsDeleteStep = (_settingsFPaths) => async (
 ) => {
   if (_settingsFPaths.length === 0) return;
   try {
-    await serverApi.putFiles(_settingsFPaths, _settingsFPaths.map(() => ({})));
+    await dataApi.putFiles(_settingsFPaths, _settingsFPaths.map(() => ({})));
     await cleanUpLocks(dispatch, getState);
   } catch (error) {
     console.log('updateSettings clean up error: ', error);
@@ -2034,7 +2035,7 @@ const updateInfo = async (dispatch, getState) => {
 export const updateInfoDeleteStep = (_infoFPath) => async (dispatch, getState) => {
   if (!isString(_infoFPath)) return;
   try {
-    await serverApi.deleteFiles([_infoFPath]);
+    await dataApi.deleteFiles([_infoFPath]);
   } catch (error) {
     console.log('updateInfo clean up error: ', error);
     // error in this step should be fine
@@ -2117,7 +2118,7 @@ export const mergeSettingsDeleteStep = (_settingsFPaths) => async (
   dispatch, getState
 ) => {
   try {
-    await serverApi.putFiles(_settingsFPaths, _settingsFPaths.map(() => ({})));
+    await dataApi.putFiles(_settingsFPaths, _settingsFPaths.map(() => ({})));
   } catch (error) {
     console.log('mergeSettings clean up error: ', error);
     // error in this step should be fine
@@ -2924,7 +2925,7 @@ export const updateCustomDataDeleteStep = (
   if (fromLink.id !== toLink.id) fpaths.push(createLinkFPath(listName, fromLink.id));
 
   try {
-    await serverApi.deleteFiles(fpaths);
+    await dataApi.deleteFiles(fpaths);
     await fileApi.deleteFiles(localUnusedFPaths);
   } catch (error) {
     console.log('updateCustomData clean up error: ', error);
@@ -3356,4 +3357,8 @@ export const deleteTagNames = (tagNames) => {
 
 export const updateSelectingTagName = (tagName) => {
   return { type: UPDATE_SELECTING_TAG_NAME, payload: tagName };
+};
+
+export const showSWWUPopup = () => async (dispatch, getState) => {
+  dispatch(updatePopup(SWWU_POPUP, true));
 };
