@@ -8,6 +8,7 @@ import userSession from '../userSession';
 import axios from '../axiosWrapper';
 import iapApi from '../paddleWrapper';
 import dataApi from '../apis/blockstack';
+import cacheApi from '../apis/localCache';
 import fileApi from '../apis/localFile';
 import lsgApi from '../apis/localSg';
 import {
@@ -408,7 +409,7 @@ const resetState = async (dispatch) => {
   dispatch({ type: OFFLINE_RESET_STATE });
 
   // clear file storage
-  //await cacheApi.deleteAllFiles();
+  await cacheApi.deleteAllFiles();
   await fileApi.deleteAllFiles();
 
   // clear cached fpaths

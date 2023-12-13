@@ -37,6 +37,11 @@ const deleteFile = async (fpath) => {
   }
 };
 
-const localCache = { getFile, putFile, deleteFile };
+const deleteAllFiles = async () => {
+  // BUG Alert: localFile also uses IndexedDB too!
+  // Use localFile to delete all files in both localCache and localFile for now!
+};
+
+const localCache = { getFile, putFile, deleteFile, deleteAllFiles };
 
 export default localCache;

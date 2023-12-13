@@ -4,6 +4,7 @@ import {
 import { saveAs } from 'file-saver';
 
 import dataApi from '../apis/blockstack';
+import cacheApi from '../apis/localCache';
 import fileApi from '../apis/localFile';
 import {
   UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
@@ -246,14 +247,13 @@ const parseBraceImages = async (dispatch, existFPaths, imgEntries, progress) => 
 
       content = await convertDataUrlToBlob(content);
 
+      await fileApi.putFile(fpath, content);
+
       fpaths.push(fpath);
       contents.push(content);
     }
 
     await importAllDataLoop(fpaths, contents);
-    for (let i = 0; i < fpaths.length; i++) {
-      await fileApi.putFile(fpaths[i], contents[i]);
-    }
 
     progress.done += selectedEntries.length;
     dispatch(updateImportAllDataProgress(progress));
@@ -812,7 +812,7 @@ export const deleteAllData = () => async (dispatch, getState) => {
       progress.done += selectedFPaths.length;
       dispatch(updateDeleteAllDataProgress(progress));
     }
-    //await cacheApi.deleteAllFiles();
+    await cacheApi.deleteAllFiles();
     await fileApi.deleteAllFiles();
 
     dispatch({ type: DELETE_ALL_DATA });

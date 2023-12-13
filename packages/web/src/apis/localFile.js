@@ -85,6 +85,7 @@ const deleteFiles = async (fpaths, dir = Dirs.DocumentDir) => {
 };
 
 const deleteAllFiles = async () => {
+  // BUG Alert: localCache also uses IndexedDB too!
   try {
     await idb.clear();
   } catch (error) {
