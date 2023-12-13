@@ -58,7 +58,7 @@ const deleteFile = async (fpath) => {
 const deleteAllFiles = async () => {
   // Different from web as there might be some other files too,
   //   can't just delete all files but need to specify dirs.
-  const dpaths = [LINKS, SETTINGS, INFO, PINS, TAGS];
+  const dpaths = [LINKS, PINS, TAGS];
 
   for (const dpath of dpaths) {
     const ddpath = deriveFPath(dpath);
@@ -69,6 +69,20 @@ const deleteAllFiles = async () => {
     } catch (error) {
       console.log('In localCache.deleteAllFiles, error:', error);
     }
+  }
+
+  try {
+    const dpath = Dirs.CacheDir;
+    const fnames = await FileSystem.ls(dpath);
+    for (const fname of fnames) {
+      if (![SETTINGS, INFO].some(el => fname.startsWith(el))) continue;
+      if (!fname.endsWith(DOT_JSON)) continue;
+
+      const fpath = `${dpath}/${fname}`;
+      await FileSystem.unlink(fpath);
+    }
+  } catch (error) {
+    console.log('In localCache.deleteAllFiles, 2nd error:', error);
   }
 };
 
