@@ -844,6 +844,10 @@ This and CI/CD are very important!
   + Custom link's title & image
   + WHT_MODE, BLK_MODE
 * brace-server-worker
+** Cloud Run and no need all below
+- yarn run deploy
+- might need to increase memory
+- Set schedule */30 * * * *
 ** Creat an instance
 - us-central1-a
 - Choose e2-medium (2 vCPU, 4GB memory)
