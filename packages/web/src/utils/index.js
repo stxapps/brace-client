@@ -13,15 +13,15 @@ import {
   UPDATE_TAG_DATA_T_STEP_ROLLBACK,
 } from '../types/actionTypes';
 import {
-  DOMAIN_NAME, HTTP, HTTPS, WWW, STATUS, LINKS, IMAGES, SETTINGS, INFO, PINS, TAGS,
-  DOT_JSON, ADDED, DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING,
-  DIED_DELETING, COLOR, PATTERN, IMAGE, BG_COLOR_STYLES, PATTERNS, VALID_URL, NO_URL,
-  ASK_CONFIRM_URL, VALID_LIST_NAME, NO_LIST_NAME, TOO_LONG_LIST_NAME,
-  DUPLICATE_LIST_NAME, COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW, GRACE, ON_HOLD,
-  PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, MAX_TRY, EXTRACT_INVALID_URL, VALID_PASSWORD,
-  NO_PASSWORD, CONTAIN_SPACES_PASSWORD, TOO_LONG_PASSWORD, N_LINKS, MY_LIST, TRASH,
-  ARCHIVE, NO_TAG_NAME, TOO_LONG_TAG_NAME, DUPLICATE_TAG_NAME, VALID_TAG_NAME, LOCKED,
-  UNLOCKED,
+  DOMAIN_NAME, HTTP, HTTPS, WWW, STATUS, LINKS, SSLTS, IMAGES, SETTINGS, INFO, PINS,
+  TAGS, DOT_JSON, ADDED, REMOVING, PENDING_REMOVING, DIED_ADDING, DIED_UPDATING,
+  DIED_MOVING, DIED_REMOVING, DIED_DELETING, COLOR, PATTERN, IMAGE, BG_COLOR_STYLES,
+  PATTERNS, VALID_URL, NO_URL, ASK_CONFIRM_URL, VALID_LIST_NAME, NO_LIST_NAME,
+  TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME, COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW,
+  GRACE, ON_HOLD, PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, MAX_TRY, EXTRACT_INVALID_URL,
+  VALID_PASSWORD, NO_PASSWORD, CONTAIN_SPACES_PASSWORD, TOO_LONG_PASSWORD, N_LINKS,
+  MY_LIST, TRASH, ARCHIVE, NO_TAG_NAME, TOO_LONG_TAG_NAME, DUPLICATE_TAG_NAME,
+  VALID_TAG_NAME, LOCKED, UNLOCKED,
 } from '../types/const';
 import {
   myListListNameObj, trashListNameObj, archiveListNameObj,
@@ -421,6 +421,15 @@ export const getAllListNames = (listNameObjs) => {
   return listNames;
 };
 
+export const getListNamesFromLinkMetas = (linkMetas) => {
+  const listNames = [];
+  for (const meta of linkMetas) {
+    const { listName } = meta;
+    if (!listNames.includes(listName)) listNames.push(listName);
+  }
+  return listNames;
+};
+
 export const isDiedStatus = (status) => {
   return [
     DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
@@ -725,13 +734,11 @@ export const excludeWithMainIds = (links, ids) => {
   return newLinks;
 };
 
-export const getLinkMainIds = (linkFPaths) => {
+export const getLinkMainIds = (linkMetas) => {
   const linkMainIds = [];
-  for (const listName in linkFPaths) {
-    for (const fpath of linkFPaths[listName]) {
-      const { id } = extractLinkFPath(fpath);
-      linkMainIds.push(getMainId(id));
-    }
+  for (const meta of linkMetas) {
+    const { id } = meta;
+    linkMainIds.push(getMainId(id));
   }
 
   return linkMainIds;
@@ -1135,6 +1142,31 @@ export const extractLinkId = (id) => {
   return { addedDT, updatedDT: isNumber(updatedDT) ? updatedDT : addedDT };
 };
 
+export const createSsltFPath = (listName, updatedDT, addedDT, id) => {
+  return `${SSLTS}/${listName}/${updatedDT}/${addedDT}/${id}${DOT_JSON}`;
+};
+
+export const extractSsltFPath = (fpath) => {
+  const arr = fpath.split('/');
+  if (arr.length !== 5) console.log(`In extractSsltFPath, invalid fpath: ${fpath}`);
+
+  let id, ext;
+  const [listName, fname] = [arr[1] || '', arr[4] || ''];
+  const [updatedDTStr, addedDTStr] = [arr[2] || '', arr[3] || ''];
+
+  const updatedDT = parseInt(updatedDTStr, 10);
+  const addedDT = parseInt(addedDTStr, 10);
+
+  const dotIndex = fname.lastIndexOf('.');
+  if (dotIndex === -1) {
+    [id, ext] = [fname, ''];
+  } else {
+    [id, ext] = [fname.substring(0, dotIndex), fname.substring(dotIndex + 1)];
+  }
+
+  return { listName, updatedDT, addedDT, id, ext };
+};
+
 export const extractStaticFPath = (fpath) => {
   const arr = fpath.split('/');
   if (arr.length !== 2) console.log(`In extractStaticFPath, invalid fpath: ${fpath}`);
@@ -1219,6 +1251,8 @@ export const addFPath = (fpaths, fpath) => {
     if (!fpaths.linkFPaths[listName].includes(fpath)) {
       fpaths.linkFPaths[listName].push(fpath);
     }
+  } else if (fpath.startsWith(SSLTS)) {
+    if (!fpaths.ssltFPaths.includes(fpath)) fpaths.ssltFPaths.push(fpath);
   } else if (fpath.startsWith(IMAGES)) {
     if (!fpaths.staticFPaths.includes(fpath)) fpaths.staticFPaths.push(fpath);
   } else if (fpath.startsWith(SETTINGS)) {
@@ -1248,8 +1282,12 @@ export const deleteFPath = (fpaths, fpath) => {
       fpaths.linkFPaths[listName] = fpaths.linkFPaths[listName].filter(el => {
         return el !== fpath;
       });
-      if (fpaths.linkFPaths[listName].length === 0) delete fpaths.linkFPaths[listName];
+      if (fpaths.linkFPaths[listName].length === 0) {
+        delete fpaths.linkFPaths[listName];
+      }
     }
+  } else if (fpath.startsWith(SSLTS)) {
+    fpaths.ssltFPaths = fpaths.ssltFPaths.filter(el => el !== fpath);
   } else if (fpath.startsWith(IMAGES)) {
     fpaths.staticFPaths = fpaths.staticFPaths.filter(el => el !== fpath);
   } else if (fpath.startsWith(SETTINGS)) {
@@ -1268,12 +1306,15 @@ export const deleteFPath = (fpaths, fpath) => {
 export const copyFPaths = (fpaths) => {
   const newLinkFPaths = {};
   if (isObject(fpaths.linkFPaths)) {
-    for (const listName in fpaths.linkFPaths) {
-      if (Array.isArray(fpaths.linkFPaths[listName])) {
-        newLinkFPaths[listName] = [...fpaths.linkFPaths[listName]];
+    for (const initListName in fpaths.linkFPaths) {
+      if (Array.isArray(fpaths.linkFPaths[initListName])) {
+        newLinkFPaths[initListName] = [...fpaths.linkFPaths[initListName]];
       }
     }
   }
+
+  let newSsltFPaths = [];
+  if (Array.isArray(fpaths.ssltFPaths)) newSsltFPaths = [...fpaths.ssltFPaths];
 
   let newStaticFPaths = [];
   if (Array.isArray(fpaths.staticFPaths)) newStaticFPaths = [...fpaths.staticFPaths];
@@ -1292,6 +1333,7 @@ export const copyFPaths = (fpaths) => {
   return {
     ...fpaths,
     linkFPaths: newLinkFPaths,
+    ssltFPaths: newSsltFPaths,
     staticFPaths: newStaticFPaths,
     settingsFPaths: newSettingsFPaths,
     pinFPaths: newPinFPaths,
@@ -1310,54 +1352,120 @@ export const getLinkFPaths = (state) => {
   return {};
 };
 
-const _applyPcAndGetLastLinkFPaths = (pcLinkFPaths, linkFPaths) => {
-  const infos = {};
-  if (Array.isArray(pcLinkFPaths)) {
-    for (const fpath of pcLinkFPaths) {
-      const { listName, id } = extractLinkFPath(fpath);
-      const { updatedDT } = extractLinkId(id);
-
-      const mainId = getMainId(id);
-      if (isObject(infos[mainId]) && infos[mainId].updatedDT >= updatedDT) {
-        continue;
-      }
-
-      infos[mainId] = { listName, fpath, updatedDT };
-    }
+export const getSsltFPaths = (state) => {
+  if (
+    isObject(state.cachedFPaths) &&
+    isObject(state.cachedFPaths.fpaths) &&
+    isObject(state.cachedFPaths.fpaths.ssltFPaths)
+  ) {
+    return state.cachedFPaths.fpaths.ssltFPaths;
   }
-  for (const listName in linkFPaths) {
-    for (const fpath of linkFPaths[listName]) {
-      const { id } = extractLinkFPath(fpath);
-      const { updatedDT } = extractLinkId(id);
-
-      const mainId = getMainId(id);
-      if (isObject(infos[mainId]) && infos[mainId].updatedDT >= updatedDT) {
-        continue;
-      }
-
-      infos[mainId] = { listName, fpath, updatedDT };
-    }
-  }
-
-  const lastFPaths = {};
-  for (const info of Object.values(infos)) {
-    const { listName, fpath } = info;
-    if (!lastFPaths[listName]) lastFPaths[listName] = [];
-    if (!lastFPaths[listName].includes(fpath)) lastFPaths[listName].push(fpath);
-  }
-
-  return lastFPaths;
+  return {};
 };
 
-export const getLastLinkFPaths = createSelector(
+export const listLinkMetas = createSelector(
   linkFPaths => linkFPaths,
-  (linkFPaths) => {
-    return _applyPcAndGetLastLinkFPaths(null, linkFPaths);
+  ssltFPaths => ssltFPaths,
+  pendingSslts => pendingSslts,
+  (linkFPaths, ssltFPaths, pendingSslts) => {
+
+    const lnkInfosPerMid = {}, ssltInfos = {};
+    for (const initListName in linkFPaths) {
+      for (const fpath of linkFPaths[initListName]) {
+        const { id } = extractLinkFPath(fpath);
+        const { addedDT, updatedDT } = extractLinkId(id);
+
+        const mainId = getMainId(id);
+        if (!Array.isArray(lnkInfosPerMid[mainId])) lnkInfosPerMid[mainId] = [];
+
+        const info = { id, addedDT, updatedDT, fpaths: [fpath], initListName };
+        lnkInfosPerMid[mainId].push(info);
+      }
+    }
+    for (const fpath of ssltFPaths) {
+      const { listName, updatedDT, id } = extractSsltFPath(fpath);
+
+      const mainId = getMainId(id);
+      if (isObject(ssltInfos[mainId]) && ssltInfos[mainId].updatedDT >= updatedDT) {
+        continue;
+      }
+
+      ssltInfos[mainId] = { updatedDT, listName, fpath };
+    }
+    for (const id in pendingSslts) {
+      const { listName } = pendingSslts[id];
+      const mainId = getMainId(id);
+
+      const info = isObject(ssltInfos[mainId]) ? { ...ssltInfos[mainId] } : {};
+      info.listName = listName;
+
+      ssltInfos[mainId] = info;
+    }
+
+    const metas = [], prevFPathsPerMids = {};
+    for (const mainId in lnkInfosPerMid) {
+      let latestUpdatedDT = -1, latestIndex = -1;
+      for (let i = 0; i < lnkInfosPerMid[mainId].length; i++) {
+        const info = lnkInfosPerMid[mainId][i];
+        if (info.updatedDT > latestUpdatedDT) {
+          latestUpdatedDT = info.updatedDT;
+          latestIndex = i;
+        }
+      }
+      for (let i = 0; i < lnkInfosPerMid[mainId].length; i++) {
+        const info = lnkInfosPerMid[mainId][i];
+        const { id, addedDT, updatedDT, fpaths, initListName } = info;
+
+        if (i !== latestIndex) {
+          if (!Array.isArray(prevFPathsPerMids[mainId])) prevFPathsPerMids[mainId] = [];
+          prevFPathsPerMids[mainId].push(...fpaths);
+          continue;
+        }
+
+        let listName = initListName;
+        if (isObject(ssltInfos[mainId])) listName = ssltInfos[mainId].listName;
+
+        const meta = { id, addedDT, updatedDT, fpaths, listName };
+        metas.push(meta);
+      }
+    }
+
+    return { linkMetas: metas, prevFPathsPerMids, ssltInfos };
   },
 );
 
-const applyPcToLinkFPaths = (pcLinkFPaths, linkFPaths) => {
-  return _applyPcAndGetLastLinkFPaths(pcLinkFPaths, linkFPaths);
+const applyPcLinksToMetas = (pcListNames, pcLinks, linkMetas) => {
+  const metas = [], mainIds = [];
+  for (let i = 0; i < pcListNames.length; i++) {
+    const [listName, link] = [pcListNames[i], pcLinks[i]];
+    if ([REMOVING, PENDING_REMOVING].includes(link.status)) continue;
+
+    const { id, addedDT, updatedDT } = link;
+    const mainId = getMainId(id);
+    if (mainIds.includes(mainId)) continue;
+
+    metas.push({ id, addedDT, updatedDT, fpaths: [], listName });
+    mainIds.push(mainId);
+  }
+  for (const meta of linkMetas) {
+    const mainId = getMainId(meta.id);
+    if (mainIds.includes(mainId)) continue;
+
+    metas.push(meta);
+    mainId.push(mainId);
+  }
+  for (let i = 0; i < pcListNames.length; i++) {
+    const [listName, link] = [pcListNames[i], pcLinks[i]];
+
+    const { id, addedDT, updatedDT } = link;
+    const mainId = getMainId(id);
+    if (mainIds.includes(mainId)) continue;
+
+    metas.push({ id, addedDT, updatedDT, fpaths: [], listName });
+    mainIds.push(mainId);
+  }
+
+  return { linkMetas: metas };
 };
 
 export const getStaticFPaths = (state) => {
@@ -2013,7 +2121,7 @@ export const extractFPath = (fpath) => {
   const fpathParts = fpath.split('/');
   const fname = fpathParts[fpathParts.length - 1];
   const fnameParts = fname.split('.');
-  const fext = fnameParts[fnameParts.length - 1];
+  const fext = fnameParts.length >= 2 ? fnameParts[fnameParts.length - 1] : '';
   return { fpath, fpathParts, fname, fnameParts, fext };
 };
 
@@ -2126,20 +2234,44 @@ export const doListContainUnlocks = (state) => {
 };
 
 export const getLink = (id, links) => {
+  const selectedLinks = [];
   for (const listName in links) {
     if (isObject(links[listName]) && isObject(links[listName][id])) {
-      return links[listName][id];
+      selectedLinks.push(links[listName][id]);
     }
   }
+
+  for (const link of selectedLinks) {
+    if (![ADDED, REMOVING, PENDING_REMOVING].includes(link.status)) {
+      return link;
+    }
+  }
+  for (const link of selectedLinks) {
+    if (link.status === ADDED) return link;
+  }
+  if (selectedLinks.length > 0) return selectedLinks[0];
+
   return null;
 };
 
 export const getListNameAndLink = (id, links) => {
+  const selectedLinks = [];
   for (const listName in links) {
     if (isObject(links[listName]) && isObject(links[listName][id])) {
-      return { listName, link: links[listName][id] };
+      selectedLinks.push({ listName, link: links[listName][id] });
     }
   }
+
+  for (const { listName, link } of selectedLinks) {
+    if (![ADDED, REMOVING, PENDING_REMOVING].includes(link.status)) {
+      return { listName, link };
+    }
+  }
+  for (const { listName, link } of selectedLinks) {
+    if (link.status === ADDED) return { listName, link };
+  }
+  if (selectedLinks.length > 0) return selectedLinks[0];
+
   return { listName: null, link: null };
 };
 
@@ -2198,9 +2330,9 @@ export const getNLinkObjs = (params) => {
   return { hasMore, hasDisorder, objsWithPcEc };
 };
 
-export const getNLinkFPaths = (params) => {
+export const getNLinkMetas = (params) => {
   const {
-    linkFPaths: _linkFPaths, links, listName, doDescendingOrder, pinFPaths,
+    linkFPaths, ssltFPaths, pendingSslts, links, listName, doDescendingOrder, pinFPaths,
     pendingPins,
   } = params;
 
@@ -2210,50 +2342,55 @@ export const getNLinkFPaths = (params) => {
     excludingMainIds = params.excludingMainIds;
   }
 
-  const pcLinkFPaths = [];
+  const pcListNames = [], pcLinks = [], processingLinkIds = [];
   for (const ln in links) {
     for (const link of Object.values(links[ln])) {
       if (link.status === ADDED) continue;
-      pcLinkFPaths.push(createLinkFPath(ln, link.id));
+      pcListNames.push(ln);
+      pcLinks.push(link);
+      processingLinkIds.push(link.id);
     }
   }
 
-  const linkFPaths = applyPcToLinkFPaths(pcLinkFPaths, _linkFPaths);
+  const { linkMetas: _linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
+  const { linkMetas } = applyPcLinksToMetas(pcListNames, pcLinks, _linkMetas);
 
-  const namedLinkFPaths = linkFPaths[listName] || [];
+  const fsMetas = linkMetas.filter(meta => meta.listName === listName);
+  fsMetas.sort((a, b) => a.addedDT - b.addedDT);
+  if (doDescendingOrder) fsMetas.reverse();
 
-  let sortedLinkFPaths = [...new Set(namedLinkFPaths)].sort();
-  if (doDescendingOrder) sortedLinkFPaths.reverse();
-  sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, pendingPins, (fpath) => {
-    const { id } = extractLinkFPath(fpath);
-    return getMainId(id);
+  const cbMetas = sortWithPins(fsMetas, pinFPaths, pendingPins, (meta) => {
+    return getMainId(meta.id);
   });
 
-  const fpaths = [], fpathsWithPcEc = [];
-  for (const fpath of sortedLinkFPaths) {
-    const { id } = extractLinkFPath(fpath);
+  const metas = [], metasWithPcEc = [];
+  for (const meta of cbMetas) {
+    const { id } = meta;
+    const mainId = getMainId(id);
 
-    if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
-      fpathsWithPcEc.push(fpath);
+    if (excludingIds.includes(id) || excludingMainIds.includes(mainId)) {
+      metasWithPcEc.push(meta);
       continue;
     }
-    if (pcLinkFPaths.includes(fpath)) {
-      fpathsWithPcEc.push(fpath);
+    if (processingLinkIds.includes(id)) {
+      metasWithPcEc.push(meta);
       continue;
     }
-    if (fpaths.length < N_LINKS) {
-      fpaths.push(fpath);
-      fpathsWithPcEc.push(fpath);
+    if (metas.length < N_LINKS) {
+      metas.push(meta);
+      metasWithPcEc.push(meta);
     }
   }
 
-  const hasMore = namedLinkFPaths.some(fpath => !fpathsWithPcEc.includes(fpath));
+  const idsWithPcEc = metasWithPcEc.map(meta => meta.id);
+  const hasMore = cbMetas.some(meta => !idsWithPcEc.includes(meta.id));
 
   let foundNotExcl = false, hasDisorder = false;
-  for (const fpath of fpathsWithPcEc) {
-    const { id } = extractLinkFPath(fpath);
+  for (const meta of metasWithPcEc) {
+    const { id } = meta;
+    const mainId = getMainId(id);
 
-    if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
+    if (excludingIds.includes(id) || excludingMainIds.includes(mainId)) {
       if (foundNotExcl) {
         hasDisorder = true;
         break;
@@ -2263,7 +2400,7 @@ export const getNLinkFPaths = (params) => {
     foundNotExcl = true;
   }
 
-  return { fpaths, hasMore, hasDisorder, fpathsWithPcEc };
+  return { metas, hasMore, hasDisorder, metasWithPcEc };
 };
 
 export const newObject = (object, ignoreAttrs) => {
@@ -2465,9 +2602,8 @@ export const copyTagNameObjs = (tagNameObjs, excludedTagNames = []) => {
   return objs;
 };
 
-export const getInUseTagNames = (linkFPaths, tagFPaths) => {
-
-  const linkMainIds = getLinkMainIds(linkFPaths);
+export const getInUseTagNames = (linkMetas, tagFPaths) => {
+  const linkMainIds = getLinkMainIds(linkMetas);
 
   const inUseTagNames = [];
   for (const fpath of tagFPaths) {
@@ -2508,8 +2644,8 @@ export const isTaggingStatus = (tagStatus) => {
   ].includes(tagStatus);
 };
 
-const getLinkFPathsByTagName = (
-  linkFPaths, tagFPaths, pendingTags, selectedTagName, doForceLock, lockedLists,
+const getLinkMetasByTagName = (
+  linkMetas, tagFPaths, pendingTags, selectedTagName, doForceLock, lockedLists,
 ) => {
   const tags = getTags(tagFPaths, pendingTags);
 
@@ -2521,30 +2657,26 @@ const getLinkFPathsByTagName = (
     if (found) mainIds.push(mainId);
   }
 
-  const linkIds = [], toLinkFPaths = {};
-  for (const listName in linkFPaths) {
+  const metas = [];
+  for (const meta of linkMetas) {
+    const { id, listName } = meta;
     if (listName === TRASH) continue;
 
     const lockStatus = getLockListStatus(doForceLock, lockedLists, listName);
     if (lockStatus === LOCKED) continue;
 
-    for (const fpath of linkFPaths[listName]) {
-      const { id } = extractLinkFPath(fpath);
-      const mainId = getMainId(id);
-      if (!mainIds.includes(mainId)) continue;
-
-      linkIds.push(id);
-      toLinkFPaths[id] = fpath;
-    }
+    const mainId = getMainId(id);
+    if (!mainIds.includes(mainId)) continue;
+    metas.push(meta);
   }
 
-  return { linkIds, toLinkFPaths };
+  return metas;
 };
 
-export const getNLinkFPathsByQt = (params) => {
+export const getNLinkMetasByQt = (params) => {
   const {
-    linkFPaths: _linkFPaths, links, doDescendingOrder, pinFPaths, pendingPins,
-    tagFPaths, pendingTags, doForceLock, lockedLists, queryString,
+    linkFPaths, ssltFPaths, pendingSslts, links, doDescendingOrder, pinFPaths,
+    pendingPins, tagFPaths, pendingTags, doForceLock, lockedLists, queryString,
   } = params;
 
   let excludingIds = [], excludingMainIds = [];
@@ -2553,58 +2685,59 @@ export const getNLinkFPathsByQt = (params) => {
     excludingMainIds = params.excludingMainIds;
   }
 
-  const pcLinkFPaths = [];
+  const pcListNames = [], pcLinks = [], processingLinkIds = [];
   for (const ln in links) {
     for (const link of Object.values(links[ln])) {
       if (link.status === ADDED) continue;
-      pcLinkFPaths.push(createLinkFPath(ln, link.id));
+      pcListNames.push(ln);
+      pcLinks.push(link);
+      processingLinkIds.push(link.id);
     }
   }
 
-  const linkFPaths = applyPcToLinkFPaths(pcLinkFPaths, _linkFPaths);
+  const { linkMetas: _linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
+  const { linkMetas } = applyPcLinksToMetas(pcListNames, pcLinks, _linkMetas);
 
   // Only tag name for now
   const tagName = queryString.trim();
-  const { linkIds, toLinkFPaths } = getLinkFPathsByTagName(
-    linkFPaths, tagFPaths, pendingTags, tagName, doForceLock, lockedLists,
+  const fsMetas = getLinkMetasByTagName(
+    linkMetas, tagFPaths, pendingTags, tagName, doForceLock, lockedLists,
   );
+  fsMetas.sort((a, b) => a.addedDT - b.addedDT);
+  if (doDescendingOrder) fsMetas.reverse();
 
-  // Can't sort on the whole link fpaths as list name can be different.
-  const sortedLinkIds = [...new Set(linkIds)].sort();
-  if (doDescendingOrder) sortedLinkIds.reverse();
-
-  let sortedLinkFPaths = sortedLinkIds.map(linkId => toLinkFPaths[linkId]);
-  sortedLinkFPaths = sortWithPins(sortedLinkFPaths, pinFPaths, pendingPins, (fpath) => {
-    const { id } = extractLinkFPath(fpath);
-    return getMainId(id);
+  const cbMetas = sortWithPins(fsMetas, pinFPaths, pendingPins, (meta) => {
+    return getMainId(meta.id);
   });
 
-  const fpaths = [], fpathsWithPcEc = [];
-  for (const fpath of sortedLinkFPaths) {
-    const { id } = extractLinkFPath(fpath);
+  const metas = [], metasWithPcEc = [];
+  for (const meta of cbMetas) {
+    const { id } = meta;
+    const mainId = getMainId(id);
 
-    if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
-      fpathsWithPcEc.push(fpath);
+    if (excludingIds.includes(id) || excludingMainIds.includes(mainId)) {
+      metasWithPcEc.push(meta);
       continue;
     }
-    if (pcLinkFPaths.includes(fpath)) {
-      fpathsWithPcEc.push(fpath);
+    if (processingLinkIds.includes(meta)) {
+      metasWithPcEc.push(meta);
       continue;
     }
-    if (fpaths.length < N_LINKS) {
-      fpaths.push(fpath);
-      fpathsWithPcEc.push(fpath);
+    if (metas.length < N_LINKS) {
+      metas.push(meta);
+      metasWithPcEc.push(meta);
     }
   }
 
-  const namedLinkFPaths = Object.values(toLinkFPaths);
-  const hasMore = namedLinkFPaths.some(fpath => !fpathsWithPcEc.includes(fpath));
+  const idsWithPcEc = metasWithPcEc.map(meta => meta.id);
+  const hasMore = cbMetas.some(meta => !idsWithPcEc.includes(meta.id));
 
   let foundNotExcl = false, hasDisorder = false;
-  for (const fpath of fpathsWithPcEc) {
-    const { id } = extractLinkFPath(fpath);
+  for (const meta of metasWithPcEc) {
+    const { id } = meta;
+    const mainId = getMainId(id);
 
-    if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
+    if (excludingIds.includes(id) || excludingMainIds.includes(mainId)) {
       if (foundNotExcl) {
         hasDisorder = true;
         break;
@@ -2614,7 +2747,7 @@ export const getNLinkFPathsByQt = (params) => {
     foundNotExcl = true;
   }
 
-  return { fpaths, hasMore, hasDisorder, fpathsWithPcEc };
+  return { metas, hasMore, hasDisorder, metasWithPcEc };
 };
 
 export const getArraysPerKey = (keys, values) => {
@@ -2625,44 +2758,4 @@ export const getArraysPerKey = (keys, values) => {
     arraysPerKey[key].push(value);
   }
   return arraysPerKey;
-};
-
-export const getLinkPrevFPathsPerId = (ids, allLinkFPaths) => {
-  const mainIds = [], updatedDTs = [];
-  for (const id of ids) {
-    const mainId = getMainId(id);
-    const { updatedDT } = extractLinkId(id);
-    mainIds.push(mainId);
-    updatedDTs.push(updatedDT);
-  }
-
-  const infosPerMainId = {}, prevFPathsPerId = {};
-  for (const listName in allLinkFPaths) {
-    for (const fpath of allLinkFPaths[listName]) {
-      const { id } = extractLinkFPath(fpath);
-      const { updatedDT } = extractLinkId(id);
-
-      const mainId = getMainId(id);
-      if (!mainIds.includes(mainId)) continue;
-
-      if (!Array.isArray(infosPerMainId[mainId])) infosPerMainId[mainId] = [];
-      infosPerMainId[mainId].push({ id, updatedDT, fpath });
-    }
-  }
-  for (let i = 0; i < ids.length; i++) {
-    const [id, mainId, updatedDT] = [ids[i], mainIds[i], updatedDTs[i]];
-
-    if (!Array.isArray(infosPerMainId[mainId])) continue;
-    for (const info of infosPerMainId[mainId]) {
-      if (info.id === id) continue;
-      if (info.updatedDT > updatedDT) {
-        console.log('In getLinkPrevInfosPerId, found invalid updatedDT', info);
-      }
-
-      if (!Array.isArray(prevFPathsPerId[id])) prevFPathsPerId[id] = [];
-      prevFPathsPerId[id].push(info.fpath);
-    }
-  }
-
-  return prevFPathsPerId;
 };

@@ -2,10 +2,10 @@ import { REHYDRATE } from 'redux-persist/constants';
 
 import {
   UPDATE_FETCHED, CACHE_FETCHED_MORE, UPDATE_FETCHED_MORE, REFRESH_FETCHED,
-  MOVE_LINKS_DELETE_STEP_COMMIT, DELETE_LINKS_COMMIT, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
+  MOVE_LINKS_ADD_STEP_COMMIT, DELETE_LINKS_COMMIT, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   UPDATE_CUSTOM_DATA_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
-import { createLinkFPath, getArraysPerKey } from '../utils';
+import { getArraysPerKey, getMainId } from '../utils';
 
 const initialState = {};
 
@@ -48,13 +48,26 @@ const fetchedMoreReducer = (state = initialState, action) => {
 
   // Died links are always shown, so need to apply to cached links here too.
   if (
-    action.type === MOVE_LINKS_DELETE_STEP_COMMIT ||
+    action.type === MOVE_LINKS_ADD_STEP_COMMIT ||
     action.type === DELETE_LINKS_COMMIT ||
     action.type === DELETE_OLD_LINKS_IN_TRASH_COMMIT
   ) {
-    const { successListNames, successIds } = action.payload;
+    let idsPerLn;
+    if (action.type === MOVE_LINKS_ADD_STEP_COMMIT) {
+      const { successLinks } = action.payload;
 
-    const idsPerLn = getArraysPerKey(successListNames, successIds);
+      const fromListNames = [], fromIds = [];
+      for (const link of successLinks) {
+        const { fromListName, fromId } = link;
+        fromListNames.push(fromListName);
+        fromIds.push(fromId);
+      }
+
+      idsPerLn = getArraysPerKey(fromListNames, fromIds);
+    } else {
+      const { successListNames, successIds } = action.payload;
+      idsPerLn = getArraysPerKey(successListNames, successIds);
+    }
 
     const newState = { ...state };
     for (const [listName, lnIds] of Object.entries(idsPerLn)) {
@@ -62,7 +75,6 @@ const fetchedMoreReducer = (state = initialState, action) => {
 
       const { payload } = newState[listName];
 
-      const fpaths = lnIds.map(id => createLinkFPath(listName, id));
       const newLinks = { ...payload.links };
       newLinks[listName] = {};
       for (const id in payload.links[listName]) {
@@ -71,8 +83,8 @@ const fetchedMoreReducer = (state = initialState, action) => {
       }
 
       const newPayload = { ...payload };
-      newPayload.unfetchedLinkFPaths = newPayload.unfetchedLinkFPaths.filter(fpath => {
-        return !fpaths.includes(fpath);
+      newPayload.unfetchedLinkMetas = newPayload.unfetchedLinkMetas.filter(meta => {
+        return !lnIds.includes(meta.id);
       });
       newPayload.links = newLinks;
 
@@ -91,20 +103,21 @@ const fetchedMoreReducer = (state = initialState, action) => {
     const newLinks = { ...payload.links };
     newLinks[listName] = { ...newLinks[listName] };
 
-    const prevFPaths = [], fpaths = [];
+    const metas = [], fromIds = [];
     if (fromLink.id in newLinks[listName]) {
-      prevFPaths.push(createLinkFPath(listName, fromLink.id));
-      fpaths.push(createLinkFPath(listName, toLink.id));
+      const { id, addedDT, updatedDT } = toLink;
+      metas.push({ id, addedDT, updatedDT, fpaths: [], listName });
+      fromIds.push(fromLink.id);
 
       delete newLinks[listName][fromLink.id];
       newLinks[listName][toLink.id] = { ...toLink };
     }
 
     const newPayload = { ...payload };
-    newPayload.unfetchedLinkFPaths = newPayload.unfetchedLinkFPaths.filter(fpath => {
-      return !prevFPaths.includes(fpath);
+    newPayload.unfetchedLinkMetas = newPayload.unfetchedLinkMetas.filter(meta => {
+      return !fromIds.includes(meta.id);
     });
-    newPayload.unfetchedLinkFPaths = _append(newPayload.unfetchedLinkFPaths, fpaths);
+    newPayload.unfetchedLinkMetas = _append(newPayload.unfetchedLinkMetas, metas);
     newPayload.links = newLinks;
 
     return { ...state, [listName]: { payload: newPayload } };
@@ -117,11 +130,13 @@ const fetchedMoreReducer = (state = initialState, action) => {
   return state;
 };
 
-const _append = (arr, elems) => {
-  const newArr = [...arr];
-  for (const elem of elems) {
-    if (newArr.includes(elem)) continue;
-    newArr.push(elem);
+const _append = (arr, metas) => {
+  const newArr = [], mainIds = [];
+  for (const meta of [...metas, ...arr]) {
+    const mainId = getMainId(meta.id);
+    if (mainIds.includes(mainId)) continue;
+    newArr.push(meta);
+    mainIds.push(mainId);
   }
   return newArr;
 };

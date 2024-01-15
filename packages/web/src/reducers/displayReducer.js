@@ -4,7 +4,7 @@ import {
   UPDATE_LIST_NAME, UPDATE_QUERY_STRING, UPDATE_SEARCH_STRING, UPDATE_POPUP, FETCH,
   FETCH_COMMIT, FETCH_ROLLBACK, UPDATE_FETCHED, FETCH_MORE_ROLLBACK, UPDATE_FETCHED_MORE,
   REFRESH_FETCHED, ADD_FETCHING_INFO, DELETE_FETCHING_INFO, SET_SHOWING_LINK_IDS,
-  ADD_LINKS, MOVE_LINKS_DELETE_STEP_COMMIT, DELETE_LINKS_COMMIT, CANCEL_DIED_LINKS,
+  ADD_LINKS, MOVE_LINKS_ADD_STEP, DELETE_LINKS_COMMIT, CANCEL_DIED_LINKS,
   DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   DELETE_OLD_LINKS_IN_TRASH_ROLLBACK, EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT,
   EXTRACT_CONTENTS_ROLLBACK, UPDATE_EXTRACTED_CONTENTS, UPDATE_CUSTOM_DATA,
@@ -435,10 +435,18 @@ const displayReducer = (state = initialState, action) => {
     return newState;
   }
 
-  if (
-    action.type === MOVE_LINKS_DELETE_STEP_COMMIT ||
-    action.type === DELETE_LINKS_COMMIT
-  ) {
+  if (action.type === MOVE_LINKS_ADD_STEP) {
+    // Need to remove from showingLinkIds immediately as new moving uses the same id.
+    const { links } = action.payload;
+
+    const ids = links.map(link => link.fromId);
+    return {
+      ...state,
+      showingLinkIds: _filterIfNotNull(state.showingLinkIds, ids),
+    };
+  }
+
+  if (action.type === DELETE_LINKS_COMMIT) {
     const { successIds } = action.payload;
     return {
       ...state,
