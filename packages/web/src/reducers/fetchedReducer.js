@@ -6,7 +6,7 @@ import {
   UPDATE_EXTRACTED_CONTENTS, PIN_LINK_COMMIT, UPDATE_CUSTOM_DATA_COMMIT,
   DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
-import { isObject, getArraysPerKey, getMainId } from '../utils';
+import { isObject, getArraysPerKey, getMainId, extractLinkId } from '../utils';
 
 const initialState = {};
 
@@ -48,7 +48,8 @@ const fetchedReducer = (state = initialState, action) => {
       const { payload } = newState[listName];
 
       const metas = lnLinks.map(link => {
-        const { id, addedDT, updatedDT } = link;
+        const { id } = link;
+        const { addedDT, updatedDT } = extractLinkId(id)
         return { id, addedDT, updatedDT, fpaths: [], listName };
       });
       const newLinks = { ...payload.links };
@@ -131,7 +132,8 @@ const fetchedReducer = (state = initialState, action) => {
         const fromLink = newLinks[listName][link.fromId];
         if (!isObject(fromLink)) continue;
 
-        const { id, addedDT, updatedDT } = link;
+        const { id } = link;
+        const { addedDT, updatedDT } = extractLinkId(id);
         metas.push({ id, addedDT, updatedDT, fpaths: [], listName });
         fromIds.push(fromLink.id);
 
@@ -167,7 +169,8 @@ const fetchedReducer = (state = initialState, action) => {
       const { payload } = newState[listName];
 
       const metas = lnLinks.map(link => {
-        const { id, addedDT, updatedDT } = link;
+        const { id } = link;
+        const { addedDT, updatedDT } = extractLinkId(id);
         return { id, addedDT, updatedDT, fpaths: [], listName };
       });
       const newLinks = { ...payload.links };
@@ -195,7 +198,8 @@ const fetchedReducer = (state = initialState, action) => {
 
     const metas = [], fromIds = [];
     if (fromLink.id in newLinks[listName]) {
-      const { id, addedDT, updatedDT } = toLink;
+      const { id } = toLink;
+      const { addedDT, updatedDT } = extractLinkId(id);
       metas.push({ id, addedDT, updatedDT, fpaths: [], listName });
       fromIds.push(fromLink.id);
 

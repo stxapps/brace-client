@@ -5,7 +5,7 @@ import {
   MOVE_LINKS_ADD_STEP_COMMIT, DELETE_LINKS_COMMIT, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
   UPDATE_CUSTOM_DATA_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
-import { getArraysPerKey, getMainId } from '../utils';
+import { getArraysPerKey, getMainId, extractLinkId } from '../utils';
 
 const initialState = {};
 
@@ -105,7 +105,8 @@ const fetchedMoreReducer = (state = initialState, action) => {
 
     const metas = [], fromIds = [];
     if (fromLink.id in newLinks[listName]) {
-      const { id, addedDT, updatedDT } = toLink;
+      const { id } = toLink;
+      const { addedDT, updatedDT } = extractLinkId(id);
       metas.push({ id, addedDT, updatedDT, fpaths: [], listName });
       fromIds.push(fromLink.id);
 

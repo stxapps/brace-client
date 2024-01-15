@@ -263,7 +263,7 @@ const parseBraceImages = async (dispatch, existFPaths, imgEntries, progress) => 
 const parseBraceLinks = async (
   dispatch, existMainIds, ssltInfos, linkEntries, ssltEntries, progress
 ) => {
-  let addedDT = Date.now();
+  let now = Date.now();
   for (let i = 0, j = linkEntries.length; i < j; i += N_LINKS) {
     const selectedEntries = linkEntries.slice(i, i + N_LINKS);
 
@@ -322,10 +322,10 @@ const parseBraceLinks = async (
       contents.push(content);
 
       if (isObject(ssltInfos[mainId]) && ssltInfos[mainId].listName !== listName) {
-        const ssltFPath = createSsltFPath(listName, addedDT, addedDT, id);
+        const ssltFPath = createSsltFPath(listName, now, now, id);
         fpaths.push(ssltFPath);
         contents.push({});
-        addedDT += 1;
+        now += 1;
       }
     }
 

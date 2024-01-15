@@ -1365,8 +1365,8 @@ export const getSsltFPaths = (state) => {
 
 export const listLinkMetas = createSelector(
   linkFPaths => linkFPaths,
-  ssltFPaths => ssltFPaths,
-  pendingSslts => pendingSslts,
+  (_, ssltFPaths) => ssltFPaths,
+  (_, __, pendingSslts) => pendingSslts,
   (linkFPaths, ssltFPaths, pendingSslts) => {
 
     const lnkInfosPerMid = {}, ssltInfos = {};
@@ -1440,9 +1440,11 @@ const applyPcLinksToMetas = (pcListNames, pcLinks, linkMetas) => {
     const [listName, link] = [pcListNames[i], pcLinks[i]];
     if ([REMOVING, PENDING_REMOVING].includes(link.status)) continue;
 
-    const { id, addedDT, updatedDT } = link;
+    const { id } = link;
     const mainId = getMainId(id);
     if (mainIds.includes(mainId)) continue;
+
+    const { addedDT, updatedDT } = extractLinkId(id);
 
     metas.push({ id, addedDT, updatedDT, fpaths: [], listName });
     mainIds.push(mainId);
@@ -1452,14 +1454,16 @@ const applyPcLinksToMetas = (pcListNames, pcLinks, linkMetas) => {
     if (mainIds.includes(mainId)) continue;
 
     metas.push(meta);
-    mainId.push(mainId);
+    mainIds.push(mainId);
   }
   for (let i = 0; i < pcListNames.length; i++) {
     const [listName, link] = [pcListNames[i], pcLinks[i]];
 
-    const { id, addedDT, updatedDT } = link;
+    const { id } = link;
     const mainId = getMainId(id);
     if (mainIds.includes(mainId)) continue;
+
+    const { addedDT, updatedDT } = extractLinkId(id);
 
     metas.push({ id, addedDT, updatedDT, fpaths: [], listName });
     mainIds.push(mainId);

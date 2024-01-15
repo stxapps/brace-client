@@ -24,7 +24,7 @@ import {
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING,
   PENDING_REMOVING, DO_IGNORE_EXTRD_RST,
 } from '../types/const';
-import { isObject, getArraysPerKey, getMainId } from '../utils';
+import { isObject, getArraysPerKey, getMainId, extractLinkId } from '../utils';
 import { _ } from '../utils/obj';
 
 const initialState = {};
@@ -651,8 +651,9 @@ const _getLastLinks = (links) => {
         continue;
       }
 
-      if (link.updatedDT > ftdUpdatedDT) {
-        ftdUpdatedDT = link.updatedDT;
+      const { updatedDT } = extractLinkId(link.id);
+      if (updatedDT > ftdUpdatedDT) {
+        ftdUpdatedDT = updatedDT;
         ftdLnk = lnk;
       }
     }
@@ -661,9 +662,10 @@ const _getLastLinks = (links) => {
 
   const lastLinks = {};
   for (const mainId in ftdLnksPerMid) {
-    const { listName, link } = ftdLnksPerMid[mainId];
-    if (!isObject(lastLinks[listName])) lastLinks[listName] = {};
-    lastLinks[listName][link.id] = { ...link };
+    for (const { listName, link } of ftdLnksPerMid[mainId]) {
+      if (!isObject(lastLinks[listName])) lastLinks[listName] = {};
+      lastLinks[listName][link.id] = { ...link };
+    }
   }
 
   return lastLinks;
