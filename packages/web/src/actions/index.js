@@ -1578,8 +1578,8 @@ export const deleteLinks = (dIds) => async (dispatch, getState) => {
 
     listNames.push(listName);
     ids.push(id);
-    fpathsPerId[id].push(...fpaths);
-    prevFPathsPerId[id].push(...prevFPaths);
+    if (Array.isArray(fpaths)) fpathsPerId[id].push(...fpaths);
+    if (Array.isArray(prevFPaths)) prevFPathsPerId[id].push(...prevFPaths);
   }
 
   if (ids.length === 0) return;
@@ -1863,8 +1863,8 @@ export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
 
     listNames.push(listName);
     ids.push(id);
-    fpathsPerId[id].push(...fpaths);
-    prevFPathsPerId[id].push(...prevFPaths);
+    if (Array.isArray(fpaths)) fpathsPerId[id].push(...fpaths);
+    if (Array.isArray(prevFPaths)) prevFPathsPerId[id].push(...prevFPaths);
     if (ids.length >= N_LINKS) break;
   }
 
