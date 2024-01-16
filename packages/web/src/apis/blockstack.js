@@ -13,7 +13,7 @@ import {
   UPDATE_CUSTOM_DATA, UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_T_STEP,
 } from '../types/actionTypes';
 import {
-  LINKS, SETTINGS, INFO, PINS, TAGS, CD_ROOT, DOT_JSON, LOCAL_LINK_ATTRS,
+  LINKS, SSLTS, SETTINGS, INFO, PINS, TAGS, CD_ROOT, DOT_JSON, LOCAL_LINK_ATTRS,
   BRACE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, N_LINKS,
 } from '../types/const';
 import {
@@ -917,7 +917,7 @@ const getFiles = async (fpaths, dangerouslyIgnoreError = false) => {
   const remainFPaths = [];
   for (const fpath of fpaths) {
     let content;
-    if ([LINKS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))) {
+    if ([LINKS, SSLTS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))) {
       content = await cacheApi.getFile(fpath, true);
     }
     if (content === undefined) {
@@ -942,7 +942,9 @@ const getFiles = async (fpaths, dangerouslyIgnoreError = false) => {
 
       if (response.success) {
         const { fpath, content } = response;
-        if ([LINKS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))) {
+        if (
+          [LINKS, SSLTS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))
+        ) {
           await cacheApi.putFile(fpath, content);
         }
       }
@@ -966,7 +968,9 @@ const putFiles = async (fpaths, contents, dangerouslyIgnoreError = false) => {
 
       if (response.success) {
         const { fpath, content } = response;
-        if ([LINKS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))) {
+        if (
+          [LINKS, SSLTS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))
+        ) {
           await cacheApi.putFile(fpath, content);
         }
       }
@@ -989,7 +993,9 @@ const deleteFiles = async (fpaths, dangerouslyIgnoreError = false) => {
 
       if (response.success) {
         const { fpath } = response;
-        if ([LINKS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))) {
+        if (
+          [LINKS, SSLTS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))
+        ) {
           await cacheApi.deleteFile(fpath);
         }
       }

@@ -480,7 +480,7 @@ export const updateSelectingLinkId = (id) => {
   return { type: UPDATE_SELECTING_LINK_ID, payload: id };
 };
 
-const _getIdsAndImages = async (linkObjs, links) => {
+const _getIdsAndImages = async (linkObjs) => {
   const ids = [], imageFPaths = [], images = {};
 
   for (const link of linkObjs) {
@@ -559,7 +559,7 @@ export const fetch = () => async (dispatch, getState) => {
       const { hasMore, objsWithPcEc } = getNLinkObjs({
         links, listName, doDescendingOrder, pinFPaths, pendingPins,
       });
-      const { ids, images } = await _getIdsAndImages(objsWithPcEc, links);
+      const { ids, images } = await _getIdsAndImages(objsWithPcEc);
       dispatch({
         type: SET_SHOWING_LINK_IDS,
         payload: { ids, hasMore, images, doClearSelectedLinkIds: true },
@@ -616,7 +616,7 @@ export const fetch = () => async (dispatch, getState) => {
     const { hasMore, objsWithPcEc } = getNLinkObjs({
       links, listName, doDescendingOrder, pinFPaths, pendingPins,
     });
-    const { ids, images } = await _getIdsAndImages(objsWithPcEc, links);
+    const { ids, images } = await _getIdsAndImages(objsWithPcEc);
     dispatch({
       type: SET_SHOWING_LINK_IDS,
       payload: { ids, hasMore, images, doClearSelectedLinkIds: true },
@@ -882,7 +882,7 @@ export const updateFetched = (
     return getMainId(link.id);
   });
 
-  const { ids, images } = await _getIdsAndImages(sortedLinks, null);
+  const { ids, images } = await _getIdsAndImages(sortedLinks);
 
   // Need to update in one render, if not jumpy!
   //   - update links
@@ -995,7 +995,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
         if (hasDisorder) {
           console.log('No cache for now. Maybe fast enough to not jumpy.');
         }
-        const { ids, images } = await _getIdsAndImages(objsWithPcEc, links);
+        const { ids, images } = await _getIdsAndImages(objsWithPcEc);
         dispatch({ type: SET_SHOWING_LINK_IDS, payload: { ids, hasMore, images } });
         dispatch(deleteFetchingInfo(fthId));
         return;
@@ -1295,7 +1295,7 @@ export const updateFetchedMore = (
     return getMainId(link.id);
   });
 
-  const { ids, images } = await _getIdsAndImages(sortedLinks, null);
+  const { ids, images } = await _getIdsAndImages(sortedLinks);
 
   // Need to update in one render, if not jumpy!
   //   - update links
