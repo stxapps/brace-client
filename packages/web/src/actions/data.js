@@ -261,7 +261,7 @@ const parseBraceImages = async (dispatch, existFPaths, imgEntries, progress) => 
 };
 
 const parseBraceLinks = async (
-  dispatch, existMainIds, ssltInfos, linkEntries, ssltEntries, progress
+  dispatch, existMainIds, ssltInfos, linkEntries, progress
 ) => {
   let now = Date.now();
   for (let i = 0, j = linkEntries.length; i < j; i += N_LINKS) {
@@ -426,10 +426,9 @@ const parseBraceImportedFile = async (dispatch, getState, json) => {
     linkFPaths, ssltFPaths, staticFPaths, settingsFPaths, pinFPaths, tagFPaths,
   } = await dataApi.listFPaths();
 
-  const existStaticFPaths = [], existMainIds = [];
-  existStaticFPaths.push(...staticFPaths);
-
   const { linkMetas, ssltInfos } = listLinkMetas(linkFPaths, ssltFPaths, {});
+
+  const existMainIds = [];
   for (const meta of linkMetas) {
     const { id } = meta;
     existMainIds.push(getMainId(id));
@@ -477,7 +476,7 @@ const parseBraceImportedFile = async (dispatch, getState, json) => {
   if (progress.total === 0) return;
 
   await parseBraceSettings(dispatch, settingsFPaths, settingsEntries, progress);
-  await parseBraceImages(dispatch, existStaticFPaths, imgEntries, progress);
+  await parseBraceImages(dispatch, staticFPaths, imgEntries, progress);
 
   await parseBraceLinks(dispatch, existMainIds, ssltInfos, linkEntries, progress);
   await parseBracePins(dispatch, pins, pinEntries, progress);
@@ -782,7 +781,6 @@ export const deleteAllData = () => async (dispatch, getState) => {
   const { prevFPathsPerMids } = listLinkMetas(lfpRst.linkFPaths, lfpRst.ssltFPaths, {});
 
   const fpaths = [];
-
   for (const mainId in prevFPathsPerMids) {
     for (const fpath of prevFPathsPerMids[mainId]) fpaths.push(fpath);
   }
