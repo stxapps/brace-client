@@ -81,17 +81,17 @@ import {
   isEqual, isArrayEqual, isString, isObject, isNumber, randomString, getMainId,
   getLinkMainIds, getUrlFirstChar, separateUrlAndParam, getUserImageUrl, validateUrl,
   randomDecor, getListNameObj, getAllListNames, getLatestPurchase, getValidPurchase,
-  doEnableExtraFeatures, createDataFName, getLinkFPaths, getStaticFPaths,
-  createSettingsFPath, extractPinFPath, getPinFPaths, getPins, separatePinnedValues,
-  sortLinks, sortWithPins, getRawPins, getFormattedTime, get24HFormattedTime,
-  extractStaticFPath, getEditingListNameEditors, validatePassword, doContainListName,
-  sleep, applySubscriptionOfferDetails, doListContainUnlocks, extractLinkFPath,
-  extractLinkId, getLink, getListNameAndLink, getNLinkObjs, getNLinkFPaths, newObject,
-  addFetchedToVars, createLinkFPath, isFetchedLinkId, doesIncludeFetching,
+  doEnableExtraFeatures, createDataFName, getLinkFPaths, getSsltFPaths, getStaticFPaths,
+  createSettingsFPath, extractSsltFPath, extractPinFPath, getPinFPaths, getPins,
+  separatePinnedValues, sortLinks, sortWithPins, getRawPins, getFormattedTime,
+  get24HFormattedTime, extractStaticFPath, getEditingListNameEditors, validatePassword,
+  doContainListName, sleep, applySubscriptionOfferDetails, doListContainUnlocks,
+  extractLinkId, getLink, getListNameAndLink, getNLinkObjs, getNLinkMetas, newObject,
+  addFetchedToVars, isFetchedLinkId, doesIncludeFetching,
   doesIncludeFetchingMore, isFetchingInterrupted, getTagFPaths, getInUseTagNames,
   getEditingTagNameEditors, getTags, getTagNameObj, getTagNameObjFromDisplayName,
-  validateTagNameDisplayName, extractTagFPath, getNLinkFPathsByQt, getLastLinkFPaths,
-  getLinkPrevFPathsPerId,
+  validateTagNameDisplayName, extractTagFPath, getNLinkMetasByQt, listLinkMetas,
+  getListNamesFromLinkMetas,
 } from '../utils';
 import { initialSettingsState } from '../types/initialStates';
 import vars from '../vars';
@@ -402,20 +402,35 @@ export const updateSelectingLinkId = (id) => {
   return { type: UPDATE_SELECTING_LINK_ID, payload: id };
 };
 
-const _getIdsAndImages = async (linkObjsOrFPaths, links) => {
+const _getIdsAndImages = async (linkObjs) => {
   const ids = [], imageFPaths = [], images = {};
 
-  for (const objOrFPath of linkObjsOrFPaths) {
-    let link;
-    if (isString(objOrFPath)) {
-      const { listName, id } = extractLinkFPath(objOrFPath);
-      if (isObject(links[listName])) link = links[listName][id];
-    } else if (isObject(objOrFPath)) {
-      link = objOrFPath;
-    } else {
-      console.log('In _getIdsAndImages, invalid objOrFPath:', objOrFPath);
-      continue;
+  for (const link of linkObjs) {
+    ids.push(link.id);
+    if (isObject(link.custom)) {
+      const { image } = link.custom;
+      if (isString(image) && image.startsWith(CD_ROOT + '/')) {
+        if (!imageFPaths.includes(image)) imageFPaths.push(image);
+      }
     }
+  }
+  for (const fpath of imageFPaths) {
+    const { contentUrl } = await fileApi.getFile(fpath);
+    if (!isString(contentUrl)) continue;
+    images[fpath] = contentUrl;
+  }
+
+  return { ids, images };
+};
+
+const _getIdsAndImagesFromMetas = async (metas, links) => {
+  const ids = [], imageFPaths = [], images = {};
+
+  for (const meta of metas) {
+    const { listName, id } = meta;
+
+    let link;
+    if (isObject(links[listName])) link = links[listName][id];
     if (!isObject(link)) continue;
 
     ids.push(link.id);
@@ -447,13 +462,15 @@ export const fetch = () => async (dispatch, getState) => {
   const fetchingInfos = getState().display.fetchingInfos;
   const doForceLock = getState().display.doForceLock;
   const cachedFetched = getState().fetched;
+  const pendingSslts = getState().pendingSslts;
   const pendingPins = getState().pendingPins;
   const pendingTags = getState().pendingTags;
   const lockedLists = getState().lockSettings.lockedLists;
 
   let doDescendingOrder = getState().settings.doDescendingOrder;
 
-  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
+  const linkFPaths = getLinkFPaths(getState());
+  const ssltFPaths = getSsltFPaths(getState());
   const pinFPaths = getPinFPaths(getState());
   const tagFPaths = getTagFPaths(getState());
 
@@ -464,7 +481,7 @@ export const fetch = () => async (dispatch, getState) => {
       const { hasMore, objsWithPcEc } = getNLinkObjs({
         links, listName, doDescendingOrder, pinFPaths, pendingPins,
       });
-      const { ids, images } = await _getIdsAndImages(objsWithPcEc, links);
+      const { ids, images } = await _getIdsAndImages(objsWithPcEc);
       dispatch({
         type: SET_SHOWING_LINK_IDS,
         payload: { ids, hasMore, images, doClearSelectedLinkIds: true },
@@ -477,33 +494,33 @@ export const fetch = () => async (dispatch, getState) => {
   const fthId = `${Date.now()}${randomString(4)}`;
   dispatch(addFetchingInfo({ type: FETCH, doForce, lnOrQt, fthId }));
 
-  const bin = { fetchedLinkFPaths: [], unfetchedLinkFPaths: [], hasMore: false };
+  const bin = { fetchedLinkMetas: [], unfetchedLinkMetas: [], hasMore: false };
   if (didFetch && didFetchSettings) {
-    let fpaths, fpathsWithPcEc;
+    let metas, metasWithPcEc;
     if (queryString) {
-      const _result = getNLinkFPathsByQt({
-        linkFPaths, links, doDescendingOrder, pinFPaths, pendingPins, tagFPaths,
-        pendingTags, doForceLock, lockedLists, queryString,
+      const _result = getNLinkMetasByQt({
+        linkFPaths, ssltFPaths, pendingSslts, links, doDescendingOrder, pinFPaths,
+        pendingPins, tagFPaths, pendingTags, doForceLock, lockedLists, queryString,
       });
-      [fpaths, fpathsWithPcEc] = [_result.fpaths, _result.fpathsWithPcEc];
+      [metas, metasWithPcEc] = [_result.metas, _result.metasWithPcEc];
       bin.hasMore = _result.hasMore;
     } else {
-      const _result = getNLinkFPaths({
-        linkFPaths, links, listName, doDescendingOrder, pinFPaths, pendingPins,
+      const _result = getNLinkMetas({
+        linkFPaths, ssltFPaths, pendingSslts, links, listName, doDescendingOrder,
+        pinFPaths, pendingPins,
       });
-      [fpaths, fpathsWithPcEc] = [_result.fpaths, _result.fpathsWithPcEc];
+      [metas, metasWithPcEc] = [_result.metas, _result.metasWithPcEc];
       bin.hasMore = _result.hasMore;
     }
-    for (const linkFPath of fpaths) {
-      const etRs = extractLinkFPath(linkFPath);
-      if (isFetchedLinkId(vars.fetch.fetchedLinkIds, links, etRs.listName, etRs.id)) {
-        bin.fetchedLinkFPaths.push(linkFPath);
+    for (const meta of metas) {
+      if (isFetchedLinkId(vars.fetch.fetchedLinkIds, links, meta.listName, meta.id)) {
+        bin.fetchedLinkMetas.push(meta);
       } else {
-        bin.unfetchedLinkFPaths.push(linkFPath);
+        bin.unfetchedLinkMetas.push(meta);
       }
     }
-    if (bin.unfetchedLinkFPaths.length === 0) {
-      const { ids, images } = await _getIdsAndImages(fpathsWithPcEc, links);
+    if (bin.unfetchedLinkMetas.length === 0) {
+      const { ids, images } = await _getIdsAndImagesFromMetas(metasWithPcEc, links);
       dispatch({
         type: SET_SHOWING_LINK_IDS,
         payload: { ids, hasMore: bin.hasMore, images, doClearSelectedLinkIds: true },
@@ -521,7 +538,7 @@ export const fetch = () => async (dispatch, getState) => {
     const { hasMore, objsWithPcEc } = getNLinkObjs({
       links, listName, doDescendingOrder, pinFPaths, pendingPins,
     });
-    const { ids, images } = await _getIdsAndImages(objsWithPcEc, links);
+    const { ids, images } = await _getIdsAndImages(objsWithPcEc);
     dispatch({
       type: SET_SHOWING_LINK_IDS,
       payload: { ids, hasMore, images, doClearSelectedLinkIds: true },
@@ -546,9 +563,9 @@ export const fetch = () => async (dispatch, getState) => {
   });
 };
 
-const _poolLinks = (linkFPaths, payloadLinks, stateLinks) => {
-  return linkFPaths.map(fpath => {
-    const { listName, id } = extractLinkFPath(fpath);
+const _poolLinks = (linkMetas, payloadLinks, stateLinks) => {
+  return linkMetas.map(meta => {
+    const { listName, id } = meta;
 
     let links = payloadLinks;
     if (isObject(links[listName]) && isObject(links[listName][id])) {
@@ -564,9 +581,9 @@ const _poolLinks = (linkFPaths, payloadLinks, stateLinks) => {
   });
 };
 
-const _poolListNameAndLinks = (linkFPaths, payloadLinks, stateLinks) => {
-  return linkFPaths.map(fpath => {
-    const { listName, id } = extractLinkFPath(fpath);
+const _poolListNameAndLinks = (linkMetas, payloadLinks, stateLinks) => {
+  return linkMetas.map(meta => {
+    const { listName, id } = meta;
 
     let links = payloadLinks;
     if (isObject(links[listName]) && isObject(links[listName][id])) {
@@ -635,10 +652,10 @@ const _getUpdateFetchedAction = (getState, payload) => {
 
   if (ossLinks.length === 0) return 0;
 
-  const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
-  const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
+  const { fetchedLinkMetas, unfetchedLinkMetas } = payload;
+  const updatingLinkMetas = [...fetchedLinkMetas, ...unfetchedLinkMetas];
 
-  let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, getState().links);
+  let updatingLinks = _poolLinks(updatingLinkMetas, payload.links, getState().links);
   updatingLinks = _getNnAndUqLinks(updatingLinks);
   updatingLinks = sortLinks(updatingLinks, doDescendingOrder);
   updatingLinks = sortWithPins(updatingLinks, pinFPaths, pendingPins, (link) => {
@@ -748,10 +765,10 @@ export const updateFetched = (
   const doDescendingOrder = getState().settings.doDescendingOrder;
   const pinFPaths = getPinFPaths(getState());
 
-  const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
-  const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
+  const { fetchedLinkMetas, unfetchedLinkMetas } = payload;
+  const updatingLinkMetas = [...fetchedLinkMetas, ...unfetchedLinkMetas];
   const updatingLnAndLks = _poolListNameAndLinks(
-    updatingLinkFPaths, payload.links, links
+    updatingLinkMetas, payload.links, links
   );
 
   const lksPerLn = {}, updatingLinks = [];
@@ -787,7 +804,7 @@ export const updateFetched = (
     return getMainId(link.id);
   });
 
-  const { ids, images } = await _getIdsAndImages(sortedLinks, null);
+  const { ids, images } = await _getIdsAndImages(sortedLinks);
 
   // Need to update in one render, if not jumpy!
   //   - update links
@@ -812,13 +829,15 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
   const showingLinkIds = getState().display.showingLinkIds;
   const doForceLock = getState().display.doForceLock;
   const cachedFetchedMore = getState().fetchedMore;
+  const pendingSslts = getState().pendingSslts;
   const pendingPins = getState().pendingPins;
   const pendingTags = getState().pendingTags;
   const lockedLists = getState().lockSettings.lockedLists;
 
   const doDescendingOrder = getState().settings.doDescendingOrder;
 
-  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
+  const linkFPaths = getLinkFPaths(getState());
+  const ssltFPaths = getSsltFPaths(getState());
   const pinFPaths = getPinFPaths(getState());
   const tagFPaths = getTagFPaths(getState());
 
@@ -854,7 +873,7 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
   }
 
   const bin = {
-    fetchedLinkFPaths: [], unfetchedLinkFPaths: [], hasMore: false, hasDisorder: false,
+    fetchedLinkMetas: [], unfetchedLinkMetas: [], hasMore: false, hasDisorder: false,
   };
   if (doForCompare) {
     if (queryString) {
@@ -863,18 +882,18 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
       dispatch(deleteFetchingInfo(fthId));
       return;
     } else {
-      const _result = getNLinkFPaths({
-        linkFPaths, links, listName, doDescendingOrder, pinFPaths, pendingPins,
-        excludingIds: safLinkIds,
+      const _result = getNLinkMetas({
+        linkFPaths, ssltFPaths, pendingSslts, links, listName, doDescendingOrder,
+        pinFPaths, pendingPins, excludingIds: safLinkIds,
       });
-      if (_result.fpaths.length === 0) {
+      if (_result.metas.length === 0) {
         addFetchedToVars(lnOrQt, null, vars);
         dispatch(deleteFetchingInfo(fthId));
         return;
       }
     }
   } else {
-    let fpaths, fpathsWithPcEc;
+    let metas, metasWithPcEc;
     if (queryString) {
       if (isStale) {
         // Impossible case, just return.
@@ -882,11 +901,12 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
         return;
       }
 
-      const _result = getNLinkFPathsByQt({
-        linkFPaths, links, doDescendingOrder, pinFPaths, pendingPins, tagFPaths,
-        pendingTags, doForceLock, lockedLists, queryString, excludingIds: safLinkIds,
+      const _result = getNLinkMetasByQt({
+        linkFPaths, ssltFPaths, pendingSslts, links, doDescendingOrder, pinFPaths,
+        pendingPins, tagFPaths, pendingTags, doForceLock, lockedLists, queryString,
+        excludingIds: safLinkIds,
       });
-      [fpaths, fpathsWithPcEc] = [_result.fpaths, _result.fpathsWithPcEc];
+      [metas, metasWithPcEc] = [_result.metas, _result.metasWithPcEc];
       [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
     } else {
       if (isStale) {
@@ -897,32 +917,31 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
         if (hasDisorder) {
           console.log('No cache for now. Maybe fast enough to not jumpy.');
         }
-        const { ids, images } = await _getIdsAndImages(objsWithPcEc, links);
+        const { ids, images } = await _getIdsAndImages(objsWithPcEc);
         dispatch({ type: SET_SHOWING_LINK_IDS, payload: { ids, hasMore, images } });
         dispatch(deleteFetchingInfo(fthId));
         return;
       }
 
-      const _result = getNLinkFPaths({
-        linkFPaths, links, listName, doDescendingOrder, pinFPaths, pendingPins,
-        excludingIds: safLinkIds,
+      const _result = getNLinkMetas({
+        linkFPaths, ssltFPaths, pendingSslts, links, listName, doDescendingOrder,
+        pinFPaths, pendingPins, excludingIds: safLinkIds,
       });
-      [fpaths, fpathsWithPcEc] = [_result.fpaths, _result.fpathsWithPcEc];
+      [metas, metasWithPcEc] = [_result.metas, _result.metasWithPcEc];
       [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
     }
-    for (const linkFPath of fpaths) {
-      const etRs = extractLinkFPath(linkFPath);
-      if (isFetchedLinkId(vars.fetch.fetchedLinkIds, links, etRs.listName, etRs.id)) {
-        bin.fetchedLinkFPaths.push(linkFPath);
+    for (const meta of metas) {
+      if (isFetchedLinkId(vars.fetch.fetchedLinkIds, links, meta.listName, meta.id)) {
+        bin.fetchedLinkMetas.push(meta);
       } else {
-        bin.unfetchedLinkFPaths.push(linkFPath);
+        bin.unfetchedLinkMetas.push(meta);
       }
     }
-    if (bin.unfetchedLinkFPaths.length === 0) {
+    if (bin.unfetchedLinkMetas.length === 0) {
       if (bin.hasDisorder) {
         console.log('No cache for now. Maybe fast enough to not jumpy.');
       }
-      const { ids, images } = await _getIdsAndImages(fpathsWithPcEc, links);
+      const { ids, images } = await _getIdsAndImagesFromMetas(metasWithPcEc, links);
       dispatch({
         type: SET_SHOWING_LINK_IDS, payload: { ids, hasMore: bin.hasMore, images },
       });
@@ -967,10 +986,10 @@ const _getLinksForCompareAction = (getState, payload) => {
     }
   }
 
-  const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
-  const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
+  const { fetchedLinkMetas, unfetchedLinkMetas } = payload;
+  const updatingLinkMetas = [...fetchedLinkMetas, ...unfetchedLinkMetas];
   const updatingLnAndLks = _poolListNameAndLinks(
-    updatingLinkFPaths, payload.links, getState().links
+    updatingLinkMetas, payload.links, getState().links
   );
 
   let updatingLinks = [];
@@ -1028,17 +1047,18 @@ const _getForCompareAction = (
   return 1;
 };
 
-const _getFpsAndLksPerLn = (links, toLnMap) => {
-  const fpaths = [], lksPerLn = {};
+const _getMetasAndLksPerLn = (links, toLnMap) => {
+  const metas = [], lksPerLn = {};
   for (const link of links) {
-    const listName = toLnMap[link.id];
-    const fpath = createLinkFPath(listName, link.id);
-    fpaths.push(fpath);
+    const { id } = link;
+    const { addedDT, updatedDT } = extractLinkId(id);
+    const listName = toLnMap[id];
+    metas.push({ id, addedDT, updatedDT, fpaths: [], listName });
 
     if (!isObject(lksPerLn[listName])) lksPerLn[listName] = {};
-    lksPerLn[listName][link.id] = link;
+    lksPerLn[listName][id] = link;
   }
-  return { fpaths, lksPerLn };
+  return { metas, lksPerLn };
 };
 
 export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
@@ -1098,13 +1118,13 @@ export const tryUpdateFetchedMore = (payload) => async (dispatch, getState) => {
       return;
     }
 
-    const { fpaths, lksPerLn } = _getFpsAndLksPerLn(updatingLinks, toLnMap);
+    const { metas, lksPerLn } = _getMetasAndLksPerLn(updatingLinks, toLnMap);
     dispatch({
       type: CACHE_FETCHED,
       payload: {
         lnOrQt: payload.lnOrQt,
-        fetchedLinkFPaths: [],
-        unfetchedLinkFPaths: fpaths,
+        fetchedLinkMetas: [],
+        unfetchedLinkMetas: metas,
         hasMore: payload.hasMore,
         links: lksPerLn,
       },
@@ -1184,10 +1204,10 @@ export const updateFetchedMore = (
   let fsgLinks = showingLinkIds.map(linkId => getLink(linkId, links));
   fsgLinks = fsgLinks.filter(link => isObject(link));
 
-  const { fetchedLinkFPaths, unfetchedLinkFPaths } = payload;
-  const updatingLinkFPaths = [...fetchedLinkFPaths, ...unfetchedLinkFPaths];
+  const { fetchedLinkMetas, unfetchedLinkMetas } = payload;
+  const updatingLinkMetas = [...fetchedLinkMetas, ...unfetchedLinkMetas];
 
-  let updatingLinks = _poolLinks(updatingLinkFPaths, payload.links, links);
+  let updatingLinks = _poolLinks(updatingLinkMetas, payload.links, links);
   updatingLinks = updatingLinks.filter(link => isObject(link));
 
   let sortedLinks = [...processingLinks, ...updatingLinks, ...fsgLinks];
@@ -1197,7 +1217,7 @@ export const updateFetchedMore = (
     return getMainId(link.id);
   });
 
-  const { ids, images } = await _getIdsAndImages(sortedLinks, null);
+  const { ids, images } = await _getIdsAndImages(sortedLinks);
 
   // Need to update in one render, if not jumpy!
   //   - update links
@@ -1367,7 +1387,7 @@ export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
     payload,
     meta: {
       offline: {
-        effect: { method: ADD_LINKS, params: payload },
+        effect: { method: MOVE_LINKS_ADD_STEP, params: payload },
         commit: { type: MOVE_LINKS_ADD_STEP_COMMIT, meta: payload },
         rollback: { type: MOVE_LINKS_ADD_STEP_ROLLBACK, meta: payload },
       },
@@ -1407,29 +1427,87 @@ export const moveLinksDeleteStep = (toListNames, toIds) => async (
       },
     },
   });
+
+  // Must delete above in the next version!
+  await cleanUpSslts(dispatch, getState);
 };
 
-export const deleteLinks = (ids) => async (dispatch, getState) => {
-  if (ids.length === 0) return;
+const cleanUpSslts = async (dispatch, getState) => {
+  const linkFPaths = getLinkFPaths(getState());
+  const ssltFPaths = getSsltFPaths(getState());
 
+  const { linkMetas, ssltInfos } = listLinkMetas(linkFPaths, ssltFPaths, {});
+  const linkMainIds = getLinkMainIds(linkMetas);
+
+  let unusedSsltFPaths = [];
+  for (const fpath of ssltFPaths) {
+    const { id } = extractSsltFPath(fpath);
+    const ssltMainId = getMainId(id);
+
+    if (
+      !isString(ssltMainId) ||
+      !linkMainIds.includes(ssltMainId) ||
+      !isObject(ssltInfos[ssltMainId]) ||
+      fpath !== ssltInfos[ssltMainId].fpath
+    ) {
+      unusedSsltFPaths.push(fpath);
+      if (unusedSsltFPaths.length >= N_LINKS) break;
+    }
+  }
+
+  if (unusedSsltFPaths.length === 0) return;
+
+  // Don't need offline, if no network or get killed, can do it later.
+  try {
+    await dataApi.deleteFiles(unusedSsltFPaths);
+  } catch (error) {
+    console.log('cleanUpSslts error: ', error);
+    // error in this step should be fine
+  }
+};
+
+export const deleteLinks = (dIds) => async (dispatch, getState) => {
   const links = getState().links;
-  const allLinkFPaths = getLinkFPaths(getState());
+  const pendingSslts = getState().pendingSslts;
 
-  const dListNames = [], dIds = [];
-  for (const id of ids) {
+  const linkFPaths = getLinkFPaths(getState());
+  const ssltFPaths = getSsltFPaths(getState());
+
+  const {
+    linkMetas, prevFPathsPerMids,
+  } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
+
+  const listNames = [], ids = [], fpathsPerId = {}, prevFPathsPerId = {};
+  for (const id of dIds) {
     const { listName, link } = getListNameAndLink(id, links);
     if (!isString(listName) || !isObject(link)) {
       console.log('In deleteLinks, no found list name or link for id:', id);
       continue;
     }
 
-    dListNames.push(listName);
-    dIds.push(id);
+    const meta = linkMetas.find(_meta => _meta.id === id);
+    if (!isObject(meta)) {
+      console.log('In deleteLinks, no found meta for id:', id);
+      continue;
+    }
+    const fpaths = meta.fpaths;
+
+    const mainId = getMainId(id);
+    const prevFPaths = prevFPathsPerMids[mainId];
+
+    if (!Array.isArray(fpathsPerId[id])) fpathsPerId[id] = [];
+    if (!Array.isArray(prevFPathsPerId[id])) prevFPathsPerId[id] = [];
+
+    listNames.push(listName);
+    ids.push(id);
+    if (Array.isArray(fpaths)) fpathsPerId[id].push(...fpaths);
+    if (Array.isArray(prevFPaths)) prevFPathsPerId[id].push(...prevFPaths);
   }
 
-  const prevFPathsPerId = getLinkPrevFPathsPerId(dIds, allLinkFPaths);
+  if (ids.length === 0) return;
+
   const payload = {
-    listNames: dListNames, ids: dIds, manuallyManageError: true, prevFPathsPerId,
+    listNames, ids, manuallyManageError: true, fpathsPerId, prevFPathsPerId,
   };
   dispatch({
     type: DELETE_LINKS,
@@ -1484,7 +1562,7 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
         payload,
         meta: {
           offline: {
-            effect: { method: ADD_LINKS, params: payload },
+            effect: { method: MOVE_LINKS_ADD_STEP, params: payload },
             commit: { type: MOVE_LINKS_ADD_STEP_COMMIT, meta: payload },
             rollback: { type: MOVE_LINKS_ADD_STEP_ROLLBACK, meta: payload },
           },
@@ -1638,7 +1716,9 @@ export const tryUpdateExtractedContents = (payload) => async (dispatch, getState
 export const extractContentsDeleteStep = (successListNames, successLinks) => async (
   dispatch, getState
 ) => {
-  const fpaths = [];
+  // Cannot createLinkFPath as initialListName might be different.
+  // Let cleanUpLinks delete previous ones.
+  /*const fpaths = [];
   for (let i = 0; i < successListNames.length; i++) {
     const [listName, link] = [successListNames[i], successLinks[i]];
     fpaths.push(createLinkFPath(listName, link.fromId));
@@ -1649,7 +1729,7 @@ export const extractContentsDeleteStep = (successListNames, successLinks) => asy
   } catch (error) {
     console.log('extractContents clean up error: ', error);
     // error in this step should be fine
-  }
+  }*/
 
   dispatch(runAfterFetchTask());
 };
@@ -1678,30 +1758,42 @@ export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
   const listName = TRASH;
   if (getState().display.listName === listName) return;
 
-  const allLinkFPaths = getLinkFPaths(getState());
-  const linkFPaths = getLastLinkFPaths(allLinkFPaths);
+  const pendingSslts = getState().pendingSslts;
 
-  const trashLinkFPaths = linkFPaths[listName] || [];
+  const linkFPaths = getLinkFPaths(getState());
+  const ssltFPaths = getSsltFPaths(getState());
 
-  const listNames = [], ids = [];
-  for (const fpath of trashLinkFPaths) {
-    const { id } = extractLinkFPath(fpath);
-    const { updatedDT } = extractLinkId(id);
-    const interval = Date.now() - Number(updatedDT);
+  const {
+    linkMetas, prevFPathsPerMids,
+  } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
+
+  const trashMetas = linkMetas.filter(meta => meta.listName === listName);
+
+  const listNames = [], ids = [], fpathsPerId = {}, prevFPathsPerId = {};
+  for (const meta of trashMetas) {
+    const { id, updatedDT, fpaths } = meta;
+    const interval = Date.now() - updatedDT;
     const days = interval / 1000 / 60 / 60 / 24;
 
     if (days <= N_DAYS) continue;
 
+    const mainId = getMainId(id);
+    const prevFPaths = prevFPathsPerMids[mainId];
+
+    if (!Array.isArray(fpathsPerId[id])) fpathsPerId[id] = [];
+    if (!Array.isArray(prevFPathsPerId[id])) prevFPathsPerId[id] = [];
+
     listNames.push(listName);
     ids.push(id);
+    if (Array.isArray(fpaths)) fpathsPerId[id].push(...fpaths);
+    if (Array.isArray(prevFPaths)) prevFPathsPerId[id].push(...prevFPaths);
     if (ids.length >= N_LINKS) break;
   }
 
   if (ids.length === 0) return;
 
-  const prevFPathsPerId = getLinkPrevFPathsPerId(ids, allLinkFPaths);
   const payload = {
-    listNames, ids, manuallyManageError: true, prevFPathsPerId,
+    listNames, ids, manuallyManageError: true, fpathsPerId, prevFPathsPerId,
   };
   dispatch({
     type: DELETE_OLD_LINKS_IN_TRASH,
@@ -1717,21 +1809,18 @@ export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
 };
 
 export const cleanUpLinks = () => async (dispatch, getState) => {
-  const allLinkFPaths = getLinkFPaths(getState());
-  const linkFPaths = getLastLinkFPaths(allLinkFPaths);
+  const pendingSslts = getState().pendingSslts;
 
-  const lastFPaths = [];
-  for (const listName in linkFPaths) {
-    for (const fpath of linkFPaths[listName]) lastFPaths.push(fpath);
-  }
+  const linkFPaths = getLinkFPaths(getState());
+  const ssltFPaths = getSsltFPaths(getState());
 
-  let unusedFPaths = [];
-  for (const listName in allLinkFPaths) {
-    for (const fpath of allLinkFPaths[listName]) {
-      if (!lastFPaths.includes(fpath)) unusedFPaths.push(fpath);
-    }
+  const { prevFPathsPerMids } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
+
+  const unusedFPaths = [];
+  for (const fpaths of Object.values(prevFPathsPerMids)) {
+    unusedFPaths.push(...fpaths);
+    if (unusedFPaths.length >= N_LINKS) break;
   }
-  unusedFPaths = unusedFPaths.slice(0, N_LINKS);
 
   if (unusedFPaths.length === 0) return;
 
@@ -1744,8 +1833,13 @@ export const cleanUpLinks = () => async (dispatch, getState) => {
 };
 
 const _cleanUpStaticFiles = async (getState) => {
-  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
-  const mainIds = getLinkMainIds(linkFPaths);
+  const pendingSslts = getState().pendingSslts;
+
+  const linkFPaths = getLinkFPaths(getState());
+  const ssltFPaths = getSsltFPaths(getState());
+
+  const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
+  const mainIds = getLinkMainIds(linkMetas);
 
   // Delete unused static files in server
   let staticFPaths = getStaticFPaths(getState());
@@ -1756,9 +1850,9 @@ const _cleanUpStaticFiles = async (getState) => {
     if (!mainIds.includes(getMainId(id))) {
       unusedIds.push(id);
       unusedFPaths.push(fpath);
+      if (unusedFPaths.length >= N_LINKS) break;
     }
   }
-  unusedFPaths = unusedFPaths.slice(0, N_LINKS);
 
   if (unusedFPaths.length > 0) {
     await dataApi.deleteFiles(unusedFPaths);
@@ -1774,9 +1868,9 @@ const _cleanUpStaticFiles = async (getState) => {
     if (!mainIds.includes(getMainId(id))) {
       unusedIds.push(id);
       unusedFPaths.push(fpath);
+      if (unusedFPaths.length >= N_LINKS) break;
     }
   }
-  unusedFPaths = unusedFPaths.slice(0, N_LINKS);
 
   if (unusedFPaths.length > 0) {
     await fileApi.deleteFiles(unusedFPaths);
@@ -1929,8 +2023,13 @@ export const checkDeleteListName = (listNameEditorKey, listNameObj) => async (
   const listNames = [listNameObj.listName];
   listNames.push(...getAllListNames(listNameObj.children));
 
-  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
-  const inUseListNames = Object.keys(linkFPaths);
+  const pendingSslts = getState().pendingSslts;
+
+  const linkFPaths = getLinkFPaths(getState());
+  const ssltFPaths = getSsltFPaths(getState());
+
+  const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
+  const inUseListNames = getListNamesFromLinkMetas(linkMetas);
 
   const canDeletes = [];
   for (const listName of listNames) {
@@ -2054,12 +2153,16 @@ export const retryDiedSettings = () => async (dispatch, getState) => {
 export const cancelDiedSettings = () => async (dispatch, getState) => {
   const settings = getState().settings;
   const snapshotSettings = getState().snapshot.settings;
+  const pendingSslts = getState().pendingSslts;
 
-  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
+  const linkFPaths = getLinkFPaths(getState());
+  const ssltFPaths = getSsltFPaths(getState());
   const tagFPaths = getTagFPaths(getState());
 
-  const listNames = Object.keys(linkFPaths);
-  const tagNames = getInUseTagNames(linkFPaths, tagFPaths);
+  const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
+
+  const listNames = getListNamesFromLinkMetas(linkMetas);
+  const tagNames = getInUseTagNames(linkMetas, tagFPaths);
   const doFetch = settings.doDescendingOrder !== snapshotSettings.doDescendingOrder;
   const payload = { listNames, tagNames, settings: snapshotSettings, doFetch };
 
@@ -2091,11 +2194,16 @@ export const mergeSettings = (selectedId) => async (dispatch, getState) => {
     if (k in _settings) settings[k] = _settings[k];
   }
 
-  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
+  const pendingSslts = getState().pendingSslts;
+
+  const linkFPaths = getLinkFPaths(getState());
+  const ssltFPaths = getSsltFPaths(getState());
   const tagFPaths = getTagFPaths(getState());
 
-  const listNames = Object.keys(linkFPaths);
-  const tagNames = getInUseTagNames(linkFPaths, tagFPaths);
+  const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
+
+  const listNames = getListNamesFromLinkMetas(linkMetas);
+  const tagNames = getInUseTagNames(linkMetas, tagFPaths);
   const doFetch = settings.doDescendingOrder !== currentSettings.doDescendingOrder;
   const payload = {
     settingsFPath, listNames, tagNames, settings, doFetch, _settingsFPaths,
@@ -2688,10 +2796,14 @@ export const cancelDiedPins = () => async (dispatch, getState) => {
 };
 
 export const cleanUpPins = () => async (dispatch, getState) => {
-  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
+  const pendingSslts = getState().pendingSslts;
+
+  const linkFPaths = getLinkFPaths(getState());
+  const ssltFPaths = getSsltFPaths(getState());
   const pinFPaths = getPinFPaths(getState());
 
-  const linkMainIds = getLinkMainIds(linkFPaths);
+  const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
+  const linkMainIds = getLinkMainIds(linkMetas);
   const pins = getRawPins(pinFPaths);
 
   let unusedPins = [];
@@ -2711,18 +2823,18 @@ export const cleanUpPins = () => async (dispatch, getState) => {
       )
     ) {
       unusedPins.push({ rank, updatedDT, addedDT, id });
+      if (unusedPins.length >= N_LINKS) break;
     }
   }
-  unusedPins = unusedPins.slice(0, N_LINKS);
 
-  if (unusedPins.length > 0) {
-    // Don't need offline, if no network or get killed, can do it later.
-    try {
-      await dataApi.deletePins({ pins: unusedPins });
-    } catch (error) {
-      console.log('cleanUpPins error: ', error);
-      // error in this step should be fine
-    }
+  if (unusedPins.length === 0) return;
+
+  // Don't need offline, if no network or get killed, can do it later.
+  try {
+    await dataApi.deletePins({ pins: unusedPins });
+  } catch (error) {
+    console.log('cleanUpPins error: ', error);
+    // error in this step should be fine
   }
 };
 
@@ -2922,7 +3034,9 @@ export const updateCustomDataDeleteStep = (
 ) => async (dispatch, getState) => {
 
   const fpaths = [...serverUnusedFPaths];
-  if (fromLink.id !== toLink.id) fpaths.push(createLinkFPath(listName, fromLink.id));
+  // Cannot createLinkFPath as initialListName might be different.
+  // Let cleanUpLinks delete previous ones.
+  //if (fromLink.id !== toLink.id) fpaths.push(createLinkFPath(listName, fromLink.id));
 
   try {
     await dataApi.deleteFiles(fpaths);
@@ -3250,14 +3364,20 @@ export const cancelDiedTags = () => async (dispatch, getState) => {
 };
 
 export const cleanUpTags = () => async (dispatch, getState) => {
-  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
+  const pendingSslts = getState().pendingSslts;
+
+  const linkFPaths = getLinkFPaths(getState());
+  const ssltFPaths = getSsltFPaths(getState());
   const tagFPaths = getTagFPaths(getState());
 
-  const linkMainIds = getLinkMainIds(linkFPaths);
+  const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
+  const linkMainIds = getLinkMainIds(linkMetas);
   const tags = getTags(tagFPaths, {});
 
   let unusedTagFPaths = [];
   for (const fpath of tagFPaths) {
+    if (unusedTagFPaths.length >= N_LINKS) break;
+
     const { tagName, rank, updatedDT, addedDT, id } = extractTagFPath(fpath);
     const tagMainId = getMainId(id);
 
@@ -3281,16 +3401,15 @@ export const cleanUpTags = () => async (dispatch, getState) => {
     });
     if (!found) unusedTagFPaths.push(fpath);
   }
-  unusedTagFPaths = unusedTagFPaths.slice(0, N_LINKS);
 
-  if (unusedTagFPaths.length > 0) {
-    // Don't need offline, if no network or get killed, can do it later.
-    try {
-      await dataApi.deleteTags({ tagFPaths: unusedTagFPaths });
-    } catch (error) {
-      console.log('cleanUpTags error: ', error);
-      // error in this step should be fine
-    }
+  if (unusedTagFPaths.length === 0) return;
+
+  // Don't need offline, if no network or get killed, can do it later.
+  try {
+    await dataApi.deleteTags({ tagFPaths: unusedTagFPaths });
+  } catch (error) {
+    console.log('cleanUpTags error: ', error);
+    // error in this step should be fine
   }
 };
 
@@ -3330,9 +3449,14 @@ export const updateTagNameColor = (tagName, newColor) => {
 export const checkDeleteTagName = (tagNameEditorKey, tagNameObj) => async (
   dispatch, getState
 ) => {
-  const linkFPaths = getLastLinkFPaths(getLinkFPaths(getState()));
+  const pendingSslts = getState().pendingSslts;
+
+  const linkFPaths = getLinkFPaths(getState());
+  const ssltFPaths = getSsltFPaths(getState());
   const tagFPaths = getTagFPaths(getState());
-  const inUseTagNames = getInUseTagNames(linkFPaths, tagFPaths);
+
+  const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
+  const inUseTagNames = getInUseTagNames(linkMetas, tagFPaths);
 
   if (inUseTagNames.includes(tagNameObj.tagName)) {
     dispatch(updateTagNameEditors({

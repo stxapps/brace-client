@@ -1,6 +1,6 @@
 import { FileSystem, Dirs, Util } from 'react-native-file-access';
 
-import { LINKS, SETTINGS, INFO, PINS, TAGS, DOT_JSON, UTF8 } from '../types/const';
+import { LINKS, SSLTS, SETTINGS, INFO, PINS, TAGS, DOT_JSON, UTF8 } from '../types/const';
 
 const deriveFPath = (fpath) => {
   return Dirs.CacheDir + '/' + fpath;
@@ -58,7 +58,7 @@ const deleteFile = async (fpath) => {
 const deleteAllFiles = async () => {
   // Different from web as there might be some other files too,
   //   can't just delete all files but need to specify dirs.
-  const dpaths = [LINKS, PINS, TAGS];
+  const dpaths = [LINKS, SSLTS, PINS, TAGS];
 
   for (const dpath of dpaths) {
     const ddpath = deriveFPath(dpath);

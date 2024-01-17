@@ -50,6 +50,7 @@ export const DO_IGNORE_EXTRD_RST = 'doIgnoreExtrdRst';
 
 export const CD_ROOT = 'cdroot';
 export const LINKS = 'links';
+export const SSLTS = 'sslts';
 export const IMAGES = 'images';
 export const SETTINGS = 'settings';
 export const INFO = 'info';

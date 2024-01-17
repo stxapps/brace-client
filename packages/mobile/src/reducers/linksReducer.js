@@ -24,7 +24,7 @@ import {
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING,
   PENDING_REMOVING, DO_IGNORE_EXTRD_RST,
 } from '../types/const';
-import { isObject, getArraysPerKey, extractLinkId, getMainId } from '../utils';
+import { isObject, getArraysPerKey, getMainId, extractLinkId } from '../utils';
 import { _ } from '../utils/obj';
 
 const initialState = {};
@@ -625,33 +625,47 @@ const linksReducer = (state = initialState, action) => {
 };
 
 const _getLastLinks = (links) => {
-  const infos = {};
+  // Allow same ids for moving links;
+  const lnksPerMid = {};
   for (const listName in links) {
     for (const link of Object.values(links[listName])) {
-      const { id, status } = link;
-      const { updatedDT } = extractLinkId(id);
+      const { id } = link;
 
       const mainId = getMainId(id);
-      if (isObject(infos[mainId])) {
-        if (
-          (infos[mainId].status === ADDED && status === ADDED) ||
-          (infos[mainId].status !== ADDED && status !== ADDED)
-        ) {
-          if (infos[mainId].updatedDT >= updatedDT) continue;
-        } else if (infos[mainId].status !== ADDED && status === ADDED) {
-          continue;
-        }
-      }
+      if (!Array.isArray(lnksPerMid[mainId])) lnksPerMid[mainId] = [];
 
-      infos[mainId] = { listName, link, updatedDT, status };
+      lnksPerMid[mainId].push({ listName, link });
     }
   }
 
+  const ftdLnksPerMid = {};
+  for (const mainId in lnksPerMid) {
+    const lnks = lnksPerMid[mainId];
+    ftdLnksPerMid[mainId] = [];
+
+    let ftdUpdatedDT = -1, ftdLnk = null;
+    for (const lnk of lnks) {
+      const { link } = lnk;
+      if (link.status !== ADDED) {
+        ftdLnksPerMid[mainId].push(lnk);
+        continue;
+      }
+
+      const { updatedDT } = extractLinkId(link.id);
+      if (updatedDT > ftdUpdatedDT) {
+        ftdUpdatedDT = updatedDT;
+        ftdLnk = lnk;
+      }
+    }
+    if (isObject(ftdLnk)) ftdLnksPerMid[mainId].push(ftdLnk);
+  }
+
   const lastLinks = {};
-  for (const info of Object.values(infos)) {
-    const { listName, link } = info;
-    if (!isObject(lastLinks[listName])) lastLinks[listName] = {};
-    lastLinks[listName][link.id] = { ...link };
+  for (const mainId in ftdLnksPerMid) {
+    for (const { listName, link } of ftdLnksPerMid[mainId]) {
+      if (!isObject(lastLinks[listName])) lastLinks[listName] = {};
+      lastLinks[listName][link.id] = { ...link };
+    }
   }
 
   return lastLinks;

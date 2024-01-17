@@ -23,6 +23,7 @@ import listNameEditorsReducer from './listNameEditorsReducer';
 import tagNameEditorsReducer from './tagNameEditorsReducer';
 import iapReducer from './iapReducer';
 import cachedFPathsReducer from './cachedFPathsReducer';
+import pendingSsltsReducer from './pendingSsltsReducer';
 import pendingPinsReducer from './pendingPinsReducer';
 import pendingTagsReducer from './pendingTagsReducer';
 import timePickReducer from './timePickReducer';
@@ -53,6 +54,7 @@ export default combineReducers({
   tagNameEditors: tagNameEditorsReducer,
   iap: iapReducer,
   cachedFPaths: cachedFPathsReducer,
+  pendingSslts: pendingSsltsReducer,
   pendingPins: pendingPinsReducer,
   pendingTags: pendingTagsReducer,
   timePick: timePickReducer,

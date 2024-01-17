@@ -22,10 +22,10 @@ import {
 import {
   isEqual, isString, isObject, isNumber, sleep, randomString, getUrlFirstChar,
   randomDecor, isDecorValid, isExtractedResultValid, isCustomValid, isListNameObjsValid,
-  isTagNameObjsValid, createDataFName, createLinkFPath, createSettingsFPath,
-  getLastSettingsFPaths, extractFPath, getPins, getMainId, getFormattedTimeStamp,
-  extractLinkFPath, extractPinFPath, getStaticFPath, extractTagFPath, getTags,
-  getLastLinkFPaths,
+  isTagNameObjsValid, createDataFName, createLinkFPath, createSsltFPath,
+  createSettingsFPath, getLastSettingsFPaths, extractFPath, getPins, getMainId,
+  getFormattedTimeStamp, extractLinkFPath, extractPinFPath, getStaticFPath,
+  extractTagFPath, getTags, listLinkMetas,
 } from '../utils';
 import { initialSettingsState } from '../types/initialStates';
 import vars from '../vars';
@@ -267,8 +267,9 @@ const parseBraceImages = async (dispatch, existFPaths, imgEntries, progress) => 
 };
 
 const parseBraceLinks = async (
-  dispatch, existFPaths, existMainIds, linkEntries, progress
+  dispatch, existMainIds, ssltInfos, linkEntries, progress
 ) => {
+  let now = Date.now();
   for (let i = 0, j = linkEntries.length; i < j; i += N_LINKS) {
     const selectedEntries = linkEntries.slice(i, i + N_LINKS);
 
@@ -277,8 +278,6 @@ const parseBraceLinks = async (
       const { fpath, fpathParts, fname } = extractFPath(entry.path);
       if (fpathParts.length !== 3 || fpathParts[0] !== LINKS) continue;
       if (!fname.endsWith(DOT_JSON)) continue;
-
-      if (existFPaths.includes(fpath)) continue;
 
       let content = entry.data;
       if (!isObject(content)) continue;
@@ -327,6 +326,13 @@ const parseBraceLinks = async (
 
       fpaths.push(fpath);
       contents.push(content);
+
+      if (isObject(ssltInfos[mainId]) && ssltInfos[mainId].listName !== listName) {
+        const ssltFPath = createSsltFPath(listName, now, now, id);
+        fpaths.push(ssltFPath);
+        contents.push({});
+        now += 1;
+      }
     }
 
     await importAllDataLoop(fpaths, contents);
@@ -423,19 +429,15 @@ const parseBraceTags = async (dispatch, tags, tagEntries, progress) => {
 
 const parseBraceImportedFile = async (dispatch, getState, json) => {
   const {
-    linkFPaths: allLinkFPaths, staticFPaths, settingsFPaths, pinFPaths, tagFPaths,
+    linkFPaths, ssltFPaths, staticFPaths, settingsFPaths, pinFPaths, tagFPaths,
   } = await dataApi.listFPaths();
 
-  const existFPaths = [], existMainIds = [];
-  existFPaths.push(...staticFPaths);
+  const { linkMetas, ssltInfos } = listLinkMetas(linkFPaths, ssltFPaths, {});
 
-  const linkFPaths = getLastLinkFPaths(allLinkFPaths);
-  for (const listName in linkFPaths) {
-    for (const fpath of linkFPaths[listName]) {
-      const { id } = extractLinkFPath(fpath);
-      existFPaths.push(fpath);
-      existMainIds.push(getMainId(id));
-    }
+  const existMainIds = [];
+  for (const meta of linkMetas) {
+    const { id } = meta;
+    existMainIds.push(getMainId(id));
   }
 
   const pins = getPins(pinFPaths, {}, false);
@@ -480,9 +482,9 @@ const parseBraceImportedFile = async (dispatch, getState, json) => {
   if (progress.total === 0) return;
 
   await parseBraceSettings(dispatch, settingsFPaths, settingsEntries, progress);
-  await parseBraceImages(dispatch, existFPaths, imgEntries, progress);
+  await parseBraceImages(dispatch, staticFPaths, imgEntries, progress);
 
-  await parseBraceLinks(dispatch, existFPaths, existMainIds, linkEntries, progress);
+  await parseBraceLinks(dispatch, existMainIds, ssltInfos, linkEntries, progress);
   await parseBracePins(dispatch, pins, pinEntries, progress);
   await parseBraceTags(dispatch, tags, tagEntries, progress);
 };
@@ -674,18 +676,20 @@ export const exportAllData = () => async (dispatch, getState) => {
     return;
   }
 
+  const { linkMetas } = listLinkMetas(lfpRst.linkFPaths, lfpRst.ssltFPaths, {});
+
   const linkFPaths = [], pinFPaths = [], tagFPaths = [], settingsFPaths = [];
-  const linkMainIds = [];
+  const linkMainIds = [], lfpToLn = {};
 
-  const lastLinkFPaths = getLastLinkFPaths(lfpRst.linkFPaths);
-  for (const listName in lastLinkFPaths) {
-    for (const fpath of lastLinkFPaths[listName]) {
-      if (!_canExport(listName, lockSettings)) continue;
+  for (const meta of linkMetas) {
+    const { id, fpaths, listName } = meta;
+    if (!_canExport(listName, lockSettings)) continue;
 
-      const { id } = extractLinkFPath(fpath);
+    for (const fpath of fpaths) {
       linkFPaths.push(fpath);
-      linkMainIds.push(getMainId(id));
+      lfpToLn[fpath] = listName;
     }
+    linkMainIds.push(getMainId(id));
   }
 
   for (const pinFPath of lfpRst.pinFPaths) {
@@ -728,7 +732,9 @@ export const exportAllData = () => async (dispatch, getState) => {
       const { responses } = await dataApi.getFiles(selectedFPaths, true);
       for (const response of responses) {
         if (response.success) {
-          const path = response.fpath, data = response.content;
+          const { id } = extractLinkFPath(response.fpath);
+          const path = createLinkFPath(lfpToLn[response.fpath], id);
+          const data = response.content;
           successResponses.push({ path, data });
 
           if (isObject(data.custom)) {
@@ -847,31 +853,31 @@ export const deleteAllData = () => async (dispatch, getState) => {
     return;
   }
 
-  const fpaths = [], lastFPaths = [];
+  const { prevFPathsPerMids } = listLinkMetas(lfpRst.linkFPaths, lfpRst.ssltFPaths, {});
 
-  const lastLinkFPaths = getLastLinkFPaths(lfpRst.linkFPaths);
-  for (const listName in lastLinkFPaths) {
-    for (const fpath of lastLinkFPaths[listName]) lastFPaths.push(fpath);
+  const fpaths = [];
+  for (const mainId in prevFPathsPerMids) {
+    for (const fpath of prevFPathsPerMids[mainId]) fpaths.push(fpath);
   }
   for (const listName in lfpRst.linkFPaths) {
     for (const fpath of lfpRst.linkFPaths[listName]) {
-      if (lastFPaths.includes(fpath)) continue;
+      if (fpaths.includes(fpath)) continue;
       fpaths.push(fpath);
     }
   }
 
-  const lastSettingsFPaths = getLastSettingsFPaths(lfpRst.settingsFPaths);
-  lastFPaths.push(...lastSettingsFPaths.fpaths);
+  const { fpaths: lastSettingsFPaths } = getLastSettingsFPaths(lfpRst.settingsFPaths);
   for (const fpath of lfpRst.settingsFPaths) {
-    if (lastFPaths.includes(fpath)) continue;
+    if (lastSettingsFPaths.includes(fpath)) continue;
     fpaths.push(fpath);
   }
+  fpaths.push(...lastSettingsFPaths);
 
-  fpaths.push(...lfpRst.staticFPaths);
   if (isString(lfpRst.infoFPath)) fpaths.push(lfpRst.infoFPath);
+  fpaths.push(...lfpRst.staticFPaths);
+  fpaths.push(...lfpRst.ssltFPaths);
   fpaths.push(...lfpRst.pinFPaths);
   fpaths.push(...lfpRst.tagFPaths);
-  fpaths.push(...lastFPaths);
 
   const progress = { total: fpaths.length, done: 0 };
   dispatch(updateDeleteAllDataProgress(progress));
