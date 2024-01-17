@@ -626,7 +626,7 @@ const linksReducer = (state = initialState, action) => {
 
 const _getLastLinks = (links) => {
   // Allow same ids for moving links;
-  const lnksPerMid = {}
+  const lnksPerMid = {};
   for (const listName in links) {
     for (const link of Object.values(links[listName])) {
       const { id } = link;
@@ -643,7 +643,7 @@ const _getLastLinks = (links) => {
     const lnks = lnksPerMid[mainId];
     ftdLnksPerMid[mainId] = [];
 
-    let ftdUpdatedDT = -1, ftdLnk = null
+    let ftdUpdatedDT = -1, ftdLnk = null;
     for (const lnk of lnks) {
       const { link } = lnk;
       if (link.status !== ADDED) {

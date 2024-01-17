@@ -175,7 +175,7 @@ const fetchLinks = async (metas) => {
 
   const { responses } = await getFiles(fpaths, true);
 
-  const ftcMap = {}; // No order guarantee btw _fpaths and responses
+  const ftcMap = {}; // No order guarantee btw fpaths and responses
   for (const { success, fpath, content } of responses) {
     const derivedContent = success ? content : deriveUnknownErrorLink(fpath);
     ftcMap[fpath] = derivedContent;
@@ -185,12 +185,12 @@ const fetchLinks = async (metas) => {
 
   const links = {};
   for (const meta of metas) {
-    const { id, fpaths, listName } = meta;
+    const { id, fpaths: mFPaths, listName } = meta;
 
-    let content
-    for (const fpath of fpaths) content = ftcMap[fpath];
+    let content;
+    for (const fpath of mFPaths) content = ftcMap[fpath];
     if (!isObject(content)) {
-      console.log('In fetchLinks, invalid content', fpaths, ftcMap);
+      console.log('In fetchLinks, invalid content', mFPaths, ftcMap);
       continue;
     }
 
@@ -506,7 +506,7 @@ const deleteLinks = async (params) => {
 
   // try to delete previous fpaths first.
   const {
-    responses: pResponses
+    responses: pResponses,
   } = await deleteFiles(prevFPaths, !!manuallyManageError);
 
   for (const response of pResponses) {

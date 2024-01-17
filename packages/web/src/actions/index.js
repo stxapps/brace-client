@@ -1563,7 +1563,7 @@ export const deleteLinks = (dIds) => async (dispatch, getState) => {
       continue;
     }
 
-    const meta = linkMetas.find(meta => meta.id === id);
+    const meta = linkMetas.find(_meta => _meta.id === id);
     if (!isObject(meta)) {
       console.log('In deleteLinks, no found meta for id:', id);
       continue;
@@ -2280,7 +2280,7 @@ export const mergeSettings = (selectedId) => async (dispatch, getState) => {
 
   const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
 
-  const listNames = getListNamesFromLinkMetas(linkMetas);;
+  const listNames = getListNamesFromLinkMetas(linkMetas);
   const tagNames = getInUseTagNames(linkMetas, tagFPaths);
   const doFetch = settings.doDescendingOrder !== currentSettings.doDescendingOrder;
   const payload = {

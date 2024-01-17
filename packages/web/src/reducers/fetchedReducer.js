@@ -49,7 +49,7 @@ const fetchedReducer = (state = initialState, action) => {
 
       const metas = lnLinks.map(link => {
         const { id } = link;
-        const { addedDT, updatedDT } = extractLinkId(id)
+        const { addedDT, updatedDT } = extractLinkId(id);
         return { id, addedDT, updatedDT, fpaths: [], listName };
       });
       const newLinks = { ...payload.links };
