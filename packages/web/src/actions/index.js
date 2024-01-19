@@ -599,10 +599,13 @@ export const fetch = () => async (dispatch, getState) => {
     }
     if (bin.unfetchedLinkMetas.length === 0) {
       const { ids, images } = await _getIdsAndImagesFromMetas(metasWithPcEc, links);
-      dispatch({
-        type: SET_SHOWING_LINK_IDS,
-        payload: { ids, hasMore: bin.hasMore, images, doClearSelectedLinkIds: true },
-      });
+      const payload = {
+        ids, hasMore: bin.hasMore, images, doClearSelectedLinkIds: true,
+      };
+      if (lnOrQt === listName && bin.fetchedLinkMetas.length === 0) {
+        payload.listNameToClearLinks = lnOrQt;
+      }
+      dispatch({ type: SET_SHOWING_LINK_IDS, payload });
       // E.g., in settings commit, reset fetchedLnOrQts but not fetchedLinkIds,
       //   need to add lnOrQt for calculate isStale correctly.
       addFetchedToVars(lnOrQt, null, vars);
@@ -1693,6 +1696,11 @@ export const cancelDiedLinks = (canceledIds) => async (dispatch, getState) => {
 
 const getToExtractLinks = (getState, listNames, ids) => {
   const links = getState().links;
+
+  const linkFPaths = getLinkFPaths(getState());
+  const ssltFPaths = getSsltFPaths(getState());
+
+  const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, {});
   const [isLnsArray, isIdsArray] = [Array.isArray(listNames), Array.isArray(ids)];
 
   const toListNames = [], toLinks = [];
@@ -1710,6 +1718,9 @@ const getToExtractLinks = (getState, listNames, ids) => {
         isObject(link.extractedResult) && link.extractedResult.status !== EXTRACT_INIT
       ) continue;
       if (validateUrl(link.url) !== VALID_URL) continue;
+      if (
+        !linkMetas.some(meta => meta.listName === listName && meta.id === link.id)
+      ) continue;
 
       const [toListName, toLink] = [listName, newObject(link, LOCAL_LINK_ATTRS)];
       toListNames.push(toListName);
@@ -1735,6 +1746,9 @@ const getToExtractLinks = (getState, listNames, ids) => {
       isObject(link.extractedResult) && link.extractedResult.status !== EXTRACT_INIT
     ) continue;
     if (validateUrl(link.url) !== VALID_URL) continue;
+    if (
+      !linkMetas.some(meta => meta.listName === listName && meta.id === link.id)
+    ) continue;
 
     const [toListName, toLink] = [listName, newObject(link, LOCAL_LINK_ATTRS)];
     toListNames.push(toListName);

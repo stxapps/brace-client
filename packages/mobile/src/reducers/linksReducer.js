@@ -8,8 +8,8 @@ import {
 } from '../actions';
 import {
   UPDATE_LIST_NAME, UPDATE_QUERY_STRING, FETCH_COMMIT, UPDATE_FETCHED,
-  FETCH_MORE_COMMIT, UPDATE_FETCHED_MORE, ADD_LINKS, ADD_LINKS_COMMIT,
-  ADD_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT,
+  FETCH_MORE_COMMIT, UPDATE_FETCHED_MORE, SET_SHOWING_LINK_IDS, ADD_LINKS,
+  ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT,
   MOVE_LINKS_ADD_STEP_ROLLBACK, MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT,
   MOVE_LINKS_DELETE_STEP_ROLLBACK, DELETE_LINKS, DELETE_LINKS_COMMIT,
   DELETE_LINKS_ROLLBACK, CANCEL_DIED_LINKS, DELETE_OLD_LINKS_IN_TRASH,
@@ -75,6 +75,7 @@ const linksReducer = (state = initialState, action) => {
 
     let newState = { ...state };
     if (isObject(links)) {
+      if (isObject(newState[lnOrQt]) && !isObject(links[lnOrQt])) links[lnOrQt] = {};
       for (const listName in links) {
         const processingLinks = _.exclude(state[listName], STATUS, ADDED);
         const fetchedLinks = _.update(links[listName], null, null, STATUS, ADDED);
@@ -153,6 +154,21 @@ const linksReducer = (state = initialState, action) => {
     return loop(
       newState, Cmd.run(extractContents(), { args: [Cmd.dispatch, Cmd.getState] })
     );
+  }
+
+  if (action.type === SET_SHOWING_LINK_IDS) {
+    if ('listNameToClearLinks' in action.payload) {
+      const { listNameToClearLinks: listName } = action.payload;
+
+      const newState = { ...state };
+      if (isObject(newState[listName])) {
+        const processingLinks = _.exclude(state[listName], STATUS, ADDED);
+        newState[listName] = { ...processingLinks };
+      }
+      return newState;
+    }
+
+    return state;
   }
 
   if (action.type === ADD_LINKS) {
