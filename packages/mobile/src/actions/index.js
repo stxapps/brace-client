@@ -23,8 +23,7 @@ import {
   ADD_FETCHING_INFO, DELETE_FETCHING_INFO, SET_SHOWING_LINK_IDS, ADD_LINKS,
   ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK, DELETE_LINKS, DELETE_LINKS_COMMIT,
   DELETE_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT,
-  MOVE_LINKS_ADD_STEP_ROLLBACK, MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT,
-  MOVE_LINKS_DELETE_STEP_ROLLBACK, CANCEL_DIED_LINKS, DELETE_OLD_LINKS_IN_TRASH,
+  MOVE_LINKS_ADD_STEP_ROLLBACK, CANCEL_DIED_LINKS, DELETE_OLD_LINKS_IN_TRASH,
   DELETE_OLD_LINKS_IN_TRASH_COMMIT, DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
   EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
   UPDATE_EXTRACTED_CONTENTS, UPDATE_LIST_NAME_EDITORS, ADD_LIST_NAMES,
@@ -1360,7 +1359,6 @@ export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
   if (ids.length === 0) return;
 
   const links = getState().links;
-  let updatedDT = Date.now();
 
   const toListNames = [], toLinks = [];
   for (const id of ids) {
@@ -1376,9 +1374,7 @@ export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
       continue;
     }
 
-    const toId = `${getMainId(fromLink.id)}-${randomString(4)}-${updatedDT}`;
-    const toLink = { ...fromLink, id: toId, fromListName, fromId: fromLink.id };
-    updatedDT += 1;
+    const toLink = { ...fromLink, fromListName, fromId: fromLink.id };
 
     toListNames.push(toListName);
     toLinks.push(toLink);
@@ -1399,50 +1395,14 @@ export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
   addFetchedToVars(null, toLinks, vars);
 };
 
-export const moveLinksDeleteStep = (toListNames, toIds) => async (
-  dispatch, getState
-) => {
-  if (toIds.length === 0) return; // can happen if all are errorIds.
-
-  const links = getState().links;
-
-  const listNames = [], ids = [];
-  for (let i = 0; i < toListNames.length; i++) {
-    const [toListName, toId] = [toListNames[i], toIds[i]];
-    if (!isObject(links[toListName]) || !isObject(links[toListName][toId])) continue;
-
-    const { fromListName, fromId } = links[toListName][toId];
-    listNames.push(fromListName);
-    ids.push(fromId);
-  }
-
-  const payload = {
-    listNames, ids, manuallyManageError: true, prevFPathsPerId: {}, toListNames, toIds,
-  };
-  dispatch({
-    type: MOVE_LINKS_DELETE_STEP,
-    payload,
-    meta: {
-      offline: {
-        effect: { method: DELETE_LINKS, params: payload },
-        commit: { type: MOVE_LINKS_DELETE_STEP_COMMIT, meta: payload },
-        rollback: { type: MOVE_LINKS_DELETE_STEP_ROLLBACK, meta: payload },
-      },
-    },
-  });
-
-  // Must delete above in the next version!
-  await cleanUpSslts(dispatch, getState);
-};
-
-const cleanUpSslts = async (dispatch, getState) => {
+export const cleanUpSslts = () => async (dispatch, getState) => {
   const linkFPaths = getLinkFPaths(getState());
   const ssltFPaths = getSsltFPaths(getState());
 
   const { linkMetas, ssltInfos } = listLinkMetas(linkFPaths, ssltFPaths, {});
   const linkMainIds = getLinkMainIds(linkMetas);
 
-  let unusedSsltFPaths = [];
+  const unusedSsltFPaths = [];
   for (const fpath of ssltFPaths) {
     const { id } = extractSsltFPath(fpath);
     const ssltMainId = getMainId(id);
@@ -1618,11 +1578,12 @@ export const cancelDiedLinks = (canceledIds) => async (dispatch, getState) => {
 
 const getToExtractLinks = (getState, listNames, ids) => {
   const links = getState().links;
+  const pendingSslts = getState().pendingSslts;
 
   const linkFPaths = getLinkFPaths(getState());
   const ssltFPaths = getSsltFPaths(getState());
 
-  const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, {});
+  const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
   const [isLnsArray, isIdsArray] = [Array.isArray(listNames), Array.isArray(ids)];
 
   const toListNames = [], toLinks = [];
@@ -1727,27 +1688,6 @@ export const tryUpdateExtractedContents = (payload) => async (dispatch, getState
   addFetchedToVars(null, payload.successLinks, vars);
 };
 
-export const extractContentsDeleteStep = (successListNames, successLinks) => async (
-  dispatch, getState
-) => {
-  // Cannot createLinkFPath as initialListName might be different.
-  // Let cleanUpLinks delete previous ones.
-  /*const fpaths = [];
-  for (let i = 0; i < successListNames.length; i++) {
-    const [listName, link] = [successListNames[i], successLinks[i]];
-    fpaths.push(createLinkFPath(listName, link.fromId));
-  }
-
-  try {
-    await dataApi.deleteFiles(fpaths);
-  } catch (error) {
-    console.log('extractContents clean up error: ', error);
-    // error in this step should be fine
-  }*/
-
-  dispatch(runAfterFetchTask());
-};
-
 export const runAfterFetchTask = () => async (dispatch, getState) => {
   dispatch(randomHouseworkTasks());
 };
@@ -1780,7 +1720,6 @@ export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
   const {
     linkMetas, prevFPathsPerMids,
   } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
-
   const trashMetas = linkMetas.filter(meta => meta.listName === listName);
 
   const listNames = [], ids = [], fpathsPerId = {}, prevFPathsPerId = {};
@@ -2820,7 +2759,7 @@ export const cleanUpPins = () => async (dispatch, getState) => {
   const linkMainIds = getLinkMainIds(linkMetas);
   const pins = getRawPins(pinFPaths);
 
-  let unusedPins = [];
+  const unusedPins = [];
   for (const fpath of pinFPaths) {
     const { rank, updatedDT, addedDT, id } = extractPinFPath(fpath);
     const pinMainId = getMainId(id);
@@ -3046,14 +2985,8 @@ export const updateCustomData = (title, image) => async (dispatch, getState) => 
 export const updateCustomDataDeleteStep = (
   listName, fromLink, toLink, serverUnusedFPaths, localUnusedFPaths
 ) => async (dispatch, getState) => {
-
-  const fpaths = [...serverUnusedFPaths];
-  // Cannot createLinkFPath as initialListName might be different.
-  // Let cleanUpLinks delete previous ones.
-  //if (fromLink.id !== toLink.id) fpaths.push(createLinkFPath(listName, fromLink.id));
-
   try {
-    await dataApi.deleteFiles(fpaths);
+    await dataApi.deleteFiles(serverUnusedFPaths);
     await fileApi.deleteFiles(localUnusedFPaths);
   } catch (error) {
     console.log('updateCustomData clean up error: ', error);
@@ -3388,7 +3321,7 @@ export const cleanUpTags = () => async (dispatch, getState) => {
   const linkMainIds = getLinkMainIds(linkMetas);
   const tags = getTags(tagFPaths, {});
 
-  let unusedTagFPaths = [];
+  const unusedTagFPaths = [];
   for (const fpath of tagFPaths) {
     if (unusedTagFPaths.length >= N_LINKS) break;
 
