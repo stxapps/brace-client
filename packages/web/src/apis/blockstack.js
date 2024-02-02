@@ -440,46 +440,37 @@ const putLinks = async (params) => {
 };
 
 const moveLinks = async (params) => {
-  // Must DELETE the next line in the next version!
-  const result = await putLinks(params);
+  const { listNames, links, manuallyManageError } = params;
 
-  try {
-    const { listNames, links, manuallyManageError } = params;
+  let now = Date.now();
 
-    let now = Date.now();
-
-    const fpaths = [], contents = [], linkMap = {};
-    for (let i = 0; i < listNames.length; i++) {
-      const [listName, link] = [listNames[i], links[i]];
-      const fpath = createSsltFPath(listName, now, now, link.id);
-      fpaths.push(fpath);
-      contents.push({});
-      linkMap[fpath] = { listName, link };
-      now += 1;
-    }
-
-    const successListNames = [], successLinks = [];
-    const errorListNames = [], errorLinks = [], errors = [];
-
-    const { responses } = await putFiles(fpaths, contents, !!manuallyManageError);
-    for (const response of responses) {
-      const { listName, link } = linkMap[response.fpath];
-      if (response.success) {
-        successListNames.push(listName);
-        successLinks.push(link);
-      } else {
-        errorListNames.push(listName);
-        errorLinks.push(link);
-        errors.push(response.error);
-      }
-    }
-
-    //return { successListNames, successLinks, errorListNames, errorLinks, errors };
-  } catch (error) {
-    console.log('Error here is fine for now.', error);
+  const fpaths = [], contents = [], linkMap = {};
+  for (let i = 0; i < listNames.length; i++) {
+    const [listName, link] = [listNames[i], links[i]];
+    const fpath = createSsltFPath(listName, now, now, link.id);
+    fpaths.push(fpath);
+    contents.push({});
+    linkMap[fpath] = { listName, link };
+    now += 1;
   }
 
-  return result;
+  const successListNames = [], successLinks = [];
+  const errorListNames = [], errorLinks = [], errors = [];
+
+  const { responses } = await putFiles(fpaths, contents, !!manuallyManageError);
+  for (const response of responses) {
+    const { listName, link } = linkMap[response.fpath];
+    if (response.success) {
+      successListNames.push(listName);
+      successLinks.push(link);
+    } else {
+      errorListNames.push(listName);
+      errorLinks.push(link);
+      errors.push(response.error);
+    }
+  }
+
+  return { successListNames, successLinks, errorListNames, errorLinks, errors };
 };
 
 const deleteLinks = async (params) => {
@@ -530,7 +521,7 @@ const deleteLinks = async (params) => {
         if (!fpaths.includes(fpath)) fpaths.push(fpath);
       }
     } else {
-      // Must delete in the next version!
+      console.log(`In deleteLinks, for ${id}, invalid fpathsPerId`, fpathsPerId);
       const fpath = createLinkFPath(listName, id);
       idMap[fpath] = { listName, id };
       if (!fpaths.includes(fpath)) fpaths.push(fpath);

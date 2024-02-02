@@ -1364,9 +1364,9 @@ export const getSsltFPaths = (state) => {
 };
 
 export const listLinkMetas = createSelector(
-  linkFPaths => linkFPaths,
-  (_, ssltFPaths) => ssltFPaths,
-  (_, __, pendingSslts) => pendingSslts,
+  (...args) => args[0],
+  (...args) => args[1],
+  (...args) => args[2],
   (linkFPaths, ssltFPaths, pendingSslts) => {
 
     const lnkInfosPerMid = {}, ssltInfos = {};
@@ -1715,39 +1715,37 @@ export const getRawPins = (pinFPaths) => {
   return pins;
 };
 
-const _getPins = (pinFPaths, pendingPins, doExcludeUnpinning) => {
-  const pins = getRawPins(pinFPaths);
-
-  for (const id in pendingPins) {
-    const { status, rank, updatedDT, addedDT } = pendingPins[id];
-    const pinMainId = getMainId(id);
-
-    if ([PIN_LINK, PIN_LINK_ROLLBACK].includes(status)) {
-      pins[pinMainId] = { status, rank, updatedDT, addedDT, id };
-    } else if ([UNPIN_LINK, UNPIN_LINK_ROLLBACK].includes(status)) {
-      if (doExcludeUnpinning) {
-        delete pins[pinMainId];
-      } else {
-        // Can't delete just yet, need for showing loading.
-        pins[pinMainId] = { status, rank, updatedDT, addedDT, id };
-      }
-    } else if ([
-      MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
-    ].includes(status)) {
-      pins[pinMainId] = { status, rank, updatedDT, addedDT, id };
-    } else {
-      console.log('getPins: unsupport pin status: ', status);
-    }
-  }
-
-  return pins;
-};
-
 export const getPins = createSelector(
   (...args) => args[0],
   (...args) => args[1],
   (...args) => args[2],
-  _getPins,
+  (pinFPaths, pendingPins, doExcludeUnpinning) => {
+    const pins = getRawPins(pinFPaths);
+
+    for (const id in pendingPins) {
+      const { status, rank, updatedDT, addedDT } = pendingPins[id];
+      const pinMainId = getMainId(id);
+
+      if ([PIN_LINK, PIN_LINK_ROLLBACK].includes(status)) {
+        pins[pinMainId] = { status, rank, updatedDT, addedDT, id };
+      } else if ([UNPIN_LINK, UNPIN_LINK_ROLLBACK].includes(status)) {
+        if (doExcludeUnpinning) {
+          delete pins[pinMainId];
+        } else {
+          // Can't delete just yet, need for showing loading.
+          pins[pinMainId] = { status, rank, updatedDT, addedDT, id };
+        }
+      } else if ([
+        MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
+      ].includes(status)) {
+        pins[pinMainId] = { status, rank, updatedDT, addedDT, id };
+      } else {
+        console.log('getPins: unsupport pin status: ', status);
+      }
+    }
+
+    return pins;
+  },
 );
 
 export const separatePinnedValues = (
@@ -2520,21 +2518,19 @@ export const getRawTags = (tagFPaths) => {
   return tags;
 };
 
-const _getTags = (tagFPaths, pendingTags) => {
-  const tags = getRawTags(tagFPaths);
-
-  for (const id in pendingTags) {
-    const mainId = getMainId(id);
-    tags[mainId] = { ...tags[mainId], ...pendingTags[id] };
-  }
-
-  return tags;
-};
-
 export const getTags = createSelector(
   (...args) => args[0],
   (...args) => args[1],
-  _getTags,
+  (tagFPaths, pendingTags) => {
+    const tags = getRawTags(tagFPaths);
+
+    for (const id in pendingTags) {
+      const mainId = getMainId(id);
+      tags[mainId] = { ...tags[mainId], ...pendingTags[id] };
+    }
+
+    return tags;
+  },
 );
 
 export const getTagNameObj = (tagName, tagNameObjs) => {

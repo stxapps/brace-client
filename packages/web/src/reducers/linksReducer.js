@@ -2,9 +2,8 @@ import { REHYDRATE } from 'redux-persist/constants';
 import { loop, Cmd } from 'redux-loop';
 
 import {
-  tryUpdateFetched, tryUpdateFetchedMore, moveLinksDeleteStep, extractContents,
-  tryUpdateExtractedContents, extractContentsDeleteStep, unpinLinks,
-  updateCustomDataDeleteStep,
+  tryUpdateFetched, tryUpdateFetchedMore, cleanUpSslts, extractContents,
+  tryUpdateExtractedContents, runAfterFetchTask, unpinLinks, updateCustomDataDeleteStep,
 } from '../actions';
 import {
   UPDATE_LIST_NAME, UPDATE_QUERY_STRING, FETCH_COMMIT, UPDATE_FETCHED,
@@ -19,12 +18,14 @@ import {
   UPDATE_CUSTOM_DATA_ROLLBACK, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
-  IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, TRASH, ARCHIVE, ID, STATUS, ADDED, MOVED,
+  IS_POPUP_SHOWN, POPUP_ANCHOR_POSITION, MY_LIST, TRASH, ARCHIVE, ID, STATUS, ADDED,
   ADDING, MOVING, REMOVING, DELETING, UPDATING, EXTRD_UPDATING, OLD_DELETING,
   DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING,
   PENDING_REMOVING, DO_IGNORE_EXTRD_RST,
 } from '../types/const';
-import { isObject, getArraysPerKey, getMainId, extractLinkId } from '../utils';
+import {
+  isObject, getArraysPerKey, getMainId, extractLinkId, doContainListName,
+} from '../utils';
 import { _ } from '../utils/obj';
 
 const initialState = {};
@@ -61,8 +62,30 @@ const linksReducer = (state = initialState, action) => {
   }
 
   if (action.type === FETCH_COMMIT) {
+    const {
+      doFetchStgsAndInfo, settings, conflictedSettings, listNames,
+    } = action.payload;
+
+    let newState = state;
+    if (
+      doFetchStgsAndInfo &&
+      isObject(settings) &&
+      (!Array.isArray(conflictedSettings) || conflictedSettings.length === 0)
+    ) {
+      newState = {};
+      for (const listName in state) {
+        let doCtLn = false;
+        if (listNames.includes(listName)) doCtLn = true;
+        if (doContainListName(listName, settings.listNameMap)) doCtLn = true;
+        if ([MY_LIST, TRASH, ARCHIVE].includes(listName)) doCtLn = true;
+        if (!doCtLn) continue;
+
+        newState[listName] = { ...state[listName] };
+      }
+    }
+
     return loop(
-      state,
+      newState,
       Cmd.run(
         tryUpdateFetched(action.payload),
         { args: [Cmd.dispatch, Cmd.getState] }
@@ -257,29 +280,43 @@ const linksReducer = (state = initialState, action) => {
     const successIds = _.extract(successLinks, ID);
     const errorIds = _.extract(errorLinks, ID);
 
+    const fromListNames = [], fromIds = [];
+    for (const link of successLinks) {
+      fromListNames.push(link.fromListName);
+      fromIds.push(link.fromId);
+    }
+
     const successIdsPerLn = getArraysPerKey(successListNames, successIds);
     const errorIdsPerLn = getArraysPerKey(errorListNames, errorIds);
+    const fromIdsPerLn = getArraysPerKey(fromListNames, fromIds);
+
+    const toUnpinIds = [];
 
     // Doesn't remove fromListName and fromId here
     //   so need to exclude this attr elsewhere if not needed.
     const newState = { ...state };
     for (const [listName, lnIds] of Object.entries(successIdsPerLn)) {
-      newState[listName] = _.update(
-        newState[listName], ID, lnIds, STATUS, MOVED
-      );
+      newState[listName] = _.update(newState[listName], ID, lnIds, STATUS, ADDED);
+
+      if ([ARCHIVE, TRASH].includes(listName)) toUnpinIds.push(...lnIds);
     }
     for (const [listName, lnIds] of Object.entries(errorIdsPerLn)) {
       newState[listName] = _.update(
         newState[listName], ID, lnIds, STATUS, DIED_MOVING
       );
     }
+    for (const [listName, lnIds] of Object.entries(fromIdsPerLn)) {
+      newState[listName] = _.exclude(newState[listName], ID, lnIds);
+    }
 
+    if (toUnpinIds.length > 0) {
+      return loop(
+        newState,
+        Cmd.run(unpinLinks(toUnpinIds), { args: [Cmd.dispatch, Cmd.getState] })
+      );
+    }
     return loop(
-      newState,
-      Cmd.run(
-        moveLinksDeleteStep(successListNames, successIds),
-        { args: [Cmd.dispatch, Cmd.getState] }
-      )
+      newState, Cmd.run(cleanUpSslts(), { args: [Cmd.dispatch, Cmd.getState] })
     );
   }
 
@@ -532,11 +569,7 @@ const linksReducer = (state = initialState, action) => {
     }
 
     return loop(
-      newState,
-      Cmd.run(
-        extractContentsDeleteStep(successListNames, successLinks),
-        { args: [Cmd.dispatch, Cmd.getState] }
-      )
+      newState, Cmd.run(runAfterFetchTask(), { args: [Cmd.dispatch, Cmd.getState] })
     );
   }
 

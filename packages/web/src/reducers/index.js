@@ -2,11 +2,8 @@ import { combineReducers } from 'redux-loop';
 
 import windowReducer from './windowReducer';
 import linksReducer from './linksReducer';
-import hasMoreLinksReducer from './hasMoreLinksReducer';
 import fetchedReducer from './fetchedReducer';
-import isFetchMoreInterrupted from './isFetchMoreInterrupted';
 import fetchedMoreReducer from './fetchedMoreReducer';
-import refreshFetchedReducer from './refreshFetchedReducer';
 import imagesReducer from './imagesReducer';
 import displayReducer from './displayReducer';
 import userReducer from './userReducer';
@@ -33,11 +30,8 @@ import lockEditorReducer from './lockEditorReducer';
 export default combineReducers({
   window: windowReducer,
   links: linksReducer,
-  hasMoreLinks: hasMoreLinksReducer,
   fetched: fetchedReducer,
-  isFetchMoreInterrupted: isFetchMoreInterrupted,
   fetchedMore: fetchedMoreReducer,
-  refreshFetched: refreshFetchedReducer,
   images: imagesReducer,
   display: displayReducer,
   user: userReducer,
