@@ -28,7 +28,9 @@ const SignUp = (props) => {
     didClick.current = true;
     setLoadingShown(true);
     setTimeout(() => {
-      walletApi.createAccount().then((data) => {
+      walletApi.createAccount(
+        { domainName, appName, appIconUrl, appScopes }
+      ).then((data) => {
         didClick.current = false;
         setLoadingShown(false);
 
@@ -61,9 +63,7 @@ const SignUp = (props) => {
     didClick.current = true;
     setLoadingShown(true);
     setTimeout(() => {
-      walletApi.chooseAccount(
-        walletData.current, { domainName, appName, appIconUrl, appScopes }, 0
-      ).then((data) => {
+      walletApi.chooseAccount(walletData.current, 0).then((data) => {
         didClick.current = false;
         setLoadingShown(false);
         props.onBackedUpBtnClick(data);
