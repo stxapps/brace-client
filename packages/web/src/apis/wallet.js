@@ -230,8 +230,8 @@ const getUsername = async (account) => {
 
 const restoreUsernames = async (accounts) => {
   for (let i = 0, j = accounts.length; i < j; i += N_ACCOUNTS) {
-    // Hiro usage rate limit is 50 requests per minute.
-    if (i !== 0 && i % 40 === 0) await sleep(60 * 1000);
+    // Hiro usage rate limit is 50 requests per minute (including OPTION).
+    if (i !== 0 && i % 20 === 0) await sleep(60 * 1000);
 
     const _accounts = accounts.slice(i, i + N_ACCOUNTS);
     await Promise.all(_accounts.map(async (account) => {
