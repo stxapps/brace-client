@@ -437,7 +437,8 @@ const displayReducer = (state = initialState, action) => {
 
   if (action.type === MOVE_LINKS_ADD_STEP) {
     // Need to remove from showingLinkIds immediately as new moving uses the same id.
-    const { links } = action.payload;
+    const { links, didRetry } = action.payload;
+    if (didRetry) return state;
 
     const ids = links.map(link => link.fromId);
     return {

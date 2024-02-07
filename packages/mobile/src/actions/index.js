@@ -1518,7 +1518,7 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
       });
     } else if (status === DIED_MOVING) {
       const payload = {
-        listNames: [listName], links: [link], manuallyManageError: true,
+        listNames: [listName], links: [link], manuallyManageError: true, didRetry: true,
       };
       dispatch({
         type: MOVE_LINKS_ADD_STEP,
