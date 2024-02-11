@@ -2759,3 +2759,26 @@ export const getArraysPerKey = (keys, values) => {
   }
   return arraysPerKey;
 };
+
+export const getPerformFilesDataPerId = (data) => {
+  let dataPerId = {};
+  if (Array.isArray(data.values) && [true, false].includes(data.isSequential)) {
+    for (const value of data.values) {
+      const _dataPerId = getPerformFilesDataPerId(value);
+      dataPerId = { ...dataPerId, ..._dataPerId };
+    }
+  } else if (isString(data.id) && isString(data.type) && isString(data.path)) {
+    dataPerId[data.id] = data;
+  } else {
+    console.log('In getPerformFilesDataPerId, invalid data:', data);
+  }
+  return dataPerId;
+};
+
+export const getPerformFilesResultsPerId = (results) => {
+  const resultPerId = {};
+  for (const result of results) {
+    resultPerId[result.id] = result;
+  }
+  return resultPerId;
+};

@@ -14,7 +14,8 @@ import {
 } from '../types/actionTypes';
 import {
   LINKS, SSLTS, SETTINGS, INFO, PINS, TAGS, CD_ROOT, DOT_JSON, LOCAL_LINK_ATTRS,
-  BRACE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, N_LINKS,
+  BRACE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, N_LINKS, PUT_FILE,
+  DELETE_FILE,
 } from '../types/const';
 import {
   isEqual, isObject, isString, isNumber, randomString, createLinkFPath, createSsltFPath,
@@ -24,7 +25,7 @@ import {
   deriveUnknownErrorLink, getLinkFPaths, getSsltFPaths, getPinFPaths, listLinkMetas,
   getNLinkMetas, isFetchedLinkId, getInUseTagNames, getTagFPaths, getTags, getMainId,
   createTagFPath, extractTagFPath, getNLinkMetasByQt, newObject, getListNameAndLink,
-  getListNamesFromLinkMetas,
+  getListNamesFromLinkMetas, getPerformFilesDataPerId,
 } from '../utils';
 import vars from '../vars';
 
@@ -996,8 +997,32 @@ const deleteFiles = async (fpaths, dangerouslyIgnoreError = false) => {
   return result;
 };
 
+const performFiles = async (data) => {
+  const results = await serverApi.performFiles(data);
+
+  const dataPerId = getPerformFilesDataPerId(data);
+  for (const result of results) {
+    if (!result.success) continue;
+
+    const { type, fpath, content } = dataPerId[result.id];
+    if (
+      [LINKS, SSLTS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))
+    ) {
+      if (type === PUT_FILE) {
+        await cacheApi.putFile(fpath, content);
+      } else if (type === DELETE_FILE) {
+        await cacheApi.deleteFile(fpath);
+      } else {
+        console.log('In blockstack.performFiles, invalid data:', data);
+      }
+    }
+  }
+
+  return results;
+};
+
 const blockstack = {
-  listFPaths, deletePins, deleteTags, getFiles, putFiles, deleteFiles,
+  listFPaths, deletePins, deleteTags, getFiles, putFiles, deleteFiles, performFiles,
 };
 
 export default blockstack;

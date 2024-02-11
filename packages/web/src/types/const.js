@@ -335,3 +335,6 @@ export const TAG_NAME_MSGS = {
   [DUPLICATE_TAG_NAME]: 'Tag already exists',
   [IN_USE_TAG_NAME]: 'Tag is in use',
 };
+
+export const PUT_FILE = 'putFile';
+export const DELETE_FILE = 'deleteFile';
