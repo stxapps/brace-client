@@ -18,7 +18,7 @@ import {
   DIED_MOVING, DIED_REMOVING, DIED_DELETING, COLOR, PATTERN, IMAGE, BG_COLOR_STYLES,
   PATTERNS, VALID_URL, NO_URL, ASK_CONFIRM_URL, VALID_LIST_NAME, NO_LIST_NAME,
   TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME, COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW,
-  GRACE, ON_HOLD, PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, MAX_TRY, EXTRACT_INVALID_URL,
+  GRACE, ON_HOLD, PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, EXTRACT_INVALID_URL,
   VALID_PASSWORD, NO_PASSWORD, CONTAIN_SPACES_PASSWORD, TOO_LONG_PASSWORD, N_LINKS,
   MY_LIST, TRASH, ARCHIVE, NO_TAG_NAME, TOO_LONG_TAG_NAME, DUPLICATE_TAG_NAME,
   VALID_TAG_NAME, LOCKED, UNLOCKED,
@@ -1967,136 +1967,6 @@ export const getEditingListNameEditors = (listNameEditors, listNameObjs) => {
   return editingLNEs;
 };
 
-export const batchGetFileWithRetry = async (
-  getFile, fpaths, callCount, dangerouslyIgnoreError = false
-) => {
-
-  const responses = await Promise.all(
-    fpaths.map(fpath =>
-      getFile(fpath)
-        .then(content => ({ content, fpath, success: true }))
-        .catch(error => ({ error, content: null, fpath, success: false }))
-    )
-  );
-
-  const failedResponses = responses.filter(({ success }) => !success);
-  const failedFPaths = failedResponses.map(({ fpath }) => fpath);
-
-  if (failedResponses.length) {
-    if (callCount + 1 >= MAX_TRY) {
-      if (dangerouslyIgnoreError) {
-        console.log('batchGetFileWithRetry error: ', failedResponses[0].error);
-        return responses;
-      }
-      throw failedResponses[0].error;
-    }
-
-    return [
-      ...responses.filter(({ success }) => success),
-      ...(await batchGetFileWithRetry(
-        getFile, failedFPaths, callCount + 1, dangerouslyIgnoreError
-      )),
-    ];
-  }
-
-  return responses;
-};
-
-export const batchPutFileWithRetry = async (
-  putFile, fpaths, contents, callCount, dangerouslyIgnoreError = false
-) => {
-
-  const responses = await Promise.all(
-    fpaths.map((fpath, i) =>
-      putFile(fpath, contents[i])
-        .then(publicUrl => ({ publicUrl, fpath, content: contents[i], success: true }))
-        .catch(error => ({ error, fpath, content: contents[i], success: false }))
-    )
-  );
-
-  const failedResponses = responses.filter(({ success }) => !success);
-  const failedFPaths = failedResponses.map(({ fpath }) => fpath);
-  const failedContents = failedResponses.map(({ content }) => content);
-
-  if (failedResponses.length) {
-    if (callCount + 1 >= MAX_TRY) {
-      if (dangerouslyIgnoreError) {
-        console.log('batchPutFileWithRetry error: ', failedResponses[0].error);
-        return responses;
-      }
-      throw failedResponses[0].error;
-    }
-
-    return [
-      ...responses.filter(({ success }) => success),
-      ...(await batchPutFileWithRetry(
-        putFile, failedFPaths, failedContents, callCount + 1, dangerouslyIgnoreError
-      )),
-    ];
-  }
-
-  return responses;
-};
-
-export const batchDeleteFileWithRetry = async (
-  deleteFile, fpaths, callCount, dangerouslyIgnoreError = false
-) => {
-
-  const responses = await Promise.all(
-    fpaths.map((fpath) =>
-      deleteFile(fpath)
-        .then(() => ({ fpath, success: true }))
-        .catch(error => {
-          // BUG ALERT
-          // Treat not found error as not an error as local data might be out-dated.
-          //   i.e. user tries to delete a not-existing file, it's ok.
-          // Anyway, if the file should be there, this will hide the real error!
-          if (
-            isObject(error) &&
-            isString(error.message) &&
-            (
-              (
-                error.message.includes('failed to delete') &&
-                error.message.includes('404')
-              ) ||
-              (
-                error.message.includes('deleteFile Error') &&
-                error.message.includes('GaiaError error 5')
-              ) ||
-              error.message.includes('does_not_exist') ||
-              error.message.includes('file_not_found')
-            )
-          ) {
-            return { fpath, success: true };
-          }
-          return { error, fpath, success: false };
-        })
-    )
-  );
-
-  const failedResponses = responses.filter(({ success }) => !success);
-  const failedFPaths = failedResponses.map(({ fpath }) => fpath);
-
-  if (failedResponses.length) {
-    if (callCount + 1 >= MAX_TRY) {
-      if (dangerouslyIgnoreError) {
-        console.log('batchDeleteFileWithRetry error: ', failedResponses[0].error);
-        return responses;
-      }
-      throw failedResponses[0].error;
-    }
-
-    return [
-      ...responses.filter(({ success }) => success),
-      ...(await batchDeleteFileWithRetry(
-        deleteFile, failedFPaths, callCount + 1, dangerouslyIgnoreError
-      )),
-    ];
-  }
-
-  return responses;
-};
-
 export const deriveUnknownErrorLink = (fpath) => {
   const { id } = extractLinkFPath(fpath);
   const { addedDT } = extractLinkId(id);
@@ -2781,4 +2651,23 @@ export const getPerformFilesResultsPerId = (results) => {
     resultPerId[result.id] = result;
   }
   return resultPerId;
+};
+
+const _throwIfPerformFilesError = (data, resultsPerId) => {
+  if (Array.isArray(data.values) && [true, false].includes(data.isSequential)) {
+    for (const value of data.values) {
+      _throwIfPerformFilesError(value, resultsPerId);
+    }
+  } else if (isString(data.id) && isString(data.type) && isString(data.path)) {
+    const result = resultsPerId[data.id];
+    if (!isObject(result)) throw new Error('Invalid performFiles results');
+    if (!result.success) throw result.error;
+  } else {
+    console.log('In getPerformFilesDataPerId, invalid data:', data);
+  }
+};
+
+export const throwIfPerformFilesError = (data, results) => {
+  const resultsPerId = getPerformFilesResultsPerId(results);
+  _throwIfPerformFilesError(data, resultsPerId);
 };

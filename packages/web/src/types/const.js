@@ -1,5 +1,8 @@
 export const DOMAIN_NAME = 'https://brace.to';
 
+export const HR_HUB_URL = 'https://hub.hiro.so';
+export const SD_HUB_URL = 'https://hub.stacksdrive.com';
+
 export const APP_NAME = 'Brace.to';
 export const APP_ICON_NAME = 'logo192.png';
 export const APP_SCOPES = ['store_write'];

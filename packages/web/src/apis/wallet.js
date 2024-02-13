@@ -16,13 +16,10 @@ import {
 } from '@stacks/encryption/dist/esm';
 import { fetchPrivate } from '@stacks/common/dist/esm';
 
+import { HR_HUB_URL, SD_HUB_URL } from '../types/const';
 import { isObject, isString, isNumber, sleep } from '../utils';
 
 const DEFAULT_PASSWORD = 'password';
-
-const HR_HUB_URL = 'https://hub.hiro.so';
-const SD_HUB_URL = 'https://hub.stacksdrive.com';
-
 const N_ACCOUNTS = 10;
 
 const getHubConfig = (hubUrl, hubInfo, privateKey, associationToken) => {

@@ -266,9 +266,6 @@ const listFiles = async (callback) => {
   return result;
 };
 
-const server = {
-  cachedFPaths: cachedServerFPaths, getFile, putFile, deleteFile, performFiles,
-  listFiles,
-};
+const server = { cachedFPaths: cachedServerFPaths, getFile, performFiles, listFiles };
 
 export default server;

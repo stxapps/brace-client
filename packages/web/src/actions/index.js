@@ -57,21 +57,21 @@ import {
   UPDATE_SELECTING_TAG_NAME, RESET_STATE,
 } from '../types/actionTypes';
 import {
-  BACK_DECIDER, BACK_POPUP, ALL, HASH_BACK, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP,
-  SEARCH_POPUP, PROFILE_POPUP, CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP,
-  CUSTOM_EDITOR_POPUP, TAG_EDITOR_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP,
-  CONFIRM_DISCARD_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
-  SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP, SWWU_POPUP,
-  DISCARD_ACTION_UPDATE_LIST_NAME, DISCARD_ACTION_UPDATE_TAG_NAME, LOCAL_LINK_ATTRS,
-  MY_LIST, TRASH, N_LINKS, N_DAYS, CD_ROOT, ADDED, DIED_ADDING, DIED_MOVING,
-  DIED_REMOVING, DIED_DELETING, DIED_UPDATING, SHOWING_STATUSES, BRACE_PRE_EXTRACT_URL,
-  EXTRACT_INIT, IAP_VERIFY_URL, IAP_STATUS_URL, PADDLE, COM_BRACEDOTTO,
-  COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, ACTIVE, UNKNOWN,
-  SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE, CUSTOM_MODE, FEATURE_PIN,
-  FEATURE_APPEARANCE, FEATURE_CUSTOM, FEATURE_LOCK, FEATURE_TAG, PADDLE_RANDOM_ID,
-  VALID_PASSWORD, PASSWORD_MSGS, IN_USE_LIST_NAME, LIST_NAME_MSGS, VALID_TAG_NAME,
-  DUPLICATE_TAG_NAME, IN_USE_TAG_NAME, TAG_NAME_MSGS, VALID_URL,
-  DELETE_ACTION_LIST_NAME, DELETE_ACTION_TAG_NAME,
+  SD_HUB_URL, BACK_DECIDER, BACK_POPUP, ALL, HASH_BACK, SIGN_UP_POPUP, SIGN_IN_POPUP,
+  ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP,
+  PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP, TAG_EDITOR_POPUP, PAYWALL_POPUP,
+  CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP,
+  SETTINGS_LISTS_MENU_POPUP, SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP,
+  LOCK_EDITOR_POPUP, SWWU_POPUP, DISCARD_ACTION_UPDATE_LIST_NAME,
+  DISCARD_ACTION_UPDATE_TAG_NAME, LOCAL_LINK_ATTRS, MY_LIST, TRASH, N_LINKS, N_DAYS,
+  CD_ROOT, ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
+  DIED_UPDATING, SHOWING_STATUSES, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, IAP_VERIFY_URL,
+  IAP_STATUS_URL, PADDLE, COM_BRACEDOTTO, COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING,
+  VALID, INVALID, ACTIVE, UNKNOWN, SWAP_LEFT, SWAP_RIGHT, WHT_MODE, BLK_MODE,
+  CUSTOM_MODE, FEATURE_PIN, FEATURE_APPEARANCE, FEATURE_CUSTOM, FEATURE_LOCK,
+  FEATURE_TAG, PADDLE_RANDOM_ID, VALID_PASSWORD, PASSWORD_MSGS, IN_USE_LIST_NAME,
+  LIST_NAME_MSGS, VALID_TAG_NAME, DUPLICATE_TAG_NAME, IN_USE_TAG_NAME, TAG_NAME_MSGS,
+  VALID_URL, DELETE_ACTION_LIST_NAME, DELETE_ACTION_TAG_NAME, PUT_FILE, DELETE_FILE,
 } from '../types/const';
 import {
   isEqual, isArrayEqual, isString, isObject, isNumber, throttle, randomString,
@@ -97,11 +97,12 @@ export const init = async (store) => {
   await handlePendingSignIn()(store.dispatch, store.getState);
 
   const isUserSignedIn = userSession.isUserSignedIn();
-  let username = null, userImage = null;
+  let username = null, userImage = null, userHubUrl = null;
   if (isUserSignedIn) {
     const userData = userSession.loadUserData();
     username = userData.username;
     userImage = getUserImageUrl(userData);
+    userHubUrl = userData.hubUrl;
   }
 
   const { windowWidth, windowHeight, visualWidth, visualHeight } = getWindowSize();
@@ -115,6 +116,7 @@ export const init = async (store) => {
       isUserSignedIn,
       username,
       userImage,
+      userHubUrl,
       href: window.location.href,
       windowWidth,
       windowHeight,
@@ -397,6 +399,7 @@ export const updateUserSignedIn = () => async (dispatch, getState) => {
       isUserSignedIn: true,
       username: userData.username,
       image: getUserImageUrl(userData),
+      hubUrl: userData.hubUrl,
     },
   });
 };
@@ -1458,7 +1461,7 @@ export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
     toLinks.push(toLink);
   }
 
-  const payload = { listNames: toListNames, links: toLinks, manuallyManageError: true };
+  const payload = { listNames: toListNames, links: toLinks };
   dispatch({
     type: MOVE_LINKS_ADD_STEP,
     payload,
@@ -1480,7 +1483,10 @@ export const cleanUpSslts = () => async (dispatch, getState) => {
   const { linkMetas, ssltInfos } = listLinkMetas(linkFPaths, ssltFPaths, {});
   const linkMainIds = getLinkMainIds(linkMetas);
 
-  const unusedSsltFPaths = [];
+  let nLinks = N_LINKS;
+  if (getState().user.hubUrl === SD_HUB_URL) nLinks = 60;
+
+  const unusedValues = [];
   for (const fpath of ssltFPaths) {
     const { id } = extractSsltFPath(fpath);
     const ssltMainId = getMainId(id);
@@ -1491,20 +1497,18 @@ export const cleanUpSslts = () => async (dispatch, getState) => {
       !isObject(ssltInfos[ssltMainId]) ||
       fpath !== ssltInfos[ssltMainId].fpath
     ) {
-      unusedSsltFPaths.push(fpath);
-      if (unusedSsltFPaths.length >= N_LINKS) break;
+      unusedValues.push(
+        { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
+      );
+      if (unusedValues.length >= nLinks) break;
     }
   }
 
-  if (unusedSsltFPaths.length === 0) return;
+  if (unusedValues.length === 0) return;
 
   // Don't need offline, if no network or get killed, can do it later.
-  try {
-    await dataApi.deleteFiles(unusedSsltFPaths);
-  } catch (error) {
-    console.log('cleanUpSslts error: ', error);
-    // error in this step should be fine
-  }
+  const data = { values: unusedValues, isSequential: false, nItemsForNs: N_LINKS };
+  await dataApi.performFiles(data);
 };
 
 export const deleteLinks = (dIds) => async (dispatch, getState) => {
@@ -1547,9 +1551,7 @@ export const deleteLinks = (dIds) => async (dispatch, getState) => {
 
   if (ids.length === 0) return;
 
-  const payload = {
-    listNames, ids, manuallyManageError: true, fpathsPerId, prevFPathsPerId,
-  };
+  const payload = { listNames, ids, fpathsPerId, prevFPathsPerId };
   dispatch({
     type: DELETE_LINKS,
     payload,
@@ -1595,9 +1597,7 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
         },
       });
     } else if (status === DIED_MOVING) {
-      const payload = {
-        listNames: [listName], links: [link], manuallyManageError: true, didRetry: true,
-      };
+      const payload = { listNames: [listName], links: [link], didRetry: true };
       dispatch({
         type: MOVE_LINKS_ADD_STEP,
         payload,
@@ -1823,9 +1823,7 @@ export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
 
   if (ids.length === 0) return;
 
-  const payload = {
-    listNames, ids, manuallyManageError: true, fpathsPerId, prevFPathsPerId,
-  };
+  const payload = { listNames, ids, fpathsPerId, prevFPathsPerId };
   dispatch({
     type: DELETE_OLD_LINKS_IN_TRASH,
     payload,
@@ -1847,20 +1845,23 @@ export const cleanUpLinks = () => async (dispatch, getState) => {
 
   const { prevFPathsPerMids } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
 
-  const unusedFPaths = [];
+  let nLinks = N_LINKS;
+  if (getState().user.hubUrl === SD_HUB_URL) nLinks = 60;
+
+  const unusedValues = [];
   for (const fpaths of Object.values(prevFPathsPerMids)) {
-    unusedFPaths.push(...fpaths);
-    if (unusedFPaths.length >= N_LINKS) break;
+    for (const fpath of fpaths) {
+      unusedValues.push(
+        { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
+      );
+    }
+    if (unusedValues.length >= nLinks) break;
   }
 
-  if (unusedFPaths.length === 0) return;
+  if (unusedValues.length === 0) return;
 
-  try {
-    await dataApi.deleteFiles(unusedFPaths);
-  } catch (error) {
-    console.log('cleanUpLinks error: ', error);
-    // error in this step should be fine
-  }
+  const data = { values: unusedValues, isSequential: false, nItemsForNs: N_LINKS };
+  await dataApi.performFiles(data);
 };
 
 const _cleanUpStaticFiles = async (getState) => {
@@ -1872,28 +1873,33 @@ const _cleanUpStaticFiles = async (getState) => {
   const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
   const mainIds = getLinkMainIds(linkMetas);
 
+  let nLinks = N_LINKS;
+  if (getState().user.hubUrl === SD_HUB_URL) nLinks = 60;
+
   // Delete unused static files in server
   let staticFPaths = getStaticFPaths(getState());
 
-  let unusedIds = [], unusedFPaths = [];
+  const unusedIds = [], unusedValues = [];
   for (const fpath of staticFPaths) {
     const { id } = extractStaticFPath(fpath);
     if (!mainIds.includes(getMainId(id))) {
       unusedIds.push(id);
-      unusedFPaths.push(fpath);
-      if (unusedFPaths.length >= N_LINKS) break;
+      unusedValues.push(
+        { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
+      );
+      if (unusedValues.length >= nLinks) break;
     }
   }
 
-  if (unusedFPaths.length > 0) {
-    await dataApi.deleteFiles(unusedFPaths);
-    await fileApi.deleteFiles(unusedFPaths);
+  if (unusedValues.length > 0) {
+    const data = { values: unusedValues, isSequential: false, nItemsForNs: N_LINKS };
+    await dataApi.performFiles(data);
   }
 
   // Delete unused static files in local
   staticFPaths = await fileApi.getStaticFPaths();
 
-  unusedFPaths = [];
+  const unusedFPaths = [];
   for (const fpath of staticFPaths) {
     const { id } = extractStaticFPath(fpath);
     if (!mainIds.includes(getMainId(id))) {
@@ -2138,13 +2144,16 @@ export const updateSettingsDeleteStep = (_settingsFPaths) => async (
   dispatch, getState
 ) => {
   if (_settingsFPaths.length === 0) return;
-  try {
-    await dataApi.putFiles(_settingsFPaths, _settingsFPaths.map(() => ({})));
-    await cleanUpLocks(dispatch, getState);
-  } catch (error) {
-    console.log('updateSettings clean up error: ', error);
-    // error in this step should be fine
+
+  const values = [];
+  for (const fpath of _settingsFPaths) {
+    values.push({ id: fpath, type: PUT_FILE, path: fpath, content: {} });
   }
+
+  const data = { values, isSequential: false, nItemsForNs: N_LINKS };
+  await dataApi.performFiles(data);
+
+  await cleanUpLocks(dispatch, getState);
 };
 
 const updateInfo = async (dispatch, getState) => {
@@ -2164,12 +2173,14 @@ const updateInfo = async (dispatch, getState) => {
 
 export const updateInfoDeleteStep = (_infoFPath) => async (dispatch, getState) => {
   if (!isString(_infoFPath)) return;
-  try {
-    await dataApi.deleteFiles([_infoFPath]);
-  } catch (error) {
-    console.log('updateInfo clean up error: ', error);
-    // error in this step should be fine
-  }
+
+  const fpath = _infoFPath;
+  const values = [
+    { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
+  ];
+
+  const data = { values, isSequential: false, nItemsForNs: N_LINKS };
+  await dataApi.performFiles(data);
 };
 
 export const updateStgsAndInfo = () => async (dispatch, getState) => {
@@ -2256,12 +2267,13 @@ export const mergeSettings = (selectedId) => async (dispatch, getState) => {
 export const mergeSettingsDeleteStep = (_settingsFPaths) => async (
   dispatch, getState
 ) => {
-  try {
-    await dataApi.putFiles(_settingsFPaths, _settingsFPaths.map(() => ({})));
-  } catch (error) {
-    console.log('mergeSettings clean up error: ', error);
-    // error in this step should be fine
+  const values = [];
+  for (const fpath of _settingsFPaths) {
+    values.push({ id: fpath, type: PUT_FILE, path: fpath, content: {} });
   }
+
+  const data = { values, isSequential: false, nItemsForNs: N_LINKS };
+  await dataApi.performFiles(data);
 };
 
 export const updateDoUseLocalLayout = (doUse) => {
@@ -2793,7 +2805,10 @@ export const cleanUpPins = () => async (dispatch, getState) => {
   const linkMainIds = getLinkMainIds(linkMetas);
   const pins = getRawPins(pinFPaths);
 
-  const unusedPins = [];
+  let nLinks = N_LINKS;
+  if (getState().user.hubUrl === SD_HUB_URL) nLinks = 60;
+
+  const unusedValues = [];
   for (const fpath of pinFPaths) {
     const { rank, updatedDT, addedDT, id } = extractPinFPath(fpath);
     const pinMainId = getMainId(id);
@@ -2809,20 +2824,18 @@ export const cleanUpPins = () => async (dispatch, getState) => {
         id !== pins[pinMainId].id
       )
     ) {
-      unusedPins.push({ rank, updatedDT, addedDT, id });
-      if (unusedPins.length >= N_LINKS) break;
+      unusedValues.push(
+        { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
+      );
+      if (unusedValues.length >= nLinks) break;
     }
   }
 
-  if (unusedPins.length === 0) return;
+  if (unusedValues.length === 0) return;
 
   // Don't need offline, if no network or get killed, can do it later.
-  try {
-    await dataApi.deletePins({ pins: unusedPins });
-  } catch (error) {
-    console.log('cleanUpPins error: ', error);
-    // error in this step should be fine
-  }
+  const data = { values: unusedValues, isSequential: false, nItemsForNs: N_LINKS };
+  await dataApi.performFiles(data);
 };
 
 export const updateDoUseLocalTheme = (doUse) => {
@@ -3019,12 +3032,19 @@ export const updateCustomData = (title, image) => async (dispatch, getState) => 
 export const updateCustomDataDeleteStep = (
   listName, fromLink, toLink, serverUnusedFPaths, localUnusedFPaths
 ) => async (dispatch, getState) => {
-  try {
-    await dataApi.deleteFiles(serverUnusedFPaths);
+  if (serverUnusedFPaths.length > 0) {
+    const values = [];
+    for (const fpath of serverUnusedFPaths) {
+      values.push(
+        { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
+      );
+    }
+
+    const data = { values, isSequential: false, nItemsForNs: N_LINKS };
+    await dataApi.performFiles(data);
+  }
+  if (localUnusedFPaths.length > 0) {
     await fileApi.deleteFiles(localUnusedFPaths);
-  } catch (error) {
-    console.log('updateCustomData clean up error: ', error);
-    // error in this step should be fine
   }
 };
 
@@ -3355,9 +3375,12 @@ export const cleanUpTags = () => async (dispatch, getState) => {
   const linkMainIds = getLinkMainIds(linkMetas);
   const tags = getTags(tagFPaths, {});
 
-  const unusedTagFPaths = [];
+  let nLinks = N_LINKS;
+  if (getState().user.hubUrl === SD_HUB_URL) nLinks = 60;
+
+  const unusedValues = [];
   for (const fpath of tagFPaths) {
-    if (unusedTagFPaths.length >= N_LINKS) break;
+    if (unusedValues.length >= nLinks) break;
 
     const { tagName, rank, updatedDT, addedDT, id } = extractTagFPath(fpath);
     const tagMainId = getMainId(id);
@@ -3367,7 +3390,9 @@ export const cleanUpTags = () => async (dispatch, getState) => {
       !linkMainIds.includes(tagMainId) ||
       !isObject(tags[tagMainId])
     ) {
-      unusedTagFPaths.push(fpath);
+      unusedValues.push(
+        { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
+      );
       continue;
     }
 
@@ -3380,18 +3405,18 @@ export const cleanUpTags = () => async (dispatch, getState) => {
         value.id === id
       );
     });
-    if (!found) unusedTagFPaths.push(fpath);
+    if (!found) {
+      unusedValues.push(
+        { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
+      );
+    }
   }
 
-  if (unusedTagFPaths.length === 0) return;
+  if (unusedValues.length === 0) return;
 
   // Don't need offline, if no network or get killed, can do it later.
-  try {
-    await dataApi.deleteTags({ tagFPaths: unusedTagFPaths });
-  } catch (error) {
-    console.log('cleanUpTags error: ', error);
-    // error in this step should be fine
-  }
+  const data = { values: unusedValues, isSequential: false, nItemsForNs: N_LINKS };
+  await dataApi.performFiles(data);
 };
 
 export const updateTagNameEditors = (tagNameEditors) => {

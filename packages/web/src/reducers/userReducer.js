@@ -6,6 +6,7 @@ const initialState = {
   isUserSignedIn: null,
   username: null,
   image: null,
+  hubUrl: null,
 };
 
 const userReducer = (state = initialState, action) => {
@@ -20,6 +21,7 @@ const userReducer = (state = initialState, action) => {
       isUserSignedIn: action.payload.isUserSignedIn,
       username: action.payload.username,
       image: action.payload.userImage,
+      hubUrl: action.payload.userHubUrl,
     };
   }
 
