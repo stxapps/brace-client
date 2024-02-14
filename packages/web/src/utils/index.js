@@ -2660,8 +2660,8 @@ const _throwIfPerformFilesError = (data, resultsPerId) => {
     }
   } else if (isString(data.id) && isString(data.type) && isString(data.path)) {
     const result = resultsPerId[data.id];
-    if (!isObject(result)) throw new Error('Invalid performFiles results');
-    if (!result.success) throw result.error;
+    if (!isObject(result)) throw new Error('Error on previous dependent item');
+    if (!result.success) throw new Error(result.error);
   } else {
     console.log('In getPerformFilesDataPerId, invalid data:', data);
   }

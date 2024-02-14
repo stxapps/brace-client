@@ -435,7 +435,7 @@ const putLinks = async (params) => {
       successLinks.push(link);
     } else {
       let error = new Error('Error on previous dependent item');
-      if (isObject(result)) error = result.error;
+      if (isObject(result)) error = new Error(result.error);
 
       errorListNames.push(listName);
       errorLinks.push(link);
@@ -475,7 +475,7 @@ const moveLinks = async (params) => {
       successLinks.push(link);
     } else {
       let error = new Error('Error on previous dependent item');
-      if (isObject(result)) error = result.error;
+      if (isObject(result)) error = new Error(result.error);
 
       errorListNames.push(listName);
       errorLinks.push(link);
@@ -540,7 +540,7 @@ const deleteLinks = async (params) => {
         } else {
           success = false;
           error = new Error('Error on previous dependent item');
-          if (isObject(result)) error = result.error;
+          if (isObject(result)) error = new Error(result.error);
           break;
         }
       }
@@ -551,7 +551,7 @@ const deleteLinks = async (params) => {
       } else {
         success = false;
         error = new Error('Error on previous dependent item');
-        if (isObject(result)) error = result.error;
+        if (isObject(result)) error = new Error(result.error);
       }
     }
 
