@@ -780,13 +780,13 @@ export const deleteAllData = () => async (dispatch, getState) => {
 
   const { prevFPathsPerMids } = listLinkMetas(lfpRst.linkFPaths, lfpRst.ssltFPaths, {});
 
-  const fpaths = [];
+  const prevFPaths = [], fpaths = [];
   for (const mainId in prevFPathsPerMids) {
-    for (const fpath of prevFPathsPerMids[mainId]) fpaths.push(fpath);
+    for (const fpath of prevFPathsPerMids[mainId]) prevFPaths.push(fpath);
   }
   for (const listName in lfpRst.linkFPaths) {
     for (const fpath of lfpRst.linkFPaths[listName]) {
-      if (fpaths.includes(fpath)) continue;
+      if (prevFPaths.includes(fpath)) continue;
       fpaths.push(fpath);
     }
   }
@@ -794,7 +794,7 @@ export const deleteAllData = () => async (dispatch, getState) => {
   const { fpaths: lastSettingsFPaths } = getLastSettingsFPaths(lfpRst.settingsFPaths);
   for (const fpath of lfpRst.settingsFPaths) {
     if (lastSettingsFPaths.includes(fpath)) continue;
-    fpaths.push(fpath);
+    prevFPaths.push(fpath);
   }
   fpaths.push(...lastSettingsFPaths);
 
@@ -804,13 +804,30 @@ export const deleteAllData = () => async (dispatch, getState) => {
   fpaths.push(...lfpRst.pinFPaths);
   fpaths.push(...lfpRst.tagFPaths);
 
-  const progress = { total: fpaths.length, done: 0 };
+  const progress = { total: prevFPaths.length + fpaths.length, done: 0 };
   dispatch(updateDeleteAllDataProgress(progress));
 
   if (progress.total === 0) return;
 
   try {
     const nLinks = 60;
+    for (let i = 0; i < prevFPaths.length; i += nLinks) {
+      const selectedFPaths = prevFPaths.slice(i, i + nLinks);
+
+      const values = [];
+      for (const fpath of selectedFPaths) {
+        values.push(
+          { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
+        );
+      }
+
+      const data = { values, isSequential: false, nItemsForNs: 1 };
+      const results = await dataApi.performFiles(data);
+      throwIfPerformFilesError(data, results);
+
+      progress.done += selectedFPaths.length;
+      dispatch(updateDeleteAllDataProgress(progress));
+    }
     for (let i = 0; i < fpaths.length; i += nLinks) {
       const selectedFPaths = fpaths.slice(i, i + nLinks);
 
