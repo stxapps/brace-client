@@ -1796,19 +1796,25 @@ export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
   const ssltFPaths = getSsltFPaths(getState());
 
   const {
-    linkMetas, prevFPathsPerMids,
+    linkMetas, prevFPathsPerMids, ssltInfos,
   } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
   const trashMetas = linkMetas.filter(meta => meta.listName === listName);
 
   const listNames = [], ids = [], fpathsPerId = {}, prevFPathsPerId = {};
   for (const meta of trashMetas) {
-    const { id, updatedDT, fpaths } = meta;
+    const { id, fpaths } = meta;
+    const mainId = getMainId(id);
+
+    let updatedDT = meta.updatedDT;
+    if (isObject(ssltInfos[mainId]) && ssltInfos[mainId].updatedDT > updatedDT) {
+      updatedDT = ssltInfos[mainId].updatedDT;
+    }
+
     const interval = Date.now() - updatedDT;
     const days = interval / 1000 / 60 / 60 / 24;
 
     if (days <= N_DAYS) continue;
 
-    const mainId = getMainId(id);
     const prevFPaths = prevFPathsPerMids[mainId];
 
     if (!Array.isArray(fpathsPerId[id])) fpathsPerId[id] = [];

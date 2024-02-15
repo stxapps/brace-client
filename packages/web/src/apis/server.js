@@ -147,6 +147,8 @@ const cacheDataToServerFPaths = async (data, results) => {
 };
 
 const _performFiles = async (data) => {
+  if (Array.isArray(data.values) && data.values.length === 0) return [];
+
   const rId = `${Date.now()}${randomString(4)}`;
   await respectLimit(rId, 2);
 

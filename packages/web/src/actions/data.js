@@ -11,7 +11,7 @@ import {
   UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA,
 } from '../types/actionTypes';
 import {
-  MY_LIST, TRASH, ARCHIVE, LINKS, IMAGES, SETTINGS, PINS, TAGS, DOT_JSON, BASE64,
+  MY_LIST, TRASH, ARCHIVE, LINKS, SSLTS, IMAGES, SETTINGS, PINS, TAGS, DOT_JSON, BASE64,
   LAYOUT_CARD, LAYOUT_LIST, CD_ROOT, PUT_FILE, DELETE_FILE, SD_HUB_URL,
 } from '../types/const';
 import {
@@ -19,8 +19,8 @@ import {
   isDecorValid, isExtractedResultValid, isCustomValid, isListNameObjsValid,
   isTagNameObjsValid, createDataFName, createLinkFPath, createSsltFPath,
   createSettingsFPath, getLastSettingsFPaths, extractFPath, getPins, getMainId,
-  getFormattedTimeStamp, extractLinkFPath, extractPinFPath, getStaticFPath,
-  extractTagFPath, getTags, listLinkMetas, throwIfPerformFilesError,
+  getFormattedTimeStamp, extractPinFPath, getStaticFPath, extractTagFPath, getTags,
+  listLinkMetas, throwIfPerformFilesError,
 } from '../utils';
 import {
   isUint8Array, isBlob, convertBlobToDataUrl, convertDataUrlToBlob,
@@ -257,8 +257,41 @@ const parseBraceImages = async (dispatch, existFPaths, imgEntries, progress) => 
 };
 
 const parseBraceLinks = async (
-  dispatch, existMainIds, ssltInfos, linkEntries, progress
+  dispatch, existMainIds, ssltInfos, linkEntries, ssltEntries, progress
 ) => {
+  const psInfos = {};
+  for (const entry of ssltEntries) {
+    const { fpath, fpathParts, fnameParts } = extractFPath(entry.path);
+    if (fpathParts.length !== 5 || fpathParts[0] !== SSLTS) continue;
+    if (fnameParts.length !== 2) continue;
+
+    const listName = fpathParts[1];
+    if (listName.length === 0) continue;
+
+    const updatedDT = fpathParts[2], addedDT = fpathParts[3], fname = fpathParts[4];
+    if (!(/^\d+$/.test(updatedDT))) continue;
+    if (!(/^\d+$/.test(addedDT))) continue;
+    if (!fname.endsWith(DOT_JSON)) continue;
+
+    const id = fname.slice(0, -5);
+    const tokens = id.split('-');
+    if (![3, 4].includes(tokens.length)) continue;
+    if (!(/^\d+$/.test(tokens[0]))) continue;
+    if (tokens.length === 4 && !(/^\d+$/.test(tokens[3]))) continue;
+
+    const pdUpdatedDT = parseInt(updatedDT, 10);
+
+    const mainId = getMainId(id);
+    if (isObject(psInfos[mainId]) && psInfos[mainId].updatedDT > pdUpdatedDT) continue;
+
+    const content = entry.data;
+    if (!isEqual(content, {})) continue;
+
+    psInfos[mainId] = { updatedDT: pdUpdatedDT, listName, fpath };
+  }
+  progress.done += ssltEntries.length;
+  dispatch(updateImportAllDataProgress(progress));
+
   let now = Date.now();
   const nLinks = 30;
   for (let i = 0; i < linkEntries.length; i += nLinks) {
@@ -283,16 +316,10 @@ const parseBraceLinks = async (
       const id = fname.slice(0, -5);
       if (id !== content.id) continue;
 
-      const listName = fpathParts[1];
       const tokens = id.split('-');
-      if (listName === TRASH) {
-        if (tokens.length !== 4) continue;
-        if (!(/^\d+$/.test(tokens[0]) && /^\d+$/.test(tokens[3]))) continue;
-      } else {
-        if (![3, 4].includes(tokens.length)) continue;
-        if (!(/^\d+$/.test(tokens[0]))) continue;
-        if (tokens.length === 4 && !(/^\d+$/.test(tokens[3]))) continue;
-      }
+      if (![3, 4].includes(tokens.length)) continue;
+      if (!(/^\d+$/.test(tokens[0]))) continue;
+      if (tokens.length === 4 && !(/^\d+$/.test(tokens[3]))) continue;
 
       const mainId = getMainId(id);
       if (existMainIds.includes(mainId)) continue;
@@ -317,7 +344,19 @@ const parseBraceLinks = async (
 
       values.push({ id: fpath, type: PUT_FILE, path: fpath, content });
 
-      if (isObject(ssltInfos[mainId]) && ssltInfos[mainId].listName !== listName) {
+      let listName = fpathParts[1];
+      if (isObject(psInfos[mainId])) listName = psInfos[mainId].listName;
+
+      let doPut = false;
+      if (isObject(ssltInfos[mainId]) && isObject(psInfos[mainId])) {
+        if (ssltInfos[mainId].listName !== listName) doPut = true;
+      } else if (isObject(ssltInfos[mainId]) && !isObject(psInfos[mainId])) {
+        if (ssltInfos[mainId].listName !== listName) doPut = true;
+      } else if (!isObject(!ssltInfos[mainId]) && isObject(psInfos[mainId])) {
+        if (fpathParts[1] !== psInfos[mainId].listName) doPut = true;
+      }
+      if (listName === TRASH) doPut = true;
+      if (doPut) {
         const ssltFPath = createSsltFPath(listName, now, now, id);
         values.push({ id: ssltFPath, type: PUT_FILE, path: ssltFPath, content: {} });
         now += 1;
@@ -356,6 +395,7 @@ const parseBracePins = async (dispatch, pins, pinEntries, progress) => {
       const tokens = id.split('-');
       if (![3, 4].includes(tokens.length)) continue;
       if (!(/^\d+$/.test(tokens[0]))) continue;
+      if (tokens.length === 4 && !(/^\d+$/.test(tokens[3]))) continue;
 
       if (getMainId(id) in pins) continue;
 
@@ -398,6 +438,7 @@ const parseBraceTags = async (dispatch, tags, tagEntries, progress) => {
       const tokens = id.split('-');
       if (![3, 4].includes(tokens.length)) continue;
       if (!(/^\d+$/.test(tokens[0]))) continue;
+      if (tokens.length === 4 && !(/^\d+$/.test(tokens[3]))) continue;
 
       const mainId = getMainId(id);
       if (
@@ -438,14 +479,18 @@ const parseBraceImportedFile = async (dispatch, getState, json) => {
   const pins = getPins(pinFPaths, {}, false);
   const tags = getTags(tagFPaths, {});
 
-  const linkEntries = [], pinEntries = [], tagEntries = [], imgEntries = [];
-  const settingsEntries = [];
+  const linkEntries = [], ssltEntries = [], pinEntries = [], tagEntries = [];
+  const imgEntries = [], settingsEntries = [];
   if (Array.isArray(json)) {
     for (const obj of json) {
       if (!isObject(obj) || !isString(obj.path)) continue;
 
       if (obj.path.startsWith(LINKS)) {
         linkEntries.push(obj);
+        continue;
+      }
+      if (obj.path.startsWith(SSLTS)) {
+        ssltEntries.push(obj);
         continue;
       }
       if (obj.path.startsWith(PINS)) {
@@ -468,8 +513,8 @@ const parseBraceImportedFile = async (dispatch, getState, json) => {
   }
 
   const total = (
-    linkEntries.length + pinEntries.length + tagEntries.length + imgEntries.length +
-    settingsEntries.length
+    linkEntries.length + ssltEntries.length + pinEntries.length + tagEntries.length +
+    imgEntries.length + settingsEntries.length
   );
   const progress = { total, done: 0 };
   dispatch(updateImportAllDataProgress(progress));
@@ -479,7 +524,9 @@ const parseBraceImportedFile = async (dispatch, getState, json) => {
   await parseBraceSettings(dispatch, settingsFPaths, settingsEntries, progress);
   await parseBraceImages(dispatch, staticFPaths, imgEntries, progress);
 
-  await parseBraceLinks(dispatch, existMainIds, ssltInfos, linkEntries, progress);
+  await parseBraceLinks(
+    dispatch, existMainIds, ssltInfos, linkEntries, ssltEntries, progress
+  );
   await parseBracePins(dispatch, pins, pinEntries, progress);
   await parseBraceTags(dispatch, tags, tagEntries, progress);
 };
@@ -606,10 +653,12 @@ export const exportAllData = () => async (dispatch, getState) => {
     return;
   }
 
-  const { linkMetas } = listLinkMetas(lfpRst.linkFPaths, lfpRst.ssltFPaths, {});
+  const {
+    linkMetas, ssltInfos,
+  } = listLinkMetas(lfpRst.linkFPaths, lfpRst.ssltFPaths, {});
 
-  const linkFPaths = [], pinFPaths = [], tagFPaths = [], settingsFPaths = [];
-  const linkMainIds = [], lfpToLn = {};
+  const linkFPaths = [], ssltFPaths = [], pinFPaths = [], tagFPaths = [];
+  const settingsFPaths = [], linkMainIds = [];
 
   for (const meta of linkMetas) {
     const { id, fpaths, listName } = meta;
@@ -617,9 +666,15 @@ export const exportAllData = () => async (dispatch, getState) => {
 
     for (const fpath of fpaths) {
       linkFPaths.push(fpath);
-      lfpToLn[fpath] = listName;
     }
     linkMainIds.push(getMainId(id));
+  }
+
+  for (const mainId in ssltInfos) {
+    if (!linkMainIds.includes(mainId)) continue;
+
+    const { fpath } = ssltInfos[mainId];
+    ssltFPaths.push(fpath);
   }
 
   for (const pinFPath of lfpRst.pinFPaths) {
@@ -646,7 +701,8 @@ export const exportAllData = () => async (dispatch, getState) => {
   }
 
   const total = (
-    linkFPaths.length + pinFPaths.length + tagFPaths.length + settingsFPaths.length
+    linkFPaths.length + ssltFPaths.length + pinFPaths.length + tagFPaths.length +
+    settingsFPaths.length
   );
   const progress = { total, done: 0 };
   dispatch(updateExportAllDataProgress(progress));
@@ -665,9 +721,7 @@ export const exportAllData = () => async (dispatch, getState) => {
       const { responses } = await dataApi.getFiles(selectedFPaths, true);
       for (const response of responses) {
         if (response.success) {
-          const { id } = extractLinkFPath(response.fpath);
-          const path = createLinkFPath(lfpToLn[response.fpath], id);
-          const data = response.content;
+          const path = response.fpath, data = response.content;
           successResponses.push({ path, data });
 
           if (isObject(data.custom)) {
@@ -711,12 +765,12 @@ export const exportAllData = () => async (dispatch, getState) => {
       }
     }
 
-    const ptFPaths = [...pinFPaths, ...tagFPaths];
-    for (const fpath of ptFPaths) {
+    const sptFPaths = [...ssltFPaths, ...pinFPaths, ...tagFPaths];
+    for (const fpath of sptFPaths) {
       const path = fpath, data = {};
       successResponses.push({ path, data });
     }
-    progress.done += ptFPaths.length;
+    progress.done += sptFPaths.length;
     if (progress.done < progress.total) {
       dispatch(updateExportAllDataProgress(progress));
     }
