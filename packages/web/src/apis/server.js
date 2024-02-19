@@ -191,7 +191,7 @@ const nsPerformFile = async (data) => {
           error.message.includes('does_not_exist') ||
           error.message.includes('file_not_found')
         )
-      )
+      );
       if (!isDoesNotExistError) throw error;
     }
     return { success: true, id };

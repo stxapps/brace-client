@@ -2182,7 +2182,7 @@ export const updateInfoDeleteStep = (_infoFPath) => async (dispatch, getState) =
 
   const fpath = _infoFPath;
   const values = [
-    { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
+    { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true },
   ];
 
   const data = { values, isSequential: false, nItemsForNs: N_LINKS };

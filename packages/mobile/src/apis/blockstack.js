@@ -14,17 +14,18 @@ import {
 } from '../types/actionTypes';
 import {
   LINKS, SSLTS, SETTINGS, INFO, PINS, TAGS, CD_ROOT, DOT_JSON, LOCAL_LINK_ATTRS,
-  BRACE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, N_LINKS,
+  BRACE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, N_LINKS, PUT_FILE,
+  DELETE_FILE, MAX_TRY,
 } from '../types/const';
 import {
   isEqual, isObject, isString, isNumber, randomString, createLinkFPath, createSsltFPath,
   createPinFPath, addFPath, getStaticFPath, deriveFPaths, createDataFName,
   getLastSettingsFPaths, createSettingsFPath, excludeNotObjContents,
-  batchGetFileWithRetry, batchPutFileWithRetry, batchDeleteFileWithRetry,
   deriveUnknownErrorLink, getLinkFPaths, getSsltFPaths, getPinFPaths, listLinkMetas,
   getNLinkMetas, isFetchedLinkId, getInUseTagNames, getTagFPaths, getTags, getMainId,
   createTagFPath, extractTagFPath, getNLinkMetasByQt, newObject, getListNameAndLink,
-  getListNamesFromLinkMetas,
+  getListNamesFromLinkMetas, getPerformFilesDataPerId, getPerformFilesResultsPerId,
+  throwIfPerformFilesError,
 } from '../utils';
 import vars from '../vars';
 
@@ -408,31 +409,37 @@ const fetchMore = async (params) => {
 };
 
 const putLinks = async (params) => {
-  const { listNames, links, manuallyManageError } = params;
+  const { listNames, links } = params;
 
-  const fpaths = [], contents = [], linkMap = {};
+  const values = [];
   for (let i = 0; i < listNames.length; i++) {
     const [listName, link] = [listNames[i], links[i]];
     const fpath = createLinkFPath(listName, link.id);
-    fpaths.push(fpath);
-    contents.push(newObject(link, LOCAL_LINK_ATTRS));
-    linkMap[fpath] = { listName, link };
+    const content = newObject(link, LOCAL_LINK_ATTRS);
+    values.push({ id: link.id, type: PUT_FILE, path: fpath, content });
   }
 
   const successListNames = [], successLinks = [];
   const errorListNames = [], errorLinks = [], errors = [];
 
-  // Use dangerouslyIgnoreError=true to manage which succeeded/failed manually.
-  const { responses } = await putFiles(fpaths, contents, !!manuallyManageError);
-  for (const response of responses) {
-    const { listName, link } = linkMap[response.fpath];
-    if (response.success) {
+  const data = { values, isSequential: false, nItemsForNs: N_LINKS };
+  const results = await performFiles(data);
+  const resultsPerId = getPerformFilesResultsPerId(results);
+
+  for (let i = 0; i < listNames.length; i++) {
+    const [listName, link] = [listNames[i], links[i]];
+
+    const result = resultsPerId[link.id];
+    if (isObject(result) && result.success) {
       successListNames.push(listName);
       successLinks.push(link);
     } else {
+      let error = new Error('Error on previous dependent item');
+      if (isObject(result)) error = new Error(result.error);
+
       errorListNames.push(listName);
       errorLinks.push(link);
-      errors.push(response.error);
+      errors.push(error);
     }
   }
 
@@ -440,33 +447,39 @@ const putLinks = async (params) => {
 };
 
 const moveLinks = async (params) => {
-  const { listNames, links, manuallyManageError } = params;
+  const { listNames, links } = params;
 
   let now = Date.now();
 
-  const fpaths = [], contents = [], linkMap = {};
+  const values = [];
   for (let i = 0; i < listNames.length; i++) {
     const [listName, link] = [listNames[i], links[i]];
     const fpath = createSsltFPath(listName, now, now, link.id);
-    fpaths.push(fpath);
-    contents.push({});
-    linkMap[fpath] = { listName, link };
+    values.push({ id: link.id, type: PUT_FILE, path: fpath, content: {} });
     now += 1;
   }
 
   const successListNames = [], successLinks = [];
   const errorListNames = [], errorLinks = [], errors = [];
 
-  const { responses } = await putFiles(fpaths, contents, !!manuallyManageError);
-  for (const response of responses) {
-    const { listName, link } = linkMap[response.fpath];
-    if (response.success) {
+  const data = { values, isSequential: false, nItemsForNs: N_LINKS };
+  const results = await performFiles(data);
+  const resultsPerId = getPerformFilesResultsPerId(results);
+
+  for (let i = 0; i < listNames.length; i++) {
+    const [listName, link] = [listNames[i], links[i]];
+
+    const result = resultsPerId[link.id];
+    if (isObject(result) && result.success) {
       successListNames.push(listName);
       successLinks.push(link);
     } else {
+      let error = new Error('Error on previous dependent item');
+      if (isObject(result)) error = new Error(result.error);
+
       errorListNames.push(listName);
       errorLinks.push(link);
-      errors.push(response.error);
+      errors.push(error);
     }
   }
 
@@ -474,81 +487,82 @@ const moveLinks = async (params) => {
 };
 
 const deleteLinks = async (params) => {
-  const { listNames, ids, manuallyManageError, fpathsPerId, prevFPathsPerId } = params;
+  const { listNames, ids, fpathsPerId, prevFPathsPerId } = params;
 
-  const lnMap = {};
+  const values = [];
   for (let i = 0; i < listNames.length; i++) {
     const [listName, id] = [listNames[i], ids[i]];
-    lnMap[id] = listName;
-  }
 
-  const idMap = {}, prevFPaths = [], fpaths = [];
-  for (const id in prevFPathsPerId) {
-    const listName = lnMap[id];
+    const pValues = [];
     for (const fpath of prevFPathsPerId[id]) {
-      idMap[fpath] = { listName, id };
-      if (!prevFPaths.includes(fpath)) prevFPaths.push(fpath);
+      pValues.push(
+        { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
+      );
     }
-  }
+    const pData = { values: pValues, isSequential: false, nItemsForNs: N_LINKS };
 
-  const _successListNames = [], _successIds = [];
-  const successListNames = [], successIds = [];
-  const errorListNames = [], errorIds = [], errors = [];
-
-  // try to delete previous fpaths first.
-  const {
-    responses: pResponses,
-  } = await deleteFiles(prevFPaths, !!manuallyManageError);
-
-  for (const response of pResponses) {
-    const { listName, id } = idMap[response.fpath];
-    if (!response.success) {
-      if (!errorIds.includes(id)) {
-        errorListNames.push(listName);
-        errorIds.push(id);
-        errors.push(response.error);
-      }
-    }
-  }
-
-  for (let i = 0; i < listNames.length; i++) {
-    const [listName, id] = [listNames[i], ids[i]];
-    if (errorIds.includes(id)) continue;
-
+    const cValues = [];
     if (isObject(fpathsPerId) && Array.isArray(fpathsPerId[id])) {
       for (const fpath of fpathsPerId[id]) {
-        idMap[fpath] = { listName, id };
-        if (!fpaths.includes(fpath)) fpaths.push(fpath);
+        cValues.push(
+          { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
+        );
       }
     } else {
       console.log(`In deleteLinks, for ${id}, invalid fpathsPerId`, fpathsPerId);
       const fpath = createLinkFPath(listName, id);
-      idMap[fpath] = { listName, id };
-      if (!fpaths.includes(fpath)) fpaths.push(fpath);
+      cValues.push(
+        { id, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
+      );
     }
+    const cData = { values: cValues, isSequential: false, nItemsForNs: N_LINKS };
+
+    const iData = { values: [pData, cData], isSequential: true, nItemsForNs: N_LINKS };
+    values.push(iData);
   }
 
-  const { responses } = await deleteFiles(fpaths, !!manuallyManageError);
-  for (const response of responses) {
-    const { listName, id } = idMap[response.fpath];
-    if (response.success) {
-      if (!_successIds.includes(id)) {
-        _successListNames.push(listName);
-        _successIds.push(id);
+  const successListNames = [], successIds = [];
+  const errorListNames = [], errorIds = [], errors = [];
+
+  const data = { values, isSequential: false, nItemsForNs: N_LINKS };
+  const results = await performFiles(data);
+  const resultsPerId = getPerformFilesResultsPerId(results);
+
+  for (let i = 0; i < listNames.length; i++) {
+    const [listName, id] = [listNames[i], ids[i]];
+
+    let success, error;
+    if (isObject(fpathsPerId) && Array.isArray(fpathsPerId[id])) {
+      for (const fpath of fpathsPerId[id]) {
+        const result = resultsPerId[fpath];
+        if (isObject(result) && result.success) {
+          success = true;
+        } else {
+          success = false;
+          error = new Error('Error on previous dependent item');
+          if (isObject(result)) error = new Error(result.error);
+          break;
+        }
       }
     } else {
-      if (!errorIds.includes(id)) {
-        errorListNames.push(listName);
-        errorIds.push(id);
-        errors.push(response.error);
+      const result = resultsPerId[id];
+      if (isObject(result) && result.success) {
+        success = true;
+      } else {
+        success = false;
+        error = new Error('Error on previous dependent item');
+        if (isObject(result)) error = new Error(result.error);
       }
     }
-  }
-  for (let i = 0; i < _successListNames.length; i++) {
-    const [listName, id] = [_successListNames[i], _successIds[i]];
-    if (errorIds.includes(id)) continue;
-    successListNames.push(listName);
-    successIds.push(id);
+
+    if (success) {
+      successListNames.push(listName);
+      successIds.push(id);
+    } else {
+      errorListNames.push(listName);
+      errorIds.push(id);
+      errors.push(error);
+    }
   }
 
   return { successListNames, successIds, errorListNames, errorIds, errors };
@@ -582,7 +596,7 @@ const extractContents = async (params) => {
   }
 
   const pResult = await putLinks({
-    listNames: extractedListNames, links: extractedLinks, manuallyManageError: true,
+    listNames: extractedListNames, links: extractedLinks,
   });
 
   return { toListNames, toLinks, extractedListNames, extractedLinks, ...pResult };
@@ -626,7 +640,14 @@ const putSettings = async (params) => {
   const settingsFName = createDataFName(`${addedDT}${randomString(4)}`, _settingsIds);
   const settingsFPath = createSettingsFPath(settingsFName);
 
-  await putFiles([settingsFPath], [settings]);
+  const values = [
+    { id: settingsFPath, type: PUT_FILE, path: settingsFPath, content: settings },
+  ];
+
+  const data = { values, isSequential: false, nItemsForNs: N_LINKS };
+  const results = await performFiles(data);
+  throwIfPerformFilesError(data, results);
+
   return { settings, _settingsFPaths };
 };
 
@@ -660,7 +681,14 @@ const putInfo = async (params) => {
   const addedDT = Date.now();
   const infoFPath = `${INFO}${addedDT}${DOT_JSON}`;
 
-  await putFiles([infoFPath], [info]);
+  const values = [
+    { id: infoFPath, type: PUT_FILE, path: infoFPath, content: info },
+  ];
+
+  const data = { values, isSequential: false, nItemsForNs: N_LINKS };
+  const results = await performFiles(data);
+  throwIfPerformFilesError(data, results);
+
   return { info, _infoFPath };
 };
 
@@ -700,15 +728,17 @@ const putPins = async (params) => {
     }
   }
 
-  const fpaths = [], contents = [];
+  const values = [];
   for (const pin of pins) {
-    fpaths.push(createPinFPath(pin.rank, pin.updatedDT, pin.addedDT, pin.id));
-    contents.push({});
+    const fpath = createPinFPath(pin.rank, pin.updatedDT, pin.addedDT, pin.id);
+    values.push({ id: fpath, type: PUT_FILE, path: fpath, content: {} });
   }
-  // Use dangerouslyIgnoreError=true to manage which succeeded/failed manually.
+
+  const data = { values, isSequential: false, nItemsForNs: N_LINKS };
+  const results = await performFiles(data);
   // Bug alert: if several pins and error, rollback is incorrect
   //   as some are successful but some aren't.
-  await putFiles(fpaths, contents);
+  throwIfPerformFilesError(data, results);
 
   return { listNames: pListNames, links: pLinks, pins };
 };
@@ -716,10 +746,17 @@ const putPins = async (params) => {
 const deletePins = async (params) => {
   const { pins } = params;
 
-  const pinFPaths = pins.map(pin => {
-    return createPinFPath(pin.rank, pin.updatedDT, pin.addedDT, pin.id);
-  });
-  await deleteFiles(pinFPaths);
+  const values = [];
+  for (const pin of pins) {
+    const fpath = createPinFPath(pin.rank, pin.updatedDT, pin.addedDT, pin.id);
+    values.push(
+      { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
+    );
+  }
+
+  const data = { values, isSequential: false, nItemsForNs: N_LINKS };
+  const results = await performFiles(data);
+  throwIfPerformFilesError(data, results);
 
   return { pins };
 };
@@ -731,23 +768,29 @@ const updateCustomData = async (params) => {
     usedFPaths, serverUnusedFPaths, localUnusedFPaths,
   } = deriveFPaths(fromLink.custom, toLink.custom);
 
-  const staticFPaths = [], staticContents = [];
+  const values = [], pValues = [];
   for (const fpath of usedFPaths) {
     if (vars.platform.isReactNative) {
-      staticFPaths.push('file://' + fpath);
-      staticContents.push('');
+      pValues.push(
+        { id: fpath, type: PUT_FILE, path: 'file://' + fpath, content: '' }
+      );
     } else {
       const { content } = await fileApi.getFile(fpath);
-      staticFPaths.push(fpath);
-      staticContents.push(content);
+      pValues.push({ id: fpath, type: PUT_FILE, path: fpath, content });
     }
   }
+  const pData = { values: pValues, isSequential: false, nItemsForNs: N_LINKS };
+  values.push(pData);
 
-  // Make sure save static files successfully first
-  await putFiles(staticFPaths, staticContents);
-  await putFiles(
-    [createLinkFPath(listName, toLink.id)], [newObject(toLink, LOCAL_LINK_ATTRS)]
+  const toFPath = createLinkFPath(listName, toLink.id);
+  const toContent = newObject(toLink, LOCAL_LINK_ATTRS);
+  values.push(
+    { id: toFPath, type: PUT_FILE, path: toFPath, content: toContent }
   );
+
+  const data = { values, isSequential: true, nItemsForNs: N_LINKS };
+  const results = await performFiles(data);
+  throwIfPerformFilesError(data, results);
 
   return { listName, fromLink, toLink, serverUnusedFPaths, localUnusedFPaths };
 };
@@ -863,7 +906,7 @@ const updateTagDataTStep = async (params) => {
 
   let now = Date.now();
 
-  const fpaths = [], contents = [], deletedTagNames = [];
+  const deletedTagNames = [], pfValues = [];
   for (const tagName in combinedValues) {
     const value = combinedValues[tagName];
 
@@ -874,32 +917,64 @@ const updateTagDataTStep = async (params) => {
     }
 
     const addedDT = isNumber(value.addedDT) ? value.addedDT : now;
-    fpaths.push(createTagFPath(tagName, value.rank, now, addedDT, id));
-    contents.push({});
+    const fpath = createTagFPath(tagName, value.rank, now, addedDT, id);
+    pfValues.push(
+      { id: fpath, type: PUT_FILE, path: fpath, content: {} }
+    );
     now += 1;
   }
-  await putFiles(fpaths, contents);
 
   // MainId is the same, but id can be different.
   // Old paths might not be deleted, need to delete them all.
-  const deleteFPaths = [];
   for (const fpath of tagFPaths) {
     const eResult = extractTagFPath(fpath);
     if (getMainId(eResult.id) === mainId && deletedTagNames.includes(eResult.tagName)) {
-      deleteFPaths.push(createTagFPath(
-        eResult.tagName, eResult.rank, eResult.updatedDT, eResult.addedDT, eResult.id
-      ));
+      pfValues.push(
+        { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
+      );
     }
   }
-  await deleteFiles(deleteFPaths);
+
+  const data = { values: pfValues, isSequential: false, nItemsForNs: N_LINKS };
+  const results = await performFiles(data);
+  throwIfPerformFilesError(data, results);
 
   return { id, values };
 };
 
-const deleteTags = async (params) => {
-  const { tagFPaths } = params;
-  await deleteFiles(tagFPaths);
-  return { tagFPaths };
+const batchGetFileWithRetry = async (
+  getFile, fpaths, callCount, dangerouslyIgnoreError = false
+) => {
+
+  const responses = await Promise.all(
+    fpaths.map(fpath =>
+      getFile(fpath)
+        .then(content => ({ content, fpath, success: true }))
+        .catch(error => ({ error, content: null, fpath, success: false }))
+    )
+  );
+
+  const failedResponses = responses.filter(({ success }) => !success);
+  const failedFPaths = failedResponses.map(({ fpath }) => fpath);
+
+  if (failedResponses.length) {
+    if (callCount + 1 >= MAX_TRY) {
+      if (dangerouslyIgnoreError) {
+        console.log('batchGetFileWithRetry error: ', failedResponses[0].error);
+        return responses;
+      }
+      throw failedResponses[0].error;
+    }
+
+    return [
+      ...responses.filter(({ success }) => success),
+      ...(await batchGetFileWithRetry(
+        getFile, failedFPaths, callCount + 1, dangerouslyIgnoreError
+      )),
+    ];
+  }
+
+  return responses;
 };
 
 const getFiles = async (fpaths, dangerouslyIgnoreError = false) => {
@@ -945,59 +1020,30 @@ const getFiles = async (fpaths, dangerouslyIgnoreError = false) => {
   return result;
 };
 
-const putFiles = async (fpaths, contents, dangerouslyIgnoreError = false) => {
-  const result = { responses: [] };
+const performFiles = async (data) => {
+  const results = await serverApi.performFiles(data);
 
-  for (let i = 0, j = fpaths.length; i < j; i += N_LINKS) {
-    const selectedFPaths = fpaths.slice(i, i + N_LINKS);
-    const selectedContents = contents.slice(i, i + N_LINKS);
-    const responses = await batchPutFileWithRetry(
-      serverApi.putFile, selectedFPaths, selectedContents, 0, dangerouslyIgnoreError
-    );
-    for (const response of responses) {
-      result.responses.push(response);
+  const dataPerId = getPerformFilesDataPerId(data);
+  for (const result of results) {
+    if (!result.success) continue;
 
-      if (response.success) {
-        const { fpath, content } = response;
-        if (
-          [LINKS, SSLTS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))
-        ) {
-          await cacheApi.putFile(fpath, content);
-        }
+    const { type, path: fpath, content } = dataPerId[result.id];
+    if (
+      [LINKS, SSLTS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))
+    ) {
+      if (type === PUT_FILE) {
+        await cacheApi.putFile(fpath, content);
+      } else if (type === DELETE_FILE) {
+        await cacheApi.deleteFile(fpath);
+      } else {
+        console.log('In blockstack.performFiles, invalid data:', data);
       }
     }
   }
 
-  return result;
+  return results;
 };
 
-const deleteFiles = async (fpaths, dangerouslyIgnoreError = false) => {
-  const result = { responses: [] };
-
-  for (let i = 0, j = fpaths.length; i < j; i += N_LINKS) {
-    const selectedFPaths = fpaths.slice(i, i + N_LINKS);
-    const responses = await batchDeleteFileWithRetry(
-      serverApi.deleteFile, selectedFPaths, 0, dangerouslyIgnoreError
-    );
-    for (const response of responses) {
-      result.responses.push(response);
-
-      if (response.success) {
-        const { fpath } = response;
-        if (
-          [LINKS, SSLTS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))
-        ) {
-          await cacheApi.deleteFile(fpath);
-        }
-      }
-    }
-  }
-
-  return result;
-};
-
-const blockstack = {
-  listFPaths, deletePins, deleteTags, getFiles, putFiles, deleteFiles,
-};
+const blockstack = { listFPaths, getFiles, performFiles };
 
 export default blockstack;

@@ -233,7 +233,7 @@ const linksReducer = (state = initialState, action) => {
     return loop(
       newState,
       Cmd.run(
-        extractContents(successListNames, _.extract(successLinks, ID)),
+        extractContents(successListNames, successIds),
         { args: [Cmd.dispatch, Cmd.getState] }
       )
     );

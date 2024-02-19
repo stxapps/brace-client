@@ -204,7 +204,7 @@ const _parseBraceSettings = async (settingsFPaths, settingsEntries) => {
   now += 1;
 
   const values = [
-    { id: fpath, type: PUT_FILE, path: fpath, content: latestSettingsPart.content }
+    { id: fpath, type: PUT_FILE, path: fpath, content: latestSettingsPart.content },
   ];
 
   const data = { values, isSequential: false, nItemsForNs: 1 };

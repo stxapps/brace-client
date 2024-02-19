@@ -641,7 +641,7 @@ const putSettings = async (params) => {
   const settingsFPath = createSettingsFPath(settingsFName);
 
   const values = [
-    { id: settingsFPath, type: PUT_FILE, path: settingsFPath, content: settings }
+    { id: settingsFPath, type: PUT_FILE, path: settingsFPath, content: settings },
   ];
 
   const data = { values, isSequential: false, nItemsForNs: N_LINKS };
@@ -682,7 +682,7 @@ const putInfo = async (params) => {
   const infoFPath = `${INFO}${addedDT}${DOT_JSON}`;
 
   const values = [
-    { id: infoFPath, type: PUT_FILE, path: infoFPath, content: info }
+    { id: infoFPath, type: PUT_FILE, path: infoFPath, content: info },
   ];
 
   const data = { values, isSequential: false, nItemsForNs: N_LINKS };
@@ -929,9 +929,6 @@ const updateTagDataTStep = async (params) => {
   for (const fpath of tagFPaths) {
     const eResult = extractTagFPath(fpath);
     if (getMainId(eResult.id) === mainId && deletedTagNames.includes(eResult.tagName)) {
-      const fpath = createTagFPath(
-        eResult.tagName, eResult.rank, eResult.updatedDT, eResult.addedDT, eResult.id
-      );
       pfValues.push(
         { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
       );

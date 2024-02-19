@@ -1,5 +1,8 @@
 export const DOMAIN_NAME = 'https://brace.to';
 
+export const HR_HUB_URL = 'https://hub.hiro.so';
+export const SD_HUB_URL = 'https://hub.stacksdrive.com';
+
 export const APP_NAME = 'Brace.to';
 export const APP_ICON_NAME = 'logo192.png';
 export const APP_SCOPES = ['store_write'];
@@ -335,3 +338,6 @@ export const TAG_NAME_MSGS = {
   [DUPLICATE_TAG_NAME]: 'Tag already exists',
   [IN_USE_TAG_NAME]: 'Tag is in use',
 };
+
+export const PUT_FILE = 'putFile';
+export const DELETE_FILE = 'deleteFile';

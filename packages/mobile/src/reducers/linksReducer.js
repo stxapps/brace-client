@@ -210,21 +210,30 @@ const linksReducer = (state = initialState, action) => {
   }
 
   if (action.type === ADD_LINKS_COMMIT) {
-    const { successListNames, successLinks } = action.payload;
+    const {
+      successListNames, successLinks, errorListNames, errorLinks,
+    } = action.payload;
 
-    const linksPerLn = getArraysPerKey(successListNames, successLinks);
+    const successIds = _.extract(successLinks, ID);
+    const errorIds = _.extract(errorLinks, ID);
+
+    const successIdsPerLn = getArraysPerKey(successListNames, successIds);
+    const errorIdsPerLn = getArraysPerKey(errorListNames, errorIds);
 
     const newState = { ...state };
-    for (const [listName, lnLinks] of Object.entries(linksPerLn)) {
+    for (const [listName, lnIds] of Object.entries(successIdsPerLn)) {
+      newState[listName] = _.update(newState[listName], ID, lnIds, STATUS, ADDED);
+    }
+    for (const [listName, lnIds] of Object.entries(errorIdsPerLn)) {
       newState[listName] = _.update(
-        newState[listName], ID, _.extract(lnLinks, ID), STATUS, ADDED
+        newState[listName], ID, lnIds, STATUS, DIED_ADDING
       );
     }
 
     return loop(
       newState,
       Cmd.run(
-        extractContents(successListNames, _.extract(successLinks, ID)),
+        extractContents(successListNames, successIds),
         { args: [Cmd.dispatch, Cmd.getState] }
       )
     );
