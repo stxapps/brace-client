@@ -54,8 +54,12 @@ const appState = {
   lastChangeDT: Date.now(),
 };
 
+const user = {
+  hubUrl: null,
+};
+
 const vars = {
   cachedServerFPaths, scrollPanel, fetch, randomHouseworkTasks, iap, platform,
-  importAllData, appState,
+  importAllData, appState, user,
 };
 export default vars;

@@ -2,19 +2,19 @@ import { Storage } from '@stacks/storage/dist/esm';
 
 import internalHub from './internalHub';
 import userSession from '../userSession';
-import { DOT_JSON, PUT_FILE, DELETE_FILE, N_LINKS } from '../types/const';
+import { DOT_JSON, PUT_FILE, DELETE_FILE, N_LINKS, SD_HUB_URL } from '../types/const';
 import {
   isObject, isString, isNumber, copyFPaths, addFPath, deleteFPath, sleep, randomString,
   sample, getPerformFilesDataPerId,
 } from '../utils';
-import { cachedServerFPaths } from '../vars';
+import vars, { cachedServerFPaths } from '../vars';
 
 const _userSession = userSession._userSession;
 
 let networkInfos = []; // info = { rId, dt, nRequests }
 
 const respectLimit = async (rId, nRequests) => {
-  const LIMIT = 72; // Requests per minute
+  const LIMIT = vars.user.hubUrl === SD_HUB_URL ? 144 : 72; // Requests per minute
   const ONE_MINUTE = 60 * 1000;
   const N_TRIES = 4;
 
@@ -241,10 +241,8 @@ const nsPerformFiles = async (data) => {
 };
 
 const performFiles = async (data) => {
-  const userData = userSession.loadUserData();
-
   let results;
-  if (userData.hubUrl === 'https://hub.stacksdrive.com') {
+  if (vars.user.hubUrl === SD_HUB_URL) {
     results = await _performFiles(data);
   } else {
     results = await nsPerformFiles(data);

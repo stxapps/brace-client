@@ -1,6 +1,7 @@
 import { REHYDRATE } from 'redux-persist/constants';
 
 import { INIT, UPDATE_USER, RESET_STATE } from '../types/actionTypes';
+import vars from '../vars';
 
 const initialState = {
   isUserSignedIn: null,
@@ -12,10 +13,12 @@ const initialState = {
 const userReducer = (state = initialState, action) => {
 
   if (action.type === REHYDRATE) {
+    vars.user.hubUrl = initialState.hubUrl;
     return { ...initialState };
   }
 
   if (action.type === INIT) {
+    vars.user.hubUrl = action.payload.userHubUrl;
     return {
       ...state,
       isUserSignedIn: action.payload.isUserSignedIn,
@@ -26,10 +29,12 @@ const userReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_USER) {
+    vars.user.hubUrl = action.payload.hubUrl;
     return { ...state, ...action.payload };
   }
 
   if (action.type === RESET_STATE) {
+    vars.user.hubUrl = initialState.hubUrl;
     return { ...initialState, isUserSignedIn: false };
   }
 
