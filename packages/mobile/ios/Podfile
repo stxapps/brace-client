@@ -31,7 +31,7 @@ end
 target 'Bracedotto' do
 
   pod 'PromisesObjC', :modular_headers => true
-  pod 'Blockstack', :git => 'https://github.com/bracedotto/blockstack-ios.git', :commit => '45bcb11'
+  pod 'Blockstack', :git => 'https://github.com/bracedotto/blockstack-ios.git', :commit => '3c7a2cc'
 
   config = use_native_modules!
 
