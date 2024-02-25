@@ -201,8 +201,11 @@ class Blockstack {
         return
       }
 
-      guard let path = path.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlPathAllowed),
-            let putUrl = URL(string: "\(config.server!)/store/\(config.address!)/\(path)") else {
+      guard let server = config.server,
+            let address = config.address,
+            let token = config.token,
+            let path = path.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlPathAllowed),
+            let putUrl = URL(string: "\(server)/store/\(address)/\(path)") else {
         callback(nil, NSError.create(description: "Error create putUrl in putFile"))
         return
       }
@@ -210,11 +213,11 @@ class Blockstack {
       var request = URLRequest(url: putUrl)
       request.httpMethod = "POST"
       request.setValue(contentType, forHTTPHeaderField: "Content-Type")
-      request.setValue("bearer \(config.token!)", forHTTPHeaderField: "Authorization")
+      request.setValue("bearer \(token)", forHTTPHeaderField: "Authorization")
       request.httpBody = data
 
       let task = URLSession.shared.dataTask(with: request) { data, response, error in
-        guard let data = data, error == nil else {
+        guard error == nil else {
           callback(nil, error)
           return
         }
@@ -224,12 +227,14 @@ class Blockstack {
           return
         }
 
-        do {
-          let result = try JSONDecoder().decode(PutFileResponse.self, from: data)
-          callback(result.publicUrl!, nil)
-        } catch {
-          callback(nil, error)
+        guard let data = data,
+              let result = try? JSONDecoder().decode(PutFileResponse.self, from: data),
+              let publicUrl = result.publicUrl else {
+          callback(nil, NSError.create(description: "Invalid putFile response"))
+          return
         }
+
+        callback(publicUrl, nil)
       }
       task.resume()
     }
