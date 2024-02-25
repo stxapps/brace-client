@@ -152,7 +152,9 @@ const _performFiles = async (data) => {
   await respectLimit(rId, 1);
 
   const sfyData = await stringifyData(data);
-  const results = await RNBlockstackSdk.performFiles(sfyData);
+  const sfySfyData = JSON.stringify(sfyData);
+  const unResults = await RNBlockstackSdk.performFiles(sfySfyData, Dirs.DocumentDir);
+  const results = JSON.parse(unResults);
   await cacheDataToServerFPaths(data, results);
 
   updateNetworkInfos(rId, 1);
