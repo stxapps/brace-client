@@ -26,7 +26,7 @@
     "react": "18.1.0",
     "react-native": "0.70.3",
     "react-native-animated-spinkit": "^1.5.2",
-    "react-native-blockstack": "https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?2c5a3f41809039638dee23284d6eff06d0b8dcdf",
+    "react-native-blockstack": "https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?ae5f4432381d0753a1b93a8467aaa6644c05d18c",
     "react-native-default-preference": "^1.4.4",
     "react-native-device-time-format": "https://github.com/stxapps/react-native-device-time-format#63f4a9158a91c391d67317a489ccfe8ec28a7c84",
     "react-native-document-picker": "^9.1.1",

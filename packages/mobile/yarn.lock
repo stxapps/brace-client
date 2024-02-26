@@ -6396,9 +6396,9 @@ react-native-animated-spinkit@^1.5.2:
   resolved "https://registry.yarnpkg.com/react-native-animated-spinkit/-/react-native-animated-spinkit-1.5.2.tgz#b1c00ecbadf48634273e6a843f8dfbcb7c006186"
   integrity sha512-YCQGR3HzEQvyaAnepiyf/hv88Sta3UIZ2CFZPtFqwu+VbFJfMgjJZniOx4157TuR5AAYajEJP9Fgy+JLIU3jzQ==
 
-"react-native-blockstack@https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?2c5a3f41809039638dee23284d6eff06d0b8dcdf":
+"react-native-blockstack@https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?ae5f4432381d0753a1b93a8467aaa6644c05d18c":
   version "0.4.6"
-  resolved "https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?2c5a3f41809039638dee23284d6eff06d0b8dcdf#7995682df5ac0939e7f4bc50acddea2840aa8603"
+  resolved "https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?ae5f4432381d0753a1b93a8467aaa6644c05d18c#91b720ee3dafba731b5a820f6b615a21be2da856"
 
 react-native-codegen@^0.70.5:
   version "0.70.5"
