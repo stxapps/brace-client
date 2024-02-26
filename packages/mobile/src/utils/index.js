@@ -2167,13 +2167,14 @@ export const getNLinkObjs = (params) => {
   // With pins, can't fetch further from the current point
   const objs = [], objsWithPcEc = [];
   for (const link of sortedLinks) {
-    const { id } = link;
+    const { id, status } = link;
+    if ([REMOVING, PENDING_REMOVING].includes(status)) continue;
 
     if (excludingIds.includes(id) || excludingMainIds.includes(getMainId(id))) {
       objsWithPcEc.push(link);
       continue;
     }
-    if (link.status !== ADDED) {
+    if (status !== ADDED) {
       objsWithPcEc.push(link);
       continue;
     }
