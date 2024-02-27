@@ -1508,8 +1508,13 @@ export const cleanUpSslts = () => async (dispatch, getState) => {
   if (unusedValues.length === 0) return;
 
   // Don't need offline, if no network or get killed, can do it later.
-  const data = { values: unusedValues, isSequential: false, nItemsForNs: N_LINKS };
-  await dataApi.performFiles(data);
+  try {
+    const data = { values: unusedValues, isSequential: false, nItemsForNs: N_LINKS };
+    await dataApi.performFiles(data);
+  } catch (error) {
+    console.log('cleanUpSslts error: ', error);
+    // error in this step should be fine
+  }
 };
 
 export const deleteLinks = (dIds) => async (dispatch, getState) => {
@@ -1867,8 +1872,13 @@ export const cleanUpLinks = () => async (dispatch, getState) => {
 
   if (unusedValues.length === 0) return;
 
-  const data = { values: unusedValues, isSequential: false, nItemsForNs: N_LINKS };
-  await dataApi.performFiles(data);
+  try {
+    const data = { values: unusedValues, isSequential: false, nItemsForNs: N_LINKS };
+    await dataApi.performFiles(data);
+  } catch (error) {
+    console.log('cleanUpLinks error: ', error);
+    // error in this step should be fine
+  }
 };
 
 const _cleanUpStaticFiles = async (getState) => {
@@ -2157,8 +2167,13 @@ export const updateSettingsDeleteStep = (_settingsFPaths) => async (
     values.push({ id: fpath, type: PUT_FILE, path: fpath, content: {} });
   }
 
-  const data = { values, isSequential: false, nItemsForNs: N_LINKS };
-  await dataApi.performFiles(data);
+  try {
+    const data = { values, isSequential: false, nItemsForNs: N_LINKS };
+    await dataApi.performFiles(data);
+  } catch (error) {
+    console.log('updateSettings clean up error: ', error);
+    // error in this step should be fine
+  }
 
   await cleanUpLocks(dispatch, getState);
 };
@@ -2186,8 +2201,13 @@ export const updateInfoDeleteStep = (_infoFPath) => async (dispatch, getState) =
     { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true },
   ];
 
-  const data = { values, isSequential: false, nItemsForNs: N_LINKS };
-  await dataApi.performFiles(data);
+  try {
+    const data = { values, isSequential: false, nItemsForNs: N_LINKS };
+    await dataApi.performFiles(data);
+  } catch (error) {
+    console.log('updateInfo clean up error: ', error);
+    // error in this step should be fine
+  }
 };
 
 export const updateStgsAndInfo = () => async (dispatch, getState) => {
@@ -2279,8 +2299,13 @@ export const mergeSettingsDeleteStep = (_settingsFPaths) => async (
     values.push({ id: fpath, type: PUT_FILE, path: fpath, content: {} });
   }
 
-  const data = { values, isSequential: false, nItemsForNs: N_LINKS };
-  await dataApi.performFiles(data);
+  try {
+    const data = { values, isSequential: false, nItemsForNs: N_LINKS };
+    await dataApi.performFiles(data);
+  } catch (error) {
+    console.log('mergeSettings clean up error: ', error);
+    // error in this step should be fine
+  }
 };
 
 export const updateDoUseLocalLayout = (doUse) => {
@@ -2841,8 +2866,13 @@ export const cleanUpPins = () => async (dispatch, getState) => {
   if (unusedValues.length === 0) return;
 
   // Don't need offline, if no network or get killed, can do it later.
-  const data = { values: unusedValues, isSequential: false, nItemsForNs: N_LINKS };
-  await dataApi.performFiles(data);
+  try {
+    const data = { values: unusedValues, isSequential: false, nItemsForNs: N_LINKS };
+    await dataApi.performFiles(data);
+  } catch (error) {
+    console.log('cleanUpPins error: ', error);
+    // error in this step should be fine
+  }
 };
 
 export const updateDoUseLocalTheme = (doUse) => {
@@ -3047,8 +3077,13 @@ export const updateCustomDataDeleteStep = (
       );
     }
 
-    const data = { values, isSequential: false, nItemsForNs: N_LINKS };
-    await dataApi.performFiles(data);
+    try {
+      const data = { values, isSequential: false, nItemsForNs: N_LINKS };
+      await dataApi.performFiles(data);
+    } catch (error) {
+      console.log('updateCustomData clean up error: ', error);
+      // error in this step should be fine
+    }
   }
   if (localUnusedFPaths.length > 0) {
     await fileApi.deleteFiles(localUnusedFPaths);
@@ -3422,8 +3457,13 @@ export const cleanUpTags = () => async (dispatch, getState) => {
   if (unusedValues.length === 0) return;
 
   // Don't need offline, if no network or get killed, can do it later.
-  const data = { values: unusedValues, isSequential: false, nItemsForNs: N_LINKS };
-  await dataApi.performFiles(data);
+  try {
+    const data = { values: unusedValues, isSequential: false, nItemsForNs: N_LINKS };
+    await dataApi.performFiles(data);
+  } catch (error) {
+    console.log('cleanUpTags error: ', error);
+    // error in this step should be fine
+  }
 };
 
 export const updateTagNameEditors = (tagNameEditors) => {
