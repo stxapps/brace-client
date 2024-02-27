@@ -230,6 +230,9 @@ const linksReducer = (state = initialState, action) => {
       );
     }
 
+    const { doExtractContents } = action.meta;
+    if (doExtractContents === false) return newState;
+
     return loop(
       newState,
       Cmd.run(

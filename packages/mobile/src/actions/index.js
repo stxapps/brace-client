@@ -1351,7 +1351,7 @@ export const addLink = (url, listName, doExtractContents) => async (
     meta: {
       offline: {
         effect: { method: ADD_LINKS, params: payload },
-        commit: { type: ADD_LINKS_COMMIT },
+        commit: { type: ADD_LINKS_COMMIT, meta: { doExtractContents } },
         rollback: { type: ADD_LINKS_ROLLBACK, meta: payload },
       },
     },
