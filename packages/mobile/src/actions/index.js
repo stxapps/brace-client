@@ -89,9 +89,9 @@ import {
   extractLinkId, getLink, getListNameAndLink, getNLinkObjs, getNLinkMetas, newObject,
   addFetchedToVars, isFetchedLinkId, doesIncludeFetching,
   doesIncludeFetchingMore, isFetchingInterrupted, getTagFPaths, getInUseTagNames,
-  getEditingTagNameEditors, getTags, getTagNameObj, getTagNameObjFromDisplayName,
-  validateTagNameDisplayName, extractTagFPath, getNLinkMetasByQt, listLinkMetas,
-  getListNamesFromLinkMetas,
+  getEditingTagNameEditors, getTags, getRawTags, getTagNameObj,
+  getTagNameObjFromDisplayName, validateTagNameDisplayName, extractTagFPath,
+  getNLinkMetasByQt, listLinkMetas, getListNamesFromLinkMetas,
 } from '../utils';
 import { initialSettingsState } from '../types/initialStates';
 import vars from '../vars';
@@ -1829,7 +1829,6 @@ const _cleanUpStaticFiles = async (getState) => {
       if (unusedValues.length >= nLinks) break;
     }
   }
-
   if (unusedValues.length > 0) {
     const data = { values: unusedValues, isSequential: false, nItemsForNs: N_LINKS };
     await dataApi.performFiles(data);
@@ -1844,10 +1843,9 @@ const _cleanUpStaticFiles = async (getState) => {
     if (!mainIds.includes(getMainId(id))) {
       unusedIds.push(id);
       unusedFPaths.push(fpath);
-      if (unusedFPaths.length >= N_LINKS) break;
+      if (unusedFPaths.length >= nLinks) break;
     }
   }
-
   if (unusedFPaths.length > 0) {
     await fileApi.deleteFiles(unusedFPaths);
   }
@@ -2808,19 +2806,14 @@ export const cleanUpPins = () => async (dispatch, getState) => {
 
   const unusedValues = [];
   for (const fpath of pinFPaths) {
-    const { rank, updatedDT, addedDT, id } = extractPinFPath(fpath);
+    const { id } = extractPinFPath(fpath);
     const pinMainId = getMainId(id);
 
     if (
       !isString(pinMainId) ||
       !linkMainIds.includes(pinMainId) ||
       !isObject(pins[pinMainId]) ||
-      (
-        rank !== pins[pinMainId].rank ||
-        updatedDT !== pins[pinMainId].updatedDT ||
-        addedDT !== pins[pinMainId].addedDT ||
-        id !== pins[pinMainId].id
-      )
+      pins[pinMainId].fpath !== fpath
     ) {
       unusedValues.push(
         { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
@@ -3381,7 +3374,7 @@ export const cleanUpTags = () => async (dispatch, getState) => {
 
   const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
   const linkMainIds = getLinkMainIds(linkMetas);
-  const tags = getTags(tagFPaths, {});
+  const tags = getRawTags(tagFPaths);
 
   let nLinks = N_LINKS;
   if (getState().user.hubUrl === SD_HUB_URL) nLinks = 60;
@@ -3390,7 +3383,7 @@ export const cleanUpTags = () => async (dispatch, getState) => {
   for (const fpath of tagFPaths) {
     if (unusedValues.length >= nLinks) break;
 
-    const { tagName, rank, updatedDT, addedDT, id } = extractTagFPath(fpath);
+    const { id } = extractTagFPath(fpath);
     const tagMainId = getMainId(id);
 
     if (
@@ -3404,15 +3397,7 @@ export const cleanUpTags = () => async (dispatch, getState) => {
       continue;
     }
 
-    const found = tags[tagMainId].values.some(value => {
-      return (
-        value.tagName === tagName &&
-        value.rank === rank &&
-        value.updatedDT === updatedDT &&
-        value.addedDT === addedDT &&
-        value.id === id
-      );
-    });
+    const found = tags[tagMainId].values.some(value => value.fpath === fpath);
     if (!found) {
       unusedValues.push(
         { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }

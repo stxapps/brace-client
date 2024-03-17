@@ -15,17 +15,17 @@ import {
 import {
   LINKS, SSLTS, SETTINGS, INFO, PINS, TAGS, CD_ROOT, DOT_JSON, LOCAL_LINK_ATTRS,
   BRACE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, N_LINKS, PUT_FILE,
-  DELETE_FILE, MAX_TRY,
+  DELETE_FILE,
 } from '../types/const';
 import {
   isEqual, isObject, isString, isNumber, randomString, createLinkFPath, createSsltFPath,
   createPinFPath, addFPath, getStaticFPath, deriveFPaths, createDataFName,
   getLastSettingsFPaths, createSettingsFPath, excludeNotObjContents,
-  deriveUnknownErrorLink, getLinkFPaths, getSsltFPaths, getPinFPaths, listLinkMetas,
-  getNLinkMetas, isFetchedLinkId, getInUseTagNames, getTagFPaths, getTags, getMainId,
-  createTagFPath, extractTagFPath, getNLinkMetasByQt, newObject, getListNameAndLink,
-  getListNamesFromLinkMetas, getPerformFilesDataPerId, getPerformFilesResultsPerId,
-  throwIfPerformFilesError,
+  batchGetFileWithRetry, deriveUnknownErrorLink, getLinkFPaths, getSsltFPaths,
+  getPinFPaths, listLinkMetas, getNLinkMetas, isFetchedLinkId, getInUseTagNames,
+  getTagFPaths, getTags, getMainId, createTagFPath, extractTagFPath, getNLinkMetasByQt,
+  newObject, getListNameAndLink, getListNamesFromLinkMetas, getPerformFilesDataPerId,
+  getPerformFilesResultsPerId, throwIfPerformFilesError,
 } from '../utils';
 import vars from '../vars';
 
@@ -942,41 +942,6 @@ const updateTagDataTStep = async (params) => {
   return { id, values };
 };
 
-const batchGetFileWithRetry = async (
-  getFile, fpaths, callCount, dangerouslyIgnoreError = false
-) => {
-
-  const responses = await Promise.all(
-    fpaths.map(fpath =>
-      getFile(fpath)
-        .then(content => ({ content, fpath, success: true }))
-        .catch(error => ({ error, content: null, fpath, success: false }))
-    )
-  );
-
-  const failedResponses = responses.filter(({ success }) => !success);
-  const failedFPaths = failedResponses.map(({ fpath }) => fpath);
-
-  if (failedResponses.length) {
-    if (callCount + 1 >= MAX_TRY) {
-      if (dangerouslyIgnoreError) {
-        console.log('batchGetFileWithRetry error: ', failedResponses[0].error);
-        return responses;
-      }
-      throw failedResponses[0].error;
-    }
-
-    return [
-      ...responses.filter(({ success }) => success),
-      ...(await batchGetFileWithRetry(
-        getFile, failedFPaths, callCount + 1, dangerouslyIgnoreError
-      )),
-    ];
-  }
-
-  return responses;
-};
-
 const getFiles = async (fpaths, dangerouslyIgnoreError = false) => {
   const result = { responses: [], fpaths: [], contents: [] };
 
@@ -996,7 +961,7 @@ const getFiles = async (fpaths, dangerouslyIgnoreError = false) => {
     result.contents.push(content);
   }
 
-  for (let i = 0, j = remainFPaths.length; i < j; i += N_LINKS) {
+  for (let i = 0; i < remainFPaths.length; i += N_LINKS) {
     const selectedFPaths = remainFPaths.slice(i, i + N_LINKS);
     const responses = await batchGetFileWithRetry(
       serverApi.getFile, selectedFPaths, 0, dangerouslyIgnoreError

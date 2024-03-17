@@ -92,7 +92,6 @@ const putFile = async (fpath, content, options = putFileOptions) => {
   return publicUrl;
 };
 
-
 const deleteFile = async (fpath, options = {}) => {
   const rId = `${Date.now()}${randomString(4)}`;
   await respectLimit(rId, 2);

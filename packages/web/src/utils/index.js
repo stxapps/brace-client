@@ -18,7 +18,7 @@ import {
   DIED_MOVING, DIED_REMOVING, DIED_DELETING, COLOR, PATTERN, IMAGE, BG_COLOR_STYLES,
   PATTERNS, VALID_URL, NO_URL, ASK_CONFIRM_URL, VALID_LIST_NAME, NO_LIST_NAME,
   TOO_LONG_LIST_NAME, DUPLICATE_LIST_NAME, COM_BRACEDOTTO_SUPPORTER, ACTIVE, NO_RENEW,
-  GRACE, ON_HOLD, PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, EXTRACT_INVALID_URL,
+  GRACE, ON_HOLD, PAUSED, UNKNOWN, CD_ROOT, MODE_EDIT, MAX_TRY, EXTRACT_INVALID_URL,
   VALID_PASSWORD, NO_PASSWORD, CONTAIN_SPACES_PASSWORD, TOO_LONG_PASSWORD, N_LINKS,
   MY_LIST, TRASH, ARCHIVE, NO_TAG_NAME, TOO_LONG_TAG_NAME, DUPLICATE_TAG_NAME,
   VALID_TAG_NAME, LOCKED, UNLOCKED,
@@ -904,7 +904,7 @@ export const splitOnFirst = (str, sep) => {
 };
 
 export const escapeDoubleQuotes = (s) => {
-  return s.trim().replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  return s.trim().replace(/\r?\n/g, '').replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 };
 
 const _isDecorValid = (decor) => {
@@ -1549,9 +1549,9 @@ export const getDataParentIds = (leafId, toParents) => {
 };
 
 const getDataRootIds = (leafId, toParents) => {
-  const rootIds = [];
+  const rootIds = [], passedIds = [leafId];
 
-  let pendingIds = [leafId], passedIds = [leafId];
+  let pendingIds = [leafId];
   while (pendingIds.length > 0) {
     let id = pendingIds[0];
     pendingIds = pendingIds.slice(1);
@@ -1586,7 +1586,7 @@ const getDataRootIds = (leafId, toParents) => {
     if (!doBreak && !rootIds.includes(id)) rootIds.push(id);
   }
 
-  return rootIds;
+  return { rootIds, passedIds };
 };
 
 const getDataOldestRootId = (rootIds) => {
@@ -1602,10 +1602,7 @@ const getDataOldestRootId = (rootIds) => {
 };
 
 const _listMetas = (dataFPaths, extractDataFPath, workingSubName) => {
-  const ids = [];
-  const toFPaths = {};
-  const toParents = {};
-  const toChildren = {};
+  const ids = [], toFPaths = {}, toParents = {}, toChildren = {};
   for (const fpath of dataFPaths) {
     const { fname, subName } = extractDataFPath(fpath);
     const { id, parentIds } = extractDataFName(fname);
@@ -1635,6 +1632,9 @@ const _listMetas = (dataFPaths, extractDataFPath, workingSubName) => {
     }
   }
 
+  // Process from leaves for the same rootIds and better performance.
+  ids.sort().reverse();
+
   const leafIds = [];
   for (const id of ids) {
     if (!toChildren[id]) {
@@ -1645,9 +1645,10 @@ const _listMetas = (dataFPaths, extractDataFPath, workingSubName) => {
 
   const toRootIds = {};
   for (const id of ids) {
-    const rootIds = getDataRootIds(id, toParents);
+    if (isString(toRootIds[id])) continue;
+    const { rootIds, passedIds } = getDataRootIds(id, toParents);
     const rootId = getDataOldestRootId(rootIds);
-    toRootIds[id] = rootId;
+    for (const passedId of passedIds) toRootIds[passedId] = rootId;
   }
 
   const toLeafIds = {};
@@ -1709,7 +1710,7 @@ export const getRawPins = (pinFPaths) => {
 
     // duplicate id, choose the latest updatedDT
     if (pinMainId in pins && pins[pinMainId].updatedDT > updatedDT) continue;
-    pins[pinMainId] = { rank, updatedDT, addedDT, id };
+    pins[pinMainId] = { rank, updatedDT, addedDT, id, fpath };
   }
 
   return pins;
@@ -1965,6 +1966,41 @@ export const getEditingListNameEditors = (listNameEditors, listNameObjs) => {
     editingLNEs[k] = { ...listNameEditors[k] };
   }
   return editingLNEs;
+};
+
+export const batchGetFileWithRetry = async (
+  getFile, fpaths, callCount, dangerouslyIgnoreError = false
+) => {
+
+  const responses = await Promise.all(
+    fpaths.map(fpath =>
+      getFile(fpath)
+        .then(content => ({ content, fpath, success: true }))
+        .catch(error => ({ error, content: null, fpath, success: false }))
+    )
+  );
+
+  const failedResponses = responses.filter(({ success }) => !success);
+  const failedFPaths = failedResponses.map(({ fpath }) => fpath);
+
+  if (failedResponses.length) {
+    if (callCount + 1 >= MAX_TRY) {
+      if (dangerouslyIgnoreError) {
+        console.log('batchGetFileWithRetry error: ', failedResponses[0].error);
+        return responses;
+      }
+      throw failedResponses[0].error;
+    }
+
+    return [
+      ...responses.filter(({ success }) => success),
+      ...(await batchGetFileWithRetry(
+        getFile, failedFPaths, callCount + 1, dangerouslyIgnoreError
+      )),
+    ];
+  }
+
+  return responses;
 };
 
 export const deriveUnknownErrorLink = (fpath) => {
@@ -2365,7 +2401,7 @@ export const getRawTags = (tagFPaths) => {
 
     const i = values.findIndex(tag => tag.tagName === tagName);
     if (i < 0) {
-      values.push({ tagName, rank, updatedDT, addedDT, id });
+      values.push({ tagName, rank, updatedDT, addedDT, id, fpath });
       continue;
     }
 
@@ -2374,7 +2410,7 @@ export const getRawTags = (tagFPaths) => {
     tags[mainId].values = [
       ...values.slice(0, i),
       ...values.slice(i + 1),
-      { tagName, rank, updatedDT, addedDT, id },
+      { tagName, rank, updatedDT, addedDT, id, fpath },
     ];
   }
 

@@ -189,9 +189,9 @@ const _parseBraceSettings = async (settingsFPaths, settingsEntries) => {
   }
   if (!isObject(latestSettingsPart)) return;
 
-  const lastSettingsFPaths = getLastSettingsFPaths(settingsFPaths);
-  if (lastSettingsFPaths.fpaths.length > 0) {
-    const lastSettingsFPath = lastSettingsFPaths.fpaths[0];
+  const lsfpsResult = getLastSettingsFPaths(settingsFPaths);
+  if (lsfpsResult.fpaths.length > 0) {
+    const lastSettingsFPath = lsfpsResult.fpaths[0];
     const { contents } = await dataApi.getFiles([lastSettingsFPath], true);
     if (isEqual(latestSettingsPart.content, contents[0])) {
       return;
@@ -199,7 +199,7 @@ const _parseBraceSettings = async (settingsFPaths, settingsEntries) => {
   }
 
   let now = Date.now();
-  const fname = createDataFName(`${now}${randomString(4)}`, lastSettingsFPaths.ids);
+  const fname = createDataFName(`${now}${randomString(4)}`, lsfpsResult.ids);
   const fpath = createSettingsFPath(fname);
   now += 1;
 
@@ -353,7 +353,7 @@ const parseBraceLinks = async (
       } else if (isObject(ssltInfos[mainId]) && !isObject(psInfos[mainId])) {
         if (ssltInfos[mainId].listName !== listName) doPut = true;
       } else if (!isObject(!ssltInfos[mainId]) && isObject(psInfos[mainId])) {
-        if (fpathParts[1] !== psInfos[mainId].listName) doPut = true;
+        if (fpathParts[1] !== listName) doPut = true;
       }
       if (listName === TRASH) doPut = true;
       if (doPut) {
@@ -691,9 +691,9 @@ export const exportAllData = () => async (dispatch, getState) => {
     tagFPaths.push(tagFPath);
   }
 
-  const lastSettingsFPaths = getLastSettingsFPaths(lfpRst.settingsFPaths);
-  if (lastSettingsFPaths.fpaths.length > 0) {
-    const lastSettingsFPath = lastSettingsFPaths.fpaths[0];
+  const lsfpsResult = getLastSettingsFPaths(lfpRst.settingsFPaths);
+  if (lsfpsResult.fpaths.length > 0) {
+    const lastSettingsFPath = lsfpsResult.fpaths[0];
     const { contents } = await dataApi.getFiles([lastSettingsFPath], true);
     if (!isEqual(initialSettingsState, contents[0])) {
       settingsFPaths.push(lastSettingsFPath);
