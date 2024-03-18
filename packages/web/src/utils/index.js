@@ -1363,13 +1363,10 @@ export const getSsltFPaths = (state) => {
   return {};
 };
 
-export const listLinkMetas = createSelector(
-  (...args) => args[0],
-  (...args) => args[1],
-  (...args) => args[2],
-  (linkFPaths, ssltFPaths, pendingSslts) => {
-
-    const lnkInfosPerMid = {}, ssltInfos = {};
+const _listLinkMetas = createSelector(
+  linkFPaths => linkFPaths,
+  (linkFPaths) => {
+    const lnkInfosPerMid = {};
     for (const initListName in linkFPaths) {
       for (const fpath of linkFPaths[initListName]) {
         const { id } = extractLinkFPath(fpath);
@@ -1382,27 +1379,8 @@ export const listLinkMetas = createSelector(
         lnkInfosPerMid[mainId].push(info);
       }
     }
-    for (const fpath of ssltFPaths) {
-      const { listName, updatedDT, id } = extractSsltFPath(fpath);
 
-      const mainId = getMainId(id);
-      if (isObject(ssltInfos[mainId]) && ssltInfos[mainId].updatedDT >= updatedDT) {
-        continue;
-      }
-
-      ssltInfos[mainId] = { updatedDT, listName, fpath };
-    }
-    for (const id in pendingSslts) {
-      const { listName } = pendingSslts[id];
-      const mainId = getMainId(id);
-
-      const info = isObject(ssltInfos[mainId]) ? { ...ssltInfos[mainId] } : {};
-      info.listName = listName;
-
-      ssltInfos[mainId] = info;
-    }
-
-    const metas = [], prevFPathsPerMids = {};
+    const metaPerMids = {}, prevFPathsPerMids = {};
     for (const mainId in lnkInfosPerMid) {
       let latestUpdatedDT = -1, latestIndex = -1;
       for (let i = 0; i < lnkInfosPerMid[mainId].length; i++) {
@@ -1422,17 +1400,59 @@ export const listLinkMetas = createSelector(
           continue;
         }
 
-        let listName = initListName;
-        if (isObject(ssltInfos[mainId])) listName = ssltInfos[mainId].listName;
-
-        const meta = { id, addedDT, updatedDT, fpaths, listName };
-        metas.push(meta);
+        const meta = { id, addedDT, updatedDT, fpaths, listName: initListName };
+        metaPerMids[mainId] = meta;
       }
     }
 
-    return { linkMetas: metas, prevFPathsPerMids, ssltInfos };
+    return { metaPerMids, prevFPathsPerMids };
   },
 );
+
+const _listSsltInfos = createSelector(
+  ssltFPaths => ssltFPaths,
+  (ssltFPaths) => {
+    const ssltInfos = {};
+    for (const fpath of ssltFPaths) {
+      const { listName, updatedDT, id } = extractSsltFPath(fpath);
+
+      const mainId = getMainId(id);
+      if (isObject(ssltInfos[mainId]) && ssltInfos[mainId].updatedDT >= updatedDT) {
+        continue;
+      }
+
+      ssltInfos[mainId] = { updatedDT, listName, fpath };
+    }
+
+    return ssltInfos;
+  },
+);
+
+export const listLinkMetas = (linkFPaths, ssltFPaths, pendingSslts) => {
+
+  const { metaPerMids, prevFPathsPerMids } = _listLinkMetas(linkFPaths);
+  const rawSsltInfos = _listSsltInfos(ssltFPaths);
+
+  const ssltInfos = { ...rawSsltInfos };
+  for (const id in pendingSslts) {
+    const { listName } = pendingSslts[id];
+    const mainId = getMainId(id);
+
+    const info = isObject(ssltInfos[mainId]) ? { ...ssltInfos[mainId] } : {};
+    info.listName = listName;
+
+    ssltInfos[mainId] = info;
+  }
+
+  const metas = [];
+  for (const [mainId, meta] of Object.entries(metaPerMids)) {
+    let listName = meta.listName;
+    if (isObject(ssltInfos[mainId])) listName = ssltInfos[mainId].listName;
+    metas.push({ ...meta, listName });
+  }
+
+  return { linkMetas: metas, prevFPathsPerMids, ssltInfos };
+};
 
 const applyPcLinksToMetas = (pcListNames, pcLinks, linkMetas) => {
   const metas = [], mainIds = [];
@@ -1702,52 +1722,51 @@ export const getPinFPaths = (state) => {
   return [];
 };
 
-export const getRawPins = (pinFPaths) => {
-  const pins = {};
-  for (const fpath of pinFPaths) {
-    const { rank, updatedDT, addedDT, id } = extractPinFPath(fpath);
-    const pinMainId = getMainId(id);
-
-    // duplicate id, choose the latest updatedDT
-    if (pinMainId in pins && pins[pinMainId].updatedDT > updatedDT) continue;
-    pins[pinMainId] = { rank, updatedDT, addedDT, id, fpath };
-  }
-
-  return pins;
-};
-
-export const getPins = createSelector(
-  (...args) => args[0],
-  (...args) => args[1],
-  (...args) => args[2],
-  (pinFPaths, pendingPins, doExcludeUnpinning) => {
-    const pins = getRawPins(pinFPaths);
-
-    for (const id in pendingPins) {
-      const { status, rank, updatedDT, addedDT } = pendingPins[id];
+export const getRawPins = createSelector(
+  pinFPaths => pinFPaths,
+  (pinFPaths) => {
+    const pins = {};
+    for (const fpath of pinFPaths) {
+      const { rank, updatedDT, addedDT, id } = extractPinFPath(fpath);
       const pinMainId = getMainId(id);
 
-      if ([PIN_LINK, PIN_LINK_ROLLBACK].includes(status)) {
-        pins[pinMainId] = { status, rank, updatedDT, addedDT, id };
-      } else if ([UNPIN_LINK, UNPIN_LINK_ROLLBACK].includes(status)) {
-        if (doExcludeUnpinning) {
-          delete pins[pinMainId];
-        } else {
-          // Can't delete just yet, need for showing loading.
-          pins[pinMainId] = { status, rank, updatedDT, addedDT, id };
-        }
-      } else if ([
-        MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
-      ].includes(status)) {
-        pins[pinMainId] = { status, rank, updatedDT, addedDT, id };
-      } else {
-        console.log('getPins: unsupport pin status: ', status);
-      }
+      // duplicate id, choose the latest updatedDT
+      if (pinMainId in pins && pins[pinMainId].updatedDT > updatedDT) continue;
+      pins[pinMainId] = { rank, updatedDT, addedDT, id, fpath };
     }
 
     return pins;
   },
 );
+
+export const getPins = (pinFPaths, pendingPins, doExcludeUnpinning) => {
+  const rawPins = getRawPins(pinFPaths);
+
+  const pins = { ...rawPins };
+  for (const id in pendingPins) {
+    const { status, rank, updatedDT, addedDT } = pendingPins[id];
+    const pinMainId = getMainId(id);
+
+    if ([PIN_LINK, PIN_LINK_ROLLBACK].includes(status)) {
+      pins[pinMainId] = { status, rank, updatedDT, addedDT, id };
+    } else if ([UNPIN_LINK, UNPIN_LINK_ROLLBACK].includes(status)) {
+      if (doExcludeUnpinning) {
+        delete pins[pinMainId];
+      } else {
+        // Can't delete just yet, need for showing loading.
+        pins[pinMainId] = { status, rank, updatedDT, addedDT, id };
+      }
+    } else if ([
+      MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
+    ].includes(status)) {
+      pins[pinMainId] = { status, rank, updatedDT, addedDT, id };
+    } else {
+      console.log('getPins: unsupport pin status: ', status);
+    }
+  }
+
+  return pins;
+};
 
 export const separatePinnedValues = (
   sortedValues, pinFPaths, pendingPins, getValueMainId
@@ -2389,56 +2408,56 @@ export const getTagFPaths = (state) => {
   return [];
 };
 
-export const getRawTags = (tagFPaths) => {
-  const tags = {};
-  for (const fpath of tagFPaths) {
-    const { tagName, rank, updatedDT, addedDT, id } = extractTagFPath(fpath);
-    const mainId = getMainId(id);
+export const getRawTags = createSelector(
+  tagFPaths => tagFPaths,
+  (tagFPaths) => {
+    const tags = {};
+    for (const fpath of tagFPaths) {
+      const { tagName, rank, updatedDT, addedDT, id } = extractTagFPath(fpath);
+      const mainId = getMainId(id);
 
-    if (!isObject(tags[mainId])) tags[mainId] = { values: [] };
+      if (!isObject(tags[mainId])) tags[mainId] = { values: [] };
 
-    const { values } = tags[mainId];
+      const { values } = tags[mainId];
 
-    const i = values.findIndex(tag => tag.tagName === tagName);
-    if (i < 0) {
-      values.push({ tagName, rank, updatedDT, addedDT, id, fpath });
-      continue;
+      const i = values.findIndex(tag => tag.tagName === tagName);
+      if (i < 0) {
+        values.push({ tagName, rank, updatedDT, addedDT, id, fpath });
+        continue;
+      }
+
+      if (values[i].updatedDT > updatedDT) continue;
+
+      tags[mainId].values = [
+        ...values.slice(0, i),
+        ...values.slice(i + 1),
+        { tagName, rank, updatedDT, addedDT, id, fpath },
+      ];
     }
 
-    if (values[i].updatedDT > updatedDT) continue;
-
-    tags[mainId].values = [
-      ...values.slice(0, i),
-      ...values.slice(i + 1),
-      { tagName, rank, updatedDT, addedDT, id, fpath },
-    ];
-  }
-
-  for (const mainId in tags) {
-    tags[mainId].values.sort((a, b) => { // Beware sort in place
-      if (a.rank < b.rank) return -1;
-      if (a.rank > b.rank) return 1;
-      return 0;
-    });
-  }
-
-  return tags;
-};
-
-export const getTags = createSelector(
-  (...args) => args[0],
-  (...args) => args[1],
-  (tagFPaths, pendingTags) => {
-    const tags = getRawTags(tagFPaths);
-
-    for (const id in pendingTags) {
-      const mainId = getMainId(id);
-      tags[mainId] = { ...tags[mainId], ...pendingTags[id] };
+    for (const mainId in tags) {
+      tags[mainId].values.sort((a, b) => { // Beware sort in place
+        if (a.rank < b.rank) return -1;
+        if (a.rank > b.rank) return 1;
+        return 0;
+      });
     }
 
     return tags;
   },
 );
+
+export const getTags = (tagFPaths, pendingTags) => {
+  const rawTags = getRawTags(tagFPaths);
+
+  const tags = { ...rawTags };
+  for (const id in pendingTags) {
+    const mainId = getMainId(id);
+    tags[mainId] = { ...tags[mainId], ...pendingTags[id] };
+  }
+
+  return tags;
+};
 
 export const getTagNameObj = (tagName, tagNameObjs) => {
   if (!tagName || !tagNameObjs) return { tagNameObj: null };
