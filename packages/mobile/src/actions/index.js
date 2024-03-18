@@ -91,7 +91,7 @@ import {
   doesIncludeFetchingMore, isFetchingInterrupted, getTagFPaths, getInUseTagNames,
   getEditingTagNameEditors, getTags, getRawTags, getTagNameObj,
   getTagNameObjFromDisplayName, validateTagNameDisplayName, extractTagFPath,
-  getNLinkMetasByQt, listLinkMetas, getListNamesFromLinkMetas,
+  getNLinkMetasByQt, listLinkMetas,
 } from '../utils';
 import { initialSettingsState } from '../types/initialStates';
 import vars from '../vars';
@@ -1723,6 +1723,8 @@ export const deleteOldLinksInTrash = () => async (dispatch, getState) => {
   const linkFPaths = getLinkFPaths(getState());
   const ssltFPaths = getSsltFPaths(getState());
 
+  // Include pendingSslts so not delete restoring links.
+  // For moving to Trash, need to > N_DAYS, should be fine.
   const {
     linkMetas, prevFPathsPerMids, ssltInfos,
   } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
@@ -2002,8 +2004,7 @@ export const checkDeleteListName = (listNameEditorKey, listNameObj) => async (
   const linkFPaths = getLinkFPaths(getState());
   const ssltFPaths = getSsltFPaths(getState());
 
-  const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
-  const inUseListNames = getListNamesFromLinkMetas(linkMetas);
+  const { inUseListNames } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
 
   const canDeletes = [];
   for (const listName of listNames) {
@@ -2143,15 +2144,18 @@ export const cancelDiedSettings = () => async (dispatch, getState) => {
   const settings = getState().settings;
   const snapshotSettings = getState().snapshot.settings;
   const pendingSslts = getState().pendingSslts;
+  const pendingTags = getState().pendingTags;
 
   const linkFPaths = getLinkFPaths(getState());
   const ssltFPaths = getSsltFPaths(getState());
   const tagFPaths = getTagFPaths(getState());
 
-  const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
+  const {
+    linkMetas, inUseListNames,
+  } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
 
-  const listNames = getListNamesFromLinkMetas(linkMetas);
-  const tagNames = getInUseTagNames(linkMetas, tagFPaths);
+  const listNames = inUseListNames;
+  const tagNames = getInUseTagNames(linkMetas, tagFPaths, pendingTags);
   const doFetch = settings.doDescendingOrder !== snapshotSettings.doDescendingOrder;
   const payload = { listNames, tagNames, settings: snapshotSettings, doFetch };
 
@@ -2184,15 +2188,18 @@ export const mergeSettings = (selectedId) => async (dispatch, getState) => {
   }
 
   const pendingSslts = getState().pendingSslts;
+  const pendingTags = getState().pendingTags;
 
   const linkFPaths = getLinkFPaths(getState());
   const ssltFPaths = getSsltFPaths(getState());
   const tagFPaths = getTagFPaths(getState());
 
-  const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
+  const {
+    linkMetas, inUseListNames,
+  } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
 
-  const listNames = getListNamesFromLinkMetas(linkMetas);
-  const tagNames = getInUseTagNames(linkMetas, tagFPaths);
+  const listNames = inUseListNames;
+  const tagNames = getInUseTagNames(linkMetas, tagFPaths, pendingTags);
   const doFetch = settings.doDescendingOrder !== currentSettings.doDescendingOrder;
   const payload = {
     settingsFPath, listNames, tagNames, settings, doFetch, _settingsFPaths,
@@ -3454,13 +3461,14 @@ export const checkDeleteTagName = (tagNameEditorKey, tagNameObj) => async (
   dispatch, getState
 ) => {
   const pendingSslts = getState().pendingSslts;
+  const pendingTags = getState().pendingTags;
 
   const linkFPaths = getLinkFPaths(getState());
   const ssltFPaths = getSsltFPaths(getState());
   const tagFPaths = getTagFPaths(getState());
 
   const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
-  const inUseTagNames = getInUseTagNames(linkMetas, tagFPaths);
+  const inUseTagNames = getInUseTagNames(linkMetas, tagFPaths, pendingTags);
 
   if (inUseTagNames.includes(tagNameObj.tagName)) {
     dispatch(updateTagNameEditors({

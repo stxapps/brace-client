@@ -24,8 +24,8 @@ import {
   batchGetFileWithRetry, deriveUnknownErrorLink, getLinkFPaths, getSsltFPaths,
   getPinFPaths, listLinkMetas, getNLinkMetas, isFetchedLinkId, getInUseTagNames,
   getTagFPaths, getTags, getMainId, createTagFPath, extractTagFPath, getNLinkMetasByQt,
-  newObject, getListNameAndLink, getListNamesFromLinkMetas, getPerformFilesDataPerId,
-  getPerformFilesResultsPerId, throwIfPerformFilesError,
+  newObject, getListNameAndLink, getPerformFilesDataPerId, getPerformFilesResultsPerId,
+  throwIfPerformFilesError,
 } from '../utils';
 import vars from '../vars';
 
@@ -288,7 +288,9 @@ const fetch = async (params) => {
       linkFPaths, ssltFPaths, settingsFPaths, infoFPath, pinFPaths, tagFPaths,
     } = await listFPaths(true);
 
-    const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
+    const {
+      linkMetas, inUseListNames,
+    } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
 
     const sResult = await fetchStgsAndInfo(settingsFPaths, infoFPath);
     result.doFetchStgsAndInfo = true;
@@ -297,8 +299,8 @@ const fetch = async (params) => {
     result.info = sResult.info;
     // List names should be retrieve from settings
     //   but also retrive from file paths in case the settings is gone.
-    result.listNames = getListNamesFromLinkMetas(linkMetas);
-    result.tagNames = getInUseTagNames(linkMetas, tagFPaths);
+    result.listNames = inUseListNames;
+    result.tagNames = getInUseTagNames(linkMetas, tagFPaths, pendingTags);
 
     if (result.settings) doDescendingOrder = result.settings.doDescendingOrder;
 

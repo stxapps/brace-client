@@ -421,15 +421,6 @@ export const getAllListNames = (listNameObjs) => {
   return listNames;
 };
 
-export const getListNamesFromLinkMetas = (linkMetas) => {
-  const listNames = [];
-  for (const meta of linkMetas) {
-    const { listName } = meta;
-    if (!listNames.includes(listName)) listNames.push(listName);
-  }
-  return listNames;
-};
-
 export const isDiedStatus = (status) => {
   return [
     DIED_ADDING, DIED_UPDATING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
@@ -1444,14 +1435,21 @@ export const listLinkMetas = (linkFPaths, ssltFPaths, pendingSslts) => {
     ssltInfos[mainId] = info;
   }
 
-  const metas = [];
+  const metas = [], inUseListNames = [];
   for (const [mainId, meta] of Object.entries(metaPerMids)) {
     let listName = meta.listName;
     if (isObject(ssltInfos[mainId])) listName = ssltInfos[mainId].listName;
     metas.push({ ...meta, listName });
+
+    // 1. initLn, 2. initLn + pending, 3. initLn + sslt, 4. initList + sslt + pending
+    let pListName = meta.listName;
+    if (isObject(rawSsltInfos[mainId])) pListName = rawSsltInfos[mainId].listName;
+
+    if (!inUseListNames.includes(listName)) inUseListNames.push(listName);
+    if (!inUseListNames.includes(pListName)) inUseListNames.push(pListName);
   }
 
-  return { linkMetas: metas, prevFPathsPerMids, ssltInfos };
+  return { linkMetas: metas, prevFPathsPerMids, ssltInfos, inUseListNames };
 };
 
 const applyPcLinksToMetas = (pcListNames, pcLinks, linkMetas) => {
@@ -2528,7 +2526,7 @@ export const copyTagNameObjs = (tagNameObjs, excludedTagNames = []) => {
   return objs;
 };
 
-export const getInUseTagNames = (linkMetas, tagFPaths) => {
+export const getInUseTagNames = (linkMetas, tagFPaths, pendingTags) => {
   const linkMainIds = getLinkMainIds(linkMetas);
 
   const inUseTagNames = [];
@@ -2539,6 +2537,13 @@ export const getInUseTagNames = (linkMetas, tagFPaths) => {
     if (!isString(tagMainId) || !linkMainIds.includes(tagMainId)) continue;
 
     if (!inUseTagNames.includes(tagName)) inUseTagNames.push(tagName);
+  }
+  for (const id in pendingTags) {
+    const { values } = pendingTags[id];
+    for (const value of values) {
+      const { tagName } = value;
+      if (!inUseTagNames.includes(tagName)) inUseTagNames.push(tagName);
+    }
   }
 
   return inUseTagNames;
