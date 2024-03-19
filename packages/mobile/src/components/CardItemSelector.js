@@ -4,7 +4,9 @@ import { View, Text, TouchableOpacity, Animated } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
-import { MAX_SELECTED_LINK_IDS } from '../types/const';
+import {
+  SD_HUB_URL, MAX_SELECTED_LINK_IDS, SD_MAX_SELECTED_LINK_IDS,
+} from '../types/const';
 import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
 import {
   makeIsLinkIdSelected, getSelectedLinkIdsLength, getThemeMode,
@@ -79,7 +81,7 @@ class CardItemSelector extends React.Component {
 
     if (
       this.state.isMaxErrorShown === true &&
-      nextProps.selectedLinkIdsLength < MAX_SELECTED_LINK_IDS
+      nextProps.selectedLinkIdsLength < nextProps.maxSelectedLinkIds
     ) {
       this.setState({ isMaxErrorShown: false });
     }
@@ -103,9 +105,9 @@ class CardItemSelector extends React.Component {
 
   onSelectBtnClick = () => {
 
-    const { linkId, isSelected, selectedLinkIdsLength } = this.props;
+    const { linkId, isSelected, selectedLinkIdsLength, maxSelectedLinkIds } = this.props;
 
-    if (!isSelected && selectedLinkIdsLength === MAX_SELECTED_LINK_IDS) {
+    if (!isSelected && selectedLinkIdsLength === maxSelectedLinkIds) {
       this.setState({ isMaxErrorShown: true, didMaxErrorCloseAnimEnd: false });
       return;
     }
@@ -118,7 +120,7 @@ class CardItemSelector extends React.Component {
   renderMaxError() {
     if (!this.state.isMaxErrorShown && this.state.didMaxErrorCloseAnimEnd) return null;
 
-    const { tailwind } = this.props;
+    const { maxSelectedLinkIds, tailwind } = this.props;
     const maxErrorStyle = {
       transform: [{
         scale: this.maxErrorScale.interpolate({
@@ -137,7 +139,7 @@ class CardItemSelector extends React.Component {
               </Svg>
             </View>
             <View style={tailwind('ml-3 flex-shrink flex-grow')}>
-              <Text style={tailwind('text-left text-sm font-normal leading-5 text-red-800')}>To prevent network overload, up to {MAX_SELECTED_LINK_IDS} items can be selected.</Text>
+              <Text style={tailwind('text-left text-sm font-normal leading-5 text-red-800')}>To prevent network overload, up to {maxSelectedLinkIds} items can be selected.</Text>
             </View>
           </View>
         </Animated.View>
@@ -186,10 +188,14 @@ const makeMapStateToProps = () => {
   const isLinkIdSelected = makeIsLinkIdSelected();
 
   const mapStateToProps = (state, props) => {
+    let maxSelectedLinkIds = MAX_SELECTED_LINK_IDS;
+    if (state.user.hubUrl === SD_HUB_URL) maxSelectedLinkIds = SD_MAX_SELECTED_LINK_IDS;
+
     return {
       isBulkEditing: state.display.isBulkEditing,
       isSelected: isLinkIdSelected(state, props),
       selectedLinkIdsLength: getSelectedLinkIdsLength(state),
+      maxSelectedLinkIds,
       themeMode: getThemeMode(state),
     };
   };

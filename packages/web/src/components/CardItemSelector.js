@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
-import { MAX_SELECTED_LINK_IDS } from '../types/const';
+import {
+  SD_HUB_URL, MAX_SELECTED_LINK_IDS, SD_MAX_SELECTED_LINK_IDS,
+} from '../types/const';
 import {
   makeIsLinkIdSelected, getSelectedLinkIdsLength, getSafeAreaWidth, getThemeMode,
 } from '../selectors';
@@ -23,7 +25,7 @@ class CardItemSelector extends React.Component {
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (
       this.state.isMaxErrorShown === true &&
-      nextProps.selectedLinkIdsLength < MAX_SELECTED_LINK_IDS
+      nextProps.selectedLinkIdsLength < nextProps.maxSelectedLinkIds
     ) {
       this.setState({ isMaxErrorShown: false });
     }
@@ -45,9 +47,9 @@ class CardItemSelector extends React.Component {
 
   onSelectBtnClick = () => {
 
-    const { linkId, isSelected, selectedLinkIdsLength } = this.props;
+    const { linkId, isSelected, selectedLinkIdsLength, maxSelectedLinkIds } = this.props;
 
-    if (!isSelected && selectedLinkIdsLength === MAX_SELECTED_LINK_IDS) {
+    if (!isSelected && selectedLinkIdsLength === maxSelectedLinkIds) {
       this.setState({ isMaxErrorShown: true });
       return;
     }
@@ -62,7 +64,7 @@ class CardItemSelector extends React.Component {
       <AnimatePresence key="AnimatePresence_CIS_maxError" />
     );
 
-    const { tailwind } = this.props;
+    const { maxSelectedLinkIds, tailwind } = this.props;
 
     return (
       <AnimatePresence key="AnimatePresence_CIS_maxError">
@@ -75,7 +77,7 @@ class CardItemSelector extends React.Component {
                 </svg>
               </div>
               <div className={tailwind('ml-3 mt-0.5')}>
-                <h3 className={tailwind('text-left text-sm leading-5 text-red-800')}>To prevent network overload, up to {MAX_SELECTED_LINK_IDS} items can be selected.</h3>
+                <h3 className={tailwind('text-left text-sm leading-5 text-red-800')}>To prevent network overload, up to {maxSelectedLinkIds} items can be selected.</h3>
               </div>
             </div>
           </div>
@@ -121,10 +123,14 @@ const makeMapStateToProps = () => {
   const isLinkIdSelected = makeIsLinkIdSelected();
 
   const mapStateToProps = (state, props) => {
+    let maxSelectedLinkIds = MAX_SELECTED_LINK_IDS;
+    if (state.user.hubUrl === SD_HUB_URL) maxSelectedLinkIds = SD_MAX_SELECTED_LINK_IDS;
+
     return {
       isBulkEditing: state.display.isBulkEditing,
       isSelected: isLinkIdSelected(state, props),
       selectedLinkIdsLength: getSelectedLinkIdsLength(state),
+      maxSelectedLinkIds,
       themeMode: getThemeMode(state),
       safeAreaWidth: getSafeAreaWidth(state),
     };

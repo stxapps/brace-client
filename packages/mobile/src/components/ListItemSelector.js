@@ -3,7 +3,9 @@ import { View, Text, TouchableOpacity, Animated } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
-import { MAX_SELECTED_LINK_IDS } from '../types/const';
+import {
+  SD_HUB_URL, MAX_SELECTED_LINK_IDS, SD_MAX_SELECTED_LINK_IDS,
+} from '../types/const';
 import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
 import { makeIsLinkIdSelected, getSelectedLinkIdsLength } from '../selectors';
 import { popupFMV } from '../types/animConfigs';
@@ -17,6 +19,10 @@ const ListItemSelector = (props) => {
   const isBulkEditing = useSelector(state => state.display.isBulkEditing);
   const isSelected = useSelector(state => getIsLinkIdSelected(state, props));
   const selectedLinkIdsLength = useSelector(state => getSelectedLinkIdsLength(state));
+  const maxSelectedLinkIds = useSelector(state => {
+    if (state.user.hubUrl === SD_HUB_URL) return SD_MAX_SELECTED_LINK_IDS;
+    return MAX_SELECTED_LINK_IDS;
+  });
   const [isMaxErrorShown, setIsMaxErrorShown] = useState(false);
   const [didMaxErrorCloseAnimEnd, setDidMaxErrorCloseAnimEnd] = useState(true);
   const maxErrorScale = useRef(new Animated.Value(0)).current;
@@ -24,7 +30,7 @@ const ListItemSelector = (props) => {
   const tailwind = useTailwind();
 
   const onSelectBtnClick = () => {
-    if (!isSelected && selectedLinkIdsLength === MAX_SELECTED_LINK_IDS) {
+    if (!isSelected && selectedLinkIdsLength === maxSelectedLinkIds) {
       setIsMaxErrorShown(true);
       setDidMaxErrorCloseAnimEnd(false);
       return;
@@ -54,7 +60,7 @@ const ListItemSelector = (props) => {
           </Svg>
         </View>
         <View style={tailwind('ml-3 flex-shrink')}>
-          <Text style={tailwind('text-left text-sm font-normal leading-5 text-red-800')}>To prevent network overload, up to {MAX_SELECTED_LINK_IDS} items can be selected.</Text>
+          <Text style={tailwind('text-left text-sm font-normal leading-5 text-red-800')}>To prevent network overload, up to {maxSelectedLinkIds} items can be selected.</Text>
         </View>
       </Animated.View>
     );
@@ -72,7 +78,7 @@ const ListItemSelector = (props) => {
     }
   }, [isMaxErrorShown, maxErrorScale]);
 
-  if (isMaxErrorShown && selectedLinkIdsLength < MAX_SELECTED_LINK_IDS) {
+  if (isMaxErrorShown && selectedLinkIdsLength < maxSelectedLinkIds) {
     setIsMaxErrorShown(false);
   }
 

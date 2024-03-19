@@ -2,7 +2,9 @@ import React, { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { MAX_SELECTED_LINK_IDS } from '../types/const';
+import {
+  SD_HUB_URL, MAX_SELECTED_LINK_IDS, SD_MAX_SELECTED_LINK_IDS,
+} from '../types/const';
 import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
 import { makeIsLinkIdSelected, getSelectedLinkIdsLength } from '../selectors';
 import { popupFMV } from '../types/animConfigs';
@@ -16,12 +18,16 @@ const ListItemSelector = (props) => {
   const isBulkEditing = useSelector(state => state.display.isBulkEditing);
   const isSelected = useSelector(state => getIsLinkIdSelected(state, props));
   const selectedLinkIdsLength = useSelector(state => getSelectedLinkIdsLength(state));
+  const maxSelectedLinkIds = useSelector(state => {
+    if (state.user.hubUrl === SD_HUB_URL) return SD_MAX_SELECTED_LINK_IDS;
+    return MAX_SELECTED_LINK_IDS;
+  });
   const [isMaxErrorShown, setIsMaxErrorShown] = useState(false);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
 
   const onSelectBtnClick = () => {
-    if (!isSelected && selectedLinkIdsLength === MAX_SELECTED_LINK_IDS) {
+    if (!isSelected && selectedLinkIdsLength === maxSelectedLinkIds) {
       setIsMaxErrorShown(true);
       return;
     }
@@ -45,14 +51,14 @@ const ListItemSelector = (props) => {
             </svg>
           </div>
           <div className={tailwind('ml-3 mt-0.5')}>
-            <h3 className={tailwind('text-left text-sm leading-5 text-red-800')}>To prevent network overload, up to {MAX_SELECTED_LINK_IDS} items can be selected.</h3>
+            <h3 className={tailwind('text-left text-sm leading-5 text-red-800')}>To prevent network overload, up to {maxSelectedLinkIds} items can be selected.</h3>
           </div>
         </motion.div>
       </AnimatePresence>
     );
   };
 
-  if (isMaxErrorShown && selectedLinkIdsLength < MAX_SELECTED_LINK_IDS) {
+  if (isMaxErrorShown && selectedLinkIdsLength < maxSelectedLinkIds) {
     setIsMaxErrorShown(false);
   }
 

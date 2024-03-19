@@ -176,6 +176,7 @@ export const LG_WIDTH = 1024;
 export const XL_WIDTH = 1280;
 
 export const MAX_SELECTED_LINK_IDS = 10;
+export const SD_MAX_SELECTED_LINK_IDS = 40;
 
 export const VALID_LIST_NAME = 'VALID_LIST_NAME';
 export const NO_LIST_NAME = 'NO_LIST_NAME';
