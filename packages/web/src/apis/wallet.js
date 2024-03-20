@@ -6,7 +6,7 @@ import {
   updateWalletConfigWithApp, getAppPrivateKey, getStxAddress,
 } from '@stacks/wallet-sdk/dist/esm';
 import {
-  DEFAULT_PROFILE, DEFAULT_PROFILE_FILE_NAME, /*signAndUploadProfile,*/
+  DEFAULT_PROFILE, DEFAULT_PROFILE_FILE_NAME, signAndUploadProfile,
 } from '@stacks/wallet-sdk/dist/esm/models/profile';
 import { getHubInfo, makeGaiaAssociationToken } from '@stacks/wallet-sdk/dist/esm/utils';
 import { TransactionVersion } from '@stacks/transactions/dist/esm';
@@ -49,7 +49,7 @@ const getHubConfig = (hubUrl, hubInfo, privateKey, associationToken) => {
   };
 };
 
-/*const storeWalletConfig = async (walletData) => {
+const storeWalletConfig = async (walletData) => {
   const { appData, wallet } = walletData;
   const { domainName, appName, appIconUrl, appScopes } = appData;
 
@@ -106,15 +106,15 @@ const storeProfile = async (walletData) => {
   await signAndUploadProfile({
     profile, account, gaiaHubUrl: SD_HUB_URL, gaiaHubConfig: sdProfileHubConfig,
   });
-};*/
+};
 
 const createAccount = async (appData) => {
   const secretKey = generateSecretKey(256);
   const wallet = await generateWallet({ secretKey, password: DEFAULT_PASSWORD });
 
   const walletData = { appData, secretKey, wallet, fromCreateAccount: true };
-  //await storeWalletConfig(walletData);
-  //await storeProfile(walletData);
+  await storeWalletConfig(walletData);
+  await storeProfile(walletData);
 
   return walletData;
 };

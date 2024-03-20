@@ -6,14 +6,23 @@ import {
   deleteAllData, updateDeleteAllDataProgress,
 } from '../actions/data';
 import { getSafeAreaWidth, getThemeMode } from '../selectors';
-import { HASH_SUPPORT, SM_WIDTH } from '../types/const';
+import { HASH_SUPPORT, SD_HUB_URL, SM_WIDTH } from '../types/const';
 
 import { useSafeAreaFrame, withTailwind, useTailwind } from '.';
 
 class _SettingsPopupData extends React.PureComponent {
 
   render() {
-    const { tailwind } = this.props;
+    const { hubUrl, tailwind } = this.props;
+
+    let [hubName, hubNameUrl] = ['hub.hiro.so', 'https://hub.hiro.so/hub_info'];
+    let [hubProvider, hubProviderUrl] = ['Hiro Systems', 'https://www.hiro.so'];
+    if (hubUrl === SD_HUB_URL) {
+      hubName = 'hub.stacksdrive.com';
+      hubNameUrl = 'https://hub.stacksdrive.com/hub_info';
+      hubProvider = 'STX Apps Co., Ltd.';
+      hubProviderUrl = 'https://www.stxapps.com';
+    }
 
     return (
       <div className={tailwind('p-4 md:p-6')}>
@@ -25,7 +34,7 @@ class _SettingsPopupData extends React.PureComponent {
         </div>
         <div className={tailwind('mt-6 md:mt-0')}>
           <h4 className={tailwind('text-base font-medium leading-none text-gray-800 blk:text-gray-100')}>Data Server</h4>
-          <p className={tailwind('mt-2.5 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Brace.to stores your data in a Stacks data server. You can specify which Stacks data server to store your data. By default, your Stacks data server is at <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href="https://hub.hiro.so/hub_info" target="_blank" rel="noreferrer">hub.hiro.so</a> provided by <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href="https://www.hiro.so" target="_blank" rel="noreferrer">Hiro Systems</a>. You can also deploy your own Stacks data server. To change your Stacks data server, you need to record your server’s information on the Stacks blockchain. Brace.to stores your data on the server specified in the blockchain. For more details, please visit <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href="https://docs.stacks.co/docs/gaia" target="_blank" rel="noreferrer">Stacks Gaia</a>.</p>
+          <p className={tailwind('mt-2.5 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Brace.to stores your data in a Stacks data server. You can specify which Stacks data server to store your data. By default, your Stacks data server is at <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={hubNameUrl} target="_blank" rel="noreferrer">{hubName}</a> provided by <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={hubProviderUrl} target="_blank" rel="noreferrer">{hubProvider}</a>. You can also deploy your own Stacks data server. To change your Stacks data server, you need to record your server’s information on the Stacks blockchain. Brace.to stores your data on the server specified in the blockchain. For more details, please visit <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href="https://docs.stacks.co/stacks-in-depth/gaia" target="_blank" rel="noreferrer">Stacks Gaia</a>.</p>
         </div>
         <div className={tailwind('mt-8')}>
           <button onClick={this.props.onToImportAllDataViewBtnClick} className={tailwind('w-full rounded text-left focus:outline-none focus:ring focus:ring-offset-1 blk:ring-offset-gray-900')}>
@@ -52,6 +61,7 @@ class _SettingsPopupData extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   return {
+    hubUrl: state.user.hubUrl,
     themeMode: getThemeMode(state),
     safeAreaWidth: getSafeAreaWidth(state),
   };
