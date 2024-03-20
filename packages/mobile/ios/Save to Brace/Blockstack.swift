@@ -312,11 +312,17 @@ class Blockstack {
       return
     }
 
+    let jsonObj = ["urls": [url]]
+    guard let data = try? JSONSerialization.data(withJSONObject: jsonObj) else {
+      print("In sendPreExtract, error when stringify url")
+      return
+    }
+
     var request = URLRequest(url: bracePreExtractUrl)
     request.httpMethod = "POST"
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     request.setValue(DOMAIN_NAME, forHTTPHeaderField: "Referer")
-    request.httpBody = "{\"urls\": [\"\(url)\"]}".data(using: .utf8)
+    request.httpBody = data
     let task = URLSession.shared.dataTask(with: request) { data, response, error in
       guard error == nil else {
         print("Sending pre-extract with error: ", error.debugDescription)
