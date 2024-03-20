@@ -765,7 +765,7 @@ This and CI/CD are very important!
 - yarn add url-parse axios@0.27.2 @react-native-community/clipboard
 - yarn add https://github.com/stxapps/redux-offline#028205cec27dcf1ae05e310fc7e45779ee908949
 - yarn add @react-native-async-storage/async-storage @react-native-community/netinfo
-- yarn add 'https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?ae5f4432381d0753a1b93a8467aaa6644c05d18c'
+- yarn add 'https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?51209bd3b6201bb56dfb5b652a7faedd555f7648
 - yarn add https://github.com/stxapps/tailwind-rn#96848a8d2c2370e4f5e57a773ace172c4073157d
 - yarn add react-native-default-preference react-native-fast-image react-native-keyboard-manager react-native-modal react-native-popup-menu
 - yarn add react-native-safe-area-context
