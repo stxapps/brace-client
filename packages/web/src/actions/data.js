@@ -352,7 +352,7 @@ const parseBraceLinks = async (
         if (ssltInfos[mainId].listName !== listName) doPut = true;
       } else if (isObject(ssltInfos[mainId]) && !isObject(psInfos[mainId])) {
         if (ssltInfos[mainId].listName !== listName) doPut = true;
-      } else if (!isObject(!ssltInfos[mainId]) && isObject(psInfos[mainId])) {
+      } else if (!isObject(ssltInfos[mainId]) && isObject(psInfos[mainId])) {
         if (fpathParts[1] !== listName) doPut = true;
       }
       if (listName === TRASH) doPut = true;
