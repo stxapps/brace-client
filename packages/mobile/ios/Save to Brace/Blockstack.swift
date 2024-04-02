@@ -78,7 +78,7 @@ class Blockstack {
 
   private func connectToGaiaHub(hubUrl: String, challengeSignerHex: String, gaiaAssociationToken: String?, callback: @escaping (GaiaConfig?, Error?) -> Void) {
     self.getGaiaHubInfo(for: hubUrl) { hubInfo, error in
-      guard let hubInfo = hubInfo, error == nil else {
+      guard error == nil, let hubInfo = hubInfo else {
         callback(nil, error)
         return
       }
@@ -106,7 +106,7 @@ class Blockstack {
         "salt": salt,
       ]
       if let gaiaAssociationToken = gaiaAssociationToken {
-        payload["gaiaAssociationToken"] = gaiaAssociationToken
+        payload["associationToken"] = gaiaAssociationToken
       }
       guard let address = Keys.getAddressFromPublicKey(iss),
             let signedPayload = JSONTokensJS().signToken(payload: payload, privateKey: challengeSignerHex) else {
