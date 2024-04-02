@@ -28,6 +28,8 @@ def __apply_xcode_15_patch(installer)
   end
 end
 
+$RNFANoPrivacyAPI = true
+
 target 'Bracedotto' do
 
   pod 'PromisesObjC', :modular_headers => true

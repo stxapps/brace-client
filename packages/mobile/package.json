@@ -31,7 +31,7 @@
     "react-native-device-time-format": "https://github.com/stxapps/react-native-device-time-format#63f4a9158a91c391d67317a489ccfe8ec28a7c84",
     "react-native-document-picker": "^9.1.1",
     "react-native-fast-image": "^8.6.3",
-    "react-native-file-access": "^3.0.4",
+    "react-native-file-access": "^3.0.7",
     "react-native-flag-secure": "^1.0.4",
     "react-native-iap": "^12.10.5",
     "react-native-image-crop-picker": "^0.40.0",
