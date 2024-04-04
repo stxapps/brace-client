@@ -407,9 +407,9 @@ PODS:
     - React-jsi (= 0.70.3)
     - React-logger (= 0.70.3)
     - React-perflogger (= 0.70.3)
-  - ReactNativeFileAccess (3.0.4):
+  - ReactNativeFileAccess (3.0.7):
     - React-Core
-    - ZIPFoundation (= 0.9.11)
+    - ZIPFoundation
   - ReactNativeKeyboardManager (6.5.11-1):
     - IQKeyboardManagerSwift (= 6.5.11)
     - React-Core
@@ -742,7 +742,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: b9a58ffdd18446f43d493a4b0ecd603ee86be847
   React-runtimeexecutor: e9b1f9310158a1e265bcdfdfd8c62d6174b947a2
   ReactCommon: 01064177e66d652192c661de899b1076da962fd9
-  ReactNativeFileAccess: 4530e3be4d5069454c6c6389096d8cb78c897f2c
+  ReactNativeFileAccess: d4d003cbad463ef6db88fe2881ffbc5c3990a52c
   ReactNativeKeyboardManager: 30ef68551383d86d3ae044afc3d29f12629ec60b
   RNCAsyncStorage: ddc4ee162bfd41b0d2c68bf2d95acd81dd7f1f93
   RNCClipboard: 3f0451a8100393908bea5c5c5b16f96d45f30bfc
@@ -762,6 +762,6 @@ SPEC CHECKSUMS:
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
   ZIPFoundation: b1f0de4eed33e74a676f76e12559ab6b75990197
 
-PODFILE CHECKSUM: a42eac80524fb6a0ddcbc314ec2bcd5367be2729
+PODFILE CHECKSUM: c9a82d0020161aa25eb6463094e85c541d5ae137
 
 COCOAPODS: 1.12.1
