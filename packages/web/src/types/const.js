@@ -19,6 +19,7 @@ export const HASH_LANDING_MOBILE = '#landing-mobile';
 export const HASH_ABOUT = '#about';
 export const HASH_TERMS = '#terms';
 export const HASH_PRIVACY = '#privacy';
+export const HASH_PRICING = '#pricing';
 export const HASH_SUPPORT = '#support';
 export const HASH_BACK = '#back';
 

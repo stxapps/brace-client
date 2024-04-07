@@ -143,7 +143,7 @@ const IapHome = (props) => {
             <p className={tailwind('ml-1 flex-shrink flex-grow text-base text-red-600 blk:text-red-500')}>Unable to verify the purchase</p>
           </div>
           <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Please wait a moment and <button onClick={onRetryVerifyPurchaseBtnClick} className={tailwind('inline underline')}>try again</button>.</p>
-          <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>If the problem persists, please <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a> with your app public key below and order ID in your order confirmation email.</p>
+          <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>If the problem persists, please <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a> with your app public key below and the order ID in your order confirmation email.</p>
           <div className={tailwind('mt-6 flex flex-col sm:flex-row')}>
             <p className={tailwind('flex-shrink-0 flex-grow-0 text-base text-gray-500 blk:text-gray-400')}>App public key:</p>
             {publicKeyText}
@@ -204,10 +204,45 @@ const IapHome = (props) => {
 
   return (
     <div className={tailwind('mt-6 mb-4 md:mt-0')}>
-      <h4 className={tailwind('text-base font-medium leading-none text-gray-800 blk:text-gray-100')}>Purchase subscription</h4>
-      <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Brace.to is free and we offer a paid subscription for use of extra features. It's our intention to never show advertisements and we don't rent, sell or share your information with other companies. Our optional paid subscription is the only way we make money.</p>
-      <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Support us and unlock extra features: pin to the top, dark appearance, change title & image, lock lists, and tags.</p>
-      <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Start with a 14 day free trial.</p>
+      <h4 className={tailwind('text-base font-medium leading-none text-gray-800 blk:text-gray-100')}>Purchase Subscription</h4>
+      <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Brace.to is free, and we offer a paid subscription for using extra features. It's our intention to never show advertisements, and we don't rent, sell, or share your information with other companies. Our optional paid subscription is the only way we make money.</p>
+      <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Please support us and unlock all extra features:</p>
+      <div className={tailwind('pt-3 lg:flex lg:justify-between lg:pt-5')}>
+        <div className={tailwind('flex')}>
+          <svg className={tailwind('h-6 w-5 flex-none text-green-600')} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd"></path>
+          </svg>
+          <span className={tailwind('ml-3 font-medium text-gray-500')}>Tags</span>
+        </div>
+        <div className={tailwind('flex pt-2 lg:pt-0')}>
+          <svg className={tailwind('h-6 w-5 flex-none text-green-600')} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd"></path>
+          </svg>
+          <span className={tailwind('ml-3 font-medium text-gray-500')}>Lock lists</span>
+        </div>
+        <div className={tailwind('flex pt-2 lg:pt-0')}>
+          <svg className={tailwind('h-6 w-5 flex-none text-green-600')} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd"></path>
+          </svg>
+          <span className={tailwind('ml-3 font-medium text-gray-500')}>Change title & image</span>
+        </div>
+      </div>
+      <div className={tailwind('lg:flex lg:justify-evenly lg:pt-5')}>
+        <div className={tailwind('flex pt-2 lg:pt-0')}>
+          <span className={tailwind('hidden lg:inline')}>&nbsp;&nbsp;</span>
+          <svg className={tailwind('h-6 w-5 flex-none text-green-600')} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd"></path>
+          </svg>
+          <span className={tailwind('ml-3 font-medium text-gray-500')}>dark appearance</span>
+        </div>
+        <div className={tailwind('flex pt-2 lg:pt-0')}>
+          <svg className={tailwind('h-6 w-5 flex-none text-green-600')} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd"></path>
+          </svg>
+          <span className={tailwind('ml-3 font-medium text-gray-500')}>pin to the top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        </div>
+      </div>
+      <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Start with a 14-day free trial.</p>
       {actionPanel}
       <p className={tailwind('mt-6 text-sm leading-relaxed text-gray-400 blk:text-gray-500')}>By subscribing, you agree to our <a className={tailwind('rounded text-gray-500 underline hover:text-gray-700 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-gray-200')} href={'/' + HASH_TERMS} target="_blank" rel="noreferrer">Terms of Service</a> and <a className={tailwind('rounded text-gray-500 underline hover:text-gray-700 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-gray-200')} href={'/' + HASH_PRIVACY} target="_blank" rel="noreferrer">Privacy Policy</a>. Only one free trial per user.</p>
       <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>If you've completed the payment or already purchased the subscription, try <button onClick={onToRestoreIapViewBtnClick} className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')}>Restore purchases</button>.</p>
@@ -307,27 +342,27 @@ const IapPurchased = (props) => {
           <svg className={tailwind('mb-1 mr-1 inline-block w-5 text-green-500 blk:text-green-400')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.7071 8.70711C14.0976 8.31658 14.0976 7.68342 13.7071 7.29289C13.3166 6.90237 12.6834 6.90237 12.2929 7.29289L9 10.5858L7.70711 9.29289C7.31658 8.90237 6.68342 8.90237 6.29289 9.29289C5.90237 9.68342 5.90237 10.3166 6.29289 10.7071L8.29289 12.7071C8.68342 13.0976 9.31658 13.0976 9.70711 12.7071L13.7071 8.70711Z" />
           </svg>
-          <span className={tailwind('text-green-600 blk:text-green-500')}>Thank you very much for supporting us.</span> You've unlocked extra features: pin to the top, dark appearance, change title & image, lock lists, and tags.
+          <span className={tailwind('text-green-600 blk:text-green-500')}>Thank you very much for supporting us.</span> You've unlocked extra features: tags, lock lists, change title & image, dark appearance, and pin to the top.
         </p>
-        <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Your subscription will be expired on {getFormattedDate(new Date(purchase.expiryDate))} and it'll be automatically renewed. You can manage your subscription at {appStoreLink}.</p>
+        <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Your subscription will expire on {getFormattedDate(new Date(purchase.expiryDate))} and will be automatically renewed. You can manage your subscription at the {appStoreLink}.</p>
       </React.Fragment>
     );
   } else if (purchase.status === NO_RENEW) {
     infoText = (
       <React.Fragment>
-        <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra features: pin to the top, dark appearance, change title & image, lock lists, and tags.</p>
-        <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Your subscription will be expired on {getFormattedDate(new Date(purchase.expiryDate))} and it won't be automatically renewed. If you want to enable automatically renewal, please go to {appStoreLink} to manage your subscription.</p>
+        <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra features: tags, lock lists, change title & image, dark appearance, and pin to the top.</p>
+        <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Your subscription will expire on {getFormattedDate(new Date(purchase.expiryDate))} and will not be automatically renewed. To enable automatic renewal, please go to {appStoreLink} to manage your subscription.</p>
       </React.Fragment>
     );
   } else if (purchase.status === GRACE) {
     infoText = (
       <React.Fragment>
-        <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra features: pin to the top, dark appearance, change title & image, lock lists, and tags.</p>
+        <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra features: tags, lock lists, change title & image, dark appearance, and pin to the top.</p>
         <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>
           <svg className={tailwind('mb-1 mr-1 inline-block w-5 text-red-500 blk:text-red-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
           </svg>
-          <span className={tailwind('text-red-600 blk:text-red-500')}>Your subscription has been expired</span> and you won't be able to use extra features soon. Please go to {appStoreLink} now to renew your subscription to continue supporting us and using extra features.
+          <span className={tailwind('text-red-600 blk:text-red-500')}>Your subscription has expired</span> and you won't be able to use extra features soon. Please go to {appStoreLink} now to renew it so you can continue supporting us and unlocking all features.
         </p>
       </React.Fragment>
     );
@@ -339,7 +374,7 @@ const IapPurchased = (props) => {
           <svg className={tailwind('mb-1 mr-1 inline-block w-5 text-red-500 blk:text-red-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
           </svg>
-          <span className={tailwind('text-red-600 blk:text-red-500')}>Your subscription has been expired.</span> Please go to {appStoreLink} now to renew your subscription to continue supporting us and using extra features.
+          <span className={tailwind('text-red-600 blk:text-red-500')}>Your subscription has expired.</span> Please go to {appStoreLink} now to renew it to support us and unlock extra features.
         </p>
       </React.Fragment>
     );
@@ -357,7 +392,7 @@ const IapPurchased = (props) => {
           <svg className={tailwind('w-5 flex-shrink-0 flex-grow-0 text-red-500 blk:text-red-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
           </svg>
-          <p className={tailwind('ml-1 flex-shrink flex-grow text-base leading-relaxed text-red-600 blk:text-red-500')}>We cannot determine your subscription's status.</p>
+          <p className={tailwind('ml-1 flex-shrink flex-grow text-base leading-relaxed text-red-600 blk:text-red-500')}>We cannot determine the status of your subscription.</p>
         </div>
       </React.Fragment>
     );
@@ -404,10 +439,10 @@ const IapPurchased = (props) => {
 
   return (
     <div className={tailwind('mt-6 mb-4 md:mt-0')}>
-      <h4 className={tailwind('text-base font-medium leading-none text-gray-800 blk:text-gray-100')}>Your subscription</h4>
+      <h4 className={tailwind('text-base font-medium leading-none text-gray-800 blk:text-gray-100')}>Your Subscription</h4>
       {infoText}
       {refreshPanel}
-      <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>{isUnknown ? 'If the problem persists' : 'If you have any questions'}, please <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a> with your app public key below and order ID in your order confirmation email.</p>
+      <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>{isUnknown ? 'If the problem persists' : 'If you have any questions'}, please <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a> with your app public key below and the order ID in your order confirmation email.</p>
       <div className={tailwind('mt-6 flex flex-col sm:flex-row')}>
         <p className={tailwind('flex-shrink-0 flex-grow-0 text-base text-gray-500 blk:text-gray-400')}>App public key:</p>
         {publicKeyText}
@@ -498,10 +533,10 @@ const _SettingsPopupIapRestore = (props) => {
           <svg className={tailwind('w-5 flex-shrink-0 flex-grow-0 text-gray-400 blk:text-gray-400')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 6C11 6.55228 10.5523 7 10 7C9.44772 7 9 6.55228 9 6C9 5.44772 9.44772 5 10 5C10.5523 5 11 5.44772 11 6ZM9 9C8.44772 9 8 9.44772 8 10C8 10.5523 8.44772 11 9 11V14C9 14.5523 9.44772 15 10 15H11C11.5523 15 12 14.5523 12 14C12 13.4477 11.5523 13 11 13V10C11 9.44772 10.5523 9 10 9H9Z" />
           </svg>
-          <p className={tailwind('ml-1 flex-shrink flex-grow text-base text-gray-500 blk:text-gray-400')}>No purchase found.</p>
+          <p className={tailwind('ml-1 flex-shrink flex-grow text-base text-gray-500 blk:text-gray-400')}>No purchase was found.</p>
         </div>
-        <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Please try to restore purchases in our <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_LANDING_MOBILE} target="_blank" rel="noreferrer">Mobile apps</a> where you've made the purchase.</p>
-        <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>If there's still no purchase found, please <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a> with your app public key below and order ID in your order confirmation email.
+        <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Please try to restore your purchase in our <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_LANDING_MOBILE} target="_blank" rel="noreferrer">mobile app</a> where you made the purchase.</p>
+        <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>If there's still no purchase, please <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a> with your app public key below and the order ID in your order confirmation email.
         </p>
         <div className={tailwind('mt-6 flex flex-col sm:flex-row')}>
           <p className={tailwind('flex-shrink-0 flex-grow-0 text-base text-gray-500 blk:text-gray-400')}>App public key:</p>

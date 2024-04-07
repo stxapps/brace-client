@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { HASH_ABOUT, HASH_TERMS, HASH_PRIVACY, HASH_SUPPORT } from '../types/const';
+import {
+  HASH_ABOUT, HASH_TERMS, HASH_PRIVACY, HASH_PRICING, HASH_SUPPORT,
+} from '../types/const';
 import { getSafeAreaWidth, getThemeMode } from '../selectors';
 
 import { withTailwind } from '.';
@@ -17,6 +19,7 @@ class Footer extends React.PureComponent {
           <a className={tailwind('block rounded-sm text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring md:mr-10 md:inline')} href={'/' + HASH_ABOUT}>About</a>
           <a className={tailwind('mt-4 block rounded-sm text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring md:mt-0 md:mr-10 md:inline')} href={'/' + HASH_TERMS}>Terms</a>
           <a className={tailwind('mt-4 block rounded-sm text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring md:mt-0 md:mr-10 md:inline')} href={'/' + HASH_PRIVACY}>Privacy</a>
+          <a className={tailwind('mt-4 block rounded-sm text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring md:mt-0 md:mr-10 md:inline')} href={'/' + HASH_PRICING}>Pricing</a>
           <a className={tailwind('mt-4 block rounded-sm text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring md:mt-0 md:inline')} href={'/' + HASH_SUPPORT}>Support</a>
         </div>
         <div className={tailwind('flex items-center justify-start pt-6 md:justify-center')}>

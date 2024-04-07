@@ -20,7 +20,7 @@ class _SettingsPopupData extends React.PureComponent {
     if (hubUrl === SD_HUB_URL) {
       hubName = 'hub.stacksdrive.com';
       hubNameUrl = 'https://hub.stacksdrive.com/hub_info';
-      hubProvider = 'STX Apps Co., Ltd.';
+      hubProvider = 'STX Apps';
       hubProviderUrl = 'https://www.stxapps.com';
     }
 
@@ -34,13 +34,13 @@ class _SettingsPopupData extends React.PureComponent {
         </div>
         <div className={tailwind('mt-6 md:mt-0')}>
           <h4 className={tailwind('text-base font-medium leading-none text-gray-800 blk:text-gray-100')}>Data Server</h4>
-          <p className={tailwind('mt-2.5 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Brace.to stores your data in a Stacks data server. You can specify which Stacks data server to store your data. By default, your Stacks data server is at <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={hubNameUrl} target="_blank" rel="noreferrer">{hubName}</a> provided by <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={hubProviderUrl} target="_blank" rel="noreferrer">{hubProvider}</a>. You can also deploy your own Stacks data server. To change your Stacks data server, you need to record your server’s information on the Stacks blockchain. Brace.to stores your data on the server specified in the blockchain. For more details, please visit <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href="https://docs.stacks.co/stacks-in-depth/gaia" target="_blank" rel="noreferrer">Stacks Gaia</a>.</p>
+          <p className={tailwind('mt-3.5 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Brace.to stores your data in a Stacks data server. You can specify which Stacks data server to store your data in. By default, your Stacks data server is at <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={hubNameUrl} target="_blank" rel="noreferrer">{hubName}</a>, provided by <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={hubProviderUrl} target="_blank" rel="noreferrer">{hubProvider}</a>. You can also deploy your own Stacks data server. To change your Stacks data server, you must record your server's information on the Stacks blockchain. Brace.to stores your data on the server specified in the blockchain. For more details, please visit <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href="https://docs.stacks.co/stacks-in-depth/gaia" target="_blank" rel="noreferrer">Stacks Gaia</a>.</p>
         </div>
         <div className={tailwind('mt-8')}>
           <button onClick={this.props.onToImportAllDataViewBtnClick} className={tailwind('w-full rounded text-left focus:outline-none focus:ring focus:ring-offset-1 blk:ring-offset-gray-900')}>
             <h4 className={tailwind('text-base font-medium leading-none text-gray-800 underline hover:text-gray-900 blk:text-gray-100 blk:hover:text-white')}>Import Data</h4>
           </button>
-          <p className={tailwind('mt-2.5 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Import data from a text file. The file can be a plain text file containing a list of links. Or it can be a file exported from some read-it-later apps, some bookmark managers, or our website.</p>
+          <p className={tailwind('mt-3 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Import data from a text file. The file can be a plain text file containing a list of links or a file exported from some read-it-later apps, bookmark managers, or our website.</p>
         </div>
         <div className={tailwind('mt-8')}>
           <button onClick={this.props.onToExportAllDataViewBtnClick} className={tailwind('w-full rounded text-left focus:outline-none focus:ring focus:ring-offset-1 blk:ring-offset-gray-900')}>
@@ -52,7 +52,7 @@ class _SettingsPopupData extends React.PureComponent {
           <button onClick={this.props.onToDeleteAllDataViewBtnClick} className={tailwind('w-full rounded text-left focus:outline-none focus:ring focus:ring-offset-1 blk:ring-offset-gray-900')}>
             <h4 className={tailwind('text-base font-medium leading-none text-gray-800 underline hover:text-gray-900 blk:text-gray-100 blk:hover:text-white')}>Delete All Data</h4>
           </button>
-          <p className={tailwind('mt-2.5 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Delete all your data including but not limited to all your saved links in all lists, all your created lists, and all your settings.</p>
+          <p className={tailwind('mt-2.5 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Delete all your data, including but not limited to all your saved links in all lists, all your created lists, and all your settings.</p>
         </div>
       </div>
     );

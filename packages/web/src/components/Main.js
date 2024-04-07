@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import Url from 'url-parse';
 
 import { updateHistoryPosition, fetch, endIapConnection } from '../actions';
 import {
@@ -45,8 +46,13 @@ class Main extends React.PureComponent {
     if (window.history.state === null) {
       this.props.updateHistoryPosition(BACK_POPUP);
 
-      window.history.replaceState(BACK_DECIDER, '', window.location.href);
-      window.history.pushState(BACK_POPUP, '', window.location.href);
+      // In case there is empty hash /#, remove it.
+      const urlObj = new Url(window.location.href, {});
+      if (urlObj.hash === '#') urlObj.set('hash', '');
+      const href = urlObj.toString();
+
+      window.history.replaceState(BACK_DECIDER, '', href);
+      window.history.pushState(BACK_POPUP, '', href);
     }
 
     this.props.fetch();

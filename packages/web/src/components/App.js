@@ -4,7 +4,7 @@ import Url from 'url-parse';
 
 import {
   HASH_LANDING, HASH_LANDING_HOW, HASH_LANDING_MOBILE, HASH_ABOUT, HASH_TERMS,
-  HASH_PRIVACY, HASH_SUPPORT, HASH_BACK,
+  HASH_PRIVACY, HASH_PRICING, HASH_SUPPORT, HASH_BACK,
 } from '../types/const';
 
 import Loading from './Loading';
@@ -13,6 +13,7 @@ import Adding from './Adding';
 import About from './About';
 import Terms from './Terms';
 import Privacy from './Privacy';
+import Pricing from './Pricing';
 import Support from './Support';
 import Back from './Back';
 import ErrorBoundary from './ErrorBoundary';
@@ -37,6 +38,7 @@ class App extends React.PureComponent {
     if (hrefObj.hash === HASH_ABOUT) return <About />;
     if (hrefObj.hash === HASH_TERMS) return <Terms />;
     if (hrefObj.hash === HASH_PRIVACY) return <Privacy />;
+    if (hrefObj.hash === HASH_PRICING) return <Pricing />;
     if (hrefObj.hash === HASH_SUPPORT) return <Support />;
     if (hrefObj.hash === HASH_BACK) return <Back />;
 

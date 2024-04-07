@@ -2,6 +2,7 @@
 import {
   RESET_STATE as OFFLINE_RESET_STATE,
 } from '@redux-offline/redux-offline/lib/constants';
+import Url from 'url-parse';
 import { LexoRank } from '@wewatch/lexorank';
 
 import userSession from '../userSession';
@@ -322,7 +323,6 @@ export const popHistoryState = (store) => {
 
     // if back button pressed and is bulk editing
     if (store.getState().display.isBulkEditing) {
-
       store.dispatch(updateBulkEdit(false));
 
       window.history.go(1);
@@ -403,6 +403,8 @@ export const updateUserSignedIn = () => async (dispatch, getState) => {
       hubUrl: userData.hubUrl,
     },
   });
+
+  redirectToMain();
 };
 
 const resetState = async (dispatch) => {
@@ -424,6 +426,18 @@ const resetState = async (dispatch) => {
 
   // clear all user data!
   dispatch({ type: RESET_STATE });
+};
+
+const redirectToMain = () => {
+  // Need timeout for window.history.back() to update the href first.
+  setTimeout(() => {
+    const urlObj = new Url(window.location.href, {});
+    if (urlObj.pathname === '/' && ['', '#'].includes(urlObj.hash)) return;
+
+    // Empty hash like this, so no reload, popHistoryState is called,
+    //   but # in the url. componentDidMount in Main will handle it.
+    window.location.hash = '';
+  }, 1);
 };
 
 export const updateStacksAccess = (data) => {

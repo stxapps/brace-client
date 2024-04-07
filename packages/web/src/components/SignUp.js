@@ -102,7 +102,7 @@ const SignUp = (props) => {
     {
       key: 'faqs1-1',
       title: "What's a Secret Key?",
-      body: "A Secret Key is a password. It's used to create your account and encrypt/decrypt your data. It's generated when you sign up. Nobody but you will have your Secret Key, to make sure that only you can decrypt your data and see the content inside.",
+      body: "A Secret Key acts like a password. You use it to access your account, and it's used to encrypt/decrypt your data. It's generated when you sign up and is only known to you, ensuring that only you can decrypt your data and see the content inside.",
     },
     {
       key: 'faqs1-2',
@@ -111,18 +111,18 @@ const SignUp = (props) => {
         <React.Fragment>
           <p className={tailwind('text-sm leading-6 text-gray-500')}>Save your Secret Key in a place where only you can find it. For example:</p>
           <ul className={tailwind('list-inside list-disc pt-2 pl-2.5 text-sm leading-6 text-gray-500')}>
-            <li>A password manager such as 1Password</li>
+            <li>A password manager such as Bitwarden</li>
             <li>Your notes app, protected with a password</li>
             <li>Written down and kept somewhere safe</li>
           </ul>
-          <p className={tailwind('pt-2 pb-3 text-sm leading-6 text-gray-500')}>Don't save it anywhere where others can find it, or on a website you do not trust. Anybody with your Secret Key will have access to your data.</p>
+          <p className={tailwind('pt-2 pb-3 text-sm leading-6 text-gray-500')}>Don't save it anywhere others can find it, or on a website you do not trust. Anybody with your Secret Key will have access to your data.</p>
         </React.Fragment>
       ),
     },
     {
       key: 'faqs1-3',
       title: "Why don't I have a password?",
-      body: "Your Secret Key is your password. It's needed to be multiple words for the encryption mechanism and it's needed to be long to prevent brute-force attacks.",
+      body: "Your Secret Key is your password. It's needed to be multiple words for the encryption mechanism and to prevent brute-force attacks.",
     },
   ];
 
@@ -130,17 +130,17 @@ const SignUp = (props) => {
     {
       key: 'faqs2-1',
       title: "What if I lose my Secret Key?",
-      body: "If you lose your Secret Key, it will be lost forever. Only you know your Secret Key, which means that no one can help you recover it.",
+      body: "If you lose your Secret Key, it'll be lost forever. Only you know your Secret Key to ensure that only you can decrypt your data, which means no one can help you recover it.",
     },
     {
       key: 'faqs2-2',
       title: "When will I need my Secret Key?",
-      body: "You'll need your Secret Key to prove it's you when you sign in on a new device such as a new phone or laptop.",
+      body: "You'll need your Secret Key to access your account, i.e., when you sign in on different devices, such as your new phone or laptop.",
     },
     {
       key: 'faqs2-3',
       title: "Can I change or reset my Secret Key?",
-      body: "Your Secret Key cannot be changed or reset. As your Secret Key is used to encrypt your data, each file individually, if you change your Secret Key, every file needs to be decrypted with your old Secret Key and encrypted again with your new Secret Key.",
+      body: "Your Secret Key cannot be changed or reset. As it's used to encrypt your content file by file, if you change your Secret Key, every file needs to be decrypted with your old Secret Key and encrypted again with your new Secret Key.",
     },
   ];
 
@@ -200,7 +200,7 @@ const SignUp = (props) => {
               <path d="M19.9265 26.7151L15.6001 22.3871C14.0444 22.2896 12.5778 21.6277 11.4754 20.5257C10.3731 19.4236 9.71079 17.9571 9.61291 16.4015L3.73611 10.5247C2.38445 12.1343 1.36387 13.9949 0.73291 15.9999C2.77131 22.4911 8.83691 27.1999 16.0001 27.1999C17.3553 27.1999 18.6705 27.0319 19.9265 26.7151Z" />
             </svg>
             <div className={tailwind('ml-3 flex-shrink flex-grow')}>
-              <p className={tailwind('text-left text-sm text-gray-500')}>{appName} won't be able to see, access, or track your activity</p>
+              <p className={tailwind('text-left text-sm text-gray-500')}>{appName} won't be able to see, access, or modify your content</p>
             </div>
           </li>
         </ul>
@@ -224,7 +224,7 @@ const SignUp = (props) => {
     const content = (
       <React.Fragment>
         <h2 className={tailwind('mt-8 text-left text-xl font-semibold text-gray-900')}>Your Secret Key</h2>
-        <p className={tailwind('mt-3 text-sm leading-6 text-gray-500')}>These 24 words are your Secret Key. They create your account, and you sign in on different devices with them. Make sure to save these somewhere safe. If you lose these words, you lose your account.</p>
+        <p className={tailwind('mt-3 text-sm leading-6 text-gray-500')}>These 24 words below are your Secret Key. They're used to access your account. You sign in on different devices with them. Make sure to save them somewhere safe. If you lose these words, you'll lose your account.</p>
         <div className={tailwind('mt-5 rounded-md border border-gray-200')}>
           <p className={tailwind('border-b border-gray-200 py-1 text-center text-base font-medium text-gray-400')}>Your Secret Key</p>
           <p className={tailwind('p-3 text-center text-sm leading-6 text-gray-700')}>{walletData.current.secretKey}</p>
@@ -247,7 +247,7 @@ const SignUp = (props) => {
       <React.Fragment>
         <h2 className={tailwind('mt-8 text-left text-xl font-semibold text-gray-900')}>Save your Secret Key</h2>
         <p className={tailwind('mt-3 text-sm leading-6 text-gray-500')}>Paste your Secret Key wherever you keep critical, private information such as passwords.</p>
-        <p className={tailwind('mt-3 text-sm leading-6 text-gray-500')}>Once lost, it's lost forever. So save it somewhere you won't forget.</p>
+        <p className={tailwind('mt-3 text-sm leading-6 text-gray-500')}>Only you know your Secret Key. If you lose it, it'll be lost forever. So save it somewhere you won't forget.</p>
         <div className={tailwind('pt-6')}>
           <button onClick={onBackedUpBtnClick} className={tailwind('w-full rounded-md border border-transparent bg-blue-700 py-2 px-4 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2')} type="button">I've backed up my Secret Key</button>
           <p className={tailwind('mt-3 text-xs leading-5 tracking-wide text-gray-400')}>By clicking the button above, you agree to our <a className={tailwind('rounded-sm text-gray-500 underline hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} href={domainName + '/' + HASH_TERMS} target="_blank" rel="noreferrer">Terms of Service</a> and <a className={tailwind('rounded-sm text-gray-500 underline hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} href={domainName + '/' + HASH_PRIVACY} target="_blank" rel="noreferrer">Privacy Policy</a>.</p>
