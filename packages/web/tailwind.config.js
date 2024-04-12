@@ -45,6 +45,9 @@ module.exports = {
       listStyleType: {
         alpha: 'lower-alpha',
       },
+      borderRadius: {
+        '4xl': '2rem',
+      },
     },
   },
   corePlugins: {
