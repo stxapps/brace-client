@@ -153,7 +153,7 @@ const IapHome = (props) => {
             <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-red-600 blk:text-red-500')}>Unable to verify the purchase</Text>
           </View>
           <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Please wait a moment and <Text onPress={onRetryVerifyPurchaseBtnClick} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>try again</Text>.</Text>
-          <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text> with your app public key below and order ID in your order confirmation email.</Text>
+          <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text> with your app public key below and the order ID in your order confirmation email.</Text>
           <View style={tailwind('mt-6 sm:flex-row')}>
             <Text style={tailwind('flex-shrink-0 flex-grow-0 text-base font-normal text-gray-500 blk:text-gray-400')}>App public key:</Text>
             {publicKeyText}
@@ -212,12 +212,47 @@ const IapHome = (props) => {
 
   return (
     <View style={tailwind('mt-6 mb-4 md:mt-0')}>
-      <Text style={tailwind('text-base font-medium leading-4 text-gray-800 blk:text-gray-100')}>Purchase subscription</Text>
-      <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Brace.to is free and we offer a paid subscription for use of extra features. It's our intention to never show advertisements and we don't rent, sell or share your information with other companies. Our optional paid subscription is the only way we make money.</Text>
-      <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Support us and unlock extra features: pin to the top, dark appearance, change title & image, lock lists, and tags.</Text>
-      <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Start with a 14 day free trial.</Text>
+      <Text style={tailwind('text-base font-medium leading-4 text-gray-800 blk:text-gray-100')}>Purchase Subscription</Text>
+      <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Brace.to is free, and we offer a paid subscription for using extra features. It's our intention to never show advertisements, and we don't rent, sell, or share your information with other companies. Our optional paid subscription is the only way we make money.</Text>
+      <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Please support us and unlock extra features:</Text>
+      <View style={tailwind('pt-3 lg:flex-row lg:justify-between lg:pt-5')}>
+        <View style={tailwind('flex-row items-center justify-start')}>
+          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-green-600 blk:text-green-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+          </Svg>
+          <Text style={tailwind('ml-3 text-base font-medium text-gray-500 blk:text-gray-400')}>Tags</Text>
+        </View>
+        <View style={tailwind('flex-row items-center justify-start pt-2 lg:pt-0')}>
+          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-green-600 blk:text-green-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+          </Svg>
+          <Text style={tailwind('ml-3 text-base font-medium text-gray-500 blk:text-gray-400')}>Lock lists</Text>
+        </View>
+        <View style={tailwind('flex-row items-center justify-start pt-2 lg:pt-0')}>
+          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-green-600 blk:text-green-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+          </Svg>
+          <Text style={tailwind('ml-3 text-base font-medium text-gray-500 blk:text-gray-400')}>Change title & image</Text>
+        </View>
+      </View>
+      <View style={tailwind('lg:flex-row lg:justify-evenly lg:pt-5')}>
+        <View style={tailwind('flex-row items-center justify-start pt-2 lg:pt-0')}>
+          <Text style={tailwind('hidden flex-shrink-0 flex-grow-0 lg:flex')}>&nbsp;&nbsp;</Text>
+          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-green-600 blk:text-green-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+          </Svg>
+          <Text style={tailwind('ml-3 text-base font-medium text-gray-500 blk:text-gray-400')}>Dark appearance</Text>
+        </View>
+        <View style={tailwind('flex-row items-center justify-start pt-2 lg:pt-0')}>
+          <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-green-600 blk:text-green-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+            <Path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+          </Svg>
+          <Text style={tailwind('ml-3 text-base font-medium text-gray-500 blk:text-gray-400')}>Pin to the top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Text>
+        </View>
+      </View>
+      <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Start with a 14-day free trial.</Text>
       {actionPanel}
-      <Text style={tailwind('mt-6 text-sm font-normal leading-6.5 text-gray-400 blk:text-gray-500')}>By subscribing, you agree to our <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_TERMS)} style={tailwind('text-sm font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Terms of Service</Text> and <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-sm font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Privacy Policy</Text>. Only one free trial per user, the App Store's Terms and Conditions apply.</Text>
+      <Text style={tailwind('mt-6 text-sm font-normal leading-6.5 text-gray-400 blk:text-gray-500')}>By subscribing, you agree to our <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_TERMS)} style={tailwind('text-sm font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Terms of Service</Text> and <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-sm font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Privacy Policy</Text>. Only one free trial per user; the App Store's Terms and Conditions apply.</Text>
       <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>If you've completed the payment or already purchased the subscription, try <Text onPress={onToRestoreIapViewBtnClick} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Restore purchases</Text></Text>
     </View>
   );
@@ -315,29 +350,29 @@ const IapPurchased = (props) => {
     infoText = (
       <React.Fragment>
         <View style={tailwind('mt-4')}>
-          <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>     <Text style={tailwind('text-base font-normal leading-6.5 text-green-600 blk:text-green-500')}>Thank you very much for supporting us.</Text> You've unlocked extra features: pin to the top, dark appearance, change title & image, lock lists, and tags.</Text>
+          <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>     <Text style={tailwind('text-base font-normal leading-6.5 text-green-600 blk:text-green-500')}>Thank you very much for supporting us.</Text> You've unlocked extra features: tags, lock lists, change title & image, dark appearance, and pin to the top.</Text>
           <View style={[tailwind('absolute'), { top: 3, left: 0 }]}>
             <Svg style={tailwind('font-normal text-green-500 blk:text-green-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.7071 8.70711C14.0976 8.31658 14.0976 7.68342 13.7071 7.29289C13.3166 6.90237 12.6834 6.90237 12.2929 7.29289L9 10.5858L7.70711 9.29289C7.31658 8.90237 6.68342 8.90237 6.29289 9.29289C5.90237 9.68342 5.90237 10.3166 6.29289 10.7071L8.29289 12.7071C8.68342 13.0976 9.31658 13.0976 9.70711 12.7071L13.7071 8.70711Z" />
             </Svg>
           </View>
         </View>
-        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Your subscription will be expired on {getFormattedDate(new Date(purchase.expiryDate))} and it'll be automatically renewed. You can manage your subscription at {appStoreLink}.</Text>
+        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Your subscription will expire on {getFormattedDate(new Date(purchase.expiryDate))} and will be automatically renewed. You can manage your subscription at the {appStoreLink}.</Text>
       </React.Fragment>
     );
   } else if (purchase.status === NO_RENEW) {
     infoText = (
       <React.Fragment>
-        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra features: pin to the top, dark appearance, change title & image, lock lists, and tags.</Text>
-        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Your subscription will be expired on {getFormattedDate(new Date(purchase.expiryDate))} and it won't be automatically renewed. If you want to enable automatically renewal, please go to {appStoreLink} to manage your subscription.</Text>
+        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra features: tags, lock lists, change title & image, dark appearance, and pin to the top.</Text>
+        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Your subscription will expire on {getFormattedDate(new Date(purchase.expiryDate))} and will not be automatically renewed. To enable automatic renewal, please go to {appStoreLink} to manage your subscription.</Text>
       </React.Fragment>
     );
   } else if (purchase.status === GRACE) {
     infoText = (
       <React.Fragment>
-        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra features: pin to the top, dark appearance, change title & image, lock lists, and tags.</Text>
+        <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us. You've unlocked extra features: tags, lock lists, change title & image, dark appearance, and pin to the top.</Text>
         <View style={tailwind('mt-4')}>
-          <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>     <Text style={tailwind('text-base font-normal leading-6.5 text-red-600 blk:text-red-500')}>Your subscription has been expired</Text> and you won't be able to use extra features soon. Please go to {appStoreLink} now to renew your subscription to continue supporting us and using extra features.</Text>
+          <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>     <Text style={tailwind('text-base font-normal leading-6.5 text-red-600 blk:text-red-500')}>Your subscription has expired</Text> and you won't be able to use extra features soon. Please go to {appStoreLink} now to renew it so you can continue supporting us and unlocking all features.</Text>
           <View style={[tailwind('absolute'), { top: 3, left: 0 }]}>
             <Svg style={tailwind('font-normal text-red-500 blk:text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
@@ -351,8 +386,7 @@ const IapPurchased = (props) => {
       <React.Fragment>
         <Text style={tailwind('mt-4 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Thank you very much for supporting us.</Text>
         <View style={tailwind('mt-4')}>
-          <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>     <Text style={tailwind('text-base font-normal leading-6.5 text-red-600 blk:text-red-500')}>Your subscription has been expired.</Text> Please go to {appStoreLink} now to renew your subscription to continue supporting us and using extra features.
-          </Text>
+          <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>     <Text style={tailwind('text-base font-normal leading-6.5 text-red-600 blk:text-red-500')}>Your subscription has expired.</Text> Please go to {appStoreLink} now to renew it to support us and unlock extra features.</Text>
           <View style={[tailwind('absolute'), { top: 3, left: 0 }]}>
             <Svg style={tailwind('font-normal text-red-500 blk:text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
@@ -375,7 +409,7 @@ const IapPurchased = (props) => {
           <Svg style={tailwind('mt-0.5 flex-shrink-0 flex-grow-0 font-normal text-red-500 blk:text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
           </Svg>
-          <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal leading-6.5 text-red-600 blk:text-red-500')}>We cannot determine your subscription's status.</Text>
+          <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal leading-6.5 text-red-600 blk:text-red-500')}>We cannot determine the status of your subscription.</Text>
         </View>
       </React.Fragment>
     );
@@ -420,10 +454,10 @@ const IapPurchased = (props) => {
 
   return (
     <View style={tailwind('mt-6 mb-4 md:mt-0')}>
-      <Text style={tailwind('text-base font-medium leading-4 text-gray-800 blk:text-gray-100')}>Your subscription</Text>
+      <Text style={tailwind('text-base font-medium leading-4 text-gray-800 blk:text-gray-100')}>Your Subscription</Text>
       {infoText}
       {refreshPanel}
-      <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>{isUnknown ? 'If the problem persists' : 'If you have any questions'}, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text> with your app public key below and order ID in your order confirmation email.</Text>
+      <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>{isUnknown ? 'If the problem persists' : 'If you have any questions'}, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text> with your app public key below and the order ID in your order confirmation email.</Text>
       <View style={tailwind('mt-6 sm:flex-row')}>
         <Text style={tailwind('flex-shrink-0 flex-grow-0 text-base font-normal text-gray-500 blk:text-gray-400')}>App public key:</Text>
         {publicKeyText}
@@ -517,9 +551,9 @@ const _SettingsPopupIapRestore = (props) => {
           <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-gray-400 blk:text-gray-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
             <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 6C11 6.55228 10.5523 7 10 7C9.44772 7 9 6.55228 9 6C9 5.44772 9.44772 5 10 5C10.5523 5 11 5.44772 11 6ZM9 9C8.44772 9 8 9.44772 8 10C8 10.5523 8.44772 11 9 11V14C9 14.5523 9.44772 15 10 15H11C11.5523 15 12 14.5523 12 14C12 13.4477 11.5523 13 11 13V10C11 9.44772 10.5523 9 10 9H9Z" />
           </Svg>
-          <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-gray-500 blk:text-gray-400')}>No purchase found.</Text>
+          <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-gray-500 blk:text-gray-400')}>No purchase was found.</Text>
         </View>
-        <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>If there should be a purchase, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text> with your app public key below and order ID in your order confirmation email.</Text>
+        <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>If there's still no purchase, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text> with your app public key below and the order ID in your order confirmation email.</Text>
         <View style={tailwind('mt-6 sm:flex-row')}>
           <Text style={tailwind('flex-shrink-0 flex-grow-0 text-base font-normal text-gray-500 blk:text-gray-400')}>App public key:</Text>
           {publicKeyText}

@@ -25,7 +25,7 @@ class _SettingsPopupData extends React.PureComponent {
     if (hubUrl === SD_HUB_URL) {
       hubName = 'hub.stacksdrive.com';
       hubNameUrl = 'https://hub.stacksdrive.com/hub_info';
-      hubProvider = 'STX Apps Co., Ltd.';
+      hubProvider = 'STX Apps';
       hubProviderUrl = 'https://www.stxapps.com';
     }
 
@@ -39,13 +39,13 @@ class _SettingsPopupData extends React.PureComponent {
         </View>
         <View style={tailwind('mt-6 md:mt-0')}>
           <Text style={tailwind('text-base font-medium leading-4 text-gray-800 blk:text-gray-100')}>Data Server</Text>
-          <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Brace.to stores your data in a Stacks data server. You can specify which Stacks data server to store your data. By default, your Stacks data server is at <Text onPress={() => Linking.openURL(hubNameUrl)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>{hubName}</Text> provided by <Text onPress={() => Linking.openURL(hubProviderUrl)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>{hubProvider}</Text>. You can also deploy your own Stacks data server. To change your Stacks data server, you need to record your server’s information on the Stacks blockchain. Brace.to stores your data on the server specified in the blockchain. For more details, please visit <Text onPress={() => Linking.openURL('https://docs.stacks.co/docs/gaia/')} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Stacks Gaia</Text>.</Text>
+          <Text style={tailwind('mt-3.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Brace.to stores your data in a Stacks data server. You can specify which Stacks data server to store your data in. By default, your Stacks data server is at <Text onPress={() => Linking.openURL(hubNameUrl)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>{hubName}</Text>, provided by <Text onPress={() => Linking.openURL(hubProviderUrl)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>{hubProvider}</Text>. You can also deploy your own Stacks data server. To change your Stacks data server, you must record your server's information on the Stacks blockchain. Brace.to stores your data on the server specified in the blockchain. For more details, please visit <Text onPress={() => Linking.openURL('https://docs.stacks.co/docs/gaia/')} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Stacks Gaia</Text>.</Text>
         </View>
         <View style={tailwind('mt-8')}>
           <TouchableOpacity onPress={this.props.onToImportAllDataViewBtnClick}>
             <Text style={tailwind('text-base font-medium leading-4 text-gray-800 underline blk:text-gray-100')}>Import Data</Text>
           </TouchableOpacity>
-          <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Import data from a text file. The file can be a plain text file containing a list of links. Or it can be a file exported from some read-it-later apps, some bookmark managers, or our website.</Text>
+          <Text style={tailwind('mt-3 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Import data from a text file. The file can be a plain text file containing a list of links or a file exported from some read-it-later apps, bookmark managers, or our website.</Text>
         </View>
         <View style={tailwind('mt-8')}>
           <TouchableOpacity onPress={this.props.onToExportAllDataViewBtnClick}>
@@ -57,7 +57,7 @@ class _SettingsPopupData extends React.PureComponent {
           <TouchableOpacity onPress={this.props.onToDeleteAllDataViewBtnClick}>
             <Text style={tailwind('text-base font-medium leading-4 text-gray-800 underline blk:text-gray-100')}>Delete All Data</Text>
           </TouchableOpacity>
-          <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Delete all your data including but not limited to all your saved links in all lists, all your created lists, and all your settings.</Text>
+          <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Delete all your data, including but not limited to all your saved links in all lists, all your created lists, and all your settings.</Text>
         </View>
       </View>
     );
@@ -394,13 +394,13 @@ class _SettingsPopupDataDelete extends React.PureComponent {
           </TouchableOpacity>
           <Text style={tailwind('pb-2 text-xl font-medium leading-5 text-gray-800 blk:text-gray-100 md:pb-0')}>Delete All Data</Text>
         </View>
-        <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Delete all your data including but not limited to all your saved links in all lists, all your created lists, and all your settings.</Text>
+        <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Delete all your data, including but not limited to all your saved links in all lists, all your created lists, and all your settings.</Text>
         <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>This will only remove all your data, not your account. You will still be able to sign in.</Text>
         <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>It may take several minutes to delete all your data.</Text>
         <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-red-600 blk:text-red-500')}>This action CANNOT be undone.</Text>
         <View style={tailwind('mt-6 flex-row items-center')}>
           <Switch onValueChange={this.onConfirmInputChange} value={this.state.didCheckConfirm} thumbColor={Platform.OS === 'android' ? this.state.didCheckConfirm ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} ios_backgroundColor={switchIosTrackColorOff} />
-          <Text style={tailwind('ml-2 flex-1 text-base font-normal text-gray-500 blk:text-gray-400')}>Yes, I’m absolutely sure I want to delete all my data.</Text>
+          <Text style={tailwind('ml-2 flex-1 text-base font-normal text-gray-500 blk:text-gray-400')}>Yes, I'm absolutely sure I want to delete all my data.</Text>
         </View>
         {actionPanel}
       </View>

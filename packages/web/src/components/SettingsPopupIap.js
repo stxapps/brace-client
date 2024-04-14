@@ -209,42 +209,42 @@ const IapHome = (props) => {
       <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Please support us and unlock all extra features:</p>
       <div className={tailwind('pt-3 lg:flex lg:justify-between lg:pt-5')}>
         <div className={tailwind('flex')}>
-          <svg className={tailwind('h-6 w-5 flex-none text-green-600')} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <svg className={tailwind('h-6 w-5 flex-none text-green-600 blk:text-green-400')} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
             <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd"></path>
           </svg>
-          <span className={tailwind('ml-3 font-medium text-gray-500')}>Tags</span>
+          <span className={tailwind('ml-3 font-medium text-gray-500 blk:text-gray-400')}>Tags</span>
         </div>
         <div className={tailwind('flex pt-2 lg:pt-0')}>
-          <svg className={tailwind('h-6 w-5 flex-none text-green-600')} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <svg className={tailwind('h-6 w-5 flex-none text-green-600 blk:text-green-400')} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
             <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd"></path>
           </svg>
-          <span className={tailwind('ml-3 font-medium text-gray-500')}>Lock lists</span>
+          <span className={tailwind('ml-3 font-medium text-gray-500 blk:text-gray-400')}>Lock lists</span>
         </div>
         <div className={tailwind('flex pt-2 lg:pt-0')}>
-          <svg className={tailwind('h-6 w-5 flex-none text-green-600')} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <svg className={tailwind('h-6 w-5 flex-none text-green-600 blk:text-green-400')} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
             <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd"></path>
           </svg>
-          <span className={tailwind('ml-3 font-medium text-gray-500')}>Change title & image</span>
+          <span className={tailwind('ml-3 font-medium text-gray-500 blk:text-gray-400')}>Change title & image</span>
         </div>
       </div>
       <div className={tailwind('lg:flex lg:justify-evenly lg:pt-5')}>
         <div className={tailwind('flex pt-2 lg:pt-0')}>
           <span className={tailwind('hidden lg:inline')}>&nbsp;&nbsp;</span>
-          <svg className={tailwind('h-6 w-5 flex-none text-green-600')} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <svg className={tailwind('h-6 w-5 flex-none text-green-600 blk:text-green-400')} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
             <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd"></path>
           </svg>
-          <span className={tailwind('ml-3 font-medium text-gray-500')}>dark appearance</span>
+          <span className={tailwind('ml-3 font-medium text-gray-500 blk:text-gray-400')}>Dark appearance</span>
         </div>
         <div className={tailwind('flex pt-2 lg:pt-0')}>
-          <svg className={tailwind('h-6 w-5 flex-none text-green-600')} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <svg className={tailwind('h-6 w-5 flex-none text-green-600 blk:text-green-400')} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
             <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd"></path>
           </svg>
-          <span className={tailwind('ml-3 font-medium text-gray-500')}>pin to the top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <span className={tailwind('ml-3 font-medium text-gray-500 blk:text-gray-400')}>Pin to the top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
         </div>
       </div>
       <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Start with a 14-day free trial.</p>
       {actionPanel}
-      <p className={tailwind('mt-6 text-sm leading-relaxed text-gray-400 blk:text-gray-500')}>By subscribing, you agree to our <a className={tailwind('rounded text-gray-500 underline hover:text-gray-700 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-gray-200')} href={'/' + HASH_TERMS} target="_blank" rel="noreferrer">Terms of Service</a> and <a className={tailwind('rounded text-gray-500 underline hover:text-gray-700 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-gray-200')} href={'/' + HASH_PRIVACY} target="_blank" rel="noreferrer">Privacy Policy</a>. Only one free trial per user.</p>
+      <p className={tailwind('mt-6 text-sm leading-relaxed text-gray-400 blk:text-gray-500')}>By subscribing, you agree to our <a className={tailwind('rounded text-gray-500 underline hover:text-gray-700 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-gray-200')} href={'/' + HASH_TERMS} target="_blank" rel="noreferrer">Terms of Service</a> and <a className={tailwind('rounded text-gray-500 underline hover:text-gray-700 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-gray-200')} href={'/' + HASH_PRIVACY} target="_blank" rel="noreferrer">Privacy Policy</a>. Only one free trial per user; the payment processing service's Terms and Conditions apply.</p>
       <p className={tailwind('mt-4 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>If you've completed the payment or already purchased the subscription, try <button onClick={onToRestoreIapViewBtnClick} className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')}>Restore purchases</button>.</p>
     </div>
   );
