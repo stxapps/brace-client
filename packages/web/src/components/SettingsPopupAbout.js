@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import {
   HASH_LANDING, HASH_LANDING_HOW, HASH_LANDING_MOBILE, HASH_ABOUT, HASH_TERMS,
-  HASH_PRIVACY, HASH_PRICING, HASH_SUPPORT, BLK_MODE,
+  HASH_PRIVACY, HASH_SUPPORT, BLK_MODE,
 } from '../types/const';
 import { getThemeMode } from '../selectors';
 
@@ -37,7 +37,6 @@ const SettingsPopupAbout = (props) => {
           <a className={tailwind('block rounded-sm text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white md:inline')} href={'/' + HASH_ABOUT} target="_blank" rel="noreferrer">About</a>
           <a className={tailwind('mt-4 block rounded-sm text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white md:mt-0 md:ml-14 md:inline')} href={'/' + HASH_TERMS} target="_blank" rel="noreferrer">Terms</a>
           <a className={tailwind('mt-4 block rounded-sm text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white md:mt-0 md:ml-14 md:inline')} href={'/' + HASH_PRIVACY} target="_blank" rel="noreferrer">Privacy</a>
-          <a className={tailwind('mt-4 block rounded-sm text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white md:mt-0 md:ml-14 md:inline')} href={'/' + HASH_PRICING} target="_blank" rel="noreferrer">Pricing</a>
           <a className={tailwind('mt-4 block rounded-sm text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white md:mt-0 md:ml-14 md:inline')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">Support</a>
         </div>
         <div className={tailwind('flex items-center justify-start pt-16 md:pt-16')}>

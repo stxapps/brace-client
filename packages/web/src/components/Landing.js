@@ -152,7 +152,7 @@ class Landing extends React.PureComponent {
         <section className={tailwind('mx-auto max-w-6xl px-4 pt-24 pb-4 md:px-6 lg:px-8')}>
           <img className={tailwind('mx-auto h-16')} src={undrawLink} alt="unDraw link icon" />
           <h2 className={tailwind('mt-4 text-center text-3xl font-semibold leading-none text-gray-900 md:text-4xl')}>Never miss a link <br className={tailwind('inline md:hidden')} />ever again</h2>
-          <p className={tailwind('mt-4 text-lg font-normal text-gray-500 sm:text-center')}>Many interesting, useful, and important stuff is <br className={tailwind('hidden sm:inline md:hidden')} /> on the internet. <br className={tailwind('hidden md:inline')} />Brace.to helps you save them so that you will never miss anything.</p>
+          <p className={tailwind('mt-4 text-lg font-normal text-gray-500 sm:text-center')}>Many interesting, useful, and important stuff is <br className={tailwind('hidden sm:inline md:hidden')} />on the internet. <br className={tailwind('hidden md:inline')} />Brace.to helps you save them so that you will never miss anything.</p>
           <div className={tailwind('mt-10 md:mt-12')}>
             <ul className={tailwind('md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10')}>
               <li>
