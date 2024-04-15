@@ -75,13 +75,13 @@ const Pricing = () => {
                 <svg className={tailwind('h-6 w-5 flex-none text-green-600')} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd"></path>
                 </svg>
-                <span className={tailwind('ml-3 font-medium text-gray-500')}>dark appearance</span>
+                <span className={tailwind('ml-3 font-medium text-gray-500')}>Dark appearance</span>
               </div>
               <div className={tailwind('flex pt-2 lg:pt-0')}>
                 <svg className={tailwind('h-6 w-5 flex-none text-green-600')} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd"></path>
                 </svg>
-                <span className={tailwind('ml-3 font-medium text-gray-500')}>pin to the top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span className={tailwind('ml-3 font-medium text-gray-500')}>Pin to the top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
               </div>
             </div>
           </div>
