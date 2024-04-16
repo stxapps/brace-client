@@ -22,7 +22,7 @@ class Privacy extends React.PureComponent {
         <TopBar rightPane={SHOW_BLANK} />
         <div className={tailwind('mx-auto w-full max-w-3xl bg-white px-4 pt-16 pb-4 text-gray-500 md:px-6 lg:px-8')}>
           <h1 className={tailwind('text-center text-3xl font-extrabold text-gray-900 sm:text-4xl')}>Privacy Policy</h1>
-          <p className={tailwind('pt-8 leading-7')}>This Privacy Policy is effective as of xx Apr 2024.</p>
+          <p className={tailwind('pt-8 leading-7')}>This Privacy Policy is effective as of 17 Apr 2024.</p>
           <h2 className={tailwind('pt-8 text-xl font-semibold text-gray-900')}>Summary</h2>
           <p className={tailwind('pt-3 leading-7')}>We don't rent, sell or share your information with other companies or advertisers. Our optional paid subscription is the only way we make money, so our incentives are aligned with yours.</p>
 

@@ -553,7 +553,7 @@ const _SettingsPopupIapRestore = (props) => {
           </Svg>
           <Text style={tailwind('ml-1 flex-shrink flex-grow text-base font-normal text-gray-500 blk:text-gray-400')}>No purchase was found.</Text>
         </View>
-        <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>If there's still no purchase, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text> with your app public key below and the order ID in your order confirmation email.</Text>
+        <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>If there should be a purchase, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>contact us</Text> with your app public key below and the order ID in your order confirmation email.</Text>
         <View style={tailwind('mt-6 sm:flex-row')}>
           <Text style={tailwind('flex-shrink-0 flex-grow-0 text-base font-normal text-gray-500 blk:text-gray-400')}>App public key:</Text>
           {publicKeyText}
