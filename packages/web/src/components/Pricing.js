@@ -3,7 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { updatePopup, updateSettingsPopup, updateSettingsViewId } from '../actions';
 import { SHOW_BLANK, SIGN_UP_POPUP, SETTINGS_VIEW_IAP } from '../types/const';
-import { isObject, getValidPurchase } from '../utils';
+import { getValidPurchase } from '../selectors';
+import { isObject } from '../utils';
 
 import { useTailwind } from '.';
 import TopBar from './TopBar';
@@ -85,7 +86,7 @@ const Pricing = () => {
               </div>
             </div>
           </div>
-          <div style={{ borderRadius: '0.75rem' }} className={tailwind('mx-auto mt-10 max-w-sm bg-gray-50 p-4 md:mt-0 md:ml-8 md:max-w-xs md:flex-shrink-0')}>
+          <div className={tailwind('mx-auto mt-10 max-w-sm rounded-4xl bg-gray-50 p-4 md:mt-0 md:ml-8 md:max-w-xs md:flex-shrink-0')}>
             <p className={tailwind('text-center text-gray-500')}>Start with a 14-day free trial.</p>
             <p className={tailwind('mt-6 flex items-baseline justify-center gap-x-2')}>
               <span className={tailwind('text-5xl font-bold tracking-tight text-gray-900')}>$4.99</span>

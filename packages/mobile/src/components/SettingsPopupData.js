@@ -45,7 +45,7 @@ class _SettingsPopupData extends React.PureComponent {
           <TouchableOpacity onPress={this.props.onToImportAllDataViewBtnClick}>
             <Text style={tailwind('text-base font-medium leading-4 text-gray-800 underline blk:text-gray-100')}>Import Data</Text>
           </TouchableOpacity>
-          <Text style={tailwind('mt-3 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Import data from a text file. The file can be a plain text file containing a list of links or a file exported from some read-it-later apps, bookmark managers, or our website.</Text>
+          <Text style={tailwind('mt-3 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Import data from a text file. The file can be a plain text file containing a list of links or a file exported from some read-it-later apps, bookmark managers, or our website/app.</Text>
         </View>
         <View style={tailwind('mt-8')}>
           <TouchableOpacity onPress={this.props.onToExportAllDataViewBtnClick}>

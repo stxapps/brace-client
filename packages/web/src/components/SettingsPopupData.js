@@ -40,7 +40,7 @@ class _SettingsPopupData extends React.PureComponent {
           <button onClick={this.props.onToImportAllDataViewBtnClick} className={tailwind('w-full rounded text-left focus:outline-none focus:ring focus:ring-offset-1 blk:ring-offset-gray-900')}>
             <h4 className={tailwind('text-base font-medium leading-none text-gray-800 underline hover:text-gray-900 blk:text-gray-100 blk:hover:text-white')}>Import Data</h4>
           </button>
-          <p className={tailwind('mt-3 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Import data from a text file. The file can be a plain text file containing a list of links or a file exported from some read-it-later apps, bookmark managers, or our website.</p>
+          <p className={tailwind('mt-3 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Import data from a text file. The file can be a plain text file containing a list of links or a file exported from some read-it-later apps, bookmark managers, or our website/app.</p>
         </div>
         <div className={tailwind('mt-8')}>
           <button onClick={this.props.onToExportAllDataViewBtnClick} className={tailwind('w-full rounded text-left focus:outline-none focus:ring focus:ring-offset-1 blk:ring-offset-gray-900')}>
