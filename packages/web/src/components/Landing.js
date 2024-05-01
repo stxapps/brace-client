@@ -387,7 +387,7 @@ class Landing extends React.PureComponent {
             <h2 className={tailwind('text-center text-4xl font-bold leading-none text-white md:text-5xl')}><span className={tailwind('line-through')}>Don't</span> Can't Be Evil</h2>
             <img className={tailwind('absolute right-0 h-5 translate-x-0 translate-y-2 transform sm:translate-x-10')} src={logoFullWhite} alt="Brace logo" />
           </div>
-          <p className={tailwind('mt-20 text-center text-lg font-normal leading-normal text-gray-200')}>Not just that Brace.to doesn't be evil; Brace.to can't be.</p>
+          <p className={tailwind('mt-20 text-center text-lg font-normal leading-normal text-gray-200')}>Not only that Brace.to doesn't be evil; Brace.to can't be.</p>
         </section>
         <section className={tailwind('mx-auto max-w-6xl px-4 py-20 md:px-6 lg:px-8')}>
           <h2 className={tailwind('text-left text-3xl font-semibold leading-none text-gray-900 md:text-4xl')}>Some kind words...</h2>

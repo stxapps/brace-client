@@ -409,6 +409,25 @@ export const copyListNameObjs = (listNameObjs, excludedListNames = []) => {
   return objs;
 };
 
+export const copyListNameObjsWithExactExclude = (listNameObjs, excludedListNames) => {
+  const newListNameObjs = [];
+  for (const listNameObj of listNameObjs) {
+    const obj = { ...listNameObj };
+    if (STATUS in obj) delete obj[STATUS];
+    if (Array.isArray(obj.children)) {
+      obj.children = copyListNameObjsWithExactExclude(obj.children, excludedListNames);
+    }
+
+    if (excludedListNames.includes(obj.listName)) {
+      if (Array.isArray(obj.children)) newListNameObjs.push(...obj.children);
+      continue;
+    }
+
+    newListNameObjs.push(obj);
+  }
+  return newListNameObjs;
+};
+
 export const getAllListNames = (listNameObjs) => {
   const listNames = [];
   if (!listNameObjs) return listNames;

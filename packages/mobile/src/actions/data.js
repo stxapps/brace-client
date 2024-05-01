@@ -25,7 +25,8 @@ import {
   isTagNameObjsValid, createDataFName, createLinkFPath, createSsltFPath,
   createSettingsFPath, getLastSettingsFPaths, extractFPath, getPins, getMainId,
   getFormattedTimeStamp, extractPinFPath, getStaticFPath, extractTagFPath, getTags,
-  listLinkMetas, throwIfPerformFilesError,
+  listLinkMetas, throwIfPerformFilesError, copyListNameObjs,
+  copyListNameObjsWithExactExclude, getAllListNames, copyTagNameObjs,
 } from '../utils';
 import { initialSettingsState } from '../types/initialStates';
 import vars from '../vars';
@@ -145,6 +146,28 @@ const parseRawImportedFile = async (dispatch, getState, text) => {
   }
 };
 
+const _combineListNameMap = (settings, content) => {
+  if (!isObject(settings) || !Array.isArray(settings.listNameMap)) return;
+  if (!isObject(content) || !Array.isArray(content.listNameMap)) return;
+
+  settings.listNameMap = copyListNameObjs(settings.listNameMap);
+
+  const excludedListNames = getAllListNames(settings.listNameMap);
+  const objs = copyListNameObjsWithExactExclude(content.listNameMap, excludedListNames);
+  settings.listNameMap.push(...objs);
+};
+
+const _combineTagNameMap = (settings, content) => {
+  if (!isObject(settings) || !Array.isArray(settings.tagNameMap)) return;
+  if (!isObject(content) || !Array.isArray(content.tagNameMap)) return;
+
+  settings.tagNameMap = copyTagNameObjs(settings.tagNameMap);
+
+  const excludedTagNames = settings.tagNameMap.map(tagNameObj => tagNameObj.tagName);
+  const objs = copyTagNameObjs(content.tagNameMap, excludedTagNames);
+  settings.tagNameMap.push(...objs);
+};
+
 const _parseBraceSettings = async (settingsFPaths, settingsEntries) => {
   const settingsParts = [];
   for (const entry of settingsEntries) {
@@ -181,22 +204,25 @@ const _parseBraceSettings = async (settingsFPaths, settingsEntries) => {
     settingsParts.push({ dt, content: settings });
   }
 
-  let latestSettingsPart;
+  let latestDt, latestSettings;
   for (const settingsPart of settingsParts) {
-    if (!isObject(latestSettingsPart)) {
-      latestSettingsPart = settingsPart;
+    if (!isNumber(latestDt) || !isObject(latestSettings)) {
+      [latestDt, latestSettings] = [settingsPart.dt, settingsPart.content];
       continue;
     }
-    if (latestSettingsPart.dt < settingsPart.dt) latestSettingsPart = settingsPart;
+    if (settingsPart.dt <= latestDt) continue;
+    [latestDt, latestSettings] = [settingsPart.dt, settingsPart.content];
   }
-  if (!isObject(latestSettingsPart)) return;
+  if (!isObject(latestSettings)) return;
 
   const lsfpsResult = getLastSettingsFPaths(settingsFPaths);
   if (lsfpsResult.fpaths.length > 0) {
-    const lastSettingsFPath = lsfpsResult.fpaths[0];
-    const { contents } = await dataApi.getFiles([lastSettingsFPath], true);
-    if (isEqual(latestSettingsPart.content, contents[0])) {
-      return;
+    const { contents } = await dataApi.getFiles(lsfpsResult.fpaths, true);
+    for (const content of contents) {
+      if (isEqual(latestSettings, content)) return;
+
+      _combineListNameMap(latestSettings, content);
+      _combineTagNameMap(latestSettings, content);
     }
   }
 
@@ -206,7 +232,7 @@ const _parseBraceSettings = async (settingsFPaths, settingsEntries) => {
   now += 1;
 
   const values = [
-    { id: fpath, type: PUT_FILE, path: fpath, content: latestSettingsPart.content },
+    { id: fpath, type: PUT_FILE, path: fpath, content: latestSettings },
   ];
 
   const data = { values, isSequential: false, nItemsForNs: 1 };
@@ -219,7 +245,9 @@ const parseBraceSettings = async (
 ) => {
   await _parseBraceSettings(settingsFPaths, settingsEntries);
   progress.done += settingsEntries.length;
-  dispatch(updateImportAllDataProgress(progress));
+  if (settingsEntries.length > 0) {
+    dispatch(updateImportAllDataProgress(progress));
+  }
 };
 
 const parseBraceImages = async (dispatch, existFPaths, imgEntries, progress) => {
@@ -296,7 +324,9 @@ const parseBraceLinks = async (
     psInfos[mainId] = { updatedDT: pdUpdatedDT, listName, fpath };
   }
   progress.done += ssltEntries.length;
-  dispatch(updateImportAllDataProgress(progress));
+  if (ssltEntries.length > 0) {
+    dispatch(updateImportAllDataProgress(progress));
+  }
 
   let now = Date.now();
   const nLinks = 30;

@@ -178,7 +178,7 @@ class Landing extends React.PureComponent {
             <Text style={tailwind('text-center text-4xl font-bold text-white md:text-5xl')}><Text style={tailwind('text-4xl font-bold text-white line-through md:text-5xl')}>Don't</Text>{safeAreaWidth < 420 ? '\n' : ' '}Can't be Evil</Text>
             <SvgXml style={cache('L_logo', [tailwind('absolute right-0 bottom-0'), logoTranslate], [safeAreaWidth, tailwind])} width={91.66} height={20} xml={logoFullWhite} />
           </View>
-          <Text style={tailwind('mt-20 text-center text-lg font-normal leading-6 text-gray-200 md:text-xl')}>Not just that Brace.to doesn't be evil; Brace.to can't be.</Text>
+          <Text style={tailwind('mt-20 text-center text-lg font-normal leading-6 text-gray-200 md:text-xl')}>Not only that Brace.to doesn't be evil; Brace.to can't be.</Text>
         </View>
       </Swiper >
     );
