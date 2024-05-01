@@ -49,6 +49,8 @@
 		04A32F2E28F569DB0003D7F6 /* Inter-MediumItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 08D3419574664F2B9DAA7294 /* Inter-MediumItalic.otf */; };
 		04A32F2F28F569DB0003D7F6 /* Inter-ThinItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 96B1CA1EA54B42989A9F5610 /* Inter-ThinItalic.otf */; };
 		04A32F3328F56B6B0003D7F6 /* Dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A32EE328F5564E0003D7F6 /* Dummy.swift */; };
+		04BB39472BE2254800B98610 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 04BB39462BE2254800B98610 /* PrivacyInfo.xcprivacy */; };
+		04BB39482BE2254800B98610 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 04BB39462BE2254800B98610 /* PrivacyInfo.xcprivacy */; };
 		04BFEEA429F91A2900C384CD /* JSONTokensJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BFEEA329F91A2900C384CD /* JSONTokensJS.swift */; };
 		04BFEEA629F91AF200C384CD /* jsontokens.js in Resources */ = {isa = PBXBuildFile; fileRef = 04BFEEA529F91AF200C384CD /* jsontokens.js */; };
 		0C80B921A6F3F58F76C31292 /* libPods-Bracedotto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-Bracedotto.a */; };
@@ -140,6 +142,7 @@
 		04A32F0C28F569350003D7F6 /* bitcoinjs.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = bitcoinjs.js; sourceTree = "<group>"; };
 		04A32F0D28F569350003D7F6 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		04A32F3028F56A1D0003D7F6 /* supporter.storekit */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = supporter.storekit; sourceTree = "<group>"; };
+		04BB39462BE2254800B98610 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		04BFEEA329F91A2900C384CD /* JSONTokensJS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONTokensJS.swift; sourceTree = "<group>"; };
 		04BFEEA529F91AF200C384CD /* jsontokens.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = jsontokens.js; sourceTree = "<group>"; };
 		060C849BE3C44557B39F2EEE /* Inter-ExtraBoldItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-ExtraBoldItalic.otf"; path = "../src/fonts/Inter/Inter-ExtraBoldItalic.otf"; sourceTree = "<group>"; };
@@ -326,6 +329,7 @@
 				04A32F3028F56A1D0003D7F6 /* supporter.storekit */,
 				04A32EE328F5564E0003D7F6 /* Dummy.swift */,
 				04A32EE228F5564E0003D7F6 /* Bracedotto-Bridging-Header.h */,
+				04BB39462BE2254800B98610 /* PrivacyInfo.xcprivacy */,
 				0BD79EFA0B814C93BF4D7788 /* Resources */,
 			);
 			indentWidth = 2;
@@ -496,6 +500,7 @@
 				04A32F1C28F569350003D7F6 /* bitcoinjs.js in Resources */,
 				04A32F2728F569DB0003D7F6 /* Inter-BlackItalic.otf in Resources */,
 				04A32F2E28F569DB0003D7F6 /* Inter-MediumItalic.otf in Resources */,
+				04BB39482BE2254800B98610 /* PrivacyInfo.xcprivacy in Resources */,
 				04A32F1E28F569DB0003D7F6 /* Inter-Medium.otf in Resources */,
 				04A32F2028F569DB0003D7F6 /* Inter-BoldItalic.otf in Resources */,
 				04A32F2F28F569DB0003D7F6 /* Inter-ThinItalic.otf in Resources */,
@@ -523,6 +528,7 @@
 				762824A24863424793B8B598 /* Inter-LightItalic.otf in Resources */,
 				B2D4D1D2243143C8BD828388 /* Inter-Medium.otf in Resources */,
 				4D3C1D2D9EAB48F7A8101E8D /* Inter-MediumItalic.otf in Resources */,
+				04BB39472BE2254800B98610 /* PrivacyInfo.xcprivacy in Resources */,
 				6792382454E347DAB63E1E41 /* Inter-Regular.otf in Resources */,
 				1E85326C6D444B27B432EE6A /* Inter-SemiBold.otf in Resources */,
 				F45D8DE93C554B56A337ACA7 /* Inter-SemiBoldItalic.otf in Resources */,

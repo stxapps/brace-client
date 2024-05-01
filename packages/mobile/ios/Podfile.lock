@@ -325,21 +325,17 @@ PODS:
   - react-native-blockstack (0.4.6):
     - Blockstack
     - React
-  - react-native-document-picker (9.1.1):
+  - react-native-document-picker (9.2.0):
     - React-Core
   - react-native-flipper (0.164.0):
     - React-Core
-  - react-native-netinfo (9.3.10):
+  - react-native-netinfo (11.3.1):
     - React-Core
   - react-native-receive-sharing-intent (1.0.4):
     - React
-  - react-native-safe-area-context (4.6.3):
-    - RCT-Folly
-    - RCTRequired
-    - RCTTypeSafety
+  - react-native-safe-area-context (4.10.1):
     - React-Core
-    - ReactCommon/turbomodule/core
-  - react-native-webview (13.2.2):
+  - react-native-webview (13.8.7):
     - React-Core
   - React-perflogger (0.70.3)
   - React-RCTActionSheet (0.70.3):
@@ -407,16 +403,16 @@ PODS:
     - React-jsi (= 0.70.3)
     - React-logger (= 0.70.3)
     - React-perflogger (= 0.70.3)
-  - ReactNativeFileAccess (3.0.7):
+  - ReactNativeFileAccess (3.1.0):
     - React-Core
     - ZIPFoundation
   - ReactNativeKeyboardManager (6.5.11-1):
     - IQKeyboardManagerSwift (= 6.5.11)
     - React-Core
     - React-RCTText
-  - RNCAsyncStorage (1.18.2):
+  - RNCAsyncStorage (1.23.1):
     - React-Core
-  - RNCClipboard (1.11.2):
+  - RNCClipboard (1.14.1):
     - React-Core
   - RNDefaultPreference (1.4.4):
     - React-Core
@@ -426,18 +422,18 @@ PODS:
     - React-Core
     - SDWebImage (~> 5.11.1)
     - SDWebImageWebPCoder (~> 0.8.4)
-  - RNIap (12.10.5):
+  - RNIap (12.13.1):
     - React-Core
-  - RNImageCropPicker (0.40.0):
-    - React-Core
-    - React-RCTImage
-    - RNImageCropPicker/QBImagePickerController (= 0.40.0)
-    - TOCropViewController
-  - RNImageCropPicker/QBImagePickerController (0.40.0):
+  - RNImageCropPicker (0.40.3):
     - React-Core
     - React-RCTImage
+    - RNImageCropPicker/QBImagePickerController (= 0.40.3)
     - TOCropViewController
-  - RNShare (9.0.2):
+  - RNImageCropPicker/QBImagePickerController (0.40.3):
+    - React-Core
+    - React-RCTImage
+    - TOCropViewController
+  - RNShare (10.2.0):
     - React-Core
   - RNSVG (13.9.0):
     - React-Core
@@ -453,7 +449,7 @@ PODS:
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
-  - ZIPFoundation (0.9.11)
+  - ZIPFoundation (0.9.19)
 
 DEPENDENCIES:
   - Blockstack (from `https://github.com/bracedotto/blockstack-ios.git`, commit `5b4ffc1`)
@@ -724,12 +720,12 @@ SPEC CHECKSUMS:
   React-jsinspector: 0553c9fe7218e1f127be070bd5a4d2fc19fb8190
   React-logger: cffcc09e8aba8a3014be8d18da7f922802e9f19e
   react-native-blockstack: a54aed35a241b7be1e735a334f9c644f6d9237fe
-  react-native-document-picker: 3599b238843369026201d2ef466df53f77ae0452
+  react-native-document-picker: 2b3efb60622b7be891b8d0e0e5424632150e0c94
   react-native-flipper: c33a4995958ef12a2b2f8290d63bed7adeed7634
-  react-native-netinfo: ccbe1085dffd16592791d550189772e13bf479e2
+  react-native-netinfo: bdb108d340cdb41875c9ced535977cac6d2ff321
   react-native-receive-sharing-intent: feba0a332a07977549a85aa58b496eb44368366a
-  react-native-safe-area-context: 36cc67648134e89465663b8172336a19eeda493d
-  react-native-webview: b8ec89966713985111a14d6e4bf98d8b54bced0d
+  react-native-safe-area-context: dcab599c527c2d7de2d76507a523d20a0b83823d
+  react-native-webview: abfd4e89ab3f5c2cc2acaeb54633795b0d9a4ab0
   React-perflogger: 082b4293f0b3914ff41da35a6c06ac4490fcbcc8
   React-RCTActionSheet: 83da3030deb5dea54b398129f56540a44e64d3ae
   React-RCTAnimation: bac3a4f4c0436554d9f7fbb1352a0cdcb1fb0f1c
@@ -742,16 +738,16 @@ SPEC CHECKSUMS:
   React-RCTVibration: b9a58ffdd18446f43d493a4b0ecd603ee86be847
   React-runtimeexecutor: e9b1f9310158a1e265bcdfdfd8c62d6174b947a2
   ReactCommon: 01064177e66d652192c661de899b1076da962fd9
-  ReactNativeFileAccess: d4d003cbad463ef6db88fe2881ffbc5c3990a52c
+  ReactNativeFileAccess: 4482faa09c4fedda209c57fbde815aa05f4e3814
   ReactNativeKeyboardManager: 30ef68551383d86d3ae044afc3d29f12629ec60b
-  RNCAsyncStorage: ddc4ee162bfd41b0d2c68bf2d95acd81dd7f1f93
-  RNCClipboard: 3f0451a8100393908bea5c5c5b16f96d45f30bfc
+  RNCAsyncStorage: 826b603ae9c0f88b5ac4e956801f755109fa4d5c
+  RNCClipboard: 0a720adef5ec193aa0e3de24c3977222c7e52a37
   RNDefaultPreference: 08bdb06cfa9188d5da97d4642dac745218d7fb31
   RNDeviceTimeFormat: 9c3020c6fbfac054dfbadb017755ea2ae519e689
   RNFastImage: 5c9c9fed9c076e521b3f509fe79e790418a544e8
-  RNIap: c397f49db45af3b10dca64b2325f21bb8078ad21
-  RNImageCropPicker: 486e2f7e2b0461ce24321f751410dce1b3b49e6d
-  RNShare: ff0c1bddfff6fa0d2653312110384dc3109e7988
+  RNIap: c76f9a941a212d5f5ef2c04f608287b9f73ee1ad
+  RNImageCropPicker: e7ab6fb43d2fc3e84651e786ef4a080d63b0ed3d
+  RNShare: 554a91f5cfbe4adac4cfe3654826ee8b299fe365
   RNSVG: 53c661b76829783cdaf9b7a57258f3d3b4c28315
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
@@ -760,8 +756,8 @@ SPEC CHECKSUMS:
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   Yoga: 2ed968a4f060a92834227c036279f2736de0fce3
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
-  ZIPFoundation: b1f0de4eed33e74a676f76e12559ab6b75990197
+  ZIPFoundation: b8c29ea7ae353b309bc810586181fd073cb3312c
 
-PODFILE CHECKSUM: c9a82d0020161aa25eb6463094e85c541d5ae137
+PODFILE CHECKSUM: a81dd2b8df13e7a58ac5037e7a2dff29b2b075a2
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.15.2
