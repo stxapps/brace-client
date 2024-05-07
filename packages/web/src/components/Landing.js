@@ -31,23 +31,11 @@ import availableOnPlayStore from '../images/available-on-play-store.svg';
 import availableOnAppStore from '../images/available-on-app-store.svg';
 
 import saveWithExtension from '../images/save-with-extension.png';
-import saveWithExtension2x from '../images/save-with-extension@2x.png';
-import saveWithExtension3x from '../images/save-with-extension@3x.png';
-import saveWithExtension4x from '../images/save-with-extension@4x.png';
 
 import shareOnPixel4a from '../images/share-on-google-pixel-4a.png';
-import shareOnPixel4a2x from '../images/share-on-google-pixel-4a@2x.png';
-import shareOnPixel4a3x from '../images/share-on-google-pixel-4a@3x.png';
-import shareOnPixel4a4x from '../images/share-on-google-pixel-4a@4x.png';
 import shareOnIPhone11Pro from '../images/share-on-iphone-11-pro.png';
-import shareOnIPhone11Pro2x from '../images/share-on-iphone-11-pro@2x.png';
-import shareOnIPhone11Pro3x from '../images/share-on-iphone-11-pro@3x.png';
-import shareOnIPhone11Pro4x from '../images/share-on-iphone-11-pro@4x.png';
 
 import visitAnywhere from '../images/visit-anywhere-ss.png';
-import visitAnywhere2x from '../images/visit-anywhere-ss@2x.png';
-import visitAnywhere3x from '../images/visit-anywhere-ss@3x.png';
-import visitAnywhere4x from '../images/visit-anywhere-ss@4x.png';
 
 import stacksShort from '../images/stacks-short.svg';
 import logoFullWhite from '../images/logo-full-white.svg';
@@ -285,7 +273,7 @@ class Landing extends React.PureComponent {
                     </a>
                   </div>
                   <div className={tailwind('mx-auto mt-4 w-full max-w-sm md:mt-0 md:mr-0 md:w-1/2')}>
-                    <img src={saveWithExtension} srcSet={`${saveWithExtension} 1x, ${saveWithExtension2x} 2x, ${saveWithExtension3x} 3x, ${saveWithExtension4x} 4x`} alt="Brace.to web browser extension" />
+                    <img src={saveWithExtension} srcSet={`${saveWithExtension} 1x, https://brace.to/static/media/save-with-extension@2x.96ffe7b05dffc9371cd5.png 2x, https://brace.to/static/media/save-with-extension@3x.534a356da96d5d0dfd5f.png 3x, https://brace.to/static/media/save-with-extension@4x.4df907894136a6e9eeb9.png 4x`} alt="Brace.to web browser extension" />
                   </div>
                 </div>
               </div>
@@ -309,8 +297,8 @@ class Landing extends React.PureComponent {
                     </a>
                   </div>
                   <div className={tailwind('mt-4 flex items-center justify-evenly md:mt-0 md:w-1/2 md:justify-end md:pr-6 lg:pr-8')}>
-                    <img className={tailwind('share-android-w')} src={shareOnPixel4a} srcSet={`${shareOnPixel4a} 1x, ${shareOnPixel4a2x} 2x, ${shareOnPixel4a3x} 3x, ${shareOnPixel4a4x} 4x`} alt="A share screen on Google Pixel 4a" />
-                    <img className={tailwind('share-ios-w md:ml-4 lg:ml-8')} src={shareOnIPhone11Pro} srcSet={`${shareOnIPhone11Pro} 1x, ${shareOnIPhone11Pro2x} 2x, ${shareOnIPhone11Pro3x} 3x, ${shareOnIPhone11Pro4x} 4x`} alt="A share screen on iPhone 11 Pro" />
+                    <img className={tailwind('share-android-w')} src={shareOnPixel4a} srcSet={`${shareOnPixel4a} 1x, https://brace.to/static/media/share-on-google-pixel-4a@2x.79413e418c63cb635ec3.png 2x, https://brace.to/static/media/share-on-google-pixel-4a@3x.34e9a43c79685ba34054.png 3x, https://brace.to/static/media/share-on-google-pixel-4a@4x.77aae1c53310915fb7e1.png 4x`} alt="A share screen on Google Pixel 4a" />
+                    <img className={tailwind('share-ios-w md:ml-4 lg:ml-8')} src={shareOnIPhone11Pro} srcSet={`${shareOnIPhone11Pro} 1x, https://brace.to/static/media/share-on-iphone-11-pro@2x.7ed3d242876974f43de9.png 2x, https://brace.to/static/media/share-on-iphone-11-pro@3x.8daef795ccd9f3b584f5.png 3x, https://brace.to/static/media/share-on-iphone-11-pro@4x.7acf669140890f4b23ad.png 4x`} alt="A share screen on iPhone 11 Pro" />
                   </div>
                 </div>
               </div>
@@ -322,7 +310,7 @@ class Landing extends React.PureComponent {
                 <h3 className={tailwind('mt-5 text-xl font-semibold text-white sm:leading-none md:text-center lg:text-2xl-extra lg:leading-none')}>Visit Anytime <br className={tailwind('inline sm:hidden')} />on Any of your Devices</h3>
                 <p className={tailwind('mt-2.5 text-base font-normal text-gray-300 md:mt-3.5 md:text-center lg:text-lg lg:leading-6')}>Every link you save will be beautified with its representative image and title <br className={tailwind('hidden md:inline')} />so you can easily find and recognize it.</p>
                 <div className={tailwind('howitwork-gray-pb relative mt-4')}>
-                  <img className={tailwind('absolute left-1/2 w-full max-w-lg -translate-x-1/2 transform md:max-w-lg lg:max-w-xl')} src={visitAnywhere} srcSet={`${visitAnywhere} 1x, ${visitAnywhere2x} 2x, ${visitAnywhere3x} 3x, ${visitAnywhere4x} 4x`} alt="Visit anywhere, anytime" />
+                  <img className={tailwind('absolute left-1/2 w-full max-w-lg -translate-x-1/2 transform md:max-w-lg lg:max-w-xl')} src={visitAnywhere} srcSet={`${visitAnywhere} 1x, https://brace.to/static/media/visit-anywhere-ss@2x.479fbd2e7161dd62aece.png 2x, https://brace.to/static/media/visit-anywhere-ss@3x.14ecc542821e1461830f.png 3x, https://brace.to/static/media/visit-anywhere-ss@4x.4e9580b6d7f6c34b53a3.png 4x`} alt="Visit anywhere, anytime" />
                 </div>
               </div>
             </div>
