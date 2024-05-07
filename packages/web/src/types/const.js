@@ -4,7 +4,7 @@ export const HR_HUB_URL = 'https://hub.hiro.so';
 export const SD_HUB_URL = 'https://hub.stacksdrive.com';
 
 export const APP_NAME = 'Brace.to';
-export const APP_ICON_NAME = 'logo192.png';
+export const APP_ICON_NAME = 'logo-for-stacks-access.png';
 export const APP_SCOPES = ['store_write'];
 export const APP_URL_SCHEME = 'bracedotto';
 export const APP_DOMAIN_NAME = 'bracedotto://app';

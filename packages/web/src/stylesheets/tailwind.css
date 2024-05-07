@@ -29,16 +29,16 @@
       font-style:  normal;
       font-weight: 100;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-Thin.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-Thin.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-Thin.fff2a096db014f6239d4.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-Thin.29b9c616a95a912abf73.woff") format("woff");
     }
     @font-face {
       font-family: 'Inter';
       font-style:  italic;
       font-weight: 100;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-ThinItalic.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-ThinItalic.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-ThinItalic.bf213704dce6b437ede4.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-ThinItalic.bae95eb2f889c797e435.woff") format("woff");
     }
 
     @font-face {
@@ -46,16 +46,16 @@
       font-style:  normal;
       font-weight: 200;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-ExtraLight.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-ExtraLight.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-ExtraLight.72505e6a122c6acd5471.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-ExtraLight.c4248615291a9e8f1fb7.woff") format("woff");
     }
     @font-face {
       font-family: 'Inter';
       font-style:  italic;
       font-weight: 200;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-ExtraLightItalic.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-ExtraLightItalic.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-ExtraLightItalic.5c7d7d6deb1d2ec8d48c.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-ExtraLightItalic.170dddfca278d3c2ad4a.woff") format("woff");
     }
 
     @font-face {
@@ -63,16 +63,16 @@
       font-style:  normal;
       font-weight: 300;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-Light.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-Light.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-Light.2d5198822ab091ce4305.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-Light.994e34451cc19ede31d3.woff") format("woff");
     }
     @font-face {
       font-family: 'Inter';
       font-style:  italic;
       font-weight: 300;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-LightItalic.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-LightItalic.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-LightItalic.f86952265d7b0f02c921.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-LightItalic.ef9f65d91d2b0ba9b2e4.woff") format("woff");
     }
 
     @font-face {
@@ -80,16 +80,16 @@
       font-style:  normal;
       font-weight: 400;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-Regular.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-Regular.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-Regular.c8ba52b05a9ef10f4758.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-Regular.8c206db99195777c6769.woff") format("woff");
     }
     @font-face {
       font-family: 'Inter';
       font-style:  italic;
       font-weight: 400;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-Italic.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-Italic.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-Italic.cb10ffd7684cd9836a05.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-Italic.890025e726861dba417f.woff") format("woff");
     }
 
     @font-face {
@@ -97,16 +97,16 @@
       font-style:  normal;
       font-weight: 500;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-Medium.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-Medium.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-Medium.293fd13dbca5a3e450ef.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-Medium.9053572c46aeb4b16caa.woff") format("woff");
     }
     @font-face {
       font-family: 'Inter';
       font-style:  italic;
       font-weight: 500;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-MediumItalic.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-MediumItalic.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-MediumItalic.085cb93e613ba3d40d2b.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-MediumItalic.3d0107dd43d0101274d3.woff") format("woff");
     }
 
     @font-face {
@@ -114,16 +114,16 @@
       font-style:  normal;
       font-weight: 600;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-SemiBold.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-SemiBold.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-SemiBold.b5f0f109bc88052d4000.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-SemiBold.cca62d21c8c555c392e5.woff") format("woff");
     }
     @font-face {
       font-family: 'Inter';
       font-style:  italic;
       font-weight: 600;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-SemiBoldItalic.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-SemiBoldItalic.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-SemiBoldItalic.d9467ee321a8f38aefff.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-SemiBoldItalic.463bdbfb28abad0fa6df.woff") format("woff");
     }
 
     @font-face {
@@ -131,16 +131,16 @@
       font-style:  normal;
       font-weight: 700;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-Bold.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-Bold.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-Bold.ec64ea577b0349e055ad.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-Bold.93c1301bd9f486c573b3.woff") format("woff");
     }
     @font-face {
       font-family: 'Inter';
       font-style:  italic;
       font-weight: 700;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-BoldItalic.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-BoldItalic.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-BoldItalic.2d26c56a606662486796.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-BoldItalic.b376885042f6c961a541.woff") format("woff");
     }
 
     @font-face {
@@ -148,16 +148,16 @@
       font-style:  normal;
       font-weight: 800;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-ExtraBold.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-ExtraBold.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-ExtraBold.cbe0ae49c52c920fd563.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-ExtraBold.d0fa3bb2b7c9063dc594.woff") format("woff");
     }
     @font-face {
       font-family: 'Inter';
       font-style:  italic;
       font-weight: 800;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-ExtraBoldItalic.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-ExtraBoldItalic.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-ExtraBoldItalic.535a6cf662596b3bd6a6.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-ExtraBoldItalic.6ab17abedc4d3f140953.woff") format("woff");
     }
 
     @font-face {
@@ -165,16 +165,16 @@
       font-style:  normal;
       font-weight: 900;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-Black.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-Black.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-Black.15ca31c0a2a68f76d2d1.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-Black.c6938660eec019fefd68.woff") format("woff");
     }
     @font-face {
       font-family: 'Inter';
       font-style:  italic;
       font-weight: 900;
       font-display: swap;
-      src: url("../fonts/Inter/Inter-BlackItalic.woff2") format("woff2"),
-           url("../fonts/Inter/Inter-BlackItalic.woff") format("woff");
+      src: url("https://brace.to/static/media/Inter-BlackItalic.cb2a7335650c690077fe.woff2") format("woff2"),
+           url("https://brace.to/static/media/Inter-BlackItalic.ca1e738e4f349f27514d.woff") format("woff");
     }
   }
 
