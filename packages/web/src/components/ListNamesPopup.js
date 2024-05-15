@@ -4,13 +4,13 @@ import { motion, AnimatePresence, useMotionValue, animate } from 'framer-motion'
 
 import {
   updatePopup, updateQueryString, updateBulkEdit, changeListName, moveLinks,
-  moveToListName, updateListNamesMode,
+  moveToListName, updateListNamesMode, updateSettingsPopup, updateSettingsViewId,
 } from '../actions';
 import {
   LIST_NAMES_POPUP, TRASH, LIST_NAMES_MODE_CHANGE_LIST_NAME,
   LIST_NAMES_MODE_CHANGE_TAG_NAME, LIST_NAMES_MODE_MOVE_LINKS,
   LIST_NAMES_MODE_MOVE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP,
-  LIST_NAMES_ANIM_TYPE_BMODAL,
+  LIST_NAMES_ANIM_TYPE_BMODAL, SETTINGS_VIEW_LISTS,
 } from '../types/const';
 import { getListNameMap } from '../selectors';
 import {
@@ -119,6 +119,8 @@ const ListNamesPopup = () => {
     if (didClick.current) return;
     onCancelBtnClick();
 
+    dispatch(updateSettingsViewId(SETTINGS_VIEW_LISTS, false));
+    dispatch(updateSettingsPopup(true));
     didClick.current = true;
   };
 
