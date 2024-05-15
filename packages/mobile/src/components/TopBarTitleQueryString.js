@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
-import { updateQueryString } from '../actions';
-import { SM_WIDTH, LG_WIDTH } from '../types/const';
+import { updatePopup, updateListNamesMode } from '../actions';
+import {
+  LIST_NAMES_POPUP, SM_WIDTH, LG_WIDTH, LIST_NAMES_MODE_CHANGE_TAG_NAME,
+  LIST_NAMES_ANIM_TYPE_POPUP,
+} from '../types/const';
 import { getTagNameDisplayName } from '../utils';
 import cache from '../utils/cache';
 
@@ -15,11 +18,22 @@ const TopBarTitleQueryString = () => {
   const { width: safeAreaWidth } = useSafeAreaFrame();
   const queryString = useSelector(state => state.display.queryString);
   const tagNameMap = useSelector(state => state.settings.tagNameMap);
+  const tagNameBtn = useRef(null);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
 
-  const onCloseBtnClick = () => {
-    dispatch(updateQueryString(''));
+  const onTagNameBtnClick = () => {
+    if (!tagNameBtn.current) return;
+    tagNameBtn.current.measure((_fx, _fy, width, height, x, y) => {
+      dispatch(updateListNamesMode(
+        LIST_NAMES_MODE_CHANGE_TAG_NAME, LIST_NAMES_ANIM_TYPE_POPUP,
+      ));
+
+      const rect = {
+        x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
+      };
+      dispatch(updatePopup(LIST_NAMES_POPUP, true, rect));
+    });
   };
 
   // Only tag name for now
@@ -42,10 +56,10 @@ const TopBarTitleQueryString = () => {
   const textStyle = { maxWidth: textMaxWidth };
 
   return (
-    <TouchableOpacity onPress={onCloseBtnClick} style={tailwind('flex-row items-center bg-white blk:bg-gray-900')}>
+    <TouchableOpacity ref={tagNameBtn} onPress={onTagNameBtnClick} style={tailwind('flex-row items-center bg-white blk:bg-gray-900')}>
       <Text style={cache('TBTQT_text', [tailwind('mr-1 text-lg font-medium leading-7 text-gray-900 blk:text-gray-50'), textStyle], [safeAreaWidth, tailwind])} numberOfLines={1} ellipsizeMode="tail">{`#${displayName}`}</Text>
-      <Svg style={tailwind('mt-px font-normal text-gray-400 blk:text-gray-400')} width={20} height={20} viewBox="0 0 28 28" stroke="none" fill="currentColor">
-        <Path fillRule="evenodd" clipRule="evenodd" d="M14 25.2001C20.1857 25.2001 25.2001 20.1857 25.2001 14C25.2001 7.81446 20.1857 2.80005 14 2.80005C7.81446 2.80005 2.80005 7.81446 2.80005 14C2.80005 20.1857 7.81446 25.2001 14 25.2001ZM12.19 10.2101C11.6433 9.66337 10.7568 9.66337 10.2101 10.2101C9.66337 10.7568 9.66337 11.6433 10.2101 12.19L12.0202 14L10.2101 15.8101C9.66337 16.3568 9.66337 17.2433 10.2101 17.79C10.7568 18.3367 11.6433 18.3367 12.19 17.79L14 15.9799L15.8101 17.79C16.3568 18.3367 17.2433 18.3367 17.79 17.79C18.3367 17.2433 18.3367 16.3568 17.79 15.8101L15.9799 14L17.79 12.19C18.3367 11.6433 18.3367 10.7568 17.79 10.2101C17.2433 9.66337 16.3568 9.66337 15.8101 10.2101L14 12.0202L12.19 10.2101Z" />
+      <Svg style={tailwind('font-normal text-gray-900 blk:text-white')} width={20} height={20} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+        <Path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       </Svg>
     </TouchableOpacity>
   );
