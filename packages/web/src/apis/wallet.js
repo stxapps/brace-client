@@ -215,7 +215,11 @@ const getUsername = async (account) => {
 
   // if server down, need to throw an error to get hubUrl correctly
   const url = `https://api.hiro.so/v1/addresses/stacks/${stxAddress}`;
-  const res = await fetchPrivate(url);
+  let res = await fetchPrivate(url);
+  if (!res.ok) {
+    await sleep(4000); // Wait for a while and try one more time
+    res = await fetchPrivate(url);
+  }
   if (res.ok) {
     const json = await res.json();
     if (Array.isArray(json.names) && json.names.length > 0) return json.names[0];
