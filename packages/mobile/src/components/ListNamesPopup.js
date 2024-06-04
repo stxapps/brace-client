@@ -248,7 +248,10 @@ const ListNamesPopup = () => {
 
   if (derivedIsShown !== isShown || derivedMode !== mode) {
     if (derivedIsShown && !isShown) setDidCloseAnimEnd(false);
-    if (!derivedIsShown && isShown || derivedMode !== mode) {
+    else if (
+      (!derivedIsShown && isShown) ||
+      (derivedIsShown && isShown && derivedMode !== mode)
+    ) {
       setDerivedAnchorPosition(anchorPosition);
       setDerivedAnimType(animType);
       setDerivedListName(listName);
@@ -440,7 +443,7 @@ const ListNamesPopup = () => {
             <ScrollView>{derivedMode === MODE_CHANGE_TAG_NAME ? renderTagNameBtns() : renderListNameBtns()}</ScrollView>
           </Animated.View>
         </View>
-        {[MODE_MOVE_LINKS, MODE_MOVE_LIST_NAME].includes(derivedMode) && <View style={tailwind(`flex-row items-center justify-end border-t border-gray-200 px-3 blk:border-gray-600 ${moveHereClassNames}`)}>
+        {[MODE_MOVE_LINKS, MODE_MOVE_LIST_NAME].includes(derivedMode) && <View style={tailwind(`flex-shrink-0 flex-grow-0 flex-row items-center justify-end border-t border-gray-200 px-3 blk:border-gray-600 ${moveHereClassNames}`)}>
           <TouchableOpacity onPress={onMoveHereBtnClick} style={tailwind(`rounded-full border bg-white px-3 py-1.5 blk:bg-gray-800 ${moveHereDisabled ? 'border-gray-300 blk:border-gray-600' : 'border-gray-400 blk:border-gray-400'}`)} disabled={moveHereDisabled}>
             <Text style={tailwind(`text-xs font-normal ${moveHereDisabled ? 'text-gray-400 blk:text-gray-500' : 'text-gray-500 blk:text-gray-300'}`)}>{moveHereDisabled ? 'View only' : 'Move here'}</Text>
           </TouchableOpacity>

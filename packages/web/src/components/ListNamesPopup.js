@@ -200,7 +200,10 @@ const ListNamesPopup = () => {
   }, [backCount, slideFMV, slideAnim]);
 
   if (derivedIsShown !== isShown || derivedMode !== mode) {
-    if ((!derivedIsShown && isShown) || derivedMode !== mode) {
+    if (
+      (!derivedIsShown && isShown) ||
+      (derivedIsShown && isShown && derivedMode !== mode)
+    ) {
       setDerivedAnchorPosition(anchorPosition);
       setDerivedAnimType(animType);
       setDerivedListName(listName);
