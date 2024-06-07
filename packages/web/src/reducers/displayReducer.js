@@ -16,17 +16,18 @@ import {
   UPDATE_PAYWALL_FEATURE, UPDATE_LOCK_ACTION, ADD_LOCK_LIST, LOCK_LIST,
   UPDATE_LOCKS_FOR_ACTIVE_APP, UPDATE_LOCKS_FOR_INACTIVE_APP,
   UPDATE_TAG_DATA_S_STEP_COMMIT, UPDATE_TAG_DATA_T_STEP_COMMIT,
-  UPDATE_SELECTING_TAG_NAME, DELETE_TAG_NAMES, UPDATE_IMPORT_ALL_DATA_PROGRESS,
-  UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA,
-  RESET_STATE,
+  UPDATE_SELECTING_TAG_NAME, DELETE_TAG_NAMES, UPDATE_BULK_EDIT_MENU_MODE,
+  UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
+  UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
-  CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP,
-  TAG_EDITOR_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP,
-  SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP, SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP,
-  LOCK_EDITOR_POPUP, ACCESS_ERROR_POPUP, SWWU_POPUP, MY_LIST, TRASH, ARCHIVE, UPDATING,
-  DIED_UPDATING, SETTINGS_VIEW_ACCOUNT, DIED_ADDING, DIED_MOVING,
+  CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP, BULK_EDIT_MENU_POPUP,
+  CUSTOM_EDITOR_POPUP, TAG_EDITOR_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP,
+  CONFIRM_DISCARD_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
+  SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP, ACCESS_ERROR_POPUP,
+  SWWU_POPUP, MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING, SETTINGS_VIEW_ACCOUNT,
+  DIED_ADDING, DIED_MOVING,
 } from '../types/const';
 import {
   doContainListName, doContainTagName, getStatusCounts, isObject, isString, isNumber,
@@ -48,6 +49,8 @@ const initialState = {
   listNamesPopupPosition: null,
   isPinMenuPopupShown: false,
   pinMenuPopupPosition: null,
+  isBulkEditMenuPopupShown: false,
+  bulkEditMenuPopupPosition: null,
   isCustomEditorPopupShown: false,
   isTagEditorPopupShown: false,
   isPaywallPopupShown: false,
@@ -89,6 +92,7 @@ const initialState = {
   paywallFeature: null,
   lockAction: null,
   doForceLock: false,
+  bulkEditMenuAnimType: null,
   importAllDataProgress: null,
   exportAllDataProgress: null,
   deleteAllDataProgress: null,
@@ -155,6 +159,8 @@ const displayReducer = (state = initialState, action) => {
         newState.listNamesPopupPosition = null;
         newState.isPinMenuPopupShown = false;
         newState.pinMenuPopupPosition = null;
+        newState.isBulkEditMenuPopupShown = false;
+        newState.bulkEditMenuPopupPosition = null;
         newState.isSettingsListsMenuPopupShown = false;
         newState.settingsListsMenuPopupPosition = null;
         newState.isSettingsTagsMenuPopupShown = false;
@@ -207,6 +213,15 @@ const displayReducer = (state = initialState, action) => {
         ...state,
         isPinMenuPopupShown: isShown,
         pinMenuPopupPosition: anchorPosition,
+      };
+      return newState;
+    }
+
+    if (id === BULK_EDIT_MENU_POPUP) {
+      const newState = {
+        ...state,
+        isBulkEditMenuPopupShown: isShown,
+        bulkEditMenuPopupPosition: anchorPosition,
       };
       return newState;
     }
@@ -743,6 +758,8 @@ const displayReducer = (state = initialState, action) => {
       listNamesPopupPosition: null,
       isPinMenuPopupShown: false,
       pinMenuPopupPosition: null,
+      isBulkEditMenuPopupShown: false,
+      bulkEditMenuPopupPosition: null,
       // CustomEditorPopup (and some others) won't be rendered by Main when locked,
       //   so no need to force close it.
       // And can't because ImagePicker makes app inactive!
@@ -792,6 +809,10 @@ const displayReducer = (state = initialState, action) => {
     // Only tag name for now
     if (!tagNames.includes(state.queryString)) return state;
     return { ...state, queryString: '' };
+  }
+
+  if (action.type === UPDATE_BULK_EDIT_MENU_MODE) {
+    return { ...state, ...action.payload };
   }
 
   if (action.type === UPDATE_IMPORT_ALL_DATA_PROGRESS) {

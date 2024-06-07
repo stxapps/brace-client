@@ -101,12 +101,14 @@ const mapStateToProps = (state, props) => {
 
   const {
     isCardItemMenuPopupShown, isListNamesPopupShown, isPinMenuPopupShown,
+    isBulkEditMenuPopupShown,
   } = state.display;
 
   return {
     searchString: state.display.searchString,
     isBottomBarShown: (
-      !isCardItemMenuPopupShown && !isListNamesPopupShown && !isPinMenuPopupShown
+      !isCardItemMenuPopupShown && !isListNamesPopupShown &&
+      !isPinMenuPopupShown && !isBulkEditMenuPopupShown
     ),
     isSearchPopupShown: state.display.isSearchPopupShown,
     themeMode: getThemeMode(state),

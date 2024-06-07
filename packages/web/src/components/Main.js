@@ -22,6 +22,7 @@ import LockPanel from './LockPanel';
 import FetchedPopup from './FetchedPopup';
 import CardItemMenuPopup from './CardItemMenuPopup';
 import PinMenuPopup from './PinMenuPopup';
+import BulkEditMenuPopup from './BulkEditMenuPopup';
 import CustomEditorPopup from './CustomEditorPopup';
 import TagEditorPopup from './TagEditorPopup';
 import SettingsPopup from './SettingsPopup';
@@ -112,6 +113,7 @@ class Main extends React.PureComponent {
           <FetchedPopup />
           <CardItemMenuPopup />
           <PinMenuPopup />
+          <BulkEditMenuPopup />
           <CustomEditorPopup />
           <TagEditorPopup />
         </React.Fragment>

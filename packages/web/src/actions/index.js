@@ -55,13 +55,13 @@ import {
   UPDATE_TAG_DATA_T_STEP, UPDATE_TAG_DATA_T_STEP_COMMIT,
   UPDATE_TAG_DATA_T_STEP_ROLLBACK, CANCEL_DIED_TAGS, UPDATE_TAG_NAME_EDITORS,
   ADD_TAG_NAMES, UPDATE_TAG_NAMES, MOVE_TAG_NAME, DELETE_TAG_NAMES,
-  UPDATE_SELECTING_TAG_NAME, RESET_STATE,
+  UPDATE_SELECTING_TAG_NAME, UPDATE_BULK_EDIT_MENU_MODE, RESET_STATE,
 } from '../types/actionTypes';
 import {
   SD_HUB_URL, BACK_DECIDER, BACK_POPUP, ALL, HASH_BACK, SIGN_UP_POPUP, SIGN_IN_POPUP,
   ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP,
-  PIN_MENU_POPUP, CUSTOM_EDITOR_POPUP, TAG_EDITOR_POPUP, PAYWALL_POPUP,
-  CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP,
+  PIN_MENU_POPUP, BULK_EDIT_MENU_POPUP, CUSTOM_EDITOR_POPUP, TAG_EDITOR_POPUP,
+  PAYWALL_POPUP, CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP,
   SETTINGS_LISTS_MENU_POPUP, SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP,
   LOCK_EDITOR_POPUP, SWWU_POPUP, DISCARD_ACTION_UPDATE_LIST_NAME,
   DISCARD_ACTION_UPDATE_TAG_NAME, LOCAL_LINK_ATTRS, MY_LIST, TRASH, N_LINKS, N_DAYS,
@@ -253,6 +253,7 @@ const getPopupShownId = (state) => {
   if (state.display.isPaywallPopupShown) return PAYWALL_POPUP;
   if (state.display.isTagEditorPopupShown) return TAG_EDITOR_POPUP;
   if (state.display.isCustomEditorPopupShown) return CUSTOM_EDITOR_POPUP;
+  if (state.display.isBulkEditMenuPopupShown) return BULK_EDIT_MENU_POPUP;
   if (state.display.isPinMenuPopupShown) return PIN_MENU_POPUP;
   if (state.display.isListNamesPopupShown) return LIST_NAMES_POPUP;
   if (state.display.isCardItemMenuPopupShown) return CARD_ITEM_MENU_POPUP;
@@ -3545,4 +3546,22 @@ export const updateSelectingTagName = (tagName) => {
 
 export const showSWWUPopup = () => async (dispatch, getState) => {
   dispatch(updatePopup(SWWU_POPUP, true));
+};
+
+export const updateBulkEditMenuMode = (animType) => {
+
+  // Filter which commands to show?
+
+  return {
+    type: UPDATE_BULK_EDIT_MENU_MODE,
+    payload: { bulkEditMenuAnimType: animType },
+  };
+};
+
+export const bulkEditPinLinks = (ids) => async (dispatch, getState) => {
+
+};
+
+export const bulkEditUnpinLinks = (ids) => async (dispatch, getState) => {
+
 };
