@@ -73,7 +73,8 @@ import {
   FEATURE_APPEARANCE, FEATURE_CUSTOM, FEATURE_LOCK, FEATURE_TAG, PADDLE_RANDOM_ID,
   VALID_PASSWORD, PASSWORD_MSGS, IN_USE_LIST_NAME, LIST_NAME_MSGS, VALID_TAG_NAME,
   DUPLICATE_TAG_NAME, IN_USE_TAG_NAME, TAG_NAME_MSGS, VALID_URL,
-  DELETE_ACTION_LIST_NAME, DELETE_ACTION_TAG_NAME, PUT_FILE, DELETE_FILE,
+  DELETE_ACTION_LIST_NAME, DELETE_ACTION_TAG_NAME, PUT_FILE, DELETE_FILE, TAGGED,
+  NOT_SUPPORTED,
 } from '../types/const';
 import {
   isEqual, isArrayEqual, isString, isObject, isNumber, throttle, randomString,
@@ -91,7 +92,7 @@ import {
   getTagNameObjFromDisplayName, validateTagNameDisplayName, extractTagFPath,
   getNLinkMetasByQt, listLinkMetas,
 } from '../utils';
-import { initialSettingsState } from '../types/initialStates';
+import { initialSettingsState, initialTagEditorState } from '../types/initialStates';
 import vars from '../vars';
 
 export const init = async (store) => {
@@ -2693,12 +2694,17 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
   let now = Date.now();
   const pins = [];
   for (const id of ids) {
+    const mainId = getMainId(id);
+    if (isObject(currentPins[mainId])) continue;
+
     const nextRank = lexoRank.toString().slice(2).replace(':', '_');
     pins.push({ rank: nextRank, updatedDT: now, addedDT: now, id });
 
     lexoRank = lexoRank.genNext();
     now += 1;
   }
+
+  if (pins.length === 0) return;
 
   const payload = { pins };
   dispatch({
@@ -3225,11 +3231,88 @@ const cleanUpLocks = async (dispatch, getState) => {
   dispatch({ type: CLEAN_UP_LOCKS, payload: { listNames } });
 };
 
-export const updateTagEditorPopup = (isShown, id, isAddTags) => async (
+const _isTagValuesDiff = (selectedValues, values) => {
+  const [isSvArr, isVArr] = [Array.isArray(selectedValues), Array.isArray(values)];
+  if (!isSvArr && !isVArr) return false;
+  if (!isSvArr || !isVArr) return true;
+  if (selectedValues.length !== values.length) return true;
+
+  for (let i = 0; i < selectedValues.length; i++) {
+    const [selectedValue, value] = [selectedValues[i], values[i]];
+    if (selectedValue.tagName !== value.tagName) return true;
+  }
+
+  return false;
+};
+
+const _initTagEditorState = (getState) => {
+  const tagFPaths = getTagFPaths(getState());
+  const pendingTags = getState().pendingTags;
+  const tagNameMap = getState().settings.tagNameMap;
+  const selectingLinkId = getState().display.selectingLinkId;
+  const isBulkEditing = getState().display.isBulkEditing;
+  const selectedLinkIds = getState().display.selectedLinkIds;
+
+  const editor = { ...initialTagEditorState };
+
+  let ids;
+  if (isBulkEditing) {
+    if (selectedLinkIds.length === 0) return editor;
+    ids = selectedLinkIds;
+  } else {
+    if (!isString(selectingLinkId)) return editor;
+    ids = [selectingLinkId];
+  }
+  editor.ids = ids;
+
+  const tags = getTags(tagFPaths, pendingTags);
+  const mainIds = ids.map(id => getMainId(id));
+
+  let selectedValues = null;
+  if (isObject(tags[mainIds[0]]) && tags[mainIds[0]].values.length > 0) {
+    selectedValues = tags[mainIds[0]].values;
+  }
+
+  for (const mainId of mainIds.slice(1)) {
+    let values = null;
+    if (isObject(tags[mainId]) && tags[mainId].values.length > 0) {
+      values = tags[mainId].values;
+    }
+
+    const isDiff = _isTagValuesDiff(selectedValues, values);
+    if (isDiff) {
+      editor.mode = NOT_SUPPORTED;
+      return editor;
+    }
+  }
+
+  if (Array.isArray(selectedValues) && selectedValues.length > 0) {
+    [editor.mode, editor.values] = [TAGGED, []];
+    for (const { tagName } of selectedValues) {
+      const { tagNameObj } = getTagNameObj(tagName, tagNameMap);
+      if (!isObject(tagNameObj)) continue;
+      editor.values.push({
+        tagName, displayName: tagNameObj.displayName, color: tagNameObj.color,
+      });
+    }
+  }
+
+  editor.hints = [];
+  for (const tagNameObj of tagNameMap) {
+    const { tagName, displayName, color } = tagNameObj;
+
+    const found = editor.values.some(value => value.tagName === tagName);
+    editor.hints.push({ tagName, displayName, color, isBlur: found });
+  }
+
+  return editor;
+};
+
+export const updateTagEditorPopup = (isShown, doCheckEnableExtraFeatures) => async (
   dispatch, getState
 ) => {
   if (isShown) {
-    if (isAddTags) {
+    if (doCheckEnableExtraFeatures) {
       const purchases = getState().info.purchases;
       if (!doEnableExtraFeatures(purchases)) {
         dispatch(updatePaywallFeature(FEATURE_TAG));
@@ -3238,7 +3321,8 @@ export const updateTagEditorPopup = (isShown, id, isAddTags) => async (
       }
     }
 
-    dispatch(updateSelectingLinkId(id));
+    const payload = _initTagEditorState(getState);
+    dispatch({ type: UPDATE_TAG_EDITOR, payload });
   }
 
   dispatch(updatePopup(TAG_EDITOR_POPUP, isShown));
@@ -3246,14 +3330,8 @@ export const updateTagEditorPopup = (isShown, id, isAddTags) => async (
 
 export const updateTagEditor = (values, hints, displayName, color, msg) => {
   const payload = {};
-  if (Array.isArray(values)) {
-    payload.values = values;
-    payload.didValuesEdit = true;
-  }
-  if (Array.isArray(hints)) {
-    payload.hints = hints;
-    payload.didHintsEdit = true;
-  }
+  if (Array.isArray(values)) payload.values = values;
+  if (Array.isArray(hints)) payload.hints = hints;
 
   if (isString(displayName)) payload.displayName = displayName;
   if (isString(color)) payload.color = color;
@@ -3300,28 +3378,32 @@ export const addTagEditorTagName = (values, hints, displayName, color) => async 
   dispatch(updateTagEditor(newValues, newHints, '', null, ''));
 };
 
-export const updateTagDataSStep = (id, values) => async (dispatch, getState) => {
-  if (!isString(id)) {
-    console.log('In updateTagDataSStep, invalid id: ', id);
+export const updateTagData = (ids, values) => async (dispatch, getState) => {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    console.log('In updateTagData, invalid ids: ', ids);
     return;
   }
+
+  const valuesPerId = {};
+  for (const id of ids) {
+    valuesPerId[id] = values;
+  }
+
+  await updateTagDataSStep(ids, valuesPerId)(dispatch, getState);
+}
+
+export const updateTagDataSStep = (rawIds, rawValuesPerId) => async (
+  dispatch, getState
+) => {
+  const tagFPaths = getTagFPaths(getState());
+  const solvedTags = getTags(tagFPaths, {});
 
   const tagNameMap = getState().settings.tagNameMap;
   const ssTagNameMap = getState().snapshot.settings.tagNameMap;
 
-  const newTagNameObjs = [];
-  for (const value of values) {
-    const { tagNameObj } = getTagNameObj(value.tagName, tagNameMap);
-    const { tagNameObj: ssTagNameObj } = getTagNameObj(value.tagName, ssTagNameMap);
-
-    if (isObject(tagNameObj) && isObject(ssTagNameObj)) continue;
-    newTagNameObjs.push(value);
-  }
-
-  if (newTagNameObjs.length === 0) {
-    const tagFPaths = getTagFPaths(getState());
-    const solvedTags = getTags(tagFPaths, {});
-    const mainId = getMainId(id);
+  const ids = [], valuesPerId = {};
+  for (const id of rawIds) {
+    const [values, mainId] = [rawValuesPerId[id], getMainId(id)];
 
     const aTns = [], bTns = [];
     if (isObject(solvedTags[mainId])) {
@@ -3329,10 +3411,34 @@ export const updateTagDataSStep = (id, values) => async (dispatch, getState) => 
     }
     for (const value of values) bTns.push(value.tagName);
 
-    if (isArrayEqual(aTns, bTns)) return;
+    if (isArrayEqual(aTns, bTns)) continue;
+
+    ids.push(id);
+    valuesPerId[id] = values;
   }
 
-  const payload = { id, values, newTagNameObjs };
+  if (ids.length === 0) return;
+
+  const newTagNameObjsPerId = {}, newTagNameObjs = [], chkdTagNames = [];
+  for (const id of ids) {
+    const values = valuesPerId[id];
+    for (const value of values) {
+      const { tagNameObj } = getTagNameObj(value.tagName, tagNameMap);
+      const { tagNameObj: ssTagNameObj } = getTagNameObj(value.tagName, ssTagNameMap);
+
+      if (isObject(tagNameObj) && isObject(ssTagNameObj)) continue;
+
+      if (!Array.isArray(newTagNameObjsPerId[id])) newTagNameObjsPerId[id] = [];
+      newTagNameObjsPerId[id].push(value);
+
+      if (!chkdTagNames.includes(value.tagName)) {
+        newTagNameObjs.push(value);
+        chkdTagNames.push(value.tagName);
+      }
+    }
+  }
+
+  const payload = { ids, valuesPerId, newTagNameObjsPerId, newTagNameObjs };
   dispatch({
     type: UPDATE_TAG_DATA_S_STEP,
     payload,
@@ -3346,8 +3452,8 @@ export const updateTagDataSStep = (id, values) => async (dispatch, getState) => 
   });
 };
 
-export const updateTagDataTStep = (id, values) => async (dispatch, getState) => {
-  const payload = { id, values };
+export const updateTagDataTStep = (ids, valuesPerId) => async (dispatch, getState) => {
+  const payload = { ids, valuesPerId };
   dispatch({
     type: UPDATE_TAG_DATA_T_STEP,
     payload,
@@ -3363,13 +3469,24 @@ export const updateTagDataTStep = (id, values) => async (dispatch, getState) => 
 
 export const retryDiedTags = () => async (dispatch, getState) => {
   const pendingTags = getState().pendingTags;
+
+  const sIds = [], sValuesPerId = {}, tIds = [], tValuesPerId = {};
   for (const id in pendingTags) {
     const { status, values } = pendingTags[id];
     if (status === UPDATE_TAG_DATA_S_STEP_ROLLBACK) {
-      await updateTagDataSStep(id, values)(dispatch, getState);
+      sIds.push(id);
+      sValuesPerId[id] = values;
     } else if (status === UPDATE_TAG_DATA_T_STEP_ROLLBACK) {
-      await updateTagDataTStep(id, values)(dispatch, getState);
+      tIds.push(id);
+      tValuesPerId[id] = values;
     }
+  }
+
+  if (sIds.length > 0) {
+    await updateTagDataSStep(sIds, sValuesPerId)(dispatch, getState);
+  }
+  if (tIds.length > 0) {
+    await updateTagDataTStep(tIds, tValuesPerId)(dispatch, getState);
   }
 };
 
@@ -3549,19 +3666,8 @@ export const showSWWUPopup = () => async (dispatch, getState) => {
 };
 
 export const updateBulkEditMenuMode = (animType) => {
-
-  // Filter which commands to show?
-
   return {
     type: UPDATE_BULK_EDIT_MENU_MODE,
     payload: { bulkEditMenuAnimType: animType },
   };
-};
-
-export const bulkEditPinLinks = (ids) => async (dispatch, getState) => {
-
-};
-
-export const bulkEditUnpinLinks = (ids) => async (dispatch, getState) => {
-
 };

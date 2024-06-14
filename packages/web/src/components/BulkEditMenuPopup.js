@@ -3,7 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import {
-  updatePopup, updateListNamesMode, bulkEditPinLinks, bulkEditUnpinLinks,
+  updatePopup, updateListNamesMode, pinLinks, unpinLinks, updateTagEditorPopup,
+  updateBulkEdit,
 } from '../actions';
 import {
   BULK_EDIT_MENU_POPUP, LIST_NAMES_POPUP, BULK_EDIT_MENU_ANIM_TYPE_BMODAL, MOVE_TO, PIN,
@@ -55,11 +56,13 @@ const BulkEditMenuPopup = () => {
       dispatch(updateListNamesMode(LIST_NAMES_MODE_MOVE_LINKS, animType));
       dispatch(updatePopup(LIST_NAMES_POPUP, true, anchorPosition));
     } else if (text === PIN) {
-      dispatch(bulkEditPinLinks(selectedLinkIds));
+      dispatch(pinLinks(selectedLinkIds));
+      dispatch(updateBulkEdit(false));
     } else if (text === UNPIN) {
-      dispatch(bulkEditUnpinLinks(selectedLinkIds));
+      dispatch(unpinLinks(selectedLinkIds));
+      dispatch(updateBulkEdit(false));
     } else if (text === MANAGE_TAGS) {
-
+      dispatch(updateTagEditorPopup(true, true));
     } else {
       console.log(`In BulkEditMenuPopup, invalid text: ${text}`);
     }
@@ -91,17 +94,22 @@ const BulkEditMenuPopup = () => {
   }
   menu = [...menu, PIN, UNPIN, MANAGE_TAGS]
 
+  const hdClassNames = isAnimTypeB ? 'h-14' : 'h-11';
+  const btnClassNames = isAnimTypeB ? 'py-4' : 'py-2.5';
   const buttons = (
-    <div className={tailwind('py-1')}>
+    <React.Fragment>
+      <div className={tailwind(`flex items-center justify-start pl-4 pr-4 pt-1 ${hdClassNames}`)}>
+        <p className={tailwind('truncate text-left text-sm font-semibold text-gray-600 blk:text-gray-200')}>Actions</p>
+      </div>
       {menu.map(text => {
-        let btnClassNames = isAnimTypeB ? 'py-4' : 'py-3';
         return <button key={text} onClick={() => onMenuPopupClick(text)} className={tailwind(`block w-full truncate rounded-md pl-4 pr-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white ${btnClassNames}`)} role="menuitem">{text}</button>
       })}
-    </div>
+    </React.Fragment>
   );
 
   let popupClassNames = 'fixed z-41 min-w-36 overflow-auto bg-white shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25';
-  if (isAnimTypeB) popupClassNames += ' pt-2 pb-2';
+  if (isAnimTypeB) popupClassNames += ' pb-2.5';
+  else popupClassNames += ' pb-1';
 
   let panel;
   if (popupSize) {

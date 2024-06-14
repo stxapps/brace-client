@@ -1,12 +1,13 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import {
-  updatePopup, updateTagEditor, addTagEditorTagName, updateTagDataSStep,
+  updatePopup, updateTagEditor, addTagEditorTagName, updateTagData, updateBulkEdit,
 } from '../actions';
-import { TAG_EDITOR_POPUP, TAGGED, ADD_TAGS, MANAGE_TAGS } from '../types/const';
-import { makeGetTagStatus, getTagEditor } from '../selectors';
+import {
+  TAG_EDITOR_POPUP, TAGGED, ADD_TAGS, MANAGE_TAGS, NOT_SUPPORTED,
+} from '../types/const';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
 import { useSafeAreaFrame, useTailwind } from '.';
@@ -14,11 +15,8 @@ import { useSafeAreaFrame, useTailwind } from '.';
 const TagEditorPopup = () => {
   // Use windowHeight to move along with a virtual keyboard.
   const { windowHeight } = useSafeAreaFrame();
-  const getTagStatus = useMemo(makeGetTagStatus, []);
   const isShown = useSelector(state => state.display.isTagEditorPopupShown);
-  const selectingLinkId = useSelector(state => state.display.selectingLinkId);
-  const tagStatus = useSelector(state => getTagStatus(state, selectingLinkId));
-  const tagEditor = useSelector(state => getTagEditor(state));
+  const tagEditor = useSelector(state => state.tagEditor);
   const didClick = useRef(false);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
@@ -34,7 +32,8 @@ const TagEditorPopup = () => {
     didClick.current = true;
 
     dispatch(updatePopup(TAG_EDITOR_POPUP, false));
-    dispatch(updateTagDataSStep(selectingLinkId, tagEditor.values));
+    dispatch(updateTagData(tagEditor.ids, tagEditor.values));
+    dispatch(updateBulkEdit(false));
   };
 
   const onHintSelect = (hint) => {
@@ -95,11 +94,46 @@ const TagEditorPopup = () => {
 
   const panelHeight = Math.min(480, windowHeight * 0.9);
 
+  if (tagEditor.mode === NOT_SUPPORTED) {
+    return (
+      <AnimatePresence key="AnimatePresence_TEP">
+        <div className={tailwind('fixed inset-0 z-30 overflow-hidden')}>
+          <div className={tailwind('flex items-center justify-center p-4')} style={{ minHeight: windowHeight }}>
+            <div className={tailwind('fixed inset-0')}>
+              <motion.button onClick={onPopupCloseBtnClick} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
+            </div>
+            <motion.div className={tailwind('w-full max-w-[25rem] overflow-hidden rounded-lg bg-yellow-50 shadow-lg')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+              <div className={tailwind('relative overflow-hidden rounded-lg bg-yellow-50')} style={{ maxHeight: panelHeight }}>
+                <div className={tailwind('flex')}>
+                  <div className={tailwind('flex-shrink-0')}>
+                    <svg className={tailwind('h-6 w-6 text-yellow-400')} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className={tailwind('ml-3 lg:mt-0.5')}>
+                    <h3 className={tailwind('text-left text-base font-medium text-yellow-800 lg:text-sm')}>Only the same tags are supported.</h3>
+                    <p className={tailwind('mt-2.5 text-sm text-yellow-700')}>Please select items with the same tags to be bulk-edited.</p>
+                  </div>
+                </div>
+                <button onClick={onPopupCloseBtnClick} className={tailwind('absolute top-1 right-1 rounded-md bg-yellow-50 p-1 hover:bg-yellow-100 focus:bg-yellow-100 focus:outline-none')} type="button">
+                  <span className={tailwind('sr-only')}>Dismiss</span>
+                  <svg className={tailwind('h-5 w-5 text-yellow-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path fillRule="evenodd" clipRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
+                  </svg>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        </div >
+      </AnimatePresence>
+    );
+  }
+
   let title = 'Tags';
   let desc = (
     <React.Fragment>Enter a new tag and press the Add button.</React.Fragment>
   );
-  if (tagStatus === null) {
+  if (tagEditor.mode === null) {
     title = ADD_TAGS;
     if (tagEditor.hints.length === 0) {
       desc = (
@@ -110,7 +144,7 @@ const TagEditorPopup = () => {
         <React.Fragment>Enter a new tag and press the Add button,<br />or select from the hint below.</React.Fragment>
       );
     }
-  } else if (tagStatus === TAGGED) {
+  } else if (tagEditor.mode === TAGGED) {
     title = MANAGE_TAGS;
     if (tagEditor.hints.length === 0) {
       desc = (

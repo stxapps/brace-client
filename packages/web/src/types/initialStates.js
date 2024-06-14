@@ -61,6 +61,16 @@ export const initialLockSettingsState = {
   lockedLists: {},
 };
 
+export const initialTagEditorState = {
+  ids: null,
+  mode: null,
+  values: [], // [{ tagName, displayName, color }, ...]
+  hints: [], // [{ tagName, displayName, color, isShown }, ...]
+  displayName: '',
+  color: '',
+  msg: '',
+};
+
 export const initialTagNameEditorState = {
   mode: MODE_VIEW,
   value: '',
