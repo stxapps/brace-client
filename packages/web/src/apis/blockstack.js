@@ -1002,7 +1002,7 @@ const updateTagDataTStep = async (params) => {
   const resultsPerId = getPerformFilesResultsPerId(results);
 
   const successIds = [], errorIds = [], errors = [];
-  for (const id in ids) {
+  for (const id of ids) {
     const mainId = getMainId(id);
 
     let error;

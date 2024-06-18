@@ -41,7 +41,9 @@ const pendingTagsReducer = (state = initialState, action) => {
       for (const value of values) newValues.push({ ...value });
 
       const newNewTagNameObjs = [];
-      for (const obj of newTagNameObjs) newNewTagNameObjs.push({ ...obj });
+      if (Array.isArray(newTagNameObjs)) {
+        for (const obj of newTagNameObjs) newNewTagNameObjs.push({ ...obj });
+      }
 
       newState[id] = {
         status: action.type, values: newValues, newTagNameObjs: newNewTagNameObjs,

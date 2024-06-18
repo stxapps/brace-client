@@ -26,7 +26,7 @@ const SWWUPopup = () => {
   if (!isShown) return null;
 
   return (
-    <div className={tailwind('fixed inset-x-0 top-14 z-40 flex items-start justify-center md:top-0')}>
+    <div className={tailwind('fixed inset-x-0 top-14 z-40 flex items-start justify-center md:top-2.5')}>
       <div className={tailwind('relative m-4 max-w-[25rem] rounded-md bg-yellow-50 p-4 shadow-lg')}>
         <div className={tailwind('flex')}>
           <div className={tailwind('flex-shrink-0')}>

@@ -98,12 +98,12 @@ const TagEditorPopup = () => {
     return (
       <AnimatePresence key="AnimatePresence_TEP">
         <div className={tailwind('fixed inset-0 z-30 overflow-hidden')}>
-          <div className={tailwind('flex items-center justify-center p-4')} style={{ minHeight: windowHeight }}>
+          <div className={tailwind('flex items-start justify-center p-4')} style={{ minHeight: windowHeight }}>
             <div className={tailwind('fixed inset-0')}>
               <motion.button onClick={onPopupCloseBtnClick} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
             </div>
-            <motion.div className={tailwind('w-full max-w-[25rem] overflow-hidden rounded-lg bg-yellow-50 shadow-lg')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-              <div className={tailwind('relative overflow-hidden rounded-lg bg-yellow-50')} style={{ maxHeight: panelHeight }}>
+            <motion.div className={tailwind('mt-14 w-full max-w-[25rem] overflow-hidden rounded-lg bg-yellow-50 shadow-lg md:mt-2.5')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+              <div className={tailwind('relative overflow-hidden rounded-lg bg-yellow-50 p-4')} style={{ maxHeight: panelHeight }}>
                 <div className={tailwind('flex')}>
                   <div className={tailwind('flex-shrink-0')}>
                     <svg className={tailwind('h-6 w-6 text-yellow-400')} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
