@@ -697,6 +697,31 @@ const putInfo = async (params) => {
 const putPins = async (params) => {
   const { getState, pins } = params;
 
+  const values = [], pinsPerFPath = {};
+  for (const pin of pins) {
+    const fpath = createPinFPath(pin.rank, pin.updatedDT, pin.addedDT, pin.id);
+    values.push({ id: fpath, type: PUT_FILE, path: fpath, content: {} });
+    pinsPerFPath[fpath] = pin;
+  }
+
+  const data = { values, isSequential: false, nItemsForNs: N_LINKS };
+  const results = await performFiles(data);
+  const resultsPerId = getPerformFilesResultsPerId(results);
+
+  const successPins = [], errorPins = [], errors = [];
+  for (const fpath in pinsPerFPath) {
+    const [pin, result] = [pinsPerFPath[fpath], resultsPerId[fpath]];
+    if (isObject(result) && result.success) {
+      successPins.push(pin);
+    } else {
+      let error = new Error('Error on previous dependent item');
+      if (isObject(result)) error = new Error(result.error);
+
+      errorPins.push(pin);
+      errors.push(error);
+    }
+  }
+
   // Add to the fetched only if also exists in fpaths to prevent pin on a link
   //   that was already moved/removed/deleted.
   const pListNames = [], pLinks = [];
@@ -709,7 +734,7 @@ const putPins = async (params) => {
     const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
 
     const links = getState().links;
-    for (const { id } of pins) {
+    for (const { id } of successPins) {
       const { listName, link } = getListNameAndLink(id, links);
       if (!isString(listName) || !isObject(link)) {
         console.log('In putPins, no found listName or link for id:', id);
@@ -730,37 +755,40 @@ const putPins = async (params) => {
     }
   }
 
-  const values = [];
-  for (const pin of pins) {
-    const fpath = createPinFPath(pin.rank, pin.updatedDT, pin.addedDT, pin.id);
-    values.push({ id: fpath, type: PUT_FILE, path: fpath, content: {} });
-  }
-
-  const data = { values, isSequential: false, nItemsForNs: N_LINKS };
-  const results = await performFiles(data);
-  // Bug alert: if several pins and error, rollback is incorrect
-  //   as some are successful but some aren't.
-  throwIfPerformFilesError(data, results);
-
-  return { listNames: pListNames, links: pLinks, pins };
+  return { successPins, errorPins, errors, listNames: pListNames, links: pLinks };
 };
 
 const deletePins = async (params) => {
   const { pins } = params;
 
-  const values = [];
+  const values = [], pinsPerFPath = {};
   for (const pin of pins) {
     const fpath = createPinFPath(pin.rank, pin.updatedDT, pin.addedDT, pin.id);
     values.push(
       { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
     );
+    pinsPerFPath[fpath] = pin;
   }
 
   const data = { values, isSequential: false, nItemsForNs: N_LINKS };
   const results = await performFiles(data);
-  throwIfPerformFilesError(data, results);
+  const resultsPerId = getPerformFilesResultsPerId(results);
 
-  return { pins };
+  const successPins = [], errorPins = [], errors = [];
+  for (const fpath in pinsPerFPath) {
+    const [pin, result] = [pinsPerFPath[fpath], resultsPerId[fpath]];
+    if (isObject(result) && result.success) {
+      successPins.push(pin);
+    } else {
+      let error = new Error('Error on previous dependent item');
+      if (isObject(result)) error = new Error(result.error);
+
+      errorPins.push(pin);
+      errors.push(error);
+    }
+  }
+
+  return { successPins, errorPins, errors };
 };
 
 const updateCustomData = async (params) => {
@@ -817,6 +845,112 @@ const updateTagDataSStep = async (params) => {
   return result;
 };
 
+const _getTpfValues = (id, mainId, values, solvedTags) => {
+  const combinedValues = {}, aTns = [], bTns = [];
+  if (isObject(solvedTags[mainId])) {
+    for (const value of solvedTags[mainId].values) {
+      combinedValues[value.tagName] = { ...value, diffs: [] };
+      aTns.push(value.tagName);
+    }
+  }
+  for (const value of values) {
+    combinedValues[value.tagName] = { ...combinedValues[value.tagName], diffs: [] };
+    bTns.push(value.tagName);
+  }
+
+  const diffs = diffLinesRaw(aTns, bTns);
+  for (const diff of diffs) {
+    const [diffType, tn] = [diff[0], diff[1]];
+    combinedValues[tn].diffs.push(diffType);
+  }
+  for (const tn in combinedValues) {
+    const tDiffs = combinedValues[tn].diffs;
+    if (tDiffs.length === 1 && tDiffs.includes(DIFF_EQUAL)) {
+      combinedValues[tn].diffType = DIFF_EQUAL;
+    } else if (tDiffs.length === 1 && tDiffs.includes(DIFF_DELETE)) {
+      combinedValues[tn].diffType = DIFF_DELETE;
+    } else if (tDiffs.length === 1 && tDiffs.includes(DIFF_INSERT)) {
+      combinedValues[tn].diffType = DIFF_INSERT;
+    } else if (
+      tDiffs.length === 2 &&
+      tDiffs.includes(DIFF_INSERT) &&
+      tDiffs.includes(DIFF_DELETE)
+    ) {
+      combinedValues[tn].diffType = DIFF_UPDATE;
+    } else {
+      console.log('Found invalid diffs for tn:', tn, tDiffs);
+    }
+  }
+
+  const bRanks = [];
+  for (const tn of bTns) {
+    const diffType = combinedValues[tn].diffType;
+    if (diffType === DIFF_EQUAL) {
+      bRanks.push(combinedValues[tn].rank);
+      continue;
+    }
+    bRanks.push(null);
+  }
+  for (let i = 0; i < bRanks.length; i++) {
+    if (isString(bRanks[i])) continue;
+
+    let prevRank, nextRank;
+    for (let j = i - 1; j >= 0; j--) {
+      if (isString(bRanks[j])) {
+        prevRank = bRanks[j];
+        break;
+      }
+    }
+    for (let j = i + 1; j < bRanks.length; j++) {
+      if (isString(bRanks[j])) {
+        nextRank = bRanks[j];
+        break;
+      }
+    }
+
+    let lexoRank;
+    if (isString(prevRank) && isString(nextRank)) {
+      const pLexoRank = LexoRank.parse(`0|${prevRank.replace('_', ':')}`);
+      const nLexoRank = LexoRank.parse(`0|${nextRank.replace('_', ':')}`);
+
+      if (prevRank === nextRank) lexoRank = pLexoRank;
+      else lexoRank = pLexoRank.between(nLexoRank);
+    } else if (isString(prevRank)) {
+      lexoRank = LexoRank.parse(`0|${prevRank.replace('_', ':')}`).genNext();
+    } else if (isString(nextRank)) {
+      lexoRank = LexoRank.parse(`0|${nextRank.replace('_', ':')}`).genPrev();
+    } else {
+      lexoRank = LexoRank.middle();
+    }
+    bRanks[i] = lexoRank.toString().slice(2).replace(':', '_');
+  }
+  for (let i = 0; i < bTns.length; i++) {
+    combinedValues[bTns[i]].rank = bRanks[i];
+  }
+
+  let now = Date.now();
+
+  const deletedTagNames = [], pfValues = [];
+  for (const tagName in combinedValues) {
+    const value = combinedValues[tagName];
+
+    if (value.diffType === DIFF_EQUAL) continue;
+    if (value.diffType === DIFF_DELETE) {
+      deletedTagNames.push(tagName);
+      continue;
+    }
+
+    const addedDT = isNumber(value.addedDT) ? value.addedDT : now;
+    const fpath = createTagFPath(tagName, value.rank, now, addedDT, id);
+    pfValues.push(
+      { id: fpath, type: PUT_FILE, path: fpath, content: {} }
+    );
+    now += 1;
+  }
+
+  return { deletedTagNames, pfValues };
+};
+
 const updateTagDataTStep = async (params) => {
   const { getState } = params;
 
@@ -827,111 +961,14 @@ const updateTagDataTStep = async (params) => {
   const tagFPaths = getTagFPaths(getState());
   const solvedTags = getTags(tagFPaths, {});
 
-  const pfValues = [], dltdTnsPerMid = {};
+  const pfValues = [], pfValuesPerMid = {}, dltdTnsPerMid = {};
   for (const id of ids) {
-    const [values, mainId] = [valuesPerId[id], getMainId(id)];
+    const [mainId, values] = [getMainId(id), valuesPerId[id]];
+    const result = _getTpfValues(id, mainId, values, solvedTags);
 
-    const combinedValues = {}, aTns = [], bTns = [];
-    if (isObject(solvedTags[mainId])) {
-      for (const value of solvedTags[mainId].values) {
-        combinedValues[value.tagName] = { ...value, diffs: [] };
-        aTns.push(value.tagName);
-      }
-    }
-    for (const value of values) {
-      combinedValues[value.tagName] = { ...combinedValues[value.tagName], diffs: [] };
-      bTns.push(value.tagName);
-    }
-
-    const diffs = diffLinesRaw(aTns, bTns);
-    for (const diff of diffs) {
-      const [diffType, tn] = [diff[0], diff[1]];
-      combinedValues[tn].diffs.push(diffType);
-    }
-    for (const tn in combinedValues) {
-      const tDiffs = combinedValues[tn].diffs;
-      if (tDiffs.length === 1 && tDiffs.includes(DIFF_EQUAL)) {
-        combinedValues[tn].diffType = DIFF_EQUAL;
-      } else if (tDiffs.length === 1 && tDiffs.includes(DIFF_DELETE)) {
-        combinedValues[tn].diffType = DIFF_DELETE;
-      } else if (tDiffs.length === 1 && tDiffs.includes(DIFF_INSERT)) {
-        combinedValues[tn].diffType = DIFF_INSERT;
-      } else if (
-        tDiffs.length === 2 &&
-        tDiffs.includes(DIFF_INSERT) &&
-        tDiffs.includes(DIFF_DELETE)
-      ) {
-        combinedValues[tn].diffType = DIFF_UPDATE;
-      } else {
-        console.log('Found invalid diffs for tn:', tn, tDiffs);
-      }
-    }
-
-    const bRanks = [];
-    for (const tn of bTns) {
-      const diffType = combinedValues[tn].diffType;
-      if (diffType === DIFF_EQUAL) {
-        bRanks.push(combinedValues[tn].rank);
-        continue;
-      }
-      bRanks.push(null);
-    }
-    for (let i = 0; i < bRanks.length; i++) {
-      if (isString(bRanks[i])) continue;
-
-      let prevRank, nextRank;
-      for (let j = i - 1; j >= 0; j--) {
-        if (isString(bRanks[j])) {
-          prevRank = bRanks[j];
-          break;
-        }
-      }
-      for (let j = i + 1; j < bRanks.length; j++) {
-        if (isString(bRanks[j])) {
-          nextRank = bRanks[j];
-          break;
-        }
-      }
-
-      let lexoRank;
-      if (isString(prevRank) && isString(nextRank)) {
-        const pLexoRank = LexoRank.parse(`0|${prevRank.replace('_', ':')}`);
-        const nLexoRank = LexoRank.parse(`0|${nextRank.replace('_', ':')}`);
-
-        if (prevRank === nextRank) lexoRank = pLexoRank;
-        else lexoRank = pLexoRank.between(nLexoRank);
-      } else if (isString(prevRank)) {
-        lexoRank = LexoRank.parse(`0|${prevRank.replace('_', ':')}`).genNext();
-      } else if (isString(nextRank)) {
-        lexoRank = LexoRank.parse(`0|${nextRank.replace('_', ':')}`).genPrev();
-      } else {
-        lexoRank = LexoRank.middle();
-      }
-      bRanks[i] = lexoRank.toString().slice(2).replace(':', '_');
-    }
-    for (let i = 0; i < bTns.length; i++) {
-      combinedValues[bTns[i]].rank = bRanks[i];
-    }
-
-    let now = Date.now();
-
-    for (const tagName in combinedValues) {
-      const value = combinedValues[tagName];
-
-      if (value.diffType === DIFF_EQUAL) continue;
-      if (value.diffType === DIFF_DELETE) {
-        if (!Array.isArray(dltdTnsPerMid[mainId])) dltdTnsPerMid[mainId] = [];
-        dltdTnsPerMid[mainId].push(tagName);
-        continue;
-      }
-
-      const addedDT = isNumber(value.addedDT) ? value.addedDT : now;
-      const fpath = createTagFPath(tagName, value.rank, now, addedDT, id);
-      pfValues.push(
-        { id: fpath, type: PUT_FILE, path: fpath, content: {} }
-      );
-      now += 1;
-    }
+    pfValues.push(...result.pfValues);
+    pfValuesPerMid[mainId] = result.pfValues;
+    dltdTnsPerMid[mainId] = result.deletedTagNames;
   }
 
   // MainId is the same, but id can be different.
@@ -943,19 +980,49 @@ const updateTagDataTStep = async (params) => {
       Array.isArray(dltdTnsPerMid[eMainId]) &&
       dltdTnsPerMid[eMainId].includes(eResult.tagName)
     ) {
-      pfValues.push(
-        { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
-      );
+      const pfValue = {
+        id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true,
+      };
+      pfValues.push(pfValue);
+
+      if (!Array.isArray(pfValuesPerMid[eMainId])) pfValuesPerMid[eMainId] = [];
+      pfValuesPerMid[eMainId].push(pfValue);
     }
   }
 
-  const data = { values: pfValues, isSequential: false, nItemsForNs: N_LINKS };
-  const results = await performFiles(data);
+  const results = [], nItems = 800;
+  for (let i = 0; i < pfValues.length; i += nItems) {
+    const selectedPfValues = pfValues.slice(i, i + nItems)
+    const data = {
+      values: selectedPfValues, isSequential: false, nItemsForNs: N_LINKS
+    };
+    const selectedResults = await performFiles(data);
+    results.push(...selectedResults);
+  }
+  const resultsPerId = getPerformFilesResultsPerId(results);
 
-  // TODO: error per id
-  throwIfPerformFilesError(data, results);
+  const successIds = [], errorIds = [], errors = [];
+  for (const id in ids) {
+    const mainId = getMainId(id);
 
-  return { ids, valuesPerId };
+    let error;
+    for (const pfValue of pfValuesPerMid[mainId]) {
+      const result = resultsPerId[pfValue.id];
+      if (isObject(result) && result.success) continue;
+
+      error = new Error('Error on previous dependent item');
+      if (isObject(result)) error = new Error(result.error);
+      break;
+    }
+    if (error) {
+      errorIds.push(id);
+      errors.push(error);
+    } else {
+      successIds.push(id);
+    }
+  }
+
+  return { valuesPerId, successIds, errorIds, errors };
 };
 
 const getFiles = async (fpaths, dangerouslyIgnoreError = false) => {

@@ -74,7 +74,7 @@ import {
   VALID_PASSWORD, PASSWORD_MSGS, IN_USE_LIST_NAME, LIST_NAME_MSGS, VALID_TAG_NAME,
   DUPLICATE_TAG_NAME, IN_USE_TAG_NAME, TAG_NAME_MSGS, VALID_URL,
   DELETE_ACTION_LIST_NAME, DELETE_ACTION_TAG_NAME, PUT_FILE, DELETE_FILE, TAGGED,
-  NOT_SUPPORTED,
+  NOT_SUPPORTED, STATUS,
 } from '../types/const';
 import {
   isEqual, isArrayEqual, isString, isObject, isNumber, throttle, randomString,
@@ -2724,7 +2724,6 @@ export const pinLinks = (ids) => async (dispatch, getState) => {
 
 export const unpinLinks = (ids) => async (dispatch, getState) => {
   const pinFPaths = getPinFPaths(getState());
-
   const linkMainIds = ids.map(id => getMainId(id));
 
   // when move, old paths might not be deleted, so when unpin,
@@ -2845,6 +2844,72 @@ export const movePinnedLink = (id, direction) => async (dispatch, getState) => {
   });
 
   await sortShowingLinkIds(dispatch, getState);
+};
+
+export const retryDiedPins = () => async (dispatch, getState) => {
+  const pendingPins = getState().pendingPins;
+
+  const pPins = [], uPins = [], mPins = [];
+  for (const id in pendingPins) {
+    const pendingPin = pendingPins[id];
+    const [status, pin] = [pendingPin.status, newObject(pendingPin, [STATUS])];
+    if (status === PIN_LINK_ROLLBACK) {
+      pPins.push(pin);
+    } else if (status === UNPIN_LINK_ROLLBACK) {
+      uPins.push(pin);
+    } else if (status === MOVE_LINKS_ADD_STEP_ROLLBACK) {
+      mPins.push(pin);
+    }
+  }
+
+  if (pPins.length > 0) {
+    const payload = { pins: pPins };
+    dispatch({
+      type: PIN_LINK,
+      payload,
+      meta: {
+        offline: {
+          effect: { method: PIN_LINK, params: { ...payload, getState } },
+          commit: { type: PIN_LINK_COMMIT, meta: payload },
+          rollback: { type: PIN_LINK_ROLLBACK, meta: payload },
+        },
+      },
+    });
+  }
+  if (uPins.length > 0) {
+    const payload = { pins: uPins };
+    dispatch({
+      type: UNPIN_LINK,
+      payload,
+      meta: {
+        offline: {
+          effect: { method: UNPIN_LINK, params: payload },
+          commit: { type: UNPIN_LINK_COMMIT, meta: payload },
+          rollback: { type: UNPIN_LINK_ROLLBACK, meta: payload },
+        },
+      },
+    });
+  }
+  if (mPins.length > 0) {
+    for (const pin of mPins) {
+      const payload = { ...pin };
+      dispatch({
+        type: MOVE_PINNED_LINK_ADD_STEP,
+        payload,
+        meta: {
+          offline: {
+            effect: { method: PIN_LINK, params: { pins: [payload] } },
+            commit: { type: MOVE_PINNED_LINK_ADD_STEP_COMMIT, meta: payload },
+            rollback: { type: MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, meta: payload },
+          },
+        },
+      });
+    }
+  }
+
+  if (pPins.length > 0 || uPins.length > 0 || mPins.length > 0) {
+    await sortShowingLinkIds(dispatch, getState);
+  }
 };
 
 export const cancelDiedPins = () => async (dispatch, getState) => {
@@ -3392,7 +3457,7 @@ export const updateTagData = (ids, values) => async (dispatch, getState) => {
   await updateTagDataSStep(ids, valuesPerId)(dispatch, getState);
 }
 
-export const updateTagDataSStep = (rawIds, rawValuesPerId) => async (
+const updateTagDataSStep = (rawIds, rawValuesPerId) => async (
   dispatch, getState
 ) => {
   const tagFPaths = getTagFPaths(getState());

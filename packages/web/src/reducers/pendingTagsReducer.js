@@ -31,14 +31,7 @@ const pendingTagsReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_TAG_DATA_S_STEP) {
-    let { ids, valuesPerId, newTagNameObjsPerId } = action.payload;
-    if (!Array.isArray(ids)) ids = [action.payload.id];
-    if (!isObject(valuesPerId)) {
-      valuesPerId = { [action.payload.id]: action.payload.values };
-    }
-    if (!isObject(newTagNameObjsPerId)) {
-      newTagNameObjsPerId = { [action.payload.id]: action.payload.newTagNameObjs }
-    }
+    const { ids, valuesPerId, newTagNameObjsPerId } = action.payload;
 
     const newState = { ...state };
     for (const id of ids) {
@@ -90,8 +83,7 @@ const pendingTagsReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_TAG_DATA_T_STEP) {
-    let { ids } = action.payload;
-    if (!Array.isArray(ids)) ids = [action.payload.id]
+    const { ids } = action.payload;
 
     const newState = { ...state };
     for (const id of ids) {
@@ -101,23 +93,28 @@ const pendingTagsReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_TAG_DATA_T_STEP_COMMIT) {
-    let { ids } = action.payload;
-    if (!Array.isArray(ids)) ids = [action.payload.id]
+    const { successIds, errorIds } = action.payload;
 
     const newState = {};
     for (const id in state) {
-      if (ids.includes(id)) continue;
+      if (successIds.includes(id)) continue;
+      if (errorIds.includes(id)) {
+        newState[id] = { ...state[id], status: UPDATE_TAG_DATA_T_STEP_ROLLBACK };
+        continue;
+      }
       newState[id] = { ...state[id] };
     }
 
-    return loop(
-      newState, Cmd.run(cleanUpTags(), { args: [Cmd.dispatch, Cmd.getState] })
-    );
+    if (errorIds.length === 0) {
+      return loop(
+        newState, Cmd.run(cleanUpTags(), { args: [Cmd.dispatch, Cmd.getState] })
+      );
+    }
+    return newState;
   }
 
   if (action.type === UPDATE_TAG_DATA_T_STEP_ROLLBACK) {
-    let { ids } = action.meta;
-    if (!Array.isArray(ids)) ids = [action.meta.id]
+    const { ids } = action.meta;
 
     const newState = { ...state };
     for (const id of ids) {

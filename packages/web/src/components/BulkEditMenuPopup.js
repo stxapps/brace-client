@@ -92,7 +92,7 @@ const BulkEditMenuPopup = () => {
       menu.push(MOVE_TO);
     }
   }
-  menu = [...menu, PIN, UNPIN, MANAGE_TAGS]
+  menu = [...menu, MANAGE_TAGS, PIN, UNPIN]
 
   const hdClassNames = isAnimTypeB ? 'h-14' : 'h-11';
   const btnClassNames = isAnimTypeB ? 'py-4' : 'py-2.5';

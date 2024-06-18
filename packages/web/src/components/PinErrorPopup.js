@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { cancelDiedPins } from '../actions';
+import { retryDiedPins, cancelDiedPins } from '../actions';
 import {
   PIN_LINK_ROLLBACK, UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
 } from '../types/actionTypes';
@@ -25,7 +25,13 @@ const PinErrorPopup = () => {
     return false;
   }, [pendingPins]);
 
-  const onCloseBtnClick = () => {
+  const onRetryBtnClick = () => {
+    if (didClick.current) return;
+    dispatch(retryDiedPins());
+    didClick.current = true;
+  };
+
+  const onCancelBtnClick = () => {
     if (didClick.current) return;
     dispatch(cancelDiedPins());
     didClick.current = true;
@@ -33,13 +39,13 @@ const PinErrorPopup = () => {
 
   useEffect(() => {
     didClick.current = false;
-  }, [haveDiedPins]);
+  }, [pendingPins]);
 
   if (!haveDiedPins) return null;
 
   return (
     <div className={tailwind('fixed inset-x-0 top-14 z-40 flex items-start justify-center md:top-0')}>
-      <div className={tailwind('relative m-4 rounded-md bg-red-50 p-4 shadow-lg')}>
+      <div className={tailwind('m-4 rounded-md bg-red-50 p-4 shadow-lg')}>
         <div className={tailwind('flex')}>
           <div className={tailwind('flex-shrink-0')}>
             <svg className={tailwind('h-6 w-6 text-red-400')} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -49,14 +55,14 @@ const PinErrorPopup = () => {
           <div className={tailwind('ml-3 lg:mt-0.5')}>
             <h3 className={tailwind('text-left text-base font-medium text-red-800 lg:text-sm')}>Updating Pins Error!</h3>
             <p className={tailwind('mt-2.5 text-sm text-red-700')}>Please wait a moment and try again. <br className={tailwind('hidden sm:inline')} />If the problem persists, please <a className={tailwind('rounded underline hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a>.</p>
+            <div className={tailwind('mt-4')}>
+              <div className={tailwind('-mx-2 -my-1.5 flex')}>
+                <button onClick={onRetryBtnClick} className={tailwind('rounded-md bg-red-50 px-2 py-1.5 text-sm font-medium text-red-800 transition duration-150 ease-in-out hover:bg-red-100 focus:bg-red-100 focus:outline-none')}>Retry</button>
+                <button onClick={onCancelBtnClick} className={tailwind('ml-3 rounded-md bg-red-50 px-2 py-1.5 text-sm font-medium text-red-800 transition duration-150 ease-in-out hover:bg-red-100 focus:bg-red-100 focus:outline-none')}>Cancel</button>
+              </div>
+            </div>
           </div>
         </div>
-        <button onClick={onCloseBtnClick} className={tailwind('absolute top-1 right-1 rounded-md bg-red-50 p-1.5 hover:bg-red-100 focus:bg-red-100 focus:outline-none')} type="button">
-          <span className={tailwind('sr-only')}>Dismiss</span>
-          <svg className={tailwind('h-5 w-5 text-red-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path fillRule="evenodd" clipRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
-          </svg>
-        </button>
       </div>
     </div>
   );

@@ -783,18 +783,21 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_TAG_DATA_T_STEP_COMMIT) {
-    const { id, values } = action.payload;
+    let { successIds, valuesPerId } = action.payload;
 
     if (state.queryString) {
       // Only tag name for now
       const tagName = state.queryString.trim();
-      const found = values.some(value => value.tagName === tagName);
-      if (!found) {
-        return {
-          ...state,
-          showingLinkIds: _filterIfNotNull(state.showingLinkIds, [id]),
-        };
+
+      const newState = { ...state };
+      for (const id of successIds) {
+        const values = valuesPerId[id];
+        const found = values.some(value => value.tagName === tagName);
+        if (!found) {
+          newState.showingLinkIds = _filterIfNotNull(newState.showingLinkIds, [id]);
+        }
       }
+      return newState;
     }
 
     return state;

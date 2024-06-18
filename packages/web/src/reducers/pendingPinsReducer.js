@@ -31,12 +31,21 @@ const pendingPinsReducer = (state = initialState, action) => {
   }
 
   if (action.type === PIN_LINK_COMMIT || action.type === UNPIN_LINK_COMMIT) {
-    const { pins } = action.meta;
+    const { successPins, errorPins } = action.payload;
+
+    let errorStatus = PIN_LINK_ROLLBACK;
+    if (action.type === UNPIN_LINK_COMMIT) errorStatus = UNPIN_LINK_ROLLBACK;
 
     const newState = { ...state };
-    for (const pin of pins) delete newState[pin.id];
+    for (const pin of successPins) delete newState[pin.id];
+    for (const pin of errorPins) newState[pin.id] = { ...pin, status: errorStatus };
 
-    return loop(newState, Cmd.run(cleanUpPins(), { args: [Cmd.dispatch, Cmd.getState] }));
+    if (errorPins.length === 0) {
+      return loop(
+        newState, Cmd.run(cleanUpPins(), { args: [Cmd.dispatch, Cmd.getState] })
+      );
+    }
+    return newState;
   }
 
   if (action.type === PIN_LINK_ROLLBACK || action.type === UNPIN_LINK_ROLLBACK) {
