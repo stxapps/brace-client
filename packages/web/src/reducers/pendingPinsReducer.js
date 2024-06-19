@@ -70,6 +70,7 @@ const pendingPinsReducer = (state = initialState, action) => {
     for (const pin of errorPins) {
       newState[pin.id] = { ...pin, status: MOVE_PINNED_LINK_ADD_STEP_ROLLBACK };
     }
+
     if (errorPins.length === 0) {
       return loop(
         newState,

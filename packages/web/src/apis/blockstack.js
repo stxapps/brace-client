@@ -994,7 +994,7 @@ const updateTagDataTStep = async (params) => {
   for (let i = 0; i < pfValues.length; i += nItems) {
     const selectedPfValues = pfValues.slice(i, i + nItems)
     const data = {
-      values: selectedPfValues, isSequential: false, nItemsForNs: N_LINKS
+      values: selectedPfValues, isSequential: false, nItemsForNs: N_LINKS,
     };
     const selectedResults = await performFiles(data);
     results.push(...selectedResults);

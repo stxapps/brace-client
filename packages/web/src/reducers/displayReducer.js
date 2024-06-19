@@ -783,7 +783,7 @@ const displayReducer = (state = initialState, action) => {
   }
 
   if (action.type === UPDATE_TAG_DATA_T_STEP_COMMIT) {
-    let { successIds, valuesPerId } = action.payload;
+    const { successIds, valuesPerId } = action.payload;
 
     if (state.queryString) {
       // Only tag name for now
