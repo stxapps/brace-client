@@ -63,20 +63,25 @@ const pendingPinsReducer = (state = initialState, action) => {
   }
 
   if (action.type === MOVE_PINNED_LINK_ADD_STEP_COMMIT) {
-    const { id } = action.meta;
+    const { successPins, errorPins } = action.payload;
 
     const newState = { ...state };
-    delete newState[id];
-
-    return loop(
-      newState,
-      Cmd.run(cleanUpPins(), { args: [Cmd.dispatch, Cmd.getState] }),
-    );
+    for (const pin of successPins) delete newState[pin.id];
+    for (const pin of errorPins) {
+      newState[pin.id] = { ...pin, status: MOVE_PINNED_LINK_ADD_STEP_ROLLBACK };
+    }
+    if (errorPins.length === 0) {
+      return loop(
+        newState,
+        Cmd.run(cleanUpPins(), { args: [Cmd.dispatch, Cmd.getState] }),
+      );
+    }
+    return newState;
   }
 
   if (action.type === MOVE_PINNED_LINK_ADD_STEP_ROLLBACK) {
-    const pin = action.meta;
-    return { ...state, [pin.id]: { ...pin, status: action.type } };
+    const { rank, updatedDT, addedDT, id } = action.meta;
+    return { ...state, [id]: { rank, updatedDT, addedDT, id, status: action.type } };
   }
 
   if (action.type === CANCEL_DIED_PINS) {

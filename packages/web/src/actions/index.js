@@ -2857,7 +2857,7 @@ export const retryDiedPins = () => async (dispatch, getState) => {
       pPins.push(pin);
     } else if (status === UNPIN_LINK_ROLLBACK) {
       uPins.push(pin);
-    } else if (status === MOVE_LINKS_ADD_STEP_ROLLBACK) {
+    } else if (status === MOVE_PINNED_LINK_ADD_STEP_ROLLBACK) {
       mPins.push(pin);
     }
   }
