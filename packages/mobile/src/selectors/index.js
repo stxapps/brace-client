@@ -545,67 +545,6 @@ export const makeGetTnAndDns = () => {
   );
 };
 
-export const getTagEditor = createSelector(
-  state => getTagFPaths(state),
-  state => state.pendingTags,
-  state => state.settings.tagNameMap,
-  state => state.display.selectingLinkId,
-  state => state.tagEditor,
-  (tagFPaths, pendingTags, tagNameMap, selectingLinkId, tagEditor) => {
-    const editor = { ...tagEditor };
-    if (!editor.didValuesEdit && isString(selectingLinkId)) {
-      const tags = getTags(tagFPaths, pendingTags);
-      const mainId = getMainId(selectingLinkId);
-
-      if (mainId in tags) {
-        const { values } = tags[mainId];
-
-        editor.values = [];
-        for (const { tagName } of values) {
-          const { tagNameObj } = getTagNameObj(tagName, tagNameMap);
-          if (!isObject(tagNameObj)) continue;
-          editor.values.push({
-            tagName, displayName: tagNameObj.displayName, color: tagNameObj.color,
-          });
-        }
-      }
-    }
-    if (!editor.didHintsEdit) {
-      editor.hints = [];
-      for (const tagNameObj of tagNameMap) {
-        const { tagName, displayName, color } = tagNameObj;
-
-        const found = editor.values.some(value => value.tagName === tagName);
-        editor.hints.push({ tagName, displayName, color, isBlur: found });
-      }
-    }
-    return editor;
-  },
-  {
-    memoizeOptions: {
-      resultEqualityCheck: (x, y) => {
-        const [xKeys, yKeys] = [Object.keys(x), Object.keys(y)];
-        const keys = [...new Set([...xKeys, ...yKeys])];
-
-        for (const key of keys) {
-          if (!(key in x) || !(key in y)) return false;
-          if (key === 'values') {
-            const [xValues, yValues] = [x[key], y[key]];
-            if (!Array.isArray(xValues) || !Array.isArray(yValues)) return false;
-            if (xValues.length !== yValues.length) return false;
-            for (let i = 0; i < xValues.length; i++) {
-              if (!isEqual(xValues[i], yValues[i])) return false;
-            }
-            continue;
-          }
-          if (x[key] !== y[key]) return false;
-        }
-        return true;
-      },
-    },
-  },
-);
-
 export const makeGetTagNameEditor = () => {
   return createSelector(
     state => state.settings.tagNameMap,

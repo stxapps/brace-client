@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, Linking } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
-import { cancelDiedPins } from '../actions';
+import { retryDiedPins, cancelDiedPins } from '../actions';
 import {
   PIN_LINK_ROLLBACK, UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
 } from '../types/actionTypes';
@@ -28,7 +28,13 @@ const PinErrorPopup = () => {
     return false;
   }, [pendingPins]);
 
-  const onCloseBtnClick = () => {
+  const onRetryBtnClick = () => {
+    if (didClick.current) return;
+    dispatch(retryDiedPins());
+    didClick.current = true;
+  };
+
+  const onCancelBtnClick = () => {
     if (didClick.current) return;
     dispatch(cancelDiedPins());
     didClick.current = true;
@@ -36,7 +42,7 @@ const PinErrorPopup = () => {
 
   useEffect(() => {
     didClick.current = false;
-  }, [haveDiedPins]);
+  }, [pendingPins]);
 
   if (!haveDiedPins) return null;
 
@@ -53,13 +59,18 @@ const PinErrorPopup = () => {
             <View style={tailwind('ml-3 flex-shrink flex-grow lg:mt-0.5')}>
               <Text style={tailwind('text-left text-base font-medium text-red-800 lg:text-sm')}>Updating Pins Error!</Text>
               <Text style={tailwind('mt-2.5 text-sm font-normal leading-6 text-red-700')}>Please wait a moment and try again. {safeAreaWidth < SM_WIDTH ? '' : '\n'}If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-sm font-normal leading-6 text-red-700 underline')}>contact us</Text>.</Text>
+              <View style={tailwind('mt-4')}>
+                <View style={tailwind('-mx-2 -my-1.5 flex-row')}>
+                  <TouchableOpacity onPress={onRetryBtnClick} style={tailwind('rounded-md bg-red-50 px-2 py-1.5')}>
+                    <Text style={tailwind('text-sm font-medium text-red-800')}>Retry</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={onCancelBtnClick} style={tailwind('ml-3 rounded-md bg-red-50 px-2 py-1.5')}>
+                    <Text style={tailwind('text-sm font-medium text-red-800')}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
           </View>
-          <TouchableOpacity onPress={onCloseBtnClick} style={tailwind('absolute top-1 right-1 rounded-md bg-red-50 p-1.5')}>
-            <Svg style={tailwind('font-normal text-red-500')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
-              <Path fillRule="evenodd" clipRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
-            </Svg>
-          </TouchableOpacity>
         </View>
       </View>
     </View>

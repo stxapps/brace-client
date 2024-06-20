@@ -150,7 +150,8 @@ class CardItemMenuPopup extends React.PureComponent {
       this.didClick = true;
       return true;
     } else if (text === ADD_TAGS || text === MANAGE_TAGS) {
-      this.props.updateTagEditorPopup(true, id, text === ADD_TAGS);
+      this.props.updateSelectingLinkId(id);
+      this.props.updateTagEditorPopup(true, text === ADD_TAGS);
     } else if (text === CHANGE) {
       this.props.updateCustomEditorPopup(true, id);
     } else {

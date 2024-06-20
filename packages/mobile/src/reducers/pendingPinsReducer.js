@@ -31,12 +31,21 @@ const pendingPinsReducer = (state = initialState, action) => {
   }
 
   if (action.type === PIN_LINK_COMMIT || action.type === UNPIN_LINK_COMMIT) {
-    const { pins } = action.meta;
+    const { successPins, errorPins } = action.payload;
+
+    let errorStatus = PIN_LINK_ROLLBACK;
+    if (action.type === UNPIN_LINK_COMMIT) errorStatus = UNPIN_LINK_ROLLBACK;
 
     const newState = { ...state };
-    for (const pin of pins) delete newState[pin.id];
+    for (const pin of successPins) delete newState[pin.id];
+    for (const pin of errorPins) newState[pin.id] = { ...pin, status: errorStatus };
 
-    return loop(newState, Cmd.run(cleanUpPins(), { args: [Cmd.dispatch, Cmd.getState] }));
+    if (errorPins.length === 0) {
+      return loop(
+        newState, Cmd.run(cleanUpPins(), { args: [Cmd.dispatch, Cmd.getState] })
+      );
+    }
+    return newState;
   }
 
   if (action.type === PIN_LINK_ROLLBACK || action.type === UNPIN_LINK_ROLLBACK) {
@@ -54,20 +63,26 @@ const pendingPinsReducer = (state = initialState, action) => {
   }
 
   if (action.type === MOVE_PINNED_LINK_ADD_STEP_COMMIT) {
-    const { id } = action.meta;
+    const { successPins, errorPins } = action.payload;
 
     const newState = { ...state };
-    delete newState[id];
+    for (const pin of successPins) delete newState[pin.id];
+    for (const pin of errorPins) {
+      newState[pin.id] = { ...pin, status: MOVE_PINNED_LINK_ADD_STEP_ROLLBACK };
+    }
 
-    return loop(
-      newState,
-      Cmd.run(cleanUpPins(), { args: [Cmd.dispatch, Cmd.getState] }),
-    );
+    if (errorPins.length === 0) {
+      return loop(
+        newState,
+        Cmd.run(cleanUpPins(), { args: [Cmd.dispatch, Cmd.getState] }),
+      );
+    }
+    return newState;
   }
 
   if (action.type === MOVE_PINNED_LINK_ADD_STEP_ROLLBACK) {
-    const pin = action.meta;
-    return { ...state, [pin.id]: { ...pin, status: action.type } };
+    const { rank, updatedDT, addedDT, id } = action.meta;
+    return { ...state, [id]: { rank, updatedDT, addedDT, id, status: action.type } };
   }
 
   if (action.type === CANCEL_DIED_PINS) {

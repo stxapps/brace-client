@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   ScrollView, View, Text, TouchableOpacity, TouchableWithoutFeedback, TextInput,
   Animated, BackHandler, Platform, Keyboard,
@@ -8,12 +8,13 @@ import Svg, { Path } from 'react-native-svg';
 import KeyboardManager from 'react-native-keyboard-manager';
 
 import {
-  updatePopup, updateTagEditor, addTagEditorTagName, updateTagDataSStep,
+  updatePopup, updateTagEditor, addTagEditorTagName, updateTagData, updateBulkEdit,
 } from '../actions';
 import {
   TAG_EDITOR_POPUP, TAGGED, ADD_TAGS, MANAGE_TAGS, BLK_MODE, SM_WIDTH, LG_WIDTH,
+  NOT_SUPPORTED,
 } from '../types/const';
-import { makeGetTagStatus, getTagEditor, getThemeMode } from '../selectors';
+import { getThemeMode } from '../selectors';
 import { dialogFMV } from '../types/animConfigs';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
@@ -22,11 +23,8 @@ const TagEditorPopup = () => {
 
   const { width: safeAreaWidth, height: safeAreaHeight } = useSafeAreaFrame();
   const insets = useSafeAreaInsets();
-  const getTagStatus = useMemo(makeGetTagStatus, []);
   const isShown = useSelector(state => state.display.isTagEditorPopupShown);
-  const selectingLinkId = useSelector(state => state.display.selectingLinkId);
-  const tagStatus = useSelector(state => getTagStatus(state, selectingLinkId));
-  const tagEditor = useSelector(state => getTagEditor(state));
+  const tagEditor = useSelector(state => state.tagEditor);
   const themeMode = useSelector(state => getThemeMode(state));
   const [didCloseAnimEnd, setDidCloseAnimEnd] = useState(!isShown);
   const [derivedIsShown, setDerivedIsShown] = useState(isShown);
@@ -47,7 +45,8 @@ const TagEditorPopup = () => {
     didClick.current = true;
 
     dispatch(updatePopup(TAG_EDITOR_POPUP, false));
-    dispatch(updateTagDataSStep(selectingLinkId, tagEditor.values));
+    dispatch(updateTagData(tagEditor.ids, tagEditor.values));
+    dispatch(updateBulkEdit(false));
   };
 
   const onHintSelect = (hint) => {
@@ -172,10 +171,42 @@ const TagEditorPopup = () => {
       { scale: popupAnim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }) },
     ],
   };
-  if (Platform.OS === 'ios' && safeAreaWidth >= LG_WIDTH) {
-    popupStyle.marginTop = Math.round(appHeight / 6);
+  if (tagEditor.mode === NOT_SUPPORTED) {
+    popupStyle.maxWidth = 240;
+  } else {
+    if (Platform.OS === 'ios' && safeAreaWidth >= LG_WIDTH) {
+      popupStyle.marginTop = Math.round(appHeight / 6);
+    }
   }
   const bgStyle = { opacity: popupAnim };
+
+  if (tagEditor.mode === NOT_SUPPORTED) {
+    return (
+      <View style={[tailwind('absolute inset-0 z-30 items-start justify-center elevation-lg'), canvasStyle]}>
+        <TouchableWithoutFeedback onPress={onPopupCloseBtnClick}>
+          <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
+        </TouchableWithoutFeedback>
+        <Animated.View style={[tailwind('mt-14 w-full overflow-hidden rounded-lg bg-yellow-50 p-4 shadow-lg md:mt-2.5'), popupStyle]}>
+          <View style={tailwind('flex-row')}>
+            <View style={tailwind('flex-shrink-0 flex-grow-0')}>
+              <Svg width={24} height={24} style={tailwind('font-normal text-yellow-400')} fill="currentColor" viewBox="0 0 20 20" stroke="none">
+                <Path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+              </Svg>
+            </View>
+            <View style={tailwind('ml-3 flex-shrink flex-grow lg:mt-0.5')}>
+              <Text style={tailwind('text-left text-base font-medium text-yellow-800 lg:text-sm')}>Only the same tags are supported.</Text>
+              <Text style={tailwind('mt-2.5 text-sm font-normal text-yellow-700')}>Please select items with the same tags to be bulk-edited.</Text>
+            </View>
+          </View>
+          <TouchableOpacity onPress={onPopupCloseBtnClick} style={tailwind('absolute top-1 right-1 rounded-md bg-yellow-50 p-1')}>
+            <Svg width={20} height={20} style={tailwind('text-yellow-500')} viewBox="0 0 20 20" fill="currentColor">
+              <Path fillRule="evenodd" clipRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
+            </Svg>
+          </TouchableOpacity>
+        </Animated.View>
+      </View>
+    );
+  }
 
   const inputStyle = { paddingVertical: Platform.OS === 'ios' ? 6 : 1 };
   if (Platform.OS === 'ios') inputStyle.lineHeight = 18;
@@ -184,7 +215,7 @@ const TagEditorPopup = () => {
   let desc = (
     <React.Fragment>Enter a new tag and press the Add button.</React.Fragment>
   );
-  if (tagStatus === null) {
+  if (tagEditor.mode === null) {
     title = ADD_TAGS;
     if (tagEditor.hints.length === 0) {
       desc = (
@@ -195,7 +226,7 @@ const TagEditorPopup = () => {
         <React.Fragment>Enter a new tag and press the Add button,{'\n'}or select from the hint below.</React.Fragment>
       );
     }
-  } else if (tagStatus === TAGGED) {
+  } else if (tagEditor.mode === TAGGED) {
     title = MANAGE_TAGS;
     if (tagEditor.hints.length === 0) {
       desc = (

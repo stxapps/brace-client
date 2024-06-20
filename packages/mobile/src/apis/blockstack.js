@@ -697,6 +697,31 @@ const putInfo = async (params) => {
 const putPins = async (params) => {
   const { getState, pins } = params;
 
+  const values = [], pinsPerFPath = {};
+  for (const pin of pins) {
+    const fpath = createPinFPath(pin.rank, pin.updatedDT, pin.addedDT, pin.id);
+    values.push({ id: fpath, type: PUT_FILE, path: fpath, content: {} });
+    pinsPerFPath[fpath] = pin;
+  }
+
+  const data = { values, isSequential: false, nItemsForNs: N_LINKS };
+  const results = await performFiles(data);
+  const resultsPerId = getPerformFilesResultsPerId(results);
+
+  const successPins = [], errorPins = [], errors = [];
+  for (const fpath in pinsPerFPath) {
+    const [pin, result] = [pinsPerFPath[fpath], resultsPerId[fpath]];
+    if (isObject(result) && result.success) {
+      successPins.push(pin);
+    } else {
+      let error = new Error('Error on previous dependent item');
+      if (isObject(result)) error = new Error(result.error);
+
+      errorPins.push(pin);
+      errors.push(error);
+    }
+  }
+
   // Add to the fetched only if also exists in fpaths to prevent pin on a link
   //   that was already moved/removed/deleted.
   const pListNames = [], pLinks = [];
@@ -709,7 +734,7 @@ const putPins = async (params) => {
     const { linkMetas } = listLinkMetas(linkFPaths, ssltFPaths, pendingSslts);
 
     const links = getState().links;
-    for (const { id } of pins) {
+    for (const { id } of successPins) {
       const { listName, link } = getListNameAndLink(id, links);
       if (!isString(listName) || !isObject(link)) {
         console.log('In putPins, no found listName or link for id:', id);
@@ -730,37 +755,40 @@ const putPins = async (params) => {
     }
   }
 
-  const values = [];
-  for (const pin of pins) {
-    const fpath = createPinFPath(pin.rank, pin.updatedDT, pin.addedDT, pin.id);
-    values.push({ id: fpath, type: PUT_FILE, path: fpath, content: {} });
-  }
-
-  const data = { values, isSequential: false, nItemsForNs: N_LINKS };
-  const results = await performFiles(data);
-  // Bug alert: if several pins and error, rollback is incorrect
-  //   as some are successful but some aren't.
-  throwIfPerformFilesError(data, results);
-
-  return { listNames: pListNames, links: pLinks, pins };
+  return { successPins, errorPins, errors, listNames: pListNames, links: pLinks };
 };
 
 const deletePins = async (params) => {
   const { pins } = params;
 
-  const values = [];
+  const values = [], pinsPerFPath = {};
   for (const pin of pins) {
     const fpath = createPinFPath(pin.rank, pin.updatedDT, pin.addedDT, pin.id);
     values.push(
       { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
     );
+    pinsPerFPath[fpath] = pin;
   }
 
   const data = { values, isSequential: false, nItemsForNs: N_LINKS };
   const results = await performFiles(data);
-  throwIfPerformFilesError(data, results);
+  const resultsPerId = getPerformFilesResultsPerId(results);
 
-  return { pins };
+  const successPins = [], errorPins = [], errors = [];
+  for (const fpath in pinsPerFPath) {
+    const [pin, result] = [pinsPerFPath[fpath], resultsPerId[fpath]];
+    if (isObject(result) && result.success) {
+      successPins.push(pin);
+    } else {
+      let error = new Error('Error on previous dependent item');
+      if (isObject(result)) error = new Error(result.error);
+
+      errorPins.push(pin);
+      errors.push(error);
+    }
+  }
+
+  return { successPins, errorPins, errors };
 };
 
 const updateCustomData = async (params) => {
@@ -817,13 +845,7 @@ const updateTagDataSStep = async (params) => {
   return result;
 };
 
-const updateTagDataTStep = async (params) => {
-  const { getState, id, values } = params;
-
-  const tagFPaths = getTagFPaths(getState());
-  const solvedTags = getTags(tagFPaths, {});
-  const mainId = getMainId(id);
-
+const _getTpfValues = (id, mainId, values, solvedTags) => {
   const combinedValues = {}, aTns = [], bTns = [];
   if (isObject(solvedTags[mainId])) {
     for (const value of solvedTags[mainId].values) {
@@ -926,22 +948,81 @@ const updateTagDataTStep = async (params) => {
     now += 1;
   }
 
+  return { deletedTagNames, pfValues };
+};
+
+const updateTagDataTStep = async (params) => {
+  const { getState } = params;
+
+  let { ids, valuesPerId } = params;
+  if (!Array.isArray(ids)) ids = [params.id];
+  if (!isObject(valuesPerId)) valuesPerId = { [params.id]: params.values };
+
+  const tagFPaths = getTagFPaths(getState());
+  const solvedTags = getTags(tagFPaths, {});
+
+  const pfValues = [], pfValuesPerMid = {}, dltdTnsPerMid = {};
+  for (const id of ids) {
+    const [mainId, values] = [getMainId(id), valuesPerId[id]];
+    const result = _getTpfValues(id, mainId, values, solvedTags);
+
+    pfValues.push(...result.pfValues);
+    pfValuesPerMid[mainId] = result.pfValues;
+    dltdTnsPerMid[mainId] = result.deletedTagNames;
+  }
+
   // MainId is the same, but id can be different.
   // Old paths might not be deleted, need to delete them all.
   for (const fpath of tagFPaths) {
     const eResult = extractTagFPath(fpath);
-    if (getMainId(eResult.id) === mainId && deletedTagNames.includes(eResult.tagName)) {
-      pfValues.push(
-        { id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true }
-      );
+    const eMainId = getMainId(eResult.id);
+    if (
+      Array.isArray(dltdTnsPerMid[eMainId]) &&
+      dltdTnsPerMid[eMainId].includes(eResult.tagName)
+    ) {
+      const pfValue = {
+        id: fpath, type: DELETE_FILE, path: fpath, doIgnoreDoesNotExistError: true,
+      };
+      pfValues.push(pfValue);
+
+      if (!Array.isArray(pfValuesPerMid[eMainId])) pfValuesPerMid[eMainId] = [];
+      pfValuesPerMid[eMainId].push(pfValue);
     }
   }
 
-  const data = { values: pfValues, isSequential: false, nItemsForNs: N_LINKS };
-  const results = await performFiles(data);
-  throwIfPerformFilesError(data, results);
+  const results = [], nItems = 800;
+  for (let i = 0; i < pfValues.length; i += nItems) {
+    const selectedPfValues = pfValues.slice(i, i + nItems)
+    const data = {
+      values: selectedPfValues, isSequential: false, nItemsForNs: N_LINKS,
+    };
+    const selectedResults = await performFiles(data);
+    results.push(...selectedResults);
+  }
+  const resultsPerId = getPerformFilesResultsPerId(results);
 
-  return { id, values };
+  const successIds = [], errorIds = [], errors = [];
+  for (const id of ids) {
+    const mainId = getMainId(id);
+
+    let error;
+    for (const pfValue of pfValuesPerMid[mainId]) {
+      const result = resultsPerId[pfValue.id];
+      if (isObject(result) && result.success) continue;
+
+      error = new Error('Error on previous dependent item');
+      if (isObject(result)) error = new Error(result.error);
+      break;
+    }
+    if (error) {
+      errorIds.push(id);
+      errors.push(error);
+    } else {
+      successIds.push(id);
+    }
+  }
+
+  return { valuesPerId, successIds, errorIds, errors };
 };
 
 const getFiles = async (fpaths, dangerouslyIgnoreError = false) => {

@@ -21,6 +21,7 @@ import ListPanel from './ListPanel';
 import LockPanel from './LockPanel';
 import FetchedPopup from './FetchedPopup';
 import PinMenuPopup from './PinMenuPopup';
+import BulkEditMenuPopup from './BulkEditMenuPopup';
 import CustomEditorPopup from './CustomEditorPopup';
 import TagEditorPopup from './TagEditorPopup';
 import SettingsPopup from './SettingsPopup';
@@ -114,6 +115,7 @@ class Main extends React.PureComponent {
           <TopBar rightPane={topBarRightPane} isListNameShown={true} doSupportTheme={true} scrollY={this.scrollY} />
           <FetchedPopup />
           <PinMenuPopup />
+          <BulkEditMenuPopup />
           <CustomEditorPopup />
           <TagEditorPopup />
         </React.Fragment>

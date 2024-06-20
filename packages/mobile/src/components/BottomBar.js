@@ -61,10 +61,14 @@ const mapStateToProps = (state, props) => {
 
   const {
     isCardItemMenuPopupShown, isListNamesPopupShown, isPinMenuPopupShown,
+    isBulkEditMenuPopupShown,
   } = state.display;
 
   return {
-    isShown: !isCardItemMenuPopupShown && !isListNamesPopupShown && !isPinMenuPopupShown,
+    isShown: (
+      !isCardItemMenuPopupShown && !isListNamesPopupShown &&
+      !isPinMenuPopupShown && !isBulkEditMenuPopupShown
+    ),
     isBulkEditing: state.display.isBulkEditing,
     themeMode: getThemeMode(state),
   };
