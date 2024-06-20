@@ -992,7 +992,7 @@ const updateTagDataTStep = async (params) => {
 
   const results = [], nItems = 800;
   for (let i = 0; i < pfValues.length; i += nItems) {
-    const selectedPfValues = pfValues.slice(i, i + nItems)
+    const selectedPfValues = pfValues.slice(i, i + nItems);
     const data = {
       values: selectedPfValues, isSequential: false, nItemsForNs: N_LINKS,
     };

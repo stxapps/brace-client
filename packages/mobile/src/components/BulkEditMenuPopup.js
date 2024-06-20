@@ -56,10 +56,10 @@ const BulkEditMenuPopup = () => {
 
     onCancelBtnClick();
     if (text === MOVE_TO) {
-      let animType = LIST_NAMES_ANIM_TYPE_POPUP;
-      if (isAnimTypeB) animType = LIST_NAMES_ANIM_TYPE_BMODAL;
+      let lnAnimType = LIST_NAMES_ANIM_TYPE_POPUP;
+      if (isAnimTypeB) lnAnimType = LIST_NAMES_ANIM_TYPE_BMODAL;
 
-      dispatch(updateListNamesMode(LIST_NAMES_MODE_MOVE_LINKS, animType));
+      dispatch(updateListNamesMode(LIST_NAMES_MODE_MOVE_LINKS, lnAnimType));
       dispatch(updatePopup(LIST_NAMES_POPUP, true, anchorPosition));
     } else if (text === PIN) {
       dispatch(pinLinks(selectedLinkIds));
@@ -146,7 +146,7 @@ const BulkEditMenuPopup = () => {
       menu.push(MOVE_TO);
     }
   }
-  menu = [...menu, MANAGE_TAGS, PIN, UNPIN]
+  menu = [...menu, MANAGE_TAGS, PIN, UNPIN];
 
   const hdClassNames = isAnimTypeB ? 'h-14' : 'h-11';
   const btnClassNames = isAnimTypeB ? 'py-4' : 'py-2.5';

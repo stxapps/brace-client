@@ -55,7 +55,7 @@ const pendingTagsReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_TAG_DATA_S_STEP_COMMIT) {
     let { ids, valuesPerId } = action.meta;
-    if (!Array.isArray(ids)) ids = [action.meta.id]
+    if (!Array.isArray(ids)) ids = [action.meta.id];
     if (!isObject(valuesPerId)) {
       valuesPerId = { [action.meta.id]: action.meta.values };
     }
@@ -75,7 +75,7 @@ const pendingTagsReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_TAG_DATA_S_STEP_ROLLBACK) {
     let { ids } = action.meta;
-    if (!Array.isArray(ids)) ids = [action.meta.id]
+    if (!Array.isArray(ids)) ids = [action.meta.id];
 
     const newState = { ...state };
     for (const id of ids) {

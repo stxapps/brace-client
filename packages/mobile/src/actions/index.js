@@ -3407,7 +3407,7 @@ export const updateTagData = (ids, values) => async (dispatch, getState) => {
   }
 
   await updateTagDataSStep(ids, valuesPerId)(dispatch, getState);
-}
+};
 
 const updateTagDataSStep = (rawIds, rawValuesPerId) => async (
   dispatch, getState
