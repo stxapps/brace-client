@@ -172,7 +172,9 @@ const TagEditorPopup = () => {
     ],
   };
   if (tagEditor.mode === NOT_SUPPORTED) {
-    popupStyle.maxWidth = 240;
+    canvasStyle.paddingTop = 16;
+    canvasStyle.paddingBottom = 16;
+    popupStyle.maxWidth = 400;
   } else {
     if (Platform.OS === 'ios' && safeAreaWidth >= LG_WIDTH) {
       popupStyle.marginTop = Math.round(appHeight / 6);
@@ -182,11 +184,11 @@ const TagEditorPopup = () => {
 
   if (tagEditor.mode === NOT_SUPPORTED) {
     return (
-      <View style={[tailwind('absolute inset-0 z-30 items-start justify-center elevation-lg'), canvasStyle]}>
+      <View style={[tailwind('absolute inset-0 z-30 flex-row items-start justify-center elevation-lg'), canvasStyle]}>
         <TouchableWithoutFeedback onPress={onPopupCloseBtnClick}>
           <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
         </TouchableWithoutFeedback>
-        <Animated.View style={[tailwind('mt-14 w-full overflow-hidden rounded-lg bg-yellow-50 p-4 shadow-lg md:mt-2.5'), popupStyle]}>
+        <Animated.View style={[tailwind('mt-14 w-full overflow-hidden rounded-lg bg-yellow-50 p-4 pb-4.25 shadow-lg md:mt-2.5'), popupStyle]}>
           <View style={tailwind('flex-row')}>
             <View style={tailwind('flex-shrink-0 flex-grow-0')}>
               <Svg width={24} height={24} style={tailwind('font-normal text-yellow-400')} fill="currentColor" viewBox="0 0 20 20" stroke="none">
@@ -199,7 +201,7 @@ const TagEditorPopup = () => {
             </View>
           </View>
           <TouchableOpacity onPress={onPopupCloseBtnClick} style={tailwind('absolute top-1 right-1 rounded-md bg-yellow-50 p-1')}>
-            <Svg width={20} height={20} style={tailwind('text-yellow-500')} viewBox="0 0 20 20" fill="currentColor">
+            <Svg width={20} height={20} style={tailwind('font-normal text-yellow-500')} viewBox="0 0 20 20" fill="currentColor">
               <Path fillRule="evenodd" clipRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
             </Svg>
           </TouchableOpacity>

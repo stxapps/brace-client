@@ -49,7 +49,7 @@ const PinErrorPopup = () => {
   return (
     <View style={tailwind('absolute inset-x-0 top-14 z-40 flex-row items-start justify-center md:top-0 elevation-xl')}>
       <View style={tailwind('w-full max-w-md')}>
-        <View style={tailwind('m-4 rounded-md bg-red-50 p-4 shadow-lg')}>
+        <View style={tailwind('m-4 rounded-md bg-red-50 p-4 pb-4.25 shadow-lg')}>
           <View style={tailwind('flex-row')}>
             <View style={tailwind('flex-shrink-0 flex-grow-0')}>
               <Svg style={tailwind('font-normal text-red-400')} width={24} height={24} viewBox="0 0 20 20" fill="currentColor">

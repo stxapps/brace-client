@@ -148,32 +148,43 @@ const BulkEditMenuPopup = () => {
   }
   menu = [...menu, MANAGE_TAGS, PIN, UNPIN];
 
+  const btnsClassNames = isAnimTypeB ? 'pb-2.5' : 'pb-1';
   const hdClassNames = isAnimTypeB ? 'h-14' : 'h-11';
-  const btnClassNames = isAnimTypeB ? 'py-4' : 'py-2.5';
   const buttons = (
-    <React.Fragment>
+    <View style={tailwind(`${btnsClassNames}`)}>
       <View style={tailwind(`flex-row items-center justify-start pl-4 pr-4 pt-1 ${hdClassNames}`)}>
         <Text style={tailwind('text-left text-sm font-semibold text-gray-600 blk:text-gray-200')} numberOfLines={1} ellipsizeMode="tail">Actions</Text>
       </View>
-      {menu.map(text => {
+      {menu.map((text, i) => {
+        let btnClassNames = isAnimTypeB ? 'py-4' : 'py-2.5';
+        if (i === 0) btnClassNames += isAnimTypeB ? ' -mt-1' : ' -mt-0.5';
         return (
           <TouchableOpacity key={text} onPress={() => onMenuPopupClick(text)} style={tailwind(`w-full pl-4 pr-4 ${btnClassNames}`)}>
             <Text style={tailwind('text-left text-sm font-normal text-gray-700 blk:text-gray-200')} numberOfLines={1} ellipsizeMode="tail">{text}</Text>
           </TouchableOpacity>
         );
       })}
-    </React.Fragment>
+    </View>
   );
 
   let popupClassNames = 'absolute z-41 min-w-36 bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800';
-  if (isAnimTypeB) popupClassNames += ' pb-2.5';
-  else popupClassNames += ' pb-1';
 
   let panel;
   let bgStyle = { opacity: 0 };
   if (popupSize) {
     if (isAnimTypeB) {
-      const popupStyle = { height: popupSize.height };
+      const popupHeight = popupSize.height + insets.bottom;
+      const popupStyle = {
+        height: popupHeight,
+        paddingBottom: insets.bottom,
+        transform: [{
+          translateY: popupAnim.interpolate({
+            inputRange: [0, 1], outputRange: [popupHeight, 0],
+          }),
+        }],
+      };
+      /* @ts-expect-error */
+      bgStyle = { opacity: popupAnim };
       popupClassNames += ' inset-x-0 bottom-0 rounded-t-lg';
 
       panel = (
@@ -211,6 +222,7 @@ const BulkEditMenuPopup = () => {
       });
       /* @ts-expect-error */
       bgStyle = { opacity: popupAnim };
+      popupClassNames += ' rounded-lg';
 
       panel = (
         <Animated.View onLayout={onPopupLayout} style={[tailwind(popupClassNames), popupStyle]}>
