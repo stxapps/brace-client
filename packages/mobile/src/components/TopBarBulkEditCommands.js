@@ -236,7 +236,7 @@ class TopBarBulkEditCommands extends React.Component {
     let isMoreBtnShown = [MY_LIST, ARCHIVE].includes(rListName);
     if (queryString) {
       [isArchiveBtnShown, isRemoveBtnShown, isRestoreBtnShown] = [false, true, false];
-      [isDeleteBtnShown, isMoveToBtnShown, isMoreBtnShown] = [false, false, false];
+      [isDeleteBtnShown, isMoveToBtnShown, isMoreBtnShown] = [false, false, true];
     }
 
     let btnStyle = {
