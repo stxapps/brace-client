@@ -227,14 +227,14 @@ class BottomBarBulkEditCommands extends React.Component {
               <div className={tailwind('mt-0.5 text-xs leading-4 text-gray-500 group-hover:text-gray-600 blk:text-gray-400 blk:group-hover:text-gray-300')}>Move to</div>
             </button>
           </div>}
-          {isMoreBtnShown && <div className={tailwind('h-full w-full p-1')}>
+          {isMoreBtnShown && <div className={tailwind('h-full w-full min-w-0 p-1')}>
             <button onClick={this.onBulkEditMoreBtnClick} className={tailwind('group flex h-full w-full flex-col items-center justify-center rounded focus:outline-none focus:ring')}>
               <div className={tailwind('flex h-6 w-6 items-center justify-center')}>
                 <svg className={tailwind('h-6 w-6 text-gray-500 group-hover:text-gray-600 blk:text-gray-400 blk:group-hover:text-gray-300')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path fillRule="evenodd" clipRule="evenodd" d="M3 5C3 4.73478 3.10536 4.48043 3.29289 4.29289C3.48043 4.10536 3.73478 4 4 4H16C16.2652 4 16.5196 4.10536 16.7071 4.29289C16.8946 4.48043 17 4.73478 17 5C17 5.26522 16.8946 5.51957 16.7071 5.70711C16.5196 5.89464 16.2652 6 16 6H4C3.73478 6 3.48043 5.89464 3.29289 5.70711C3.10536 5.51957 3 5.26522 3 5ZM3 10C3 9.73478 3.10536 9.48043 3.29289 9.29289C3.48043 9.10536 3.73478 9 4 9H10C10.2652 9 10.5196 9.10536 10.7071 9.29289C10.8946 9.48043 11 9.73478 11 10C11 10.2652 10.8946 10.5196 10.7071 10.7071C10.5196 10.8946 10.2652 11 10 11H4C3.73478 11 3.48043 10.8946 3.29289 10.7071C3.10536 10.5196 3 10.2652 3 10ZM3 15C3 14.7348 3.10536 14.4804 3.29289 14.2929C3.48043 14.1054 3.73478 14 4 14H16C16.2652 14 16.5196 14.1054 16.7071 14.2929C16.8946 14.4804 17 14.7348 17 15C17 15.2652 16.8946 15.5196 16.7071 15.7071C16.5196 15.8946 16.2652 16 16 16H4C3.73478 16 3.48043 15.8946 3.29289 15.7071C3.10536 15.5196 3 15.2652 3 15Z" />
                 </svg>
               </div>
-              <div className={tailwind('mt-0.5 text-xs leading-4 text-gray-500 group-hover:text-gray-600 blk:text-gray-400 blk:group-hover:text-gray-300')}>More actions</div>
+              <div className={tailwind('mt-0.5 w-full truncate text-xs leading-4 text-gray-500 group-hover:text-gray-600 blk:text-gray-400 blk:group-hover:text-gray-300')}>More actions</div>
             </button>
           </div>}
           <div className={tailwind('h-full w-full p-1')}>
