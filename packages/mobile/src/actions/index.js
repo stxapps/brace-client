@@ -3274,10 +3274,16 @@ const _initTagEditorState = (getState) => {
 
   let ids;
   if (isBulkEditing) {
-    if (selectedLinkIds.length === 0) return editor;
+    if (selectedLinkIds.length === 0) {
+      editor.mode = INVALID;
+      return editor;
+    }
     ids = selectedLinkIds;
   } else {
-    if (!isString(selectingLinkId)) return editor;
+    if (!isString(selectingLinkId)) {
+      editor.mode = INVALID;
+      return editor;
+    }
     ids = [selectingLinkId];
   }
   editor.ids = ids;
@@ -3339,6 +3345,8 @@ export const updateTagEditorPopup = (isShown, doCheckEnableExtraFeatures) => asy
     }
 
     const payload = _initTagEditorState(getState);
+    if (payload.mode === INVALID) return;
+
     dispatch({ type: UPDATE_TAG_EDITOR, payload });
   }
 

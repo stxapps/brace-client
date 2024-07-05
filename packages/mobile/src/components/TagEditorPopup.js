@@ -172,8 +172,8 @@ const TagEditorPopup = () => {
     ],
   };
   if (tagEditor.mode === NOT_SUPPORTED) {
-    canvasStyle.paddingTop = 16;
-    canvasStyle.paddingBottom = 16;
+    canvasStyle.paddingTop = 16 + insets.top;
+    canvasStyle.paddingBottom = 16 + insets.bottom;
     popupStyle.maxWidth = 400;
   } else {
     if (Platform.OS === 'ios' && safeAreaWidth >= LG_WIDTH) {
@@ -188,7 +188,7 @@ const TagEditorPopup = () => {
         <TouchableWithoutFeedback onPress={onPopupCloseBtnClick}>
           <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
         </TouchableWithoutFeedback>
-        <Animated.View style={[tailwind('mt-14 w-full overflow-hidden rounded-lg bg-yellow-50 p-4 pb-4.25 shadow-lg md:mt-2.5'), popupStyle]}>
+        <Animated.View style={[tailwind('mt-14 w-full overflow-hidden rounded-lg bg-yellow-50 p-4 shadow-lg md:mt-2.5'), popupStyle]}>
           <View style={tailwind('flex-row')}>
             <View style={tailwind('flex-shrink-0 flex-grow-0')}>
               <Svg width={24} height={24} style={tailwind('font-normal text-yellow-400')} fill="currentColor" viewBox="0 0 20 20" stroke="none">

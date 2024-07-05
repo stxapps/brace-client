@@ -46,7 +46,6 @@ class ConfirmDeletePopup extends React.Component {
 
   onConfirmDeleteOkBtnClick = () => {
     if (this.didClick) return;
-    this.didClick = true;
 
     const { deleteAction, selectedLinkIds } = this.props;
     const { selectingLinkId, selectingListName, selectingTagName } = this.props;
@@ -68,7 +67,10 @@ class ConfirmDeletePopup extends React.Component {
       this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
     } else {
       console.log('In ConfirmDeletePopup, invalid deleteAction: ', deleteAction);
+      return; // Don't set didClick to true
     }
+
+    this.didClick = true;
   }
 
   onConfirmDeleteCancelBtnClick = () => {

@@ -81,6 +81,7 @@ const LockEditorPopup = () => {
       dispatch(unlockList(selectingListName, passwordInputValue));
     } else {
       console.log(`In LockEditorPopup, invalid lockAction: ${lockAction}`);
+      return; // Don't set didClick to true
     }
 
     didClick.current = true;
