@@ -50,7 +50,7 @@ class TopBar extends React.PureComponent {
     const space2 = laidStatusPopupHeight;
     const space3 = headerHeight;
 
-    let space4 = ((headerHeight - listNameHeight) / 2) + 3;
+    let space4 = ((headerHeight - listNameHeight) / 2);
 
     const changingTranslateX = scrollY.interpolate({
       inputRange: [0, listNameDistanceY],
@@ -85,7 +85,7 @@ class TopBar extends React.PureComponent {
       statusPopupDistanceY,
     } = getTopBarSizes(safeAreaWidth);
 
-    const space1 = ((laidStatusPopupHeight - statusPopupHeight) / 2) + 1.5;
+    const space1 = ((laidStatusPopupHeight - statusPopupHeight) / 2) + 3;
     const space2 = listNameHeight - statusPopupHeight;
 
     const changingTranslateY = scrollY.interpolate({
