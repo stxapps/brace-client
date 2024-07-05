@@ -74,7 +74,7 @@ class TopBar extends React.PureComponent {
       listNameStartY, listNameEndY, listNameDistanceY,
     } = getTopBarSizes(safeAreaWidth);
 
-    let top = listNameStartY + (scrollY * (listNameEndY - listNameStartY) / listNameDistanceY) + 3;
+    let top = listNameStartY + (scrollY * (listNameEndY - listNameStartY) / listNameDistanceY);
     const left = scrollY * listNameDistanceX / listNameDistanceY;
 
     const listNameStyle = { top, left };
@@ -92,7 +92,7 @@ class TopBar extends React.PureComponent {
       statusPopupDistanceY,
     } = getTopBarSizes(safeAreaWidth);
 
-    const initialTop = safeAreaWidth < MD_WIDTH ? '4.75rem' : '5.25rem';
+    const initialTop = safeAreaWidth < MD_WIDTH ? '4.5625rem' : '5.0625rem';
     const top = Math.max(0, toPx(initialTop) - scrollY);
     const right = 0;
     const opacity = Math.max(0, 1.0 - (scrollY / statusPopupDistanceY));
