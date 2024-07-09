@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   ScrollView, View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated,
-  BackHandler, PanResponder, Linking,
+  BackHandler, PanResponder, Linking, Platform,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
@@ -329,6 +329,9 @@ const SettingsPopup = () => {
   };
 
   const _render = (content) => {
+    let reviewUrl = DOMAIN_NAME + '/' + HASH_SUPPORT;
+    if (Platform.OS === 'ios') reviewUrl = 'https://apps.apple.com/app/id1531456778?action=write-review';
+    else if (Platform.OS === 'android') reviewUrl = 'https://play.google.com/store/apps/details?id=com.bracedotto';
 
     const sidebarCanvasStyleClasses = !isSidebarShown && didSidebarAnimEnd ? 'hidden relative' : 'absolute inset-0';
     const sidebarStyle = {
@@ -407,6 +410,12 @@ const SettingsPopup = () => {
                   </Svg>
                   <Text style={tailwind(`text-sm font-medium leading-5 ${isViewSelected(VIEW_ABOUT) ? selectedMenuTextStyleClasses : menuTextStyleClasses}`)}>About</Text>
                 </TouchableOpacity>
+                <TouchableOpacity onPress={() => Linking.openURL(reviewUrl)} style={tailwind(`mt-2 w-full flex-row items-center rounded-md px-2 py-2 ${menuBtnStyleClasses}`)}>
+                  <Svg style={tailwind(`mr-3 font-normal ${menuSvgStyleClasses}`)} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+                    <Path d="M9.04897 2.927C9.34897 2.006 10.652 2.006 10.951 2.927L12.021 6.219C12.0863 6.41949 12.2134 6.59418 12.384 6.71811C12.5547 6.84203 12.7601 6.90885 12.971 6.909H16.433C17.402 6.909 17.804 8.149 17.021 8.719L14.221 10.753C14.05 10.877 13.9227 11.052 13.8573 11.2529C13.7919 11.4537 13.7918 11.6701 13.857 11.871L14.927 15.163C15.227 16.084 14.172 16.851 13.387 16.281L10.587 14.247C10.4162 14.123 10.2105 14.0562 9.99947 14.0562C9.78842 14.0562 9.58277 14.123 9.41197 14.247L6.61197 16.281C5.82797 16.851 4.77397 16.084 5.07297 15.163L6.14297 11.871C6.20815 11.6701 6.20803 11.4537 6.14264 11.2529C6.07725 11.052 5.94994 10.877 5.77897 10.753L2.97997 8.72C2.19697 8.15 2.59997 6.91 3.56797 6.91H7.02897C7.24002 6.91006 7.44568 6.84334 7.6165 6.7194C7.78732 6.59546 7.91455 6.42065 7.97997 6.22L9.04997 2.928L9.04897 2.927Z" />
+                  </Svg>
+                  <Text style={tailwind(`text-sm font-medium leading-5 ${menuTextStyleClasses}`)}>Review us</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -480,6 +489,12 @@ const SettingsPopup = () => {
                         <Path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 12.1217 17.1571 14.1566 15.6569 15.6569C14.1566 17.1571 12.1217 18 10 18C7.87827 18 5.84344 17.1571 4.34315 15.6569C2.84285 14.1566 2 12.1217 2 10C2 7.87827 2.84285 5.84344 4.34315 4.34315C5.84344 2.84285 7.87827 2 10 2C12.1217 2 14.1566 2.84285 15.6569 4.34315C17.1571 5.84344 18 7.87827 18 10ZM11 6C11 6.26522 10.8946 6.51957 10.7071 6.70711C10.5196 6.89464 10.2652 7 10 7C9.73478 7 9.48043 6.89464 9.29289 6.70711C9.10536 6.51957 9 6.26522 9 6C9 5.73478 9.10536 5.48043 9.29289 5.29289C9.48043 5.10536 9.73478 5 10 5C10.2652 5 10.5196 5.10536 10.7071 5.29289C10.8946 5.48043 11 5.73478 11 6ZM9 9C8.73478 9 8.48043 9.10536 8.29289 9.29289C8.10536 9.48043 8 9.73478 8 10C8 10.2652 8.10536 10.5196 8.29289 10.7071C8.48043 10.8946 8.73478 11 9 11V14C9 14.2652 9.10536 14.5196 9.29289 14.7071C9.48043 14.8946 9.73478 15 10 15H11C11.2652 15 11.5196 14.8946 11.7071 14.7071C11.8946 14.5196 12 14.2652 12 14C12 13.7348 11.8946 13.4804 11.7071 13.2929C11.5196 13.1054 11.2652 13 11 13V10C11 9.73478 10.8946 9.48043 10.7071 9.29289C10.5196 9.10536 10.2652 9 10 9H9Z" />
                       </Svg>
                       <Text style={tailwind('text-base font-medium leading-5 text-gray-500 blk:text-gray-400')}>About</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => Linking.openURL(reviewUrl)} style={tailwind('mt-2 w-full flex-row items-center rounded-md px-2 py-2.5')}>
+                      <Svg style={tailwind('mr-2 font-normal text-gray-400 blk:text-gray-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+                        <Path d="M9.04897 2.927C9.34897 2.006 10.652 2.006 10.951 2.927L12.021 6.219C12.0863 6.41949 12.2134 6.59418 12.384 6.71811C12.5547 6.84203 12.7601 6.90885 12.971 6.909H16.433C17.402 6.909 17.804 8.149 17.021 8.719L14.221 10.753C14.05 10.877 13.9227 11.052 13.8573 11.2529C13.7919 11.4537 13.7918 11.6701 13.857 11.871L14.927 15.163C15.227 16.084 14.172 16.851 13.387 16.281L10.587 14.247C10.4162 14.123 10.2105 14.0562 9.99947 14.0562C9.78842 14.0562 9.58277 14.123 9.41197 14.247L6.61197 16.281C5.82797 16.851 4.77397 16.084 5.07297 15.163L6.14297 11.871C6.20815 11.6701 6.20803 11.4537 6.14264 11.2529C6.07725 11.052 5.94994 10.877 5.77897 10.753L2.97997 8.72C2.19697 8.15 2.59997 6.91 3.56797 6.91H7.02897C7.24002 6.91006 7.44568 6.84334 7.6165 6.7194C7.78732 6.59546 7.91455 6.42065 7.97997 6.22L9.04997 2.928L9.04897 2.927Z" />
+                      </Svg>
+                      <Text style={tailwind('text-base font-medium leading-5 text-gray-500 blk:text-gray-400')}>Review us</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
