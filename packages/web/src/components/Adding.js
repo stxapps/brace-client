@@ -1,127 +1,165 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
+import { updatePopup, addLink, cancelDiedLinks } from '../actions';
 import {
   HASH_SUPPORT, SIGN_UP_POPUP, SIGN_IN_POPUP, MY_LIST, ADDING, ADDED, DIED_ADDING,
-  URL_QUERY_CLOSE_KEY, URL_QUERY_CLOSE_WINDOW, SHOW_BLANK, VALID_URL, NO_URL,
-  ASK_CONFIRM_URL, URL_MSGS, BLK_MODE,
+  URL_QUERY_CLOSE_KEY, URL_QUERY_CLOSE_WINDOW, SHOW_BLANK, VALID_URL, NO_URL, BLK_MODE,
 } from '../types/const';
-import { updatePopup, addLink, cancelDiedLinks } from '../actions';
-import { getSafeAreaWidth, getThemeMode } from '../selectors';
+import { getThemeMode } from '../selectors';
 import {
-  getUrlPathQueryHash,
-  validateUrl, separateUrlAndParam, ensureContainUrlProtocol,
-  isEqual,
-  truncateString,
+  getUrlPathQueryHash, validateUrl, separateUrlAndParam, ensureContainUrlProtocol,
+  isObject, isString, isEqual, truncateString,
 } from '../utils';
 
-import { withTailwind } from '.';
-import Loading from './Loading';
+import { useTailwind } from '.';
 import TopBar from './TopBar';
 import SignUpPopup from './SignUpPopup';
 import SignInPopup from './SignInPopup';
 
 const MAX_LINK_LENGTH = 157;
 
-class Adding extends React.PureComponent {
+const RENDER_ADDING = 'RENDER_ADDING';
+const RENDER_ADDED = 'RENDER_ADDED';
+const RENDER_IN_OTHER_PROCESSING = 'RENDER_IN_OTHER_PROCESSING';
+const RENDER_NOT_SIGNED_IN = 'RENDER_NOT_SIGNED_IN';
+const RENDER_INVALID = 'RENDER_INVALID';
+const RENDER_ERROR = 'RENDER_ERROR';
 
-  state = {
-    urlValidatedResult: null,
-    addingUrl: null,
-    param: null,
-    hasAskedConfirm: false,
+const getLinkFromAddingUrl = (addingUrl, links) => {
+  if (!isString(addingUrl)) return null;
+
+  for (const _id in links) {
+    if (links[_id].url === addingUrl) {
+      return links[_id];
+    }
+  }
+
+  return null;
+};
+
+const processAddingUrl = (addingUrl) => {
+  if (!isString(addingUrl)) return { addingPUrl: '', addingTUrl: '' };
+
+  return {
+    addingPUrl: ensureContainUrlProtocol(addingUrl),
+    addingTUrl: truncateString(addingUrl, MAX_LINK_LENGTH),
   };
+};
 
-  componentDidMount() {
-    this.addLink(true);
-  }
+const Adding = () => {
 
-  componentDidUpdate() {
-    this.addLink(false);
-  }
+  const isUserSignedIn = useSelector(state => state.user.isUserSignedIn);
+  const href = useSelector(state => state.window.href);
+  const links = useSelector(state => state.links[MY_LIST]);
+  const themeMode = useSelector(state => getThemeMode(state));
+  const [type, setType] = useState(null);
+  const [urlState, setUrlState] = useState({
+    addingUrl: null, param: null, urlValidatedResult: null,
+  });
+  const doCancelDiedLink = useRef(true);
+  const dispatch = useDispatch();
+  const tailwind = useTailwind();
 
-  addLink(doCancelDiedLink = false) {
-    const { isUserSignedIn, href } = this.props;
+  const updateType = useCallback((newType) => {
+    if (newType !== type) setType(newType);
+  }, [type, setType]);
 
-    let addingUrl = null, param = {};
+  const updateUrlState = useCallback((newValues) => {
+    let doUpdate = false;
+    for (const key in newValues) {
+      if (!isEqual(newValues[key], urlState[key])) {
+        doUpdate = true;
+        break;
+      }
+    }
 
-    addingUrl = getUrlPathQueryHash(href);
+    if (doUpdate) setUrlState({ ...urlState, ...newValues });
+  }, [urlState, setUrlState]);
 
-    const urlValidatedResult = validateUrl(addingUrl);
+  const processLink = useCallback(() => {
+    if (![true, false].includes(isUserSignedIn) || !isString(href)) return;
+
+    let { addingUrl, param, urlValidatedResult } = urlState;
+
+    let newValues = {}, isFirst = false;
+    if (!isString(addingUrl)) {
+      addingUrl = getUrlPathQueryHash(href);
+
+      const res = separateUrlAndParam(addingUrl, URL_QUERY_CLOSE_KEY);
+      [addingUrl, param] = [res.separatedUrl, res.param];
+
+      urlValidatedResult = validateUrl(addingUrl);
+
+      newValues = { addingUrl, param, urlValidatedResult };
+      isFirst = true;
+    }
+
+    if (isUserSignedIn === false) {
+      updateType(RENDER_NOT_SIGNED_IN);
+      updateUrlState(newValues);
+      return;
+    }
+
     if (urlValidatedResult === NO_URL) {
-      this.updateState({ urlValidatedResult });
+      updateType(RENDER_INVALID);
+      updateUrlState(newValues);
       return;
     }
 
-    const res = separateUrlAndParam(addingUrl, URL_QUERY_CLOSE_KEY);
-    [addingUrl, param] = [res.separatedUrl, res.param];
-
-    let { hasAskedConfirm } = this.state;
-    if ((urlValidatedResult === ASK_CONFIRM_URL && !hasAskedConfirm) || !isUserSignedIn) {
-      this.updateState({ urlValidatedResult, addingUrl, param });
-      return;
-    }
-
-    let link = this.getLinkFromAddingUrl(addingUrl);
-    if (doCancelDiedLink) {
-      if (link && link.status === DIED_ADDING) {
-        this.props.cancelDiedLinks([link.id]);
+    let link = getLinkFromAddingUrl(addingUrl, links);
+    if (doCancelDiedLink.current) {
+      if (isObject(link) && link.status === DIED_ADDING) {
+        dispatch(cancelDiedLinks([link.id]));
         link = null;
       }
+      doCancelDiedLink.current = false;
     }
-    if (!link) this.props.addLink(addingUrl, MY_LIST, false);
+    if (!isObject(link)) {
+      dispatch(addLink(addingUrl, MY_LIST, false));
 
-    this.updateState({ urlValidatedResult, addingUrl, param });
-  }
-
-  getLinkFromAddingUrl(addingUrl) {
-
-    if (!addingUrl) return null;
-
-    const { links } = this.props;
-
-    for (const _id in links) {
-      if (links[_id].url === addingUrl) {
-        return links[_id];
-      }
+      updateType(RENDER_ADDING);
+      updateUrlState(newValues);
+      return;
     }
 
-    return null;
-  }
-
-  updateState(newState) {
-    if (this.shouldSetState(newState, this.state)) this.setState(newState);
-  }
-
-  shouldSetState(newState, oldState) {
-    for (const key in newState) {
-      if (!isEqual(newState[key], oldState[key])) return true;
+    if (isFirst) {
+      updateType(link.status === ADDING ? RENDER_ADDING : RENDER_IN_OTHER_PROCESSING);
+      updateUrlState(newValues);
+      return;
     }
-    return false;
-  }
+    if (link.status === ADDED) {
+      updateType(RENDER_ADDED);
+      updateUrlState(newValues);
+      return;
+    }
+    if (link.status === DIED_ADDING) {
+      updateType(RENDER_ERROR);
+      updateUrlState(newValues);
+      return;
+    }
+  }, [
+    isUserSignedIn, href, links, urlState, updateType, updateUrlState, dispatch,
+  ]);
 
-  onAskingConfirmOkBtnClick = () => {
-    this.setState({ hasAskedConfirm: true });
-  }
+  const onSignUpBtnClick = () => {
+    dispatch(updatePopup(SIGN_UP_POPUP, true));
+  };
 
-  onSignUpBtnClick = () => {
-    this.props.updatePopup(SIGN_UP_POPUP, true);
-  }
+  const onSignInBtnClick = () => {
+    dispatch(updatePopup(SIGN_IN_POPUP, true));
+  };
 
-  onSignInBtnClick = () => {
-    this.props.updatePopup(SIGN_IN_POPUP, true);
-  }
+  const onRetryBtnClick = () => {
+    doCancelDiedLink.current = true;
+    processLink();
+  };
 
-  _processAddingUrl(addingUrl) {
-    return {
-      addingPUrl: ensureContainUrlProtocol(addingUrl),
-      addingTUrl: truncateString(addingUrl, MAX_LINK_LENGTH),
-    };
-  }
+  useEffect(() => {
+    processLink();
+  }, [processLink]);
 
-  _render(content) {
-    const { tailwind } = this.props;
-
+  const _render = (content) => {
     return (
       <div className={tailwind('min-h-screen bg-white blk:bg-gray-900')}>
         <TopBar rightPane={SHOW_BLANK} doSupportTheme={true} />
@@ -132,24 +170,20 @@ class Adding extends React.PureComponent {
         <SignInPopup />
       </div>
     );
-  }
+  };
 
-  renderNav() {
-    const { isUserSignedIn, tailwind } = this.props;
-    const { urlValidatedResult, addingUrl, param } = this.state;
-
-    const { addingPUrl } = this._processAddingUrl(addingUrl);
+  const renderNav = () => {
+    const { addingUrl, param, urlValidatedResult } = urlState;
+    const { addingPUrl } = processAddingUrl(addingUrl);
 
     let rightLink = <a className={tailwind('block rounded-sm text-right text-base font-medium leading-none text-gray-500 hover:text-gray-600 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-200')} href="/">{isUserSignedIn ? 'Go to My List >' : 'Go to Brace.to >'}</a>
     let centerText = null;
     let leftLink = urlValidatedResult === VALID_URL ? <a className={tailwind('mt-6 block rounded-sm text-left text-base leading-none text-gray-500 hover:text-gray-600 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-200 md:mt-0')} href={addingPUrl}>Back to the link</a> : <div />;
 
-    if (param && param[URL_QUERY_CLOSE_KEY]) {
-      if (param[URL_QUERY_CLOSE_KEY] === URL_QUERY_CLOSE_WINDOW) {
-        leftLink = null;
-        centerText = <button onClick={() => window.close()} className={tailwind('block w-full rounded-sm py-2 text-center text-base text-gray-500 hover:text-gray-600 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-200')}>Close this window</button>;
-        rightLink = null;
-      }
+    if (isObject(param) && param[URL_QUERY_CLOSE_KEY] === URL_QUERY_CLOSE_WINDOW) {
+      leftLink = null;
+      centerText = <button onClick={() => window.close()} className={tailwind('block w-full rounded-sm py-2 text-center text-base text-gray-500 hover:text-gray-600 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-200')}>Close this window</button>;
+      rightLink = null;
     }
 
     return (
@@ -159,11 +193,11 @@ class Adding extends React.PureComponent {
         {leftLink}
       </div>
     );
-  }
+  };
 
-  renderAdding() {
-    const { tailwind } = this.props;
-    const { addingPUrl, addingTUrl } = this._processAddingUrl(this.state.addingUrl);
+  const renderAdding = () => {
+    const { addingPUrl, addingTUrl } = processAddingUrl(urlState.addingUrl);
+    const isUrl = addingPUrl.length > 0 && addingTUrl.length > 0;
 
     const content = (
       <React.Fragment>
@@ -175,20 +209,19 @@ class Adding extends React.PureComponent {
             <div className={tailwind('bg-gray-400 blk:bg-gray-400')} />
           </div>
         </div>
-        <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-center text-base text-gray-500 blk:text-gray-400')}>
+        {isUrl && <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-center text-base text-gray-500 blk:text-gray-400')}>
           <a className={tailwind('break-all rounded-sm hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-300')} href={addingPUrl} target="_blank" rel="noreferrer">{addingTUrl}</a>
           <br />
           <span className={tailwind('break-normal text-lg font-semibold text-gray-900 blk:text-gray-50')}>is being saved.</span>
-        </p>
+        </p>}
       </React.Fragment>
     );
 
-    return this._render(content);
-  }
+    return _render(content);
+  };
 
-  renderAdded() {
-    const { themeMode, tailwind } = this.props;
-    const { addingPUrl, addingTUrl } = this._processAddingUrl(this.state.addingUrl);
+  const renderAdded = () => {
+    const { addingPUrl, addingTUrl } = processAddingUrl(urlState.addingUrl);
 
     const content = (
       <React.Fragment>
@@ -201,101 +234,15 @@ class Adding extends React.PureComponent {
           <br />
           <span className={tailwind('break-normal text-lg font-semibold text-gray-900 blk:text-gray-50')}>has been saved.</span>
         </p>
-        {this.renderNav()}
+        {renderNav()}
       </React.Fragment>
     );
 
-    return this._render(content);
-  }
+    return _render(content);
+  };
 
-  renderDiedAdding() {
-    const { tailwind } = this.props;
-
-    const content = (
-      <React.Fragment>
-        <svg className={tailwind('mx-auto h-24 text-red-600 blk:text-red-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
-        </svg>
-        <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-center text-lg font-semibold text-gray-800 blk:text-gray-100')}>Oops..., something went wrong!</p>
-        <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-left text-base leading-relaxed text-gray-500 blk:text-gray-400 sm:text-center')}>Please wait a moment and try again. If the problem persists, please <a className={tailwind('rounded underline hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-300')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a>.</p>
-        <button onClick={() => this.addLink(true)} className={tailwind('group mx-auto mt-5 mb-px block h-14 focus:outline-none')}>
-          <span className={tailwind('rounded-full border border-gray-400 bg-white px-3 py-2 text-sm text-gray-500 group-hover:border-gray-500 group-hover:text-gray-600 group-focus:ring blk:border-gray-400 blk:bg-gray-900 blk:text-gray-300 blk:group-hover:border-gray-300 blk:group-hover:text-gray-200')}>Try again</span>
-        </button>
-        {this.renderNav()}
-      </React.Fragment>
-    );
-
-    return this._render(content);
-  }
-
-  renderAskingConfirm() {
-    const { tailwind } = this.props;
-    const { addingPUrl, addingTUrl } = this._processAddingUrl(this.state.addingUrl);
-
-    const content = (
-      <React.Fragment>
-        <svg className={tailwind('mx-auto h-24 text-yellow-500 blk:text-yellow-400')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM10 7C9.63113 7 9.3076 7.19922 9.13318 7.50073C8.85664 7.97879 8.24491 8.14215 7.76685 7.86561C7.28879 7.58906 7.12543 6.97733 7.40197 6.49927C7.91918 5.60518 8.88833 5 10 5C11.6569 5 13 6.34315 13 8C13 9.30622 12.1652 10.4175 11 10.8293V11C11 11.5523 10.5523 12 10 12C9.44773 12 9.00001 11.5523 9.00001 11V10C9.00001 9.44772 9.44773 9 10 9C10.5523 9 11 8.55228 11 8C11 7.44772 10.5523 7 10 7ZM10 15C10.5523 15 11 14.5523 11 14C11 13.4477 10.5523 13 10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15Z" />
-        </svg>
-        <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-center text-base text-gray-500 blk:text-gray-400')}>
-          <a className={tailwind('break-all rounded-sm hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-300')} href={addingPUrl} target="_blank" rel="noreferrer">{addingTUrl}</a>
-          <br />
-          <span className={tailwind('break-normal text-lg font-semibold text-gray-900 blk:text-gray-50')}>looks like an invalid link. Are you sure?</span>
-        </p>
-        <button onClick={this.onAskingConfirmOkBtnClick} className={tailwind('group mx-auto mt-5 mb-px block h-14 focus:outline-none')}>
-          <span className={tailwind('rounded-full border border-gray-400 bg-white px-3 py-2 text-sm text-gray-500 group-hover:border-gray-500 group-hover:text-gray-600 group-focus:ring blk:border-gray-400 blk:bg-gray-900 blk:text-gray-300 blk:group-hover:border-gray-300 blk:group-hover:text-gray-200')}>Yes, I'm sure</span>
-        </button>
-        <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-center text-sm tracking-wide text-gray-500 blk:text-gray-400')}>You can edit the link in address bar and press enter again</p>
-        {this.renderNav()}
-      </React.Fragment>
-    );
-
-    return this._render(content);
-  }
-
-  renderInvalid() {
-    const { tailwind } = this.props;
-    const msg = URL_MSGS[this.state.urlValidatedResult];
-
-    const content = (
-      <React.Fragment>
-        <svg className={tailwind('mx-auto h-24 text-red-600 blk:text-red-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path fillRule="evenodd" clipRule="evenodd" d="M8.25706 3.09882C9.02167 1.73952 10.9788 1.73952 11.7434 3.09882L17.3237 13.0194C18.0736 14.3526 17.1102 15.9999 15.5805 15.9999H4.4199C2.89025 15.9999 1.92682 14.3526 2.67675 13.0194L8.25706 3.09882ZM11.0001 13C11.0001 13.5523 10.5524 14 10.0001 14C9.44784 14 9.00012 13.5523 9.00012 13C9.00012 12.4477 9.44784 12 10.0001 12C10.5524 12 11.0001 12.4477 11.0001 13ZM10.0001 5C9.44784 5 9.00012 5.44772 9.00012 6V9C9.00012 9.55228 9.44784 10 10.0001 10C10.5524 10 11.0001 9.55228 11.0001 9V6C11.0001 5.44772 10.5524 5 10.0001 5Z" />
-        </svg>
-        <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-center text-base text-red-700 blk:text-red-600')}>{msg}</p>
-        {this.renderNav()}
-      </React.Fragment>
-    );
-
-    return this._render(content);
-  }
-
-  renderNotSignedIn() {
-    const { tailwind } = this.props;
-
-    const content = (
-      <React.Fragment>
-        <svg className={tailwind('mx-auto h-24 text-yellow-600 blk:text-yellow-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path fillRule="evenodd" clipRule="evenodd" d="M8.25706 3.09882C9.02167 1.73952 10.9788 1.73952 11.7434 3.09882L17.3237 13.0194C18.0736 14.3526 17.1102 15.9999 15.5805 15.9999H4.4199C2.89025 15.9999 1.92682 14.3526 2.67675 13.0194L8.25706 3.09882ZM11.0001 13C11.0001 13.5523 10.5524 14 10.0001 14C9.44784 14 9.00012 13.5523 9.00012 13C9.00012 12.4477 9.44784 12 10.0001 12C10.5524 12 11.0001 12.4477 11.0001 13ZM10.0001 5C9.44784 5 9.00012 5.44772 9.00012 6V9C9.00012 9.55228 9.44784 10 10.0001 10C10.5524 10 11.0001 9.55228 11.0001 9V6C11.0001 5.44772 10.5524 5 10.0001 5Z" />
-        </svg>
-        <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-center text-base text-gray-500 blk:text-gray-400')}>Please sign in first</p>
-        <button onClick={this.onSignInBtnClick} className={tailwind('group mx-auto mt-2 block h-14 focus:outline-none')}>
-          <span className={tailwind('rounded-full border border-gray-400 bg-white px-3 py-1.5 text-sm text-gray-500 group-hover:border-gray-500 group-hover:text-gray-600 group-focus:ring blk:border-gray-400 blk:bg-gray-900 blk:text-gray-300 blk:group-hover:border-gray-300 blk:group-hover:text-gray-200')}>Sign in</span>
-        </button>
-        <div className={tailwind('mt-10 flex items-center justify-center')}>
-          <p className={tailwind('text-base text-gray-500 blk:text-gray-400')}>No account yet?</p>
-          <button onClick={this.onSignUpBtnClick} className={tailwind('ml-2 rounded-sm text-base font-medium text-gray-600 hover:text-gray-700 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-100')}>Sign up</button>
-        </div>
-        {this.renderNav()}
-      </React.Fragment>
-    );
-
-    return this._render(content);
-  }
-
-  renderInOtherProcessing() {
-    const { themeMode, tailwind } = this.props;
-    const { addingPUrl, addingTUrl } = this._processAddingUrl(this.state.addingUrl);
+  const renderInOtherProcessing = () => {
+    const { addingPUrl, addingTUrl } = processAddingUrl(urlState.addingUrl);
 
     const content = (
       <React.Fragment>
@@ -308,58 +255,72 @@ class Adding extends React.PureComponent {
           <br />
           <span className={tailwind('break-normal text-lg font-semibold text-gray-900 blk:text-gray-50')}>already exists</span>
         </p>
-        {this.renderNav()}
+        {renderNav()}
       </React.Fragment>
     );
 
-    return this._render(content);
-  }
+    return _render(content);
+  };
 
-  render() {
+  const renderNotSignedIn = () => {
+    const content = (
+      <React.Fragment>
+        <svg className={tailwind('mx-auto h-24 text-yellow-600 blk:text-yellow-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fillRule="evenodd" clipRule="evenodd" d="M8.25706 3.09882C9.02167 1.73952 10.9788 1.73952 11.7434 3.09882L17.3237 13.0194C18.0736 14.3526 17.1102 15.9999 15.5805 15.9999H4.4199C2.89025 15.9999 1.92682 14.3526 2.67675 13.0194L8.25706 3.09882ZM11.0001 13C11.0001 13.5523 10.5524 14 10.0001 14C9.44784 14 9.00012 13.5523 9.00012 13C9.00012 12.4477 9.44784 12 10.0001 12C10.5524 12 11.0001 12.4477 11.0001 13ZM10.0001 5C9.44784 5 9.00012 5.44772 9.00012 6V9C9.00012 9.55228 9.44784 10 10.0001 10C10.5524 10 11.0001 9.55228 11.0001 9V6C11.0001 5.44772 10.5524 5 10.0001 5Z" />
+        </svg>
+        <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-center text-base text-gray-500 blk:text-gray-400')}>Please sign in first</p>
+        <button onClick={onSignInBtnClick} className={tailwind('group mx-auto mt-2 block h-14 focus:outline-none')}>
+          <span className={tailwind('rounded-full border border-gray-400 bg-white px-3 py-1.5 text-sm text-gray-500 group-hover:border-gray-500 group-hover:text-gray-600 group-focus:ring blk:border-gray-400 blk:bg-gray-900 blk:text-gray-300 blk:group-hover:border-gray-300 blk:group-hover:text-gray-200')}>Sign in</span>
+        </button>
+        <div className={tailwind('mt-10 flex items-center justify-center')}>
+          <p className={tailwind('text-base text-gray-500 blk:text-gray-400')}>No account yet?</p>
+          <button onClick={onSignUpBtnClick} className={tailwind('ml-2 rounded-sm text-base font-medium text-gray-600 hover:text-gray-700 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-100')}>Sign up</button>
+        </div>
+        {renderNav()}
+      </React.Fragment>
+    );
 
-    const { isUserSignedIn } = this.props;
-    if (!isUserSignedIn) {
-      return this.renderNotSignedIn();
-    }
+    return _render(content);
+  };
 
-    const { urlValidatedResult, addingUrl } = this.state;
+  const renderInvalid = () => {
+    const content = (
+      <React.Fragment>
+        <svg className={tailwind('mx-auto h-24 text-red-600 blk:text-red-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fillRule="evenodd" clipRule="evenodd" d="M8.25706 3.09882C9.02167 1.73952 10.9788 1.73952 11.7434 3.09882L17.3237 13.0194C18.0736 14.3526 17.1102 15.9999 15.5805 15.9999H4.4199C2.89025 15.9999 1.92682 14.3526 2.67675 13.0194L8.25706 3.09882ZM11.0001 13C11.0001 13.5523 10.5524 14 10.0001 14C9.44784 14 9.00012 13.5523 9.00012 13C9.00012 12.4477 9.44784 12 10.0001 12C10.5524 12 11.0001 12.4477 11.0001 13ZM10.0001 5C9.44784 5 9.00012 5.44772 9.00012 6V9C9.00012 9.55228 9.44784 10 10.0001 10C10.5524 10 11.0001 9.55228 11.0001 9V6C11.0001 5.44772 10.5524 5 10.0001 5Z" />
+        </svg>
+        <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-center text-base text-red-700 blk:text-red-600')}>No link found to save to Brace</p>
+        {renderNav()}
+      </React.Fragment>
+    );
 
-    const link = this.getLinkFromAddingUrl(addingUrl);
+    return _render(content);
+  };
 
-    if (link && link.status === ADDED) {
-      return this.renderAdded();
-    }
-    if (link && link.status === ADDING) {
-      return this.renderAdding();
-    }
-    if (link && link.status === DIED_ADDING) {
-      return this.renderDiedAdding();
-    }
-    if (link) {
-      return this.renderInOtherProcessing();
-    }
+  const renderError = () => {
+    const content = (
+      <React.Fragment>
+        <svg className={tailwind('mx-auto h-24 text-red-600 blk:text-red-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fillRule="evenodd" clipRule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 14C11 14.5523 10.5523 15 10 15C9.44772 15 9 14.5523 9 14C9 13.4477 9.44772 13 10 13C10.5523 13 11 13.4477 11 14ZM10 5C9.44772 5 9 5.44772 9 6V10C9 10.5523 9.44772 11 10 11C10.5523 11 11 10.5523 11 10V6C11 5.44772 10.5523 5 10 5Z" />
+        </svg>
+        <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-center text-lg font-semibold text-gray-800 blk:text-gray-100')}>Oops..., something went wrong!</p>
+        <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-left text-base leading-relaxed text-gray-500 blk:text-gray-400 sm:text-center')}>Please wait a moment and try again. If the problem persists, please <a className={tailwind('rounded underline hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-300')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a>.</p>
+        <button onClick={onRetryBtnClick} className={tailwind('group mx-auto mt-5 mb-px block h-14 focus:outline-none')}>
+          <span className={tailwind('rounded-full border border-gray-400 bg-white px-3 py-2 text-sm text-gray-500 group-hover:border-gray-500 group-hover:text-gray-600 group-focus:ring blk:border-gray-400 blk:bg-gray-900 blk:text-gray-300 blk:group-hover:border-gray-300 blk:group-hover:text-gray-200')}>Try again</span>
+        </button>
+        {renderNav()}
+      </React.Fragment>
+    );
 
-    if (urlValidatedResult === ASK_CONFIRM_URL) {
-      return this.renderAskingConfirm();
-    }
-    if (urlValidatedResult === NO_URL) {
-      return this.renderInvalid();
-    }
+    return _render(content);
+  };
 
-    return <Loading />;
-  }
-}
-
-const mapStateToProps = (state) => {
-  return {
-    isUserSignedIn: state.user.isUserSignedIn,
-    href: state.window.href,
-    links: state.links[MY_LIST],
-    themeMode: getThemeMode(state),
-    safeAreaWidth: getSafeAreaWidth(state),
-  }
+  if (type === RENDER_NOT_SIGNED_IN) return renderNotSignedIn();
+  if (type === RENDER_INVALID) return renderInvalid();
+  if (type === RENDER_ERROR) return renderError();
+  if (type === RENDER_ADDED) return renderAdded();
+  if (type === RENDER_IN_OTHER_PROCESSING) return renderInOtherProcessing();
+  return renderAdding();
 };
 
-const mapDispatchToProps = { updatePopup, addLink, cancelDiedLinks };
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(Adding));
+export default React.memo(Adding);

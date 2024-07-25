@@ -25,10 +25,10 @@ const Main = React.lazy(() => _Main);
 class App extends React.PureComponent {
 
   render() {
-    if (this.props.href === null || this.props.isHandlingSignIn) return <Loading />;
-
     const hrefObj = new Url(this.props.href);
     if (hrefObj.pathname !== '/') return <Adding />;
+
+    if (this.props.href === null || this.props.isHandlingSignIn) return <Loading />;
 
     if (
       hrefObj.hash === HASH_LANDING ||

@@ -215,6 +215,7 @@ export const DISCARD_ACTION_UPDATE_TAG_NAME = 1;
 
 export const APP_GROUP_SHARE = 'group.bracedotto.share';
 export const APP_GROUP_SHARE_UKEY = 'uKey';
+export const APP_GROUP_SHARE_SKEY = 'sKey';
 
 export const MODE_VIEW = 'MODE_VIEW';
 export const MODE_EDIT = 'MODE_EDIT';

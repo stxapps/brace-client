@@ -1,4 +1,6 @@
-import { Linking, AppState, Platform, Appearance, Alert } from 'react-native';
+import {
+  Linking, AppState, Platform, Appearance, Alert, DeviceEventEmitter,
+} from 'react-native';
 import {
   RESET_STATE as OFFLINE_RESET_STATE,
 } from '@redux-offline/redux-offline/lib/constants';
@@ -60,11 +62,11 @@ import {
 } from '../types/actionTypes';
 import {
   DOMAIN_NAME, SD_HUB_URL, APP_URL_SCHEME, APP_DOMAIN_NAME, BLOCKSTACK_AUTH,
-  APP_GROUP_SHARE, APP_GROUP_SHARE_UKEY, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP,
-  SEARCH_POPUP, PROFILE_POPUP, CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP,
-  BULK_EDIT_MENU_POPUP, CUSTOM_EDITOR_POPUP, TAG_EDITOR_POPUP, PAYWALL_POPUP,
-  CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP,
-  SETTINGS_LISTS_MENU_POPUP, SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP,
+  APP_GROUP_SHARE, APP_GROUP_SHARE_UKEY, APP_GROUP_SHARE_SKEY, SIGN_UP_POPUP,
+  SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP, CARD_ITEM_MENU_POPUP,
+  LIST_NAMES_POPUP, PIN_MENU_POPUP, BULK_EDIT_MENU_POPUP, CUSTOM_EDITOR_POPUP,
+  TAG_EDITOR_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP,
+  SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP, SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP,
   LOCK_EDITOR_POPUP, SWWU_POPUP, DISCARD_ACTION_UPDATE_LIST_NAME,
   DISCARD_ACTION_UPDATE_TAG_NAME, LOCAL_LINK_ATTRS, MY_LIST, TRASH, N_LINKS, N_DAYS,
   CD_ROOT, ADDED, DIED_ADDING, DIED_MOVING, DIED_REMOVING, DIED_DELETING,
@@ -120,11 +122,6 @@ export const init = async (store) => {
 
   Linking.addEventListener('url', async (e) => {
     await handlePendingSignIn(e.url)(store.dispatch, store.getState);
-  });
-
-  AppState.addEventListener('change', async (nextAppState) => {
-    await handleAppStateChange(nextAppState)(store.dispatch, store.getState);
-    vars.appState.lastChangeDT = Date.now();
   });
 
   const isUserSignedIn = await userSession.isUserSignedIn();
@@ -194,8 +191,40 @@ const handlePendingSignIn = (url) => async (dispatch, getState) => {
   });
 };
 
+let _didAddAppStateChangeListener;
+export const addAppStateChangeListener = () => (dispatch, getState) => {
+  // This listener is added in Main.js and never remove.
+  // Add when needed and let it there. Also, add only once.
+  // Don't add in init, as Share also calls it.
+  // Can't dispatch after init as init might not finished yet due to await.
+  if (_didAddAppStateChangeListener) return;
+
+  if (Platform.OS === 'android') {
+    DeviceEventEmitter.addListener('onMainActivityResume', async () => {
+      const nextAppState = APP_STATE_ACTIVE;
+      await handleAppStateChange(nextAppState)(dispatch, getState);
+      vars.appState.lastChangeDT = Date.now();
+    });
+    DeviceEventEmitter.addListener('onMainActivityPause', async () => {
+      const nextAppState = APP_STATE_BACKGROUND;
+      await handleAppStateChange(nextAppState)(dispatch, getState);
+      vars.appState.lastChangeDT = Date.now();
+    });
+  } else {
+    AppState.addEventListener('change', async (nextAppState) => {
+      await handleAppStateChange(nextAppState)(dispatch, getState);
+      vars.appState.lastChangeDT = Date.now();
+    });
+  }
+
+  _didAddAppStateChangeListener = true;
+};
+
 const handleAppStateChange = (nextAppState) => async (dispatch, getState) => {
-  const isUserSignedIn = await userSession.isUserSignedIn();
+  // AppState is host level, trigger events on any activity.
+  // For iOS, Share is pure native, so this won't be called. Can just use AppState.
+  // For Android, need to use ActivityState so this is called only for App, not Share.
+  const isUserSignedIn = getState().user.isUserSignedIn;
 
   if (nextAppState === APP_STATE_ACTIVE) {
     const doForceLock = getState().display.doForceLock;
@@ -223,8 +252,13 @@ const handleAppStateChange = (nextAppState) => async (dispatch, getState) => {
 
     if (!isUserSignedIn) return;
 
+    let didShare = false;
+    if (Platform.OS === 'ios') {
+      const res = await DefaultPreference.get(APP_GROUP_SHARE_SKEY);
+      didShare = res === 'didShare=true';
+    }
     const interval = (Date.now() - vars.fetch.dt) / 1000 / 60 / 60;
-    if (interval < 0.6) return;
+    if (!didShare && interval < 0.6) return;
     if (isPopupShown(getState()) && interval < 0.9) return;
 
     dispatch(refreshFetched());
@@ -233,6 +267,10 @@ const handleAppStateChange = (nextAppState) => async (dispatch, getState) => {
   let isInactive = nextAppState === APP_STATE_INACTIVE;
   if (Platform.OS === 'android') isInactive = nextAppState === APP_STATE_BACKGROUND;
   if (isInactive) {
+    if (Platform.OS === 'ios') {
+      await DefaultPreference.set(APP_GROUP_SHARE_SKEY, '');
+    }
+
     if (!isUserSignedIn) return;
 
     const { purchaseStatus } = getState().iap;

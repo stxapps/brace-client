@@ -3,7 +3,7 @@ import { Animated } from 'react-native';
 import { connect } from 'react-redux';
 
 import fileApi from '../apis/localFile';
-import { fetch, endIapConnection } from '../actions';
+import { addAppStateChangeListener, fetch, endIapConnection } from '../actions';
 import {
   PC_100, PC_50, PC_33, SHOW_BLANK, SHOW_COMMANDS, SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
   IMAGES, LOCKED,
@@ -49,6 +49,7 @@ class Main extends React.PureComponent {
   }
 
   componentDidMount() {
+    this.props.addAppStateChangeListener();
     this.mkDirAndFetch();
   }
 
@@ -156,6 +157,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { fetch, endIapConnection };
+const mapDispatchToProps = { addAppStateChangeListener, fetch, endIapConnection };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withSafeAreaContext(Main));

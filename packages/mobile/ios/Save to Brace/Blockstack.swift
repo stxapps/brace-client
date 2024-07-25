@@ -37,7 +37,11 @@ class Blockstack {
     self.putFile(path: fpath, content: content, contentType: "application/json", callback: callback)
   }
 
-  private let defaultGaiaHubUrl = "https://hub.blockstack.org"
+  public func setDidShare() {
+    userDefaults?.set("didShare=true", forKey: APP_GROUP_SHARE_SKEY)
+  }
+
+  private let defaultGaiaHubUrl = "https://hub.hiro.so"
   private let userDefaults = UserDefaults(suiteName: APP_GROUP_SHARE)
 
   private func getUserData() -> UserData? {
@@ -241,7 +245,7 @@ class Blockstack {
   }
 
   private func randomString(_ length: Int) -> String {
-    let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
     return String((0..<length).map{ _ in characters.randomElement()!})
   }
 

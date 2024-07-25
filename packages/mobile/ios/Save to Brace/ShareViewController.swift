@@ -29,16 +29,16 @@ class ShareViewController: UIViewController {
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
     DispatchQueue.global(qos: .userInitiated).async {
+      // From debug, viewDidDisappear is not called, so reset values here.
+      if let t = self.timer {
+        t.invalidate()
+      }
+      self.sharedUrls = []
+      self.didRenderAdded = false
+      self.timer = nil
+
       self.processRequest()
     }
-  }
-
-  override func viewDidDisappear(_ animated: Bool) {
-    super.viewDidDisappear(animated)
-
-    self.sharedUrls = []
-    self.didRenderAdded = false
-    self.timer = nil
   }
 
   private func processRequest() {
@@ -65,8 +65,11 @@ class ShareViewController: UIViewController {
     for (_, attachment) in attachments.enumerated() {
       if attachment.hasItemConformingToTypeIdentifier(textContentType) {
         attachment.loadItem(forTypeIdentifier: textContentType, options: nil) { [unowned self] data, error in
-          if let text = data as? String, error == nil {
-            self.sharedUrls.append(text)
+          if let rawText = data as? String, error == nil {
+            let text = rawText.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !text.isEmpty() {
+              self.sharedUrls.append(text)
+            }
           }
           self.addLink()
         }
@@ -92,10 +95,11 @@ class ShareViewController: UIViewController {
     Blockstack.shared.addLink(url: self.sharedUrls[0]) { publicUrl, error in
       guard let _ = publicUrl, error == nil else {
         print("Died adding with error: ", error.debugDescription)
-        self.renderDiedAdding()
+        self.renderError()
         return
       }
 
+      Blockstack.shared.setDidShare()
       self.renderAdded()
     }
   }
@@ -236,7 +240,110 @@ class ShareViewController: UIViewController {
     }
   }
 
-  private func renderDiedAdding() {
+  private func renderNotSignedIn() {
+    DispatchQueue.main.async {
+      let contentView = UIView()
+
+      let contentViewWidth = 256, contentViewHeight = 256
+      let cwConstraint = NSLayoutConstraint(item: contentView, attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: CGFloat(contentViewWidth))
+      let chConstraint = NSLayoutConstraint(item: contentView, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: CGFloat(contentViewHeight))
+      contentView.addConstraints([cwConstraint, chConstraint])
+
+      let img = UIImageView(image: UIImage(named: "YellowExclamation"))
+      img.translatesAutoresizingMaskIntoConstraints = false
+      contentView.addSubview(img)
+
+      // imgTop = paddingTop + (((contentViewHeight - textHeight - btnHeight - spaceBtwTextAndBtn - paddingTop - paddingBottom) - imgHeight) / 2) + a bit down
+      let imgTop = 16 + (((contentViewHeight - 36 - 36 - 36 - 16 - 16) - 72) / 2) + 4
+      let ixConstraint = NSLayoutConstraint(item: img, attribute: NSLayoutConstraint.Attribute.centerX, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.centerX, multiplier: 1, constant: 0)
+      let itConstraint = NSLayoutConstraint(item: img, attribute: NSLayoutConstraint.Attribute.top, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.top, multiplier: 1, constant: CGFloat(imgTop))
+      contentView.addConstraints([ixConstraint, itConstraint])
+
+      let text = UILabel()
+      text.font = self.normalTextBase
+      text.textColor = self.gray600
+      text.textAlignment = NSTextAlignment.center
+      text.text = "Please sign in first"
+      text.translatesAutoresizingMaskIntoConstraints = false
+      contentView.addSubview(text)
+
+      let tlConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.left, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.left, multiplier: 1, constant: 16)
+      let trConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.right, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.right, multiplier: 1, constant: -16)
+      let tbConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.bottom, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.bottom, multiplier: 1, constant: (-16 + -36 + -36))
+      let thConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: 36)
+      contentView.addConstraints([tlConstraint, trConstraint, tbConstraint, thConstraint])
+
+      let btn = UIButton()
+      btn.backgroundColor = .clear
+      btn.setTitleColor(self.gray500, for: .normal)
+      btn.setAttributedTitle(NSMutableAttributedString(string: "Close", attributes: [NSAttributedString.Key.font: self.normalTextSm]), for: .normal)
+      btn.addTarget(self, action: #selector(self.completeRequest), for: .touchUpInside)
+      btn.translatesAutoresizingMaskIntoConstraints = false
+      contentView.addSubview(btn)
+
+      let blConstraint = NSLayoutConstraint(item: btn, attribute: NSLayoutConstraint.Attribute.left, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.left, multiplier: 1, constant: 16)
+      let brConstraint = NSLayoutConstraint(item: btn, attribute: NSLayoutConstraint.Attribute.right, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.right, multiplier: 1, constant: -16)
+      let bbConstraint = NSLayoutConstraint(item: btn, attribute: NSLayoutConstraint.Attribute.bottom, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.bottom, multiplier: 1, constant: -16)
+      let bhConstraint = NSLayoutConstraint(item: btn, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: 36)
+      contentView.addConstraints([blConstraint, brConstraint, bbConstraint, bhConstraint])
+
+      self._render(contentView)
+    }
+  }
+
+  private func renderInvalid() {
+    DispatchQueue.main.async {
+      let contentView = UIView()
+
+      let contentViewWidth = 256, contentViewHeight = 256
+      let cwConstraint = NSLayoutConstraint(item: contentView, attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: CGFloat(contentViewWidth))
+      let chConstraint = NSLayoutConstraint(item: contentView, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: CGFloat(contentViewHeight))
+      contentView.addConstraints([cwConstraint, chConstraint])
+
+      let img = UIImageView(image: UIImage(named: "YellowExclamation"))
+      img.translatesAutoresizingMaskIntoConstraints = false
+      contentView.addSubview(img)
+
+      // imgTop = paddingTop + (((contentViewHeight - textHeight - btnHeight - spaceBtwTextAndBtn - paddingTop - paddingBottom) - imgHeight) / 2) + a bit down
+      let imgTop = 16 + (((contentViewHeight - 36 - 36 - 36 - 16 - 16) - 72) / 2) + 4
+      let ixConstraint = NSLayoutConstraint(item: img, attribute: NSLayoutConstraint.Attribute.centerX, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.centerX, multiplier: 1, constant: 0)
+      let itConstraint = NSLayoutConstraint(item: img, attribute: NSLayoutConstraint.Attribute.top, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.top, multiplier: 1, constant: CGFloat(imgTop))
+      contentView.addConstraints([ixConstraint, itConstraint])
+
+      let text = UILabel()
+      text.font = self.normalTextBase
+      text.textColor = self.gray600
+      text.textAlignment = NSTextAlignment.center
+      text.text = "No link found to save to Brace"
+      text.numberOfLines = 2
+      text.translatesAutoresizingMaskIntoConstraints = false
+      contentView.addSubview(text)
+
+      let tlConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.left, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.left, multiplier: 1, constant: 16)
+      let trConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.right, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.right, multiplier: 1, constant: -16)
+      let tbConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.bottom, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.bottom, multiplier: 1, constant: (-16 + -36 + -8))
+      let thConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: 60)
+      contentView.addConstraints([tlConstraint, trConstraint, tbConstraint, thConstraint])
+
+      let btn = UIButton()
+      btn.backgroundColor = .clear
+      btn.setTitleColor(self.gray500, for: .normal)
+      btn.setAttributedTitle(NSMutableAttributedString(string: "Close", attributes: [NSAttributedString.Key.font: self.normalTextSm]), for: .normal)
+      btn.addTarget(self, action: #selector(self.completeRequest), for: .touchUpInside)
+      btn.translatesAutoresizingMaskIntoConstraints = false
+      contentView.addSubview(btn)
+
+      let blConstraint = NSLayoutConstraint(item: btn, attribute: NSLayoutConstraint.Attribute.left, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.left, multiplier: 1, constant: 16)
+      let brConstraint = NSLayoutConstraint(item: btn, attribute: NSLayoutConstraint.Attribute.right, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.right, multiplier: 1, constant: -16)
+      let bbConstraint = NSLayoutConstraint(item: btn, attribute: NSLayoutConstraint.Attribute.bottom, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.bottom, multiplier: 1, constant: -16)
+      let bhConstraint = NSLayoutConstraint(item: btn, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: 36)
+      contentView.addConstraints([blConstraint, brConstraint, bbConstraint, bhConstraint])
+
+      self._render(contentView)
+    }
+  }
+
+  private func renderError() {
     DispatchQueue.main.async {
       let contentView = UIView()
 
@@ -300,109 +407,6 @@ class ShareViewController: UIViewController {
       contentView.addConstraints([blConstraint, brConstraint, bbConstraint, bhConstraint])
 
       self._render(contentView, pb: -48)
-    }
-  }
-
-  private func renderInvalid() {
-    DispatchQueue.main.async {
-      let contentView = UIView()
-
-      let contentViewWidth = 256, contentViewHeight = 256
-      let cwConstraint = NSLayoutConstraint(item: contentView, attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: CGFloat(contentViewWidth))
-      let chConstraint = NSLayoutConstraint(item: contentView, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: CGFloat(contentViewHeight))
-      contentView.addConstraints([cwConstraint, chConstraint])
-
-      let img = UIImageView(image: UIImage(named: "YellowExclamation"))
-      img.translatesAutoresizingMaskIntoConstraints = false
-      contentView.addSubview(img)
-
-      // imgTop = paddingTop + (((contentViewHeight - textHeight - btnHeight - spaceBtwTextAndBtn - paddingTop - paddingBottom) - imgHeight) / 2) + a bit down
-      let imgTop = 16 + (((contentViewHeight - 36 - 36 - 36 - 16 - 16) - 72) / 2) + 4
-      let ixConstraint = NSLayoutConstraint(item: img, attribute: NSLayoutConstraint.Attribute.centerX, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.centerX, multiplier: 1, constant: 0)
-      let itConstraint = NSLayoutConstraint(item: img, attribute: NSLayoutConstraint.Attribute.top, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.top, multiplier: 1, constant: CGFloat(imgTop))
-      contentView.addConstraints([ixConstraint, itConstraint])
-
-      let text = UILabel()
-      text.font = self.normalTextBase
-      text.textColor = self.gray600
-      text.textAlignment = NSTextAlignment.center
-      text.text = "No link found to save to Brace"
-      text.numberOfLines = 2
-      text.translatesAutoresizingMaskIntoConstraints = false
-      contentView.addSubview(text)
-
-      let tlConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.left, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.left, multiplier: 1, constant: 16)
-      let trConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.right, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.right, multiplier: 1, constant: -16)
-      let tbConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.bottom, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.bottom, multiplier: 1, constant: (-16 + -36 + -8))
-      let thConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: 60)
-      contentView.addConstraints([tlConstraint, trConstraint, tbConstraint, thConstraint])
-
-      let btn = UIButton()
-      btn.backgroundColor = .clear
-      btn.setTitleColor(self.gray500, for: .normal)
-      btn.setAttributedTitle(NSMutableAttributedString(string: "Close", attributes: [NSAttributedString.Key.font: self.normalTextSm]), for: .normal)
-      btn.addTarget(self, action: #selector(self.completeRequest), for: .touchUpInside)
-      btn.translatesAutoresizingMaskIntoConstraints = false
-      contentView.addSubview(btn)
-
-      let blConstraint = NSLayoutConstraint(item: btn, attribute: NSLayoutConstraint.Attribute.left, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.left, multiplier: 1, constant: 16)
-      let brConstraint = NSLayoutConstraint(item: btn, attribute: NSLayoutConstraint.Attribute.right, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.right, multiplier: 1, constant: -16)
-      let bbConstraint = NSLayoutConstraint(item: btn, attribute: NSLayoutConstraint.Attribute.bottom, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.bottom, multiplier: 1, constant: -16)
-      let bhConstraint = NSLayoutConstraint(item: btn, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: 36)
-      contentView.addConstraints([blConstraint, brConstraint, bbConstraint, bhConstraint])
-
-      self._render(contentView)
-    }
-  }
-
-  private func renderNotSignedIn() {
-    DispatchQueue.main.async {
-      let contentView = UIView()
-
-      let contentViewWidth = 256, contentViewHeight = 256
-      let cwConstraint = NSLayoutConstraint(item: contentView, attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: CGFloat(contentViewWidth))
-      let chConstraint = NSLayoutConstraint(item: contentView, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: CGFloat(contentViewHeight))
-      contentView.addConstraints([cwConstraint, chConstraint])
-
-      let img = UIImageView(image: UIImage(named: "YellowExclamation"))
-      img.translatesAutoresizingMaskIntoConstraints = false
-      contentView.addSubview(img)
-
-      // imgTop = paddingTop + (((contentViewHeight - textHeight - btnHeight - spaceBtwTextAndBtn - paddingTop - paddingBottom) - imgHeight) / 2) + a bit down
-      let imgTop = 16 + (((contentViewHeight - 36 - 36 - 36 - 16 - 16) - 72) / 2) + 4
-      let ixConstraint = NSLayoutConstraint(item: img, attribute: NSLayoutConstraint.Attribute.centerX, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.centerX, multiplier: 1, constant: 0)
-      let itConstraint = NSLayoutConstraint(item: img, attribute: NSLayoutConstraint.Attribute.top, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.top, multiplier: 1, constant: CGFloat(imgTop))
-      contentView.addConstraints([ixConstraint, itConstraint])
-
-      let text = UILabel()
-      text.font = self.normalTextBase
-      text.textColor = self.gray600
-      text.textAlignment = NSTextAlignment.center
-      text.text = "Please sign in first"
-      text.translatesAutoresizingMaskIntoConstraints = false
-      contentView.addSubview(text)
-
-      let tlConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.left, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.left, multiplier: 1, constant: 16)
-      let trConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.right, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.right, multiplier: 1, constant: -16)
-      let tbConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.bottom, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.bottom, multiplier: 1, constant: (-16 + -36 + -36))
-      let thConstraint = NSLayoutConstraint(item: text, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: 36)
-      contentView.addConstraints([tlConstraint, trConstraint, tbConstraint, thConstraint])
-
-      let btn = UIButton()
-      btn.backgroundColor = .clear
-      btn.setTitleColor(self.gray500, for: .normal)
-      btn.setAttributedTitle(NSMutableAttributedString(string: "Close", attributes: [NSAttributedString.Key.font: self.normalTextSm]), for: .normal)
-      btn.addTarget(self, action: #selector(self.completeRequest), for: .touchUpInside)
-      btn.translatesAutoresizingMaskIntoConstraints = false
-      contentView.addSubview(btn)
-
-      let blConstraint = NSLayoutConstraint(item: btn, attribute: NSLayoutConstraint.Attribute.left, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.left, multiplier: 1, constant: 16)
-      let brConstraint = NSLayoutConstraint(item: btn, attribute: NSLayoutConstraint.Attribute.right, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.right, multiplier: 1, constant: -16)
-      let bbConstraint = NSLayoutConstraint(item: btn, attribute: NSLayoutConstraint.Attribute.bottom, relatedBy: NSLayoutConstraint.Relation.equal, toItem: contentView, attribute: NSLayoutConstraint.Attribute.bottom, multiplier: 1, constant: -16)
-      let bhConstraint = NSLayoutConstraint(item: btn, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: 36)
-      contentView.addConstraints([blConstraint, brConstraint, bbConstraint, bhConstraint])
-
-      self._render(contentView)
     }
   }
 }

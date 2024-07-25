@@ -3,6 +3,8 @@ package com.bracedotto;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 public class MainActivity extends ReactActivity {
 
@@ -13,6 +15,26 @@ public class MainActivity extends ReactActivity {
   @Override
   protected String getMainComponentName() {
     return "Brace";
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    ReactContext reactContext = getReactInstanceManager().getCurrentReactContext();
+    if (reactContext != null) {
+      reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+              .emit("onMainActivityPause", null);
+    }
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    ReactContext reactContext = getReactInstanceManager().getCurrentReactContext();
+    if (reactContext != null) {
+      reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+              .emit("onMainActivityResume", null);
+    }
   }
 
   /**
