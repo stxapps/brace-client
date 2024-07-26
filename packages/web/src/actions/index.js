@@ -442,6 +442,10 @@ const redirectToMain = () => {
   }, 1);
 };
 
+export const updateDefaultPreference = async (doExtractContents) => {
+  // Do nothing on web. This is for mobile.
+};
+
 export const updateStacksAccess = (data) => {
   return { type: UPDATE_STACKS_ACCESS, payload: data };
 };

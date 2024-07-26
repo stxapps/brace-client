@@ -1,7 +1,9 @@
 import { REHYDRATE } from 'redux-persist/constants';
 import { loop, Cmd } from 'redux-loop';
 
-import { updateSettingsDeleteStep, mergeSettingsDeleteStep } from '../actions';
+import {
+  updateDefaultPreference, updateSettingsDeleteStep, mergeSettingsDeleteStep,
+} from '../actions';
 import {
   FETCH_COMMIT, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME,
   DELETE_LIST_NAMES, UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_S_STEP_COMMIT,
@@ -66,6 +68,7 @@ const settingsReducer = (state = initialState, action) => {
       );
     }
 
+    updateDefaultPreference(newState.doExtractContents);
     return newState;
   }
 
@@ -351,6 +354,8 @@ const settingsReducer = (state = initialState, action) => {
     didChange.doDescendingOrder = false;
     didChange.listNameMap = false;
     didChange.tagNameMap = false;
+
+    updateDefaultPreference(state.doExtractContents);
     return loop(
       state,
       Cmd.run(
@@ -385,8 +390,11 @@ const settingsReducer = (state = initialState, action) => {
     didChange.doDescendingOrder = false;
     didChange.listNameMap = false;
     didChange.tagNameMap = false;
+
+    const newState = deriveSettingsState(listNames, tagNames, settings, initialState);
+    updateDefaultPreference(newState.doExtractContents);
     return loop(
-      deriveSettingsState(listNames, tagNames, settings, initialState),
+      newState,
       Cmd.run(
         mergeSettingsDeleteStep(_settingsFPaths), { args: [Cmd.dispatch, Cmd.getState] }
       )
@@ -400,6 +408,9 @@ const settingsReducer = (state = initialState, action) => {
     didChange.listNameMap = false;
     didChange.tagNameMap = false;
     didChange.newTagNameObjs = [];
+    if (action.type === DELETE_ALL_DATA) {
+      updateDefaultPreference(initialState.doExtractContents);
+    }
     return { ...initialState };
   }
 

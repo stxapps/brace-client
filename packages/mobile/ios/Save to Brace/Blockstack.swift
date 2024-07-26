@@ -316,6 +316,12 @@ class Blockstack {
       return
     }
 
+    guard let s = userDefaults?.string(forKey: APP_GROUP_SHARE_PKEY),
+          s == "doExtractContents=true" else {
+      print("In sendPreExtract, not found doExtractContents=true")
+      return
+    }
+
     let jsonObj = ["urls": [url]]
     guard let data = try? JSONSerialization.data(withJSONObject: jsonObj) else {
       print("In sendPreExtract, error when stringify url")
