@@ -8,6 +8,7 @@ import DocumentPicker, {
 } from 'react-native-document-picker';
 import Share from 'react-native-share';
 
+import axios from '../axiosWrapper';
 import dataApi from '../apis/blockstack';
 import cacheApi from '../apis/localCache';
 import fileApi from '../apis/localFile';
@@ -17,7 +18,8 @@ import {
 } from '../types/actionTypes';
 import {
   MY_LIST, TRASH, ARCHIVE, LINKS, SSLTS, IMAGES, SETTINGS, PINS, TAGS, DOT_JSON, BASE64,
-  LAYOUT_CARD, LAYOUT_LIST, CD_ROOT, PUT_FILE, DELETE_FILE, SD_HUB_URL, UTF8,
+  LAYOUT_CARD, LAYOUT_LIST, CD_ROOT, PUT_FILE, DELETE_FILE, SD_HUB_URL,
+  BRACE_PRE_EXTRACT_URL, UTF8,
 } from '../types/const';
 import {
   isEqual, isString, isObject, isNumber, randomString, getUrlFirstChar, randomDecor,
@@ -141,6 +143,15 @@ const parseRawImportedFile = async (dispatch, getState, text) => {
     const results = await dataApi.performFiles(data);
     throwIfPerformFilesError(data, results);
 
+    if (getState().settings.doExtractContents) {
+      const urls = selectedValues.map(value => value.content.url);
+      axios.post(BRACE_PRE_EXTRACT_URL, { urls })
+        .then(() => { })
+        .catch((error) => {
+          console.log('Error when contact Brace server to pre-extract contents with urls: ', urls, ' Error: ', error);
+        });
+    }
+
     progress.done += values.length;
     dispatch(updateImportAllDataProgress(progress));
   }
@@ -238,6 +249,8 @@ const _parseBraceSettings = async (settingsFPaths, settingsEntries) => {
   const data = { values, isSequential: false, nItemsForNs: 1 };
   const results = await dataApi.performFiles(data);
   throwIfPerformFilesError(data, results);
+
+  vars.importAllData.doExtractContents = latestSettings.doExtractContents;
 };
 
 const parseBraceSettings = async (
@@ -333,7 +346,7 @@ const parseBraceLinks = async (
   for (let i = 0; i < linkEntries.length; i += nLinks) {
     const selectedEntries = linkEntries.slice(i, i + nLinks);
 
-    const values = [];
+    const values = [], addingUrls = [];
     for (const entry of selectedEntries) {
       const { fpath, fpathParts, fname } = extractFPath(entry.path);
       if (fpathParts.length !== 3 || fpathParts[0] !== LINKS) continue;
@@ -379,6 +392,7 @@ const parseBraceLinks = async (
       }
 
       values.push({ id: fpath, type: PUT_FILE, path: fpath, content });
+      addingUrls.push(content.url);
 
       let listName = fpathParts[1];
       if (isObject(psInfos[mainId])) listName = psInfos[mainId].listName;
@@ -402,6 +416,14 @@ const parseBraceLinks = async (
     const data = { values, isSequential: false, nItemsForNs: 1 };
     const results = await dataApi.performFiles(data);
     throwIfPerformFilesError(data, results);
+
+    if (vars.importAllData.doExtractContents) {
+      axios.post(BRACE_PRE_EXTRACT_URL, { urls: addingUrls })
+        .then(() => { })
+        .catch((error) => {
+          console.log('Error when contact Brace server to pre-extract contents with urls: ', addingUrls, ' Error: ', error);
+        });
+    }
 
     progress.done += selectedEntries.length;
     dispatch(updateImportAllDataProgress(progress));
@@ -556,6 +578,8 @@ const parseBraceImportedFile = async (dispatch, getState, json) => {
   dispatch(updateImportAllDataProgress(progress));
 
   if (progress.total === 0) return;
+
+  vars.importAllData.doExtractContents = getState().settings.doExtractContents;
 
   await parseBraceSettings(dispatch, settingsFPaths, settingsEntries, progress);
   await parseBraceImages(dispatch, staticFPaths, imgEntries, progress);

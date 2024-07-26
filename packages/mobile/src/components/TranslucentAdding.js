@@ -118,7 +118,7 @@ const TranslucentAdding = () => {
         link = null;
       }
       if (!isObject(link)) {
-        dispatch(addLink(addingUrl));
+        dispatch(addLink(addingUrl, MY_LIST, false));
         didDispatch = true;
         continue;
       }
@@ -130,7 +130,6 @@ const TranslucentAdding = () => {
       updateType(RENDER_INVALID);
       return;
     }
-
     if (!didDispatch && didExist) {
       updateType(RENDER_IN_OTHER_PROCESSING);
       return;
@@ -153,7 +152,8 @@ const TranslucentAdding = () => {
 
   useEffect(() => {
     return () => {
-      ReceiveSharingIntent.clearReceivedFiles();
+      // Not clear here as there might be a new sharing during this
+      //ReceiveSharingIntent.clearReceivedFiles();
       if (removeListener.current) {
         removeListener.current();
         removeListener.current = null;
