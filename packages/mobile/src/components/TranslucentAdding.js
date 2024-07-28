@@ -152,8 +152,7 @@ const TranslucentAdding = () => {
 
   useEffect(() => {
     return () => {
-      // Not clear here as there might be a new sharing during this
-      //ReceiveSharingIntent.clearReceivedFiles();
+      ReceiveSharingIntent.clearReceivedFiles();
       if (removeListener.current) {
         removeListener.current();
         removeListener.current = null;
