@@ -1,10 +1,13 @@
+import { Storage } from '@stacks/storage/dist/esm';
 import { FileContentLoader } from '@stacks/storage/dist/esm/fileContentLoader';
 import { getPublicKeyFromPrivate, encryptECIES } from '@stacks/encryption/dist/esm';
 import { fetchPrivate } from '@stacks/common/dist/esm';
 
 import userSession from '../userSession';
 import { PUT_FILE } from '../types/const';
-import { isString } from '../utils';
+import { isObject, isString } from '../utils';
+
+const _userSession = userSession._userSession;
 
 const encryptData = async (data, publicKey) => {
   const ecdData = { ...data };
@@ -33,7 +36,12 @@ const encryptData = async (data, publicKey) => {
 
 const performFiles = async (data) => {
   const userData = userSession.loadUserData();
-  const { appPrivateKey: privateKey, gaiaHubConfig: hubConfig } = userData;
+
+  let { appPrivateKey: privateKey, gaiaHubConfig: hubConfig } = userData;
+  if (!isObject(hubConfig)) {
+    const storage = new Storage({ userSession: _userSession });
+    hubConfig = await storage.getOrSetLocalGaiaHubConnection();
+  }
 
   const publicKey = getPublicKeyFromPrivate(privateKey);
   const ecdData = await encryptData(data, publicKey);
