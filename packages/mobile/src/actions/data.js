@@ -152,7 +152,7 @@ const parseRawImportedFile = async (dispatch, getState, text) => {
         });
     }
 
-    progress.done += values.length;
+    progress.done += selectedValues.length;
     dispatch(updateImportAllDataProgress(progress));
   }
 };
