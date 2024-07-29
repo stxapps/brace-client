@@ -56,6 +56,7 @@ const TranslucentAdding = () => {
   const [type, setType] = useState(null);
   const [addingUrls, setAddingUrls] = useState(null);
   const didAddListener = useRef(false);
+  const didDispatch = useRef(false);
   const removeListener = useRef(null);
   const timeoutId = useRef(null);
   const tailwind = useTailwind();
@@ -110,7 +111,11 @@ const TranslucentAdding = () => {
       if (newAddingUrls.length >= MAX_ADDING_URLS) break;
     }
 
-    let didDispatch = false, didExist = false;
+    if (newAddingUrls.length === 0) {
+      updateType(RENDER_INVALID);
+      return;
+    }
+
     for (const addingUrl of newAddingUrls) {
       let link = getLinkFromAddingUrl(addingUrl, links);
       if (isObject(link) && link.status === DIED_ADDING) {
@@ -119,23 +124,12 @@ const TranslucentAdding = () => {
       }
       if (!isObject(link)) {
         dispatch(addLink(addingUrl, MY_LIST, false));
-        didDispatch = true;
+        didDispatch.current = true;
         continue;
       }
-
-      didExist = true;
     }
 
-    if (!didDispatch && !didExist) {
-      updateType(RENDER_INVALID);
-      return;
-    }
-    if (!didDispatch && didExist) {
-      updateType(RENDER_IN_OTHER_PROCESSING);
-      return;
-    }
-
-    updateType(RENDER_ADDING);
+    if (didDispatch.current) updateType(RENDER_ADDING);
     updateAddingUrls(newAddingUrls);
   }, [links, addingUrls, updateType, updateAddingUrls, dispatch]);
 
@@ -184,24 +178,17 @@ const TranslucentAdding = () => {
 
     for (const addingUrl of addingUrls) {
       const link = getLinkFromAddingUrl(addingUrl, links);
-      if (!isObject(link)) {
-        updateType(RENDER_ADDING);
-        return;
-      }
-      if (link.status === ADDING) {
-        updateType(RENDER_ADDING);
-        return;
-      }
-      if (link.status === ADDED) {
-        continue;
-      }
+      if (!isObject(link)) return;
+      if (link.status === ADDING) return;
+      if (link.status === ADDED) continue;
       if (link.status === DIED_ADDING) {
         updateType(RENDER_ERROR);
         return;
       }
     }
 
-    updateType(RENDER_ADDED);
+    const newType = didDispatch.current ? RENDER_ADDED : RENDER_IN_OTHER_PROCESSING;
+    updateType(newType);
     if (!timeoutId.current) {
       timeoutId.current = setTimeout(() => {
         BackHandler.exitApp();

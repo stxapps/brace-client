@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { updatePopup, addLink, cancelDiedLinks } from '../actions';
 import {
-  HASH_SUPPORT, SIGN_UP_POPUP, SIGN_IN_POPUP, MY_LIST, ADDING, ADDED, DIED_ADDING,
+  HASH_SUPPORT, SIGN_UP_POPUP, SIGN_IN_POPUP, MY_LIST, ADDED, DIED_ADDING,
   URL_QUERY_CLOSE_KEY, URL_QUERY_CLOSE_WINDOW, SHOW_BLANK, VALID_URL, NO_URL, BLK_MODE,
 } from '../types/const';
 import { getThemeMode } from '../selectors';
@@ -58,6 +58,7 @@ const Adding = () => {
     addingUrl: null, param: null, urlValidatedResult: null,
   });
   const doCancelDiedLink = useRef(true);
+  const didDispatch = useRef(false);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
 
@@ -82,7 +83,7 @@ const Adding = () => {
 
     let { addingUrl, param, urlValidatedResult } = urlState;
 
-    let newValues = {}, isFirst = false;
+    let newValues = {};
     if (!isString(addingUrl)) {
       addingUrl = getUrlPathQueryHash(href);
 
@@ -92,7 +93,6 @@ const Adding = () => {
       urlValidatedResult = validateUrl(addingUrl);
 
       newValues = { addingUrl, param, urlValidatedResult };
-      isFirst = true;
     }
 
     if (isUserSignedIn === false) {
@@ -117,19 +117,16 @@ const Adding = () => {
     }
     if (!isObject(link)) {
       dispatch(addLink(addingUrl, MY_LIST, false));
+      didDispatch.current = true;
 
       updateType(RENDER_ADDING);
       updateUrlState(newValues);
       return;
     }
 
-    if (isFirst) {
-      updateType(link.status === ADDING ? RENDER_ADDING : RENDER_IN_OTHER_PROCESSING);
-      updateUrlState(newValues);
-      return;
-    }
     if (link.status === ADDED) {
-      updateType(RENDER_ADDED);
+      const newType = didDispatch.current ? RENDER_ADDED : RENDER_IN_OTHER_PROCESSING;
+      updateType(newType);
       updateUrlState(newValues);
       return;
     }
