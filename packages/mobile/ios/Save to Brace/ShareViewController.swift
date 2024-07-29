@@ -67,7 +67,7 @@ class ShareViewController: UIViewController {
         attachment.loadItem(forTypeIdentifier: textContentType, options: nil) { [unowned self] data, error in
           if let rawText = data as? String, error == nil {
             let text = rawText.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !text.isEmpty() {
+            if !text.isEmpty {
               self.sharedUrls.append(text)
             }
           }

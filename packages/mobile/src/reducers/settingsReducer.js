@@ -380,7 +380,10 @@ const settingsReducer = (state = initialState, action) => {
     didChange.doDescendingOrder = false;
     didChange.listNameMap = false;
     didChange.tagNameMap = false;
-    return deriveSettingsState(listNames, tagNames, settings, initialState);
+
+    const newState = deriveSettingsState(listNames, tagNames, settings, initialState);
+    updateDefaultPreference(newState.doExtractContents);
+    return newState;
   }
 
   if (action.type === MERGE_SETTINGS_COMMIT) {
