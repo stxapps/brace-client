@@ -31,7 +31,7 @@ import {
   copyListNameObjsWithExactExclude, getAllListNames, copyTagNameObjs,
 } from '../utils';
 import { initialSettingsState } from '../types/initialStates';
-import vars from '../vars';
+import vars, { didChange } from '../vars';
 
 const parseRawImportedFile = async (dispatch, getState, text) => {
 
@@ -250,7 +250,9 @@ const _parseBraceSettings = async (settingsFPaths, settingsEntries) => {
   const results = await dataApi.performFiles(data);
   throwIfPerformFilesError(data, results);
 
-  vars.importAllData.doExtractContents = latestSettings.doExtractContents;
+  if (!didChange.doExtractContents) {
+    vars.importAllData.doExtractContents = latestSettings.doExtractContents;
+  }
 };
 
 const parseBraceSettings = async (
