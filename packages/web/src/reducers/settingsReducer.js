@@ -411,10 +411,12 @@ const settingsReducer = (state = initialState, action) => {
     didChange.listNameMap = false;
     didChange.tagNameMap = false;
     didChange.newTagNameObjs = [];
+
+    const newState = { ...initialState };
     if (action.type === DELETE_ALL_DATA) {
-      updateDefaultPreference(initialState.doExtractContents);
+      updateDefaultPreference(newState.doExtractContents);
     }
-    return { ...initialState };
+    return newState;
   }
 
   return state;
