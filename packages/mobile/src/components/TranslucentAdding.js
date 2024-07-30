@@ -64,11 +64,11 @@ const TranslucentAdding = () => {
 
   const updateType = useCallback((newType) => {
     if (newType !== type) setType(newType);
-  }, [type, setType]);
+  }, [type]);
 
   const updateAddingUrls = useCallback((newAddingUrls) => {
     if (!isArrayEqual(newAddingUrls, addingUrls)) setAddingUrls(newAddingUrls);
-  }, [addingUrls, setAddingUrls]);
+  }, [addingUrls]);
 
   const onReceivedFiles = useCallback((files) => {
     ReceiveSharingIntent.clearReceivedFiles();
