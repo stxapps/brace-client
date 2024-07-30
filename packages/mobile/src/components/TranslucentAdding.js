@@ -56,7 +56,8 @@ const TranslucentAdding = () => {
   const [type, setType] = useState(null);
   const [addingUrls, setAddingUrls] = useState(null);
   const didAddListener = useRef(false);
-  const didDispatch = useRef(false);
+  const didReceiveFiles = useRef(false);
+  const didAddLink = useRef(false);
   const removeListener = useRef(null);
   const timeoutId = useRef(null);
   const tailwind = useTailwind();
@@ -71,15 +72,16 @@ const TranslucentAdding = () => {
   }, [addingUrls]);
 
   const onReceivedFiles = useCallback((files) => {
+    // Strong assumption that this component is created to save links and then close,
+    //  so ignore subsequent calls.
+    if (didReceiveFiles.current) return;
+    didReceiveFiles.current = true;
+
     ReceiveSharingIntent.clearReceivedFiles();
     if (removeListener.current) {
       removeListener.current();
       removeListener.current = null;
     }
-
-    // Strong assumption that this component is created to save links and then close,
-    //  so ignore subsequent calls.
-    if (Array.isArray(addingUrls)) return;
 
     let text = getText(files);
     text = text.trim();
@@ -124,14 +126,14 @@ const TranslucentAdding = () => {
       }
       if (!isObject(link)) {
         dispatch(addLink(addingUrl, MY_LIST, false));
-        didDispatch.current = true;
+        didAddLink.current = true;
         continue;
       }
     }
 
-    if (didDispatch.current) updateType(RENDER_ADDING);
+    if (didAddLink.current) updateType(RENDER_ADDING);
     updateAddingUrls(newAddingUrls);
-  }, [links, addingUrls, updateType, updateAddingUrls, dispatch]);
+  }, [links, updateType, updateAddingUrls, dispatch]);
 
   const onErrorReceivedFiles = useCallback(() => {
     updateType(RENDER_ERROR);
@@ -187,7 +189,7 @@ const TranslucentAdding = () => {
       }
     }
 
-    const newType = didDispatch.current ? RENDER_ADDED : RENDER_IN_OTHER_PROCESSING;
+    const newType = didAddLink.current ? RENDER_ADDED : RENDER_IN_OTHER_PROCESSING;
     updateType(newType);
     if (!timeoutId.current) {
       timeoutId.current = setTimeout(() => {
