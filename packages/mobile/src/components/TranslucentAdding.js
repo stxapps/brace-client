@@ -10,7 +10,8 @@ import Svg, { Path } from 'react-native-svg';
 
 import { addLink, cancelDiedLinks } from '../actions';
 import {
-  MY_LIST, ADDING, ADDED, DIED_ADDING, NO_URL, SHARE_BORDER_RADIUS, HTTP, HTTPS,
+  MY_LIST, ADDING, ADDED, DIED_ADDING, NO_URL, VALID_URL, SHARE_BORDER_RADIUS, HTTP,
+  HTTPS,
 } from '../types/const';
 import { isObject, isString, validateUrl, indexesOf } from '../utils';
 import cache from '../utils/cache';
@@ -34,6 +35,22 @@ const getText = (files) => {
   if (isString(file.text)) return file.text;
 
   return '';
+};
+
+const pickUrls = (urls) => {
+  const validUrls = [], illUrls = [];
+  for (const url of urls) {
+    const urlValidateResult = validateUrl(url);
+    if (urlValidateResult === NO_URL) continue;
+    if (urlValidateResult === VALID_URL) {
+      validUrls.push(url);
+      continue;
+    }
+    illUrls.push(url);
+  }
+
+  if (validUrls.length > 0) return validUrls.slice(0, MAX_ADDING_URLS);
+  return illUrls.slice(0, MAX_ADDING_URLS);
 };
 
 const getLinkFromAddingUrl = (addingUrl, links) => {
@@ -97,15 +114,7 @@ const TranslucentAdding = () => {
       if (t.length > 0) pendingUrls.push(t);
     }
 
-    const newAddingUrls = [];
-    for (const pendingUrl of pendingUrls) {
-      const urlValidateResult = validateUrl(pendingUrl);
-      if (urlValidateResult === NO_URL) continue;
-
-      newAddingUrls.push(pendingUrl);
-      if (newAddingUrls.length >= MAX_ADDING_URLS) break;
-    }
-
+    const newAddingUrls = pickUrls(pendingUrls);
     if (newAddingUrls.length === 0) {
       setType(RENDER_INVALID);
       return;
