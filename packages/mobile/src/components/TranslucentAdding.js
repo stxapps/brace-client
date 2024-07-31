@@ -12,7 +12,7 @@ import { addLink, cancelDiedLinks } from '../actions';
 import {
   MY_LIST, ADDING, ADDED, DIED_ADDING, NO_URL, SHARE_BORDER_RADIUS, HTTP, HTTPS,
 } from '../types/const';
-import { isObject, isString, isArrayEqual, validateUrl, indexesOf } from '../utils';
+import { isObject, isString, validateUrl, indexesOf } from '../utils';
 import cache from '../utils/cache';
 
 import { useSafeAreaFrame, useTailwind } from '.';
@@ -55,6 +55,7 @@ const TranslucentAdding = () => {
   const links = useSelector(state => state.links[MY_LIST]);
   const [type, setType] = useState(null);
   const [addingUrls, setAddingUrls] = useState(null);
+  const linksRef = useRef(links);
   const didAddListener = useRef(false);
   const didReceiveFiles = useRef(false);
   const didAddLink = useRef(false);
@@ -63,30 +64,22 @@ const TranslucentAdding = () => {
   const tailwind = useTailwind();
   const dispatch = useDispatch();
 
-  const updateType = useCallback((newType) => {
-    if (newType !== type) setType(newType);
-  }, [type]);
-
-  const updateAddingUrls = useCallback((newAddingUrls) => {
-    if (!isArrayEqual(newAddingUrls, addingUrls)) setAddingUrls(newAddingUrls);
-  }, [addingUrls]);
-
   const onReceivedFiles = useCallback((files) => {
-    // Strong assumption that this component is created to save links and then close,
-    //  so ignore subsequent calls.
-    if (didReceiveFiles.current) return;
-    didReceiveFiles.current = true;
-
     ReceiveSharingIntent.clearReceivedFiles();
     if (removeListener.current) {
       removeListener.current();
       removeListener.current = null;
     }
 
+    // Strong assumption that this component is created to save links and then close,
+    //  so ignore subsequent calls.
+    if (didReceiveFiles.current) return;
+    didReceiveFiles.current = true;
+
     let text = getText(files);
     text = text.trim();
     if (text.length === 0) {
-      updateType(RENDER_INVALID);
+      setType(RENDER_INVALID);
       return;
     }
 
@@ -114,12 +107,12 @@ const TranslucentAdding = () => {
     }
 
     if (newAddingUrls.length === 0) {
-      updateType(RENDER_INVALID);
+      setType(RENDER_INVALID);
       return;
     }
 
     for (const addingUrl of newAddingUrls) {
-      let link = getLinkFromAddingUrl(addingUrl, links);
+      let link = getLinkFromAddingUrl(addingUrl, linksRef.current);
       if (isObject(link) && link.status === DIED_ADDING) {
         dispatch(cancelDiedLinks([link.id]));
         link = null;
@@ -131,13 +124,13 @@ const TranslucentAdding = () => {
       }
     }
 
-    if (didAddLink.current) updateType(RENDER_ADDING);
-    updateAddingUrls(newAddingUrls);
-  }, [links, updateType, updateAddingUrls, dispatch]);
+    if (didAddLink.current) setType(RENDER_ADDING);
+    setAddingUrls(newAddingUrls);
+  }, [dispatch]);
 
   const onErrorReceivedFiles = useCallback(() => {
-    updateType(RENDER_ERROR);
-  }, [updateType]);
+    setType(RENDER_ERROR);
+  }, []);
 
   const onBackgroundBtnClick = () => {
     if (type === RENDER_ADDED || type === RENDER_IN_OTHER_PROCESSING) {
@@ -145,6 +138,10 @@ const TranslucentAdding = () => {
       return;
     }
   };
+
+  useEffect(() => {
+    linksRef.current = links;
+  }, [links]);
 
   useEffect(() => {
     return () => {
@@ -164,13 +161,14 @@ const TranslucentAdding = () => {
     if (![true, false].includes(isUserSignedIn)) return;
 
     if (isUserSignedIn === false) {
-      updateType(RENDER_NOT_SIGNED_IN);
+      setType(RENDER_NOT_SIGNED_IN);
       return;
     }
 
     if (!Array.isArray(addingUrls)) {
       if (!didAddListener.current && !removeListener.current) {
         didAddListener.current = true;
+        // Bug alert: as not remove and re-add every render, dep vars are not updated.
         removeListener.current = ReceiveSharingIntent.getReceivedFiles(
           onReceivedFiles, onErrorReceivedFiles
         );
@@ -184,20 +182,20 @@ const TranslucentAdding = () => {
       if (link.status === ADDING) return;
       if (link.status === ADDED) continue;
       if (link.status === DIED_ADDING) {
-        updateType(RENDER_ERROR);
+        setType(RENDER_ERROR);
         return;
       }
     }
 
     const newType = didAddLink.current ? RENDER_ADDED : RENDER_IN_OTHER_PROCESSING;
-    updateType(newType);
+    setType(newType);
     if (!timeoutId.current) {
       timeoutId.current = setTimeout(() => {
         BackHandler.exitApp();
       }, 2000);
     }
   }, [
-    isUserSignedIn, links, addingUrls, updateType, onReceivedFiles, onErrorReceivedFiles,
+    isUserSignedIn, links, addingUrls, onReceivedFiles, onErrorReceivedFiles,
   ]);
 
   const _render = (content) => {
