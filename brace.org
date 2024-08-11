@@ -10,7 +10,9 @@
 ** notado.app
 ** www.linkace.org
 ** bmrk.cc
+** bmrks.com
 ** bookmarkmanager.com
+** linkwarden.app
 * Same Name
 ** brace.io
 - www.studioanthonylane.com/Brace-io
@@ -183,6 +185,7 @@
 - github.com/tabler/tabler-icons
 - github.com/twbs/icons
 - systemuicons.com
+- iconbuddy.com
 *** Free illustrations
 - undraw.co
 - humaaans.com
