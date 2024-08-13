@@ -1,13 +1,14 @@
 import { Storage } from '@stacks/storage/dist/esm';
 import { FileContentLoader } from '@stacks/storage/dist/esm/fileContentLoader';
 import { getPublicKeyFromPrivate, encryptECIES } from '@stacks/encryption/dist/esm';
-import { fetchPrivate } from '@stacks/common/dist/esm';
+import { createFetchFn } from '@stacks/network/dist/esm'
 
 import userSession from '../userSession';
 import { PUT_FILE } from '../types/const';
 import { isObject, isString } from '../utils';
 
 const _userSession = userSession._userSession;
+const fetchFn = createFetchFn();
 
 const encryptData = async (data, publicKey) => {
   const ecdData = { ...data };
@@ -47,7 +48,7 @@ const performFiles = async (data) => {
   const ecdData = await encryptData(data, publicKey);
 
   const url = `${hubConfig.server}/perform-files/${hubConfig.address}`;
-  const res = await fetchPrivate(url, {
+  const res = await fetchFn(url, {
     method: 'POST',
     mode: 'cors',
     cache: 'no-cache',

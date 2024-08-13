@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { showConnect } from '@stacks/connect/dist/index.esm';
+import { showConnect } from '@stacks/connect';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import userSession from '../userSession';

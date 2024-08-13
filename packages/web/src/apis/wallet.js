@@ -2,22 +2,23 @@ import { SECP256K1Client, TokenSigner } from 'jsontokens';
 import { parseZoneFile } from 'zone-file';
 import { makeDIDFromAddress } from '@stacks/auth/dist/esm'
 import {
-  generateSecretKey, generateWallet, getRootNode, deriveAccount, makeWalletConfig,
-  updateWalletConfigWithApp, getAppPrivateKey, getStxAddress,
+  generateSecretKey, generateWallet, getRootNode, deriveAccount, DerivationType,
+  getHubInfo, makeWalletConfig, updateWalletConfigWithApp, getAppPrivateKey,
+  getStxAddress, makeGaiaAssociationToken, DEFAULT_PROFILE, DEFAULT_PROFILE_FILE_NAME,
+  signAndUploadProfile,
 } from '@stacks/wallet-sdk/dist/esm';
-import {
-  DEFAULT_PROFILE, DEFAULT_PROFILE_FILE_NAME, signAndUploadProfile,
-} from '@stacks/wallet-sdk/dist/esm/models/profile';
-import { getHubInfo, makeGaiaAssociationToken } from '@stacks/wallet-sdk/dist/esm/utils';
+import { getTokenFileUrl } from '@stacks/profile/dist/esm';
 import { TransactionVersion } from '@stacks/transactions/dist/esm';
 import {
-  randomBytes, hexStringToECPair, ecPairToAddress, decryptContent,
-  getPublicKeyFromPrivate, publicKeyToAddress,
+  randomBytes, decryptContent, getPublicKeyFromPrivate, publicKeyToBtcAddress,
 } from '@stacks/encryption/dist/esm';
-import { fetchPrivate } from '@stacks/common/dist/esm';
+import { createFetchFn } from '@stacks/network/dist/esm'
+import { bytesToHex } from '@stacks/common/dist/esm';
 
 import { HR_HUB_URL, SD_HUB_URL } from '../types/const';
 import { isObject, isString, isNumber, sleep } from '../utils';
+
+const fetchFn = createFetchFn()
 
 const DEFAULT_PASSWORD = 'password';
 const N_ACCOUNTS = 10;
@@ -25,7 +26,7 @@ const N_ACCOUNTS = 10;
 const getHubConfig = (hubUrl, hubInfo, privateKey, associationToken) => {
   const challengeText = hubInfo.challenge_text;
   const iss = getPublicKeyFromPrivate(privateKey);
-  const salt = randomBytes(16).toString('hex');
+  const salt = bytesToHex(randomBytes(16));
   const payload = {
     gaiaChallenge: challengeText,
     hubUrl,
@@ -36,9 +37,7 @@ const getHubConfig = (hubUrl, hubInfo, privateKey, associationToken) => {
   const signedPayload = new TokenSigner('ES256K', privateKey).sign(payload);
   const token = `v1:${signedPayload}`;
 
-  const address = ecPairToAddress(
-    hexStringToECPair(privateKey + (privateKey.length === 64 ? '01' : ''))
-  );
+  const address = publicKeyToBtcAddress(getPublicKeyFromPrivate(privateKey));
 
   return {
     url_prefix: hubInfo.read_url_prefix,
@@ -122,7 +121,7 @@ const createAccount = async (appData) => {
 const getWalletConfig = async (url_prefix, address, privateKey) => {
   // If server down, throw error. If 404, 403, not found, return null. Else throw error.
   const url = `${url_prefix}${address}/wallet-config.json`;
-  const res = await fetchPrivate(url);
+  const res = await fetchFn(url);
   if (res.ok) {
     try {
       const encrypted = await res.text();
@@ -147,7 +146,9 @@ const deriveNewAccounts = (rootNode, salt, wAccounts, wcAccounts) => {
   const newAccounts = wcAccounts.map((account, index) => {
     let existingAccount = wAccounts[index];
     if (!isObject(existingAccount)) {
-      existingAccount = deriveAccount({ rootNode, index, salt });
+      existingAccount = deriveAccount({
+        rootNode, index, salt, stxDerivationType: DerivationType.Wallet,
+      });
     }
     return { ...existingAccount };
   });
@@ -215,10 +216,10 @@ const getUsername = async (account) => {
 
   // if server down, need to throw an error to get hubUrl correctly
   const url = `https://api.hiro.so/v1/addresses/stacks/${stxAddress}`;
-  let res = await fetchPrivate(url);
+  let res = await fetchFn(url);
   if (!res.ok) {
     await sleep(4000); // Wait for a while and try one more time
-    res = await fetchPrivate(url);
+    res = await fetchFn(url);
   }
   if (res.ok) {
     const json = await res.json();
@@ -264,12 +265,12 @@ const restoreAccount = async (appData, secretKey) => {
 const getProfileUrlFromZoneFile = async (name) => {
   // if server down, need to throw an error to get hubUrl correctly
   const url = `https://api.hiro.so/v1/names/${name}`;
-  const res = await fetchPrivate(url);
+  const res = await fetchFn(url);
   if (res.ok) {
     const nameInfo = await res.json();
     try {
       const zone = parseZoneFile(nameInfo.zonefile);
-      const target = zone.uri[0].target;
+      const target = getTokenFileUrl(zone);
       if (isString(target) && target.length > 0) return target;
     } catch (error) {
       // Invalid zonefile format, return null.
@@ -294,7 +295,7 @@ const restoreProfile = async (walletData, accountIndex) => {
   if (isString(account.username)) {
     url = await getProfileUrlFromZoneFile(account.username);
     if (isString(url)) {
-      const res = await fetchPrivate(url);
+      const res = await fetchFn(url);
       if (res.ok) {
         try {
           const json = await res.json();
@@ -319,11 +320,11 @@ const restoreProfile = async (walletData, accountIndex) => {
   }
 
   const publicKey = getPublicKeyFromPrivate(account.dataPrivateKey);
-  const address = publicKeyToAddress(publicKey);
+  const address = publicKeyToBtcAddress(publicKey);
 
   url = `${sdHubInfo.read_url_prefix}${address}/${DEFAULT_PROFILE_FILE_NAME}`;
 
-  const res = await fetchPrivate(url);
+  const res = await fetchFn(url);
   if (res.ok) {
     try {
       const json = await res.json();
@@ -452,7 +453,7 @@ const chooseAccount = async (walletData, accountIndex) => {
   const account = wallet.accounts[accountIndex];
 
   const publicKey = SECP256K1Client.derivePublicKey(account.dataPrivateKey);
-  const address = publicKeyToAddress(publicKey);
+  const address = publicKeyToBtcAddress(publicKey);
   const did = makeDIDFromAddress(address);
 
   const appPrivateKey = getAppPrivateKey({ account, appDomain: appData.domainName });
