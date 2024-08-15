@@ -31,9 +31,7 @@ class TopBarMain extends React.PureComponent {
   }
 
   componentDidMount() {
-    if (this.props.isListNameShown) {
-      window.addEventListener('scroll', this.updateScrollY);
-    }
+    window.addEventListener('scroll', this.updateScrollY);
   }
 
   componentWillUnmount() {
@@ -57,7 +55,9 @@ class TopBarMain extends React.PureComponent {
       listNameStartY, listNameEndY, listNameDistanceY,
     } = getTopBarSizes(safeAreaWidth);
 
-    let top = listNameStartY + (scrollY * (listNameEndY - listNameStartY) / listNameDistanceY);
+    let top = (
+      listNameStartY + (scrollY * (listNameEndY - listNameStartY) / listNameDistanceY)
+    );
     const left = scrollY * listNameDistanceX / listNameDistanceY;
 
     const listNameStyle = { top, left };
@@ -107,7 +107,9 @@ class TopBarMain extends React.PureComponent {
       listNameDistanceY,
     } = getTopBarSizes(safeAreaWidth);
 
-    const height = topBarHeight + (scrollY * (headerHeight - topBarHeight) / listNameDistanceY);
+    const height = (
+      topBarHeight + (scrollY * (headerHeight - topBarHeight) / listNameDistanceY)
+    );
 
     topBarStyle = { height };
     topBarStyleClasses += ' fixed inset-x-0 top-0 z-30';
