@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { retryDiedTags, cancelDiedTags } from '../actions';
+import { retryDiedTags, cancelDiedTags } from '../actions/chunk';
 import {
   UPDATE_TAG_DATA_S_STEP_ROLLBACK, UPDATE_TAG_DATA_T_STEP_ROLLBACK,
 } from '../types/actionTypes';

@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Url from 'url-parse';
 
-import { updateHistoryPosition, fetch, endIapConnection } from '../actions';
+import { updateHistoryPosition } from '../actions';
+import { fetch, endIapConnection } from '../actions/chunk';
 import {
   BACK_DECIDER, BACK_POPUP, PC_100, PC_50, PC_33, SHOW_BLANK, SHOW_COMMANDS,
   SM_WIDTH, LG_WIDTH, LAYOUT_LIST, LOCKED,
@@ -14,7 +15,7 @@ import {
 
 import { withTailwind } from '.';
 
-import TopBar from './TopBar';
+import TopBarMain from './TopBarMain';
 import BottomBar from './BottomBar';
 import CardPanel from './CardPanel';
 import ListPanel from './ListPanel';
@@ -97,7 +98,7 @@ class Main extends React.PureComponent {
         <React.Fragment>
           <LockPanel columnWidth={columnWidth} />
           {columnWidth === PC_100 && <BottomBar />}
-          <TopBar rightPane={topBarRightPane} isListNameShown={true} doSupportTheme={true} />
+          <TopBarMain rightPane={topBarRightPane} />
         </React.Fragment>
       );
     } else {
@@ -109,7 +110,7 @@ class Main extends React.PureComponent {
           }
           {/* BottomBar before TopBar so listNamePopup's bg in TopBar's above BottomBar */}
           {columnWidth === PC_100 && <BottomBar />}
-          <TopBar rightPane={topBarRightPane} isListNameShown={true} doSupportTheme={true} />
+          <TopBarMain rightPane={topBarRightPane} />
           <FetchedPopup />
           <CardItemMenuPopup />
           <PinMenuPopup />

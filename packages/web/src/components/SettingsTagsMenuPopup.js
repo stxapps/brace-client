@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { moveTagName, updateTagNameEditors, updatePopup } from '../actions';
+import { updatePopup } from '../actions';
+import { moveTagName, updateTagNameEditors } from '../actions/chunk';
 import {
   SETTINGS_TAGS_MENU_POPUP, MODE_EDIT, SWAP_LEFT, SWAP_RIGHT,
 } from '../types/const';

@@ -1,6 +1,6 @@
-import userSession from './userSession';
 import axios from './axiosWrapper';
 import lsgApi from './apis/localSg';
+import ecApi from './apis/encryption';
 import {
   DOMAIN_NAME, COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, PADDLE_RANDOM_ID,
   IAP_PADDLE_PRE_URL,
@@ -107,7 +107,7 @@ const requestSubscription = async (productId) => {
   // only the first time, check in localStorage first
   let randomId = lsgApi.getItemSync(PADDLE_RANDOM_ID);
   if (!isString(randomId)) {
-    const sigObj = await userSession.signECDSA(SIGNED_TEST_STRING);
+    const sigObj = await ecApi.signECDSA(SIGNED_TEST_STRING);
     const userId = sigObj.publicKey;
 
     randomId = `${randomString(8)}-${randomString(8)}-${randomString(8)}-${randomString(8)}`;

@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { updatePopup, updateLinkEditor, addLink } from '../actions';
+import { updatePopup } from '../actions';
+import { updateLinkEditor, addLink } from '../actions/chunk';
 import { ADD_POPUP, NO_URL, ASK_CONFIRM_URL, URL_MSGS } from '../types/const';
 import { getSafeAreaWidth, getThemeMode } from '../selectors';
 import { validateUrl } from '../utils';

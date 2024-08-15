@@ -1,7 +1,8 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { updatePopup, updateSelectingListName, updateLockAction } from '../actions';
+import { updatePopup } from '../actions';
+import { updateSelectingListName, updateLockAction } from '../actions/chunk';
 import {
   PC_100, TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
   SM_WIDTH, MD_WIDTH, LOCK_EDITOR_POPUP, LOCK_ACTION_UNLOCK_LIST,

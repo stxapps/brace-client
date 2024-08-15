@@ -2,7 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { updatePopup, updateSettingsPopup } from '../actions';
+import { updatePopup } from '../actions';
+import { updateSettingsPopup } from '../actions/chunk';
 import {
   CONFIRM_DISCARD_POPUP, DISCARD_ACTION_UPDATE_LIST_NAME, DISCARD_ACTION_UPDATE_TAG_NAME,
   SM_WIDTH,

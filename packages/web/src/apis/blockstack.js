@@ -1,8 +1,7 @@
 import { diffLinesRaw, DIFF_EQUAL, DIFF_DELETE, DIFF_INSERT } from 'jest-diff';
 import { LexoRank } from '@wewatch/lexorank';
 
-import serverApi from './server';
-import cacheApi from './localCache';
+import dataApi from './data';
 import fileApi from './localFile';
 import axios from '../axiosWrapper';
 import {
@@ -13,18 +12,16 @@ import {
   UPDATE_CUSTOM_DATA, UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_T_STEP,
 } from '../types/actionTypes';
 import {
-  LINKS, SSLTS, SETTINGS, INFO, PINS, TAGS, CD_ROOT, DOT_JSON, LOCAL_LINK_ATTRS,
-  BRACE_EXTRACT_URL, EXTRACT_INIT, EXTRACT_EXCEEDING_N_URLS, N_LINKS, PUT_FILE,
-  DELETE_FILE,
+  INFO, CD_ROOT, DOT_JSON, LOCAL_LINK_ATTRS, BRACE_EXTRACT_URL, EXTRACT_INIT,
+  EXTRACT_EXCEEDING_N_URLS, N_LINKS, PUT_FILE, DELETE_FILE,
 } from '../types/const';
 import {
   isEqual, isObject, isString, isNumber, randomString, createLinkFPath, createSsltFPath,
-  createPinFPath, addFPath, getStaticFPath, deriveFPaths, createDataFName,
-  getLastSettingsFPaths, createSettingsFPath, excludeNotObjContents,
-  batchGetFileWithRetry, deriveUnknownErrorLink, getLinkFPaths, getSsltFPaths,
-  getPinFPaths, listLinkMetas, getNLinkMetas, isFetchedLinkId, getInUseTagNames,
-  getTagFPaths, getTags, getMainId, createTagFPath, extractTagFPath, getNLinkMetasByQt,
-  newObject, getListNameAndLink, getPerformFilesDataPerId, getPerformFilesResultsPerId,
+  createPinFPath, getStaticFPath, deriveFPaths, createDataFName, getLastSettingsFPaths,
+  createSettingsFPath, excludeNotObjContents, deriveUnknownErrorLink, getLinkFPaths,
+  getSsltFPaths, getPinFPaths, listLinkMetas, getNLinkMetas, isFetchedLinkId,
+  getInUseTagNames, getTagFPaths, getTags, getMainId, createTagFPath, extractTagFPath,
+  getNLinkMetasByQt, newObject, getListNameAndLink, getPerformFilesResultsPerId,
   throwIfPerformFilesError,
 } from '../utils';
 import vars from '../vars';
@@ -98,29 +95,6 @@ export const effect = async (effectObj, _action) => {
   throw new Error(`${method} is invalid for blockstack effect.`);
 };
 
-const _listFPaths = async (listFiles) => {
-  // List fpaths(keys)
-  // Even though aws, az, gc sorts a-z but on Gaia local machine, it's arbitrary
-  //   so need to fetch all and sort locally.
-  const fpaths = {
-    linkFPaths: {}, ssltFPaths: [], staticFPaths: [], settingsFPaths: [],
-    infoFPath: null, pinFPaths: [], tagFPaths: [],
-  };
-  await listFiles((fpath) => {
-    addFPath(fpaths, fpath);
-    return true;
-  });
-  return fpaths;
-};
-
-const listFPaths = async (doForce = false) => {
-  if (isObject(serverApi.cachedFPaths.fpaths) && !doForce) {
-    return serverApi.cachedFPaths.fpaths;
-  }
-  serverApi.cachedFPaths.fpaths = await _listFPaths(serverApi.listFiles);
-  return serverApi.cachedFPaths.fpaths;
-};
-
 const fetchStgsAndInfo = async (_settingsFPaths, infoFPath) => {
   let settings, conflictedSettings = [], info;
   const {
@@ -128,7 +102,7 @@ const fetchStgsAndInfo = async (_settingsFPaths, infoFPath) => {
   } = getLastSettingsFPaths(_settingsFPaths);
 
   if (settingsFPaths.length > 0) {
-    const files = await getFiles(settingsFPaths, true);
+    const files = await dataApi.getFiles(settingsFPaths, true);
 
     // content can be null if dangerouslyIgnoreError is true.
     const { fpaths, contents } = excludeNotObjContents(files.fpaths, files.contents);
@@ -145,7 +119,7 @@ const fetchStgsAndInfo = async (_settingsFPaths, infoFPath) => {
   }
 
   if (infoFPath) {
-    const { contents } = await getFiles([infoFPath], true);
+    const { contents } = await dataApi.getFiles([infoFPath], true);
     if (isObject(contents[0])) info = contents[0];
   }
 
@@ -174,7 +148,7 @@ const fetchLinks = async (metas) => {
   const fpaths = [];
   for (const meta of metas) fpaths.push(...meta.fpaths);
 
-  const { responses } = await getFiles(fpaths, true);
+  const { responses } = await dataApi.getFiles(fpaths, true);
 
   const ftcMap = {}; // No order guarantee btw fpaths and responses
   for (const { success, fpath, content } of responses) {
@@ -229,7 +203,7 @@ const fetchStaticFiles = async (linkObjs) => {
     remainStaticFPaths.push(staticFPath);
   }
 
-  const sFiles = await getFiles(remainStaticFPaths, true);
+  const sFiles = await dataApi.getFiles(remainStaticFPaths, true);
   for (let i = 0; i < sFiles.fpaths.length; i++) {
     if (sFiles.contents[i] === null) continue;
     await fileApi.putFile(fpathMap[sFiles.fpaths[i]], sFiles.contents[i]);
@@ -286,7 +260,7 @@ const fetch = async (params) => {
   if (!didFetch || !didFetchSettings) {
     const {
       linkFPaths, ssltFPaths, settingsFPaths, infoFPath, pinFPaths, tagFPaths,
-    } = await listFPaths(true);
+    } = await dataApi.listFPaths(true);
 
     const {
       linkMetas, inUseListNames,
@@ -425,7 +399,7 @@ const putLinks = async (params) => {
   const errorListNames = [], errorLinks = [], errors = [];
 
   const data = { values, isSequential: false, nItemsForNs: N_LINKS };
-  const results = await performFiles(data);
+  const results = await dataApi.performFiles(data);
   const resultsPerId = getPerformFilesResultsPerId(results);
 
   for (let i = 0; i < listNames.length; i++) {
@@ -465,7 +439,7 @@ const moveLinks = async (params) => {
   const errorListNames = [], errorLinks = [], errors = [];
 
   const data = { values, isSequential: false, nItemsForNs: N_LINKS };
-  const results = await performFiles(data);
+  const results = await dataApi.performFiles(data);
   const resultsPerId = getPerformFilesResultsPerId(results);
 
   for (let i = 0; i < listNames.length; i++) {
@@ -527,7 +501,7 @@ const deleteLinks = async (params) => {
   const errorListNames = [], errorIds = [], errors = [];
 
   const data = { values, isSequential: false, nItemsForNs: N_LINKS };
-  const results = await performFiles(data);
+  const results = await dataApi.performFiles(data);
   const resultsPerId = getPerformFilesResultsPerId(results);
 
   for (let i = 0; i < listNames.length; i++) {
@@ -632,7 +606,7 @@ const tryPutSettings = async (params) => {
 
 const putSettings = async (params) => {
   const { settings } = params;
-  const { settingsFPaths } = await listFPaths();
+  const { settingsFPaths } = await dataApi.listFPaths();
 
   const addedDT = Date.now();
   const {
@@ -647,7 +621,7 @@ const putSettings = async (params) => {
   ];
 
   const data = { values, isSequential: false, nItemsForNs: N_LINKS };
-  const results = await performFiles(data);
+  const results = await dataApi.performFiles(data);
   throwIfPerformFilesError(data, results);
 
   return { settings, _settingsFPaths };
@@ -678,7 +652,7 @@ const tryPutInfo = async (params) => {
 
 const putInfo = async (params) => {
   const { info } = params;
-  const { infoFPath: _infoFPath } = await listFPaths();
+  const { infoFPath: _infoFPath } = await dataApi.listFPaths();
 
   const addedDT = Date.now();
   const infoFPath = `${INFO}${addedDT}${DOT_JSON}`;
@@ -688,7 +662,7 @@ const putInfo = async (params) => {
   ];
 
   const data = { values, isSequential: false, nItemsForNs: N_LINKS };
-  const results = await performFiles(data);
+  const results = await dataApi.performFiles(data);
   throwIfPerformFilesError(data, results);
 
   return { info, _infoFPath };
@@ -705,7 +679,7 @@ const putPins = async (params) => {
   }
 
   const data = { values, isSequential: false, nItemsForNs: N_LINKS };
-  const results = await performFiles(data);
+  const results = await dataApi.performFiles(data);
   const resultsPerId = getPerformFilesResultsPerId(results);
 
   const successPins = [], errorPins = [], errors = [];
@@ -771,7 +745,7 @@ const deletePins = async (params) => {
   }
 
   const data = { values, isSequential: false, nItemsForNs: N_LINKS };
-  const results = await performFiles(data);
+  const results = await dataApi.performFiles(data);
   const resultsPerId = getPerformFilesResultsPerId(results);
 
   const successPins = [], errorPins = [], errors = [];
@@ -819,7 +793,7 @@ const updateCustomData = async (params) => {
   );
 
   const data = { values, isSequential: true, nItemsForNs: N_LINKS };
-  const results = await performFiles(data);
+  const results = await dataApi.performFiles(data);
   throwIfPerformFilesError(data, results);
 
   return { listName, fromLink, toLink, serverUnusedFPaths, localUnusedFPaths };
@@ -996,7 +970,7 @@ const updateTagDataTStep = async (params) => {
     const data = {
       values: selectedPfValues, isSequential: false, nItemsForNs: N_LINKS,
     };
-    const selectedResults = await performFiles(data);
+    const selectedResults = await dataApi.performFiles(data);
     results.push(...selectedResults);
   }
   const resultsPerId = getPerformFilesResultsPerId(results);
@@ -1024,74 +998,3 @@ const updateTagDataTStep = async (params) => {
 
   return { valuesPerId, successIds, errorIds, errors };
 };
-
-const getFiles = async (fpaths, dangerouslyIgnoreError = false) => {
-  const result = { responses: [], fpaths: [], contents: [] };
-
-  const remainFPaths = [];
-  for (const fpath of fpaths) {
-    let content;
-    if ([LINKS, SSLTS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))) {
-      content = await cacheApi.getFile(fpath, true);
-    }
-    if (content === undefined) {
-      remainFPaths.push(fpath);
-      continue;
-    }
-
-    result.responses.push({ content, fpath, success: true });
-    result.fpaths.push(fpath);
-    result.contents.push(content);
-  }
-
-  for (let i = 0; i < remainFPaths.length; i += N_LINKS) {
-    const selectedFPaths = remainFPaths.slice(i, i + N_LINKS);
-    const responses = await batchGetFileWithRetry(
-      serverApi.getFile, selectedFPaths, 0, dangerouslyIgnoreError
-    );
-    for (const response of responses) {
-      result.responses.push(response);
-      result.fpaths.push(response.fpath);
-      result.contents.push(response.content);
-
-      if (response.success) {
-        const { fpath, content } = response;
-        if (
-          [LINKS, SSLTS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))
-        ) {
-          await cacheApi.putFile(fpath, content);
-        }
-      }
-    }
-  }
-
-  return result;
-};
-
-const performFiles = async (data) => {
-  const results = await serverApi.performFiles(data);
-
-  const dataPerId = getPerformFilesDataPerId(data);
-  for (const result of results) {
-    if (!result.success) continue;
-
-    const { type, path: fpath, content } = dataPerId[result.id];
-    if (
-      [LINKS, SSLTS, SETTINGS, INFO, PINS, TAGS].some(el => fpath.startsWith(el))
-    ) {
-      if (type === PUT_FILE) {
-        await cacheApi.putFile(fpath, content);
-      } else if (type === DELETE_FILE) {
-        await cacheApi.deleteFile(fpath);
-      } else {
-        console.log('In blockstack.performFiles, invalid data:', data);
-      }
-    }
-  }
-
-  return results;
-};
-
-const blockstack = { listFPaths, getFiles, performFiles };
-
-export default blockstack;

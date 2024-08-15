@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { motion } from 'framer-motion';
 
-import { updateStatus } from '../actions';
+import { updateStatus } from '../actions/chunk';
 import {
   FETCH, FETCH_COMMIT, FETCH_ROLLBACK, DELETE_OLD_LINKS_IN_TRASH,
   DELETE_OLD_LINKS_IN_TRASH_COMMIT, DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,

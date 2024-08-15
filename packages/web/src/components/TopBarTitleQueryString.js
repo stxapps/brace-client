@@ -1,7 +1,8 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { updatePopup, updateListNamesMode } from '../actions';
+import { updatePopup } from '../actions';
+import { updateListNamesMode } from '../actions/chunk';
 import {
   LIST_NAMES_POPUP, SM_WIDTH, LG_WIDTH, LIST_NAMES_MODE_CHANGE_TAG_NAME,
   LIST_NAMES_ANIM_TYPE_POPUP,

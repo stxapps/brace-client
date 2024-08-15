@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-import walletApi from '../apis/wallet';
+import { walletCreateAccount, walletChooseAccount } from '../importWrapper';
 import { HASH_TERMS, HASH_PRIVACY, HASH_SUPPORT } from '../types/const';
 import { isString, randomString, copyTextToClipboard } from '../utils';
 
@@ -28,7 +28,7 @@ const SignUp = (props) => {
     didClick.current = true;
     setLoadingShown(true);
     setTimeout(() => {
-      walletApi.createAccount(
+      walletCreateAccount(
         { domainName, appName, appIconUrl, appScopes }
       ).then((data) => {
         didClick.current = false;
@@ -42,7 +42,7 @@ const SignUp = (props) => {
         setLoadingShown(false);
         setErrorShown(true);
       });
-    }, 1);
+    }, 72);
   };
 
   const onClipboardBtnClick = () => {
@@ -63,7 +63,7 @@ const SignUp = (props) => {
     didClick.current = true;
     setLoadingShown(true);
     setTimeout(() => {
-      walletApi.chooseAccount(walletData.current, 0).then((data) => {
+      walletChooseAccount(walletData.current, 0).then((data) => {
         didClick.current = false;
         setLoadingShown(false);
         props.onBackedUpBtnClick(data);
@@ -73,7 +73,7 @@ const SignUp = (props) => {
         setLoadingShown(false);
         setErrorShown(true);
       });
-    }, 1);
+    }, 72);
   };
 
   useEffect(() => {

@@ -1,8 +1,5 @@
 import { UserSession, AppConfig } from '@stacks/auth/dist/esm';
 import { SessionData } from '@stacks/auth/dist/esm/sessionData';
-import {
-  signECDSA as _signECDSA, encryptContent, decryptContent,
-} from '@stacks/encryption/dist/esm';
 
 import { DOMAIN_NAME, APP_SCOPES } from './types/const';
 
@@ -45,27 +42,9 @@ const loadUserData = () => {
   return _userSession.loadUserData();
 };
 
-const signECDSA = async (content) => {
-  const userData = loadUserData();
-  const sigObj = _signECDSA(userData.appPrivateKey, content);
-  return sigObj;
-};
-
-const encrypt = (content) => {
-  const userData = loadUserData();
-  const options = { privateKey: userData.appPrivateKey };
-  return encryptContent(content, options);
-};
-
-const decrypt = (encryptedContent) => {
-  const userData = loadUserData();
-  const options = { privateKey: userData.appPrivateKey };
-  return decryptContent(encryptedContent, options);
-};
-
 const userSession = {
   _userSession, didSessionCreate, isUserSignedIn, isSignInPending, handlePendingSignIn,
-  signUserOut, updateUserData, loadUserData, signECDSA, encrypt, decrypt,
+  signUserOut, updateUserData, loadUserData,
 };
 
 export default userSession;

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { retryDiedLinks, cancelDiedLinks } from '../actions';
+import { retryDiedLinks, cancelDiedLinks } from '../actions/chunk';
 import {
   ADDING, MOVING, UPDATING, EXTRD_UPDATING, SM_WIDTH, PINNED,
 } from '../types/const';

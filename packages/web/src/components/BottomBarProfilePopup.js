@@ -3,9 +3,10 @@ import { connect } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import Url from 'url-parse';
 
+import { signOut, updatePopup } from '../actions';
 import {
-  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, lockCurrentList,
-} from '../actions';
+  updateSettingsPopup, updateSettingsViewId, lockCurrentList,
+} from '../actions/chunk';
 import {
   getSafeAreaWidth, getThemeMode, getCurrentLockListStatus, getCanChangeListNames,
 } from '../selectors';

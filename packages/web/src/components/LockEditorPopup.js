@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { updatePopup } from '../actions';
 import {
-  updatePopup, updateLockEditor, addLockList, removeLockList, unlockList,
-} from '../actions';
+  updateLockEditor, addLockList, removeLockList, unlockList,
+} from '../actions/chunk';
 import {
   MY_LIST, LOCK_EDITOR_POPUP, LOCK_ACTION_ADD_LOCK_LIST, LOCK_ACTION_REMOVE_LOCK_LIST,
   LOCK_ACTION_UNLOCK_LIST,

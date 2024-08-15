@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { retryDiedSettings, cancelDiedSettings, updateSettingsPopup } from '../actions';
+import {
+  retryDiedSettings, cancelDiedSettings, updateSettingsPopup,
+} from '../actions/chunk';
 import { HASH_SUPPORT, DIED_UPDATING } from '../types/const';
 
 import { useTailwind } from '.';

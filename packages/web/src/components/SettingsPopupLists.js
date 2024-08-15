@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
+import { updatePopup } from '../actions';
 import {
   addListNames, updateListNames, moveListName, checkDeleteListName,
-  updateSelectingListName, updateListNameEditors, updatePopup,
-} from '../actions';
+  updateSelectingListName, updateListNameEditors,
+} from '../actions/chunk';
 import {
   VALID_LIST_NAME, LIST_NAME_MSGS, SETTINGS_LISTS_MENU_POPUP, SWAP_LEFT, SWAP_RIGHT,
   MODE_VIEW, MODE_EDIT, SM_WIDTH,

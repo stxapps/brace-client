@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
+import { updatePopup } from '../actions';
 import {
   addTagNames, updateTagNames, moveTagName, checkDeleteTagName, updateSelectingTagName,
-  updateTagNameEditors, updatePopup,
-} from '../actions';
+  updateTagNameEditors,
+} from '../actions/chunk';
 import {
   VALID_TAG_NAME, TAG_NAME_MSGS, SETTINGS_TAGS_MENU_POPUP, SWAP_LEFT, SWAP_RIGHT,
   MODE_VIEW, MODE_EDIT,

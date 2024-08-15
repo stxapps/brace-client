@@ -2,10 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { updatePopup } from '../actions';
 import {
-  updatePopup, updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction,
-  updateListNamesMode, updateCustomEditorPopup, updateTagEditorPopup,
-} from '../actions';
+  updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction, updateListNamesMode,
+  updateCustomEditorPopup, updateTagEditorPopup,
+} from '../actions/chunk';
 import {
   MY_LIST, TRASH, ADDING, MOVING, UPDATING, EXTRD_UPDATING, COPY_LINK, ARCHIVE, REMOVE,
   RESTORE, DELETE, MOVE_TO, CHANGE, PIN, MANAGE_PIN, PINNED, CARD_ITEM_MENU_POPUP,

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { mergeSettings } from '../actions';
+import { mergeSettings } from '../actions/chunk';
 import { initialSettingsState } from '../types/initialStates';
 import { extractDataId, getFormattedDT } from '../utils';
 

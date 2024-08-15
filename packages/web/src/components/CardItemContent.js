@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import GracefulImage from 'react-graceful-image';
 
+import { updatePopup, updateBulkEdit } from '../actions';
 import {
-  updatePopup, updateSelectingLinkId, updateBulkEdit, addSelectedLinkIds,
-  updateQueryString,
-} from '../actions';
+  updateSelectingLinkId, addSelectedLinkIds, updateQueryString,
+} from '../actions/chunk';
 import { CARD_ITEM_MENU_POPUP, COLOR, PATTERN, IMAGE } from '../types/const';
 import {
   makeGetCustomImage, getSafeAreaWidth, getThemeMode, makeGetTnAndDns,

@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import Url from 'url-parse';
 
+import { signOut, updatePopup, updateBulkEdit } from '../actions';
 import {
-  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, updateBulkEdit,
-  lockCurrentList,
-} from '../actions';
+  updateSettingsPopup, updateSettingsViewId, lockCurrentList,
+} from '../actions/chunk';
 import {
   HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT, LOCK, UNLOCKED,
 } from '../types/const';

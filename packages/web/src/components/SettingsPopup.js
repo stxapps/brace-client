@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { updateSettingsPopup, updateSettingsViewId } from '../actions';
+import { updateSettingsPopup, updateSettingsViewId } from '../actions/chunk';
 import {
   SETTINGS_VIEW_ACCOUNT, SETTINGS_VIEW_IAP, SETTINGS_VIEW_IAP_RESTORE,
   SETTINGS_VIEW_DATA, SETTINGS_VIEW_DATA_IMPORT, SETTINGS_VIEW_DATA_EXPORT,

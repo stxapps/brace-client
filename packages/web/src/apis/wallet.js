@@ -107,7 +107,7 @@ const storeProfile = async (walletData) => {
   });
 };
 
-const createAccount = async (appData) => {
+export const createAccount = async (appData) => {
   const secretKey = generateSecretKey(256);
   const wallet = await generateWallet({ secretKey, password: DEFAULT_PASSWORD });
 
@@ -242,7 +242,7 @@ const restoreUsernames = async (accounts) => {
   }
 };
 
-const restoreAccount = async (appData, secretKey) => {
+export const restoreAccount = async (appData, secretKey) => {
   if (!isString(secretKey)) return { errMsg: 'Please fill in your Secret Key.' };
 
   let wallet;
@@ -445,7 +445,7 @@ const updateWalletConfig = async (walletData, accountIndex, hubUrl) => {
   }
 };
 
-const chooseAccount = async (walletData, accountIndex) => {
+export const chooseAccount = async (walletData, accountIndex) => {
   const { appData, wallet, fromCreateAccount } = walletData;
 
   if (!fromCreateAccount) await restoreProfile(walletData, accountIndex);
@@ -491,7 +491,3 @@ const chooseAccount = async (walletData, accountIndex) => {
 
   return userData;
 };
-
-const wallet = { createAccount, restoreAccount, chooseAccount };
-
-export default wallet;

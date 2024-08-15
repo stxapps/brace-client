@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import GracefulImage from 'react-graceful-image';
 
+import { updatePopup, updateBulkEdit } from '../actions';
 import {
-  updatePopup, updateSelectingLinkId, updateBulkEdit, addSelectedLinkIds, moveLinks,
-  updateQueryString,
-} from '../actions';
+  updateSelectingLinkId, addSelectedLinkIds, moveLinks, updateQueryString,
+} from '../actions/chunk';
 import {
   CARD_ITEM_MENU_POPUP, COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING,
   UPDATING, EXTRD_UPDATING, LG_WIDTH, REMOVE, RESTORE, PINNED, TAGGED,

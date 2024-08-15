@@ -3,54 +3,15 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { updatePopup } from '../actions';
-import {
-  SIGN_IN_POPUP, SHOW_BLANK, SHOW_SIGN_IN, SHOW_COMMANDS, MD_WIDTH, BLK_MODE,
-} from '../types/const';
+import { SIGN_IN_POPUP, SHOW_SIGN_IN, BLK_MODE } from '../types/const';
 import { getSafeAreaWidth, getThemeMode } from '../selectors';
-import { toPx, throttle } from '../utils';
 
 import { getTopBarSizes, withTailwind } from '.';
-
-import TopBarCommands from './TopBarCommands';
-import TopBarBulkEditCommands from './TopBarBulkEditCommands';
-import TopBarTitle from './TopBarTitle';
-import StatusPopup from './StatusPopup';
 
 import shortLogo from '../images/logo-short.svg';
 import shortLogoBlk from '../images/logo-short-blk.svg';
 
 class TopBar extends React.PureComponent {
-
-  constructor(props) {
-    super(props);
-
-    const { listNameDistanceY } = getTopBarSizes(props.safeAreaWidth);
-
-    this.state = {
-      scrollY: Math.min(window.scrollY, listNameDistanceY),
-    };
-
-    this.updateScrollY = throttle(this.updateScrollY, 16);
-  }
-
-  componentDidMount() {
-    if (this.props.isListNameShown) {
-      window.addEventListener('scroll', this.updateScrollY);
-    }
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('scroll', this.updateScrollY);
-  }
-
-  updateScrollY = () => {
-    const { safeAreaWidth } = this.props;
-    const { listNameDistanceY } = getTopBarSizes(safeAreaWidth);
-    if (window.scrollY >= listNameDistanceY && this.state.scrollY >= listNameDistanceY) {
-      return;
-    }
-    this.setState({ scrollY: Math.min(window.scrollY, listNameDistanceY) });
-  }
 
   onSignInBtnClick = () => {
     this.props.updatePopup(SIGN_IN_POPUP, true);
@@ -66,81 +27,19 @@ class TopBar extends React.PureComponent {
     );
   }
 
-  renderListName() {
-    const { safeAreaWidth, tailwind } = this.props;
-    const { scrollY } = this.state;
-    const {
-      listNameDistanceX,
-      listNameStartY, listNameEndY, listNameDistanceY,
-    } = getTopBarSizes(safeAreaWidth);
-
-    let top = listNameStartY + (scrollY * (listNameEndY - listNameStartY) / listNameDistanceY);
-    const left = scrollY * listNameDistanceX / listNameDistanceY;
-
-    const listNameStyle = { top, left };
-    return (
-      <div style={listNameStyle} className={tailwind('absolute')}>
-        <TopBarTitle />
-      </div >
-    );
-  }
-
-  renderStatusPopup() {
-    const { safeAreaWidth, tailwind } = this.props;
-    const { scrollY } = this.state;
-    const {
-      statusPopupDistanceY,
-    } = getTopBarSizes(safeAreaWidth);
-
-    const initialTop = safeAreaWidth < MD_WIDTH ? '4.5625rem' : '5.0625rem';
-    const top = Math.max(0, toPx(initialTop) - scrollY);
-    const right = 0;
-    const opacity = Math.max(0, 1.0 - (scrollY / statusPopupDistanceY));
-    const visibility = scrollY >= statusPopupDistanceY ? 'hidden' : 'visible';
-
-    const statusPopupStyle = /** @type any */({ top, right, opacity, visibility });
-    return (
-      <div style={statusPopupStyle} className={tailwind('absolute')}>
-        <StatusPopup />
-      </div>
-    );
-  }
-
   render() {
     const {
-      rightPane: rightPaneProp, isBulkEditing, themeMode, safeAreaWidth, tailwind,
+      rightPane: rightPaneProp, doSupportTheme, themeMode, safeAreaWidth, tailwind,
     } = this.props;
 
-    let rightPane;
-    if (rightPaneProp === SHOW_BLANK) rightPane = null;
-    else if (rightPaneProp === SHOW_SIGN_IN) rightPane = this.renderSignInBtn();
-    else if (rightPaneProp === SHOW_COMMANDS) {
-      rightPane = isBulkEditing ? <TopBarBulkEditCommands /> : <TopBarCommands />;
-    } else throw new Error(`Invalid rightPane: ${rightPaneProp}`);
-
-    const { isListNameShown, doSupportTheme } = this.props;
+    let rightPane = null;
+    if (rightPaneProp === SHOW_SIGN_IN) rightPane = this.renderSignInBtn();
 
     let topBarStyle, topBarStyleClasses = 'bg-white';
-    if (isListNameShown) {
 
-      const { scrollY } = this.state;
-      const {
-        topBarHeight, headerHeight,
-        listNameDistanceY,
-      } = getTopBarSizes(safeAreaWidth);
+    const { headerHeight } = getTopBarSizes(safeAreaWidth);
+    topBarStyle = { height: headerHeight };
 
-      const height = topBarHeight + (scrollY * (headerHeight - topBarHeight) / listNameDistanceY);
-
-      topBarStyle = { height };
-      topBarStyleClasses += ' fixed inset-x-0 top-0 z-30';
-      if (height === headerHeight) {
-        topBarStyleClasses += ' border-b border-gray-200';
-        if (doSupportTheme) topBarStyleClasses += ' blk:border-gray-700';
-      }
-    } else {
-      const { headerHeight } = getTopBarSizes(safeAreaWidth);
-      topBarStyle = { height: headerHeight };
-    }
     if (doSupportTheme) topBarStyleClasses += ' blk:bg-gray-900';
 
     return (
@@ -152,8 +51,6 @@ class TopBar extends React.PureComponent {
             </a>
             {rightPane}
           </header>
-          {isListNameShown && this.renderStatusPopup()}
-          {isListNameShown && this.renderListName()}
         </div>
       </div>
     );
@@ -162,18 +59,15 @@ class TopBar extends React.PureComponent {
 
 TopBar.propTypes = {
   rightPane: PropTypes.string.isRequired,
-  isListNameShown: PropTypes.bool,
   doSupportTheme: PropTypes.bool,
 };
 
 TopBar.defaultProps = {
-  isListNameShown: false,
   doSupportTheme: false,
 };
 
 const mapStateToProps = (state, props) => {
   return {
-    isBulkEditing: state.display.isBulkEditing,
     themeMode: getThemeMode(state),
     safeAreaWidth: getSafeAreaWidth(state),
   };

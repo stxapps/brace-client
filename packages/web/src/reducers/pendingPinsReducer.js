@@ -1,7 +1,7 @@
 import { REHYDRATE } from 'redux-persist/constants';
 import { loop, Cmd } from 'redux-loop';
 
-import { cleanUpPins } from '../actions';
+import { cleanUpPins } from '../importWrapper';
 import {
   PIN_LINK, PIN_LINK_COMMIT, PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_COMMIT,
   UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,

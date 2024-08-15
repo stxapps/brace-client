@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { updatePopup } from '../actions';
 import {
-  moveListName, updateListNameEditors, updatePopup, updateListNamesMode,
-  updateLockAction, showAddLockEditorPopup,
-} from '../actions';
+  moveListName, updateListNameEditors, updateListNamesMode, updateLockAction,
+  showAddLockEditorPopup,
+} from '../actions/chunk';
 import {
   SETTINGS_LISTS_MENU_POPUP, LIST_NAMES_POPUP, LOCK_EDITOR_POPUP, MY_LIST, TRASH,
   ARCHIVE, MODE_EDIT, SWAP_LEFT, SWAP_RIGHT, LIST_NAMES_MODE_MOVE_LIST_NAME,

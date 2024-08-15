@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { retryDiedLinks, cancelDiedLinks } from '../actions';
+import { retryDiedLinks, cancelDiedLinks } from '../actions/chunk';
 import { ADDING, MOVING, UPDATING, EXTRD_UPDATING, PINNED } from '../types/const';
 import {
   makeGetPinStatus, makeGetTagStatus, getSafeAreaWidth, getThemeMode,

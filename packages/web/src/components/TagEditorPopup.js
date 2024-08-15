@@ -2,9 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import {
-  updatePopup, updateTagEditor, addTagEditorTagName, updateTagData, updateBulkEdit,
-} from '../actions';
+import { updatePopup, updateBulkEdit } from '../actions';
+import { updateTagEditor, addTagEditorTagName, updateTagData } from '../actions/chunk';
 import {
   TAG_EDITOR_POPUP, TAGGED, ADD_TAGS, MANAGE_TAGS, NOT_SUPPORTED,
 } from '../types/const';

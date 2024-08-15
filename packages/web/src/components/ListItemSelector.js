@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   SD_HUB_URL, MAX_SELECTED_LINK_IDS, SD_MAX_SELECTED_LINK_IDS,
 } from '../types/const';
-import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
+import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions/chunk';
 import { makeIsLinkIdSelected, getSelectedLinkIdsLength } from '../selectors';
 import { popupFMV } from '../types/animConfigs';
 

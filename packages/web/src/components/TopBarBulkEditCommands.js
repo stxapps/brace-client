@@ -2,10 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { updatePopup, updateBulkEdit } from '../actions';
 import {
-  updatePopup, updateBulkEdit, moveLinks, updateDeleteAction, updateListNamesMode,
-  updateBulkEditMenuMode,
-} from '../actions';
+  moveLinks, updateDeleteAction, updateListNamesMode, updateBulkEditMenuMode,
+} from '../actions/chunk';
 import {
   CONFIRM_DELETE_POPUP, LIST_NAMES_POPUP, BULK_EDIT_MENU_POPUP, MY_LIST, ARCHIVE, TRASH,
   DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,

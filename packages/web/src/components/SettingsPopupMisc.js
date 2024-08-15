@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   updateDoExtractContents, updateDoDeleteOldLinksInTrash, updateDoDescendingOrder,
   updateDoUseLocalLayout, updateLayoutType, updateDoUseLocalTheme, updateTheme,
-} from '../actions';
+} from '../actions/chunk';
 import {
   HASH_PRIVACY, LAYOUT_CARD, LAYOUT_LIST, WHT_MODE, BLK_MODE, SYSTEM_MODE, CUSTOM_MODE,
 } from '../types/const';

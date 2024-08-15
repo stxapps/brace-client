@@ -4,7 +4,7 @@ import {
 import { saveAs } from 'file-saver';
 
 import axios from '../axiosWrapper';
-import dataApi from '../apis/blockstack';
+import dataApi from '../apis/data';
 import cacheApi from '../apis/localCache';
 import fileApi from '../apis/localFile';
 import {

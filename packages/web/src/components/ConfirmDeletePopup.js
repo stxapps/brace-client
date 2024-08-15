@@ -2,9 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import {
-  updatePopup, deleteLinks, updateBulkEdit, deleteListNames, deleteTagNames,
-} from '../actions';
+import { updatePopup, updateBulkEdit } from '../actions';
+import { deleteLinks, deleteListNames, deleteTagNames } from '../actions/chunk';
 import {
   CARD_ITEM_MENU_POPUP, CONFIRM_DELETE_POPUP, DELETE_ACTION_LINK_COMMANDS,
   DELETE_ACTION_LINK_ITEM_MENU, DELETE_ACTION_LIST_NAME, DELETE_ACTION_TAG_NAME,

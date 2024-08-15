@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { updatePopup, addLink, cancelDiedLinks } from '../actions';
+import { updatePopup } from '../actions';
+import { addLink, cancelDiedLinks } from '../actions/chunk';
 import {
   HASH_SUPPORT, SIGN_UP_POPUP, SIGN_IN_POPUP, MY_LIST, ADDED, DIED_ADDING,
   URL_QUERY_CLOSE_KEY, URL_QUERY_CLOSE_WINDOW, SHOW_BLANK, VALID_URL, NO_URL, BLK_MODE,

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { fetchMore, updateFetchedMore } from '../actions';
+import { fetchMore, updateFetchedMore } from '../actions/chunk';
 import {
   PC_100, PC_50, PC_33,
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,

@@ -4,9 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import loadImage from 'blueimp-load-image';
 
 import fileApi from '../apis/localFile';
-import {
-  updatePopup, updateCustomEditor, updateImages, updateCustomData,
-} from '../actions';
+import { updatePopup } from '../actions';
+import { updateCustomEditor, updateImages, updateCustomData } from '../actions/chunk';
 import { CUSTOM_EDITOR_POPUP, IMAGES, CD_ROOT, BLK_MODE } from '../types/const';
 import { getCustomEditor, getThemeMode } from '../selectors';
 import {
