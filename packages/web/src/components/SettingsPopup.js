@@ -267,7 +267,8 @@ const SettingsPopup = () => {
             <motion.button onClick={onSidebarCloseBtnClick} className={tailwind('absolute inset-0 h-full w-full')} variants={sideBarOverlayFMV}>
               <div className={tailwind('absolute inset-0 bg-gray-100 blk:bg-gray-800')} />
             </motion.button>
-            <motion.div className={tailwind('flex w-full max-w-56 flex-1 flex-col bg-white blk:bg-gray-900')} variants={sideBarFMV}>
+            {/* Need relative to be above absolute above */}
+            <motion.div className={tailwind('relative flex w-full max-w-56 flex-1 flex-col bg-white blk:bg-gray-900')} variants={sideBarFMV}>
               <div className={tailwind('overflow-auto pt-8 pb-4')}>
                 <div className={tailwind('flex flex-shrink-0 items-center px-4')}>
                   <h2 className={tailwind('text-xl font-medium leading-6 text-gray-800 blk:text-gray-100')}>Settings</h2>
@@ -322,7 +323,8 @@ const SettingsPopup = () => {
                 </nav>
               </div>
             </motion.div>
-            <div className={tailwind('w-14 flex-shrink-0')}>
+            {/* Need relative to be above absolute above */}
+            <div className={tailwind('relative w-14 flex-shrink-0')}>
               {/* Force sidebar to shrink to fit close icon */}
             </div>
             <div className={tailwind('absolute top-0 right-0')}>
