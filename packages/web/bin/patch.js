@@ -25,7 +25,7 @@ const replaceMatchedLine = (fpath, actionObjs) => {
 
 const patchFetch = () => {
   let match = '    Object.assign(fetchOpts, defaultFetchOpts, init);';
-  let repmt = "    if (input.includes('hiro.so') || input.includes('stacks.co') || input.includes('blockstack.org')) { Object.assign(fetchOpts, defaultFetchOpts, init); } else { Object.assign(fetchOpts, { referrerPolicy: 'origin' }, init); }";
+  let repmt = "    const inputUrl = new URL(input); if (inputUrl.host.includes('hiro.so') || inputUrl.host.includes('stacks.co') || inputUrl.host.includes('blockstack.org')) { Object.assign(fetchOpts, defaultFetchOpts, init); } else { Object.assign(fetchOpts, { referrerPolicy: 'origin' }, init); }";
   replaceMatchedLine(
     'node_modules/@stacks/network/dist/fetch.js',
     [{ match, repmt }],

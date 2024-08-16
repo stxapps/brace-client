@@ -292,7 +292,7 @@ const restoreProfile = async (walletData, accountIndex) => {
   if (!('username' in account)) account.username = await getUsername(account);
 
   let url;
-  if (isString(account.username)) {
+  if (isString(account.username) && account.username.length > 0) {
     url = await getProfileUrlFromZoneFile(account.username);
     if (isString(url)) {
       const res = await fetchFn(url);

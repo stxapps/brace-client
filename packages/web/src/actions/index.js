@@ -25,8 +25,8 @@ import {
   LOCK_EDITOR_POPUP, SWWU_POPUP, WHT_MODE, BLK_MODE, PADDLE_RANDOM_ID,
 } from '../types/const';
 import {
-  isEqual, isObject, throttle, separateUrlAndParam, extractUrl, getUserImageUrl,
-  getWindowSize, getEditingListNameEditors, getEditingTagNameEditors,
+  isEqual, isObject, throttle, separateUrlAndParam, extractUrl, getUserUsername,
+  getUserImageUrl, getWindowSize, getEditingListNameEditors, getEditingTagNameEditors,
 } from '../utils';
 import vars from '../vars';
 
@@ -38,7 +38,7 @@ export const init = async (store) => {
   let username = null, userImage = null, userHubUrl = null;
   if (isUserSignedIn) {
     const userData = userSession.loadUserData();
-    username = userData.username;
+    username = getUserUsername(userData);
     userImage = getUserImageUrl(userData);
     userHubUrl = userData.hubUrl;
   }
@@ -335,7 +335,7 @@ export const updateUserSignedIn = () => async (dispatch, getState) => {
     type: UPDATE_USER,
     payload: {
       isUserSignedIn: true,
-      username: userData.username,
+      username: getUserUsername(userData),
       image: getUserImageUrl(userData),
       hubUrl: userData.hubUrl,
     },
