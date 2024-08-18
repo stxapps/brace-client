@@ -97,7 +97,7 @@ const deleteFile = async (fpath, options = {}) => {
   await respectLimit(rId, 2);
 
   const storage = new Storage({ userSession: _userSession });
-  const result = storage.deleteFile(fpath, options);
+  const result = await storage.deleteFile(fpath, options);
 
   if (isObject(cachedServerFPaths.fpaths)) {
     const fpaths = copyFPaths(cachedServerFPaths.fpaths);
