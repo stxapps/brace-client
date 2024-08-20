@@ -7,7 +7,7 @@ const outputDir = process.argv[3];
 const readLines = (fpath) => {
 
   const text = fs.readFileSync(fpath, 'utf-8');
-  const lines = text.split('\n')
+  const lines = text.split(/\r?\n/)
     .filter(line => {
       const i = line.indexOf('//');
       if (i >= 0) {
@@ -15,6 +15,7 @@ const readLines = (fpath) => {
         if (i - 6 >= 0 && line.slice(i - 6, i) === 'https:') return true;
         if (i - 5 >= 0 && line.slice(i - 5, i) === 'file:') return true;
         if (i - 1 >= 0 && line.slice(i - 1, i) === '"') return true;
+        if (i - 1 >= 0 && line.slice(i - 1, i) === '\\') return true;
 
         console.log(`Line with a comment deleted: ${line}`);
         return false;

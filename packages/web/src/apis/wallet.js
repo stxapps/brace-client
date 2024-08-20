@@ -18,7 +18,7 @@ import { bytesToHex } from '@stacks/common/dist/esm';
 import { HR_HUB_URL, SD_HUB_URL } from '../types/const';
 import { isObject, isString, isNumber, sleep } from '../utils';
 
-const fetchFn = createFetchFn()
+const fetchFn = createFetchFn();
 
 const DEFAULT_PASSWORD = 'password';
 const N_ACCOUNTS = 10;

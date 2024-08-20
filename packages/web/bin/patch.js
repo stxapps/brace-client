@@ -36,6 +36,20 @@ const patchFetch = () => {
   );
 };
 
+const patchCryptoUtils = () => {
+  // Bundle gzip size will +125.2 kB
+  /*let match = "            const nodeCrypto = require('crypto');";
+  let repmt = "            const nodeCrypto = require('crypto-browserify');";
+  replaceMatchedLine(
+    'node_modules/@stacks/encryption/dist/cryptoUtils.js',
+    [{ match, repmt }],
+  );
+  replaceMatchedLine(
+    'node_modules/@stacks/encryption/dist/esm/cryptoUtils.js',
+    [{ match, repmt }],
+  );*/
+};
+
 const patchTypeReactRedux = () => {
 
   let match = '    <TState = unknown, Selected = unknown>(selector: (state: TState) => Selected, equalityFn?: EqualityFn<Selected>): Selected;';
@@ -71,5 +85,6 @@ const patchTypeReselect = () => {
 };
 
 patchFetch();
+patchCryptoUtils();
 patchTypeReactRedux();
 patchTypeReselect();
