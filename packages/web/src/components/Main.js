@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import Url from 'url-parse';
 
 import { updateHistoryPosition } from '../actions';
-import { fetch, endIapConnection } from '../actions/chunk';
+import { fetch } from '../actions/chunk';
+import { endIapConnection } from '../actions/iap';
 import {
   BACK_DECIDER, BACK_POPUP, PC_100, PC_50, PC_33, SHOW_BLANK, SHOW_COMMANDS,
   SM_WIDTH, LG_WIDTH, LAYOUT_LIST, LOCKED,

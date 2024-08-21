@@ -37,7 +37,7 @@ const patchFetch = () => {
 };
 
 const patchCryptoUtils = () => {
-  // Bundle gzip size will +125.2 kB
+  // Bundle gzip size will +125.2 kB, should be await import()?
   /*let match = "            const nodeCrypto = require('crypto');";
   let repmt = "            const nodeCrypto = require('crypto-browserify');";
   replaceMatchedLine(

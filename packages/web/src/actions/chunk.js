@@ -1,10 +1,8 @@
 import { LexoRank } from '@wewatch/lexorank';
 
 import axios from '../axiosWrapper';
-import iapApi from '../paddleWrapper';
 import dataApi from '../apis/data';
 import fileApi from '../apis/localFile';
-import lsgApi from '../apis/localSg';
 import ecApi from '../apis/encryption';
 import {
   UPDATE_LIST_NAME, UPDATE_QUERY_STRING, UPDATE_LINK_EDITOR, UPDATE_STATUS,
@@ -26,21 +24,16 @@ import {
   CANCEL_DIED_SETTINGS, MERGE_SETTINGS, MERGE_SETTINGS_COMMIT, MERGE_SETTINGS_ROLLBACK,
   UPDATE_SETTINGS_VIEW_ID, UPDATE_DO_USE_LOCAL_LAYOUT, UPDATE_DEFAULT_LAYOUT_TYPE,
   UPDATE_LOCAL_LAYOUT_TYPE, UPDATE_DELETE_ACTION, UPDATE_DISCARD_ACTION,
-  UPDATE_LIST_NAMES_MODE, GET_PRODUCTS, GET_PRODUCTS_COMMIT, GET_PRODUCTS_ROLLBACK,
-  REQUEST_PURCHASE, REQUEST_PURCHASE_COMMIT, REQUEST_PURCHASE_ROLLBACK,
-  RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
-  REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
-  UPDATE_IAP_PUBLIC_KEY, UPDATE_IAP_PRODUCT_STATUS, UPDATE_IAP_PURCHASE_STATUS,
-  UPDATE_IAP_RESTORE_STATUS, UPDATE_IAP_REFRESH_STATUS, PIN_LINK, PIN_LINK_COMMIT,
-  PIN_LINK_ROLLBACK, UNPIN_LINK, UNPIN_LINK_COMMIT, UNPIN_LINK_ROLLBACK,
-  MOVE_PINNED_LINK_ADD_STEP, MOVE_PINNED_LINK_ADD_STEP_COMMIT,
-  MOVE_PINNED_LINK_ADD_STEP_ROLLBACK, CANCEL_DIED_PINS, UPDATE_DO_USE_LOCAL_THEME,
-  UPDATE_DEFAULT_THEME, UPDATE_LOCAL_THEME, UPDATE_UPDATING_THEME_MODE,
-  UPDATE_TIME_PICK, UPDATE_CUSTOM_EDITOR, UPDATE_IMAGES, UPDATE_CUSTOM_DATA,
-  UPDATE_CUSTOM_DATA_COMMIT, UPDATE_CUSTOM_DATA_ROLLBACK, CLEAN_UP_STATIC_FILES,
-  CLEAN_UP_STATIC_FILES_COMMIT, CLEAN_UP_STATIC_FILES_ROLLBACK, UPDATE_PAYWALL_FEATURE,
-  UPDATE_LOCK_ACTION, UPDATE_LOCK_EDITOR, ADD_LOCK_LIST, REMOVE_LOCK_LIST, LOCK_LIST,
-  UNLOCK_LIST, CLEAN_UP_LOCKS, UPDATE_TAG_EDITOR, UPDATE_TAG_DATA_S_STEP,
+  UPDATE_LIST_NAMES_MODE, PIN_LINK, PIN_LINK_COMMIT, PIN_LINK_ROLLBACK, UNPIN_LINK,
+  UNPIN_LINK_COMMIT, UNPIN_LINK_ROLLBACK, MOVE_PINNED_LINK_ADD_STEP,
+  MOVE_PINNED_LINK_ADD_STEP_COMMIT, MOVE_PINNED_LINK_ADD_STEP_ROLLBACK,
+  CANCEL_DIED_PINS, UPDATE_DO_USE_LOCAL_THEME, UPDATE_DEFAULT_THEME,
+  UPDATE_LOCAL_THEME, UPDATE_UPDATING_THEME_MODE, UPDATE_TIME_PICK,
+  UPDATE_CUSTOM_EDITOR, UPDATE_IMAGES, UPDATE_CUSTOM_DATA, UPDATE_CUSTOM_DATA_COMMIT,
+  UPDATE_CUSTOM_DATA_ROLLBACK, CLEAN_UP_STATIC_FILES, CLEAN_UP_STATIC_FILES_COMMIT,
+  CLEAN_UP_STATIC_FILES_ROLLBACK, UPDATE_PAYWALL_FEATURE, UPDATE_LOCK_ACTION,
+  UPDATE_LOCK_EDITOR, ADD_LOCK_LIST, REMOVE_LOCK_LIST, LOCK_LIST, UNLOCK_LIST,
+  CLEAN_UP_LOCKS, UPDATE_TAG_EDITOR, UPDATE_TAG_DATA_S_STEP,
   UPDATE_TAG_DATA_S_STEP_COMMIT, UPDATE_TAG_DATA_S_STEP_ROLLBACK,
   UPDATE_TAG_DATA_T_STEP, UPDATE_TAG_DATA_T_STEP_COMMIT,
   UPDATE_TAG_DATA_T_STEP_ROLLBACK, CANCEL_DIED_TAGS, UPDATE_TAG_NAME_EDITORS,
@@ -53,24 +46,22 @@ import {
   DISCARD_ACTION_UPDATE_LIST_NAME, DISCARD_ACTION_UPDATE_TAG_NAME, LOCAL_LINK_ATTRS,
   MY_LIST, TRASH, N_LINKS, N_DAYS, CD_ROOT, ADDED, DIED_ADDING, DIED_MOVING,
   DIED_REMOVING, DIED_DELETING, DIED_UPDATING, REMOVING, PENDING_REMOVING,
-  SHOWING_STATUSES, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, IAP_VERIFY_URL,
-  IAP_STATUS_URL, PADDLE, COM_BRACEDOTTO, COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING,
-  VALID, INVALID, ACTIVE, UNKNOWN, SWAP_LEFT, SWAP_RIGHT, CUSTOM_MODE, FEATURE_PIN,
-  FEATURE_APPEARANCE, FEATURE_CUSTOM, FEATURE_LOCK, FEATURE_TAG, PADDLE_RANDOM_ID,
-  VALID_PASSWORD, PASSWORD_MSGS, IN_USE_LIST_NAME, LIST_NAME_MSGS, VALID_TAG_NAME,
-  DUPLICATE_TAG_NAME, IN_USE_TAG_NAME, TAG_NAME_MSGS, VALID_URL,
-  DELETE_ACTION_LIST_NAME, DELETE_ACTION_TAG_NAME, PUT_FILE, DELETE_FILE, TAGGED,
-  NOT_SUPPORTED, STATUS,
+  SHOWING_STATUSES, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, INVALID, SWAP_LEFT,
+  SWAP_RIGHT, CUSTOM_MODE, FEATURE_PIN, FEATURE_APPEARANCE, FEATURE_CUSTOM,
+  FEATURE_LOCK, FEATURE_TAG, VALID_PASSWORD, PASSWORD_MSGS, IN_USE_LIST_NAME,
+  LIST_NAME_MSGS, VALID_TAG_NAME, DUPLICATE_TAG_NAME, IN_USE_TAG_NAME, TAG_NAME_MSGS,
+  VALID_URL, DELETE_ACTION_LIST_NAME, DELETE_ACTION_TAG_NAME, PUT_FILE, DELETE_FILE,
+  TAGGED, NOT_SUPPORTED, STATUS,
 } from '../types/const';
 import {
   isEqual, isArrayEqual, isString, isObject, isNumber, randomString, getMainId,
   getLinkMainIds, getUrlFirstChar, validateUrl, randomDecor, getListNameObj,
-  getAllListNames, getLatestPurchase, getValidPurchase, doEnableExtraFeatures,
+  getAllListNames, doEnableExtraFeatures,
   createDataFName, getLinkFPaths, getSsltFPaths, getStaticFPaths, createSettingsFPath,
   extractSsltFPath, extractPinFPath, getPinFPaths, getPins, separatePinnedValues,
   sortLinks, sortWithPins, getRawPins, getFormattedTime, get24HFormattedTime,
   extractStaticFPath, getEditingListNameEditors, validatePassword, doContainListName,
-  sleep, sample, extractLinkId, getLink, getListNameAndLink, getNLinkObjs,
+  sleep, extractLinkId, getLink, getListNameAndLink, getNLinkObjs,
   getNLinkMetas, newObject, addFetchedToVars, isFetchedLinkId, doesIncludeFetching,
   doesIncludeFetchingMore, isFetchingInterrupted, getTagFPaths, getInUseTagNames,
   getEditingTagNameEditors, getTags, getRawTags, getTagNameObj,
@@ -81,6 +72,7 @@ import { initialSettingsState, initialTagEditorState } from '../types/initialSta
 import vars from '../vars';
 
 import { isPopupShown, updatePopup } from '.';
+import { checkPurchases } from './iap';
 
 export const changeListName = (listName) => async (dispatch, getState) => {
   dispatch(updateFetched(null, false, true));
@@ -1961,309 +1953,6 @@ export const updateListNamesMode = (mode, animType) => {
 
 export const updatePaywallFeature = (feature) => {
   return { type: UPDATE_PAYWALL_FEATURE, payload: feature };
-};
-
-const _verifyPurchase = async (rawPurchase) => {
-  if (!rawPurchase) return { status: INVALID };
-
-  const source = PADDLE;
-
-  const sigObj = await ecApi.signECDSA(SIGNED_TEST_STRING);
-  const userId = sigObj.publicKey;
-
-  const productId = rawPurchase.productId;
-  const token = rawPurchase.purchaseToken;
-  const paddleUserId = rawPurchase.paddleUserId;
-  const passthrough = rawPurchase.passthrough;
-
-  if (!token) {
-    console.log('No purchaseToken in rawPurchase');
-    return { status: INVALID };
-  }
-
-  const reqBody = { source, userId, productId, token, paddleUserId, passthrough };
-
-  let verifyResult;
-  try {
-    const res = await axios.post(IAP_VERIFY_URL, reqBody);
-    verifyResult = res.data;
-  } catch (error) {
-    console.log(`Error when contact IAP server to verify with reqBody: ${JSON.stringify(reqBody)}, Error: `, error);
-    return { status: UNKNOWN };
-  }
-
-  return verifyResult;
-};
-
-const verifyPurchase = async (rawPurchase) => {
-  // Sometimes the servers doesn't return the latest result, so wait and try again.
-  const nTries = 3;
-
-  let result;
-  for (let currentTry = 1; currentTry <= nTries; currentTry++) {
-    result = await _verifyPurchase(rawPurchase);
-    if (result.status === VALID) return result;
-    if (currentTry < nTries) await sleep(sample([3000, 4500, 6000]));
-  }
-  return result;
-};
-
-const getIapStatus = async (doForce) => {
-  const sigObj = await ecApi.signECDSA(SIGNED_TEST_STRING);
-  const randomId = await lsgApi.getItem(PADDLE_RANDOM_ID);
-  const reqBody = {
-    source: PADDLE,
-    userId: sigObj.publicKey,
-    signature: sigObj.signature,
-    appId: COM_BRACEDOTTO,
-    doForce: doForce,
-    randomId: randomId,
-  };
-
-  const res = await axios.post(IAP_STATUS_URL, reqBody);
-  return res;
-};
-
-const getPurchases = (
-  action, commitAction, rollbackAction, doForce, serverOnly
-) => async (dispatch, getState) => {
-
-  const { purchaseState, restoreStatus, refreshStatus } = getState().iap;
-  if (
-    purchaseState === REQUEST_PURCHASE ||
-    restoreStatus === RESTORE_PURCHASES ||
-    refreshStatus === REFRESH_PURCHASES
-  ) return;
-
-  dispatch({ type: action });
-
-  let statusResult;
-  try {
-    const res = await getIapStatus(doForce);
-    statusResult = res.data;
-
-    if (serverOnly) {
-      dispatch({ type: commitAction, payload: statusResult });
-      return;
-    }
-
-    if (statusResult.status === VALID) {
-      const purchase = getLatestPurchase(statusResult.purchases);
-      if (purchase && purchase.status === ACTIVE) {
-        dispatch({ type: commitAction, payload: statusResult });
-        return;
-      }
-    }
-  } catch (error) {
-    console.log('Error when contact IAP server to get purchases: ', error);
-    dispatch({ type: rollbackAction });
-    return;
-  }
-
-  dispatch({ type: commitAction, payload: statusResult });
-};
-
-const iapUpdatedListener = (dispatch, getState) => async (rawPurchase) => {
-  const verifyResult = await verifyPurchase(rawPurchase);
-  dispatch({
-    type: REQUEST_PURCHASE_COMMIT,
-    payload: { ...verifyResult, rawPurchase },
-  });
-};
-
-const iapErrorListener = (dispatch, getState) => async (error) => {
-  console.log('Error in iapErrorListener: ', error);
-  if (error.code === 'E_USER_CANCELLED') {
-    // It's possible that a user completes the purchase,
-    //   but iapUpdatedListener doesn't get called and the user just close the popup.
-    // PS1. No need redundant in requestPurchase's catch block.
-    // PS2. No await, do it in the background, in case really no purchase.
-    checkRequestPurchase(dispatch, getState);
-    dispatch(updateIapPurchaseStatus(null, null));
-  } else {
-    dispatch({ type: REQUEST_PURCHASE_ROLLBACK });
-  }
-};
-
-const registerIapListeners = (doRegister, dispatch, getState) => {
-  if (doRegister) {
-    if (!vars.iap.updatedEventEmitter) {
-      vars.iap.updatedEventEmitter = iapApi.purchaseUpdatedListener(
-        iapUpdatedListener(dispatch, getState)
-      );
-    }
-    if (!vars.iap.errorEventEmitter) {
-      vars.iap.errorEventEmitter = iapApi.purchaseErrorListener(
-        iapErrorListener(dispatch, getState)
-      );
-    }
-  } else {
-    if (vars.iap.updatedEventEmitter) {
-      vars.iap.updatedEventEmitter.remove();
-      vars.iap.updatedEventEmitter = null;
-    }
-    if (vars.iap.errorEventEmitter) {
-      vars.iap.errorEventEmitter.remove();
-      vars.iap.errorEventEmitter = null;
-    }
-  }
-};
-
-export const endIapConnection = (isInit = false) => async (dispatch, getState) => {
-  registerIapListeners(false, dispatch, getState);
-
-  if (!isInit) {
-    vars.iap.didGetProducts = false;
-    dispatch(updateIapProductStatus(null, null, null));
-  }
-};
-
-export const initIapConnectionAndGetProducts = (doForce) => async (
-  dispatch, getState
-) => {
-  if (vars.iap.didGetProducts && !doForce) return;
-  vars.iap.didGetProducts = true;
-  dispatch({ type: GET_PRODUCTS });
-
-  if (doForce) await endIapConnection(true)(dispatch, getState);
-
-  try {
-    const canMakePayments = await iapApi.initConnection();
-    registerIapListeners(true, dispatch, getState);
-
-    let products = null;
-    if (canMakePayments) {
-      products = await iapApi.getSubscriptions([COM_BRACEDOTTO_SUPPORTER]);
-    }
-
-    dispatch({
-      type: GET_PRODUCTS_COMMIT,
-      payload: { canMakePayments, products },
-    });
-  } catch (error) {
-    console.log('Error when init iap and get products: ', error);
-    dispatch({ type: GET_PRODUCTS_ROLLBACK });
-  }
-};
-
-export const requestPurchase = (product) => async (dispatch, getState) => {
-  dispatch({ type: REQUEST_PURCHASE });
-  try {
-    await iapApi.requestSubscription(product.productId);
-  } catch (error) {
-    console.log('Error when request purchase: ', error);
-    if (error.code === 'E_USER_CANCELLED') {
-      dispatch(updateIapPurchaseStatus(null, null));
-    } else {
-      dispatch({ type: REQUEST_PURCHASE_ROLLBACK });
-    }
-  }
-};
-
-const checkRequestPurchase = async (dispatch, getState) => {
-  const { purchases } = getState().info;
-  const purchase = getValidPurchase(purchases);
-  if (purchase) return;
-
-  try {
-    const res = await getIapStatus(false);
-    const statusResult = res.data;
-
-    if (statusResult.status === VALID) {
-      const purchase = getValidPurchase(statusResult.purchases);
-      if (purchase) {
-        dispatch({
-          type: REQUEST_PURCHASE_COMMIT,
-          payload: { status: statusResult.status, purchase, rawPurchase: null },
-        });
-        return;
-      }
-    }
-  } catch (error) {
-    console.log('checkRequestPurchase error:', error);
-  }
-};
-
-export const restorePurchases = () => async (dispatch, getState) => {
-  await getPurchases(
-    RESTORE_PURCHASES, RESTORE_PURCHASES_COMMIT, RESTORE_PURCHASES_ROLLBACK,
-    false, false
-  )(dispatch, getState);
-};
-
-export const refreshPurchases = () => async (dispatch, getState) => {
-  await getPurchases(
-    REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
-    true, false
-  )(dispatch, getState);
-};
-
-export const checkPurchases = () => async (dispatch, getState) => {
-  const { purchases, checkPurchasesDT } = getState().info;
-
-  const purchase = getValidPurchase(purchases);
-  if (!purchase) return;
-
-  const now = Date.now();
-  const expiryDT = (new Date(purchase.expiryDate)).getTime();
-
-  let doCheck = false;
-  if (now >= expiryDT || !checkPurchasesDT) doCheck = true;
-  else {
-    let p = 1.0 / (N_DAYS * 24 * 60 * 60 * 1000) * Math.abs(now - checkPurchasesDT);
-    p = Math.max(0.01, Math.min(p, 0.99));
-    doCheck = p > Math.random();
-  }
-  if (!doCheck) return;
-
-  await getPurchases(
-    REFRESH_PURCHASES, REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,
-    false, true
-  )(dispatch, getState);
-};
-
-export const retryVerifyPurchase = () => async (dispatch, getState) => {
-  const rawPurchase = getState().iap.rawPurchase;
-
-  dispatch({ type: REQUEST_PURCHASE });
-  const verifyResult = await verifyPurchase(rawPurchase);
-  dispatch({
-    type: REQUEST_PURCHASE_COMMIT,
-    payload: { ...verifyResult, rawPurchase },
-  });
-};
-
-export const updateIapPublicKey = () => async (dispatch, getState) => {
-  const sigObj = await ecApi.signECDSA(SIGNED_TEST_STRING);
-  dispatch({ type: UPDATE_IAP_PUBLIC_KEY, payload: sigObj.publicKey });
-};
-
-export const updateIapProductStatus = (status, canMakePayments, products) => {
-  return {
-    type: UPDATE_IAP_PRODUCT_STATUS,
-    payload: { status, canMakePayments, products },
-  };
-};
-
-export const updateIapPurchaseStatus = (status, rawPurchase) => {
-  return {
-    type: UPDATE_IAP_PURCHASE_STATUS,
-    payload: { status, rawPurchase },
-  };
-};
-
-export const updateIapRestoreStatus = (status) => {
-  return {
-    type: UPDATE_IAP_RESTORE_STATUS,
-    payload: status,
-  };
-};
-
-export const updateIapRefreshStatus = (status) => {
-  return {
-    type: UPDATE_IAP_REFRESH_STATUS,
-    payload: status,
-  };
 };
 
 export const pinLinks = (ids) => async (dispatch, getState) => {
