@@ -5,7 +5,8 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
-import { updatePopup, updateSettingsPopup, updateSettingsViewId } from '../actions';
+import { updatePopup } from '../actions';
+import { updateSettingsPopup, updateSettingsViewId } from '../actions/chunk';
 import {
   PAYWALL_POPUP, SETTINGS_VIEW_IAP, FEATURE_PIN, FEATURE_APPEARANCE, FEATURE_CUSTOM,
   FEATURE_LOCK, FEATURE_TAG,

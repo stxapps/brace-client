@@ -1,6 +1,7 @@
 import defaultQueue from '@redux-offline/redux-offline/lib/defaults/queue';
 
 import userSession from '../userSession';
+import { blockstackEffect } from '../importWrapper';
 import {
   FETCH, FETCH_MORE, ADD_LINKS, UPDATE_LINKS, MOVE_LINKS_ADD_STEP, DELETE_LINKS,
   EXTRACT_CONTENTS, TRY_UPDATE_SETTINGS, UPDATE_SETTINGS, TRY_UPDATE_INFO, UPDATE_INFO,
@@ -8,8 +9,6 @@ import {
   UPDATE_TAG_DATA_T_STEP,
 } from '../types/actionTypes';
 import { isObject, isString, isNumber } from '../utils';
-
-import { effect as blockstackEffect } from './blockstack';
 
 export const queue = {
   ...defaultQueue,

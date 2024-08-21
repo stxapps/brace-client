@@ -9,9 +9,8 @@ import ImagePicker from 'react-native-image-crop-picker';
 import KeyboardManager from 'react-native-keyboard-manager';
 
 import fileApi from '../apis/localFile';
-import {
-  updatePopup, updateCustomEditor, updateImages, updateCustomData,
-} from '../actions';
+import { updatePopup } from '../actions';
+import { updateCustomEditor, updateImages, updateCustomData } from '../actions/chunk';
 import {
   CUSTOM_EDITOR_POPUP, IMAGES, CD_ROOT, BLK_MODE, LG_WIDTH,
 } from '../types/const';

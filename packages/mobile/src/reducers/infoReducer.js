@@ -1,7 +1,7 @@
 import { REHYDRATE } from 'redux-persist/constants';
 import { loop, Cmd } from 'redux-loop';
 
-import { tryUpdateInfo, updateInfoDeleteStep } from '../actions';
+import { tryUpdateInfo, updateInfoDeleteStep } from '../importWrapper';
 import {
   FETCH_COMMIT, UPDATE_INFO_COMMIT, UPDATE_INFO_ROLLBACK, UPDATE_UNCHANGED_INFO,
   REQUEST_PURCHASE_COMMIT, RESTORE_PURCHASES_COMMIT, REFRESH_PURCHASES_COMMIT,

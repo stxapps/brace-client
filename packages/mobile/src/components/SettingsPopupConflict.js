@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
-import { mergeSettings } from '../actions';
+import { mergeSettings } from '../actions/chunk';
 import { initialSettingsState } from '../types/initialStates';
 import { extractDataId, getFormattedDT } from '../utils';
 

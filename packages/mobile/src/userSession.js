@@ -45,23 +45,9 @@ const loadUserData = async () => {
   return userData;
 };
 
-const signECDSA = async (content) => {
-  const userData = await loadUserData();
-  const sigObj = await RNBlockstackSdk.signECDSA(userData.appPrivateKey, content);
-  return sigObj;
-};
-
-const encrypt = async (content) => {
-  return content;
-};
-
-const decrypt = async (encryptedContent) => {
-  return encryptedContent;
-};
-
 const userSession = {
   didSessionCreate, hasSession, createSession, isUserSignedIn, handlePendingSignIn,
-  signUserOut, updateUserData, loadUserData, signECDSA, encrypt, decrypt,
+  signUserOut, updateUserData, loadUserData,
 };
 
 export default userSession;

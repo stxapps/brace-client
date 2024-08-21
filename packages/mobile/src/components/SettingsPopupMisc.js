@@ -2,11 +2,12 @@ import React, { useRef } from 'react';
 import { View, Text, TouchableOpacity, Switch, Linking, Platform } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
+import { updatePopup } from '../actions';
 import {
   updateDoExtractContents, updateDoDeleteOldLinksInTrash, updateDoDescendingOrder,
   updateDoUseLocalLayout, updateLayoutType, updateDoUseLocalTheme, updateTheme,
-  updateUpdatingThemeMode, updatePopup,
-} from '../actions';
+  updateUpdatingThemeMode,
+} from '../actions/chunk';
 import {
   DOMAIN_NAME, HASH_PRIVACY, LAYOUT_CARD, LAYOUT_LIST, WHT_MODE, BLK_MODE, SYSTEM_MODE,
   CUSTOM_MODE, TIME_PICK_POPUP,

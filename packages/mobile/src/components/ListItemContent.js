@@ -3,9 +3,8 @@ import { View, Text, TouchableOpacity, Linking, Image } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
-import {
-  updateBulkEdit, addSelectedLinkIds, moveLinks, updateQueryString,
-} from '../actions';
+import { updateBulkEdit } from '../actions';
+import { addSelectedLinkIds, moveLinks, updateQueryString } from '../actions/chunk';
 import {
   COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING, UPDATING,
   EXTRD_UPDATING, LG_WIDTH, PINNED, TAGGED,

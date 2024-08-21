@@ -5,7 +5,8 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
-import { moveTagName, updateTagNameEditors, updatePopup } from '../actions';
+import { updatePopup } from '../actions';
+import { moveTagName, updateTagNameEditors } from '../actions/chunk';
 import {
   SETTINGS_TAGS_MENU_POPUP, MODE_EDIT, SWAP_LEFT, SWAP_RIGHT,
 } from '../types/const';

@@ -3,10 +3,10 @@ import { View, Text, TouchableOpacity, BackHandler, Animated } from 'react-nativ
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
+import { updatePopup, updateBulkEdit } from '../actions';
 import {
-  updatePopup, updateBulkEdit, moveLinks, updateDeleteAction, updateListNamesMode,
-  updateBulkEditMenuMode,
-} from '../actions';
+  moveLinks, updateDeleteAction, updateListNamesMode, updateBulkEditMenuMode,
+} from '../actions/chunk';
 import {
   CONFIRM_DELETE_POPUP, LIST_NAMES_POPUP, BULK_EDIT_MENU_POPUP, MY_LIST, ARCHIVE, TRASH,
   BOTTOM_BAR_HEIGHT, DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS,

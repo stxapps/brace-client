@@ -4,7 +4,7 @@ import { loop, Cmd } from 'redux-loop';
 import {
   tryUpdateFetched, tryUpdateFetchedMore, cleanUpSslts, extractContents,
   tryUpdateExtractedContents, runAfterFetchTask, unpinLinks, updateCustomDataDeleteStep,
-} from '../actions';
+} from '../importWrapper';
 import {
   UPDATE_LIST_NAME, UPDATE_QUERY_STRING, FETCH_COMMIT, UPDATE_FETCHED,
   FETCH_MORE_COMMIT, UPDATE_FETCHED_MORE, SET_SHOWING_LINK_IDS, ADD_LINKS,

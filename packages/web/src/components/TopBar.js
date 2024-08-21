@@ -6,7 +6,7 @@ import { updatePopup } from '../actions';
 import { SIGN_IN_POPUP, SHOW_SIGN_IN, BLK_MODE } from '../types/const';
 import { getSafeAreaWidth, getThemeMode } from '../selectors';
 
-import { getTopBarSizes, withTailwind } from '.';
+import { withTailwind } from '.';
 
 import shortLogo from '../images/logo-short.svg';
 import shortLogoBlk from '../images/logo-short-blk.svg';
@@ -29,21 +29,17 @@ class TopBar extends React.PureComponent {
 
   render() {
     const {
-      rightPane: rightPaneProp, doSupportTheme, themeMode, safeAreaWidth, tailwind,
+      rightPane: rightPaneProp, doSupportTheme, themeMode, tailwind,
     } = this.props;
 
     let rightPane = null;
     if (rightPaneProp === SHOW_SIGN_IN) rightPane = this.renderSignInBtn();
 
-    let topBarStyle, topBarStyleClasses = 'bg-white';
-
-    const { headerHeight } = getTopBarSizes(safeAreaWidth);
-    topBarStyle = { height: headerHeight };
-
+    let topBarStyleClasses = 'bg-white';
     if (doSupportTheme) topBarStyleClasses += ' blk:bg-gray-900';
 
     return (
-      <div style={topBarStyle} className={tailwind(`mx-auto max-w-6xl px-4 md:px-6 lg:px-8 ${topBarStyleClasses}`)}>
+      <div className={tailwind(`mx-auto max-w-6xl px-4 md:px-6 lg:px-8 ${topBarStyleClasses}`)}>
         <div className={tailwind('relative')}>
           <header className={tailwind('flex h-14 items-center justify-between')}>
             <a className={tailwind('relative rounded focus:outline-none focus:ring focus:ring-offset-2')} href="/">

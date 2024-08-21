@@ -71,9 +71,7 @@ class TopBarMain extends React.PureComponent {
   renderStatusPopup() {
     const { safeAreaWidth, tailwind } = this.props;
     const { scrollY } = this.state;
-    const {
-      statusPopupDistanceY,
-    } = getTopBarSizes(safeAreaWidth);
+    const { statusPopupDistanceY } = getTopBarSizes(safeAreaWidth);
 
     const initialTop = safeAreaWidth < MD_WIDTH ? '4.5625rem' : '5.0625rem';
     const top = Math.max(0, toPx(initialTop) - scrollY);
@@ -99,24 +97,21 @@ class TopBarMain extends React.PureComponent {
       rightPane = isBulkEditing ? <TopBarBulkEditCommands /> : <TopBarCommands />;
     }
 
-    let topBarStyle, topBarStyleClasses = 'bg-white';
-
     const { scrollY } = this.state;
     const {
-      topBarHeight, headerHeight,
-      listNameDistanceY,
+      topBarHeight, headerHeight, listNameDistanceY,
     } = getTopBarSizes(safeAreaWidth);
 
     const height = (
       topBarHeight + (scrollY * (headerHeight - topBarHeight) / listNameDistanceY)
     );
 
-    topBarStyle = { height };
-    topBarStyleClasses += ' fixed inset-x-0 top-0 z-30';
+    const topBarStyle = { height };
+    let topBarStyleClasses = 'fixed inset-x-0 top-0 z-30';
     if (height === headerHeight) {
       topBarStyleClasses += ' border-b border-gray-200 blk:border-gray-700';
     }
-    topBarStyleClasses += ' blk:bg-gray-900';
+    topBarStyleClasses += ' bg-white blk:bg-gray-900';
 
     return (
       <div style={topBarStyle} className={tailwind(`mx-auto max-w-6xl px-4 md:px-6 lg:px-8 ${topBarStyleClasses}`)}>

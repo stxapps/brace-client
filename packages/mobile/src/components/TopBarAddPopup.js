@@ -6,7 +6,8 @@ import {
 } from 'react-native-popup-menu';
 import Svg, { Path } from 'react-native-svg';
 
-import { updatePopup, updateLinkEditor, addLink } from '../actions';
+import { updatePopup } from '../actions';
+import { updateLinkEditor, addLink } from '../actions/chunk';
 import { ADD_POPUP, NO_URL, ASK_CONFIRM_URL, URL_MSGS, BLK_MODE } from '../types/const';
 import { getThemeMode } from '../selectors';
 import { validateUrl } from '../utils';

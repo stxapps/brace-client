@@ -6,10 +6,11 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
+import { updatePopup, updateBulkEdit } from '../actions';
 import {
-  updatePopup, updateQueryString, updateBulkEdit, changeListName, moveLinks,
-  moveToListName, updateListNamesMode, updateSettingsPopup, updateSettingsViewId,
-} from '../actions';
+  updateQueryString, changeListName, moveLinks, moveToListName, updateListNamesMode,
+  updateSettingsPopup, updateSettingsViewId,
+} from '../actions/chunk';
 import {
   LIST_NAMES_POPUP, TRASH, LIST_NAMES_MODE_CHANGE_LIST_NAME,
   LIST_NAMES_MODE_CHANGE_TAG_NAME, LIST_NAMES_MODE_MOVE_LINKS,

@@ -23,6 +23,17 @@ export const HASH_PRICING = '#pricing';
 export const HASH_SUPPORT = '#support';
 export const HASH_BACK = '#back';
 
+export const APP_RENDER_LOADING = 'APP_RENDER_LOADING';
+export const APP_RENDER_LANDING = 'APP_RENDER_LANDING';
+export const APP_RENDER_ABOUT = 'APP_RENDER_ABOUT';
+export const APP_RENDER_TERMS = 'APP_RENDER_TERMS';
+export const APP_RENDER_PRIVACY = 'APP_RENDER_PRIVACY';
+export const APP_RENDER_PRICING = 'APP_RENDER_PRICING';
+export const APP_RENDER_SUPPORT = 'APP_RENDER_SUPPORT';
+export const APP_RENDER_BACK = 'APP_RENDER_BACK';
+export const APP_RENDER_ADDING = 'APP_RENDER_ADDING';
+export const APP_RENDER_MAIN = 'APP_RENDER_MAIN';
+
 export const ALL = 'ALL';
 export const SIGN_UP_POPUP = 'SIGN_UP_POPUP';
 export const SIGN_IN_POPUP = 'SIGN_IN_POPUP';

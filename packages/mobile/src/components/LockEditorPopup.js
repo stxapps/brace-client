@@ -8,9 +8,10 @@ import Svg, { Path } from 'react-native-svg';
 import KeyboardManager from 'react-native-keyboard-manager';
 import { Circle } from 'react-native-animated-spinkit';
 
+import { updatePopup } from '../actions';
 import {
-  updatePopup, updateLockEditor, addLockList, removeLockList, unlockList,
-} from '../actions';
+  updateLockEditor, addLockList, removeLockList, unlockList,
+} from '../actions/chunk';
 import {
   MY_LIST, LOCK_EDITOR_POPUP, LOCK_ACTION_ADD_LOCK_LIST, LOCK_ACTION_REMOVE_LOCK_LIST,
   LOCK_ACTION_UNLOCK_LIST, BLK_MODE, LG_WIDTH,

@@ -3,7 +3,7 @@ import { FlatList, View, Text, TouchableOpacity, Animated } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { Flow } from 'react-native-animated-spinkit';
 
-import { fetchMore, updateFetchedMore } from '../actions';
+import { fetchMore, updateFetchedMore } from '../actions/chunk';
 import {
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
   MD_WIDTH, PC_100,

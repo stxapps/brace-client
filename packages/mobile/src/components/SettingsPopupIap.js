@@ -8,7 +8,7 @@ import {
   initIapConnectionAndGetProducts, requestPurchase, restorePurchases, refreshPurchases,
   retryVerifyPurchase, updateIapPublicKey, updateIapPurchaseStatus,
   updateIapRestoreStatus, updateIapRefreshStatus,
-} from '../actions';
+} from '../actions/iap';
 import {
   GET_PRODUCTS_ROLLBACK, REQUEST_PURCHASE, RESTORE_PURCHASES, REFRESH_PURCHASES,
   REFRESH_PURCHASES_COMMIT, REFRESH_PURCHASES_ROLLBACK,

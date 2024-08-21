@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 import { Circle } from 'react-native-animated-spinkit';
 
-import { updateSettingsPopup, updateSettingsViewId } from '../actions';
+import { updateSettingsPopup, updateSettingsViewId } from '../actions/chunk';
 import {
   SETTINGS_VIEW_ACCOUNT, SETTINGS_VIEW_IAP, SETTINGS_VIEW_IAP_RESTORE,
   SETTINGS_VIEW_DATA, SETTINGS_VIEW_DATA_IMPORT, SETTINGS_VIEW_DATA_EXPORT,

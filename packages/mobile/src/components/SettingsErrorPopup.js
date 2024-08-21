@@ -3,7 +3,9 @@ import { View, Text, TouchableOpacity, Linking } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
-import { retryDiedSettings, cancelDiedSettings, updateSettingsPopup } from '../actions';
+import {
+  retryDiedSettings, cancelDiedSettings, updateSettingsPopup,
+} from '../actions/chunk';
 import { DOMAIN_NAME, HASH_SUPPORT, DIED_UPDATING, SM_WIDTH } from '../types/const';
 
 import { useSafeAreaFrame, useTailwind } from '.';

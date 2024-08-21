@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, Animated } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
-import { updateFetched } from '../actions';
+import { updateFetched } from '../actions/chunk';
 import { MD_WIDTH } from '../types/const';
 import { getThemeMode } from '../selectors';
 import cache from '../utils/cache';

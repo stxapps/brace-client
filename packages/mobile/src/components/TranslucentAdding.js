@@ -8,7 +8,7 @@ import ReceiveSharingIntent from 'react-native-receive-sharing-intent';
 import { Flow } from 'react-native-animated-spinkit';
 import Svg, { Path } from 'react-native-svg';
 
-import { addLink, cancelDiedLinks } from '../actions';
+import { addLink, cancelDiedLinks } from '../actions/chunk';
 import {
   MY_LIST, ADDING, ADDED, DIED_ADDING, NO_URL, VALID_URL, SHARE_BORDER_RADIUS, HTTP,
   HTTPS,

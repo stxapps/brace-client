@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { View, Text, TouchableOpacity, Linking, Image } from 'react-native';
 import { connect } from 'react-redux';
 
-import { updateBulkEdit, addSelectedLinkIds, updateQueryString } from '../actions';
+import { updateBulkEdit } from '../actions';
+import { addSelectedLinkIds, updateQueryString } from '../actions/chunk';
 import { COLOR, PATTERN, IMAGE } from '../types/const';
 import { makeGetCustomImage, getThemeMode, makeGetTnAndDns } from '../selectors';
 import {

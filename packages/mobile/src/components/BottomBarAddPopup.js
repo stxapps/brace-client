@@ -3,7 +3,8 @@ import { View, Text, TouchableOpacity, TextInput, Platform } from 'react-native'
 import { connect } from 'react-redux';
 import Modal from 'react-native-modal';
 
-import { updatePopup, updateLinkEditor, addLink } from '../actions';
+import { updatePopup } from '../actions';
+import { updateLinkEditor, addLink } from '../actions/chunk';
 import {
   ADD_POPUP, NO_URL, ASK_CONFIRM_URL, URL_MSGS, MODAL_SUPPORTED_ORIENTATIONS, BLK_MODE,
 } from '../types/const';

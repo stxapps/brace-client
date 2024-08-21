@@ -6,10 +6,11 @@ import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-m
 import Svg, { Path } from 'react-native-svg';
 import Clipboard from '@react-native-clipboard/clipboard';
 
+import { updatePopup } from '../actions';
 import {
-  updatePopup, updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction,
-  updateListNamesMode, updateCustomEditorPopup, updateTagEditorPopup,
-} from '../actions';
+  updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction, updateListNamesMode,
+  updateCustomEditorPopup, updateTagEditorPopup,
+} from '../actions/chunk';
 import {
   MY_LIST, TRASH, ADDING, MOVING, UPDATING, EXTRD_UPDATING, COPY_LINK, ARCHIVE, REMOVE,
   RESTORE, DELETE, MOVE_TO, CHANGE, PIN, MANAGE_PIN, PINNED, CARD_ITEM_MENU_POPUP,

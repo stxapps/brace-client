@@ -4,7 +4,8 @@ import {
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { updatePopup, unpinLinks, movePinnedLink } from '../actions';
+import { updatePopup } from '../actions';
+import { unpinLinks, movePinnedLink } from '../actions/chunk';
 import {
   PIN_MENU_POPUP, PIN_LEFT, PIN_RIGHT, PIN_UP, PIN_DOWN, UNPIN,
   SWAP_LEFT, SWAP_RIGHT, LAYOUT_LIST, SM_WIDTH,

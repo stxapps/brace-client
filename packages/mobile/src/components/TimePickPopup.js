@@ -5,7 +5,8 @@ import {
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { updatePopup, updateTimePick, updateThemeCustomOptions } from '../actions';
+import { updatePopup } from '../actions';
+import { updateTimePick, updateThemeCustomOptions } from '../actions/chunk';
 import { TIME_PICK_POPUP } from '../types/const';
 import {
   makeIsTimePickHourItemSelected, makeIsTimePickMinuteItemSelected,

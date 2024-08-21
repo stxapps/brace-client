@@ -5,7 +5,8 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
-import { updatePopup, updateSettingsPopup } from '../actions';
+import { updatePopup } from '../actions';
+import { updateSettingsPopup } from '../actions/chunk';
 import {
   CONFIRM_DISCARD_POPUP, DISCARD_ACTION_UPDATE_LIST_NAME, DISCARD_ACTION_UPDATE_TAG_NAME,
   SM_WIDTH,

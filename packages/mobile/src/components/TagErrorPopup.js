@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, Linking } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
-import { retryDiedTags, cancelDiedTags } from '../actions';
+import { retryDiedTags, cancelDiedTags } from '../actions/chunk';
 import {
   UPDATE_TAG_DATA_S_STEP_ROLLBACK, UPDATE_TAG_DATA_T_STEP_ROLLBACK,
 } from '../types/actionTypes';

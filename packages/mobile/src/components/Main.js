@@ -3,7 +3,9 @@ import { Animated } from 'react-native';
 import { connect } from 'react-redux';
 
 import fileApi from '../apis/localFile';
-import { addAppStateChangeListener, fetch, endIapConnection } from '../actions';
+import { addAppStateChangeListener } from '../actions';
+import { fetch } from '../actions/chunk';
+import { endIapConnection } from '../actions/iap';
 import {
   PC_100, PC_50, PC_33, SHOW_BLANK, SHOW_COMMANDS, SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
   IMAGES, LOCKED,
@@ -14,7 +16,7 @@ import {
 
 import { withSafeAreaContext } from '.';
 
-import TopBar from './TopBar';
+import TopBarMain from './TopBarMain';
 import BottomBar from './BottomBar';
 import CardPanel from './CardPanel';
 import ListPanel from './ListPanel';
@@ -102,7 +104,7 @@ class Main extends React.PureComponent {
         <React.Fragment>
           <LockPanel columnWidth={columnWidth} />
           {columnWidth === PC_100 && <BottomBar />}
-          <TopBar rightPane={topBarRightPane} isListNameShown={true} doSupportTheme={true} scrollY={this.scrollY} />
+          <TopBarMain rightPane={topBarRightPane} scrollY={this.scrollY} />
         </React.Fragment>
       );
     } else {
@@ -113,7 +115,7 @@ class Main extends React.PureComponent {
             <CardPanel columnWidth={columnWidth} scrollY={this.scrollY} />
           }
           {columnWidth === PC_100 && <BottomBar />}
-          <TopBar rightPane={topBarRightPane} isListNameShown={true} doSupportTheme={true} scrollY={this.scrollY} />
+          <TopBarMain rightPane={topBarRightPane} scrollY={this.scrollY} />
           <FetchedPopup />
           <PinMenuPopup />
           <BulkEditMenuPopup />

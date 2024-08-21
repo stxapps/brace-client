@@ -5,9 +5,8 @@ import { withMenuContext } from 'react-native-popup-menu';
 import Modal from 'react-native-modal';
 import Svg, { Path } from 'react-native-svg';
 
-import {
-  updatePopup, deleteLinks, updateBulkEdit, deleteListNames, deleteTagNames,
-} from '../actions';
+import { updatePopup, updateBulkEdit } from '../actions';
+import { deleteLinks, deleteListNames, deleteTagNames } from '../actions/chunk';
 import {
   CARD_ITEM_MENU_POPUP, CONFIRM_DELETE_POPUP, MODAL_SUPPORTED_ORIENTATIONS,
   DELETE_ACTION_LINK_COMMANDS, DELETE_ACTION_LINK_ITEM_MENU, DELETE_ACTION_LIST_NAME,

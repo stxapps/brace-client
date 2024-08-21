@@ -2,10 +2,10 @@ import React from 'react';
 import { Text, TouchableOpacity, Linking, Animated, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 
+import { signOut, updatePopup, refreshFetched } from '../actions';
 import {
-  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, refreshFetched,
-  lockCurrentList,
-} from '../actions';
+  updateSettingsPopup, updateSettingsViewId, lockCurrentList,
+} from '../actions/chunk';
 import {
   DOMAIN_NAME, HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT, LOCK, UNLOCKED,
 } from '../types/const';

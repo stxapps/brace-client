@@ -3,9 +3,10 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
+import { updatePopup } from '../actions';
 import {
-  updatePopup, updateListNamesMode, updateSelectingListName, updateLockAction,
-} from '../actions';
+  updateListNamesMode, updateSelectingListName, updateLockAction,
+} from '../actions/chunk';
 import {
   LIST_NAMES_POPUP, LOCK_EDITOR_POPUP, SM_WIDTH, LG_WIDTH,
   LIST_NAMES_MODE_CHANGE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP, LOCK_ACTION_UNLOCK_LIST,

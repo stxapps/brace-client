@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, Linking, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
-import { retryDiedLinks, cancelDiedLinks } from '../actions';
+import { retryDiedLinks, cancelDiedLinks } from '../actions/chunk';
 import {
   ADDING, MOVING, UPDATING, EXTRD_UPDATING, SM_WIDTH, PINNED,
 } from '../types/const';

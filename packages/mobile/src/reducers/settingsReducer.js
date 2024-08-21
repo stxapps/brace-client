@@ -1,9 +1,8 @@
 import { REHYDRATE } from 'redux-persist/constants';
 import { loop, Cmd } from 'redux-loop';
 
-import {
-  updateDefaultPreference, updateSettingsDeleteStep, mergeSettingsDeleteStep,
-} from '../actions';
+import { updateDefaultPreference } from '../actions';
+import { updateSettingsDeleteStep, mergeSettingsDeleteStep } from '../importWrapper';
 import {
   FETCH_COMMIT, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME,
   DELETE_LIST_NAMES, UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_S_STEP_COMMIT,

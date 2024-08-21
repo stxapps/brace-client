@@ -7,10 +7,11 @@ import Svg, { Path } from 'react-native-svg';
 import { Circle } from 'react-native-animated-spinkit';
 import KeyboardManager from 'react-native-keyboard-manager';
 
+import { updatePopup } from '../actions';
 import {
   addTagNames, updateTagNames, moveTagName, checkDeleteTagName, updateSelectingTagName,
-  updateTagNameEditors, updatePopup,
-} from '../actions';
+  updateTagNameEditors,
+} from '../actions/chunk';
 import {
   VALID_TAG_NAME, TAG_NAME_MSGS, SETTINGS_TAGS_MENU_POPUP, SWAP_LEFT, SWAP_RIGHT,
   MODE_VIEW, MODE_EDIT, BLK_MODE,

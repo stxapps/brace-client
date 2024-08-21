@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import Svg, { Path } from 'react-native-svg';
 
+import { signOut, updatePopup, updateBulkEdit, refreshFetched } from '../actions';
 import {
-  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, updateBulkEdit,
-  refreshFetched, lockCurrentList,
-} from '../actions';
+  updateSettingsPopup, updateSettingsViewId, lockCurrentList,
+} from '../actions/chunk';
 import {
   DOMAIN_NAME, HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT, LOCK, UNLOCKED,
 } from '../types/const';
