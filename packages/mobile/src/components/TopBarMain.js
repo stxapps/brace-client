@@ -201,7 +201,7 @@ class TopBarMain extends React.PureComponent {
 
 TopBarMain.propTypes = {
   rightPane: PropTypes.string.isRequired,
-  scrollY: PropTypes.string.isRequired,
+  scrollY: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state, props) => {
