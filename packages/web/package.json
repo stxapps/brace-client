@@ -40,7 +40,7 @@
     "@wewatch/lexorank": "^1.0.3",
     "assert": "^2.0.0",
     "autoprefixer": "^10.4.14",
-    "axios": "^1.6.2",
+    "axios": "^1.7.4",
     "blueimp-load-image": "^5.16.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
