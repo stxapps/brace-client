@@ -9,7 +9,7 @@ import { COLOR, PATTERN, IMAGE } from '../types/const';
 import { makeGetCustomImage, getThemeMode, makeGetTnAndDns } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
-  extractUrl, isEqual, isDecorValid, prependDomainName,
+  extractUrl, isEqual, isObject, isString, isDecorValid, prependDomainName,
 } from '../utils';
 import cache from '../utils/cache';
 import { PATTERN_MAP } from '../types/patternPaths';
@@ -77,15 +77,17 @@ class CardItemContent extends React.Component {
     }
 
     let fg = null;
-    if (isDecorValid(decor) && decor.image.fg) {
+    if (isDecorValid(decor) && isObject(decor.image.fg)) {
       const { text } = decor.image.fg;
-      fg = (
-        <React.Fragment>
-          <View style={tailwind('h-20 w-20 items-center justify-center rounded-full bg-white')}>
-            <Text style={[tailwind('text-5xl font-medium uppercase text-gray-700'), { lineHeight: 58 }]}>{text}</Text>
-          </View>
-        </React.Fragment>
-      );
+      if (isString(text) && text.length > 0) {
+        fg = (
+          <React.Fragment>
+            <View style={tailwind('h-20 w-20 items-center justify-center rounded-full bg-white')}>
+              <Text style={[tailwind('text-5xl font-medium uppercase text-gray-700'), { lineHeight: 58 }]}>{text}</Text>
+            </View>
+          </React.Fragment>
+        );
+      }
     }
 
     // Only plain color background or plain color background with a letter

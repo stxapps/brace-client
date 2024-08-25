@@ -13,7 +13,7 @@ import {
 } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
-  extractUrl, isEqual, isDecorValid, prependDomainName,
+  extractUrl, isEqual, isObject, isString, isDecorValid, prependDomainName,
 } from '../utils';
 
 import { withTailwind } from '.';
@@ -110,14 +110,16 @@ class CardItemContent extends React.Component {
     }
 
     let fg = null;
-    if (isDecorValid(decor) && decor.image.fg) {
+    if (isDecorValid(decor) && isObject(decor.image.fg)) {
       const { text } = decor.image.fg;
-      fg = (
-        <React.Fragment>
-          <div className={tailwind('absolute top-1/2 left-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 transform rounded-full bg-white')} />
-          <div className={tailwind('absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform text-5xl font-medium uppercase leading-none text-gray-700')}>{text}</div>
-        </React.Fragment>
-      );
+      if (isString(text) && text.length > 0) {
+        fg = (
+          <React.Fragment>
+            <div className={tailwind('absolute top-1/2 left-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 transform rounded-full bg-white')} />
+            <div className={tailwind('absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform text-5xl font-medium uppercase leading-none text-gray-700')}>{text}</div>
+          </React.Fragment>
+        );
+      }
     }
 
     // Only plain color background or plain color background with a letter

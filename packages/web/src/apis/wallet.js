@@ -1,6 +1,6 @@
 import { SECP256K1Client, TokenSigner } from 'jsontokens';
 import { parseZoneFile } from 'zone-file';
-import { makeDIDFromAddress } from '@stacks/auth/dist/esm'
+import { makeDIDFromAddress } from '@stacks/auth/dist/esm';
 import {
   generateSecretKey, generateWallet, getRootNode, deriveAccount, DerivationType,
   getHubInfo, makeWalletConfig, updateWalletConfigWithApp, getAppPrivateKey,
@@ -12,7 +12,7 @@ import { TransactionVersion } from '@stacks/transactions/dist/esm';
 import {
   randomBytes, decryptContent, getPublicKeyFromPrivate, publicKeyToBtcAddress,
 } from '@stacks/encryption/dist/esm';
-import { createFetchFn } from '@stacks/network/dist/esm'
+import { createFetchFn } from '@stacks/network/dist/esm';
 import { bytesToHex } from '@stacks/common/dist/esm';
 
 import { HR_HUB_URL, SD_HUB_URL } from '../types/const';

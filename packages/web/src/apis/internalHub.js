@@ -1,7 +1,7 @@
 import { Storage } from '@stacks/storage/dist/esm';
 import { FileContentLoader } from '@stacks/storage/dist/esm/fileContentLoader';
 import { getPublicKeyFromPrivate, encryptECIES } from '@stacks/encryption/dist/esm';
-import { createFetchFn } from '@stacks/network/dist/esm'
+import { createFetchFn } from '@stacks/network/dist/esm';
 
 import userSession from '../userSession';
 import { PUT_FILE } from '../types/const';

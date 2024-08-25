@@ -930,14 +930,14 @@ const _isDecorValid = (decor) => {
     return false;
   }
 
-  if ('fg' in decor.image) {
-    if (!(
-      decor.image.fg === null ||
-      (
-        isObject(decor.image.fg) && isString(decor.image.fg.text)
-      )
-    )) return false;
-  }
+  // no fg, fg is null, fg is an empty object, fg must have text.
+  const isFgValid = (
+    !('fg' in decor.image) ||
+    decor.image.fg === null ||
+    isEqual(decor.image.fg, {}) ||
+    (isObject(decor.image.fg) && isString(decor.image.fg.text))
+  );
+  if (!isFgValid) return false;
 
   if (!isString(decor.favicon.bg.type) || !isString(decor.favicon.bg.value)) {
     return false;
