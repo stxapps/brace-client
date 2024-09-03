@@ -31,7 +31,7 @@ import {
   copyListNameObjsWithExactExclude, getAllListNames, copyTagNameObjs,
 } from '../utils';
 import { initialSettingsState } from '../types/initialStates';
-import vars, { didChange } from '../vars';
+import vars from '../vars';
 
 const parseRawImportedFile = async (dispatch, getState, text) => {
 
@@ -143,7 +143,7 @@ const parseRawImportedFile = async (dispatch, getState, text) => {
     const results = await dataApi.performFiles(data);
     throwIfPerformFilesError(data, results);
 
-    if (getState().settings.doExtractContents) {
+    if (getState().settings.doExtractContents && values.length - i < 240) {
       const urls = selectedValues.map(value => value.content.url);
       axios.post(BRACE_PRE_EXTRACT_URL, { urls })
         .then(() => { })
@@ -249,10 +249,6 @@ const _parseBraceSettings = async (settingsFPaths, settingsEntries) => {
   const data = { values, isSequential: false, nItemsForNs: 1 };
   const results = await dataApi.performFiles(data);
   throwIfPerformFilesError(data, results);
-
-  if (!didChange.doExtractContents) {
-    vars.importAllData.doExtractContents = latestSettings.doExtractContents;
-  }
 };
 
 const parseBraceSettings = async (
@@ -348,7 +344,7 @@ const parseBraceLinks = async (
   for (let i = 0; i < linkEntries.length; i += nLinks) {
     const selectedEntries = linkEntries.slice(i, i + nLinks);
 
-    const values = [], addingUrls = [];
+    const values = [];
     for (const entry of selectedEntries) {
       const { fpath, fpathParts, fname } = extractFPath(entry.path);
       if (fpathParts.length !== 3 || fpathParts[0] !== LINKS) continue;
@@ -394,7 +390,6 @@ const parseBraceLinks = async (
       }
 
       values.push({ id: fpath, type: PUT_FILE, path: fpath, content });
-      addingUrls.push(content.url);
 
       let listName = fpathParts[1];
       if (isObject(psInfos[mainId])) listName = psInfos[mainId].listName;
@@ -419,13 +414,8 @@ const parseBraceLinks = async (
     const results = await dataApi.performFiles(data);
     throwIfPerformFilesError(data, results);
 
-    if (vars.importAllData.doExtractContents) {
-      axios.post(BRACE_PRE_EXTRACT_URL, { urls: addingUrls })
-        .then(() => { })
-        .catch((error) => {
-          console.log('Error when contact Brace server to pre-extract contents with urls: ', addingUrls, ' Error: ', error);
-        });
-    }
+    // As from Brace.to export, likely already have extractResults or in the server,
+    //   shouldn't need to preExtract.
 
     progress.done += selectedEntries.length;
     dispatch(updateImportAllDataProgress(progress));
@@ -580,8 +570,6 @@ const parseBraceImportedFile = async (dispatch, getState, json) => {
   dispatch(updateImportAllDataProgress(progress));
 
   if (progress.total === 0) return;
-
-  vars.importAllData.doExtractContents = getState().settings.doExtractContents;
 
   await parseBraceSettings(dispatch, settingsFPaths, settingsEntries, progress);
   await parseBraceImages(dispatch, staticFPaths, imgEntries, progress);

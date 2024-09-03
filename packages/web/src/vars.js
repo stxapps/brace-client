@@ -48,7 +48,6 @@ export const getCachedFPaths = () => {
 
 const importAllData = {
   didPick: false,
-  doExtractContents: false,
 };
 
 const appState = {
