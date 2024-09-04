@@ -12,6 +12,7 @@ import {
 } from 'react-native-safe-area-context';
 import { MenuProvider } from 'react-native-popup-menu';
 import KeyboardManager from 'react-native-keyboard-manager';
+import SystemNavigationBar from 'react-native-system-navigation-bar';
 
 import reducers from './reducers';
 import { init, updateMenuPopupAsBackPressed } from './actions';
@@ -91,8 +92,22 @@ const _Root = () => {
   const backgroundColorRef = useRef(backgroundColor);
 
   const updateStatusBar = () => {
-    StatusBar.setBarStyle(themeModeRef.current === BLK_MODE ? 'light-content' : 'dark-content');
-    if (Platform.OS === 'android') StatusBar.setBackgroundColor(backgroundColorRef.current);
+    const statusBarStyle = (
+      themeModeRef.current === BLK_MODE ? 'light-content' : 'dark-content'
+    );
+    const statusBgColor = backgroundColorRef.current;
+    const navBarStyle = themeModeRef.current === BLK_MODE ? 'light' : 'dark';
+    const navBgColor = themeModeRef.current === BLK_MODE ? 'rgb(31, 41, 55)' : 'white';
+
+    if (Platform.OS === 'ios') {
+      StatusBar.setBarStyle(statusBarStyle);
+    } else if (Platform.OS === 'android') {
+      SystemNavigationBar.setNavigationColor(statusBgColor, navBarStyle, 'status');
+      SystemNavigationBar.setNavigationColor(navBgColor, navBarStyle, 'navigation');
+
+      StatusBar.setBarStyle(statusBarStyle);
+      StatusBar.setBackgroundColor(statusBgColor);
+    }
   };
 
   useEffect(() => {
