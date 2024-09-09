@@ -20,6 +20,7 @@
     "@react-native-clipboard/clipboard": "^1.14.1",
     "@react-native-community/netinfo": "^11.3.1",
     "@redux-offline/redux-offline": "https://github.com/stxapps/redux-offline#028205cec27dcf1ae05e310fc7e45779ee908949",
+    "@vonovak/react-native-theme-control": "^6.0.1",
     "@wewatch/lexorank": "^1.0.3",
     "axios": "^1.7.4",
     "jest-diff": "^29.7.0",

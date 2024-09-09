@@ -1762,6 +1762,11 @@
   dependencies:
     eslint-visitor-keys "^1.1.0"
 
+"@vonovak/react-native-theme-control@^6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@vonovak/react-native-theme-control/-/react-native-theme-control-6.0.1.tgz#1314e833adf6231e34f6b05b6b35a0071d712a31"
+  integrity sha512-NRorvTCtHkB4iBGkjf84nqUICanODOTys076YTODGMJwNWeKcFw2yOr+Dh7ylOzVCy+3cqybkFS0syz1Ygw81w==
+
 "@welldone-software/why-did-you-render@^7.0.1":
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/@welldone-software/why-did-you-render/-/why-did-you-render-7.0.1.tgz#09f487d84844bd8e66435843c2e0305702e61efb"

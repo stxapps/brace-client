@@ -13,6 +13,7 @@ import {
 import { MenuProvider } from 'react-native-popup-menu';
 import KeyboardManager from 'react-native-keyboard-manager';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
+import { setAppBackground } from '@vonovak/react-native-theme-control';
 
 import reducers from './reducers';
 import { init, updateMenuPopupAsBackPressed } from './actions';
@@ -91,22 +92,32 @@ const _Root = () => {
   const themeModeRef = useRef(themeMode);
   const backgroundColorRef = useRef(backgroundColor);
 
-  const updateStatusBar = () => {
+  const updateStatusBar = async () => {
     const statusBarStyle = (
       themeModeRef.current === BLK_MODE ? 'light-content' : 'dark-content'
     );
     const statusBgColor = backgroundColorRef.current;
     const navBarStyle = themeModeRef.current === BLK_MODE ? 'light' : 'dark';
     const navBgColor = themeModeRef.current === BLK_MODE ? 'rgb(31, 41, 55)' : 'white';
+    const appBgColor = backgroundColorRef.current;
 
-    if (Platform.OS === 'ios') {
-      StatusBar.setBarStyle(statusBarStyle);
-    } else if (Platform.OS === 'android') {
-      SystemNavigationBar.setNavigationColor(statusBgColor, navBarStyle, 'status');
-      SystemNavigationBar.setNavigationColor(navBgColor, navBarStyle, 'navigation');
+    try {
+      if (Platform.OS === 'ios') {
+        StatusBar.setBarStyle(statusBarStyle);
+      } else if (Platform.OS === 'android') {
+        await SystemNavigationBar.setNavigationColor(
+          statusBgColor, navBarStyle, 'status'
+        );
+        await SystemNavigationBar.setNavigationColor(
+          navBgColor, navBarStyle, 'navigation'
+        );
+        await setAppBackground(appBgColor);
 
-      StatusBar.setBarStyle(statusBarStyle);
-      StatusBar.setBackgroundColor(statusBgColor);
+        StatusBar.setBarStyle(statusBarStyle);
+        StatusBar.setBackgroundColor(statusBgColor);
+      }
+    } catch (error) {
+      console.log('In src/index.js, updateStatusBar error:', error);
     }
   };
 
