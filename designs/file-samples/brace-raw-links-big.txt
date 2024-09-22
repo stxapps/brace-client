@@ -1,0 +1,3653 @@
+        "image": "https://thaipublica.org/wp-content/uploads/2019/05/ปาล์ม1-860x645.jpg",
+        "favicon": "https://thaipublica.org/wp-content/uploads/2020/01/260120_181590885228969_4032567_n.jpg",
+        "extractedDT": 1722154793881
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1570099449000-PpNp-daQO-1726806087721.json",
+    "data": {
+      "id": "1570099449000-PpNp-daQO-1726806087721",
+      "url": "https://thaipublica.org/2019/10/farming-farmer-perspective-insight/",
+      "addedDT": 1570099449000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "spider-weave"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-teal-600"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "https://thaipublica.org/2019/10/farming-farmer-perspective-insight",
+        "status": "EXTRACT_OK",
+        "title": "\"เกิดอะไรขึ้นกับภาคเกษตรไทย จะพลิกโฉมอย่างไรสู่การพัฒนาที่ยั่งยืน?\" งานวิจัยเจาะลึกจากธปท. - ThaiPublica",
+        "image": "https://thaipublica.org/wp-content/uploads/2019/10/slide_ภูมิทัศน์เกษตร_7.jpg",
+        "favicon": "https://thaipublica.org/wp-content/uploads/2020/01/260120_181590885228969_4032567_n.jpg",
+        "extractedDT": 1722154783346
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1580733882000-aTDA-QuRt-1726806087720.json",
+    "data": {
+      "id": "1580733882000-aTDA-QuRt-1726806087720",
+      "url": "https://www.listenfield.com/",
+      "addedDT": 1580733882000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "fishing-net"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "carbon"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "https://www.listenfield.com",
+        "status": "EXTRACT_OK",
+        "title": "ListenField - AgTech Start-Up - Predicting Soil to Harvest: Crop Modeling & AI Unlock Sustainable Growth",
+        "image": "https://ucc95d0d9b7715a90fb567ddcdc0.previews.dropboxusercontent.com/p/thumb/ABVg9lczogl40LwuVygamJ3env4naqAz6wP_bzaZsAR4dvblegWoYOjJM4hPcvLj8zx_l-_1-calX3jFm54V3Gf5s1LqqDF19LddiKOdRV7ZRKh7k9tkOlCAePVUisVXr0McXRE1wW3N304ofSZk0UWG63iaUL0KXo7FwLD-b2R5G9U53RpqraPqVgSrPnztqW8i_IkeAYZtvemG6G_cTwk2CEPcy9Mg9pFu0gblSvQ_cVFhRyxHH4lC3iFNpjQ0InowvvYkxCZ7U36QnJdhPPU0797_m7baEuyQDXRD8atrxfeHisz1E7mGWv9K3xLHXJI2UzGyvplhiPrnUuvYgv8TXRR2aTxPs8g3NiAP2ovWtQ/p.png?fv_content=true&size_mode=5",
+        "favicon": "https://assets-global.website-files.com/610ab869c288d010b689d8bd/613845121e7cae07e5fd45b1_favicon.png",
+        "extractedDT": 1722154344365
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1582900800000-FPUu-nzYQ-1726806087719.json",
+    "data": {
+      "id": "1582900800000-FPUu-nzYQ-1726806087719",
+      "url": "http://www.thefruitrepublic.com/",
+      "addedDT": 1582900800000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "the-pond"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "sort"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "http://www.thefruitrepublic.com",
+        "status": "EXTRACT_OK",
+        "title": "The Fruit Republic - Home",
+        "image": "https://storage.googleapis.com/brace-001.appspot.com/z4Ii617lMz7Z2R7KJAsJwc3pbWGVAh8ZJLUmm1iBcT5U3618.png",
+        "favicon": "https://www.thefruitrepublic.com/templates/fruit-republic/favicon.ico",
+        "extractedDT": 1722154087692
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1582900803000-RMeZ-SKPU-1726806087718.json",
+    "data": {
+      "id": "1582900803000-RMeZ-SKPU-1726806087718",
+      "url": "https://www.farmrepublic.ng/",
+      "addedDT": 1582900803000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/silver-macbook-beside-white-smartphone.cdf98260.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-green-400"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "https://www.farmrepublic.ng",
+        "status": "EXTRACT_OK",
+        "extractedDT": 1722153729339
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1582900847000-icAk-FJbI-1726806087717.json",
+    "data": {
+      "id": "1582900847000-icAk-FJbI-1726806087717",
+      "url": "https://www.inaturalist.org/",
+      "addedDT": 1582900847000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-teal-300"
+          },
+          "fg": {
+            "text": "i"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-gray-500"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "https://www.inaturalist.org",
+        "status": "EXTRACT_OK",
+        "title": "iNaturalist",
+        "image": "https://static.inaturalist.org/sites/1-shareable_image.png?1573071871",
+        "favicon": "https://static.inaturalist.org/sites/1-favicon.png?1573071870",
+        "extractedDT": 1715043634596
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1582900864000-EAhe-fXqS-1726806087716.json",
+    "data": {
+      "id": "1582900864000-EAhe-fXqS-1726806087716",
+      "url": "http://www.sweethome3d.com/",
+      "addedDT": 1582900864000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/silver-macbook-beside-white-smartphone.cdf98260.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "chinese-lanterns"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "https://www.sweethome3d.com",
+        "status": "EXTRACT_OK",
+        "title": "Sweet Home 3D - Draw floor plans and arrange furniture freely",
+        "image": "https://storage.googleapis.com/brace-001.appspot.com/4FNDFoJviibFKbldpN7vFQCHMZgCuWvCJoLbPXJnyVbeNcMt.png",
+        "extractedDT": 1704006027845
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1585391236000-XxDH-roOt-1726806087715.json",
+    "data": {
+      "id": "1585391236000-XxDH-roOt-1726806087715",
+      "url": "https://world.openfoodfacts.org/",
+      "addedDT": 1585391236000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "diagonal-stripes"
+          },
+          "fg": {
+            "text": "o"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-green-600"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "https://world.openfoodfacts.org",
+        "status": "EXTRACT_OK",
+        "image": "https://static.openfoodfacts.org/images/logos/off-logo-vertical-white-social-media-preview.png",
+        "favicon": "https://world.openfoodfacts.org/images/favicon/favicon.ico",
+        "extractedDT": 1722154893893
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1585392107000-AKMC-HOSw-1726806087714.json",
+    "data": {
+      "id": "1585392107000-AKMC-HOSw-1726806087714",
+      "url": "https://www.technologychaoban.com/news-slide/article_7264",
+      "addedDT": 1585392107000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "confetti"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "ladybird"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "https://www.technologychaoban.com/news-slide/article_7264",
+        "status": "EXTRACT_OK",
+        "title": "ลุงนิล ปราชญ์ชาวบ้าน ผู้กำเนิดแนวคิด 'เกษตรคอนโดฯ 9 ชั้น' ทำรายได้เป็นกอบเป็นกำ - เทคโนโลยีชาวบ้าน",
+        "image": "https://www.technologychaoban.com/wp-content/uploads/2016/11/ลุงนิล.png",
+        "favicon": "https://www.technologychaoban.com/wp-content/uploads/2016/08/favicon.ico",
+        "extractedDT": 1722154189141
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1585392196000-LETe-zYCA-1726806087713.json",
+    "data": {
+      "id": "1585392196000-LETe-zYCA-1726806087713",
+      "url": "https://www.youtube.com/channel/UC6v-dnJccKowk2aLzjvpIRg/featured",
+      "addedDT": 1585392196000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "copper-clasp"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-yellow-600"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "https://www.youtube.com/channel/UC6v-dnJccKowk2aLzjvpIRg/featured",
+        "status": "EXTRACT_OK",
+        "title": "สามอาชีพ เพื่อมนุษยชาติ",
+        "image": "https://yt3.googleusercontent.com/ytc/AIdro_nFFDdWrZBHyMvn4QGBtXF7S2fwuwTYEnCkZLTh3esZVQ=s900-c-k-c0x00ffffff-no-rj",
+        "favicon": "https://www.youtube.com/s/desktop/780e45f1/img/favicon_144x144.png",
+        "extractedDT": 1722153832382
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1585392208000-OZco-TGKt-1726806087712.json",
+    "data": {
+      "id": "1585392208000-OZco-TGKt-1726806087712",
+      "url": "https://hackaday.com/2019/05/20/integrated-circuits-can-be-easy-to-understand-with-the-right-teachers/",
+      "addedDT": 1585392208000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "neon-mesh"
+          },
+          "fg": {
+            "text": "h"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "diamonds"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "https://hackaday.com/2019/05/20/integrated-circuits-can-be-easy-to-understand-with-the-right-teachers",
+        "status": "EXTRACT_OK",
+        "title": "Integrated Circuits Can Be Easy To Understand With The Right Teachers",
+        "image": "https://hackaday.com/wp-content/uploads/2019/05/ul914-acrylic-model-maker-faire-featured.jpg?w=640",
+        "favicon": "https://hackaday.com/wp-content/themes/hackaday-2/favicon.ico?v=3",
+        "extractedDT": 1722154621429
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1585392230000-wxMt-lvGA-1726806074781.json",
+    "data": {
+      "id": "1585392230000-wxMt-lvGA-1726806074781",
+      "url": "https://www.youtube.com/watch?v=sYXlI6GUSag",
+      "addedDT": 1585392230000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/macbook-pro-on-brown-table.c21128e5.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "blueprint-grid"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "https://www.youtube.com/watch?v=sYXlI6GUSag",
+        "status": "EXTRACT_OK",
+        "title": "อาจารย์ยักษ์ กับวิชา \"ขึ้นรูปแปลงนา\" เพื่อสร้างหัวคันนาทองคำให้เป็น",
+        "image": "https://i.ytimg.com/vi/sYXlI6GUSag/maxresdefault.jpg",
+        "favicon": "https://www.youtube.com/s/desktop/780e45f1/img/favicon_144x144.png",
+        "extractedDT": 1722155055293
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1585392481000-IvEJ-ZReU-1726806074780.json",
+    "data": {
+      "id": "1585392481000-IvEJ-ZReU-1726806074780",
+      "url": "https://www.se-ed.com/product/Organic-Farm-%E0%B8%AA%E0%B8%B4%E0%B9%88%E0%B8%87%E0%B8%A1%E0%B8%AB%E0%B8%B1%E0%B8%A8%E0%B8%88%E0%B8%A3%E0%B8%A3%E0%B8%A2%E0%B9%8C%E0%B9%80%E0%B8%81%E0%B8%B4%E0%B8%94%E0%B8%82%E0%B8%B6%E0%B9%89%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B9%84%E0%B8%A3%E0%B9%88.aspx?no=9786160416998",
+      "addedDT": 1585392481000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/black-and-white-electronic-device-cup-of-espresso-on-saucer-beside-spiral-note.1ee6c90d.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-pink-800"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "https://www.se-ed.com/product/Organic-Farm-%E0%B8%AA%E0%B8%B4%E0%B9%88%E0%B8%87%E0%B8%A1%E0%B8%AB%E0%B8%B1%E0%B8%A8%E0%B8%88%E0%B8%A3%E0%B8%A3%E0%B8%A2%E0%B9%8C%E0%B9%80%E0%B8%81%E0%B8%B4%E0%B8%94%E0%B8%82%E0%B8%B6%E0%B9%89%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B9%84%E0%B8%A3%E0%B9%88.aspx?no=9786160416998",
+        "status": "EXTRACT_OK",
+        "title": "Organic Farm สิ่งมหัศจรรย์เกิดขึ้นที่ไร่",
+        "image": "https://images-se-ed.com/ws/Storage/Originals/978616/041/9786160416998L.jpg?h=29ed90539a5d119072b48f12324a2e2b",
+        "favicon": "https://www.se-ed.com/favicon.ico",
+        "extractedDT": 1722153812542
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1585392512000-YBVL-TCyG-1726806074779.json",
+    "data": {
+      "id": "1585392512000-YBVL-TCyG-1726806074779",
+      "url": "http://maps.stamen.com/#toner/12/37.7706/-122.3782",
+      "addedDT": 1585392512000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/led-bulb-on-black-surface.4e04e667.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-blue-800"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "http://maps.stamen.com/#toner/12/37.7706/-122.3782",
+        "status": "EXTRACT_OK",
+        "title": "Stamen Maps",
+        "image": "https://maps.stamen.com/images/fb-terrain.png",
+        "extractedDT": 1725357673627
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1585392512000-ltWN-nrhu-1726806074778.json",
+    "data": {
+      "id": "1585392512000-ltWN-nrhu-1726806074778",
+      "url": "http://maps.stamen.com/#toner/12/37.7706/-122.3782",
+      "addedDT": 1585392512000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "chocolate-weave"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-gray-400"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "http://maps.stamen.com/#toner/12/37.7706/-122.3782",
+        "status": "EXTRACT_OK",
+        "title": "Stamen Maps",
+        "image": "https://maps.stamen.com/images/fb-terrain.png",
+        "extractedDT": 1725357673627
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1585392514000-aAnO-IyyW-1726806074777.json",
+    "data": {
+      "id": "1585392514000-aAnO-IyyW-1726806074777",
+      "url": "https://www.therobotreport.com/apex-os-1-0-available-brings-ros-2-development-self-driving-cars/",
+      "addedDT": 1585392514000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-yellow-500"
+          },
+          "fg": {
+            "text": "t"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "sort"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "https://www.therobotreport.com/apex-os-1-0-available-brings-ros-2-development-self-driving-cars",
+        "status": "EXTRACT_OK",
+        "title": "Apex.OS 1.0 now available, brings ROS 2 development to self-driving cars",
+        "image": "https://www.therobotreport.com/wp-content/uploads/2020/02/ApexAI_car_1.jpg",
+        "favicon": "https://www.therobotreport.com/wp-content/uploads/2017/08/cropped-robot-report-site-192x192.png",
+        "extractedDT": 1725357673628
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1585392514000-lyxV-OpSh-1726806074776.json",
+    "data": {
+      "id": "1585392514000-lyxV-OpSh-1726806074776",
+      "url": "https://www.therobotreport.com/apex-os-1-0-available-brings-ros-2-development-self-driving-cars/",
+      "addedDT": 1585392514000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-yellow-800"
+          },
+          "fg": {
+            "text": "t"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-teal-300"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "https://www.therobotreport.com/apex-os-1-0-available-brings-ros-2-development-self-driving-cars",
+        "status": "EXTRACT_OK",
+        "title": "Apex.OS 1.0 now available, brings ROS 2 development to self-driving cars",
+        "image": "https://www.therobotreport.com/wp-content/uploads/2020/02/ApexAI_car_1.jpg",
+        "favicon": "https://www.therobotreport.com/wp-content/uploads/2017/08/cropped-robot-report-site-192x192.png",
+        "extractedDT": 1725357673628
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1585392523000-YQUn-pkTg-1726806074775.json",
+    "data": {
+      "id": "1585392523000-YQUn-pkTg-1726806074775",
+      "url": "https://techsauce.co/saucy-thoughts/akha-ama-journey-through-the-decade82449",
+      "addedDT": 1585392523000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/clear-light-bulb-on-black-chalkboard.c407ee8b.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-gray-500"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "https://techsauce.co/saucy-thoughts/akha-ama-journey-through-the-decade82449",
+        "status": "EXTRACT_OK",
+        "title": "1 ทศวรรษการเดินทางของกาแฟไทย ‘Akha Ama’ กับแนวคิด ‘ธุรกิจเพื่อสังคม’ ที่ส่งกลิ่นหอมกรุ่นไปทั่วโลก | Techsauce",
+        "image": "https://storage.googleapis.com/techsauce-prod/ugc/uploads/2020/2/540519_1200_630_000.jpg",
+        "favicon": "https://techsauce.co/favicon.ico",
+        "extractedDT": 1725357683777
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1585392523000-uzIB-WHEk-1726806074774.json",
+    "data": {
+      "id": "1585392523000-uzIB-WHEk-1726806074774",
+      "url": "https://techsauce.co/saucy-thoughts/akha-ama-journey-through-the-decade82449",
+      "addedDT": 1585392523000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/green-typewriter-beside-green-hardbound-book-and-book.b3dbf018.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-green-600"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "https://techsauce.co/saucy-thoughts/akha-ama-journey-through-the-decade82449",
+        "status": "EXTRACT_OK",
+        "title": "1 ทศวรรษการเดินทางของกาแฟไทย ‘Akha Ama’ กับแนวคิด ‘ธุรกิจเพื่อสังคม’ ที่ส่งกลิ่นหอมกรุ่นไปทั่วโลก | Techsauce",
+        "image": "https://storage.googleapis.com/techsauce-prod/ugc/uploads/2020/2/540519_1200_630_000.jpg",
+        "favicon": "https://techsauce.co/favicon.ico",
+        "extractedDT": 1725357683777
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1604206809000-PtUr-rsyX-1726806074773.json",
+    "data": {
+      "id": "1604206809000-PtUr-rsyX-1726806074773",
+      "url": "http://manipulation.csail.mit.edu/?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=books",
+      "addedDT": 1604206809000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-purple-600"
+          },
+          "fg": {
+            "text": "m"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "circles"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "http://manipulation.csail.mit.edu/?amp%3Butm_medium=email&amp%3Butm_term=books",
+        "status": "EXTRACT_OK",
+        "title": "Robotic Manipulation",
+        "image": "https://storage.googleapis.com/brace-001.appspot.com/LLrenPNniumcWWlWPREcCKPFqGIkxhZUhloHzXgeyywvDZEr.png",
+        "extractedDT": 1725357666358
+      }
+    }
+  },
+  {
+    "path": "links/Archive/1604206809000-cORm-Ksoq-1726806074772.json",
+    "data": {
+      "id": "1604206809000-cORm-Ksoq-1726806074772",
+      "url": "http://manipulation.csail.mit.edu/?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=books",
+      "addedDT": 1604206809000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "sort"
+          },
+          "fg": {
+            "text": "m"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-teal-800"
+          }
+        }
+      },
+      "extractedResult": {
+        "url": "http://manipulation.csail.mit.edu/?amp%3Butm_medium=email&amp%3Butm_term=books",
+        "status": "EXTRACT_OK",
+        "title": "Robotic Manipulation",
+        "image": "https://storage.googleapis.com/brace-001.appspot.com/LLrenPNniumcWWlWPREcCKPFqGIkxhZUhloHzXgeyywvDZEr.png",
+        "extractedDT": 1725357666358
+      }
+    }
+  },
+  {
+    "path": "links/My List/1483767624683-XLFo-IhbA.json",
+    "data": {
+      "id": "1483767624683-XLFo-IhbA",
+      "url": "http://maps.google.com/?q=31/1+%E0%B8%9E%E0%B8%AB%E0%B8%A5%E0%B9%82%E0%B8%A2%E0%B8%98%E0%B8%B4%E0%B8%99+Khwaeng+Talat+Bang+Khen,+Khet+Lak+Si,+Krung+Thep+Maha+Nakhon+10210&amp;ftid=0x30e29d2d6cc9dcd5:0xfe4604d7e3837f9d",
+      "addedDT": 1483767624683,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "nightclub"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "ninja-star"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1483767624683-lfpU-JZPg.json",
+    "data": {
+      "id": "1483767624683-lfpU-JZPg",
+      "url": "http://maps.google.com/?q=31/1+%E0%B8%9E%E0%B8%AB%E0%B8%A5%E0%B9%82%E0%B8%A2%E0%B8%98%E0%B8%B4%E0%B8%99+Khwaeng+Talat+Bang+Khen,+Khet+Lak+Si,+Krung+Thep+Maha+Nakhon+10210&amp;ftid=0x30e29d2d6cc9dcd5:0xfe4604d7e3837f9d",
+      "addedDT": 1483767624683,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-teal-900"
+          },
+          "fg": {
+            "text": "g"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-red-800"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1491728928619-ATRX-FWCE.json",
+    "data": {
+      "id": "1491728928619-ATRX-FWCE",
+      "url": "http://maps.google.com/?cid=693167819525822122",
+      "addedDT": 1491728928619,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/white-ipad-on-brown-wooden-table.dc7c6e95.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-purple-400"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1491728928619-PDiE-Asfs.json",
+    "data": {
+      "id": "1491728928619-PDiE-Asfs",
+      "url": "http://maps.google.com/?cid=693167819525822122",
+      "addedDT": 1491728928619,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "moth-bot"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-blue-400"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1501078119000-mpRI-Iner.json",
+    "data": {
+      "id": "1501078119000-mpRI-Iner",
+      "url": "https://hbr.org/2017/05/linear-thinking-in-a-nonlinear-world?utm_campaign=hbr&amp;utm_source=facebook&amp;utm_medium=social",
+      "addedDT": 1501078119000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/white-printing-paper-on-table.5f25e12e.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-pink-800"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1520433145000-ZcVC-sGsA.json",
+    "data": {
+      "id": "1520433145000-ZcVC-sGsA",
+      "url": "http://andrewgelman.com/2018/03/07/information-flows-ways-martian-conspiracy-theory-edition/",
+      "addedDT": 1520433145000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "terracotta-trace"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-purple-400"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1520698900000-eAth-LDVW.json",
+    "data": {
+      "id": "1520698900000-eAth-LDVW",
+      "url": "http://andrewgelman.com/2018/03/10/incorporating-bayes-factor-understanding-scientific-information-replication-crisis/",
+      "addedDT": 1520698900000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "propeller"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-gray-500"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1522890091000-eBrr-pdCZ.json",
+    "data": {
+      "id": "1522890091000-eBrr-pdCZ",
+      "url": "https://ssir.org/articles/entry/cutting_through_the_complexity_a_roadmap_for_effective_collaboration?platform=hootsuite",
+      "addedDT": 1522890091000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "blossom"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-purple-600"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1526112205112-MEPx-DSzM.json",
+    "data": {
+      "id": "1526112205112-MEPx-DSzM",
+      "url": "http://maps.google.com/?cid=8629079027669845273",
+      "addedDT": 1526112205112,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "lavender-lumberjack"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "blueprint-grid"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1526112205112-OrPY-iKYf.json",
+    "data": {
+      "id": "1526112205112-OrPY-iKYf",
+      "url": "http://maps.google.com/?cid=8629079027669845273",
+      "addedDT": 1526112205112,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "blood-moon"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-yellow-700"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1526691770898-MWoM-MruB.json",
+    "data": {
+      "id": "1526691770898-MWoM-MruB",
+      "url": "http://maps.google.com/?cid=7106818742471532436",
+      "addedDT": 1526691770898,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "linked"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-purple-800"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1526691770898-iBKO-rjng.json",
+    "data": {
+      "id": "1526691770898-iBKO-rjng",
+      "url": "http://maps.google.com/?cid=7106818742471532436",
+      "addedDT": 1526691770898,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/eyeglasses-with-black-plastic-frame-on-top-of-open-book.6c4bcc8f.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "bricks"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1539821991000-HrkI-ICIm.json",
+    "data": {
+      "id": "1539821991000-HrkI-ICIm",
+      "url": "https://tls.ulfheim.net/",
+      "addedDT": 1539821991000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "hollow-lemon"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-yellow-600"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1556862783000-kPKH-xUqY.json",
+    "data": {
+      "id": "1556862783000-kPKH-xUqY",
+      "url": "https://queue.acm.org/detail.cfm?id=3323993",
+      "addedDT": 1556862783000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-blue-600"
+          },
+          "fg": {
+            "text": "a"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-red-900"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1557890281000-DUBW-CYXp.json",
+    "data": {
+      "id": "1557890281000-DUBW-CYXp",
+      "url": "https://www.smartbrief.com/original/2019/05/americas-loneliness-epidemic-hidden-systemic-risk-organizations",
+      "addedDT": 1557890281000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "overlapping-shields"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "whispers"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1557931766000-SArf-oaUi.json",
+    "data": {
+      "id": "1557931766000-SArf-oaUi",
+      "url": "https://www.ideo.com/blog/5-brainstorming-exercises-for-introverts",
+      "addedDT": 1557931766000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "tablecloth"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-pink-500"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1558073106000-QJdQ-Uxnf.json",
+    "data": {
+      "id": "1558073106000-QJdQ-Uxnf",
+      "url": "http://www.pgbovine.net/research-design-patterns.htm",
+      "addedDT": 1558073106000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "circles"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-blue-600"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1558505071000-vLpk-GfZc.json",
+    "data": {
+      "id": "1558505071000-vLpk-GfZc",
+      "url": "https://www.holloway.com/s/rvc-fundamentals-of-product-market-fit",
+      "addedDT": 1558505071000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "hearts"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-pink-400"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1561527871000-XsGB-LyJN.json",
+    "data": {
+      "id": "1561527871000-XsGB-LyJN",
+      "url": "https://webtransparency.cs.princeton.edu/dark-patterns/",
+      "addedDT": 1561527871000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "quatrefoil"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "wave"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1561701916000-QjBW-Kyjr.json",
+    "data": {
+      "id": "1561701916000-QjBW-Kyjr",
+      "url": "https://eng.lyft.com/lyft-marketing-automation-b43b7b7537cc",
+      "addedDT": 1561701916000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "purple-quartz"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-indigo-600"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1561703028000-GrDH-NrVz.json",
+    "data": {
+      "id": "1561703028000-GrDH-NrVz",
+      "url": "https://firstround.com/review/how-superhuman-built-an-engine-to-find-product-market-fit/",
+      "addedDT": 1561703028000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "neon-mesh"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "phone-alert-system"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1561703036000-ntdf-FDKQ.json",
+    "data": {
+      "id": "1561703036000-ntdf-FDKQ",
+      "url": "https://brianbalfour.com/essays/how-to-launch-a-product-or-feature-to-maximize-growth",
+      "addedDT": 1561703036000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-purple-blockstack"
+          },
+          "fg": {
+            "text": "b"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-yellow-900"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1562682284000-exjN-aUsh.json",
+    "data": {
+      "id": "1562682284000-exjN-aUsh",
+      "url": "https://hbr.org/ideacast/2019/07/the-3-types-of-leaders-of-innovative-companies",
+      "addedDT": 1562682284000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-teal-300"
+          },
+          "fg": {
+            "text": "h"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-gray-800"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1563341328000-Prrk-EHfV.json",
+    "data": {
+      "id": "1563341328000-Prrk-EHfV",
+      "url": "https://tribecap.co/a-quantitative-approach-to-product-market-fit/",
+      "addedDT": 1563341328000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-gray-300"
+          },
+          "fg": {
+            "text": "t"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-pink-500"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1563701638000-NPdI-uURd.json",
+    "data": {
+      "id": "1563701638000-NPdI-uURd",
+      "url": "https://www.nngroup.com/articles/why-you-only-need-to-test-with-5-users/?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=fav",
+      "addedDT": 1563701638000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/white-printing-paper-on-table.5f25e12e.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "dots"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1564368537571-DpXM-BErw.json",
+    "data": {
+      "id": "1564368537571-DpXM-BErw",
+      "url": "http://maps.google.com/?cid=18143668509996808785",
+      "addedDT": 1564368537571,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/turned-off-black-laptop-computer-on-green-grass-field.cac3b6f1.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "bling-chunk"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1564368537571-OUqy-JYxF.json",
+    "data": {
+      "id": "1564368537571-OUqy-JYxF",
+      "url": "http://maps.google.com/?cid=18143668509996808785",
+      "addedDT": 1564368537571,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "fake-luggage"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "cross-dots"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1564397994930-KUNn-cOBd.json",
+    "data": {
+      "id": "1564397994930-KUNn-cOBd",
+      "url": "http://maps.google.com/?q=13.641114898685185,100.63537415117025",
+      "addedDT": 1564397994930,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "plant-cells"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-green-500"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1564397994930-RcCB-UYsi.json",
+    "data": {
+      "id": "1564397994930-RcCB-UYsi",
+      "url": "http://maps.google.com/?q=13.641114898685185,100.63537415117025",
+      "addedDT": 1564397994930,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/macbook-air-beside-white-ceramic-mug-on-brown-wooden-table.4f9aadb0.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-green-800"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1570165824000-kIls-fYiZ.json",
+    "data": {
+      "id": "1570165824000-kIls-fYiZ",
+      "url": "https://numinous.productions/ttft/",
+      "addedDT": 1570165824000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "goldwork"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-green-300"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1571205594000-Grxt-yURI.json",
+    "data": {
+      "id": "1571205594000-Grxt-yURI",
+      "url": "https://modernpricing.com/blog/posts/how-to-become-your-companys-growth-hero",
+      "addedDT": 1571205594000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "kitchen-tiles"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "fall"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1572586196000-TSxV-zTzR.json",
+    "data": {
+      "id": "1572586196000-TSxV-zTzR",
+      "url": "https://12factor.net/",
+      "addedDT": 1572586196000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "motor-warp"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-purple-400"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1574852517000-heOg-BpWw.json",
+    "data": {
+      "id": "1574852517000-heOg-BpWw",
+      "url": "https://versionone.vc/startup-handbook/",
+      "addedDT": 1574852517000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-green-900"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-pink-500"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1577088174000-Vdzh-Cpoc.json",
+    "data": {
+      "id": "1577088174000-Vdzh-Cpoc",
+      "url": "https://www.blackhc.net/blog/2019/better-intuition-for-information-theory/",
+      "addedDT": 1577088174000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-pink-300"
+          },
+          "fg": {
+            "text": "b"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-yellow-300"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1578897758000-kDaP-jvgh.json",
+    "data": {
+      "id": "1578897758000-kDaP-jvgh",
+      "url": "https://www.guilford.com/books/Mindfulness/Feldman-Kuyken/9781462540105",
+      "addedDT": 1578897758000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "leaf"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-purple-400"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1579266362000-QBTc-NAGm.json",
+    "data": {
+      "id": "1579266362000-QBTc-NAGm",
+      "url": "https://toc.cryptobook.us/",
+      "addedDT": 1579266362000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-gray-600"
+          },
+          "fg": {
+            "text": "c"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-red-600"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1580887325000-RkPY-DQzs.json",
+    "data": {
+      "id": "1580887325000-RkPY-DQzs",
+      "url": "http://picktrace.com/",
+      "addedDT": 1580887325000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-pink-500"
+          },
+          "fg": {
+            "text": "p"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "money-zoom"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1581675163000-Xpot-NWTe.json",
+    "data": {
+      "id": "1581675163000-Xpot-NWTe",
+      "url": "https://github.com/leandromoreira/digital_video_introduction#how-does-a-video-codec-work?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=fav",
+      "addedDT": 1581675163000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/black-ballpoint-pen-on-graphing-notebook.f3d0ba4d.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "motor-warp"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1582301578000-EioF-ZToT.json",
+    "data": {
+      "id": "1582301578000-EioF-ZToT",
+      "url": "https://www.hsdl.org/?abstract&amp;did=802233&amp;utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=books",
+      "addedDT": 1582301578000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-red-900"
+          },
+          "fg": {
+            "text": "h"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-orange-700"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1582969752000-oEbW-fOvQ.json",
+    "data": {
+      "id": "1582969752000-oEbW-fOvQ",
+      "url": "https://www.waveapps.com/",
+      "addedDT": 1582969752000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/black-and-white-electronic-device-cup-of-espresso-on-saucer-beside-spiral-note.1ee6c90d.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-gray-400"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1583499689000-GjrF-qfFE.json",
+    "data": {
+      "id": "1583499689000-GjrF-qfFE",
+      "url": "http://supportexamples.com/?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=show_hn",
+      "addedDT": 1583499689000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-blue-600"
+          },
+          "fg": {
+            "text": "s"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-green-900"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1585230400000-mdLS-UdLE.json",
+    "data": {
+      "id": "1585230400000-mdLS-UdLE",
+      "url": "https://github.com/quorumcontrol/dgit",
+      "addedDT": 1585230400000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "lace"
+          },
+          "fg": {
+            "text": "g"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-yellow-500"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1585630718000-YRJp-zgJP.json",
+    "data": {
+      "id": "1585630718000-YRJp-zgJP",
+      "url": "https://sivers.org/a",
+      "addedDT": 1585630718000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/white-notebook-with-gray-ballpoint-pen.de5b6422.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-teal-500"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1586509104000-JvBY-QfCv.json",
+    "data": {
+      "id": "1586509104000-JvBY-QfCv",
+      "url": "https://www.amazon.com/Writing-Well-30th-Anniversary-Nonfiction-ebook/dp/B0090RVGW0/ref=tmm_kin_swatch_0?_encoding=UTF8&amp;qid=&amp;sr=",
+      "addedDT": 1586509104000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "bamboo"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "cyclone"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1586526640000-PsPy-ulrU.json",
+    "data": {
+      "id": "1586526640000-PsPy-ulrU",
+      "url": "https://www.gnu.org/software/emacs/manual/html_node/eintr/index.html",
+      "addedDT": 1586526640000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "japanese-cube"
+          },
+          "fg": {
+            "text": "g"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-indigo-900"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1586590194000-IJKi-vISm.json",
+    "data": {
+      "id": "1586590194000-IJKi-vISm",
+      "url": "https://www.usertesting.com/",
+      "addedDT": 1586590194000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/white-notebook-with-gray-ballpoint-pen.de5b6422.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-orange-900"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1587650129000-diRK-yvqh.json",
+    "data": {
+      "id": "1587650129000-diRK-yvqh",
+      "url": "https://www.optimizely.com/",
+      "addedDT": 1587650129000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "cross-dots"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-orange-900"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1587910814000-UNud-eaAR.json",
+    "data": {
+      "id": "1587910814000-UNud-eaAR",
+      "url": "https://www.spacedtime.com/?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=show_hn",
+      "addedDT": 1587910814000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/clear-sodium-bulb-lot-with-white-background.d3197f9b.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-indigo-700"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1588511450000-IdEQ-Azny.json",
+    "data": {
+      "id": "1588511450000-IdEQ-Azny",
+      "url": "https://github.com/ksindi/managers-playbook?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=working",
+      "addedDT": 1588511450000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/cup-of-coffee-beside-macbook-pro.bb3ad8cf.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-pink-300"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1589000374000-TAfb-QLRW.json",
+    "data": {
+      "id": "1589000374000-TAfb-QLRW",
+      "url": "https://frappebooks.com/",
+      "addedDT": 1589000374000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-purple-700"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "fishing-net"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1590758639000-WjAm-LPND.json",
+    "data": {
+      "id": "1590758639000-WjAm-LPND",
+      "url": "https://github.com/LisaDziuba/Marketing-for-Engineers?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=fav",
+      "addedDT": 1590758639000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-pink-500"
+          },
+          "fg": {
+            "text": "g"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-purple-900"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1591369806000-WAVd-Dhos.json",
+    "data": {
+      "id": "1591369806000-WAVd-Dhos",
+      "url": "https://dropbox.design/article/mental-models-for-designers?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=design",
+      "addedDT": 1591369806000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/eyeglasses-on-top-of-opened-book.6c42f4d3.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-yellow-400"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1591369931000-ttus-JmLU.json",
+    "data": {
+      "id": "1591369931000-ttus-JmLU",
+      "url": "https://danielgauthier.me/launch-an-app/?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=fav",
+      "addedDT": 1591369931000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "knot-work"
+          },
+          "fg": {
+            "text": "d"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-yellow-300"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1593923768427-KAHd-ebwA.json",
+    "data": {
+      "id": "1593923768427-KAHd-ebwA",
+      "url": "http://maps.google.com/?cid=14718363184140648707",
+      "addedDT": 1593923768427,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "nope"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "bones"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1593923768427-tctW-AYOy.json",
+    "data": {
+      "id": "1593923768427-tctW-AYOy",
+      "url": "http://maps.google.com/?cid=14718363184140648707",
+      "addedDT": 1593923768427,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "squares"
+          },
+          "fg": {
+            "text": "g"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-indigo-900"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1594095996000-mJhs-LAer.json",
+    "data": {
+      "id": "1594095996000-mJhs-LAer",
+      "url": "https://lars.hupel.info/topics/crdt/01-intro.html",
+      "addedDT": 1594095996000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-indigo-700"
+          },
+          "fg": {
+            "text": "h"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "cyclone"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1594971683000-DuJJ-COKw.json",
+    "data": {
+      "id": "1594971683000-DuJJ-COKw",
+      "url": "https://github.com/orbitjs/orbit",
+      "addedDT": 1594971683000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "hearts"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "checkerboard"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1595221709000-oTuO-tfbT.json",
+    "data": {
+      "id": "1595221709000-oTuO-tfbT",
+      "url": "https://github.com/Ashoat/squadcal",
+      "addedDT": 1595221709000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-orange-900"
+          },
+          "fg": {
+            "text": "g"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-indigo-700"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1595598923000-UrkU-usGA.json",
+    "data": {
+      "id": "1595598923000-UrkU-usGA",
+      "url": "https://zulip.com/",
+      "addedDT": 1595598923000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "lavender-lumberjack"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "villain-underpants"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1595912946000-UTRs-NIJA.json",
+    "data": {
+      "id": "1595912946000-UTRs-NIJA",
+      "url": "https://github.com/adamcharnock/django-hordak",
+      "addedDT": 1595912946000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "lavender-lumberjack"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-teal-700"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1598158098000-dzIT-DkaB.json",
+    "data": {
+      "id": "1598158098000-dzIT-DkaB",
+      "url": "https://umami.is/?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=show_hn",
+      "addedDT": 1598158098000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "lemon-lime-gingham"
+          },
+          "fg": {
+            "text": "u"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-green-700"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1599232373000-OJuy-lvTI.json",
+    "data": {
+      "id": "1599232373000-OJuy-lvTI",
+      "url": "https://webrtcforthecurious.com/?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=fav",
+      "addedDT": 1599232373000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "overlapping-shields"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-pink-300"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1599232394000-xJKL-qkME.json",
+    "data": {
+      "id": "1599232394000-xJKL-qkME",
+      "url": "http://web.engr.oregonstate.edu/~rosulekm/crypto/?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=books",
+      "addedDT": 1599232394000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-red-400"
+          },
+          "fg": {
+            "text": "o"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "madras"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1603894263000-upQx-zLja.json",
+    "data": {
+      "id": "1603894263000-upQx-zLja",
+      "url": "https://playbook.samaltman.com/",
+      "addedDT": 1603894263000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "cat-toes"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "cat-toes"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1603894341000-IBkV-fFQB.json",
+    "data": {
+      "id": "1603894341000-IBkV-fFQB",
+      "url": "https://www.fivecastfinancial.com/guides/financial-modeling-for-startups-an-introduction/",
+      "addedDT": 1603894341000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "dots"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-green-800"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1603894344000-vIEu-kFXy.json",
+    "data": {
+      "id": "1603894344000-vIEu-kFXy",
+      "url": "https://a16z.com/2018/09/02/sales-startups-technical-founders/",
+      "addedDT": 1603894344000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/macbook-and-teal-ceramic-kettle-on-white-table.435a0a38.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-purple-700"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1603894498000-sQCM-yvyi.json",
+    "data": {
+      "id": "1603894498000-sQCM-yvyi",
+      "url": "https://jordanbelfort.com/order-straight-line-persuasion/",
+      "addedDT": 1603894498000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-yellow-400"
+          },
+          "fg": {
+            "text": "j"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-red-900"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1603894501000-VDDj-Kutp.json",
+    "data": {
+      "id": "1603894501000-VDDj-Kutp",
+      "url": "https://nav.al/how-to-get-rich",
+      "addedDT": 1603894501000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-gray-500"
+          },
+          "fg": {
+            "text": "n"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "water-trail"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1603894522000-zySp-fxWO.json",
+    "data": {
+      "id": "1603894522000-zySp-fxWO",
+      "url": "https://linearb.io/blog/how-software-leaders-can-use-metrics-without-damaging-culture/",
+      "addedDT": 1603894522000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-orange-500"
+          },
+          "fg": {
+            "text": "l"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-blue-500"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1603894541000-yHtY-qlMI.json",
+    "data": {
+      "id": "1603894541000-yHtY-qlMI",
+      "url": "https://developer.squareup.com/blog/books-an-immutable-double-entry-accounting-database-service/?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=code",
+      "addedDT": 1603894541000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "the-pond"
+          },
+          "fg": {
+            "text": "s"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "villain-underpants"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1603894547000-eGDo-RQzI.json",
+    "data": {
+      "id": "1603894547000-eGDo-RQzI",
+      "url": "https://blog.nuclino.com/makers-don-t-let-yourself-be-forced-into-the-manager-schedule",
+      "addedDT": 1603894547000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-purple-300"
+          },
+          "fg": {
+            "text": "n"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-orange-700"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1603894558000-fEsf-PJem.json",
+    "data": {
+      "id": "1603894558000-fEsf-PJem",
+      "url": "https://medium.com/@karti/expectations-vs-reality-at-work-4f58b3a2f5c8",
+      "addedDT": 1603894558000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "circle-grid"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-orange-600"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1603894571000-uVPA-LgXS.json",
+    "data": {
+      "id": "1603894571000-uVPA-LgXS",
+      "url": "https://hbr.org/2020/01/the-little-things-that-make-employees-feel-appreciated",
+      "addedDT": 1603894571000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-purple-700"
+          },
+          "fg": {
+            "text": "h"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-green-600"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1603894751000-DyUp-PtCA.json",
+    "data": {
+      "id": "1603894751000-DyUp-PtCA",
+      "url": "https://handbook.clerky.com/?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=books",
+      "addedDT": 1603894751000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "stars"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-indigo-800"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1604285551000-EeYt-fQCP.json",
+    "data": {
+      "id": "1604285551000-EeYt-fQCP",
+      "url": "https://sive.rs/m",
+      "addedDT": 1604285551000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/eyeglasses-on-top-of-opened-book.6c42f4d3.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-blue-900"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1604372625000-SrrU-RBkP.json",
+    "data": {
+      "id": "1604372625000-SrrU-RBkP",
+      "url": "https://matomo.org/",
+      "addedDT": 1604372625000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-yellow-500"
+          },
+          "fg": {
+            "text": "m"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "pyramids"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1604406967000-eIfP-CCco.json",
+    "data": {
+      "id": "1604406967000-eIfP-CCco",
+      "url": "https://www.sync.com/",
+      "addedDT": 1604406967000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/clear-light-bulb.a7201056.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-yellow-400"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1604673144000-JnRE-iKld.json",
+    "data": {
+      "id": "1604673144000-JnRE-iKld",
+      "url": "https://ebird.org/home",
+      "addedDT": 1604673144000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-green-700"
+          },
+          "fg": {
+            "text": "e"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-teal-900"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1605363926000-iIiI-usCi.json",
+    "data": {
+      "id": "1605363926000-iIiI-usCi",
+      "url": "https://simonwillison.net/2020/Nov/14/personal-data-warehouses/",
+      "addedDT": 1605363926000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-orange-700"
+          },
+          "fg": {
+            "text": "s"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-pink-600"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1607250289000-rCEA-Ryzx.json",
+    "data": {
+      "id": "1607250289000-rCEA-Ryzx",
+      "url": "https://withblue.ink/2020/11/12/maybe-we-shouldnt-want-a-fully-decentralized-web.html",
+      "addedDT": 1607250289000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "blossom"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "half-rombes"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1607250303000-HhTd-hxOI.json",
+    "data": {
+      "id": "1607250303000-HhTd-hxOI",
+      "url": "https://calv.info/early-stage-lessons",
+      "addedDT": 1607250303000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "lace"
+          },
+          "fg": {
+            "text": "c"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "carbon"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1608948708000-wrVv-Hgmy.json",
+    "data": {
+      "id": "1608948708000-wrVv-Hgmy",
+      "url": "https://useplanner.com/",
+      "addedDT": 1608948708000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-indigo-900"
+          },
+          "fg": {
+            "text": "u"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "tablecloth"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1609591654000-JrNJ-FdxU.json",
+    "data": {
+      "id": "1609591654000-JrNJ-FdxU",
+      "url": "https://github.com/LibrePhotos/librephotos?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=show_hn",
+      "addedDT": 1609591654000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "the-pond"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-red-400"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1610507599000-YbXi-sKfM.json",
+    "data": {
+      "id": "1610507599000-YbXi-sKfM",
+      "url": "https://untools.co/?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=fav",
+      "addedDT": 1610507599000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-blue-800"
+          },
+          "fg": {
+            "text": "u"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "instrument-panel"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1610943138000-Iedu-iFjv.json",
+    "data": {
+      "id": "1610943138000-Iedu-iFjv",
+      "url": "https://github.com/terrysahaidak/react-native-gallery-toolkit",
+      "addedDT": 1610943138000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "japanese-cube"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-green-500"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1612252342000-AgPd-WTWN.json",
+    "data": {
+      "id": "1612252342000-AgPd-WTWN",
+      "url": "https://www.amazon.com/Resetting-Table-Straight-Talk-About-ebook/dp/B083RZ8Q4S/ref=tmm_kin_swatch_0?_encoding=UTF8&amp;qid=&amp;sr=",
+      "addedDT": 1612252342000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "hollow-lemon"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-green-300"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1613575808000-rVvK-gxjW.json",
+    "data": {
+      "id": "1613575808000-rVvK-gxjW",
+      "url": "https://bitwarden.com/",
+      "addedDT": 1613575808000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "bling-chunk"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-blue-900"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1613717531000-bZsJ-vbkl.json",
+    "data": {
+      "id": "1613717531000-bZsJ-vbkl",
+      "url": "https://www.goodreads.com/book/show/52668915-entangled-life?from_choice=true",
+      "addedDT": 1613717531000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "medpack"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-orange-800"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1613717537000-pIpl-txjr.json",
+    "data": {
+      "id": "1613717537000-pIpl-txjr",
+      "url": "https://www.goodreads.com/book/show/51154724-modern-comfort-food?from_choice=true",
+      "addedDT": 1613717537000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "googly-eyes"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "segments"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1614951870000-AemD-tHFN.json",
+    "data": {
+      "id": "1614951870000-AemD-tHFN",
+      "url": "https://hummingbard.com/hummingbard/introducing-hummingbard?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=show_hn",
+      "addedDT": 1614951870000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-yellow-700"
+          },
+          "fg": {
+            "text": "h"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "diamonds"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1615647417000-JyOO-neXu.json",
+    "data": {
+      "id": "1615647417000-JyOO-neXu",
+      "url": "https://twist.com/",
+      "addedDT": 1615647417000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "confetti2"
+          },
+          "fg": {
+            "text": "t"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-purple-300"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1616227433000-EzeC-lRzJ.json",
+    "data": {
+      "id": "1616227433000-EzeC-lRzJ",
+      "url": "https://www.animatedknots.com/",
+      "addedDT": 1616227433000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/clear-sodium-bulb-lot-with-white-background.d3197f9b.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-blue-700"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1616728251000-zIMR-ySKE.json",
+    "data": {
+      "id": "1616728251000-zIMR-ySKE",
+      "url": "https://github.com/prscX/react-native-photo-editor",
+      "addedDT": 1616728251000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "port-hole"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-green-500"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1616945641000-TvLV-ywTS.json",
+    "data": {
+      "id": "1616945641000-TvLV-ywTS",
+      "url": "https://www.bridgebase.com/",
+      "addedDT": 1616945641000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "leaf"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-purple-900"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1617090665000-WnpI-SCnU.json",
+    "data": {
+      "id": "1617090665000-WnpI-SCnU",
+      "url": "https://github.com/fmeringdal/nettu-scheduler",
+      "addedDT": 1617090665000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "instrument-panel"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "marrakesh"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1617457452000-WjkS-chml.json",
+    "data": {
+      "id": "1617457452000-WjkS-chml",
+      "url": "https://cryptobook.nakov.com/",
+      "addedDT": 1617457452000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/black-and-gray-laptop-computer-macbook-beside-drinking-glass-on-wooden-table.91f396ce.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-teal-800"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1619969553000-YyFb-ezaT.json",
+    "data": {
+      "id": "1619969553000-YyFb-ezaT",
+      "url": "https://paddle.com/",
+      "addedDT": 1619969553000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "spider-weave"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-indigo-400"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1621665296000-xswQ-ofsG.json",
+    "data": {
+      "id": "1621665296000-xswQ-ofsG",
+      "url": "http://www.gardening.cornell.edu/homegardening/?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=learn",
+      "addedDT": 1621665296000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-yellow-400"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-red-500"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1625411352000-UhQb-AjNO.json",
+    "data": {
+      "id": "1625411352000-UhQb-AjNO",
+      "url": "https://www.amazon.com/gp/product/B08N4P59FP/ref=as_li_qf_asin_il_tl?ie=UTF8&amp;tag=time-books-20&amp;creative=9325&amp;linkCode=as2&amp;creativeASIN=B08N4P59FP&amp;linkId=376ea387b612cfdbcac278d4e2fc8141",
+      "addedDT": 1625411352000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/turned-off-black-laptop-computer-on-green-grass-field.cac3b6f1.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-teal-300"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1625883997000-Abam-LIhI.json",
+    "data": {
+      "id": "1625883997000-Abam-LIhI",
+      "url": "http://www.gutenberg.org/ebooks/45410",
+      "addedDT": 1625883997000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "bones"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-blue-400"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1627733244000-ECYj-xfiz.json",
+    "data": {
+      "id": "1627733244000-ECYj-xfiz",
+      "url": "https://candidegardening.com/GB/identify-plants?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=show_hn",
+      "addedDT": 1627733244000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "instrument-panel"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-blue-500"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1629387605000-JKBg-ViIZ.json",
+    "data": {
+      "id": "1629387605000-JKBg-ViIZ",
+      "url": "https://www.amazon.com/gp/aw/d/B00D0V44LC/ref=tmm_kin_swatch_0?ie=UTF8&amp;qid=&amp;sr=",
+      "addedDT": 1629387605000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "cross-dots"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-red-800"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1630832648000-EBiS-mOgP.json",
+    "data": {
+      "id": "1630832648000-EBiS-mOgP",
+      "url": "https://ente.io/",
+      "addedDT": 1630832648000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "peep-holes"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-blue-700"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1631071956000-fUxi-VDeq.json",
+    "data": {
+      "id": "1631071956000-fUxi-VDeq",
+      "url": "https://www.goodreads.com/book/show/50202953-piranesi",
+      "addedDT": 1631071956000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-red-600"
+          },
+          "fg": {
+            "text": "g"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "pyramids"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1631429709000-CGCk-KFPE.json",
+    "data": {
+      "id": "1631429709000-CGCk-KFPE",
+      "url": "https://electroagenda.com/en/a-summary-of-electronics/",
+      "addedDT": 1631429709000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "diamonds"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-gray-300"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1631429709000-vsai-xHJa.json",
+    "data": {
+      "id": "1631429709000-vsai-xHJa",
+      "url": "https://electroagenda.com/en/a-summary-of-electronics/",
+      "addedDT": 1631429709000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/silver-macbook-beside-white-smartphone.cdf98260.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-yellow-300"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1631430578000-oXSJ-MOGx.json",
+    "data": {
+      "id": "1631430578000-oXSJ-MOGx",
+      "url": "https://www.windy.com/?13.698,100.464,5",
+      "addedDT": 1631430578000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "diagonal-checkerboard"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-gray-300"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1631430578000-qTrt-exPL.json",
+    "data": {
+      "id": "1631430578000-qTrt-exPL",
+      "url": "https://www.windy.com/?13.698,100.464,5",
+      "addedDT": 1631430578000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "half-rombes"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-green-700"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1631893628000-DquK-OCCT.json",
+    "data": {
+      "id": "1631893628000-DquK-OCCT",
+      "url": "https://www.coldstart.com/",
+      "addedDT": 1631893628000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "mermaid"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "biohazard"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1631893628000-VAzP-LeDT.json",
+    "data": {
+      "id": "1631893628000-VAzP-LeDT",
+      "url": "https://www.coldstart.com/",
+      "addedDT": 1631893628000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "bones"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-gray-500"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1633169998000-gHkP-MvmT.json",
+    "data": {
+      "id": "1633169998000-gHkP-MvmT",
+      "url": "https://www.gatesnotes.com/Books/Range",
+      "addedDT": 1633169998000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "moth-bot"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-blue-600"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1633169998000-oLLJ-IrPo.json",
+    "data": {
+      "id": "1633169998000-oLLJ-IrPo",
+      "url": "https://www.gatesnotes.com/Books/Range",
+      "addedDT": 1633169998000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "villain-underpants"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "chinese-lanterns"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1633170005000-QuDe-UFgX.json",
+    "data": {
+      "id": "1633170005000-QuDe-UFgX",
+      "url": "https://www.gatesnotes.com/Books/Lights-Out",
+      "addedDT": 1633170005000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "leaf"
+          },
+          "fg": {
+            "text": "g"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-blue-700"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1633170005000-znyT-eNLF.json",
+    "data": {
+      "id": "1633170005000-znyT-eNLF",
+      "url": "https://www.gatesnotes.com/Books/Lights-Out",
+      "addedDT": 1633170005000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-green-800"
+          },
+          "fg": {
+            "text": "g"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-orange-700"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1633170067000-fFcG-mWyu.json",
+    "data": {
+      "id": "1633170067000-fFcG-mWyu",
+      "url": "https://www.gatesnotes.com/Books/The-Ride-of-a-Lifetime",
+      "addedDT": 1633170067000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-pink-400"
+          },
+          "fg": {
+            "text": "g"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-indigo-500"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1633170067000-mZoa-OdYt.json",
+    "data": {
+      "id": "1633170067000-mZoa-OdYt",
+      "url": "https://www.gatesnotes.com/Books/The-Ride-of-a-Lifetime",
+      "addedDT": 1633170067000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "lemon-lime-gingham"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-purple-800"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1633170113000-hOZl-jWEE.json",
+    "data": {
+      "id": "1633170113000-hOZl-jWEE",
+      "url": "https://www.goodreads.com/book/show/57070599-rationality",
+      "addedDT": 1633170113000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "rainbows"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-gray-800"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1633170113000-yVvC-GmNd.json",
+    "data": {
+      "id": "1633170113000-yVvC-GmNd",
+      "url": "https://www.goodreads.com/book/show/57070599-rationality",
+      "addedDT": 1633170113000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "medpack"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "bed-springs"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1633176120000-UmsB-XvFu.json",
+    "data": {
+      "id": "1633176120000-UmsB-XvFu",
+      "url": "https://www.goodreads.com/book/show/55623616-nature-remade",
+      "addedDT": 1633176120000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-red-700"
+          },
+          "fg": {
+            "text": "g"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-purple-900"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1633176120000-dhpw-lDtZ.json",
+    "data": {
+      "id": "1633176120000-dhpw-lDtZ",
+      "url": "https://www.goodreads.com/book/show/55623616-nature-remade",
+      "addedDT": 1633176120000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/clear-light-bulb-on-black-chalkboard.c407ee8b.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-teal-700"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1633176211000-McKN-QywQ.json",
+    "data": {
+      "id": "1633176211000-McKN-QywQ",
+      "url": "https://www.amazon.com/gp/aw/d/B08MQM2M54/ref=tmm_kin_swatch_0?ie=UTF8&amp;qid=&amp;sr=",
+      "addedDT": 1633176211000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "image",
+            "value": "/static/media/cup-of-coffee-beside-macbook-pro.bb3ad8cf.jpg"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-teal-800"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1633176211000-tJdS-NFuX.json",
+    "data": {
+      "id": "1633176211000-tJdS-NFuX",
+      "url": "https://www.amazon.com/gp/aw/d/B08MQM2M54/ref=tmm_kin_swatch_0?ie=UTF8&amp;qid=&amp;sr=",
+      "addedDT": 1633176211000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-blue-800"
+          },
+          "fg": {
+            "text": "a"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-indigo-800"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1633179935000-DWna-xPDf.json",
+    "data": {
+      "id": "1633179935000-DWna-xPDf",
+      "url": "https://imgz.org/?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=show_hn",
+      "addedDT": 1633179935000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-pink-500"
+          },
+          "fg": {
+            "text": "i"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-blue-800"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1633179935000-tQhG-hVdx.json",
+    "data": {
+      "id": "1633179935000-tQhG-hVdx",
+      "url": "https://imgz.org/?utm_source=hackernewsletter&amp;utm_medium=email&amp;utm_term=show_hn",
+      "addedDT": 1633179935000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "sugar-lattice"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "pattern",
+            "value": "sea-wall"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1633835728000-WaGI-EwuK.json",
+    "data": {
+      "id": "1633835728000-WaGI-EwuK",
+      "url": "https://www.nature.com/articles/d41586-021-02615-2?utm_source=Nature+Briefing&amp;utm_campaign=38fd982e90-briefing-dy-20211008&amp;utm_medium=email&amp;utm_term=0_c9dfd39373-38fd982e90-46673950",
+      "addedDT": 1633835728000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "color",
+            "value": "bg-gray-900"
+          },
+          "fg": {
+            "text": "n"
+          }
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-indigo-900"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "links/My List/1633835728000-lUsE-KFpb.json",
+    "data": {
+      "id": "1633835728000-lUsE-KFpb",
+      "url": "https://www.nature.com/articles/d41586-021-02615-2?utm_source=Nature+Briefing&amp;utm_campaign=38fd982e90-briefing-dy-20211008&amp;utm_medium=email&amp;utm_term=0_c9dfd39373-38fd982e90-46673950",
+      "addedDT": 1633835728000,
+      "decor": {
+        "image": {
+          "bg": {
+            "type": "pattern",
+            "value": "tablecloth"
+          },
+          "fg": null
+        },
+        "favicon": {
+          "bg": {
+            "type": "color",
+            "value": "bg-teal-600"
+          }
+        }
+      }
+    }
+  },
+  {
+    "path": "settings1726806125607LQha_1726806084077Jwud.json",
+    "data": {
+      "defaultListName": "My List",
+      "doEncrypt": true,
+      "doExtractContents": false,
+      "doDeleteOldLinksInTrash": true,
+      "doDescendingOrder": true,
+      "doRemoveAfterClick": false,
+      "doExitBulkEditAfterAction": true,
+      "listNameMap": [
+        {
+          "listName": "My List",
+          "displayName": "My List"
+        },
+        {
+          "listName": "Trash",
+          "displayName": "Trash"
+        },
+        {
+          "listName": "Archive",
+          "displayName": "Archive"
+        }
+      ],
+      "tagNameMap": [],
+      "purchases": null,
+      "checkPurchasesDT": null,
+      "layoutType": "LAYOUT_CARD",
+      "themeMode": 0,
+      "themeCustomOptions": [
+        {
+          "mode": 0,
+          "startTime": "06:00"
+        },
+        {
+          "mode": 1,
+          "startTime": "18:00"
+        }
+      ]
+    }
+  }
+]
