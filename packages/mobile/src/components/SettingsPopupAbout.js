@@ -71,6 +71,23 @@ const SettingsPopupAbout = (props) => {
             <Text style={tailwind('text-base font-normal text-gray-500 blk:text-gray-400')}>Support</Text>
           </TouchableOpacity>
         </View>
+        <View style={tailwind('hidden py-2 md:ml-10 lg:flex')}>
+          <TouchableOpacity onPress={() => Linking.openURL('https://docs.brace.to')} style={tailwind('px-2 py-1')}>
+            <Text style={tailwind('text-base font-normal text-gray-500 blk:text-gray-400')}>Docs</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={tailwind('hidden py-2 md:ml-10 lg:flex')}>
+          <TouchableOpacity onPress={() => Linking.openURL('https://medium.com/@stxapps')} style={tailwind('px-2 py-1')}>
+            <Text style={tailwind('text-base font-normal text-gray-500 blk:text-gray-400')}>Blog</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={tailwind('-ml-2 items-start justify-start pt-8 md:flex-row lg:hidden')}>
+        <View style={tailwind('py-2')}>
+          <TouchableOpacity onPress={() => Linking.openURL('https://docs.brace.to')} style={tailwind('px-2 py-1')}>
+            <Text style={tailwind('text-base font-normal text-gray-500 blk:text-gray-400')}>Docs</Text>
+          </TouchableOpacity>
+        </View>
         <View style={tailwind('py-2 md:ml-10')}>
           <TouchableOpacity onPress={() => Linking.openURL('https://medium.com/@stxapps')} style={tailwind('px-2 py-1')}>
             <Text style={tailwind('text-base font-normal text-gray-500 blk:text-gray-400')}>Blog</Text>

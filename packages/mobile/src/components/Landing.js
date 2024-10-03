@@ -137,7 +137,7 @@ class Landing extends React.PureComponent {
               </Svg>
             </View>
             <Text style={tailwind('mt-5 text-xl font-semibold leading-5 text-gray-900 md:text-2xl')}>Account</Text>
-            <Text style={tailwind('mt-2.5 text-base font-normal text-gray-500 md:text-lg')}><Text style={tailwind('text-base font-medium text-purple-blockstack md:text-lg')} onPress={() => Linking.openURL('https://docs.stacks.co/stacks-101/accounts')}>Your account</Text> is cryptographically generated; only you, with your Secret Key, can control it.</Text>
+            <Text style={tailwind('mt-2.5 text-base font-normal text-gray-500 md:text-lg')}><Text style={tailwind('text-base font-medium text-purple-blockstack md:text-lg')} onPress={() => Linking.openURL('https://docs.stacks.co/concepts/network-fundamentals/accounts')}>Your account</Text> is cryptographically generated; only you, with your Secret Key, can control it.</Text>
             <Text style={tailwind('mt-5 text-base font-medium leading-5.5 text-gray-900 md:text-lg')}>No ban on your owned account</Text>
             <Text style={tailwind('mt-2.5 text-base font-normal text-gray-500 md:text-lg')}>Your account cannot be locked, banned, or deleted by anyone, as your Secret Key is required to access and modify your account.</Text>
           </View>
@@ -167,7 +167,7 @@ class Landing extends React.PureComponent {
               <Path d="M57 44.2584V49.4842L52.3548 52.0245M57 44.2584L52.3548 46.8713M57 44.2584L52.3548 41.6455L47.7097 44.2584M52.3548 52.0245L47.7097 49.4842V44.2584M52.3548 52.0245V46.8713M47.7097 44.2584L52.3548 46.8713" stroke="white" strokeWidth="1.69052" />
             </Svg>
             <Text style={tailwind('mt-5 text-xl font-semibold leading-5 text-gray-900 md:text-2xl')}>Data Storage</Text>
-            <Text style={tailwind('mt-2.5 text-base font-normal text-gray-500 md:text-lg')}>Your data lives in <Text style={tailwind('text-base font-medium text-purple-blockstack md:text-lg')} onPress={() => Linking.openURL('https://docs.stacks.co/stacks-in-depth/gaia')}>a data server</Text> of your choice; only you, with your Secret Key, can change it.</Text>
+            <Text style={tailwind('mt-2.5 text-base font-normal text-gray-500 md:text-lg')}>Your data lives in <Text style={tailwind('text-base font-medium text-purple-blockstack md:text-lg')} onPress={() => Linking.openURL('https://docs.stacks.co/concepts/gaia')}>a data server</Text> of your choice; only you, with your Secret Key, can change it.</Text>
             <Text style={tailwind('mt-5 text-base font-medium leading-5.5 text-gray-900 md:text-lg')}>No lock out of your own data</Text>
             <Text style={tailwind('mt-2.5 text-base font-normal text-gray-500 md:text-lg')}>You can manage your data and set permissions directly, as you can host your own data server or choose any data server provider.</Text>
           </View>

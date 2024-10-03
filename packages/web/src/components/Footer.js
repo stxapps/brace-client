@@ -32,6 +32,9 @@ class Footer extends React.PureComponent {
             <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={'/' + HASH_SUPPORT}>Support</a>
           </div>
           <div className={tailwind('mt-2 px-3 py-1 md:mt-0')}>
+            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href="https://docs.brace.to" target="_blank" rel="noreferrer">Docs</a>
+          </div>
+          <div className={tailwind('mt-2 px-3 py-1 md:mt-0')}>
             <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href="https://medium.com/@stxapps" target="_blank" rel="noreferrer">Blog</a>
           </div>
         </div>

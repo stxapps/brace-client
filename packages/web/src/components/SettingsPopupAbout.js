@@ -52,6 +52,17 @@ const SettingsPopupAbout = (props) => {
           <div className={tailwind('py-2 md:ml-10')}>
             <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">Support</a>
           </div>
+          <div className={tailwind('hidden py-2 md:ml-10 lg:block')}>
+            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href="https://docs.brace.to" target="_blank" rel="noreferrer">Docs</a>
+          </div>
+          <div className={tailwind('hidden py-2 md:ml-10 lg:block')}>
+            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href="https://medium.com/@stxapps" target="_blank" rel="noreferrer">Blog</a>
+          </div>
+        </div>
+        <div className={tailwind('-ml-2 pt-8 md:flex lg:hidden')}>
+          <div className={tailwind('py-2')}>
+            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href="https://docs.brace.to" target="_blank" rel="noreferrer">Docs</a>
+          </div>
           <div className={tailwind('py-2 md:ml-10')}>
             <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href="https://medium.com/@stxapps" target="_blank" rel="noreferrer">Blog</a>
           </div>

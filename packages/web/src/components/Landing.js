@@ -333,7 +333,7 @@ class Landing extends React.PureComponent {
                   </svg>
                 </div>
                 <h3 className={tailwind('mt-5 text-xl font-medium leading-none text-gray-900')}>Account</h3>
-                <p className={tailwind('mt-2.5 text-base font-normal text-gray-500')}><a className={tailwind('rounded font-medium text-purple-blockstack hover:underline focus:outline-none focus:ring')} href="https://docs.stacks.co/stacks-101/accounts" target="_blank" rel="noreferrer">Your account</a> is cryptographically generated; only you, with your Secret Key, can control it.</p>
+                <p className={tailwind('mt-2.5 text-base font-normal text-gray-500')}><a className={tailwind('rounded font-medium text-purple-blockstack hover:underline focus:outline-none focus:ring')} href="https://docs.stacks.co/concepts/network-fundamentals/accounts" target="_blank" rel="noreferrer">Your account</a> is cryptographically generated; only you, with your Secret Key, can control it.</p>
                 <h4 className={tailwind('mt-5 text-base font-medium leading-snug text-gray-900')}>No ban on your owned account</h4>
                 <p className={tailwind('mt-2.5 text-base font-normal text-gray-500')}>Your account cannot be locked, banned, or deleted by anyone, as your Secret Key is required to access and modify your account.</p>
               </div>
@@ -363,7 +363,7 @@ class Landing extends React.PureComponent {
                   <path d="M57 44.2584V49.4842L52.3548 52.0245M57 44.2584L52.3548 46.8713M57 44.2584L52.3548 41.6455L47.7097 44.2584M52.3548 52.0245L47.7097 49.4842V44.2584M52.3548 52.0245V46.8713M47.7097 44.2584L52.3548 46.8713" stroke="white" strokeWidth="1.69052" />
                 </svg>
                 <h3 className={tailwind('mt-5 text-xl font-medium leading-none text-gray-900')}>Data Storage</h3>
-                <p className={tailwind('mt-2.5 text-base font-normal text-gray-500')}>Your data lives in <a className={tailwind('rounded font-medium text-purple-blockstack hover:underline focus:outline-none focus:ring')} href="https://docs.stacks.co/stacks-in-depth/gaia" target="_blank" rel="noreferrer">a data server</a> of your choice; only you, with your Secret Key, can change it.</p>
+                <p className={tailwind('mt-2.5 text-base font-normal text-gray-500')}>Your data lives in <a className={tailwind('rounded font-medium text-purple-blockstack hover:underline focus:outline-none focus:ring')} href="https://docs.stacks.co/concepts/gaia" target="_blank" rel="noreferrer">a data server</a> of your choice; only you, with your Secret Key, can change it.</p>
                 <h4 className={tailwind('mt-5 text-base font-medium leading-snug text-gray-900')}>No lock out of your own data</h4>
                 <p className={tailwind('mt-2.5 text-base font-normal text-gray-500')}>You can manage your data and set permissions directly, as you can host your own data server or choose any data server provider.</p>
               </div>
