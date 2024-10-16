@@ -26,7 +26,7 @@ class Landing extends React.PureComponent {
 
   onSignUpBtnClick = () => {
     this.props.updatePopup(SIGN_UP_POPUP, true);
-  }
+  };
 
   renderSwiper(swiperHeight) {
     const { safeAreaWidth, safeAreaHeight, tailwind } = this.props;

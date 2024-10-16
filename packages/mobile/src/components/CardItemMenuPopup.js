@@ -90,7 +90,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
     this.props.updatePopup(CARD_ITEM_MENU_POPUP, true, null);
     this.didClick = false;
-  }
+  };
 
   onMenuPopupClick = (text) => {
     if (!text || this.didClick) return true;
@@ -162,11 +162,11 @@ class CardItemMenuPopup extends React.PureComponent {
     this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
     this.didClick = true;
     return true;
-  }
+  };
 
   onMenuBackdropPress = () => {
     this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
-  }
+  };
 
   renderMenu() {
     const { listNameMap, tailwind } = this.props;

@@ -109,7 +109,7 @@ class BottomBarBulkEditCommands extends React.Component {
 
     this.setState({ isEmptyErrorShown: false });
     return false;
-  }
+  };
 
   onBulkEditArchiveBtnClick = () => {
     if (this.checkNoLinkIdSelected() || this.didClick) return;
@@ -120,7 +120,7 @@ class BottomBarBulkEditCommands extends React.Component {
     this.props.updateBulkEdit(false);
 
     this.didClick = true;
-  }
+  };
 
   onBulkEditRemoveBtnClick = () => {
     if (this.checkNoLinkIdSelected() || this.didClick) return;
@@ -131,7 +131,7 @@ class BottomBarBulkEditCommands extends React.Component {
     this.props.updateBulkEdit(false);
 
     this.didClick = true;
-  }
+  };
 
   onBulkEditRestoreBtnClick = () => {
     if (this.checkNoLinkIdSelected() || this.didClick) return;
@@ -142,13 +142,13 @@ class BottomBarBulkEditCommands extends React.Component {
     this.props.updateBulkEdit(false);
 
     this.didClick = true;
-  }
+  };
 
   onBulkEditDeleteBtnClick = () => {
     if (this.checkNoLinkIdSelected()) return;
     this.props.updateDeleteAction(DELETE_ACTION_LINK_COMMANDS);
     this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
-  }
+  };
 
   onBulkEditMoveToBtnClick = () => {
     if (this.checkNoLinkIdSelected()) return;
@@ -162,7 +162,7 @@ class BottomBarBulkEditCommands extends React.Component {
       };
       this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
     });
-  }
+  };
 
   onBulkEditMoreBtnClick = () => {
     if (this.checkNoLinkIdSelected()) return;
@@ -174,11 +174,11 @@ class BottomBarBulkEditCommands extends React.Component {
       };
       this.props.updatePopup(BULK_EDIT_MENU_POPUP, true, rect);
     });
-  }
+  };
 
   onBulkEditCancelBtnClick = () => {
     this.props.updateBulkEdit(false);
-  }
+  };
 
   renderEmptyError() {
     const { tailwind } = this.props;

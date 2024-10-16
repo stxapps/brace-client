@@ -16,7 +16,7 @@ class TopBar extends React.PureComponent {
 
   onSignInBtnClick = () => {
     this.props.updatePopup(SIGN_IN_POPUP, true);
-  }
+  };
 
   renderSignInBtn() {
     const { tailwind } = this.props;

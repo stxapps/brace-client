@@ -46,22 +46,22 @@ class TopBarAddPopup extends React.PureComponent {
         if (this.addInput.current) this.addInput.current.focus();
       }, 100);
     }
-  }
+  };
 
   onAddBtnClick = () => {
     this.props.updatePopup(ADD_POPUP, true);
     this.didClick = false;
-  }
+  };
 
   onAddInputChange = (e) => {
     this.props.updateLinkEditor(
       { url: e.nativeEvent.text, msg: '', isAskingConfirm: false }
     );
-  }
+  };
 
   onAddInputKeyPress = () => {
     this.onAddOkBtnClick();
-  }
+  };
 
   onAddOkBtnClick = () => {
     if (this.didClick) return;
@@ -88,16 +88,16 @@ class TopBarAddPopup extends React.PureComponent {
     this.props.updatePopup(ADD_POPUP, false);
 
     this.didClick = true;
-  }
+  };
 
   onAddCancelBtnClick = () => {
     this.props.ctx.menuActions.closeMenu();
     this.onAddPopupClosed();
-  }
+  };
 
   onAddPopupClosed = () => {
     this.props.updatePopup(ADD_POPUP, false);
-  }
+  };
 
   renderAddPopup() {
     const { url, msg, isAskingConfirm, themeMode, tailwind } = this.props;

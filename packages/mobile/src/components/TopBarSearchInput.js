@@ -13,11 +13,11 @@ class TopBarSearchInput extends React.PureComponent {
 
   onSearchInputChange = (e) => {
     this.props.updateSearchString(e.nativeEvent.text);
-  }
+  };
 
   onSearchClearBtnClick = () => {
     this.props.updateSearchString('');
-  }
+  };
 
   render() {
     const { searchString, themeMode, tailwind } = this.props;

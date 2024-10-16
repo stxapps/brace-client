@@ -52,11 +52,11 @@ class CardItemContent extends React.Component {
   onLongPress = () => {
     this.props.updateBulkEdit(true);
     this.props.addSelectedLinkIds([this.props.link.id]);
-  }
+  };
 
   onExtractedFaviconError = () => {
     this.setState({ extractedFaviconError: true });
-  }
+  };
 
   renderImage() {
     const { decor, extractedResult, doIgnoreExtrdRst } = this.props.link;

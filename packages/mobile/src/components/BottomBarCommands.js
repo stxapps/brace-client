@@ -17,19 +17,19 @@ class BottomBarCommands extends React.PureComponent {
 
   onAddBtnClick = () => {
     this.props.updatePopup(ADD_POPUP, true);
-  }
+  };
 
   onSearchBtnClick = () => {
     this.props.updatePopup(SEARCH_POPUP, true);
-  }
+  };
 
   onBulkEditBtnClick = () => {
     this.props.updateBulkEdit(true);
-  }
+  };
 
   onProfileBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, true);
-  }
+  };
 
   render() {
     const { tailwind } = this.props;

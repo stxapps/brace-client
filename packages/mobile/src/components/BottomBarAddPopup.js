@@ -27,19 +27,19 @@ class BottomBarAddPopup extends React.PureComponent {
       if (this.addInput.current) this.addInput.current.focus();
     }, 100);
     this.didClick = false;
-  }
+  };
 
-  onAddPopupHide = () => this.addInput.current.blur()
+  onAddPopupHide = () => this.addInput.current.blur();
 
   onAddInputChange = (e) => {
     this.props.updateLinkEditor(
       { url: e.nativeEvent.text, msg: '', isAskingConfirm: false }
     );
-  }
+  };
 
   onAddInputKeyPress = () => {
     this.onAddOkBtnClick();
-  }
+  };
 
   onAddOkBtnClick = () => {
     if (this.didClick) return;
@@ -65,11 +65,11 @@ class BottomBarAddPopup extends React.PureComponent {
     this.props.updatePopup(ADD_POPUP, false);
 
     this.didClick = true;
-  }
+  };
 
   onAddCancelBtnClick = () => {
     this.props.updatePopup(ADD_POPUP, false);
-  }
+  };
 
   render() {
 

@@ -10,7 +10,7 @@ class GracefulImage extends React.PureComponent {
 
   onLoad = () => {
     this.setState({ loaded: true });
-  }
+  };
 
   render() {
     const { source, style, contentStyle, placeholderColor, customPlaceholder, onError, ...nativeImageProps } = this.props;

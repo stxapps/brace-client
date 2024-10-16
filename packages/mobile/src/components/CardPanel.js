@@ -57,11 +57,11 @@ class CardPanel extends React.PureComponent {
       this.props.scrollY.setValue(0);
       vars.scrollPanel.scrollY = 0;
     }, 1);
-  }
+  };
 
   getItemId = (item) => {
     return item.id;
-  }
+  };
 
   onScroll = (e) => {
     const contentHeight = e.nativeEvent.contentSize.height;
@@ -71,7 +71,7 @@ class CardPanel extends React.PureComponent {
     vars.scrollPanel.contentHeight = contentHeight;
     vars.scrollPanel.layoutHeight = layoutHeight;
     vars.scrollPanel.scrollY = scrollY;
-  }
+  };
 
   onEndReached = () => {
     // if has more, not fetching more, and at the bottom
@@ -81,19 +81,19 @@ class CardPanel extends React.PureComponent {
     }
 
     this.props.fetchMore();
-  }
+  };
 
   onFetchMoreBtnClick = () => {
     this.props.fetchMore();
-  }
+  };
 
   onUpdateFetchedBtnClick = () => {
     this.props.updateFetchedMore();
-  }
+  };
 
   renderEmpty = () => {
     return <EmptyContent />;
-  }
+  };
 
   renderFetchMoreBtn = () => {
     const { tailwind } = this.props;
@@ -105,7 +105,7 @@ class CardPanel extends React.PureComponent {
         </View>
       </TouchableOpacity>
     );
-  }
+  };
 
   renderFetchingMore = () => {
     const { tailwind } = this.props;
@@ -115,7 +115,7 @@ class CardPanel extends React.PureComponent {
         <Flow size={48} color="rgb(156, 163, 175)" />
       </View>
     );
-  }
+  };
 
   renderUpdateFetchedBtn = () => {
     const { tailwind } = this.props;
@@ -127,7 +127,7 @@ class CardPanel extends React.PureComponent {
         </View>
       </TouchableOpacity>
     );
-  }
+  };
 
   renderItem = ({ item }) => {
     const { tailwind } = this.props;
@@ -155,7 +155,7 @@ class CardPanel extends React.PureComponent {
       return <CardLoadingContentItem style={tailwind(classNames)} />;
     }
     return <CardItem style={tailwind(classNames)} link={item.data} />;
-  }
+  };
 
   renderColumn = ({ item }) => {
     const { columnWidth, safeAreaWidth } = this.props;
@@ -187,7 +187,7 @@ class CardPanel extends React.PureComponent {
         maxToRenderPerBatch={maxToRenderPerBatch}
         removeClippedSubviews={false} />
     );
-  }
+  };
 
   renderPanel = ({ item }) => {
     const { hasFetchedMore, isFetchingMore, safeAreaWidth, tailwind } = this.props;
@@ -275,7 +275,7 @@ class CardPanel extends React.PureComponent {
     }
 
     throw new Error(`Invalid item.id: ${item.id}`);
-  }
+  };
 
   render() {
     const { hasMore, columnWidth, tailwind } = this.props;

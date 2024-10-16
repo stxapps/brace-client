@@ -26,44 +26,44 @@ class TopBarCommands extends React.PureComponent {
 
   onBulkEditBtnClick = () => {
     this.props.updateBulkEdit(true);
-  }
+  };
 
   onProfileBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, true);
-  }
+  };
 
   onProfileCancelBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
-  }
+  };
 
   onRefreshBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
     this.props.refreshFetched(true, true);
-  }
+  };
 
   onSettingsBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
 
     this.props.updateSettingsViewId(SETTINGS_VIEW_ACCOUNT, true);
     this.props.updateSettingsPopup(true);
-  }
+  };
 
   onSupportBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
     Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT);
-  }
+  };
 
   onSignOutBtnClick = () => {
     // No need to update it, will get already unmount
     //this.props.updatePopup(PROFILE_POPUP, false);
     this.props.signOut();
-  }
+  };
 
   onLockBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
     // Wait for the close animation to finish first
     setTimeout(() => this.props.lockCurrentList(), 100);
-  }
+  };
 
   renderProfilePopup() {
     const { tailwind, lockStatus, canChangeListNames } = this.props;

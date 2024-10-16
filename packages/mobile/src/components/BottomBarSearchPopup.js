@@ -104,7 +104,7 @@ class BottomBarSearchPopup extends React.PureComponent {
         this.searchPopupBackHandler = null;
       }
     }
-  }
+  };
 
   registerKeyboardListeners = (isSearchPopupShown) => {
     if (isSearchPopupShown) {
@@ -128,7 +128,7 @@ class BottomBarSearchPopup extends React.PureComponent {
         this.keyboardDidHideListener = null;
       }
     }
-  }
+  };
 
   translateSearchPopup = (prevIsBottomBarShown) => {
     const { isBottomBarShown, isSearchPopupShown, insets } = this.props;
@@ -157,23 +157,23 @@ class BottomBarSearchPopup extends React.PureComponent {
         useNativeDriver: true,
       }).start();
     }
-  }
+  };
 
   onSearchInputChange = (e) => {
     this.props.updateSearchString(e.nativeEvent.text);
-  }
+  };
 
   onSearchClearBtnClick = () => {
     this.props.updateSearchString('');
     this.searchInput.current.focus();
-  }
+  };
 
   onSearchCancelBtnClick = () => {
     this.props.updateSearchString('');
     this.props.updatePopup(SEARCH_POPUP, false);
 
     Keyboard.dismiss();
-  }
+  };
 
   render() {
     const { searchString, insets, themeMode, tailwind } = this.props;

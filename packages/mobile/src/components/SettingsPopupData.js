@@ -299,7 +299,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
       didCheckConfirm: !this.state.didCheckConfirm,
       isRequireConfirmShown: false,
     });
-  }
+  };
 
   onDeleteAllDataBtnClick = () => {
     if (this.didClick) return;
@@ -314,7 +314,7 @@ class _SettingsPopupDataDelete extends React.PureComponent {
     }
 
     this.setState({ isRequireConfirmShown: true });
-  }
+  };
 
   render() {
     const { deleteAllDataProgress, safeAreaWidth, themeMode, tailwind } = this.props;

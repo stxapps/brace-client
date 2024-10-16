@@ -75,7 +75,7 @@ class Main extends React.PureComponent {
     if (safeAreaWidth >= LG_WIDTH) columnWidth = PC_33;
 
     return columnWidth;
-  }
+  };
 
   mkDirAndFetch = async () => {
     try {
@@ -86,7 +86,7 @@ class Main extends React.PureComponent {
     }
 
     this.props.fetch();
-  }
+  };
 
   render() {
     const { layoutType, safeAreaWidth, lockStatus } = this.props;

@@ -70,11 +70,11 @@ class ConfirmDeletePopup extends React.Component {
     }
 
     this.didClick = true;
-  }
+  };
 
   onConfirmDeleteCancelBtnClick = () => {
     this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
-  }
+  };
 
   render() {
     const {

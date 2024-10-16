@@ -60,11 +60,11 @@ class CardItem extends React.Component {
     if (this.didClick) return;
     this.props.retryDiedLinks([this.props.link.id]);
     this.didClick = true;
-  }
+  };
 
   onRetryCancelBtnClick = () => {
     this.props.cancelDiedLinks([this.props.link.id]);
-  }
+  };
 
   renderRetry() {
     const { tailwind } = this.props;

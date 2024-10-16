@@ -115,7 +115,7 @@ class CardItemSelector extends React.Component {
 
     if (isSelected) this.props.deleteSelectedLinkIds([linkId]);
     else this.props.addSelectedLinkIds([linkId]);
-  }
+  };
 
   renderMaxError() {
     if (!this.state.isMaxErrorShown && this.state.didMaxErrorCloseAnimEnd) return null;

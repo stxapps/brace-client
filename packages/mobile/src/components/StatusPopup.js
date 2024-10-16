@@ -96,11 +96,11 @@ class StatusPopup extends React.PureComponent {
     }
 
     this.textWidth = textWidth;
-  }
+  };
 
   onTimeout = () => {
     this.props.updateStatus(null);
-  }
+  };
 
   render() {
     const { status, safeAreaWidth, tailwind } = this.props;
