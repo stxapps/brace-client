@@ -8,76 +8,77 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* BracedottoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* BracedottoTests.m */; };
-		04A32EE428F5564E0003D7F6 /* Dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A32EE328F5564E0003D7F6 /* Dummy.swift */; };
-		04A32EE628F557550003D7F6 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04A32EE528F557550003D7F6 /* StoreKit.framework */; };
-		04A32EEF28F559B00003D7F6 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A32EEE28F559B00003D7F6 /* ShareViewController.swift */; };
-		04A32EF228F559B00003D7F6 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04A32EF028F559B00003D7F6 /* MainInterface.storyboard */; };
-		04A32EF628F559B00003D7F6 /* Save to Brace.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 04A32EEC28F559B00003D7F6 /* Save to Brace.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		04A32EFD28F567220003D7F6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04A32EFC28F567220003D7F6 /* Images.xcassets */; };
-		04A32F0E28F569350003D7F6 /* keys.js in Resources */ = {isa = PBXBuildFile; fileRef = 04A32EFE28F569350003D7F6 /* keys.js */; };
-		04A32F0F28F569350003D7F6 /* encryption.js in Resources */ = {isa = PBXBuildFile; fileRef = 04A32EFF28F569350003D7F6 /* encryption.js */; };
-		04A32F1028F569350003D7F6 /* DataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A32F0028F569350003D7F6 /* DataTypes.swift */; };
-		04A32F1128F569350003D7F6 /* Blockstack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A32F0128F569350003D7F6 /* Blockstack.swift */; };
-		04A32F1228F569350003D7F6 /* BigInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A32F0228F569350003D7F6 /* BigInt.swift */; };
-		04A32F1328F569350003D7F6 /* EllipticJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A32F0328F569350003D7F6 /* EllipticJS.swift */; };
-		04A32F1428F569350003D7F6 /* bigi.js in Resources */ = {isa = PBXBuildFile; fileRef = 04A32F0428F569350003D7F6 /* bigi.js */; };
-		04A32F1528F569350003D7F6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A32F0528F569350003D7F6 /* Constants.swift */; };
-		04A32F1628F569350003D7F6 /* EncryptionJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A32F0628F569350003D7F6 /* EncryptionJS.swift */; };
-		04A32F1728F569350003D7F6 /* KeysJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A32F0728F569350003D7F6 /* KeysJS.swift */; };
-		04A32F1828F569350003D7F6 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A32F0828F569350003D7F6 /* Keys.swift */; };
-		04A32F1928F569350003D7F6 /* BitcoinJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A32F0928F569350003D7F6 /* BitcoinJS.swift */; };
-		04A32F1A28F569350003D7F6 /* elliptic.js in Resources */ = {isa = PBXBuildFile; fileRef = 04A32F0A28F569350003D7F6 /* elliptic.js */; };
-		04A32F1B28F569350003D7F6 /* Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A32F0B28F569350003D7F6 /* Encryption.swift */; };
-		04A32F1C28F569350003D7F6 /* bitcoinjs.js in Resources */ = {isa = PBXBuildFile; fileRef = 04A32F0C28F569350003D7F6 /* bitcoinjs.js */; };
-		04A32F1D28F569350003D7F6 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A32F0D28F569350003D7F6 /* Extensions.swift */; };
-		04A32F1E28F569DB0003D7F6 /* Inter-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7C124D0B5D314AE19E979E43 /* Inter-Medium.otf */; };
-		04A32F1F28F569DB0003D7F6 /* Inter-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9C7BA3F9904E42CE916AD78F /* Inter-ExtraBold.otf */; };
-		04A32F2028F569DB0003D7F6 /* Inter-BoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = EDB668761B5E443CB980206B /* Inter-BoldItalic.otf */; };
-		04A32F2128F569DB0003D7F6 /* Inter-ExtraLightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = DA6869ED175D40848D3FB95C /* Inter-ExtraLightItalic.otf */; };
-		04A32F2228F569DB0003D7F6 /* Inter-SemiBoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = F5E513FF6C404829A1A8406D /* Inter-SemiBoldItalic.otf */; };
-		04A32F2328F569DB0003D7F6 /* Inter-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2C4D7C164D504AEC8EF3A4CB /* Inter-Thin.otf */; };
-		04A32F2428F569DB0003D7F6 /* Inter-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4BB33E6C20C149BAA666726E /* Inter-Black.otf */; };
-		04A32F2528F569DB0003D7F6 /* Inter-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3CB262030D184B229141A8D5 /* Inter-LightItalic.otf */; };
-		04A32F2628F569DB0003D7F6 /* Inter-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = DBCF036F2C53496CB1F32604 /* Inter-SemiBold.otf */; };
-		04A32F2728F569DB0003D7F6 /* Inter-BlackItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 27365427CEF1440D968A25FB /* Inter-BlackItalic.otf */; };
-		04A32F2828F569DB0003D7F6 /* Inter-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8EDC5C2A0CC94D9E82F21384 /* Inter-Regular.otf */; };
-		04A32F2928F569DB0003D7F6 /* Inter-ExtraLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 92D482B199B24F82BE4AC7D7 /* Inter-ExtraLight.otf */; };
-		04A32F2A28F569DB0003D7F6 /* Inter-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E0FEF833E3B4D1DB2C8CC4F /* Inter-Italic.otf */; };
-		04A32F2B28F569DB0003D7F6 /* Inter-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6CF55134B2B14CD0A1B2FA95 /* Inter-Bold.otf */; };
-		04A32F2C28F569DB0003D7F6 /* Inter-ExtraBoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 060C849BE3C44557B39F2EEE /* Inter-ExtraBoldItalic.otf */; };
-		04A32F2D28F569DB0003D7F6 /* Inter-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = F398929645EF4148B38EFDE4 /* Inter-Light.otf */; };
-		04A32F2E28F569DB0003D7F6 /* Inter-MediumItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 08D3419574664F2B9DAA7294 /* Inter-MediumItalic.otf */; };
-		04A32F2F28F569DB0003D7F6 /* Inter-ThinItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 96B1CA1EA54B42989A9F5610 /* Inter-ThinItalic.otf */; };
-		04A32F3328F56B6B0003D7F6 /* Dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A32EE328F5564E0003D7F6 /* Dummy.swift */; };
-		04BB39472BE2254800B98610 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 04BB39462BE2254800B98610 /* PrivacyInfo.xcprivacy */; };
-		04BB39482BE2254800B98610 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 04BB39462BE2254800B98610 /* PrivacyInfo.xcprivacy */; };
-		04BFEEA429F91A2900C384CD /* JSONTokensJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BFEEA329F91A2900C384CD /* JSONTokensJS.swift */; };
-		04BFEEA629F91AF200C384CD /* jsontokens.js in Resources */ = {isa = PBXBuildFile; fileRef = 04BFEEA529F91AF200C384CD /* jsontokens.js */; };
+		04A95A3E2CBE579000D80D46 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04A95A3D2CBE579000D80D46 /* StoreKit.framework */; };
+		04A95A412CBE5DB700D80D46 /* Dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A95A402CBE5DB700D80D46 /* Dummy.swift */; };
+		04A95A502CBE5E4400D80D46 /* Save to Brace.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 04A95A462CBE5E4300D80D46 /* Save to Brace.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		04A95A5C2CBE5E5900D80D46 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04A95A582CBE5E5900D80D46 /* MainInterface.storyboard */; };
+		04A95A5D2CBE5E5900D80D46 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A95A592CBE5E5900D80D46 /* ShareViewController.swift */; };
+		04A95A602CBE60B200D80D46 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 04A95A5F2CBE60B200D80D46 /* PrivacyInfo.xcprivacy */; };
+		04A95A612CBE60B200D80D46 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 04A95A5F2CBE60B200D80D46 /* PrivacyInfo.xcprivacy */; };
+		04A95A622CBE60E400D80D46 /* Dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A95A402CBE5DB700D80D46 /* Dummy.swift */; };
+		04A95A752CBE61AB00D80D46 /* KeysJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A95A742CBE61AB00D80D46 /* KeysJS.swift */; };
+		04A95A762CBE61AB00D80D46 /* Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A95A6F2CBE61AB00D80D46 /* Encryption.swift */; };
+		04A95A772CBE61AB00D80D46 /* Blockstack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A95A692CBE61AB00D80D46 /* Blockstack.swift */; };
+		04A95A782CBE61AB00D80D46 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A95A6A2CBE61AB00D80D46 /* Constants.swift */; };
+		04A95A792CBE61AB00D80D46 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A95A712CBE61AB00D80D46 /* Extensions.swift */; };
+		04A95A7A2CBE61AB00D80D46 /* EncryptionJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A95A702CBE61AB00D80D46 /* EncryptionJS.swift */; };
+		04A95A7B2CBE61AB00D80D46 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A95A732CBE61AB00D80D46 /* Keys.swift */; };
+		04A95A7C2CBE61AB00D80D46 /* JSONTokensJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A95A722CBE61AB00D80D46 /* JSONTokensJS.swift */; };
+		04A95A7D2CBE61AB00D80D46 /* BitcoinJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A95A682CBE61AB00D80D46 /* BitcoinJS.swift */; };
+		04A95A7E2CBE61AB00D80D46 /* BigInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A95A662CBE61AB00D80D46 /* BigInt.swift */; };
+		04A95A7F2CBE61AB00D80D46 /* EllipticJS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A95A6D2CBE61AB00D80D46 /* EllipticJS.swift */; };
+		04A95A802CBE61AB00D80D46 /* DataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A95A6B2CBE61AB00D80D46 /* DataTypes.swift */; };
+		04A95A812CBE61AB00D80D46 /* bitcoinjs.js in Resources */ = {isa = PBXBuildFile; fileRef = 04A95A672CBE61AB00D80D46 /* bitcoinjs.js */; };
+		04A95A822CBE61AB00D80D46 /* bigi.js in Resources */ = {isa = PBXBuildFile; fileRef = 04A95A652CBE61AB00D80D46 /* bigi.js */; };
+		04A95A832CBE61AB00D80D46 /* encryption.js in Resources */ = {isa = PBXBuildFile; fileRef = 04A95A6E2CBE61AB00D80D46 /* encryption.js */; };
+		04A95A842CBE61AB00D80D46 /* elliptic.js in Resources */ = {isa = PBXBuildFile; fileRef = 04A95A6C2CBE61AB00D80D46 /* elliptic.js */; };
+		04A95A872CBE62B800D80D46 /* keys.js in Resources */ = {isa = PBXBuildFile; fileRef = 04A95A862CBE62B800D80D46 /* keys.js */; };
+		04A95A882CBE62B800D80D46 /* jsontokens.js in Resources */ = {isa = PBXBuildFile; fileRef = 04A95A852CBE62B800D80D46 /* jsontokens.js */; };
+		04A95A892CBE62EA00D80D46 /* Inter-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 86B1D5145DE94B8C9FAD5794 /* Inter-SemiBold.otf */; };
+		04A95A8A2CBE62EA00D80D46 /* Inter-MediumItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 343CE4ABA10245119E917503 /* Inter-MediumItalic.otf */; };
+		04A95A8B2CBE62EA00D80D46 /* Inter-ExtraLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = FB7CD475051C49789247D975 /* Inter-ExtraLight.otf */; };
+		04A95A8C2CBE62EA00D80D46 /* Inter-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3D751FAB2A7447438CBD4CC9 /* Inter-Thin.otf */; };
+		04A95A8D2CBE62EA00D80D46 /* Inter-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 93F8772C278F40ECBDBDD92F /* Inter-Italic.otf */; };
+		04A95A8E2CBE62EA00D80D46 /* Inter-ThinItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = A3ABC664C2934AAB870AFBE2 /* Inter-ThinItalic.otf */; };
+		04A95A8F2CBE62EA00D80D46 /* Inter-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0A8B6CABDFB249BDB60A4D03 /* Inter-Regular.otf */; };
+		04A95A902CBE62EA00D80D46 /* Inter-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = D330C2EA25FB4701A8B2CE5E /* Inter-Medium.otf */; };
+		04A95A912CBE62EA00D80D46 /* Inter-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5886605ECE4A48A1BC55010D /* Inter-ExtraBold.otf */; };
+		04A95A922CBE62EA00D80D46 /* Inter-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1FB4C7AE7C114FDE8BA94852 /* Inter-Bold.otf */; };
+		04A95A932CBE62EA00D80D46 /* Inter-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = E75DD888B0EE43FFAB4FDE8E /* Inter-Light.otf */; };
+		04A95A942CBE62EA00D80D46 /* Inter-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = C43F776B384B4446962B0208 /* Inter-Black.otf */; };
+		04A95A952CBE62EA00D80D46 /* Inter-BoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = A3B554710E0A41AF8A254EC0 /* Inter-BoldItalic.otf */; };
+		04A95A962CBE62EA00D80D46 /* Inter-SemiBoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = DA783A93740842FBB76DF73D /* Inter-SemiBoldItalic.otf */; };
+		04A95A972CBE62EA00D80D46 /* Inter-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = BCB88F0B9ECE4C709C45380B /* Inter-LightItalic.otf */; };
+		04A95A982CBE62EA00D80D46 /* Inter-ExtraBoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 11E40564005F457F80D8CD4C /* Inter-ExtraBoldItalic.otf */; };
+		04A95A992CBE62EA00D80D46 /* Inter-BlackItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 079BA7ADA4F242D3B75E9E9D /* Inter-BlackItalic.otf */; };
+		04A95A9A2CBE62EA00D80D46 /* Inter-ExtraLightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4CC17237B47647E6B403CA35 /* Inter-ExtraLightItalic.otf */; };
+		04A95A9C2CBE664800D80D46 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04A95A9B2CBE664800D80D46 /* Images.xcassets */; };
+		04A95A9D2CBE69AA00D80D46 /* supporter.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 04A95A632CBE613B00D80D46 /* supporter.storekit */; };
+		05CC3BFF25A0469AA1A2593F /* Inter-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0A8B6CABDFB249BDB60A4D03 /* Inter-Regular.otf */; };
 		0C80B921A6F3F58F76C31292 /* libPods-Bracedotto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-Bracedotto.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		1E85326C6D444B27B432EE6A /* Inter-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = DBCF036F2C53496CB1F32604 /* Inter-SemiBold.otf */; };
-		204D114ED11446678DB31C04 /* Inter-BoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = EDB668761B5E443CB980206B /* Inter-BoldItalic.otf */; };
-		25A92283152547A6B4C7B256 /* Inter-ExtraLightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = DA6869ED175D40848D3FB95C /* Inter-ExtraLightItalic.otf */; };
-		3C376750CD914C8081020150 /* Inter-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2C4D7C164D504AEC8EF3A4CB /* Inter-Thin.otf */; };
-		4D3C1D2D9EAB48F7A8101E8D /* Inter-MediumItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 08D3419574664F2B9DAA7294 /* Inter-MediumItalic.otf */; };
-		5C9BF2410A0E480FA4D263EA /* Inter-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9C7BA3F9904E42CE916AD78F /* Inter-ExtraBold.otf */; };
-		5CDFC43657AA45828AAD22CC /* Inter-ExtraBoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 060C849BE3C44557B39F2EEE /* Inter-ExtraBoldItalic.otf */; };
-		6792382454E347DAB63E1E41 /* Inter-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8EDC5C2A0CC94D9E82F21384 /* Inter-Regular.otf */; };
-		762824A24863424793B8B598 /* Inter-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3CB262030D184B229141A8D5 /* Inter-LightItalic.otf */; };
+		25A3D6A0F06D4A70B0FF0C70 /* Inter-BlackItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 079BA7ADA4F242D3B75E9E9D /* Inter-BlackItalic.otf */; };
+		46FE0C85DFBC427AA093A167 /* Inter-ThinItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = A3ABC664C2934AAB870AFBE2 /* Inter-ThinItalic.otf */; };
+		5AFDD91C000A48768A76ADC9 /* Inter-SemiBoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = DA783A93740842FBB76DF73D /* Inter-SemiBoldItalic.otf */; };
+		6C3AE0F4DE1A49C290ED548F /* Inter-ExtraLightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4CC17237B47647E6B403CA35 /* Inter-ExtraLightItalic.otf */; };
+		6D8C7BA8809C4FF383CA0A39 /* Inter-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 93F8772C278F40ECBDBDD92F /* Inter-Italic.otf */; };
+		7225DEBBB9784D69B7CD1865 /* Inter-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5886605ECE4A48A1BC55010D /* Inter-ExtraBold.otf */; };
+		7572407C2E1546C8A33B10C9 /* Inter-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = D330C2EA25FB4701A8B2CE5E /* Inter-Medium.otf */; };
 		7699B88040F8A987B510C191 /* libPods-Bracedotto-BracedottoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-Bracedotto-BracedottoTests.a */; };
-		76FDF7E550AD44DDADCA8912 /* Inter-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = F398929645EF4148B38EFDE4 /* Inter-Light.otf */; };
-		7A3F20E24A70475ABB0982E7 /* Inter-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6CF55134B2B14CD0A1B2FA95 /* Inter-Bold.otf */; };
+		7A684AE63B164010B70CA729 /* Inter-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = E75DD888B0EE43FFAB4FDE8E /* Inter-Light.otf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		81B997CE05D04225A2075EF0 /* Inter-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6E0FEF833E3B4D1DB2C8CC4F /* Inter-Italic.otf */; };
-		88741725249CF500123F35E9 /* libPods-Save to Brace.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B0533FA829DC6FE6BD767DC8 /* libPods-Save to Brace.a */; };
-		A64AAAEB3916466CBA25E735 /* Inter-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4BB33E6C20C149BAA666726E /* Inter-Black.otf */; };
-		B2D4D1D2243143C8BD828388 /* Inter-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7C124D0B5D314AE19E979E43 /* Inter-Medium.otf */; };
-		BB322B15C9B84D99AA4E3E94 /* Inter-ExtraLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 92D482B199B24F82BE4AC7D7 /* Inter-ExtraLight.otf */; };
-		D355806473EE40B9BAF1596A /* Inter-BlackItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 27365427CEF1440D968A25FB /* Inter-BlackItalic.otf */; };
-		F45D8DE93C554B56A337ACA7 /* Inter-SemiBoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = F5E513FF6C404829A1A8406D /* Inter-SemiBoldItalic.otf */; };
-		FC8C703770A949228C3417EA /* Inter-ThinItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 96B1CA1EA54B42989A9F5610 /* Inter-ThinItalic.otf */; };
+		8597D8641CB747EDB4B80192 /* Inter-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = C43F776B384B4446962B0208 /* Inter-Black.otf */; };
+		8E0CCF45227944FB9BE4CD7B /* Inter-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = BCB88F0B9ECE4C709C45380B /* Inter-LightItalic.otf */; };
+		8F3D9597F16A403DB50B06B6 /* Inter-ExtraLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = FB7CD475051C49789247D975 /* Inter-ExtraLight.otf */; };
+		A302FEDE4700426B87DF3D86 /* Inter-MediumItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 343CE4ABA10245119E917503 /* Inter-MediumItalic.otf */; };
+		A7D0FE4495DA4673AA6D8BCA /* Inter-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3D751FAB2A7447438CBD4CC9 /* Inter-Thin.otf */; };
+		BD924CDE6B3CBF0415A44507 /* libPods-Save to Brace.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C9FCD8E27C7519B1F98F0371 /* libPods-Save to Brace.a */; };
+		D38DF61A0C5F422BA6C9226E /* Inter-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 86B1D5145DE94B8C9FAD5794 /* Inter-SemiBold.otf */; };
+		D56F60336B9043FBA748E543 /* Inter-BoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = A3B554710E0A41AF8A254EC0 /* Inter-BoldItalic.otf */; };
+		E6E8AE8F3C16491D81FB7BBD /* Inter-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1FB4C7AE7C114FDE8BA94852 /* Inter-Bold.otf */; };
+		F4A0881B6F49412E9216B970 /* Inter-ExtraBoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 11E40564005F457F80D8CD4C /* Inter-ExtraBoldItalic.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,23 +89,23 @@
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = Bracedotto;
 		};
-		04A32EF428F559B00003D7F6 /* PBXContainerItemProxy */ = {
+		04A95A4E2CBE5E4400D80D46 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 04A32EEB28F559B00003D7F6;
+			remoteGlobalIDString = 04A95A452CBE5E4300D80D46;
 			remoteInfo = "Save to Brace";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		04A32EFA28F559B00003D7F6 /* Embed Foundation Extensions */ = {
+		04A95A552CBE5E4400D80D46 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				04A32EF628F559B00003D7F6 /* Save to Brace.appex in Embed Foundation Extensions */,
+				04A95A502CBE5E4400D80D46 /* Save to Brace.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -115,38 +116,39 @@
 		00E356EE1AD99517003FC87E /* BracedottoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BracedottoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* BracedottoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BracedottoTests.m; sourceTree = "<group>"; };
-		04A32EE228F5564E0003D7F6 /* Bracedotto-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bracedotto-Bridging-Header.h"; sourceTree = "<group>"; };
-		04A32EE328F5564E0003D7F6 /* Dummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dummy.swift; sourceTree = "<group>"; };
-		04A32EE528F557550003D7F6 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
-		04A32EE728F5575B0003D7F6 /* Bracedotto.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Bracedotto.entitlements; path = Bracedotto/Bracedotto.entitlements; sourceTree = "<group>"; };
-		04A32EEC28F559B00003D7F6 /* Save to Brace.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Save to Brace.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		04A32EEE28F559B00003D7F6 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
-		04A32EF128F559B00003D7F6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
-		04A32EF328F559B00003D7F6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		04A32EFB28F55A060003D7F6 /* Save to Brace.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Save to Brace.entitlements"; sourceTree = "<group>"; };
-		04A32EFC28F567220003D7F6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		04A32EFE28F569350003D7F6 /* keys.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = keys.js; sourceTree = "<group>"; };
-		04A32EFF28F569350003D7F6 /* encryption.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = encryption.js; sourceTree = "<group>"; };
-		04A32F0028F569350003D7F6 /* DataTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataTypes.swift; sourceTree = "<group>"; };
-		04A32F0128F569350003D7F6 /* Blockstack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Blockstack.swift; sourceTree = "<group>"; };
-		04A32F0228F569350003D7F6 /* BigInt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BigInt.swift; sourceTree = "<group>"; };
-		04A32F0328F569350003D7F6 /* EllipticJS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EllipticJS.swift; sourceTree = "<group>"; };
-		04A32F0428F569350003D7F6 /* bigi.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = bigi.js; sourceTree = "<group>"; };
-		04A32F0528F569350003D7F6 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		04A32F0628F569350003D7F6 /* EncryptionJS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptionJS.swift; sourceTree = "<group>"; };
-		04A32F0728F569350003D7F6 /* KeysJS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeysJS.swift; sourceTree = "<group>"; };
-		04A32F0828F569350003D7F6 /* Keys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
-		04A32F0928F569350003D7F6 /* BitcoinJS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BitcoinJS.swift; sourceTree = "<group>"; };
-		04A32F0A28F569350003D7F6 /* elliptic.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = elliptic.js; sourceTree = "<group>"; };
-		04A32F0B28F569350003D7F6 /* Encryption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Encryption.swift; sourceTree = "<group>"; };
-		04A32F0C28F569350003D7F6 /* bitcoinjs.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = bitcoinjs.js; sourceTree = "<group>"; };
-		04A32F0D28F569350003D7F6 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		04A32F3028F56A1D0003D7F6 /* supporter.storekit */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = supporter.storekit; sourceTree = "<group>"; };
-		04BB39462BE2254800B98610 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		04BFEEA329F91A2900C384CD /* JSONTokensJS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONTokensJS.swift; sourceTree = "<group>"; };
-		04BFEEA529F91AF200C384CD /* jsontokens.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = jsontokens.js; sourceTree = "<group>"; };
-		060C849BE3C44557B39F2EEE /* Inter-ExtraBoldItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-ExtraBoldItalic.otf"; path = "../src/fonts/Inter/Inter-ExtraBoldItalic.otf"; sourceTree = "<group>"; };
-		08D3419574664F2B9DAA7294 /* Inter-MediumItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-MediumItalic.otf"; path = "../src/fonts/Inter/Inter-MediumItalic.otf"; sourceTree = "<group>"; };
+		04A95A3C2CBE577200D80D46 /* Bracedotto.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Bracedotto.entitlements; path = Bracedotto/Bracedotto.entitlements; sourceTree = "<group>"; };
+		04A95A3D2CBE579000D80D46 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		04A95A3F2CBE5DB600D80D46 /* Bracedotto-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bracedotto-Bridging-Header.h"; sourceTree = "<group>"; };
+		04A95A402CBE5DB700D80D46 /* Dummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dummy.swift; sourceTree = "<group>"; };
+		04A95A462CBE5E4300D80D46 /* Save to Brace.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Save to Brace.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		04A95A562CBE5E5900D80D46 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		04A95A572CBE5E5900D80D46 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		04A95A592CBE5E5900D80D46 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		04A95A5E2CBE5E9A00D80D46 /* Save to Brace.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Save to Brace.entitlements"; sourceTree = "<group>"; };
+		04A95A5F2CBE60B200D80D46 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		04A95A632CBE613B00D80D46 /* supporter.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = supporter.storekit; sourceTree = "<group>"; };
+		04A95A652CBE61AB00D80D46 /* bigi.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = bigi.js; sourceTree = "<group>"; };
+		04A95A662CBE61AB00D80D46 /* BigInt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigInt.swift; sourceTree = "<group>"; };
+		04A95A672CBE61AB00D80D46 /* bitcoinjs.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = bitcoinjs.js; sourceTree = "<group>"; };
+		04A95A682CBE61AB00D80D46 /* BitcoinJS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitcoinJS.swift; sourceTree = "<group>"; };
+		04A95A692CBE61AB00D80D46 /* Blockstack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Blockstack.swift; sourceTree = "<group>"; };
+		04A95A6A2CBE61AB00D80D46 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		04A95A6B2CBE61AB00D80D46 /* DataTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTypes.swift; sourceTree = "<group>"; };
+		04A95A6C2CBE61AB00D80D46 /* elliptic.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = elliptic.js; sourceTree = "<group>"; };
+		04A95A6D2CBE61AB00D80D46 /* EllipticJS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EllipticJS.swift; sourceTree = "<group>"; };
+		04A95A6E2CBE61AB00D80D46 /* encryption.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = encryption.js; sourceTree = "<group>"; };
+		04A95A6F2CBE61AB00D80D46 /* Encryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encryption.swift; sourceTree = "<group>"; };
+		04A95A702CBE61AB00D80D46 /* EncryptionJS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionJS.swift; sourceTree = "<group>"; };
+		04A95A712CBE61AB00D80D46 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		04A95A722CBE61AB00D80D46 /* JSONTokensJS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONTokensJS.swift; sourceTree = "<group>"; };
+		04A95A732CBE61AB00D80D46 /* Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
+		04A95A742CBE61AB00D80D46 /* KeysJS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeysJS.swift; sourceTree = "<group>"; };
+		04A95A852CBE62B800D80D46 /* jsontokens.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = jsontokens.js; sourceTree = "<group>"; };
+		04A95A862CBE62B800D80D46 /* keys.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = keys.js; sourceTree = "<group>"; };
+		04A95A9B2CBE664800D80D46 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		079BA7ADA4F242D3B75E9E9D /* Inter-BlackItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-BlackItalic.otf"; path = "../src/fonts/Inter/Inter-BlackItalic.otf"; sourceTree = "<group>"; };
+		0A8B6CABDFB249BDB60A4D03 /* Inter-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Regular.otf"; path = "../src/fonts/Inter/Inter-Regular.otf"; sourceTree = "<group>"; };
+		11E40564005F457F80D8CD4C /* Inter-ExtraBoldItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-ExtraBoldItalic.otf"; path = "../src/fonts/Inter/Inter-ExtraBoldItalic.otf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Brace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Brace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Bracedotto/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = Bracedotto/AppDelegate.mm; sourceTree = "<group>"; };
@@ -154,32 +156,31 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Bracedotto/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Bracedotto/main.m; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-Bracedotto-BracedottoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Bracedotto-BracedottoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		27365427CEF1440D968A25FB /* Inter-BlackItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-BlackItalic.otf"; path = "../src/fonts/Inter/Inter-BlackItalic.otf"; sourceTree = "<group>"; };
-		2C4D7C164D504AEC8EF3A4CB /* Inter-Thin.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Thin.otf"; path = "../src/fonts/Inter/Inter-Thin.otf"; sourceTree = "<group>"; };
+		1FB4C7AE7C114FDE8BA94852 /* Inter-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Bold.otf"; path = "../src/fonts/Inter/Inter-Bold.otf"; sourceTree = "<group>"; };
+		343CE4ABA10245119E917503 /* Inter-MediumItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-MediumItalic.otf"; path = "../src/fonts/Inter/Inter-MediumItalic.otf"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-Bracedotto.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bracedotto.debug.xcconfig"; path = "Target Support Files/Pods-Bracedotto/Pods-Bracedotto.debug.xcconfig"; sourceTree = "<group>"; };
-		3CB262030D184B229141A8D5 /* Inter-LightItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-LightItalic.otf"; path = "../src/fonts/Inter/Inter-LightItalic.otf"; sourceTree = "<group>"; };
-		4BB33E6C20C149BAA666726E /* Inter-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Black.otf"; path = "../src/fonts/Inter/Inter-Black.otf"; sourceTree = "<group>"; };
-		53B5DF488351743F5B58E154 /* Pods-Save to Brace.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Save to Brace.release.xcconfig"; path = "Target Support Files/Pods-Save to Brace/Pods-Save to Brace.release.xcconfig"; sourceTree = "<group>"; };
+		3D751FAB2A7447438CBD4CC9 /* Inter-Thin.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Thin.otf"; path = "../src/fonts/Inter/Inter-Thin.otf"; sourceTree = "<group>"; };
+		4CC17237B47647E6B403CA35 /* Inter-ExtraLightItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-ExtraLightItalic.otf"; path = "../src/fonts/Inter/Inter-ExtraLightItalic.otf"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-Bracedotto.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bracedotto.release.xcconfig"; path = "Target Support Files/Pods-Bracedotto/Pods-Bracedotto.release.xcconfig"; sourceTree = "<group>"; };
+		5886605ECE4A48A1BC55010D /* Inter-ExtraBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-ExtraBold.otf"; path = "../src/fonts/Inter/Inter-ExtraBold.otf"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-Bracedotto-BracedottoTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bracedotto-BracedottoTests.debug.xcconfig"; path = "Target Support Files/Pods-Bracedotto-BracedottoTests/Pods-Bracedotto-BracedottoTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-Bracedotto.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Bracedotto.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6CF55134B2B14CD0A1B2FA95 /* Inter-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Bold.otf"; path = "../src/fonts/Inter/Inter-Bold.otf"; sourceTree = "<group>"; };
-		6E0FEF833E3B4D1DB2C8CC4F /* Inter-Italic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Italic.otf"; path = "../src/fonts/Inter/Inter-Italic.otf"; sourceTree = "<group>"; };
-		7C124D0B5D314AE19E979E43 /* Inter-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Medium.otf"; path = "../src/fonts/Inter/Inter-Medium.otf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Bracedotto/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		8480FA6F1482F9AFBDFCE0A6 /* Pods-Save to Brace.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Save to Brace.debug.xcconfig"; path = "Target Support Files/Pods-Save to Brace/Pods-Save to Brace.debug.xcconfig"; sourceTree = "<group>"; };
+		86B1D5145DE94B8C9FAD5794 /* Inter-SemiBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-SemiBold.otf"; path = "../src/fonts/Inter/Inter-SemiBold.otf"; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-Bracedotto-BracedottoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bracedotto-BracedottoTests.release.xcconfig"; path = "Target Support Files/Pods-Bracedotto-BracedottoTests/Pods-Bracedotto-BracedottoTests.release.xcconfig"; sourceTree = "<group>"; };
-		8EDC5C2A0CC94D9E82F21384 /* Inter-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Regular.otf"; path = "../src/fonts/Inter/Inter-Regular.otf"; sourceTree = "<group>"; };
-		92D482B199B24F82BE4AC7D7 /* Inter-ExtraLight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-ExtraLight.otf"; path = "../src/fonts/Inter/Inter-ExtraLight.otf"; sourceTree = "<group>"; };
-		96B1CA1EA54B42989A9F5610 /* Inter-ThinItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-ThinItalic.otf"; path = "../src/fonts/Inter/Inter-ThinItalic.otf"; sourceTree = "<group>"; };
-		9C7BA3F9904E42CE916AD78F /* Inter-ExtraBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-ExtraBold.otf"; path = "../src/fonts/Inter/Inter-ExtraBold.otf"; sourceTree = "<group>"; };
-		B0533FA829DC6FE6BD767DC8 /* libPods-Save to Brace.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Save to Brace.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		DA6869ED175D40848D3FB95C /* Inter-ExtraLightItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-ExtraLightItalic.otf"; path = "../src/fonts/Inter/Inter-ExtraLightItalic.otf"; sourceTree = "<group>"; };
-		DBCF036F2C53496CB1F32604 /* Inter-SemiBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-SemiBold.otf"; path = "../src/fonts/Inter/Inter-SemiBold.otf"; sourceTree = "<group>"; };
+		93F8772C278F40ECBDBDD92F /* Inter-Italic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Italic.otf"; path = "../src/fonts/Inter/Inter-Italic.otf"; sourceTree = "<group>"; };
+		A3ABC664C2934AAB870AFBE2 /* Inter-ThinItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-ThinItalic.otf"; path = "../src/fonts/Inter/Inter-ThinItalic.otf"; sourceTree = "<group>"; };
+		A3B554710E0A41AF8A254EC0 /* Inter-BoldItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-BoldItalic.otf"; path = "../src/fonts/Inter/Inter-BoldItalic.otf"; sourceTree = "<group>"; };
+		B16EC90B1401C82F0B122BE9 /* Pods-Save to Brace.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Save to Brace.release.xcconfig"; path = "Target Support Files/Pods-Save to Brace/Pods-Save to Brace.release.xcconfig"; sourceTree = "<group>"; };
+		BCB88F0B9ECE4C709C45380B /* Inter-LightItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-LightItalic.otf"; path = "../src/fonts/Inter/Inter-LightItalic.otf"; sourceTree = "<group>"; };
+		C43F776B384B4446962B0208 /* Inter-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Black.otf"; path = "../src/fonts/Inter/Inter-Black.otf"; sourceTree = "<group>"; };
+		C9FCD8E27C7519B1F98F0371 /* libPods-Save to Brace.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Save to Brace.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D330C2EA25FB4701A8B2CE5E /* Inter-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Medium.otf"; path = "../src/fonts/Inter/Inter-Medium.otf"; sourceTree = "<group>"; };
+		DA783A93740842FBB76DF73D /* Inter-SemiBoldItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-SemiBoldItalic.otf"; path = "../src/fonts/Inter/Inter-SemiBoldItalic.otf"; sourceTree = "<group>"; };
+		E75DD888B0EE43FFAB4FDE8E /* Inter-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Light.otf"; path = "../src/fonts/Inter/Inter-Light.otf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		EDB668761B5E443CB980206B /* Inter-BoldItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-BoldItalic.otf"; path = "../src/fonts/Inter/Inter-BoldItalic.otf"; sourceTree = "<group>"; };
-		F29DED515356626BC421DE07 /* Pods-Save to Brace.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Save to Brace.debug.xcconfig"; path = "Target Support Files/Pods-Save to Brace/Pods-Save to Brace.debug.xcconfig"; sourceTree = "<group>"; };
-		F398929645EF4148B38EFDE4 /* Inter-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Light.otf"; path = "../src/fonts/Inter/Inter-Light.otf"; sourceTree = "<group>"; };
-		F5E513FF6C404829A1A8406D /* Inter-SemiBoldItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-SemiBoldItalic.otf"; path = "../src/fonts/Inter/Inter-SemiBoldItalic.otf"; sourceTree = "<group>"; };
+		FB7CD475051C49789247D975 /* Inter-ExtraLight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-ExtraLight.otf"; path = "../src/fonts/Inter/Inter-ExtraLight.otf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,11 +192,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		04A32EE928F559B00003D7F6 /* Frameworks */ = {
+		04A95A432CBE5E4300D80D46 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				88741725249CF500123F35E9 /* libPods-Save to Brace.a in Frameworks */,
+				BD924CDE6B3CBF0415A44507 /* libPods-Save to Brace.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,7 +205,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C80B921A6F3F58F76C31292 /* libPods-Bracedotto.a in Frameworks */,
-				04A32EE628F557550003D7F6 /* StoreKit.framework in Frameworks */,
+				04A95A3E2CBE579000D80D46 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,65 +229,40 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		04A32EED28F559B00003D7F6 /* Save to Brace */ = {
+		04A95A5A2CBE5E5900D80D46 /* Save to Brace */ = {
 			isa = PBXGroup;
 			children = (
-				04A32EFB28F55A060003D7F6 /* Save to Brace.entitlements */,
-				04A32EEE28F559B00003D7F6 /* ShareViewController.swift */,
-				04A32EF028F559B00003D7F6 /* MainInterface.storyboard */,
-				04A32EFC28F567220003D7F6 /* Images.xcassets */,
-				04A32EF328F559B00003D7F6 /* Info.plist */,
-				04A32F0128F569350003D7F6 /* Blockstack.swift */,
-				04A32F0B28F569350003D7F6 /* Encryption.swift */,
-				04A32F0828F569350003D7F6 /* Keys.swift */,
-				04A32F0228F569350003D7F6 /* BigInt.swift */,
-				04A32F0D28F569350003D7F6 /* Extensions.swift */,
-				04A32F0028F569350003D7F6 /* DataTypes.swift */,
-				04A32F0528F569350003D7F6 /* Constants.swift */,
-				04A32F0928F569350003D7F6 /* BitcoinJS.swift */,
-				04A32F0728F569350003D7F6 /* KeysJS.swift */,
-				04A32F0328F569350003D7F6 /* EllipticJS.swift */,
-				04A32F0628F569350003D7F6 /* EncryptionJS.swift */,
-				04BFEEA329F91A2900C384CD /* JSONTokensJS.swift */,
-				04A32F0C28F569350003D7F6 /* bitcoinjs.js */,
-				04A32F0428F569350003D7F6 /* bigi.js */,
-				04A32EFE28F569350003D7F6 /* keys.js */,
-				04A32F0A28F569350003D7F6 /* elliptic.js */,
-				04A32EFF28F569350003D7F6 /* encryption.js */,
-				04BFEEA529F91AF200C384CD /* jsontokens.js */,
+				04A95A5E2CBE5E9A00D80D46 /* Save to Brace.entitlements */,
+				04A95A592CBE5E5900D80D46 /* ShareViewController.swift */,
+				04A95A582CBE5E5900D80D46 /* MainInterface.storyboard */,
+				04A95A9B2CBE664800D80D46 /* Images.xcassets */,
+				04A95A562CBE5E5900D80D46 /* Info.plist */,
+				04A95A692CBE61AB00D80D46 /* Blockstack.swift */,
+				04A95A6F2CBE61AB00D80D46 /* Encryption.swift */,
+				04A95A732CBE61AB00D80D46 /* Keys.swift */,
+				04A95A662CBE61AB00D80D46 /* BigInt.swift */,
+				04A95A712CBE61AB00D80D46 /* Extensions.swift */,
+				04A95A6B2CBE61AB00D80D46 /* DataTypes.swift */,
+				04A95A6A2CBE61AB00D80D46 /* Constants.swift */,
+				04A95A682CBE61AB00D80D46 /* BitcoinJS.swift */,
+				04A95A742CBE61AB00D80D46 /* KeysJS.swift */,
+				04A95A6D2CBE61AB00D80D46 /* EllipticJS.swift */,
+				04A95A702CBE61AB00D80D46 /* EncryptionJS.swift */,
+				04A95A722CBE61AB00D80D46 /* JSONTokensJS.swift */,
+				04A95A672CBE61AB00D80D46 /* bitcoinjs.js */,
+				04A95A652CBE61AB00D80D46 /* bigi.js */,
+				04A95A862CBE62B800D80D46 /* keys.js */,
+				04A95A6C2CBE61AB00D80D46 /* elliptic.js */,
+				04A95A6E2CBE61AB00D80D46 /* encryption.js */,
+				04A95A852CBE62B800D80D46 /* jsontokens.js */,
 			);
 			path = "Save to Brace";
-			sourceTree = "<group>";
-		};
-		0BD79EFA0B814C93BF4D7788 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				4BB33E6C20C149BAA666726E /* Inter-Black.otf */,
-				27365427CEF1440D968A25FB /* Inter-BlackItalic.otf */,
-				6CF55134B2B14CD0A1B2FA95 /* Inter-Bold.otf */,
-				EDB668761B5E443CB980206B /* Inter-BoldItalic.otf */,
-				9C7BA3F9904E42CE916AD78F /* Inter-ExtraBold.otf */,
-				060C849BE3C44557B39F2EEE /* Inter-ExtraBoldItalic.otf */,
-				92D482B199B24F82BE4AC7D7 /* Inter-ExtraLight.otf */,
-				DA6869ED175D40848D3FB95C /* Inter-ExtraLightItalic.otf */,
-				6E0FEF833E3B4D1DB2C8CC4F /* Inter-Italic.otf */,
-				F398929645EF4148B38EFDE4 /* Inter-Light.otf */,
-				3CB262030D184B229141A8D5 /* Inter-LightItalic.otf */,
-				7C124D0B5D314AE19E979E43 /* Inter-Medium.otf */,
-				08D3419574664F2B9DAA7294 /* Inter-MediumItalic.otf */,
-				8EDC5C2A0CC94D9E82F21384 /* Inter-Regular.otf */,
-				DBCF036F2C53496CB1F32604 /* Inter-SemiBold.otf */,
-				F5E513FF6C404829A1A8406D /* Inter-SemiBoldItalic.otf */,
-				2C4D7C164D504AEC8EF3A4CB /* Inter-Thin.otf */,
-				96B1CA1EA54B42989A9F5610 /* Inter-ThinItalic.otf */,
-			);
-			name = Resources;
 			sourceTree = "<group>";
 		};
 		13B07FAE1A68108700A75B9A /* Bracedotto */ = {
 			isa = PBXGroup;
 			children = (
-				04A32EE728F5575B0003D7F6 /* Bracedotto.entitlements */,
+				04A95A3C2CBE577200D80D46 /* Bracedotto.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -300,11 +276,11 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				04A32EE528F557550003D7F6 /* StoreKit.framework */,
+				04A95A3D2CBE579000D80D46 /* StoreKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				5DCACB8F33CDC322A6C60F78 /* libPods-Bracedotto.a */,
 				19F6CBCC0A4E27FBF8BF4A61 /* libPods-Bracedotto-BracedottoTests.a */,
-				B0533FA829DC6FE6BD767DC8 /* libPods-Save to Brace.a */,
+				C9FCD8E27C7519B1F98F0371 /* libPods-Save to Brace.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -322,15 +298,15 @@
 				13B07FAE1A68108700A75B9A /* Bracedotto */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* BracedottoTests */,
-				04A32EED28F559B00003D7F6 /* Save to Brace */,
+				04A95A5A2CBE5E5900D80D46 /* Save to Brace */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
-				04A32F3028F56A1D0003D7F6 /* supporter.storekit */,
-				04A32EE328F5564E0003D7F6 /* Dummy.swift */,
-				04A32EE228F5564E0003D7F6 /* Bracedotto-Bridging-Header.h */,
-				04BB39462BE2254800B98610 /* PrivacyInfo.xcprivacy */,
-				0BD79EFA0B814C93BF4D7788 /* Resources */,
+				ED66915D6A1B4DF7BAED4CCF /* Resources */,
+				04A95A402CBE5DB700D80D46 /* Dummy.swift */,
+				04A95A3F2CBE5DB600D80D46 /* Bracedotto-Bridging-Header.h */,
+				04A95A632CBE613B00D80D46 /* supporter.storekit */,
+				04A95A5F2CBE60B200D80D46 /* PrivacyInfo.xcprivacy */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -342,7 +318,7 @@
 			children = (
 				13B07F961A680F5B00A75B9A /* Brace.app */,
 				00E356EE1AD99517003FC87E /* BracedottoTests.xctest */,
-				04A32EEC28F559B00003D7F6 /* Save to Brace.appex */,
+				04A95A462CBE5E4300D80D46 /* Save to Brace.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -354,10 +330,35 @@
 				5709B34CF0A7D63546082F79 /* Pods-Bracedotto.release.xcconfig */,
 				5B7EB9410499542E8C5724F5 /* Pods-Bracedotto-BracedottoTests.debug.xcconfig */,
 				89C6BE57DB24E9ADA2F236DE /* Pods-Bracedotto-BracedottoTests.release.xcconfig */,
-				F29DED515356626BC421DE07 /* Pods-Save to Brace.debug.xcconfig */,
-				53B5DF488351743F5B58E154 /* Pods-Save to Brace.release.xcconfig */,
+				8480FA6F1482F9AFBDFCE0A6 /* Pods-Save to Brace.debug.xcconfig */,
+				B16EC90B1401C82F0B122BE9 /* Pods-Save to Brace.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		ED66915D6A1B4DF7BAED4CCF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C43F776B384B4446962B0208 /* Inter-Black.otf */,
+				079BA7ADA4F242D3B75E9E9D /* Inter-BlackItalic.otf */,
+				1FB4C7AE7C114FDE8BA94852 /* Inter-Bold.otf */,
+				A3B554710E0A41AF8A254EC0 /* Inter-BoldItalic.otf */,
+				5886605ECE4A48A1BC55010D /* Inter-ExtraBold.otf */,
+				11E40564005F457F80D8CD4C /* Inter-ExtraBoldItalic.otf */,
+				FB7CD475051C49789247D975 /* Inter-ExtraLight.otf */,
+				4CC17237B47647E6B403CA35 /* Inter-ExtraLightItalic.otf */,
+				93F8772C278F40ECBDBDD92F /* Inter-Italic.otf */,
+				E75DD888B0EE43FFAB4FDE8E /* Inter-Light.otf */,
+				BCB88F0B9ECE4C709C45380B /* Inter-LightItalic.otf */,
+				D330C2EA25FB4701A8B2CE5E /* Inter-Medium.otf */,
+				343CE4ABA10245119E917503 /* Inter-MediumItalic.otf */,
+				0A8B6CABDFB249BDB60A4D03 /* Inter-Regular.otf */,
+				86B1D5145DE94B8C9FAD5794 /* Inter-SemiBold.otf */,
+				DA783A93740842FBB76DF73D /* Inter-SemiBoldItalic.otf */,
+				3D751FAB2A7447438CBD4CC9 /* Inter-Thin.otf */,
+				A3ABC664C2934AAB870AFBE2 /* Inter-ThinItalic.otf */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -384,14 +385,14 @@
 			productReference = 00E356EE1AD99517003FC87E /* BracedottoTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		04A32EEB28F559B00003D7F6 /* Save to Brace */ = {
+		04A95A452CBE5E4300D80D46 /* Save to Brace */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 04A32EF728F559B00003D7F6 /* Build configuration list for PBXNativeTarget "Save to Brace" */;
+			buildConfigurationList = 04A95A522CBE5E4400D80D46 /* Build configuration list for PBXNativeTarget "Save to Brace" */;
 			buildPhases = (
-				129D239956ACE5AD14ABC974 /* [CP] Check Pods Manifest.lock */,
-				04A32EE828F559B00003D7F6 /* Sources */,
-				04A32EE928F559B00003D7F6 /* Frameworks */,
-				04A32EEA28F559B00003D7F6 /* Resources */,
+				B91BED1A93E9D343E1775774 /* [CP] Check Pods Manifest.lock */,
+				04A95A422CBE5E4300D80D46 /* Sources */,
+				04A95A432CBE5E4300D80D46 /* Frameworks */,
+				04A95A442CBE5E4300D80D46 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -399,7 +400,7 @@
 			);
 			name = "Save to Brace";
 			productName = "Save to Brace";
-			productReference = 04A32EEC28F559B00003D7F6 /* Save to Brace.appex */;
+			productReference = 04A95A462CBE5E4300D80D46 /* Save to Brace.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		13B07F861A680F5B00A75B9A /* Bracedotto */ = {
@@ -407,19 +408,18 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Bracedotto" */;
 			buildPhases = (
 				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
-				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */,
 				E235C05ADACE081382539298 /* [CP] Copy Pods Resources */,
-				04A32EFA28F559B00003D7F6 /* Embed Foundation Extensions */,
+				04A95A552CBE5E4400D80D46 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				04A32EF528F559B00003D7F6 /* PBXTargetDependency */,
+				04A95A4F2CBE5E4400D80D46 /* PBXTargetDependency */,
 			);
 			name = Bracedotto;
 			productName = Bracedotto;
@@ -432,18 +432,18 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1400;
-				LastUpgradeCheck = 1400;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1210;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
-					04A32EEB28F559B00003D7F6 = {
-						CreatedOnToolsVersion = 14.0.1;
+					04A95A452CBE5E4300D80D46 = {
+						CreatedOnToolsVersion = 16.0;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1400;
+						LastSwiftMigration = 1600;
 					};
 				};
 			};
@@ -462,7 +462,7 @@
 			targets = (
 				13B07F861A680F5B00A75B9A /* Bracedotto */,
 				00E356ED1AD99517003FC87E /* BracedottoTests */,
-				04A32EEB28F559B00003D7F6 /* Save to Brace */,
+				04A95A452CBE5E4300D80D46 /* Save to Brace */,
 			);
 		};
 /* End PBXProject section */
@@ -475,37 +475,37 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		04A32EEA28F559B00003D7F6 /* Resources */ = {
+		04A95A442CBE5E4300D80D46 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04A32F2A28F569DB0003D7F6 /* Inter-Italic.otf in Resources */,
-				04A32F1A28F569350003D7F6 /* elliptic.js in Resources */,
-				04A32F2928F569DB0003D7F6 /* Inter-ExtraLight.otf in Resources */,
-				04A32F0E28F569350003D7F6 /* keys.js in Resources */,
-				04A32F2C28F569DB0003D7F6 /* Inter-ExtraBoldItalic.otf in Resources */,
-				04A32EF228F559B00003D7F6 /* MainInterface.storyboard in Resources */,
-				04A32EFD28F567220003D7F6 /* Images.xcassets in Resources */,
-				04A32F0F28F569350003D7F6 /* encryption.js in Resources */,
-				04A32F1F28F569DB0003D7F6 /* Inter-ExtraBold.otf in Resources */,
-				04A32F2B28F569DB0003D7F6 /* Inter-Bold.otf in Resources */,
-				04A32F1428F569350003D7F6 /* bigi.js in Resources */,
-				04A32F2828F569DB0003D7F6 /* Inter-Regular.otf in Resources */,
-				04A32F2628F569DB0003D7F6 /* Inter-SemiBold.otf in Resources */,
-				04A32F2128F569DB0003D7F6 /* Inter-ExtraLightItalic.otf in Resources */,
-				04A32F2428F569DB0003D7F6 /* Inter-Black.otf in Resources */,
-				04A32F2528F569DB0003D7F6 /* Inter-LightItalic.otf in Resources */,
-				04BFEEA629F91AF200C384CD /* jsontokens.js in Resources */,
-				04A32F2328F569DB0003D7F6 /* Inter-Thin.otf in Resources */,
-				04A32F1C28F569350003D7F6 /* bitcoinjs.js in Resources */,
-				04A32F2728F569DB0003D7F6 /* Inter-BlackItalic.otf in Resources */,
-				04A32F2E28F569DB0003D7F6 /* Inter-MediumItalic.otf in Resources */,
-				04BB39482BE2254800B98610 /* PrivacyInfo.xcprivacy in Resources */,
-				04A32F1E28F569DB0003D7F6 /* Inter-Medium.otf in Resources */,
-				04A32F2028F569DB0003D7F6 /* Inter-BoldItalic.otf in Resources */,
-				04A32F2F28F569DB0003D7F6 /* Inter-ThinItalic.otf in Resources */,
-				04A32F2D28F569DB0003D7F6 /* Inter-Light.otf in Resources */,
-				04A32F2228F569DB0003D7F6 /* Inter-SemiBoldItalic.otf in Resources */,
+				04A95A612CBE60B200D80D46 /* PrivacyInfo.xcprivacy in Resources */,
+				04A95A5C2CBE5E5900D80D46 /* MainInterface.storyboard in Resources */,
+				04A95A812CBE61AB00D80D46 /* bitcoinjs.js in Resources */,
+				04A95A822CBE61AB00D80D46 /* bigi.js in Resources */,
+				04A95A892CBE62EA00D80D46 /* Inter-SemiBold.otf in Resources */,
+				04A95A8A2CBE62EA00D80D46 /* Inter-MediumItalic.otf in Resources */,
+				04A95A8B2CBE62EA00D80D46 /* Inter-ExtraLight.otf in Resources */,
+				04A95A8C2CBE62EA00D80D46 /* Inter-Thin.otf in Resources */,
+				04A95A8D2CBE62EA00D80D46 /* Inter-Italic.otf in Resources */,
+				04A95A9C2CBE664800D80D46 /* Images.xcassets in Resources */,
+				04A95A8E2CBE62EA00D80D46 /* Inter-ThinItalic.otf in Resources */,
+				04A95A8F2CBE62EA00D80D46 /* Inter-Regular.otf in Resources */,
+				04A95A902CBE62EA00D80D46 /* Inter-Medium.otf in Resources */,
+				04A95A912CBE62EA00D80D46 /* Inter-ExtraBold.otf in Resources */,
+				04A95A922CBE62EA00D80D46 /* Inter-Bold.otf in Resources */,
+				04A95A932CBE62EA00D80D46 /* Inter-Light.otf in Resources */,
+				04A95A942CBE62EA00D80D46 /* Inter-Black.otf in Resources */,
+				04A95A952CBE62EA00D80D46 /* Inter-BoldItalic.otf in Resources */,
+				04A95A962CBE62EA00D80D46 /* Inter-SemiBoldItalic.otf in Resources */,
+				04A95A972CBE62EA00D80D46 /* Inter-LightItalic.otf in Resources */,
+				04A95A982CBE62EA00D80D46 /* Inter-ExtraBoldItalic.otf in Resources */,
+				04A95A992CBE62EA00D80D46 /* Inter-BlackItalic.otf in Resources */,
+				04A95A9A2CBE62EA00D80D46 /* Inter-ExtraLightItalic.otf in Resources */,
+				04A95A832CBE61AB00D80D46 /* encryption.js in Resources */,
+				04A95A872CBE62B800D80D46 /* keys.js in Resources */,
+				04A95A882CBE62B800D80D46 /* jsontokens.js in Resources */,
+				04A95A842CBE61AB00D80D46 /* elliptic.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -514,26 +514,27 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				04A95A9D2CBE69AA00D80D46 /* supporter.storekit in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				A64AAAEB3916466CBA25E735 /* Inter-Black.otf in Resources */,
-				D355806473EE40B9BAF1596A /* Inter-BlackItalic.otf in Resources */,
-				7A3F20E24A70475ABB0982E7 /* Inter-Bold.otf in Resources */,
-				204D114ED11446678DB31C04 /* Inter-BoldItalic.otf in Resources */,
-				5C9BF2410A0E480FA4D263EA /* Inter-ExtraBold.otf in Resources */,
-				5CDFC43657AA45828AAD22CC /* Inter-ExtraBoldItalic.otf in Resources */,
-				BB322B15C9B84D99AA4E3E94 /* Inter-ExtraLight.otf in Resources */,
-				25A92283152547A6B4C7B256 /* Inter-ExtraLightItalic.otf in Resources */,
-				81B997CE05D04225A2075EF0 /* Inter-Italic.otf in Resources */,
-				76FDF7E550AD44DDADCA8912 /* Inter-Light.otf in Resources */,
-				762824A24863424793B8B598 /* Inter-LightItalic.otf in Resources */,
-				B2D4D1D2243143C8BD828388 /* Inter-Medium.otf in Resources */,
-				4D3C1D2D9EAB48F7A8101E8D /* Inter-MediumItalic.otf in Resources */,
-				04BB39472BE2254800B98610 /* PrivacyInfo.xcprivacy in Resources */,
-				6792382454E347DAB63E1E41 /* Inter-Regular.otf in Resources */,
-				1E85326C6D444B27B432EE6A /* Inter-SemiBold.otf in Resources */,
-				F45D8DE93C554B56A337ACA7 /* Inter-SemiBoldItalic.otf in Resources */,
-				3C376750CD914C8081020150 /* Inter-Thin.otf in Resources */,
-				FC8C703770A949228C3417EA /* Inter-ThinItalic.otf in Resources */,
+				8597D8641CB747EDB4B80192 /* Inter-Black.otf in Resources */,
+				25A3D6A0F06D4A70B0FF0C70 /* Inter-BlackItalic.otf in Resources */,
+				E6E8AE8F3C16491D81FB7BBD /* Inter-Bold.otf in Resources */,
+				D56F60336B9043FBA748E543 /* Inter-BoldItalic.otf in Resources */,
+				7225DEBBB9784D69B7CD1865 /* Inter-ExtraBold.otf in Resources */,
+				F4A0881B6F49412E9216B970 /* Inter-ExtraBoldItalic.otf in Resources */,
+				8F3D9597F16A403DB50B06B6 /* Inter-ExtraLight.otf in Resources */,
+				6C3AE0F4DE1A49C290ED548F /* Inter-ExtraLightItalic.otf in Resources */,
+				6D8C7BA8809C4FF383CA0A39 /* Inter-Italic.otf in Resources */,
+				7A684AE63B164010B70CA729 /* Inter-Light.otf in Resources */,
+				8E0CCF45227944FB9BE4CD7B /* Inter-LightItalic.otf in Resources */,
+				7572407C2E1546C8A33B10C9 /* Inter-Medium.otf in Resources */,
+				A302FEDE4700426B87DF3D86 /* Inter-MediumItalic.otf in Resources */,
+				04A95A602CBE60B200D80D46 /* PrivacyInfo.xcprivacy in Resources */,
+				05CC3BFF25A0469AA1A2593F /* Inter-Regular.otf in Resources */,
+				D38DF61A0C5F422BA6C9226E /* Inter-SemiBold.otf in Resources */,
+				5AFDD91C000A48768A76ADC9 /* Inter-SemiBoldItalic.otf in Resources */,
+				A7D0FE4495DA4673AA6D8BCA /* Inter-Thin.otf in Resources */,
+				46FE0C85DFBC427AA093A167 /* Inter-ThinItalic.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -554,7 +555,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
 		00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -573,28 +574,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Bracedotto/Pods-Bracedotto-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		129D239956ACE5AD14ABC974 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Save to Brace-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -611,6 +590,28 @@
 			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-Bracedotto-BracedottoTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B91BED1A93E9D343E1775774 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Save to Brace-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -690,25 +691,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Bracedotto-BracedottoTests/Pods-Bracedotto-BracedottoTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		FD10A7F022414F080027D42C /* Start Packager */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Start Packager";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -720,24 +702,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		04A32EE828F559B00003D7F6 /* Sources */ = {
+		04A95A422CBE5E4300D80D46 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04A32F1728F569350003D7F6 /* KeysJS.swift in Sources */,
-				04A32F1228F569350003D7F6 /* BigInt.swift in Sources */,
-				04A32EEF28F559B00003D7F6 /* ShareViewController.swift in Sources */,
-				04A32F1928F569350003D7F6 /* BitcoinJS.swift in Sources */,
-				04BFEEA429F91A2900C384CD /* JSONTokensJS.swift in Sources */,
-				04A32F1328F569350003D7F6 /* EllipticJS.swift in Sources */,
-				04A32F1028F569350003D7F6 /* DataTypes.swift in Sources */,
-				04A32F1628F569350003D7F6 /* EncryptionJS.swift in Sources */,
-				04A32F1D28F569350003D7F6 /* Extensions.swift in Sources */,
-				04A32F1128F569350003D7F6 /* Blockstack.swift in Sources */,
-				04A32F1828F569350003D7F6 /* Keys.swift in Sources */,
-				04A32F1528F569350003D7F6 /* Constants.swift in Sources */,
-				04A32F3328F56B6B0003D7F6 /* Dummy.swift in Sources */,
-				04A32F1B28F569350003D7F6 /* Encryption.swift in Sources */,
+				04A95A752CBE61AB00D80D46 /* KeysJS.swift in Sources */,
+				04A95A762CBE61AB00D80D46 /* Encryption.swift in Sources */,
+				04A95A772CBE61AB00D80D46 /* Blockstack.swift in Sources */,
+				04A95A782CBE61AB00D80D46 /* Constants.swift in Sources */,
+				04A95A792CBE61AB00D80D46 /* Extensions.swift in Sources */,
+				04A95A7A2CBE61AB00D80D46 /* EncryptionJS.swift in Sources */,
+				04A95A7B2CBE61AB00D80D46 /* Keys.swift in Sources */,
+				04A95A7C2CBE61AB00D80D46 /* JSONTokensJS.swift in Sources */,
+				04A95A7D2CBE61AB00D80D46 /* BitcoinJS.swift in Sources */,
+				04A95A7E2CBE61AB00D80D46 /* BigInt.swift in Sources */,
+				04A95A7F2CBE61AB00D80D46 /* EllipticJS.swift in Sources */,
+				04A95A802CBE61AB00D80D46 /* DataTypes.swift in Sources */,
+				04A95A622CBE60E400D80D46 /* Dummy.swift in Sources */,
+				04A95A5D2CBE5E5900D80D46 /* ShareViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -746,7 +728,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
-				04A32EE428F5564E0003D7F6 /* Dummy.swift in Sources */,
+				04A95A412CBE5DB700D80D46 /* Dummy.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -759,18 +741,18 @@
 			target = 13B07F861A680F5B00A75B9A /* Bracedotto */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
-		04A32EF528F559B00003D7F6 /* PBXTargetDependency */ = {
+		04A95A4F2CBE5E4400D80D46 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 04A32EEB28F559B00003D7F6 /* Save to Brace */;
-			targetProxy = 04A32EF428F559B00003D7F6 /* PBXContainerItemProxy */;
+			target = 04A95A452CBE5E4300D80D46 /* Save to Brace */;
+			targetProxy = 04A95A4E2CBE5E4400D80D46 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		04A32EF028F559B00003D7F6 /* MainInterface.storyboard */ = {
+		04A95A582CBE5E5900D80D46 /* MainInterface.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				04A32EF128F559B00003D7F6 /* Base */,
+				04A95A572CBE5E5900D80D46 /* Base */,
 			);
 			name = MainInterface.storyboard;
 			sourceTree = "<group>";
@@ -782,14 +764,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-Bracedotto-BracedottoTests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = BracedottoTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -810,11 +791,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 89C6BE57DB24E9ADA2F236DE /* Pods-Bracedotto-BracedottoTests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = BracedottoTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -831,10 +811,11 @@
 			};
 			name = Release;
 		};
-		04A32EF828F559B00003D7F6 /* Debug */ = {
+		04A95A532CBE5E4400D80D46 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F29DED515356626BC421DE07 /* Pods-Save to Brace.debug.xcconfig */;
+			baseConfigurationReference = 8480FA6F1482F9AFBDFCE0A6 /* Pods-Save to Brace.debug.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -846,24 +827,26 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = DZ8XN7425J;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Save to Brace/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Save to Brace";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 0.18.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 0.29.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bracedotto.brace.Save-to-Brace";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -871,10 +854,11 @@
 			};
 			name = Debug;
 		};
-		04A32EF928F559B00003D7F6 /* Release */ = {
+		04A95A542CBE5E4400D80D46 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 53B5DF488351743F5B58E154 /* Pods-Save to Brace.release.xcconfig */;
+			baseConfigurationReference = B16EC90B1401C82F0B122BE9 /* Pods-Save to Brace.release.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -887,25 +871,26 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = DZ8XN7425J;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Save to Brace/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Save to Brace";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 0.18.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 0.29.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bracedotto.brace.Save-to-Brace";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -915,7 +900,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-Bracedotto.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Bracedotto/Bracedotto.entitlements;
@@ -923,6 +907,8 @@
 				DEVELOPMENT_TEAM = DZ8XN7425J;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Bracedotto/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -937,7 +923,6 @@
 				PRODUCT_NAME = Brace;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Bracedotto-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -950,13 +935,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-Bracedotto.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Bracedotto/Bracedotto.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = DZ8XN7425J;
 				INFOPLIST_FILE = Bracedotto/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -971,7 +957,6 @@
 				PRODUCT_NAME = Brace;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Bracedotto-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -983,8 +968,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CC = "";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1010,9 +996,10 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				CXX = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1028,7 +1015,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LD = "";
+				LDPLUSPLUS = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -1045,9 +1034,17 @@
 					"-DFOLLY_NO_CONFIG",
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
+					"-DFOLLY_CFG_NO_COROUTINES=1",
+					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				USE_HERMES = true;
 			};
 			name = Debug;
 		};
@@ -1055,8 +1052,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CC = "";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1082,9 +1080,10 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
+				CXX = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1093,7 +1092,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LD = "";
+				LDPLUSPLUS = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -1109,10 +1110,16 @@
 					"-DFOLLY_NO_CONFIG",
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
+					"-DFOLLY_CFG_NO_COROUTINES=1",
+					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
-				SWIFT_COMPILATION_MODE = wholemodule;
+				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1129,11 +1136,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		04A32EF728F559B00003D7F6 /* Build configuration list for PBXNativeTarget "Save to Brace" */ = {
+		04A95A522CBE5E4400D80D46 /* Build configuration list for PBXNativeTarget "Save to Brace" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				04A32EF828F559B00003D7F6 /* Debug */,
-				04A32EF928F559B00003D7F6 /* Release */,
+				04A95A532CBE5E4400D80D46 /* Debug */,
+				04A95A542CBE5E4400D80D46 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

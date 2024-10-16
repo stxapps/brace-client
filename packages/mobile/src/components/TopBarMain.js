@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Animated } from 'react-native';
 import { connect } from 'react-redux';
-import { SvgXml } from 'react-native-svg';
 
 import { SHOW_COMMANDS, BLK_MODE } from '../types/const';
 import { getThemeMode } from '../selectors';
@@ -14,8 +13,8 @@ import TopBarBulkEditCommands from './TopBarBulkEditCommands';
 import TopBarTitle from './TopBarTitle';
 import StatusPopup from './StatusPopup';
 
-import shortLogo from '../images/logo-short.svg';
-import shortLogoBlk from '../images/logo-short-blk.svg';
+import Logo from '../images/logo-short.svg';
+import LogoBlk from '../images/logo-short-blk.svg';
 
 class TopBarMain extends React.PureComponent {
 
@@ -186,7 +185,7 @@ class TopBarMain extends React.PureComponent {
           <Animated.View style={headerStyle}>
             <View style={tailwind('h-14 flex-row items-center justify-between px-4 md:px-6 lg:px-8')}>
               <View>
-                <SvgXml width={28.36} height={32} xml={themeMode === BLK_MODE ? shortLogoBlk : shortLogo} />
+                {themeMode === BLK_MODE ? <LogoBlk width={28.36} height={32} /> : <Logo width={28.36} height={32} />}
               </View>
               {rightPane}
             </View>

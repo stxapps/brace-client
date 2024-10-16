@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Platform } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import Svg, { SvgXml, Path } from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 
 import { updatePopup } from '../actions';
 import { ADD_POPUP, MY_LIST, TRASH, ARCHIVE, BLK_MODE } from '../types/const';
@@ -11,13 +11,13 @@ import cache from '../utils/cache';
 
 import { useTailwind } from '.';
 
-import emptyBox from '../images/empty-box-sided.svg';
-import undrawLink from '../images/undraw-link.svg';
-import undrawLinkBlk from '../images/undraw-link-blk.svg';
-import saveLinkOnIos from '../images/save-link-on-ios.svg';
-import saveLinkOnIosBlk from '../images/save-link-on-ios-blk.svg';
-import saveLinkOnAndroid from '../images/save-link-on-android.svg';
-import saveLinkOnAndroidBlk from '../images/save-link-on-android-blk.svg';
+import EmptyBox from '../images/empty-box-sided.svg';
+import UndrawLink from '../images/undraw-link.svg';
+import UndrawLinkBlk from '../images/undraw-link-blk.svg';
+import SaveLinkOnIos from '../images/save-link-on-ios.svg';
+import SaveLinkOnIosBlk from '../images/save-link-on-ios-blk.svg';
+import SaveLinkOnAndroid from '../images/save-link-on-android.svg';
+import SaveLinkOnAndroidBlk from '../images/save-link-on-android-blk.svg';
 
 const BORDER_RADIUS = {
   borderTopLeftRadius: 24,
@@ -68,7 +68,7 @@ const EmptyContent = () => {
   if (queryString) {
     return (
       <View style={tailwind('w-full items-center px-4 pb-6 md:px-6 lg:px-8')}>
-        <SvgXml style={tailwind('mt-10')} width={160} height={146.66} xml={emptyBox} />
+        <EmptyBox style={tailwind('mt-10')} width={160} height={146.66} />
         <Text style={tailwind('mt-6 text-center text-lg font-medium text-gray-800 blk:text-gray-200')}>No links in #{displayName}</Text>
         <Text style={tailwind('mt-2 max-w-md text-center text-base font-normal tracking-wide text-gray-500 blk:text-gray-400')}>Tap <Text style={tailwind('text-base font-semibold tracking-wide text-gray-500 blk:text-gray-400')}>{textName}</Text> from the menu to show links here.</Text>
       </View>
@@ -81,14 +81,14 @@ const EmptyContent = () => {
       or = (
         <React.Fragment>
           <Text style={tailwind('mt-16 max-w-md text-center text-base font-normal text-gray-600 blk:text-gray-300')}>Or tap <Text style={tailwind('text-base font-semibold text-gray-600 blk:text-gray-300')}>Brace</Text> from Share menu</Text>
-          <SvgXml style={tailwind('mt-0 sm:mt-4')} width={'100%'} xml={themeMode === BLK_MODE ? saveLinkOnIosBlk : saveLinkOnIos} />
+          {themeMode === BLK_MODE ? <SaveLinkOnIosBlk style={tailwind('mt-0 sm:mt-4')} width={'100%'} /> : <SaveLinkOnIos style={tailwind('mt-0 sm:mt-4')} width={'100%'} />}
         </React.Fragment>
       );
     } else {
       or = (
         <React.Fragment>
           <Text style={tailwind('mt-16 max-w-md text-center text-base font-normal text-gray-600 blk:text-gray-300')}>Or tap <Text style={tailwind('text-base font-semibold text-gray-600 blk:text-gray-300')}>Save to Brace</Text> from Share menu</Text>
-          <SvgXml style={tailwind('mt-0 sm:mt-4')} width={'100%'} xml={themeMode === BLK_MODE ? saveLinkOnAndroidBlk : saveLinkOnAndroid} />
+          {themeMode === BLK_MODE ? <SaveLinkOnAndroidBlk style={tailwind('mt-0 sm:mt-4')} width={'100%'} /> : <SaveLinkOnAndroid style={tailwind('mt-0 sm:mt-4')} width={'100%'} />}
         </React.Fragment>
       );
     }
@@ -96,7 +96,7 @@ const EmptyContent = () => {
     return (
       <View style={tailwind('w-full items-center px-4 pb-6 md:px-6 lg:px-8')}>
         <View style={cache('CP_emptyMyListView', [tailwind('w-full max-w-md items-center bg-gray-50 px-4 pt-16 pb-8 blk:bg-gray-800'), BORDER_RADIUS], [tailwind])}>
-          <SvgXml width={64} height={64} xml={themeMode === BLK_MODE ? undrawLinkBlk : undrawLink} />
+          {themeMode === BLK_MODE ? <UndrawLinkBlk width={64} height={64} /> : <UndrawLink width={64} height={64} />}
           <Text style={tailwind('mt-6 text-center text-base font-normal text-gray-600 blk:text-gray-300')}>Get started saving links</Text>
           <TouchableOpacity onPress={onAddBtnClick} style={[tailwind('mt-4 flex-row items-center justify-center rounded-full bg-gray-800 blk:bg-gray-100'), { paddingTop: 7, paddingBottom: 7, paddingLeft: 10, paddingRight: 13 }]}>
             <Svg style={tailwind('font-normal text-white blk:text-gray-900')} width={12} height={10} viewBox="0 0 16 14" stroke="currentColor" fill="none">
@@ -126,7 +126,7 @@ const EmptyContent = () => {
 
   return (
     <View style={tailwind('w-full items-center px-4 pb-6 md:px-6 lg:px-8')}>
-      <SvgXml style={tailwind('mt-10')} width={160} height={146.66} xml={emptyBox} />
+      <EmptyBox style={tailwind('mt-10')} width={160} height={146.66} />
       <Text style={tailwind('mt-6 text-center text-lg font-medium text-gray-800 blk:text-gray-200')}>No links in {displayName}</Text>
       <Text style={tailwind('mt-2 max-w-md text-center text-base font-normal tracking-wide text-gray-500 blk:text-gray-400')}>Tap <Text style={tailwind('text-base font-semibold tracking-wide text-gray-500 blk:text-gray-400')}>{textName}</Text> from the menu to move links here.</Text>
     </View>

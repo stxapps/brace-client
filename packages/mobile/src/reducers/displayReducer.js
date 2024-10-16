@@ -17,8 +17,9 @@ import {
   UPDATE_LOCKS_FOR_ACTIVE_APP, UPDATE_LOCKS_FOR_INACTIVE_APP,
   UPDATE_TAG_DATA_S_STEP_COMMIT, UPDATE_TAG_DATA_T_STEP_COMMIT,
   UPDATE_SELECTING_TAG_NAME, DELETE_TAG_NAMES, UPDATE_BULK_EDIT_MENU_MODE,
-  UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
-  UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA, RESET_STATE,
+  INCREASE_UPDATE_STATUS_BAR_STYLE_COUNT, UPDATE_IMPORT_ALL_DATA_PROGRESS,
+  UPDATE_EXPORT_ALL_DATA_PROGRESS, UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA,
+  RESET_STATE,
 } from '../types/actionTypes';
 import {
   ALL, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
@@ -93,6 +94,7 @@ const initialState = {
   lockAction: null,
   doForceLock: false,
   bulkEditMenuAnimType: null,
+  updateStatusBarStyleCount: 0,
   importAllDataProgress: null,
   exportAllDataProgress: null,
   deleteAllDataProgress: null,
@@ -816,6 +818,13 @@ const displayReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_BULK_EDIT_MENU_MODE) {
     return { ...state, ...action.payload };
+  }
+
+  if (action.type === INCREASE_UPDATE_STATUS_BAR_STYLE_COUNT) {
+    return {
+      ...state,
+      updateStatusBarStyleCount: state.updateStatusBarStyleCount + 1,
+    };
   }
 
   if (action.type === UPDATE_IMPORT_ALL_DATA_PROGRESS) {

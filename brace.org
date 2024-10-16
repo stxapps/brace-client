@@ -765,39 +765,46 @@ This and CI/CD are very important!
 - Ubuntu laptop: Firefox, Chrome
 * react-native
 ** steps
-- npx react-native init Bracedotto
-- yarn add redux react-redux redux-loop reselect
-- yarn add url-parse axios@0.27.2 @react-native-community/clipboard
-- yarn add https://github.com/stxapps/redux-offline#028205cec27dcf1ae05e310fc7e45779ee908949
-- yarn add @react-native-async-storage/async-storage @react-native-community/netinfo
-- yarn add 'https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?51209bd3b6201bb56dfb5b652a7faedd555f7648
-- yarn add https://github.com/stxapps/tailwind-rn#96848a8d2c2370e4f5e57a773ace172c4073157d
-- yarn add react-native-default-preference react-native-fast-image react-native-keyboard-manager react-native-modal react-native-popup-menu
-- yarn add react-native-safe-area-context
-- yarn add react-native-svg react-native-animated-spinkit react-native-swiper
-- yarn add https://github.com/stxapps/react-native-receive-sharing-intent#c3acb5afdae0087aef58ad806e8208ef2f280f7e
-- yarn add react-native-webview
-- yarn add babel-plugin-inline-import --dev
-- yarn add @welldone-software/why-did-you-render --dev
-- yarn add typescript@4.0.8 --dev
-- yarn add @types/react-native --dev
-- yarn add react-native-file-access
-- yarn add react-native-iap@8.0.8 @wewatch/lexorank
-- yarn add https://github.com/stxapps/react-native-device-time-format#63f4a9158a91c391d67317a489ccfe8ec28a7c84
-- yarn add react-native-image-crop-picker
-- change minSdkVersion from 16 to 21 in ./android/build.gradle
+- npx @react-native-community/cli@latest init Bracedotto --pm npm
+- npm i redux@4.2.1 react-redux@8.1.3 redux-loop@6.2.0 reselect@4.1.8
+- npm i react-native-svg
+- npm i -D react-native-svg-transformer
+  + Update metro.config.js to work with .svg
+- npm i url-parse
+- npm i react-native-animated-spinkit react-native-swiper
+- npm i react-native-safe-area-context
+- npm i react-native-keyboard-manager
+- npm i react-native-webview
+- npm i react-native-file-access
+- npm i https://github.com/stxapps/tailwind-rn#96848a8d2c2370e4f5e57a773ace172c4073157d
+- npm i 'https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?3d5bcd6ea9a17f00c76be5913009f2c02f13b95f'
+- npm i https://github.com/stxapps/redux-offline#028205cec27dcf1ae05e310fc7e45779ee908949
+- npm i @react-native-async-storage/async-storage @react-native-community/netinfo
+- npm i @welldone-software/why-did-you-render -D
+- npm i react-native-iap @wewatch/lexorank axios
+- npm i https://github.com/stxapps/react-native-device-time-format#63f4a9158a91c391d67317a489ccfe8ec28a7c84
+- npm i react-native-document-picker react-native-share @react-native-clipboard/clipboard
+- npm i react-native-flag-secure
+- npm i jest-diff
+- npm i react-native-default-preference
+- npm i https://github.com/stxapps/react-native-receive-sharing-intent#d1b4aa9140e0ad28e1a8403814125a733c92172c
+- npm i react-native-system-navigation-bar @vonovak/react-native-theme-control
+- npm uninstall typescript && npm i typescript@5.5.4 -D
+- npm i react-native-image-crop-picker
+- npm i react-native-modal react-native-popup-menu
+- npm i @d11/react-native-fast-image
+- change minSdkVersion to 28 in ./android/build.gradle
 - Allow CORS access on https://brace.to/manifest.json
 - Set up Android deep linking: reactnative.dev/docs/linking and developer.android.com/training/app-links/deep-linking
 - npx react-native-asset to link assets i.e. fonts
   + medium.com/@mehrankhandev/ultimate-guide-to-use-custom-fonts-in-react-native-77fcdf859cf4
-- yarn add react-native-document-picker react-native-share
-- yarn add --dev redux-flipper react-native-flipper@0.164.0
-- yarn add react-native-flag-secure
-- yarn add jest-diff
-- yarn add react-native-system-navigation-bar @vonovak/react-native-theme-control
 - ios
-  + Edit PodFile: ios target 12.0, pod 'Blockstack'
-  + In Xcode, Bracedotto General -> Target iOS 12.0
+  + Edit PodFile: ios target 15.5, pod 'Blockstack'
+  + First time must run:
+    ~ cd ios
+    ~ bundle install
+    ~ bundle exec pod install
+  + In Xcode, Bracedotto General -> Target iOS 15.5
   + In AppDelegate.m, moduleName:@"Brace"
   + Select Bracedotto in left pane, new -> swift file and generate header binding
   + Add image assets, update storyboard

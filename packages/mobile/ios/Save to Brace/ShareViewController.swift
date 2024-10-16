@@ -108,7 +108,7 @@ class ShareViewController: UIViewController {
     if let t = self.timer {
       t.invalidate()
     }
-    self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
+    self.extensionContext?.completeRequest(returningItems: [], completionHandler: nil)
   }
 
   @objc private func onBackgroundBtnClick() {

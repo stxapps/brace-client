@@ -15,7 +15,8 @@ import {
   DELETE_LINKS, MOVE_LINKS_ADD_STEP, MOVE_LINKS_DELETE_STEP, TRY_UPDATE_SETTINGS,
   MERGE_SETTINGS, PIN_LINK, UNPIN_LINK, MOVE_PINNED_LINK_ADD_STEP,
   UPDATE_SYSTEM_THEME_MODE, UPDATE_IS_24H_FORMAT, UPDATE_CUSTOM_DATA,
-  UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_T_STEP, RESET_STATE,
+  UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_T_STEP, INCREASE_UPDATE_STATUS_BAR_STYLE_COUNT,
+  RESET_STATE,
 } from '../types/actionTypes';
 import {
   BACK_DECIDER, BACK_POPUP, ALL, HASH_BACK, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP,
@@ -430,4 +431,8 @@ export const updateIs24HFormat = (is24HFormat) => {
 
 export const showSWWUPopup = () => async (dispatch, getState) => {
   dispatch(updatePopup(SWWU_POPUP, true));
+};
+
+export const increaseUpdateStatusBarStyleCount = () => {
+  return { type: INCREASE_UPDATE_STATUS_BAR_STYLE_COUNT };
 };

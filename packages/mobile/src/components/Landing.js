@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, View, Text, TouchableOpacity, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import Swiper from 'react-native-swiper';
-import Svg, { SvgXml, Path, Circle } from 'react-native-svg';
+import Svg, { Path, Circle } from 'react-native-svg';
 
 import { updatePopup } from '../actions';
 import {
@@ -17,10 +17,10 @@ import TopBar from './TopBar';
 import SignUpPopup from './SignUpPopup';
 import SignInPopup from './SignInPopup';
 
-import saveLinksToVisitLater from '../images/save-links-to-visit-later.svg';
-import undrawLink from '../images/undraw-link.svg';
-import stacksShort from '../images/stacks-short.svg';
-import logoFullWhite from '../images/logo-full-white.svg';
+import SaveLinksToVisitLater from '../images/save-links-to-visit-later.svg';
+import UndrawLink from '../images/undraw-link.svg';
+import StacksShort from '../images/stacks-short.svg';
+import LogoFullWhite from '../images/logo-full-white.svg';
 
 class Landing extends React.PureComponent {
 
@@ -57,12 +57,12 @@ class Landing extends React.PureComponent {
     return (
       <Swiper height={swiperHeight} showsPagination={true} showsButtons={false} activeDotStyle={tailwind('bg-gray-500')} paginationStyle={cache('L_pagination', { bottom: 10 })} loop={false}>
         <View style={tailwind('h-full w-full items-center justify-center px-12')}>
-          <SvgXml width={saveLinksSvgWidth} height={saveLinksSvgHeight} xml={saveLinksToVisitLater} />
+          <SaveLinksToVisitLater width={saveLinksSvgWidth} height={saveLinksSvgHeight} />
           {/* From onLayout, text width is ~394 so when safe area width is wide enough, no line break. */}
           <Text style={tailwind('mt-5 text-center text-3xl font-bold text-gray-900 sm:mt-8 sm:text-4xl md:text-5xl')}>Save links {safeAreaWidth < 400 ? '\n' : ''}to visit later</Text>
         </View>
         <View style={tailwind('h-full w-full items-center justify-center px-4 md:px-6 lg:px-8')}>
-          <SvgXml width={64} height={64} xml={undrawLink} />
+          <UndrawLink width={64} height={64} />
           <Text style={tailwind('mt-4 text-center text-3xl font-semibold text-gray-900 md:text-4xl')}>Never miss a link ever again</Text>
           <Text style={tailwind('mt-4 text-center text-lg font-normal text-gray-500')}>Many interesting, useful, and important stuff is {safeAreaWidth >= SM_WIDTH && safeAreaWidth < MD_WIDTH ? '\n' : ''}on the internet. {safeAreaWidth >= MD_WIDTH ? '\n' : ''}Brace.to helps you save them so that you will never miss anything.</Text>
         </View>
@@ -125,7 +125,7 @@ class Landing extends React.PureComponent {
           </View>
         </View>
         <View style={tailwind('h-full w-full items-center justify-center px-4 md:px-6 lg:px-8')}>
-          <SvgXml width={80} height={80} xml={stacksShort} />
+          <StacksShort width={80} height={80} />
           <Text style={tailwind('mt-4 text-center text-3xl font-semibold text-gray-900 md:text-4xl')}>Your privacy at heart powered by <Text onPress={() => Linking.openURL('https://www.hiro.so/stacks-js')} style={tailwind('text-3xl font-semibold text-purple-blockstack md:text-4xl')}>Stacks</Text></Text>
           <Text style={tailwind('mt-4 text-center text-lg font-normal text-gray-500 md:text-xl')}>Your account is truly yours. {safeAreaWidth >= SM_WIDTH ? '' : '\n'}Your data is truly yours.</Text>
         </View>
@@ -176,7 +176,7 @@ class Landing extends React.PureComponent {
           <View>
             {/* // From onLayout, Don't be evil text width is ~317 so when safe area width is wide enought (padding 48 + 48 + 317), no line break. */}
             <Text style={tailwind('text-center text-4xl font-bold text-white md:text-5xl')}><Text style={tailwind('text-4xl font-bold text-white line-through md:text-5xl')}>Don't</Text>{safeAreaWidth < 420 ? '\n' : ' '}Can't be Evil</Text>
-            <SvgXml style={cache('L_logo', [tailwind('absolute right-0 bottom-0'), logoTranslate], [safeAreaWidth, tailwind])} width={91.66} height={20} xml={logoFullWhite} />
+            <LogoFullWhite style={cache('L_logo', [tailwind('absolute right-0 bottom-0'), logoTranslate], [safeAreaWidth, tailwind])} width={91.66} height={20} />
           </View>
           <Text style={tailwind('mt-20 text-center text-lg font-normal leading-6 text-gray-200 md:text-xl')}>Not only that Brace.to doesn't be evil; Brace.to can't be.</Text>
         </View>

@@ -1,12 +1,11 @@
 {
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "exclude": ["ios"],
   "compilerOptions": {
-    "allowJs": true,
     "checkJs": true,
-    "target": "es6",
-    "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
-    "noEmit": true,
-    "jsx": "react",
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "useUnknownInCatchVariables": false,
     "typeRoots": ["./src/@types", "./node_modules/@types"]
   }
 }

@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
-import { SvgXml } from 'react-native-svg';
 
 import { updatePopup } from '../actions';
 import { SIGN_IN_POPUP, SHOW_SIGN_IN, BLK_MODE } from '../types/const';
@@ -10,8 +9,8 @@ import { getThemeMode } from '../selectors';
 
 import { withTailwind } from '.';
 
-import shortLogo from '../images/logo-short.svg';
-import shortLogoBlk from '../images/logo-short-blk.svg';
+import Logo from '../images/logo-short.svg';
+import LogoBlk from '../images/logo-short-blk.svg';
 
 class TopBar extends React.PureComponent {
 
@@ -47,7 +46,7 @@ class TopBar extends React.PureComponent {
         <View style={tailwind('w-full max-w-6xl')}>
           <View style={tailwind('h-14 flex-row items-center justify-between px-4 md:px-6 lg:px-8')}>
             <View>
-              <SvgXml width={28.36} height={32} xml={doSupportTheme && themeMode === BLK_MODE ? shortLogoBlk : shortLogo} />
+              {doSupportTheme && themeMode === BLK_MODE ? <LogoBlk width={28.36} height={32} /> : <Logo width={28.36} height={32} />}
             </View>
             {rightPane}
           </View>
