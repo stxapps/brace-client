@@ -33,6 +33,8 @@ import {
 import { initialSettingsState } from '../types/initialStates';
 import vars from '../vars';
 
+import { increaseUpdateStatusBarStyleCount } from '.';
+
 const parseRawImportedFile = async (dispatch, getState, text) => {
 
   let listName = MY_LIST, now = Date.now();
@@ -609,6 +611,8 @@ const _importAllData = async (dispatch, getState) => {
       type: DocumentPickerTypes.allFiles,
       copyTo: 'cachesDirectory',
     });
+    dispatch(increaseUpdateStatusBarStyleCount());
+
     const result = results[0];
     if (!isObject(result) || !isString(result.fileCopyUri)) {
       dispatch(updateImportAllDataProgress(null));
@@ -628,6 +632,8 @@ const _importAllData = async (dispatch, getState) => {
     const text = await FileSystem.readFile(result.fileCopyUri, UTF8);
     await parseImportedFile(dispatch, getState, text);
   } catch (error) {
+    dispatch(increaseUpdateStatusBarStyleCount());
+
     dispatch(updateImportAllDataProgress(null));
     if (DocumentPicker.isCancel(error)) return;
 
@@ -649,11 +655,14 @@ export const updateImportAllDataProgress = (progress) => {
   };
 };
 
-export const saveAs = async (filePath, fileName) => {
+export const saveAs = async (dispatch, filePath, fileName) => {
   if (Platform.OS === 'ios') {
     try {
       await Share.open({ url: 'file://' + filePath });
+      dispatch(increaseUpdateStatusBarStyleCount());
     } catch (error) {
+      dispatch(increaseUpdateStatusBarStyleCount());
+
       if (isObject(error)) {
         if (
           isObject(error.error) &&
@@ -916,7 +925,7 @@ export const exportAllData = () => async (dispatch, getState) => {
     await FileSystem.writeFile(
       filePath, JSON.stringify(successResponses, null, 2), UTF8
     );
-    await saveAs(filePath, fileName);
+    await saveAs(dispatch, filePath, fileName);
 
     if (errorResponses.length > 0) {
       progress.total = -1;

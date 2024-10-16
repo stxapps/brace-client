@@ -9,7 +9,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import KeyboardManager from 'react-native-keyboard-manager';
 
 import fileApi from '../apis/localFile';
-import { updatePopup } from '../actions';
+import { updatePopup, increaseUpdateStatusBarStyleCount } from '../actions';
 import { updateCustomEditor, updateImages, updateCustomData } from '../actions/chunk';
 import {
   CUSTOM_EDITOR_POPUP, IMAGES, CD_ROOT, BLK_MODE, LG_WIDTH,
@@ -96,9 +96,12 @@ const CustomEditorPopup = () => {
         cropperToolbarColor: '#20242F',
         cropperToolbarWidgetColor: '#F3F4F6',
       });
+      dispatch(increaseUpdateStatusBarStyleCount());
 
       dispatch(updateCustomEditor(null, { ...data }, 0, 0, 0, 0));
     } catch (error) {
+      dispatch(increaseUpdateStatusBarStyleCount());
+
       console.log('In CustomEditorPopup, ImagePicker error:', error);
       if (
         isObject(error) &&

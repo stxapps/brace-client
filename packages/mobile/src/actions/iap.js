@@ -20,6 +20,8 @@ import {
 } from '../utils';
 import vars from '../vars';
 
+import { increaseUpdateStatusBarStyleCount } from '.';
+
 const verifyPurchase = async (rawPurchase) => {
   if (!rawPurchase) return { status: INVALID };
   if (Platform.OS === 'android' && rawPurchase.purchaseStateAndroid === 0) {
@@ -275,7 +277,10 @@ export const requestPurchase = (product) => async (dispatch, getState) => {
       // github.com/dooboolab-community/react-native-iap/issues/2247
       subscriptionOffers: [{ sku: productId, offerToken }],
     });
+    dispatch(increaseUpdateStatusBarStyleCount());
   } catch (error) {
+    dispatch(increaseUpdateStatusBarStyleCount());
+
     console.log('Error when request purchase: ', error);
     if (error.code === 'E_USER_CANCELLED') {
       dispatch(updateIapPurchaseStatus(null, null));
