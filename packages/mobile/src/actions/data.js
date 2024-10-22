@@ -682,7 +682,7 @@ export const saveAs = async (dispatch, filePath, fileName) => {
   }
 
   if (Platform.OS === 'android') {
-    if (Platform.Version < 33) {
+    if (Platform.Version <= 28) {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
       );
