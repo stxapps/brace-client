@@ -438,7 +438,7 @@ class Landing extends React.PureComponent {
                 <li className={tailwind('lg:mt-8')}>
                   <figure className={tailwind('mx-auto max-w-2xl rounded-4xl bg-white p-6 shadow-md ring-1 ring-gray-900/5')}>
                     <blockquote>
-                      <p className={tailwind(`text-lg tracking-tight text-gray-800 before:content-['“'] after:content-['”']`)}>I really adore this life improvement app called <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://twitter.com/bracedotto" target="_blank" rel="noreferrer">@bracedotto</a>. It's simple but easy to use, decentralized, and hassle-free. The essence of <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://twitter.com/hashtag/OwnYourInternet" target="_blank" rel="noreferrer">#OwnYourInternet</a> and <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://twitter.com/hashtag/CantBeEvil" target="_blank" rel="noreferrer">#CantBeEvil</a></p>
+                      <p className={tailwind(`text-lg tracking-tight text-gray-800 before:content-['“'] after:content-['”']`)}>I really adore this life improvement app called <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/bracedotto" target="_blank" rel="noreferrer">@bracedotto</a>. It's simple but easy to use, decentralized, and hassle-free. The essence of <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/hashtag/OwnYourInternet" target="_blank" rel="noreferrer">#OwnYourInternet</a> and <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/hashtag/CantBeEvil" target="_blank" rel="noreferrer">#CantBeEvil</a></p>
                     </blockquote>
                     <figcaption className={tailwind('mt-6 flex items-center')}>
                       <div className={tailwind('overflow-hidden rounded-full bg-gray-50')}>
@@ -446,7 +446,7 @@ class Landing extends React.PureComponent {
                       </div>
                       <div className={tailwind('ml-4')}>
                         <div className={tailwind('text-base font-medium leading-6 tracking-tight text-gray-800')}>Algorithm.btc</div>
-                        <a className={tailwind('mt-1 rounded text-sm text-gray-500 hover:underline focus:outline-none focus:ring')} href="https://twitter.com/godfred_xcuz/status/1623624956700401667" target="_blank" rel="noreferrer">@godfred_xcuz</a>
+                        <a className={tailwind('mt-1 rounded text-sm text-gray-500 hover:underline focus:outline-none focus:ring')} href="https://x.com/godfred_xcuz/status/1623624956700401667" target="_blank" rel="noreferrer">@godfred_xcuz</a>
                       </div>
                     </figcaption>
                   </figure>
@@ -474,7 +474,7 @@ class Landing extends React.PureComponent {
                 <li className={tailwind('lg:mt-8')}>
                   <figure className={tailwind('mx-auto max-w-2xl rounded-4xl bg-white p-6 shadow-md ring-1 ring-gray-900/5')}>
                     <blockquote>
-                      <p className={tailwind(`text-lg tracking-tight text-gray-800 before:content-['“'] after:content-['”']`)}>Save your articles, websites, and video links using <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://twitter.com/bracedotto" target="_blank" rel="noreferrer">@bracedotto</a> powered by <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://twitter.com/Stacks" target="_blank" rel="noreferrer">@Stacks</a>. Easy to use and secure. You can't beat that! <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://twitter.com/hashtag/Stacks" target="_blank" rel="noreferrer">#Stacks</a></p>
+                      <p className={tailwind(`text-lg tracking-tight text-gray-800 before:content-['“'] after:content-['”']`)}>Save your articles, websites, and video links using <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/bracedotto" target="_blank" rel="noreferrer">@bracedotto</a> powered by <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/Stacks" target="_blank" rel="noreferrer">@Stacks</a>. Easy to use and secure. You can't beat that! <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/hashtag/Stacks" target="_blank" rel="noreferrer">#Stacks</a></p>
                     </blockquote>
                     <figcaption className={tailwind('mt-6 flex items-center')}>
                       <div className={tailwind('overflow-hidden rounded-full bg-gray-50')}>
@@ -482,7 +482,7 @@ class Landing extends React.PureComponent {
                       </div>
                       <div className={tailwind('ml-4')}>
                         <div className={tailwind('text-base font-medium leading-6 tracking-tight text-gray-800')}>Bitcoin Apostle</div>
-                        <a className={tailwind('mt-1 rounded text-sm text-gray-500 hover:underline focus:outline-none focus:ring')} href="https://twitter.com/BTC_Apostle/status/1698816615826227365" target="_blank" rel="noreferrer">@BTC_Apostle</a>
+                        <a className={tailwind('mt-1 rounded text-sm text-gray-500 hover:underline focus:outline-none focus:ring')} href="https://x.com/BTC_Apostle/status/1698816615826227365" target="_blank" rel="noreferrer">@BTC_Apostle</a>
                       </div>
                     </figcaption>
                   </figure>

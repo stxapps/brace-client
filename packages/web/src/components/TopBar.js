@@ -41,12 +41,12 @@ class TopBar extends React.PureComponent {
     return (
       <div className={tailwind(`mx-auto max-w-6xl px-4 md:px-6 lg:px-8 ${topBarStyleClasses}`)}>
         <div className={tailwind('relative')}>
-          <header className={tailwind('flex h-14 items-center justify-between')}>
+          <div className={tailwind('flex h-14 items-center justify-between')}>
             <a className={tailwind('relative rounded focus:outline-none focus:ring focus:ring-offset-2')} href="/">
               <img className={tailwind('h-8')} src={doSupportTheme && themeMode === BLK_MODE ? shortLogoBlk : shortLogo} alt="Brace logo" />
             </a>
             {rightPane}
-          </header>
+          </div>
         </div>
       </div>
     );
