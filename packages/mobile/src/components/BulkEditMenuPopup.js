@@ -13,8 +13,6 @@ import {
   UNPIN, MANAGE_TAGS, MY_LIST, ARCHIVE, TRASH, LIST_NAMES_MODE_MOVE_LINKS,
   LIST_NAMES_ANIM_TYPE_POPUP, LIST_NAMES_ANIM_TYPE_BMODAL,
 } from '../types/const';
-import { getListNameMap } from '../selectors';
-import { getAllListNames } from '../utils';
 import { popupFMV } from '../types/animConfigs';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
@@ -30,7 +28,6 @@ const BulkEditMenuPopup = () => {
   const anchorPosition = useSelector(state => state.display.bulkEditMenuPopupPosition);
   const listName = useSelector(state => state.display.listName);
   const queryString = useSelector(state => state.display.queryString);
-  const listNameMap = useSelector(state => getListNameMap(state));
   const selectedLinkIds = useSelector(state => state.display.selectedLinkIds);
   const animType = useSelector(state => state.display.bulkEditMenuAnimType);
   const [popupSize, setPopupSize] = useState(null);
@@ -142,9 +139,7 @@ const BulkEditMenuPopup = () => {
   let menu = [];
   const rListName = [MY_LIST, ARCHIVE, TRASH].includes(listName) ? listName : MY_LIST;
   if (queryString === '') {
-    if (rListName === MY_LIST && getAllListNames(listNameMap).length > 3) {
-      menu.push(MOVE_TO);
-    }
+    if (rListName === MY_LIST) menu.push(MOVE_TO);
   }
   menu = [...menu, MANAGE_TAGS, PIN, UNPIN];
 

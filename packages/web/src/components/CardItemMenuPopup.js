@@ -19,8 +19,7 @@ import {
   getSafeAreaWidth, getSafeAreaHeight, makeGetTagStatus,
 } from '../selectors';
 import {
-  copyTextToClipboard, getListNameDisplayName, getAllListNames, isObject, isEqual,
-  getLastHalfHeight,
+  copyTextToClipboard, getListNameDisplayName, isObject, isEqual, getLastHalfHeight,
 } from '../utils';
 import { popupBgFMV, popupFMV } from '../types/animConfigs';
 
@@ -82,8 +81,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
   populateMenu() {
     const {
-      listName, queryString, listNameMap, popupLink, pinStatus, tagStatus, layoutType,
-      safeAreaWidth,
+      listName, queryString, popupLink, pinStatus, tagStatus, layoutType, safeAreaWidth,
     } = this.props;
 
     let menu = null;
@@ -91,9 +89,6 @@ class CardItemMenuPopup extends React.PureComponent {
       menu = CARD_ITEM_POPUP_MENU[listName];
     } else {
       menu = CARD_ITEM_POPUP_MENU[MY_LIST];
-    }
-    if (listName === MY_LIST && getAllListNames(listNameMap).length === 3) {
-      menu = menu.slice(0, -1);
     }
     if (queryString) menu = QUERY_STRING_MENU;
 
