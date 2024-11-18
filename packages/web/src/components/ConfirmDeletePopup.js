@@ -93,7 +93,7 @@ class ConfirmDeletePopup extends React.Component {
       <AnimatePresence key="AP_CDP">
         <div className={tailwind('fixed inset-0 z-50 overflow-y-auto')} aria-labelledby="modal-title" role="dialog" aria-modal="true">
           <div style={{ minHeight: safeAreaHeight }} className={tailwind('flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0')}>
-            <div className={tailwind('fixed inset-0')} aria-hidden="true">
+            <div className={tailwind('fixed inset-0')}>
               <motion.button onClick={this.onConfirmDeleteCancelBtnClick} tabIndex={-1} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
             </div>
             <span style={spanStyle} className={tailwind('hidden sm:inline-block sm:h-screen sm:align-middle')} aria-hidden="true">&#8203;</span>
