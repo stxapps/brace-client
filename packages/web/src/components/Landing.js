@@ -232,7 +232,7 @@ class Landing extends React.PureComponent {
                 <div className={tailwind('md:flex md:flex-grow md:items-start')}>
                   <div className={tailwind('md:mt-0.5 md:ml-4 md:w-1/2')}>
                     <h3 className={tailwind('mt-5 text-xl font-semibold leading-none text-white md:mt-0 lg:text-2xl-extra lg:leading-none')}>Save at Brace.to</h3>
-                    <p className={tailwind('mt-2.5 text-base font-normal text-gray-300 md:pr-8 lg:text-lg lg:leading-6')}>Click the black button with a plus sign on our website.</p>
+                    <p className={tailwind('mt-2.5 text-base font-normal text-gray-300 md:pr-8 lg:text-lg lg:leading-6')}>Click the '+ add' button on our website.</p>
                   </div>
                   <img className={tailwind('mx-auto mt-4 w-full max-w-md md:mt-0 md:mr-0 md:w-1/2')} src={saveLinkAtTheSite} alt="Save link at brace.to" />
                 </div>
