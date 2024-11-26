@@ -14,7 +14,7 @@ class Footer extends React.PureComponent {
     const { tailwind } = this.props;
 
     return (
-      <footer className={tailwind('mx-auto max-w-6xl px-4 pt-28 pb-6 md:px-6 lg:px-8')}>
+      <footer className={tailwind('mx-auto max-w-6xl overflow-hidden px-4 pt-28 pb-6 md:px-6 lg:px-8')}>
         <div className={tailwind('-mx-5 -my-2 md:flex md:flex-wrap md:justify-center')}>
           <div className={tailwind('px-3 py-1')}>
             <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={'/' + HASH_ABOUT}>About</a>
