@@ -309,26 +309,22 @@ const ListNamesPopup = () => {
       if (longestDisplayName.length > 26) popupWidth = 256;
       else if (longestDisplayName.length > 14) popupWidth = 208;
 
-      popupHeight = Math.min(268, 44 * (maxChildrenSize + 1) + 4);
-      if (maxChildrenSize > 4) {
+      popupHeight = 44 * (maxChildrenSize + 1) + 4;
+      if (popupHeight > safeAreaHeight - 16) {
         popupHeight = getLastHalfHeight(
           Math.min(popupHeight, safeAreaHeight - 16), 44, 0, 0, 0.5
         );
-      } else if (maxChildrenSize > 3) {
-        popupHeight = Math.min(popupHeight, safeAreaHeight - 16);
       }
     } else if ([MODE_MOVE_LINKS, MODE_MOVE_LIST_NAME].includes(derivedMode)) {
       popupWidth = 168;
       if (longestDisplayName.length > 26) popupWidth = 256;
       else if (longestDisplayName.length > 14) popupWidth = 208;
 
-      popupHeight = Math.min(315, 44 * (maxChildrenSize + 1) + 51);
-      if (maxChildrenSize > 4) {
+      popupHeight = 44 * (maxChildrenSize + 1) + 51;
+      if (popupHeight > safeAreaHeight - 16) {
         popupHeight = getLastHalfHeight(
           Math.min(popupHeight, safeAreaHeight - 16), 44, 0, 51, 0.5
         );
-      } else if (maxChildrenSize > 3) {
-        popupHeight = Math.min(popupHeight, safeAreaHeight - 16);
       }
     } else {
       console.log('In ListNamesPopup popupWidth/Height, invalid mode:', derivedMode);

@@ -214,6 +214,7 @@ export const ZERO = 'ZERO'; // top or left of the window
 export const CENTER = 'CENTER'; // center of the window
 export const EDGE = 'EDGE'; // bottom or right of the window
 export const AT_TRIGGER = 'AT_TRIGGER'; // top or left of the trigger
+export const CENTER_TRIGGER = 'CENTER_TRIGGER'; // center of the trigger
 export const EDGE_TRIGGER = 'EDGE_TRIGGER'; // bottom or right of the trigger
 
 export const DELETE_ACTION_LINK_COMMANDS = 0;

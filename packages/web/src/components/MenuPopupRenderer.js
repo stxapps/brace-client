@@ -1,30 +1,30 @@
-import { ZERO, CENTER, EDGE, AT_TRIGGER, EDGE_TRIGGER } from '../types/const';
+import { ZERO, CENTER, AT_TRIGGER, CENTER_TRIGGER, EDGE_TRIGGER } from '../types/const';
 
-const axisPosition = (oDim, wDim, tPos, tDim) => {
+const axisPosition = (oDim, oSpc, wDim, tPos, tDim) => {
   // if options are bigger than window dimension, then render at 0
   if (oDim > wDim) {
-    return [0, ZERO];
+    return [oSpc, ZERO];
   }
   // render at trigger position if possible
-  if (tPos + oDim <= wDim) {
+  if (tPos + oDim + oSpc <= wDim) {
     return [tPos, AT_TRIGGER];
   }
   // aligned to the trigger from the bottom (right)
-  if (tPos + tDim - oDim >= 0) {
+  if (tPos + tDim - oDim - oSpc >= 0) {
     return [tPos + tDim - oDim, EDGE_TRIGGER];
   }
   // compute center position
   let pos = Math.round(tPos + (tDim / 2) - (oDim / 2));
-  // check top boundary
-  if (pos < 0) {
-    return [0, ZERO];
+  // top boundary overflows, render at window center instead
+  if (pos - oSpc < 0) {
+    return [Math.round((wDim - oDim) / 2), CENTER];
   }
-  // check bottom boundary
-  if (pos + oDim > wDim) {
-    return [wDim - oDim, EDGE];
+  // bottom boundary overflows, render at window center instead
+  if (pos + oDim + oSpc > wDim) {
+    return [Math.round((wDim - oDim) / 2), CENTER];
   }
   // if everything ok, render in center position
-  return [pos, CENTER];
+  return [pos, CENTER_TRIGGER];
 };
 
 export const computePosition = (layouts, triggerOffsets, popupMargin = 0) => {
@@ -42,14 +42,8 @@ export const computePosition = (layouts, triggerOffsets, popupMargin = 0) => {
   }
   const { height: oHeight, width: oWidth } = optionsLayout;
 
-  let [top, topOrigin] = axisPosition(oHeight, wHeight, tY - wY, tHeight);
-  let [left, leftOrigin] = axisPosition(oWidth, wWidth, tX - wX, tWidth);
-
-  if (topOrigin === ZERO) top += popupMargin;
-  else if (topOrigin === EDGE) top -= popupMargin;
-
-  if (leftOrigin === ZERO) left += popupMargin;
-  else if (leftOrigin === EDGE) left -= popupMargin;
+  let [top, topOrigin] = axisPosition(oHeight, popupMargin, wHeight, tY - wY, tHeight);
+  let [left, leftOrigin] = axisPosition(oWidth, popupMargin, wWidth, tX - wX, tWidth);
 
   return { top, left, topOrigin, leftOrigin };
 };
