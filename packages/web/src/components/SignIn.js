@@ -156,7 +156,7 @@ const SignIn = (props) => {
           <button onClick={onContinueBtnClick} className={tailwind('w-full rounded-md border border-transparent bg-blue-700 py-2 px-4 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2')} type="button">Continue</button>
           <p className={tailwind('mt-5 text-center text-sm text-gray-500')}>
             Or
-            <button onClick={props.onSignInWithHiroWalletBtnClick} className={tailwind('ml-1 rounded-sm font-medium text-blue-700 hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} type="button">Sign in with a Stacks Wallet</button>
+            <button onClick={props.onSignInWithHiroWalletBtnClick} className={tailwind('ml-1 rounded-sm font-medium text-blue-400 hover:text-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-1')} type="button">Sign in with a Stacks Wallet</button>
           </p>
         </div>
         <div className={tailwind('mt-24 mb-1.5 flex pt-2 sm:mt-28 sm:pt-1')}>
@@ -171,6 +171,19 @@ const SignIn = (props) => {
   const renderChooseView = () => {
     const content = (
       <React.Fragment>
+        <div className={tailwind('mt-8 rounded-md bg-red-50 p-4 shadow-lg')}>
+          <div className={tailwind('flex')}>
+            <div className={tailwind('flex-shrink-0')}>
+              <svg className={tailwind('h-6 w-6 text-red-400')} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className={tailwind('ml-3 lg:mt-0.5')}>
+              <h3 className={tailwind('text-left text-base font-medium text-red-800 lg:text-sm')}>Multiple accounts are deprecated!</h3>
+              <p className={tailwind('mt-2.5 text-sm text-red-700 leading-5.5')}>Multiple accounts per Secret Key are deprecated and will be removed. Please use one account per Secret Key instead. For more information: <a className={tailwind('rounded-sm underline hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700')} href="http://bit.ly/3Sv6ebK" target="_blank" rel="noreferrer">http://bit.ly/3Sv6ebK</a></p>
+            </div>
+          </div>
+        </div>
         <h2 className={tailwind('mt-8 text-left text-xl font-semibold text-gray-900')}>Choose an account</h2>
         <p className={tailwind('mt-2 text-sm leading-6 text-gray-500')}>to use with {appName}</p>
         <ul className={tailwind('mt-5 divide-y divide-gray-200 border-t border-b border-gray-200')}>

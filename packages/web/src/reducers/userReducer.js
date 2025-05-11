@@ -1,6 +1,6 @@
 import { REHYDRATE } from 'redux-persist/constants';
 
-import { INIT, UPDATE_USER, RESET_STATE } from '../types/actionTypes';
+import { INIT, UPDATE_USER, UPDATE_HUB_ADDR, RESET_STATE } from '../types/actionTypes';
 import vars from '../vars';
 
 const initialState = {
@@ -8,6 +8,7 @@ const initialState = {
   username: null,
   image: null,
   hubUrl: null,
+  hubAddr: null,
 };
 
 const userReducer = (state = initialState, action) => {
@@ -31,6 +32,10 @@ const userReducer = (state = initialState, action) => {
   if (action.type === UPDATE_USER) {
     vars.user.hubUrl = action.payload.hubUrl;
     return { ...state, ...action.payload };
+  }
+
+  if (action.type === UPDATE_HUB_ADDR) {
+    return { ...state, hubAddr: action.payload.hubAddr };
   }
 
   if (action.type === RESET_STATE) {

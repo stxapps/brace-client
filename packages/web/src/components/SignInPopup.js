@@ -30,6 +30,7 @@ const SignInPopup = () => {
   };
 
   const onSignInWithHiroWalletBtnClick = () => {
+    window.alert('Sign in with a Stacks wallet is deprecated and will be removed. Please sign in directly instead. For more information: http://bit.ly/3Sv6ebK');
     onPopupCloseBtnClick();
 
     const authOptions = {

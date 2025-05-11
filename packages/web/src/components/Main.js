@@ -41,6 +41,7 @@ import ConfirmDeletePopup from './ConfirmDeletePopup';
 import ConfirmDiscardPopup from './ConfirmDiscardPopup';
 import PaywallPopup from './PaywallPopup';
 import AccessErrorPopup from './AccessErrorPopup';
+import HubErrorPopup from './HubErrorPopup';
 import SWWUPopup from './SWWUPopup';
 
 class Main extends React.PureComponent {
@@ -138,6 +139,7 @@ class Main extends React.PureComponent {
         <ConfirmDiscardPopup />
         <PaywallPopup />
         <AccessErrorPopup />
+        <HubErrorPopup />
         <SWWUPopup />
       </div>
     );

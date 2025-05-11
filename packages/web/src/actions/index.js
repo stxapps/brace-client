@@ -183,7 +183,7 @@ const handlePendingSignIn = () => async (dispatch, getState) => {
 const getPopupShownId = (state) => {
   // No need these popups here:
   //   SettingsErrorPopup, PinErrorPopup, TagErrorPopup, AccessErrorPopup,
-  //   and SWWUPopup.
+  //   SWWUPopup, and HubErrorPopup.
   if (state.display.isLockEditorPopupShown) return LOCK_EDITOR_POPUP;
   if (state.display.isTimePickPopupShown) return TIME_PICK_POPUP;
   if (state.display.isConfirmDeletePopupShown) return CONFIRM_DELETE_POPUP;

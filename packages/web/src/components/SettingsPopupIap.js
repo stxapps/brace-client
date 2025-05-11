@@ -535,9 +535,8 @@ const _SettingsPopupIapRestore = (props) => {
           </svg>
           <p className={tailwind('ml-1 flex-shrink flex-grow text-base text-gray-500 blk:text-gray-400')}>No purchase was found.</p>
         </div>
-        <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Please try to restore your purchases in our <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_LANDING_MOBILE} target="_blank" rel="noreferrer">mobile app</a> where you made the purchases.</p>
-        <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>If there's still no purchase, please <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a> with your app public key below and the order ID in your order confirmation email.
-        </p>
+        <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>If you purchased via <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_LANDING_MOBILE} target="_blank" rel="noreferrer">our mobile app</a>, please try to restore your purchases in our app with the same App Store/Google Play account.</p>
+        <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Otherwise, or if there's still no purchase, please <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a> with your app public key below and the order ID in your order confirmation email.</p>
         <div className={tailwind('mt-6 flex flex-col sm:flex-row')}>
           <p className={tailwind('flex-shrink-0 flex-grow-0 text-base text-gray-500 blk:text-gray-400')}>App public key:</p>
           {publicKeyText}

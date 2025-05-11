@@ -208,7 +208,7 @@ const SignUp = (props) => {
           <button onClick={onGetSecretKeyBtnClick} className={tailwind('w-full rounded-md border border-transparent bg-blue-700 py-2 px-4 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2')} type="button">Get your Secret Key</button>
           <p className={tailwind('mt-5 text-center text-sm text-gray-500')}>
             Or
-            <button onClick={props.onSignUpWithHiroWalletBtnClick} className={tailwind('ml-1 rounded-sm font-medium text-blue-700 hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} type="button">Sign up with a Stacks Wallet</button>
+            <button onClick={props.onSignUpWithHiroWalletBtnClick} className={tailwind('ml-1 rounded-sm font-medium text-blue-400 hover:text-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-1')} type="button">Sign up with a Stacks Wallet</button>
           </p>
         </div>
         <div className={tailwind('mt-10 mb-1.5 flex pt-1')}>

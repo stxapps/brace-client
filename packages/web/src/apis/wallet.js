@@ -185,27 +185,31 @@ const restoreWalletConfig = async (walletData) => {
     return;
   }
 
-  let { hrHubInfo, hrWalletHubConfig } = walletData;
-  if (!isObject(hrHubInfo)) {
-    hrHubInfo = await getHubInfo(HR_HUB_URL);
-    walletData.hrHubInfo = hrHubInfo;
-  }
-  if (!isObject(hrWalletHubConfig)) {
-    hrWalletHubConfig = getHubConfig(
-      HR_HUB_URL, hrHubInfo, wallet.configPrivateKey, null
-    );
-    walletData.hrWalletHubConfig = hrWalletHubConfig;
-  }
+  try {
+    let { hrHubInfo, hrWalletHubConfig } = walletData;
+    if (!isObject(hrHubInfo)) {
+      hrHubInfo = await getHubInfo(HR_HUB_URL);
+      walletData.hrHubInfo = hrHubInfo;
+    }
+    if (!isObject(hrWalletHubConfig)) {
+      hrWalletHubConfig = getHubConfig(
+        HR_HUB_URL, hrHubInfo, wallet.configPrivateKey, null
+      );
+      walletData.hrWalletHubConfig = hrWalletHubConfig;
+    }
 
-  const hrWalletConfig = await getWalletConfig(
-    hrWalletHubConfig.url_prefix, hrWalletHubConfig.address, wallet.configPrivateKey
-  );
-  if (isObject(hrWalletConfig)) {
-    wallet.accounts = deriveNewAccounts(
-      rootNode, salt, wallet.accounts, hrWalletConfig.accounts
+    const hrWalletConfig = await getWalletConfig(
+      hrWalletHubConfig.url_prefix, hrWalletHubConfig.address, wallet.configPrivateKey
     );
-    walletData.hrWalletConfig = hrWalletConfig;
-    return;
+    if (isObject(hrWalletConfig)) {
+      wallet.accounts = deriveNewAccounts(
+        rootNode, salt, wallet.accounts, hrWalletConfig.accounts
+      );
+      walletData.hrWalletConfig = hrWalletConfig;
+      return;
+    }
+  } catch (error) {
+    console.log('restoreWalletConfig from Hiro error:', error);
   }
 };
 
@@ -214,26 +218,29 @@ const getUsername = async (account) => {
     account, transactionVersion: TransactionVersion.Mainnet,
   });
 
-  // if server down, need to throw an error to get hubUrl correctly
+  // if server down, treat it as no username for now.
   const url = `https://api.hiro.so/v1/addresses/stacks/${stxAddress}`;
-  let res = await fetchFn(url);
-  if (!res.ok) {
-    await sleep(4000); // Wait for a while and try one more time
-    res = await fetchFn(url);
-  }
-  if (res.ok) {
-    const json = await res.json();
-    if (Array.isArray(json.names) && json.names.length > 0) return json.names[0];
-    return null;
+  try {
+    let res = await fetchFn(url);
+    if (!res.ok) {
+      await sleep(4000); // Wait for a while and try one more time
+      res = await fetchFn(url);
+    }
+    if (res.ok) {
+      const json = await res.json();
+      if (Array.isArray(json.names) && json.names.length > 0) return json.names[0];
+    }
+  } catch (error) {
+    console.log('getUsername error:', error);
   }
 
-  throw new Error(`(getUsername) Error ${res.status}`);
+  return null;
 };
 
 const restoreUsernames = async (accounts) => {
   for (let i = 0; i < accounts.length; i += N_ACCOUNTS) {
-    // Hiro usage rate limit is 50 requests per minute (including OPTION).
-    if (i !== 0 && i % 20 === 0) await sleep(60 * 1000);
+    // Hiro usage rate limit is 25 requests per minute (including OPTION).
+    if (i !== 0 && i % 10 === 0) await sleep(60 * 1000);
 
     const _accounts = accounts.slice(i, i + N_ACCOUNTS);
     await Promise.all(_accounts.map(async (account) => {
@@ -263,24 +270,21 @@ export const restoreAccount = async (appData, secretKey) => {
 };
 
 const getProfileUrlFromZoneFile = async (name) => {
-  // if server down, need to throw an error to get hubUrl correctly
+  // if server down, treat it as no profile for now.
   const url = `https://api.hiro.so/v1/names/${name}`;
-  const res = await fetchFn(url);
-  if (res.ok) {
-    const nameInfo = await res.json();
-    try {
+  try {
+    const res = await fetchFn(url);
+    if (res.ok) {
+      const nameInfo = await res.json();
       const zone = parseZoneFile(nameInfo.zonefile);
       const target = getTokenFileUrl(zone);
       if (isString(target) && target.length > 0) return target;
-    } catch (error) {
-      // Invalid zonefile format, return null.
     }
-    return null;
+  } catch (error) {
+    console.log('getProfileUrlFromZoneFile error:', error);
   }
-  // should not happen as just get the username from the API
-  if ([403, 404].includes(res.status)) return null;
 
-  throw new Error(`(getProfileUrlFromZoneFile) Error ${res.status}`);
+  return null;
 };
 
 const restoreProfile = async (walletData, accountIndex) => {
@@ -295,20 +299,16 @@ const restoreProfile = async (walletData, accountIndex) => {
   if (isString(account.username) && account.username.length > 0) {
     url = await getProfileUrlFromZoneFile(account.username);
     if (isString(url)) {
-      const res = await fetchFn(url);
-      if (res.ok) {
-        try {
+      try {
+        const res = await fetchFn(url);
+        if (res.ok) {
           const json = await res.json();
           const { decodedToken } = json[0];
           account.profile = decodedToken.payload.claim;
           return;
-        } catch (error) {
-          // Invalid profile format, try below.
         }
-      } else if ([403, 404].includes(res.status)) {
-        // Not found profile, try below.
-      } else {
-        throw new Error(`(restoreProfile) Error ${res.status}`);
+      } catch (error) {
+        // All errors, try below for now.
       }
     }
   }
@@ -339,6 +339,35 @@ const restoreProfile = async (walletData, accountIndex) => {
   } else {
     throw new Error(`(restoreProfile) Error ${res.status}`);
   }
+};
+
+const isHrAlive = async (walletData) => {
+  const { wallet } = walletData;
+
+  try {
+    let { hrHubInfo, hrWalletHubConfig } = walletData;
+    if (!isObject(hrHubInfo)) {
+      hrHubInfo = await getHubInfo(HR_HUB_URL);
+      walletData.hrHubInfo = hrHubInfo;
+    }
+    if (!isObject(hrWalletHubConfig)) {
+      hrWalletHubConfig = getHubConfig(
+        HR_HUB_URL, hrHubInfo, wallet.configPrivateKey, null
+      );
+      walletData.hrWalletHubConfig = hrWalletHubConfig;
+    }
+
+    await getWalletConfig(
+      hrWalletHubConfig.url_prefix, hrWalletHubConfig.address, wallet.configPrivateKey
+    );
+
+    // Can still connect to Hiro hub and storage
+    return true;
+  } catch (error) {
+    console.log('isHrAlive error:', error);
+  }
+
+  return false;
 };
 
 const doUseBefore = (walletConfig, appDomain, accountIndex = null) => {
@@ -471,6 +500,10 @@ export const chooseAccount = async (walletData, accountIndex) => {
     isString(account.profile.api.gaiaHubUrl)
   ) {
     hubUrl = account.profile.api.gaiaHubUrl;
+  }
+  if (hubUrl === HR_HUB_URL) {
+    const isAlive = await isHrAlive(walletData);
+    if (!isAlive) hubUrl = SD_HUB_URL;
   }
 
   if (!fromCreateAccount) await updateWalletConfig(walletData, accountIndex, hubUrl);
