@@ -55,6 +55,11 @@ const importActionChunk = async () => {
   actionChunk = await import('./actions/chunk');
 };
 
+export const updateHubAddr = () => async (dispatch, getState) => {
+  await importActionChunk();
+  dispatch(actionChunk.updateHubAddr());
+};
+
 export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
   await importActionChunk();
   dispatch(actionChunk.tryUpdateFetched(payload));

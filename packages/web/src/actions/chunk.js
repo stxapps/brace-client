@@ -75,6 +75,20 @@ import vars from '../vars';
 import { isPopupShown, updatePopup } from '.';
 import { checkPurchases } from './iap';
 
+export const updateHubAddr = () => (dispatch, getState) => {
+  try {
+    if (getState().user.hubUrl === HR_HUB_URL) {
+      dispatch(updatePopup(HUB_ERROR_POPUP, true));
+    }
+
+    const userData = userSession.loadUserData();
+    const hubAddr = getUserHubAddr(userData);
+    dispatch({ type: UPDATE_HUB_ADDR, payload: { hubAddr } });
+  } catch (error) {
+    console.log('updateHubAddr error:', error);
+  }
+};
+
 export const changeListName = (listName) => async (dispatch, getState) => {
   dispatch(updateFetched(null, false, true));
   dispatch(updateFetchedMore(null, true));
@@ -392,17 +406,7 @@ const _getUpdateFetchedAction = (getState, payload) => {
 };
 
 export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
-  try {
-    if (getState().user.hubUrl === HR_HUB_URL) {
-      dispatch(updatePopup(HUB_ERROR_POPUP, true));
-    }
-
-    const userData = userSession.loadUserData();
-    const hubAddr = getUserHubAddr(userData);
-    dispatch({ type: UPDATE_HUB_ADDR, payload: { hubAddr } });
-  } catch (error) {
-    console.log('In tryUpdateFetched, hub block error:', error);
-  }
+  dispatch(updateHubAddr());
 
   const listName = getState().display.listName;
   const queryString = getState().display.queryString;
