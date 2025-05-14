@@ -75,13 +75,13 @@ import vars from '../vars';
 import { isPopupShown, updatePopup } from '.';
 import { checkPurchases } from './iap';
 
-export const updateHubAddr = () => (dispatch, getState) => {
+export const updateHubAddr = () => async (dispatch, getState) => {
   try {
     if (getState().user.hubUrl === HR_HUB_URL) {
       dispatch(updatePopup(HUB_ERROR_POPUP, true));
     }
 
-    const userData = userSession.loadUserData();
+    const userData = await userSession.loadUserData();
     const hubAddr = getUserHubAddr(userData);
     dispatch({ type: UPDATE_HUB_ADDR, payload: { hubAddr } });
   } catch (error) {
