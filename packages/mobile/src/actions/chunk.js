@@ -1,5 +1,6 @@
 import { LexoRank } from '@wewatch/lexorank';
 
+import userSession from '../userSession';
 import axios from '../axiosWrapper';
 import dataApi from '../apis/data';
 import fileApi from '../apis/localFile';
@@ -38,14 +39,14 @@ import {
   UPDATE_TAG_DATA_T_STEP, UPDATE_TAG_DATA_T_STEP_COMMIT,
   UPDATE_TAG_DATA_T_STEP_ROLLBACK, CANCEL_DIED_TAGS, UPDATE_TAG_NAME_EDITORS,
   ADD_TAG_NAMES, UPDATE_TAG_NAMES, MOVE_TAG_NAME, DELETE_TAG_NAMES,
-  UPDATE_SELECTING_TAG_NAME, UPDATE_BULK_EDIT_MENU_MODE,
+  UPDATE_SELECTING_TAG_NAME, UPDATE_BULK_EDIT_MENU_MODE, UPDATE_HUB_ADDR,
 } from '../types/actionTypes';
 import {
-  SD_HUB_URL, CUSTOM_EDITOR_POPUP, TAG_EDITOR_POPUP, PAYWALL_POPUP,
+  HR_HUB_URL, SD_HUB_URL, CUSTOM_EDITOR_POPUP, TAG_EDITOR_POPUP, PAYWALL_POPUP,
   CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP, LOCK_EDITOR_POPUP,
-  DISCARD_ACTION_UPDATE_LIST_NAME, DISCARD_ACTION_UPDATE_TAG_NAME, LOCAL_LINK_ATTRS,
-  MY_LIST, TRASH, N_LINKS, N_DAYS, CD_ROOT, ADDED, DIED_ADDING, DIED_MOVING,
-  DIED_REMOVING, DIED_DELETING, DIED_UPDATING, REMOVING, PENDING_REMOVING,
+  HUB_ERROR_POPUP, DISCARD_ACTION_UPDATE_LIST_NAME, DISCARD_ACTION_UPDATE_TAG_NAME,
+  LOCAL_LINK_ATTRS, MY_LIST, TRASH, N_LINKS, N_DAYS, CD_ROOT, ADDED, DIED_ADDING,
+  DIED_MOVING, DIED_REMOVING, DIED_DELETING, DIED_UPDATING, REMOVING, PENDING_REMOVING,
   SHOWING_STATUSES, BRACE_PRE_EXTRACT_URL, EXTRACT_INIT, INVALID, SWAP_LEFT,
   SWAP_RIGHT, CUSTOM_MODE, FEATURE_PIN, FEATURE_APPEARANCE, FEATURE_CUSTOM,
   FEATURE_LOCK, FEATURE_TAG, VALID_PASSWORD, PASSWORD_MSGS, IN_USE_LIST_NAME,
@@ -66,12 +67,27 @@ import {
   isFetchingInterrupted, getTagFPaths, getInUseTagNames, getEditingTagNameEditors,
   getTags, getRawTags, getTagNameObj, getTagNameObjFromDisplayName,
   validateTagNameDisplayName, extractTagFPath, getNLinkMetasByQt, listLinkMetas,
+  getUserHubAddr,
 } from '../utils';
 import { initialSettingsState, initialTagEditorState } from '../types/initialStates';
 import vars from '../vars';
 
 import { isPopupShown, updatePopup } from '.';
 import { checkPurchases } from './iap';
+
+export const updateHubAddr = () => (dispatch, getState) => {
+  try {
+    if (getState().user.hubUrl === HR_HUB_URL) {
+      dispatch(updatePopup(HUB_ERROR_POPUP, true));
+    }
+
+    const userData = userSession.loadUserData();
+    const hubAddr = getUserHubAddr(userData);
+    dispatch({ type: UPDATE_HUB_ADDR, payload: { hubAddr } });
+  } catch (error) {
+    console.log('updateHubAddr error:', error);
+  }
+};
 
 export const changeListName = (listName) => async (dispatch, getState) => {
   dispatch(updateFetched(null, false, true));
@@ -390,6 +406,8 @@ const _getUpdateFetchedAction = (getState, payload) => {
 };
 
 export const tryUpdateFetched = (payload) => async (dispatch, getState) => {
+  dispatch(updateHubAddr());
+
   const listName = getState().display.listName;
   const queryString = getState().display.queryString;
   const fetchingInfos = getState().display.fetchingInfos;
@@ -1022,7 +1040,7 @@ export const addLink = (url, listName, doExtractContents) => async (
   // If doExtractContents is false but from settings is true, send pre-extract to server
   if (doExtractContents === false && getState().settings.doExtractContents === true) {
     axios.post(BRACE_PRE_EXTRACT_URL, { urls: [url] })
-      .then(() => { })
+      .then(() => {})
       .catch((error) => {
         console.log('Error when contact Brace server to pre-extract contents with url: ', url, ' Error: ', error);
       });

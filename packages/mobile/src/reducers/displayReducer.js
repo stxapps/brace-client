@@ -27,8 +27,8 @@ import {
   CUSTOM_EDITOR_POPUP, TAG_EDITOR_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP,
   CONFIRM_DISCARD_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
   SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP, ACCESS_ERROR_POPUP,
-  SWWU_POPUP, MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING, SETTINGS_VIEW_ACCOUNT,
-  DIED_ADDING, DIED_MOVING,
+  HUB_ERROR_POPUP, SWWU_POPUP, MY_LIST, TRASH, ARCHIVE, UPDATING, DIED_UPDATING,
+  SETTINGS_VIEW_ACCOUNT, DIED_ADDING, DIED_MOVING,
 } from '../types/const';
 import {
   doContainListName, doContainTagName, getStatusCounts, isObject, isString, isNumber,
@@ -66,6 +66,7 @@ const initialState = {
   timePickPopupPosition: null,
   isLockEditorPopupShown: false,
   isAccessErrorPopupShown: false,
+  isHubErrorPopupShown: false,
   isSWWUPopupShown: false, // isServiceWorkerWaitUpdatePopupShown
   statuses: [],
   isHandlingSignIn: false,
@@ -152,6 +153,7 @@ const displayReducer = (state = initialState, action) => {
         isSettingsPopupShown: isShown,
         isLockEditorPopupShown: isShown,
         //isAccessErrorPopupShown: isShown, // ErrorPopup should still be shown
+        //isHubErrorPopupShown: isShown, // ErrorPopup should still be shown
         //isSWWUPopupShown: isShown, // WarnPopup should still be shown
       };
       if (!isShown) {
@@ -289,6 +291,10 @@ const displayReducer = (state = initialState, action) => {
 
     if (id === ACCESS_ERROR_POPUP) {
       return { ...state, isAccessErrorPopupShown: isShown };
+    }
+
+    if (id === HUB_ERROR_POPUP) {
+      return { ...state, isHubErrorPopupShown: isShown };
     }
 
     if (id === SWWU_POPUP) {

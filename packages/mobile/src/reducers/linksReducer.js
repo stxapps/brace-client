@@ -2,11 +2,11 @@ import { REHYDRATE } from 'redux-persist/constants';
 import { loop, Cmd } from 'redux-loop';
 
 import {
-  tryUpdateFetched, tryUpdateFetchedMore, cleanUpSslts, extractContents,
+  updateHubAddr, tryUpdateFetched, tryUpdateFetchedMore, cleanUpSslts, extractContents,
   tryUpdateExtractedContents, runAfterFetchTask, unpinLinks, updateCustomDataDeleteStep,
 } from '../importWrapper';
 import {
-  UPDATE_LIST_NAME, UPDATE_QUERY_STRING, FETCH_COMMIT, UPDATE_FETCHED,
+  UPDATE_LIST_NAME, UPDATE_QUERY_STRING, FETCH_COMMIT, FETCH_ROLLBACK, UPDATE_FETCHED,
   FETCH_MORE_COMMIT, UPDATE_FETCHED_MORE, SET_SHOWING_LINK_IDS, ADD_LINKS,
   ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT,
   MOVE_LINKS_ADD_STEP_ROLLBACK, MOVE_LINKS_DELETE_STEP, MOVE_LINKS_DELETE_STEP_COMMIT,
@@ -88,6 +88,16 @@ const linksReducer = (state = initialState, action) => {
       newState,
       Cmd.run(
         tryUpdateFetched(action.payload),
+        { args: [Cmd.dispatch, Cmd.getState] }
+      )
+    );
+  }
+
+  if (action.type === FETCH_ROLLBACK) {
+    return loop(
+      state,
+      Cmd.run(
+        updateHubAddr(),
         { args: [Cmd.dispatch, Cmd.getState] }
       )
     );
