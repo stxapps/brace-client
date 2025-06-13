@@ -58,7 +58,7 @@ class _SettingsPopupData extends React.PureComponent {
           <TouchableOpacity onPress={this.props.onToExportAllDataViewBtnClick}>
             <Text style={tailwind('text-base font-medium leading-4 text-gray-800 underline blk:text-gray-100')}>Export All Data</Text>
           </TouchableOpacity>
-          <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Export all your data from the server to your device in a text file.</Text>
+          <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Export all your data from the server to your device as a text file.</Text>
         </View>
         <View style={tailwind('mt-8 mb-4')}>
           <TouchableOpacity onPress={this.props.onToDeleteAllDataViewBtnClick}>
@@ -273,7 +273,7 @@ const _SettingsPopupDataExport = (props) => {
         </TouchableOpacity>
         <Text style={tailwind('pb-2 text-xl font-medium leading-5 text-gray-800 blk:text-gray-100 md:pb-0')}>Export All Data</Text>
       </View>
-      <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Export all your data from the server to your device in a text file.</Text>
+      <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Export all your data from the server to your device as a text file.</Text>
       <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>It may take several minutes to export all your data.</Text>
       {actionPanel}
     </View>

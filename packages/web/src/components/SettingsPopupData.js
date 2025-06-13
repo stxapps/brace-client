@@ -51,7 +51,7 @@ class _SettingsPopupData extends React.PureComponent {
           <button onClick={this.props.onToExportAllDataViewBtnClick} className={tailwind('w-full rounded text-left focus:outline-none focus:ring focus:ring-offset-1 blk:ring-offset-gray-900')}>
             <h4 className={tailwind('text-base font-medium leading-none text-gray-800 underline hover:text-gray-900 blk:text-gray-100 blk:hover:text-white')}>Export All Data</h4>
           </button>
-          <p className={tailwind('mt-2.5 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Export all your data from the server to your device in a text file.</p>
+          <p className={tailwind('mt-2.5 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Export all your data from the server to your device as a text file.</p>
         </div>
         <div className={tailwind('mt-8 mb-4')}>
           <button onClick={this.props.onToDeleteAllDataViewBtnClick} className={tailwind('w-full rounded text-left focus:outline-none focus:ring focus:ring-offset-1 blk:ring-offset-gray-900')}>
@@ -263,7 +263,7 @@ class _SettingsPopupDataExport extends React.PureComponent {
           </button>
           <h3 className={tailwind('pb-2 text-xl font-medium leading-none text-gray-800 blk:text-gray-100 md:pb-0')}>Export All Data</h3>
         </div>
-        <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Export all your data from the server to your device in a text file.</p>
+        <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Export all your data from the server to your device as a text file.</p>
         <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>It may take several minutes to export all your data.</p>
         {actionPanel}
       </div>
