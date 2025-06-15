@@ -9,14 +9,13 @@ import cacheApi from '../apis/localCache';
 import fileApi from '../apis/localFile';
 import lsgApi from '../apis/localSg';
 import {
-  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW_SIZE, UPDATE_VISUAL_SIZE, UPDATE_WINDOW,
-  UPDATE_HISTORY_POSITION, UPDATE_STACKS_ACCESS, UPDATE_SEARCH_STRING, UPDATE_POPUP,
-  UPDATE_HANDLING_SIGN_IN, UPDATE_BULK_EDITING, REFRESH_FETCHED, ADD_LINKS,
-  DELETE_LINKS, MOVE_LINKS_ADD_STEP, MOVE_LINKS_DELETE_STEP, TRY_UPDATE_SETTINGS,
-  MERGE_SETTINGS, PIN_LINK, UNPIN_LINK, MOVE_PINNED_LINK_ADD_STEP,
-  UPDATE_SYSTEM_THEME_MODE, UPDATE_IS_24H_FORMAT, UPDATE_CUSTOM_DATA,
-  UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_T_STEP, INCREASE_UPDATE_STATUS_BAR_STYLE_COUNT,
-  RESET_STATE,
+  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW, UPDATE_HISTORY_POSITION,
+  UPDATE_STACKS_ACCESS, UPDATE_SEARCH_STRING, UPDATE_POPUP, UPDATE_HANDLING_SIGN_IN,
+  UPDATE_BULK_EDITING, REFRESH_FETCHED, ADD_LINKS, DELETE_LINKS, MOVE_LINKS_ADD_STEP,
+  MOVE_LINKS_DELETE_STEP, TRY_UPDATE_SETTINGS, MERGE_SETTINGS, PIN_LINK, UNPIN_LINK,
+  MOVE_PINNED_LINK_ADD_STEP, UPDATE_SYSTEM_THEME_MODE, UPDATE_IS_24H_FORMAT,
+  UPDATE_CUSTOM_DATA, UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_T_STEP,
+  INCREASE_UPDATE_STATUS_BAR_STYLE_COUNT, RESET_STATE,
 } from '../types/actionTypes';
 import {
   BACK_DECIDER, BACK_POPUP, ALL, HASH_BACK, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP,
@@ -28,7 +27,7 @@ import {
 } from '../types/const';
 import {
   isEqual, isObject, throttle, separateUrlAndParam, extractUrl, getUserUsername,
-  getUserImageUrl, getWindowSize, getEditingListNameEditors, getEditingTagNameEditors,
+  getUserImageUrl, getWindowInsets, getEditingListNameEditors, getEditingTagNameEditors,
 } from '../utils';
 import vars from '../vars';
 
@@ -45,8 +44,6 @@ export const init = async (store) => {
     userHubUrl = userData.hubUrl;
   }
 
-  const { windowWidth, windowHeight, visualWidth, visualHeight } = getWindowSize();
-
   const darkMatches = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const is24HFormat = null;
 
@@ -58,10 +55,6 @@ export const init = async (store) => {
       userImage,
       userHubUrl,
       href: window.location.href,
-      windowWidth,
-      windowHeight,
-      visualWidth,
-      visualHeight,
       systemThemeMode: darkMatches ? BLK_MODE : WHT_MODE,
       is24HFormat,
     },
@@ -73,21 +66,31 @@ export const init = async (store) => {
   });
 
   window.addEventListener('resize', throttle(() => {
+    const insets = getWindowInsets();
     store.dispatch({
-      type: UPDATE_WINDOW_SIZE,
+      type: UPDATE_WINDOW,
       payload: {
-        windowWidth: window.innerWidth,
-        windowHeight: window.innerHeight,
+        width: window.innerWidth,
+        height: window.innerHeight,
+        insetTop: insets.top,
+        insetRight: insets.right,
+        insetBottom: insets.bottom,
+        insetLeft: insets.left,
       },
     });
   }, 16));
   if (isObject(window.visualViewport)) {
     window.visualViewport.addEventListener('resize', throttle(() => {
+      const insets = getWindowInsets();
       store.dispatch({
-        type: UPDATE_VISUAL_SIZE,
+        type: UPDATE_WINDOW,
         payload: {
           visualWidth: window.visualViewport.width,
           visualHeight: window.visualViewport.height,
+          insetTop: insets.top,
+          insetRight: insets.right,
+          insetBottom: insets.bottom,
+          insetLeft: insets.left,
         },
       });
     }, 16));

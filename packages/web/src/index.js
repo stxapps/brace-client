@@ -23,6 +23,7 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 
 import App from './components/App';
+import { useTailwind } from './components';
 
 offlineConfig.queue = queue;
 offlineConfig.discard = discard;
@@ -60,11 +61,21 @@ const store = createStore(
   )
 );
 
+const InnerRoot = () => {
+  const tailwind = useTailwind();
+
+  return (
+    <div className={tailwind('safe-area min-h-screen bg-white blk:bg-gray-900')}>
+      <App />
+    </div>
+  );
+};
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <InnerRoot />
     </Provider>
   </React.StrictMode>
 );

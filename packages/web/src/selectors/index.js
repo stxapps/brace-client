@@ -11,7 +11,7 @@ import {
 import {
   isStringIn, isObject, isString, isEqual, getListNameObj, getStatusCounts, getMainId,
   getValidProduct as _getValidProduct, getValidPurchase as _getValidPurchase,
-  getPinFPaths, getPins, doEnableExtraFeatures, isNumber, isMobile as _isMobile, getLink,
+  getPinFPaths, getPins, doEnableExtraFeatures, isNumber, getLink,
   doesIncludeFetchingMore, getTagFPaths, getTags, getTagNameObj, getLockListStatus,
 } from '../utils';
 import { tailwind } from '../stylesheets/tailwind';
@@ -201,19 +201,52 @@ export const getLayoutType = createSelector(
   },
 );
 
+const _getInsets = (insetTop, insetRight, insetBottom, insetLeft) => {
+  let [top, right, bottom, left] = [0, 0, 0, 0];
+  if (isNumber(insetTop)) top = Math.round(insetTop);
+  if (isNumber(insetRight)) right = Math.round(insetRight);
+  if (isNumber(insetBottom)) bottom = Math.round(insetBottom);
+  if (isNumber(insetLeft)) left = Math.round(insetLeft);
+  return { left, top, right, bottom };
+};
+
 export const getSafeAreaFrame = createSelector(
   state => state.window.width,
   state => state.window.height,
   state => state.window.visualWidth,
   state => state.window.visualHeight,
-  (windowWidth, windowHeight, visualWidth, visualHeight) => {
-    const isMobile = _isMobile();
+  state => state.window.insetTop,
+  state => state.window.insetRight,
+  state => state.window.insetBottom,
+  state => state.window.insetLeft,
+  (
+    windowWidth, windowHeight, visualWidth, visualHeight,
+    insetTop, insetRight, insetBottom, insetLeft,
+  ) => {
 
     [windowWidth, windowHeight] = [Math.round(windowWidth), Math.round(windowHeight)];
-    [visualWidth, visualHeight] = [Math.round(visualWidth), Math.round(visualHeight)];
 
-    const width = isMobile && isNumber(visualWidth) ? visualWidth : windowWidth;
-    const height = isMobile && isNumber(visualHeight) ? visualHeight : windowHeight;
+    let [width, height] = [windowWidth, windowHeight];
+
+    if (isNumber(visualWidth)) {
+      visualWidth = Math.round(visualWidth);
+      width = visualWidth;
+    } else {
+      visualWidth = windowWidth;
+    }
+
+    if (isNumber(visualHeight)) {
+      visualHeight = Math.round(visualHeight);
+      height = visualHeight;
+    } else {
+      visualHeight = windowHeight;
+    }
+
+    const assumeKeyboard = windowHeight - visualHeight > 80;
+
+    const insets = _getInsets(insetTop, insetRight, insetBottom, insetLeft);
+    width = width - insets.left - insets.right;
+    height = height - insets.top - (assumeKeyboard ? 0 : insets.bottom);
 
     return {
       x: 0, y: 0, width, height, windowWidth, windowHeight, visualWidth, visualHeight,
@@ -221,25 +254,26 @@ export const getSafeAreaFrame = createSelector(
   }
 );
 
-export const getSafeAreaWidth = createSelector(
-  state => state.window.width,
-  state => state.window.visualWidth,
-  (windowWidth, visualWidth) => {
-    const isMobile = _isMobile();
-    [windowWidth, visualWidth] = [Math.round(windowWidth), Math.round(visualWidth)];
-    return isMobile && isNumber(visualWidth) ? visualWidth : windowWidth;
-  }
+export const getSafeAreaInsets = createSelector(
+  state => state.window.insetTop,
+  state => state.window.insetRight,
+  state => state.window.insetBottom,
+  state => state.window.insetLeft,
+  (insetTop, insetRight, insetBottom, insetLeft) => {
+    const insets = _getInsets(insetTop, insetRight, insetBottom, insetLeft);
+    return insets;
+  },
 );
 
-export const getSafeAreaHeight = createSelector(
-  state => state.window.height,
-  state => state.window.visualHeight,
-  (windowHeight, visualHeight) => {
-    const isMobile = _isMobile();
-    [windowHeight, visualHeight] = [Math.round(windowHeight), Math.round(visualHeight)];
-    return isMobile && isNumber(visualHeight) ? visualHeight : windowHeight;
-  }
-);
+export const getSafeAreaWidth = (state) => {
+  const { width: safeAreaWidth } = getSafeAreaFrame(state);
+  return safeAreaWidth;
+};
+
+export const getSafeAreaHeight = (state) => {
+  const { height: safeAreaHeight } = getSafeAreaFrame(state);
+  return safeAreaHeight;
+};
 
 export const getValidProduct = createSelector(
   state => state.iap.products,
