@@ -10,11 +10,12 @@ import {
 } from '../types/const';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
-import { useSafeAreaFrame, useTailwind } from '.';
+import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
 const ConfirmDiscardPopup = () => {
 
   const { width: safeAreaWidth, height: safeAreaHeight } = useSafeAreaFrame();
+  const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isConfirmDiscardPopupShown);
   const discardAction = useSelector(state => state.display.discardAction);
   const cancelBtn = useRef(null);
@@ -53,6 +54,11 @@ const ConfirmDiscardPopup = () => {
 
   if (!isShown) return <AnimatePresence key="AP_CDiscardP" />;
 
+  const canvasStyle = {
+    paddingTop: insets.top, paddingBottom: insets.bottom,
+    paddingLeft: insets.left, paddingRight: insets.right,
+  };
+
   const spanStyle = {};
   if (safeAreaWidth >= SM_WIDTH) spanStyle.height = safeAreaHeight;
 
@@ -71,7 +77,7 @@ const ConfirmDiscardPopup = () => {
 
   return (
     <AnimatePresence key="AP_CDiscardP">
-      <div className={tailwind('fixed inset-0 z-50 overflow-y-auto')} aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div style={canvasStyle} className={tailwind('fixed inset-0 z-50 overflow-y-auto')} aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div style={{ minHeight: safeAreaHeight }} className={tailwind('flex items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0')}>
           <div className={tailwind('fixed inset-0')}>
             <motion.button ref={cancelBtn} onClick={onConfirmDiscardCancelBtnClick} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />

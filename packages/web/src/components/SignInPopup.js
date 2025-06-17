@@ -11,12 +11,13 @@ import {
 import { extractUrl, getUrlPathQueryHash } from '../utils';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
-import { useSafeAreaFrame, useTailwind } from '.';
+import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 import SignIn from './SignIn';
 
 const SignInPopup = () => {
 
   const { height: safeAreaHeight } = useSafeAreaFrame();
+  const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isSignInPopupShown);
   const cancelBtn = useRef(null);
   const appIconUrl = useMemo(() => {
@@ -59,11 +60,15 @@ const SignInPopup = () => {
 
   if (!isShown) return <AnimatePresence key="AnimatePresence_SIP" />;
 
+  const canvasStyle = {
+    paddingTop: insets.top, paddingBottom: insets.bottom,
+    paddingLeft: insets.left, paddingRight: insets.right,
+  };
   const panelHeight = Math.min(480, safeAreaHeight * 0.9);
 
   return (
     <AnimatePresence key="AnimatePresence_SIP">
-      <div className={tailwind('fixed inset-0 z-30 overflow-hidden')}>
+      <div style={canvasStyle} className={tailwind('fixed inset-0 z-30 overflow-hidden')}>
         <div className={tailwind('flex items-center justify-center p-4')} style={{ minHeight: safeAreaHeight }}>
           <div className={tailwind('fixed inset-0')}>
             {/* No cancel on background of SignInPopup */}

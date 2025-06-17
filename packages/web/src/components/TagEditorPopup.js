@@ -9,11 +9,12 @@ import {
 } from '../types/const';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
-import { useSafeAreaFrame, useTailwind } from '.';
+import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
 const TagEditorPopup = () => {
   // Use windowHeight to move along with a virtual keyboard.
   const { windowHeight } = useSafeAreaFrame();
+  const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isTagEditorPopupShown);
   const tagEditor = useSelector(state => state.tagEditor);
   const didClick = useRef(false);
@@ -94,9 +95,13 @@ const TagEditorPopup = () => {
   const panelHeight = Math.min(480, windowHeight * 0.9);
 
   if (tagEditor.mode === NOT_SUPPORTED) {
+    const canvasStyle = {
+      paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right,
+    };
+
     return (
       <AnimatePresence key="AnimatePresence_TEP">
-        <div className={tailwind('fixed inset-0 z-30 overflow-hidden')}>
+        <div style={canvasStyle} className={tailwind('fixed inset-0 z-30 overflow-hidden')}>
           <div className={tailwind('flex items-start justify-center p-4')} style={{ minHeight: windowHeight }}>
             <div className={tailwind('fixed inset-0')}>
               <motion.button onClick={onPopupCloseBtnClick} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
@@ -110,7 +115,7 @@ const TagEditorPopup = () => {
                     </svg>
                   </div>
                   <div className={tailwind('ml-3 lg:mt-0.5')}>
-                    <h3 className={tailwind('text-left text-base font-medium text-yellow-800 lg:text-sm')}>Only the same tags are supported.</h3>
+                    <h3 className={tailwind('mr-4 text-left text-base font-medium text-yellow-800 lg:text-sm')}>Only the same tags are supported.</h3>
                     <p className={tailwind('mt-2.5 text-sm text-yellow-700')}>Please select items with the same tags to be bulk-edited.</p>
                   </div>
                 </div>
@@ -127,6 +132,11 @@ const TagEditorPopup = () => {
       </AnimatePresence>
     );
   }
+
+  const canvasStyle = {
+    paddingTop: insets.top, paddingBottom: insets.bottom,
+    paddingLeft: insets.left, paddingRight: insets.right,
+  };
 
   let title = 'Tags';
   let desc = (
@@ -158,7 +168,7 @@ const TagEditorPopup = () => {
 
   return (
     <AnimatePresence key="AnimatePresence_TEP">
-      <div className={tailwind('fixed inset-0 z-30 overflow-hidden')}>
+      <div style={canvasStyle} className={tailwind('fixed inset-0 z-30 overflow-hidden')}>
         <div className={tailwind('flex items-center justify-center p-4')} style={{ minHeight: windowHeight }}>
           <div className={tailwind('fixed inset-0')}>
             {/* No cancel on background of TagEditorPopup */}

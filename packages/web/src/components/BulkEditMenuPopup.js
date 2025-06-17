@@ -12,15 +12,16 @@ import {
   LIST_NAMES_ANIM_TYPE_POPUP, LIST_NAMES_ANIM_TYPE_BMODAL,
 } from '../types/const';
 import { popupBgFMV, popupFMV, bModalBgFMV, bModalFMV } from '../types/animConfigs';
+import { computePositionStyle } from '../utils/popup';
 
-import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
-import { useSafeAreaFrame, useTailwind } from '.';
+import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
 const ANIM_TYPE_BMODAL = BULK_EDIT_MENU_ANIM_TYPE_BMODAL;
 
 const BulkEditMenuPopup = () => {
 
   const { width: safeAreaWidth, height: safeAreaHeight } = useSafeAreaFrame();
+  const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isBulkEditMenuPopupShown);
   const anchorPosition = useSelector(state => state.display.bulkEditMenuPopupPosition);
   const listName = useSelector(state => state.display.listName);
@@ -109,7 +110,11 @@ const BulkEditMenuPopup = () => {
   let panel;
   if (popupSize) {
     if (isAnimTypeB) {
-      const popupStyle = { height: popupSize.height };
+      const popupStyle = {
+        height: popupSize.height + insets.bottom,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left, paddingRight: insets.right,
+      };
       popupClassNames += ' inset-x-0 bottom-0 rounded-t-lg';
 
       panel = (
@@ -119,16 +124,17 @@ const BulkEditMenuPopup = () => {
       );
     } else {
       const maxHeight = safeAreaHeight - 16;
-      const layouts = createLayouts(
+      const posStyle = computePositionStyle(
         anchorPosition,
         { width: popupSize.width, height: Math.min(popupSize.height, maxHeight) },
         { width: safeAreaWidth, height: safeAreaHeight },
+        null,
+        insets,
+        8,
       );
-      const popupPosition = computePosition(layouts, null, 8);
+      const popupStyle = { ...posStyle, maxHeight };
 
-      const { top, left, topOrigin, leftOrigin } = popupPosition;
-      const popupStyle = { top, left, maxHeight };
-      popupClassNames += ' rounded-lg ' + getOriginClassName(topOrigin, leftOrigin);
+      popupClassNames += ' rounded-lg';
 
       panel = (
         <motion.div key="BEMP_popup" ref={popup} style={popupStyle} className={tailwind(popupClassNames)} variants={popupFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
@@ -138,7 +144,7 @@ const BulkEditMenuPopup = () => {
     }
   } else {
     panel = (
-      <div key="BEMP_popup" ref={popup} style={{ top: safeAreaHeight, left: safeAreaWidth }} className={tailwind(popupClassNames)} role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+      <div key="BEMP_popup" ref={popup} style={{ top: safeAreaHeight + 256, left: safeAreaWidth + 256 }} className={tailwind(popupClassNames)} role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
         {buttons}
       </div>
     );

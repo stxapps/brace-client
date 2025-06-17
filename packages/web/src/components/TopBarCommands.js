@@ -1,109 +1,47 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { motion, AnimatePresence } from 'framer-motion';
-import Url from 'url-parse';
 
-import { signOut, updatePopup, updateBulkEdit } from '../actions';
-import {
-  updateSettingsPopup, updateSettingsViewId, lockCurrentList,
-} from '../actions/chunk';
-import {
-  HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT, LOCK, UNLOCKED,
-} from '../types/const';
-import {
-  getSafeAreaWidth, getThemeMode, getCurrentLockListStatus, getCanChangeListNames,
-} from '../selectors';
-import { popupBgFMV, popupFMV } from '../types/animConfigs';
+import { updatePopup, updateBulkEdit } from '../actions';
+import { ADD_POPUP, PROFILE_POPUP } from '../types/const';
+import { getSafeAreaWidth, getThemeMode } from '../selectors';
+import { adjustRect } from '../utils';
 
 import { withTailwind } from '.';
-import TopBarAddPopup from './TopBarAddPopup';
+
 import TopBarSearchInput from './TopBarSearchInput';
 
 class TopBarCommands extends React.PureComponent {
+
+  onAddBtnClick = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const nRect = adjustRect(rect, 0, 42, 0, 0);
+    this.props.updatePopup(ADD_POPUP, true, nRect);
+  }
 
   onBulkEditBtnClick = () => {
     this.props.updateBulkEdit(true);
   }
 
-  onProfileBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, true);
-  }
-
-  onProfileCancelBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, false);
-  }
-
-  onSettingsBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, false);
-
-    this.props.updateSettingsViewId(SETTINGS_VIEW_ACCOUNT, true);
-    this.props.updateSettingsPopup(true);
-  }
-
-  onSupportBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, false);
-
-    const urlObj = new Url(window.location.href, {});
-    urlObj.set('pathname', '/');
-    urlObj.set('hash', HASH_SUPPORT);
-    window.location.href = urlObj.toString();
-  }
-
-  onSignOutBtnClick = () => {
-    // No need to update it, will get already unmount
-    //this.props.updatePopup(PROFILE_POPUP, false);
-    this.props.signOut();
-  }
-
-  onLockBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, false);
-    // Wait for the close animation to finish first
-    setTimeout(() => this.props.lockCurrentList(), 100);
-  }
-
-  renderProfilePopup() {
-    const { isProfilePopupShown, tailwind, lockStatus, canChangeListNames } = this.props;
-
-    if (!isProfilePopupShown) return (
-      <AnimatePresence key="AnimatePresence_ProfilePopup" />
-    );
-
-    const supportAndSignOutButtons = (
-      <React.Fragment>
-        <button onClick={this.onSupportBtnClick} className={tailwind('block w-full rounded-md py-2.5 pl-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')}>Support</button>
-        <button onClick={this.onSignOutBtnClick} className={tailwind('block w-full rounded-md py-2.5 pl-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')}>Sign out</button>
-      </React.Fragment>
-    );
-
-    let buttons;
-    if (!canChangeListNames) {
-      buttons = supportAndSignOutButtons;
-    } else {
-      buttons = (
-        <React.Fragment>
-          {lockStatus === UNLOCKED && <button onClick={this.onLockBtnClick} className={tailwind('block w-full rounded-md py-2.5 pl-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')}>{LOCK}</button>}
-          <button onClick={this.onSettingsBtnClick} className={tailwind('block w-full rounded-md py-2.5 pl-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')}>Settings</button>
-          {supportAndSignOutButtons}
-        </React.Fragment>
-      );
-    }
-
-    return (
-      <AnimatePresence key="AnimatePresence_ProfilePopup">
-        <motion.button key="ProfilePopup_cancelBtn" onClick={this.onProfileCancelBtnClick} tabIndex={-1} className={tailwind('fixed inset-0 z-40 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
-        <motion.div key="ProfilePopup_menuPopup" className={tailwind('absolute right-0 z-41 mt-2 w-28 origin-top-right rounded-lg bg-white py-2 shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25')} variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
-          {buttons}
-        </motion.div>
-      </AnimatePresence>
-    );
+  onProfileBtnClick = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const nRect = adjustRect(rect, -4, -4, 8, 8);
+    this.props.updatePopup(PROFILE_POPUP, true, nRect);
   }
 
   render() {
-    const { isProfilePopupShown, tailwind } = this.props;
+    const { tailwind } = this.props;
 
     return (
       <div className={tailwind('flex items-center justify-end')}>
-        <TopBarAddPopup />
+        <div className={tailwind('relative')}>
+          {/* If want to show the button along with the popup, add relative and z-41 */}
+          <button onClick={this.onAddBtnClick} style={{ height: '2rem', paddingLeft: '0.625rem', paddingRight: '0.75rem' }} className={tailwind('group flex items-center justify-center rounded-full border border-gray-400 bg-white hover:border-gray-500 focus:outline-none focus:ring blk:border-gray-400 blk:bg-gray-900 blk:hover:border-gray-300')}>
+            <svg className={tailwind('w-3 text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-200')} viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 1V13M1 6.95139H15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span className={tailwind('ml-1 text-sm leading-none text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-200')}>Add</span>
+          </button>
+        </div>
         <TopBarSearchInput />
         <div className={tailwind('relative ml-4')}>
           <button onClick={this.onBulkEditBtnClick} style={{ height: '2rem', paddingLeft: '0.625rem', paddingRight: '0.75rem' }} className={tailwind('group flex items-center justify-center rounded-full border border-gray-400 bg-white px-3 hover:border-gray-500 focus:outline-none focus:ring blk:border-gray-400 blk:bg-gray-900 blk:hover:border-gray-300')}>
@@ -115,12 +53,11 @@ class TopBarCommands extends React.PureComponent {
           </button>
         </div>
         <div className={tailwind('relative ml-4')}>
-          <button onClick={this.onProfileBtnClick} className={tailwind(`group relative block h-8 w-8 overflow-hidden rounded-full focus:outline-none focus:ring ${isProfilePopupShown ? 'z-41' : ''}`)}>
+          <button onClick={this.onProfileBtnClick} className={tailwind('group relative block h-8 w-8 overflow-hidden rounded-full focus:outline-none focus:ring')}>
             <svg className={tailwind('mx-auto w-7 text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-200')} viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M5 12H5.01M12 12H12.01M19 12H19.01M6 12C6 12.2652 5.89464 12.5196 5.70711 12.7071C5.51957 12.8946 5.26522 13 5 13C4.73478 13 4.48043 12.8946 4.29289 12.7071C4.10536 12.5196 4 12.2652 4 12C4 11.7348 4.10536 11.4804 4.29289 11.2929C4.48043 11.1054 4.73478 11 5 11C5.26522 11 5.51957 11.1054 5.70711 11.2929C5.89464 11.4804 6 11.7348 6 12ZM13 12C13 12.2652 12.8946 12.5196 12.7071 12.7071C12.5196 12.8946 12.2652 13 12 13C11.7348 13 11.4804 12.8946 11.2929 12.7071C11.1054 12.5196 11 12.2652 11 12C11 11.7348 11.1054 11.4804 11.2929 11.2929C11.4804 11.1054 11.7348 11 12 11C12.2652 11 12.5196 11.1054 12.7071 11.2929C12.8946 11.4804 13 11.7348 13 12ZM20 12C20 12.2652 19.8946 12.5196 19.7071 12.7071C19.5196 12.8946 19.2652 13 19 13C18.7348 13 18.4804 12.8946 18.2929 12.7071C18.1054 12.5196 18 12.2652 18 12C18 11.7348 18.1054 11.4804 18.2929 11.2929C18.4804 11.1054 18.7348 11 19 11C19.2652 11 19.5196 11.1054 19.7071 11.2929C19.8946 11.4804 20 11.7348 20 12Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
-          {this.renderProfilePopup()}
         </div>
       </div>
     );
@@ -129,17 +66,11 @@ class TopBarCommands extends React.PureComponent {
 
 const mapStateToProps = (state, props) => {
   return {
-    isProfilePopupShown: state.display.isProfilePopupShown,
     themeMode: getThemeMode(state),
     safeAreaWidth: getSafeAreaWidth(state),
-    lockStatus: getCurrentLockListStatus(state),
-    canChangeListNames: getCanChangeListNames(state),
   };
 };
 
-const mapDispatchToProps = {
-  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, updateBulkEdit,
-  lockCurrentList,
-};
+const mapDispatchToProps = { updatePopup, updateBulkEdit };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(TopBarCommands));

@@ -9,7 +9,9 @@ import {
   DELETE_ACTION_LINK_ITEM_MENU, DELETE_ACTION_LIST_NAME, DELETE_ACTION_TAG_NAME,
   SM_WIDTH,
 } from '../types/const';
-import { getSafeAreaWidth, getSafeAreaHeight, getThemeMode } from '../selectors';
+import {
+  getSafeAreaWidth, getSafeAreaHeight, getSafeAreaInsets, getThemeMode,
+} from '../selectors';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -75,10 +77,15 @@ class ConfirmDeletePopup extends React.Component {
 
   render() {
     const {
-      isConfirmDeletePopupShown, safeAreaWidth, safeAreaHeight, tailwind,
+      isConfirmDeletePopupShown, safeAreaWidth, safeAreaHeight, insets, tailwind,
     } = this.props;
 
     if (!isConfirmDeletePopupShown) return <AnimatePresence key="AP_CDP" />;
+
+    const canvasStyle = {
+      paddingTop: insets.top, paddingBottom: insets.bottom,
+      paddingLeft: insets.left, paddingRight: insets.right,
+    };
 
     const spanStyle = {};
     if (safeAreaWidth >= SM_WIDTH) spanStyle.height = safeAreaHeight;
@@ -91,7 +98,7 @@ class ConfirmDeletePopup extends React.Component {
 
     return (
       <AnimatePresence key="AP_CDP">
-        <div className={tailwind('fixed inset-0 z-50 overflow-y-auto')} aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div style={canvasStyle} className={tailwind('fixed inset-0 z-50 overflow-y-auto')} aria-labelledby="modal-title" role="dialog" aria-modal="true">
           <div style={{ minHeight: safeAreaHeight }} className={tailwind('flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0')}>
             <div className={tailwind('fixed inset-0')}>
               <motion.button onClick={this.onConfirmDeleteCancelBtnClick} tabIndex={-1} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
@@ -134,6 +141,7 @@ const mapStateToProps = (state, props) => {
     themeMode: getThemeMode(state),
     safeAreaWidth: getSafeAreaWidth(state),
     safeAreaHeight: getSafeAreaHeight(state),
+    insets: getSafeAreaInsets(state),
   };
 };
 

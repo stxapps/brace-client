@@ -6,10 +6,11 @@ import {
 } from '../actions/chunk';
 import { HASH_SUPPORT, DIED_UPDATING } from '../types/const';
 
-import { useTailwind } from '.';
+import { useSafeAreaInsets, useTailwind } from '.';
 
 const _SettingsUpdateErrorPopup = () => {
 
+  const insets = useSafeAreaInsets();
   const settingsStatus = useSelector(state => state.display.settingsStatus);
   const didClick = useRef(false);
   const dispatch = useDispatch();
@@ -33,8 +34,12 @@ const _SettingsUpdateErrorPopup = () => {
 
   if (settingsStatus !== DIED_UPDATING) return null;
 
+  const canvasStyle = {
+    paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right,
+  };
+
   return (
-    <div className={tailwind('fixed inset-x-0 top-14 z-40 flex items-start justify-center md:top-0')}>
+    <div style={canvasStyle} className={tailwind('fixed inset-x-0 top-14 z-40 flex items-start justify-center md:top-0')}>
       <div className={tailwind('m-4 rounded-md bg-red-50 p-4 shadow-lg')}>
         <div className={tailwind('flex')}>
           <div className={tailwind('flex-shrink-0')}>
@@ -60,6 +65,7 @@ const _SettingsUpdateErrorPopup = () => {
 
 const _SettingsConflictErrorPopup = () => {
 
+  const insets = useSafeAreaInsets();
   const isSettingsPopupShown = useSelector(state => state.display.isSettingsPopupShown);
   const conflictedSettingsContents = useSelector(
     state => state.conflictedSettings.contents
@@ -98,8 +104,12 @@ const _SettingsConflictErrorPopup = () => {
     didClose
   ) return null;
 
+  const canvasStyle = {
+    paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right,
+  };
+
   return (
-    <div className={tailwind('fixed inset-x-0 top-14 z-40 flex items-start justify-center md:top-0')}>
+    <div style={canvasStyle} className={tailwind('fixed inset-x-0 top-14 z-40 flex items-start justify-center md:top-0')}>
       <div className={tailwind('relative m-4 rounded-md bg-red-50 p-4 shadow-lg')}>
         <div className={tailwind('flex')}>
           <div className={tailwind('flex-shrink-0')}>
@@ -108,7 +118,7 @@ const _SettingsConflictErrorPopup = () => {
             </svg>
           </div>
           <div className={tailwind('ml-3 lg:mt-0.5')}>
-            <h3 className={tailwind('text-left text-base font-medium text-red-800 lg:text-sm')}>Settings version conflicts!</h3>
+            <h3 className={tailwind('mr-4 text-left text-base font-medium text-red-800 lg:text-sm')}>Settings version conflicts!</h3>
             <p className={tailwind('mt-2.5 text-sm text-red-700')}>Please go to Settings and manually choose the correct version.</p>
             <div className={tailwind('mt-4')}>
               <div className={tailwind('-mx-2 -my-1.5 flex')}>

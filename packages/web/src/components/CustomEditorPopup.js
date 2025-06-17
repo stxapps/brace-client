@@ -13,11 +13,12 @@ import {
 } from '../utils';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
-import { useSafeAreaFrame, useTailwind } from '.';
+import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
 const CustomEditorPopup = () => {
   // Use windowHeight to move along with a virtual keyboard.
   const { windowHeight } = useSafeAreaFrame();
+  const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isCustomEditorPopupShown);
   const selectingLinkId = useSelector(state => state.display.selectingLinkId);
   const customEditor = useSelector(state => getCustomEditor(state));
@@ -425,12 +426,16 @@ const CustomEditorPopup = () => {
 
   if (!isShown) return <AnimatePresence key="AnimatePresence_LEP" />;
 
+  const canvasStyle = {
+    paddingTop: insets.top, paddingBottom: insets.bottom,
+    paddingLeft: insets.left, paddingRight: insets.right,
+  };
   const panelHeight = Math.min(480, windowHeight * 0.9);
   const zoomRangeStyle = { backgroundSize: `${customEditor.zoom}% 100%` };
 
   return (
     <AnimatePresence key="AnimatePresence_LEP">
-      <div className={tailwind('fixed inset-0 z-30 touch-none overflow-hidden')}>
+      <div style={canvasStyle} className={tailwind('fixed inset-0 z-30 touch-none overflow-hidden')}>
         <div onTouchMove={onTouchMove} onTouchEnd={onMouseUp} onTouchCancel={onMouseLeave} onMouseMove={onMouseMove} onMouseUp={onMouseUp} onMouseLeave={onMouseLeave} className={tailwind('flex items-center justify-center p-4')} style={{ minHeight: windowHeight }}>
           <div className={tailwind('fixed inset-0')}>
             {/* No cancel on background of CustomEditorPopup */}

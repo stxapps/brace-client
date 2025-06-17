@@ -16,15 +16,15 @@ import {
 } from '../types/const';
 import {
   getListNameMap, getPopupLink, getLayoutType, makeGetPinStatus, getThemeMode,
-  getSafeAreaWidth, getSafeAreaHeight, makeGetTagStatus,
+  getSafeAreaWidth, getSafeAreaHeight, getSafeAreaInsets, makeGetTagStatus,
 } from '../selectors';
 import {
   copyTextToClipboard, getListNameDisplayName, isObject, isEqual, getLastHalfHeight,
 } from '../utils';
 import { popupBgFMV, popupFMV } from '../types/animConfigs';
+import { computePositionStyle } from '../utils/popup';
 
 import { withTailwind } from '.';
-import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
 
 const CARD_ITEM_POPUP_MENU = {
   [MY_LIST]: [COPY_LINK, ARCHIVE, REMOVE, MOVE_TO],
@@ -139,30 +139,12 @@ class CardItemMenuPopup extends React.PureComponent {
       this.props.updateListNamesMode(
         LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
       );
-
-      const newX = anchorPosition.x + 8;
-      const newY = anchorPosition.y + 12;
-      const newWidth = anchorPosition.width - 8 - 12;
-      const newHeight = anchorPosition.height - 12 - 0;
-      const rect = {
-        x: newX, y: newY, width: newWidth, height: newHeight,
-        top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
-      };
-      this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
+      this.props.updatePopup(LIST_NAMES_POPUP, true, anchorPosition);
     } else if (text === PIN) {
       this.props.pinLinks([id]);
     } else if (text === MANAGE_PIN) {
       this.props.updateSelectingLinkId(id);
-
-      const newX = anchorPosition.x + 8;
-      const newY = anchorPosition.y + 12;
-      const newWidth = anchorPosition.width - 8 - 12;
-      const newHeight = anchorPosition.height - 12 - 0;
-      const rect = {
-        x: newX, y: newY, width: newWidth, height: newHeight,
-        top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
-      };
-      this.props.updatePopup(PIN_MENU_POPUP, true, rect);
+      this.props.updatePopup(PIN_MENU_POPUP, true, anchorPosition);
     } else if (text === ADD_TAGS || text === MANAGE_TAGS) {
       this.props.updateSelectingLinkId(id);
       this.props.updateTagEditorPopup(true, text === ADD_TAGS);
@@ -199,7 +181,7 @@ class CardItemMenuPopup extends React.PureComponent {
 
   render() {
     const {
-      isShown, anchorPosition, safeAreaWidth, safeAreaHeight, tailwind,
+      isShown, anchorPosition, safeAreaWidth, safeAreaHeight, insets, tailwind,
     } = this.props;
     if (!isShown) return (
       <AnimatePresence key="AnimatePresence_CIMP_menuPopup" />
@@ -207,24 +189,23 @@ class CardItemMenuPopup extends React.PureComponent {
 
     const { menuPopupSize } = this.state;
 
-    let popupClassNames = 'fixed z-41 min-w-32 max-w-64 overflow-auto rounded-lg bg-white py-2 shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25';
+    const popupClassNames = 'fixed z-41 min-w-32 max-w-64 overflow-auto rounded-lg bg-white py-2 shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25';
+
     let menuPopup;
     if (menuPopupSize) {
       const maxHeight = getLastHalfHeight(safeAreaHeight - 16, 40, 8, 0, 0.55);
-      const layouts = createLayouts(
+      const posStyle = computePositionStyle(
         anchorPosition,
         {
           width: menuPopupSize.width,
           height: Math.min(menuPopupSize.height, maxHeight),
         },
         { width: safeAreaWidth, height: safeAreaHeight },
+        null,
+        insets,
+        8,
       );
-      const triggerOffsets = { x: 8, y: 12, width: -20, height: -12 };
-      const popupPosition = computePosition(layouts, triggerOffsets, 8);
-
-      const { top, left, topOrigin, leftOrigin } = popupPosition;
-      const popupStyle = { top, left, maxHeight };
-      popupClassNames += ' ' + getOriginClassName(topOrigin, leftOrigin);
+      const popupStyle = { ...posStyle, maxHeight };
 
       menuPopup = (
         <motion.div key="CIMP_menuPopup" ref={this.menuPopup} style={popupStyle} className={tailwind(popupClassNames)} variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
@@ -233,7 +214,7 @@ class CardItemMenuPopup extends React.PureComponent {
       )
     } else {
       menuPopup = (
-        <div key="CIMP_menuPopup" ref={this.menuPopup} style={{ top: safeAreaHeight, left: safeAreaWidth }} className={tailwind(popupClassNames)}>
+        <div key="CIMP_menuPopup" ref={this.menuPopup} style={{ top: safeAreaHeight + 256, left: safeAreaWidth + 256 }} className={tailwind(popupClassNames)}>
           {this.renderMenu()}
         </div>
       );
@@ -271,6 +252,7 @@ const makeMapStateToProps = () => {
       themeMode: getThemeMode(state),
       safeAreaWidth: getSafeAreaWidth(state),
       safeAreaHeight: getSafeAreaHeight(state),
+      insets: getSafeAreaInsets(state),
     };
   };
 

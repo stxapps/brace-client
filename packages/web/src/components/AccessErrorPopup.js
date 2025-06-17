@@ -4,10 +4,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updatePopup, signOut } from '../actions';
 import { HASH_SUPPORT, ACCESS_ERROR_POPUP } from '../types/const';
 
-import { useTailwind } from '.';
+import { useSafeAreaInsets, useTailwind } from '.';
 
 const AccessErrorPopup = () => {
 
+  const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isAccessErrorPopupShown);
   const didClick = useRef(false);
   const dispatch = useDispatch();
@@ -31,8 +32,12 @@ const AccessErrorPopup = () => {
 
   if (!isShown) return null;
 
+  const canvasStyle = {
+    paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right,
+  };
+
   return (
-    <div className={tailwind('fixed inset-x-0 top-14 z-40 flex items-start justify-center md:top-0')}>
+    <div style={canvasStyle} className={tailwind('fixed inset-x-0 top-14 z-40 flex items-start justify-center md:top-0')}>
       <div className={tailwind('relative m-4 rounded-md bg-red-50 p-4 shadow-lg')}>
         <div className={tailwind('flex')}>
           <div className={tailwind('flex-shrink-0')}>
@@ -41,7 +46,7 @@ const AccessErrorPopup = () => {
             </svg>
           </div>
           <div className={tailwind('ml-3 lg:mt-0.5')}>
-            <h3 className={tailwind('text-left text-base font-medium text-red-800 lg:text-sm')}>Your access has expired!</h3>
+            <h3 className={tailwind('mr-4 text-left text-base font-medium text-red-800 lg:text-sm')}>Your access has expired!</h3>
             <p className={tailwind('mt-2.5 text-sm text-red-700')}>Please sign out and sign in again. <br className={tailwind('hidden sm:inline')} />If the problem persists, please <a className={tailwind('rounded underline hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a>.</p>
             <div className={tailwind('mt-4')}>
               <div className={tailwind('-mx-2 -my-1.5 flex')}>

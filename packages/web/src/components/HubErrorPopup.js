@@ -4,10 +4,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updatePopup } from '../actions';
 import { HUB_ERROR_POPUP } from '../types/const';
 
-import { useTailwind } from '.';
+import { useSafeAreaInsets, useTailwind } from '.';
 
 const HubErrorPopup = () => {
 
+  const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isHubErrorPopupShown);
   const didClick = useRef(false);
   const dispatch = useDispatch();
@@ -25,8 +26,12 @@ const HubErrorPopup = () => {
 
   if (!isShown) return null;
 
+  const canvasStyle = {
+    paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right,
+  };
+
   return (
-    <div className={tailwind('fixed inset-x-0 top-14 z-40 flex items-start justify-center md:top-0')}>
+    <div style={canvasStyle} className={tailwind('fixed inset-x-0 top-14 z-40 flex items-start justify-center md:top-0')}>
       <div className={tailwind('relative m-4 rounded-md bg-red-50 p-4 shadow-lg')}>
         <div className={tailwind('flex')}>
           <div className={tailwind('flex-shrink-0')}>

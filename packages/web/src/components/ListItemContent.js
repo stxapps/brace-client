@@ -13,7 +13,7 @@ import {
 import { makeGetCustomImage, makeGetTnAndDns } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
-  extractUrl, isDecorValid, prependDomainName,
+  extractUrl, isDecorValid, prependDomainName, adjustRect,
 } from '../utils';
 
 import { useSafeAreaFrame, useTailwind } from '.';
@@ -78,8 +78,9 @@ const ListItemContent = (props) => {
   const onMenuBtnClick = (e) => {
     dispatch(updateSelectingLinkId(link.id));
 
-    const menuBtnPosition = e.currentTarget.getBoundingClientRect();
-    dispatch(updatePopup(CARD_ITEM_MENU_POPUP, true, menuBtnPosition));
+    const rect = e.currentTarget.getBoundingClientRect();
+    const nRect = adjustRect(rect, 8, 12, -20, -12);
+    dispatch(updatePopup(CARD_ITEM_MENU_POPUP, true, nRect));
     if (window.document.activeElement instanceof HTMLElement) {
       window.document.activeElement.blur();
     }

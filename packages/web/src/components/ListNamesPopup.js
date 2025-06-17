@@ -21,9 +21,9 @@ import {
 import {
   popupBgFMV, popupFMV, bModalBgFMV, bModalFMV, slideInPopupFMV, slideInModalFMV,
 } from '../types/animConfigs';
+import { computePositionStyle } from '../utils/popup';
 
-import { computePosition, createLayouts, getOriginClassName } from './MenuPopupRenderer';
-import { useSafeAreaFrame, useTailwind } from '.';
+import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
 const MODE_CHANGE_LIST_NAME = LIST_NAMES_MODE_CHANGE_LIST_NAME;
 const MODE_CHANGE_TAG_NAME = LIST_NAMES_MODE_CHANGE_TAG_NAME;
@@ -36,6 +36,7 @@ const ANIM_TYPE_BMODAL = LIST_NAMES_ANIM_TYPE_BMODAL;
 const ListNamesPopup = () => {
 
   const { width: safeAreaWidth, height: safeAreaHeight } = useSafeAreaFrame();
+  const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isListNamesPopupShown);
   const anchorPosition = useSelector(state => state.display.listNamesPopupPosition);
   const mode = useSelector(state => state.display.listNamesMode);
@@ -396,26 +397,29 @@ const ListNamesPopup = () => {
 
   let panel;
   if (isAnimTypeB) {
-    const popupStyle = { height: popupHeight };
+    const popupStyle = {
+      height: popupHeight + insets.bottom,
+      paddingBottom: insets.bottom,
+      paddingLeft: insets.left, paddingRight: insets.right,
+    };
     panel = (
       <motion.div key="LNP_popup" style={popupStyle} className={tailwind('fixed inset-x-0 bottom-0 z-41 rounded-t-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25')} variants={bModalFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
         {_render()}
       </motion.div>
     );
   } else {
-    const layouts = createLayouts(
+    const posStyle = computePositionStyle(
       derivedAnchorPosition,
       { width: popupWidth, height: popupHeight },
       { width: safeAreaWidth, height: safeAreaHeight },
+      null,
+      insets,
+      8,
     );
-    const popupPosition = computePosition(layouts, null, 8);
-
-    const { top, left, topOrigin, leftOrigin } = popupPosition;
-    const popupStyle = { top, left, width: popupWidth, height: popupHeight };
-    const popupClassNames = getOriginClassName(topOrigin, leftOrigin);
+    const popupStyle = { ...posStyle, width: popupWidth, height: popupHeight };
 
     panel = (
-      <motion.div key="LNP_popup" style={popupStyle} className={tailwind(`fixed z-41 overflow-auto rounded-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25 ${popupClassNames}`)} variants={popupFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+      <motion.div key="LNP_popup" style={popupStyle} className={tailwind('fixed z-41 overflow-auto rounded-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25')} variants={popupFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
         {_render()}
       </motion.div>
     );

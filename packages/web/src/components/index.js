@@ -37,7 +37,7 @@ export const getTopBarSizes = (width) => {
 
   const listNameArrowWidth = 20; // From inspect
   const listNameArrowSpace = 4; // From inspect
-  const commandsWidth = 434; // From inspect
+  const commandsWidth = 422; // From inspect
 
   return {
     topBarHeight,

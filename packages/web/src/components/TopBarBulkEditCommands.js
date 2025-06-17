@@ -12,7 +12,7 @@ import {
   BULK_EDIT_MENU_ANIM_TYPE_POPUP,
 } from '../types/const';
 import { getListNameMap, getSafeAreaWidth, getThemeMode } from '../selectors';
-import { getListNameDisplayName } from '../utils';
+import { getListNameDisplayName, adjustRect } from '../utils';
 import { popupFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -109,17 +109,9 @@ class TopBarBulkEditCommands extends React.Component {
       LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
     );
 
-    // Hacky to make sure the popup overlap all the button
-    const _rect = e.currentTarget.getBoundingClientRect();
-    const newX = _rect.x - 4;
-    const newY = _rect.y - 4;
-    const newWidth = _rect.width + 8;
-    const newHeight = _rect.height + 8;
-    const rect = {
-      x: newX, y: newY, width: newWidth, height: newHeight,
-      top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
-    };
-    this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
+    const rect = e.currentTarget.getBoundingClientRect();
+    const nRect = adjustRect(rect, -4, -4, 8, 8);
+    this.props.updatePopup(LIST_NAMES_POPUP, true, nRect);
   }
 
   onBulkEditMoreBtnClick = (e) => {
@@ -127,17 +119,9 @@ class TopBarBulkEditCommands extends React.Component {
 
     this.props.updateBulkEditMenuMode(BULK_EDIT_MENU_ANIM_TYPE_POPUP);
 
-    // Hacky to make sure the popup overlap all the button
-    const _rect = e.currentTarget.getBoundingClientRect();
-    const newX = _rect.x - 4;
-    const newY = _rect.y - 4;
-    const newWidth = _rect.width + 8;
-    const newHeight = _rect.height + 8;
-    const rect = {
-      x: newX, y: newY, width: newWidth, height: newHeight,
-      top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
-    };
-    this.props.updatePopup(BULK_EDIT_MENU_POPUP, true, rect);
+    const rect = e.currentTarget.getBoundingClientRect();
+    const nRect = adjustRect(rect, -4, -4, 8, 8);
+    this.props.updatePopup(BULK_EDIT_MENU_POPUP, true, nRect);
   }
 
   onBulkEditCancelBtnClick = () => {

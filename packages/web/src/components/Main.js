@@ -7,17 +7,21 @@ import { fetch } from '../actions/chunk';
 import { endIapConnection } from '../actions/iap';
 import {
   BACK_DECIDER, BACK_POPUP, PC_100, PC_50, PC_33, SHOW_BLANK, SHOW_COMMANDS,
-  SM_WIDTH, LG_WIDTH, LAYOUT_LIST, LOCKED,
+  SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
 } from '../types/const';
 import {
   getIsShowingLinkIdsNull, getLayoutType, getThemeMode, getSafeAreaWidth,
-  getCurrentLockListStatus,
 } from '../selectors';
 
 import { withTailwind } from '.';
 
 import TopBarMain from './TopBarMain';
+import TopBarAddPopup from './TopBarAddPopup';
+import TopBarProfilePopup from './TopBarProfilePopup';
 import BottomBar from './BottomBar';
+import BottomBarAddPopup from './BottomBarAddPopup';
+import BottomBarSearchPopup from './BottomBarSearchPopup';
+import BottomBarProfilePopup from './BottomBarProfilePopup';
 import CardPanel from './CardPanel';
 import ListPanel from './ListPanel';
 import LockPanel from './LockPanel';
@@ -85,7 +89,7 @@ class Main extends React.PureComponent {
   }
 
   render() {
-    const { layoutType, safeAreaWidth, tailwind, lockStatus } = this.props;
+    const { layoutType, safeAreaWidth } = this.props;
 
     const columnWidth = this.getColumnWidth(safeAreaWidth);
     const topBarRightPane = [PC_50, PC_33].includes(columnWidth) ?
@@ -94,38 +98,32 @@ class Main extends React.PureComponent {
     // In Settings, remove a list that makes listName change to MY_LIST
     //   and if not rehydrated yet, loading is shown
     //   so if not rehydrated, show loading under Settings.
-    let contentPanel;
-    if (lockStatus === LOCKED) {
-      contentPanel = (
-        <React.Fragment>
-          <LockPanel columnWidth={columnWidth} />
-          {columnWidth === PC_100 && <BottomBar />}
-          <TopBarMain rightPane={topBarRightPane} />
-        </React.Fragment>
-      );
-    } else {
-      contentPanel = (
-        <React.Fragment>
-          {layoutType === LAYOUT_LIST ?
-            <ListPanel columnWidth={columnWidth} /> :
-            <CardPanel columnWidth={columnWidth} />
-          }
-          {/* BottomBar before TopBar so listNamePopup's bg in TopBar's above BottomBar */}
-          {columnWidth === PC_100 && <BottomBar />}
-          <TopBarMain rightPane={topBarRightPane} />
-          <FetchedPopup />
-          <CardItemMenuPopup />
-          <PinMenuPopup />
-          <BulkEditMenuPopup />
-          <CustomEditorPopup />
-          <TagEditorPopup />
-        </React.Fragment>
-      );
-    }
-
     return (
-      <div className={tailwind('min-h-screen bg-white blk:bg-gray-900')}>
-        {contentPanel}
+      <React.Fragment>
+        <TopBarMain rightPane={topBarRightPane} />
+        {layoutType === LAYOUT_LIST ?
+          <ListPanel columnWidth={columnWidth} /> :
+          <CardPanel columnWidth={columnWidth} />
+        }
+        <LockPanel columnWidth={columnWidth} />
+        {columnWidth === PC_100 && <>
+          <BottomBarSearchPopup />
+          <BottomBar />
+        </>}
+        <FetchedPopup />
+        {columnWidth !== PC_100 && <>
+          <TopBarAddPopup />
+          <TopBarProfilePopup />
+        </>}
+        {columnWidth === PC_100 && <>
+          <BottomBarAddPopup />
+          <BottomBarProfilePopup />
+        </>}
+        <CardItemMenuPopup />
+        <PinMenuPopup />
+        <BulkEditMenuPopup />
+        <CustomEditorPopup />
+        <TagEditorPopup />
         <SettingsPopup />
         <SettingsListsMenuPopup />
         <SettingsTagsMenuPopup />
@@ -141,7 +139,7 @@ class Main extends React.PureComponent {
         <AccessErrorPopup />
         <HubErrorPopup />
         <SWWUPopup />
-      </div>
+      </React.Fragment>
     );
   }
 }
@@ -156,7 +154,6 @@ const mapStateToProps = (state, props) => {
     layoutType: getLayoutType(state),
     themeMode: getThemeMode(state),
     safeAreaWidth: getSafeAreaWidth(state),
-    lockStatus: getCurrentLockListStatus(state),
   };
 };
 

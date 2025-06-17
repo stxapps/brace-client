@@ -8,7 +8,8 @@ import {
   updateSettingsPopup, updateSettingsViewId, lockCurrentList,
 } from '../actions/chunk';
 import {
-  getSafeAreaWidth, getThemeMode, getCurrentLockListStatus, getCanChangeListNames,
+  getSafeAreaWidth, getSafeAreaInsets, getThemeMode, getCurrentLockListStatus,
+  getCanChangeListNames,
 } from '../selectors';
 import {
   HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT, LOCK, UNLOCKED,
@@ -52,11 +53,18 @@ class BottomBarProfilePopup extends React.PureComponent {
   };
 
   render() {
-    const { isProfilePopupShown, tailwind, lockStatus, canChangeListNames } = this.props;
+    const {
+      isProfilePopupShown, insets, tailwind, lockStatus, canChangeListNames,
+    } = this.props;
 
     if (!isProfilePopupShown) return (
       <AnimatePresence key="AnimatePresence_BB_ProfilePopup" />
     );
+
+    const popupStyle = {
+      paddingBottom: insets.bottom,
+      paddingLeft: insets.left, paddingRight: insets.right,
+    };
 
     const supportAndSignOutButtons = (
       <React.Fragment>
@@ -81,8 +89,10 @@ class BottomBarProfilePopup extends React.PureComponent {
     return (
       <AnimatePresence key="AnimatePresence_BB_ProfilePopup">
         <motion.button key="BB_ProfilePopup_cancelBtn" onClick={this.onProfileCancelBtnClick} tabIndex={-1} className={tailwind('fixed inset-0 z-40 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={bModalBgFMV} initial="hidden" animate="visible" exit="hidden" />
-        <motion.div key="BB_ProfilePopup_menuPopup" className={tailwind('fixed inset-x-0 bottom-0 z-41 rounded-t-lg bg-white pt-4 pb-4 shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25')} variants={bModalFMV} initial="hidden" animate="visible" exit="hidden">
-          {buttons}
+        <motion.div key="BB_ProfilePopup_menuPopup" style={popupStyle} className={tailwind('fixed inset-x-0 bottom-0 z-41 rounded-t-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25')} variants={bModalFMV} initial="hidden" animate="visible" exit="hidden">
+          <div className={tailwind('pt-4 pb-4')}>
+            {buttons}
+          </div>
         </motion.div>
       </AnimatePresence>
     );
@@ -94,6 +104,7 @@ const mapStateToProps = (state, props) => {
     isProfilePopupShown: state.display.isProfilePopupShown,
     themeMode: getThemeMode(state),
     safeAreaWidth: getSafeAreaWidth(state),
+    insets: getSafeAreaInsets(state),
     lockStatus: getCurrentLockListStatus(state),
     canChangeListNames: getCanChangeListNames(state),
   };

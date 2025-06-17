@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { SHOW_COMMANDS, MD_WIDTH, BLK_MODE } from '../types/const';
-import { getSafeAreaWidth, getThemeMode } from '../selectors';
+import { getSafeAreaWidth, getSafeAreaInsets, getThemeMode } from '../selectors';
 import { toPx, throttle } from '../utils';
 
 import { getTopBarSizes, withTailwind } from '.';
@@ -89,7 +89,8 @@ class TopBarMain extends React.PureComponent {
 
   render() {
     const {
-      rightPane: rightPaneProp, isBulkEditing, themeMode, safeAreaWidth, tailwind,
+      rightPane: rightPaneProp, isBulkEditing, themeMode, safeAreaWidth, insets,
+      tailwind,
     } = this.props;
 
     let rightPane = null;
@@ -106,24 +107,29 @@ class TopBarMain extends React.PureComponent {
       topBarHeight + (scrollY * (headerHeight - topBarHeight) / listNameDistanceY)
     );
 
-    const topBarStyle = { height };
-    let topBarStyleClasses = 'fixed inset-x-0 top-0 z-30';
-    if (height === headerHeight) {
-      topBarStyleClasses += ' border-b border-gray-200 blk:border-gray-700';
+    const tbStyle = {
+      paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right,
     }
-    topBarStyleClasses += ' bg-white blk:bg-gray-900';
+    const style = { height };
+
+    let classes = '';
+    if (height === headerHeight) {
+      classes = 'border-b border-gray-200 blk:border-gray-700';
+    }
 
     return (
-      <div style={topBarStyle} className={tailwind(`mx-auto max-w-6xl px-4 md:px-6 lg:px-8 ${topBarStyleClasses}`)}>
-        <div className={tailwind('relative')}>
-          <div className={tailwind('flex h-14 items-center justify-between')}>
-            <a className={tailwind('relative rounded focus:outline-none focus:ring focus:ring-offset-2')} href="/">
-              <img className={tailwind('h-8')} src={themeMode === BLK_MODE ? shortLogoBlk : shortLogo} alt="Brace logo" />
-            </a>
-            {rightPane}
+      <div style={tbStyle} className={tailwind('fixed inset-x-0 top-0 z-30 bg-white blk:bg-gray-900')}>
+        <div style={style} className={tailwind(`mx-auto max-w-6xl px-4 md:px-6 lg:px-8 ${classes}`)}>
+          <div className={tailwind('relative')}>
+            <div className={tailwind('flex h-14 items-center justify-between')}>
+              <a className={tailwind('relative rounded focus:outline-none focus:ring focus:ring-offset-2')} href="/">
+                <img className={tailwind('h-8')} src={themeMode === BLK_MODE ? shortLogoBlk : shortLogo} alt="Brace logo" />
+              </a>
+              {rightPane}
+            </div>
+            {this.renderStatusPopup()}
+            {this.renderListName()}
           </div>
-          {this.renderStatusPopup()}
-          {this.renderListName()}
         </div>
       </div>
     );
@@ -139,6 +145,7 @@ const mapStateToProps = (state, props) => {
     isBulkEditing: state.display.isBulkEditing,
     themeMode: getThemeMode(state),
     safeAreaWidth: getSafeAreaWidth(state),
+    insets: getSafeAreaInsets(state),
   };
 };
 

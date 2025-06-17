@@ -9,7 +9,7 @@ import {
 import {
   getLinks, getHasMoreLinks, getIsFetchingMore, getHasFetchedMore,
 } from '../selectors';
-import { addRem, getWindowHeight, getWindowScrollHeight, throttle } from '../utils';
+import { addRem, getWindowScrollHeight, throttle } from '../utils';
 import vars from '../vars';
 
 import { useSafeAreaFrame, useTailwind } from '.';
@@ -36,7 +36,7 @@ const ListPanel = (props) => {
   const updateScrollY = useCallback(() => {
     // https://gist.github.com/enqtran/25c6b222a73dc497cc3a64c090fb6700
     const scrollHeight = getWindowScrollHeight()
-    const windowHeight = getWindowHeight();
+    const windowHeight = window.innerHeight;
     const scrollY = window.scrollY;
 
     vars.scrollPanel.contentHeight = scrollHeight;

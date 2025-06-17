@@ -7,10 +7,11 @@ import {
 } from '../types/actionTypes';
 import { HASH_SUPPORT } from '../types/const';
 
-import { useTailwind } from '.';
+import { useSafeAreaInsets, useTailwind } from '.';
 
 const PinErrorPopup = () => {
 
+  const insets = useSafeAreaInsets();
   const pendingPins = useSelector(state => state.pendingPins);
   const didClick = useRef(false);
   const dispatch = useDispatch();
@@ -43,8 +44,12 @@ const PinErrorPopup = () => {
 
   if (!haveDiedPins) return null;
 
+  const canvasStyle = {
+    paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right,
+  };
+
   return (
-    <div className={tailwind('fixed inset-x-0 top-14 z-40 flex items-start justify-center md:top-0')}>
+    <div style={canvasStyle} className={tailwind('fixed inset-x-0 top-14 z-40 flex items-start justify-center md:top-0')}>
       <div className={tailwind('m-4 rounded-md bg-red-50 p-4 shadow-lg')}>
         <div className={tailwind('flex')}>
           <div className={tailwind('flex-shrink-0')}>
