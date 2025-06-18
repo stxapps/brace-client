@@ -42,8 +42,10 @@ const initialState = {
   isSignUpPopupShown: false,
   isSignInPopupShown: false,
   isAddPopupShown: false,
+  addPopupPosition: null,
   isSearchPopupShown: false,
   isProfilePopupShown: false,
+  profilePopupPosition: null,
   isCardItemMenuPopupShown: false,
   cardItemMenuPopupPosition: null,
   isListNamesPopupShown: false,
@@ -142,9 +144,7 @@ const displayReducer = (state = initialState, action) => {
         ...state,
         isSignUpPopupShown: isShown,
         isSignInPopupShown: isShown,
-        isAddPopupShown: isShown,
         isSearchPopupShown: isShown,
-        isProfilePopupShown: isShown,
         isCustomEditorPopupShown: isShown,
         isTagEditorPopupShown: isShown,
         isPaywallPopupShown: isShown,
@@ -157,6 +157,10 @@ const displayReducer = (state = initialState, action) => {
         //isSWWUPopupShown: isShown, // WarnPopup should still be shown
       };
       if (!isShown) {
+        newState.isAddPopupShown = isShown;
+        newState.addPopupPosition = null;
+        newState.isProfilePopupShown = isShown;
+        newState.profilePopupPosition = null;
         newState.isCardItemMenuPopupShown = false;
         newState.cardItemMenuPopupPosition = null;
         newState.isListNamesPopupShown = false;
@@ -184,7 +188,11 @@ const displayReducer = (state = initialState, action) => {
     }
 
     if (id === ADD_POPUP) {
-      return { ...state, isAddPopupShown: isShown };
+      return {
+        ...state,
+        isAddPopupShown: isShown,
+        addPopupPosition: anchorPosition,
+      };
     }
 
     if (id === SEARCH_POPUP) {
@@ -192,7 +200,11 @@ const displayReducer = (state = initialState, action) => {
     }
 
     if (id === PROFILE_POPUP) {
-      return { ...state, isProfilePopupShown: isShown };
+      return {
+        ...state,
+        isProfilePopupShown: isShown,
+        profilePopupPosition: anchorPosition,
+      };
     }
 
     if (id === CARD_ITEM_MENU_POPUP) {

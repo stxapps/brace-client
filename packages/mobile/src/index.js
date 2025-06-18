@@ -139,7 +139,7 @@ const updateAndroidStyle = async (themeMode) => {
   }
 };
 
-const _Root = () => {
+const InnerRoot = () => {
   const themeMode = useSelector(state => getThemeMode(state));
   const updateStBarStyleCount = useSelector(
     state => state.display.updateStatusBarStyleCount
@@ -201,7 +201,7 @@ const Root = () => {
     <Provider store={store}>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <MenuProvider customStyles={cache('SI_menuProvider', { backdrop: { backgroundColor: 'black', opacity: 0.25 } })} backHandler={backHandler}>
-          <_Root />
+          <InnerRoot />
         </MenuProvider>
       </SafeAreaProvider>
     </Provider>
