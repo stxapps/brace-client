@@ -218,14 +218,13 @@ const mapStateToProps = (state, props) => {
 
   const {
     isCardItemMenuPopupShown, isListNamesPopupShown, isPinMenuPopupShown,
-    isBulkEditMenuPopupShown,
   } = state.display;
 
   return {
     searchString: state.display.searchString,
     isBottomBarShown: (
       !isCardItemMenuPopupShown && !isListNamesPopupShown &&
-      !isPinMenuPopupShown && !isBulkEditMenuPopupShown
+      !isPinMenuPopupShown
     ),
     isSearchPopupShown: state.display.isSearchPopupShown,
     isCardItemMenuPopupShown,
