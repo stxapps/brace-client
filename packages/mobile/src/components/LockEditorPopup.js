@@ -226,8 +226,8 @@ const LockEditorPopup = () => {
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>
       <View style={tailwind(`flex-1 items-center justify-center p-4 ${Platform.OS === 'ios' ? 'lg:justify-start' : ''}`)}>
-        <Animated.View style={[tailwind('w-full overflow-hidden rounded-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
-          <KeyboardAvoidingView behavior="padding">
+        <KeyboardAvoidingView behavior="padding">
+          <Animated.View style={[tailwind('w-full overflow-hidden rounded-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
             <ScrollView style={{ maxHeight: panelHeight }} keyboardShouldPersistTaps="handled">
               <View style={tailwind('px-4 pt-8 pb-4 sm:px-6 sm:pb-6')}>
                 <Text style={tailwind('text-left text-xl font-semibold text-gray-800 blk:text-gray-100')}>{title}</Text>
@@ -272,11 +272,11 @@ const LockEditorPopup = () => {
                 </View>
               </View>
             </ScrollView>
-          </KeyboardAvoidingView>
-          {isLoadingShown && <View style={tailwind('absolute inset-0 flex items-center justify-center bg-white bg-opacity-25 blk:bg-gray-800 blk:bg-opacity-25')}>
-            <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} />
-          </View>}
-        </Animated.View>
+            {isLoadingShown && <View style={tailwind('absolute inset-0 flex items-center justify-center bg-white bg-opacity-25 blk:bg-gray-800 blk:bg-opacity-25')}>
+              <Circle size={20} color={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} />
+            </View>}
+          </Animated.View>
+        </KeyboardAvoidingView>
       </View>
     </View>
   );

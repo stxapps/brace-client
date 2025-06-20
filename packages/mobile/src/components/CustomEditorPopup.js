@@ -205,8 +205,8 @@ const CustomEditorPopup = () => {
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>
       <View style={tailwind(`flex-1 items-center justify-center p-4 ${Platform.OS === 'ios' ? 'lg:justify-start' : ''}`)}>
-        <Animated.View style={[tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
-          <KeyboardAvoidingView behavior="padding">
+        <KeyboardAvoidingView behavior="padding">
+          <Animated.View style={[tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
             <ScrollView style={{ maxHeight: panelHeight }} keyboardShouldPersistTaps="handled">
               {imageUrl && <View style={tailwind('w-full rounded-t-lg bg-white blk:border-b blk:border-gray-700 blk:bg-gray-800 aspect-7/12 shadow-xs')}>
                 <Image style={tailwind('h-full w-full')} source={cache(`CEP_image_${imageUrl}`, { uri: imageUrl }, [imageUrl])} />
@@ -253,8 +253,8 @@ const CustomEditorPopup = () => {
                 </View>
               </View>}
             </ScrollView>
-          </KeyboardAvoidingView>
-        </Animated.View>
+          </Animated.View>
+        </KeyboardAvoidingView>
       </View>
     </View>
   );

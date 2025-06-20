@@ -16,7 +16,6 @@ import {
   DIED_MERGING, BLK_MODE,
 } from '../types/const';
 import { getThemeMode } from '../selectors';
-import cache from '../utils/cache';
 import { dialogFMV, sidebarFMV, popupFMV } from '../types/animConfigs';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
@@ -319,15 +318,13 @@ const SettingsPopup = () => {
 
   const _renderPanel = (content) => {
     return (
-      <KeyboardAvoidingView behavior="padding" style={tailwind('flex-1')}>
-        <ScrollView ref={panelContent} style={tailwind('flex-1')} keyboardShouldPersistTaps="handled">
-          <View style={tailwind('items-center justify-start')}>
-            <View style={tailwind('w-full max-w-6xl items-center justify-start')}>
-              {content}
-            </View>
+      <ScrollView ref={panelContent} style={tailwind('flex-1')} keyboardShouldPersistTaps="handled">
+        <View style={tailwind('items-center justify-start')}>
+          <View style={tailwind('w-full max-w-6xl items-center justify-start')}>
+            {content}
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </View>
+      </ScrollView>
     );
   };
 
@@ -431,8 +428,8 @@ const SettingsPopup = () => {
     );
 
     return (
-      <View {...viewPanResponder.panHandlers} style={cache('SP_canvas', [tailwind('absolute inset-0 z-30 bg-white blk:bg-gray-900'), canvasStyle], [insets.top, insets.bottom, insets.left, insets.right, tailwind])}>
-        <View style={tailwind('flex-1')}>
+      <View {...viewPanResponder.panHandlers} style={[tailwind('absolute inset-0 z-30 bg-white blk:bg-gray-900'), canvasStyle]}>
+        <KeyboardAvoidingView behavior="padding" style={tailwind('flex-1')}>
           {_renderPanel(contentWithSidebar)}
           {_renderPanelCloseBtn()}
           {/* Sidebar for mobile */}
@@ -516,7 +513,7 @@ const SettingsPopup = () => {
               </View>
             </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </View>
     );
   };
@@ -647,7 +644,7 @@ const SettingsPopup = () => {
       <SettingsPopupConflict />
     );
     return (
-      <View style={cache('SP_canvas_cnflt', [tailwind('absolute inset-0 z-30 bg-white blk:bg-gray-900'), canvasStyle], [insets.top, insets.bottom, insets.left, insets.right, tailwind])}>
+      <View style={[tailwind('absolute inset-0 z-30 bg-white blk:bg-gray-900'), canvasStyle]}>
         <View style={tailwind('flex-1')}>
           {_renderPanel(content)}
           {_renderConflictLoading()}

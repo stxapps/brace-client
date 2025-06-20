@@ -112,26 +112,24 @@ const BottomBarAddPopup = () => {
   return (
     <>
       <TouchableOpacity activeOpacity={1.0} onPress={onCancelBtnClick} style={tailwind('absolute inset-0 z-40 bg-black bg-opacity-25')} />
-      <View style={[tailwind('absolute inset-x-0 bottom-0 z-41 rounded-t-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
-        <KeyboardAvoidingView behavior="padding">
-          <View style={tailwind('px-4 pt-6 pb-6')}>
-            <View style={tailwind('flex-row items-center justify-start')}>
-              <Text style={tailwind('flex-none text-sm font-normal text-gray-500 blk:text-gray-300')}>Url:</Text>
-              {/* onKeyPress event for Enter key only if there is multiline TextInput */}
-              <TextInput ref={addInput} onChange={onAddInputChange} onSubmitEditing={onAddInputKeyPress} style={tailwind(`ml-3 flex-1 rounded-full border border-gray-400 bg-white px-3.5 text-base font-normal text-gray-700 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 ${inputClassNames}`)} keyboardType="url" placeholder="https://" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={url} autoCapitalize="none" />
-            </View>
-            {msg !== '' && <Text style={tailwind('pt-3 text-sm font-normal text-red-500')}>{msg}</Text>}
-            <View style={tailwind(`flex-row items-center justify-start ${msg !== '' ? 'pt-3' : 'pt-5'}`)}>
-              <TouchableOpacity onPress={onOkBtnClick} style={[tailwind('items-center justify-center rounded-full bg-gray-800 px-4 blk:bg-gray-100'), { paddingTop: 7, paddingBottom: 7 }]}>
-                <Text style={tailwind('text-sm font-medium text-gray-50 blk:text-gray-800')}>{isAskingConfirm ? 'Sure' : 'Save'}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={onCancelBtnClick} style={tailwind('ml-2 rounded-md px-2.5 py-1.5')}>
-                <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-300')}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
+      <KeyboardAvoidingView behavior="position" style={tailwind('absolute inset-x-0 bottom-0 z-41')} contentContainerStyle={[tailwind('rounded-t-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
+        <View style={tailwind('px-4 pt-6 pb-6')}>
+          <View style={tailwind('flex-row items-center justify-start')}>
+            <Text style={tailwind('flex-none text-sm font-normal text-gray-500 blk:text-gray-300')}>Url:</Text>
+            {/* onKeyPress event for Enter key only if there is multiline TextInput */}
+            <TextInput ref={addInput} onChange={onAddInputChange} onSubmitEditing={onAddInputKeyPress} style={tailwind(`ml-3 flex-1 rounded-full border border-gray-400 bg-white px-3.5 text-base font-normal text-gray-700 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 ${inputClassNames}`)} keyboardType="url" placeholder="https://" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={url} autoCapitalize="none" />
           </View>
-        </KeyboardAvoidingView>
-      </View>
+          {msg !== '' && <Text style={tailwind('pt-3 text-sm font-normal text-red-500')}>{msg}</Text>}
+          <View style={tailwind(`flex-row items-center justify-start ${msg !== '' ? 'pt-3' : 'pt-5'}`)}>
+            <TouchableOpacity onPress={onOkBtnClick} style={[tailwind('items-center justify-center rounded-full bg-gray-800 px-4 blk:bg-gray-100'), { paddingTop: 7, paddingBottom: 7 }]}>
+              <Text style={tailwind('text-sm font-medium text-gray-50 blk:text-gray-800')}>{isAskingConfirm ? 'Sure' : 'Save'}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onCancelBtnClick} style={tailwind('ml-2 rounded-md px-2.5 py-1.5')}>
+              <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-300')}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
     </>
   );
 };

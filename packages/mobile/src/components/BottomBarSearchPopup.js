@@ -21,11 +21,17 @@ class BottomBarSearchPopup extends React.PureComponent {
   constructor(props) {
     super(props);
 
+    this.state = {
+      keyboardHeight: 0,
+    };
+
     this.searchInput = React.createRef();
 
     this.searchPopupTranslateY = new Animated.Value(toPx(SEARCH_POPUP_HEIGHT));
 
     this.searchPopupBackHandler = null;
+    this.keyboardDidShowListener = null;
+    this.keyboardDidHideListener = null;
     this.doFocus = true;
   }
 
@@ -33,6 +39,7 @@ class BottomBarSearchPopup extends React.PureComponent {
     const { searchString, isSearchPopupShown } = this.props;
 
     this.registerSearchPopupBackHandler(isSearchPopupShown);
+    this.registerKeyboardListeners(isSearchPopupShown);
 
     if (searchString && !isSearchPopupShown) {
       this.doFocus = false;
@@ -52,17 +59,22 @@ class BottomBarSearchPopup extends React.PureComponent {
     }
 
     if (!prevProps.isSearchPopupShown && isSearchPopupShown) {
+      // Register keyboard listerners before input focus
+      this.registerKeyboardListeners(isSearchPopupShown);
       if (this.doFocus) this.searchInput.current.focus();
       this.doFocus = true;
     }
 
     if (prevProps.isSearchPopupShown && !isSearchPopupShown) {
+      // Input blur before unregister keyboard listerners
       this.searchInput.current.blur();
+      this.registerKeyboardListeners(isSearchPopupShown);
     }
 
     if (
       prevProps.isBottomBarShown !== isBottomBarShown ||
-      prevProps.isSearchPopupShown !== isSearchPopupShown
+      prevProps.isSearchPopupShown !== isSearchPopupShown ||
+      prevState.keyboardHeight !== this.state.keyboardHeight
     ) {
       this.translateSearchPopup(prevProps.isBottomBarShown);
     }
@@ -70,6 +82,7 @@ class BottomBarSearchPopup extends React.PureComponent {
 
   componentWillUnmount() {
     this.registerSearchPopupBackHandler(false);
+    this.registerKeyboardListeners(false);
   }
 
   registerSearchPopupBackHandler = (isSearchPopupShown) => {
@@ -94,6 +107,30 @@ class BottomBarSearchPopup extends React.PureComponent {
     }
   };
 
+  registerKeyboardListeners = (isSearchPopupShown) => {
+    if (isSearchPopupShown) {
+      if (!this.keyboardDidShowListener) {
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', (e) => {
+          this.setState({ keyboardHeight: e.endCoordinates.height });
+        });
+      }
+      if (!this.keyboardDidHideListener) {
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardWillHide', () => {
+          this.setState({ keyboardHeight: 0 });
+        });
+      }
+    } else {
+      if (this.keyboardDidShowListener) {
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidShowListener = null;
+      }
+      if (this.keyboardDidHideListener) {
+        this.keyboardDidHideListener.remove();
+        this.keyboardDidHideListener = null;
+      }
+    }
+  };
+
   translateSearchPopup = (prevIsBottomBarShown) => {
     const { isBottomBarShown, isSearchPopupShown, insets } = this.props;
 
@@ -101,8 +138,16 @@ class BottomBarSearchPopup extends React.PureComponent {
     if (!isBottomBarShown) {
       toValue = toPx(BOTTOM_BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT) + insets.bottom;
     } else {
-      if (!isSearchPopupShown) toValue = toPx(SEARCH_POPUP_HEIGHT);
-      else toValue = 0;
+      if (!isSearchPopupShown) {
+        toValue = toPx(SEARCH_POPUP_HEIGHT);
+      } else {
+        const bottom = toPx(BOTTOM_BAR_HEIGHT) + insets.bottom;
+        if (Platform.OS === 'ios' && this.state.keyboardHeight > bottom) {
+          toValue = toPx(BOTTOM_BAR_HEIGHT) + insets.bottom;
+        } else {
+          toValue = 0;
+        }
+      }
     }
 
     if (!prevIsBottomBarShown && isBottomBarShown) {
@@ -147,8 +192,8 @@ class BottomBarSearchPopup extends React.PureComponent {
     const inputClassNames = Platform.OS === 'ios' ? 'py-2 leading-4' : 'py-0.5';
 
     return (
-      <Animated.View style={[tailwind('absolute inset-x-0 z-10 bg-white blk:bg-gray-800'), style]}>
-        <KeyboardAvoidingView behavior="padding" enabled={isSearchPopupShown}>
+      <KeyboardAvoidingView behavior="position" enabled={isSearchPopupShown} style={tailwind('absolute inset-x-0 bottom-0 z-10')}>
+        <Animated.View style={[tailwind('absolute inset-x-0 bg-white blk:bg-gray-800'), style]}>
           <View style={tailwind('flex-row items-center justify-between border-t border-gray-200 px-2 py-2 blk:border-gray-700')}>
             <View style={tailwind('flex-shrink flex-grow')}>
               <TextInput ref={this.searchInput} onChange={this.onSearchInputChange} style={tailwind(`w-full rounded-full border border-gray-400 bg-white pl-4 pr-6 text-sm font-normal text-gray-700 blk:border-gray-600 blk:bg-gray-800 blk:text-gray-200 ${inputClassNames}`)} placeholder="Search" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={searchString} autoCapitalize="none" />
@@ -163,8 +208,8 @@ class BottomBarSearchPopup extends React.PureComponent {
               <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-300')}>Cancel</Text>
             </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView>
-      </Animated.View>
+        </Animated.View>
+      </KeyboardAvoidingView>
     );
   }
 }
