@@ -1,5 +1,7 @@
 import React from 'react';
-import { Text, TouchableOpacity, Linking, Animated, BackHandler } from 'react-native';
+import {
+  View, Text, TouchableOpacity, Linking, Animated, BackHandler,
+} from 'react-native';
 import { connect } from 'react-redux';
 
 import { signOut, updatePopup, refreshFetched } from '../actions';
@@ -143,6 +145,7 @@ class BottomBarProfilePopup extends React.PureComponent {
 
     const popupStyle = {
       paddingBottom: Math.max(insets.bottom, 16),
+      paddingLeft: insets.left, paddingRight: insets.right,
       transform: [{ translateY: this.profilePopupTranslateY }],
     };
 
@@ -180,8 +183,10 @@ class BottomBarProfilePopup extends React.PureComponent {
     return (
       <React.Fragment>
         <TouchableOpacity activeOpacity={1.0} onPress={this.onProfileCancelBtnClick} style={tailwind('absolute inset-0 z-40 bg-black bg-opacity-25')} />
-        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 z-41 rounded-t-lg bg-white pt-4 shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
-          {buttons}
+        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 z-41 rounded-t-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
+          <View style={tailwind('pt-4')}>
+            {buttons}
+          </View>
         </Animated.View>
       </React.Fragment>
     );

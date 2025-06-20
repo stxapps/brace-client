@@ -95,7 +95,10 @@ const ConfirmDiscardPopup = () => {
 
   if (!isShown && didCloseAnimEnd) return null;
 
-  const canvasStyle = { paddingLeft: 16 + insets.left, paddingRight: 16 + insets.right };
+  const canvasStyle = {
+    paddingTop: insets.top, paddingBottom: insets.bottom,
+    paddingLeft: insets.left, paddingRight: insets.right,
+  };
   const popupStyle = {
     opacity: popupAnim,
     transform: [
@@ -118,33 +121,35 @@ const ConfirmDiscardPopup = () => {
   }
 
   return (
-    <View style={[tailwind('absolute inset-0 z-50 items-center justify-end px-4 pt-4 pb-20 sm:justify-center sm:p-0 elevation-xl'), canvasStyle]}>
+    <View style={[tailwind('absolute inset-0 z-50'), canvasStyle]}>
       <TouchableWithoutFeedback onPress={onConfirmDiscardCancelBtnClick}>
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>
-      <Animated.View style={[tailwind('w-full max-w-lg rounded-lg bg-white px-4 pt-5 pb-4 shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800 sm:my-8 sm:p-6'), popupStyle]}>
-        <View style={tailwind('items-center sm:flex-row sm:items-start')}>
-          <View style={tailwind('h-12 w-12 flex-shrink-0 flex-grow-0 items-center justify-center rounded-full bg-red-100 sm:h-10 sm:w-10')}>
-            <Svg width={24} height={24} style={tailwind('font-normal text-red-600')} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <Path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </Svg>
-          </View>
-          <View style={tailwind('mt-3 flex-shrink flex-grow sm:mt-0 sm:ml-4')}>
-            <Text style={tailwind('text-center text-lg font-medium leading-6 text-gray-900 blk:text-white sm:text-left')}>Discard unsaved changes?</Text>
-            <View style={tailwind('mt-2')}>
-              <Text style={tailwind('text-center text-sm font-normal text-gray-500 blk:text-gray-400 sm:text-left')}>{msg}</Text>
+      <View style={tailwind('flex-1 items-center justify-end px-4 pt-4 pb-20 sm:justify-center sm:p-0')}>
+        <Animated.View style={[tailwind('w-full max-w-lg rounded-lg bg-white px-4 pt-5 pb-4 shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800 sm:my-8 sm:p-6'), popupStyle]}>
+          <View style={tailwind('items-center sm:flex-row sm:items-start')}>
+            <View style={tailwind('h-12 w-12 flex-shrink-0 flex-grow-0 items-center justify-center rounded-full bg-red-100 sm:h-10 sm:w-10')}>
+              <Svg width={24} height={24} style={tailwind('font-normal text-red-600')} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <Path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </Svg>
+            </View>
+            <View style={tailwind('mt-3 flex-shrink flex-grow sm:mt-0 sm:ml-4')}>
+              <Text style={tailwind('text-center text-lg font-medium leading-6 text-gray-900 blk:text-white sm:text-left')}>Discard unsaved changes?</Text>
+              <View style={tailwind('mt-2')}>
+                <Text style={tailwind('text-center text-sm font-normal text-gray-500 blk:text-gray-400 sm:text-left')}>{msg}</Text>
+              </View>
             </View>
           </View>
-        </View>
-        <View style={tailwind('mt-5 sm:mt-4 sm:ml-10 sm:flex-row sm:pl-4')}>
-          <TouchableOpacity onPress={onConfirmDiscardOkBtnClick} style={tailwind('w-full rounded-full border border-red-600 bg-red-600 py-2 blk:border-red-500 blk:bg-red-500 sm:w-auto sm:px-3.5 sm:py-1.5')}>
-            <Text style={tailwind('text-center text-base font-medium text-white sm:rounded-full sm:text-sm')}>Discard</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onConfirmDiscardCancelBtnClick} style={[tailwind('mt-3 w-full rounded-full border border-gray-400 bg-white blk:border-gray-400 blk:bg-gray-800 sm:mt-0 sm:ml-3 sm:w-auto sm:px-3 sm:py-1.5'), cancelBtnStyle]}>
-            <Text style={tailwind('text-center text-base font-normal text-gray-500 blk:text-gray-300 sm:text-sm')}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
-      </Animated.View>
+          <View style={tailwind('mt-5 sm:mt-4 sm:ml-10 sm:flex-row sm:pl-4')}>
+            <TouchableOpacity onPress={onConfirmDiscardOkBtnClick} style={tailwind('w-full rounded-full border border-red-600 bg-red-600 py-2 blk:border-red-500 blk:bg-red-500 sm:w-auto sm:px-3.5 sm:py-1.5')}>
+              <Text style={tailwind('text-center text-base font-medium text-white sm:rounded-full sm:text-sm')}>Discard</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onConfirmDiscardCancelBtnClick} style={[tailwind('mt-3 w-full rounded-full border border-gray-400 bg-white blk:border-gray-400 blk:bg-gray-800 sm:mt-0 sm:ml-3 sm:w-auto sm:px-3 sm:py-1.5'), cancelBtnStyle]}>
+              <Text style={tailwind('text-center text-base font-normal text-gray-500 blk:text-gray-300 sm:text-sm')}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+      </View>
     </View>
   );
 };

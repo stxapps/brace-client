@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, Animated } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
@@ -105,15 +105,17 @@ class FetchedPopup extends React.PureComponent {
     const closeBtnStyle = { marginRight: 8 };
 
     return (
-      <Animated.View style={[tailwind('absolute z-30 flex-row items-center rounded-full bg-blue-400 shadow-lg'), style]}>
-        <TouchableOpacity onPress={this.onUpdateBtnClick} style={cache('FP_updateBtn', updateBtnStyle)}>
-          <Text style={tailwind('text-sm font-normal text-white')}>There is an update</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={this.onCloseBtnClick} style={cache('FP_cancelBtn', [tailwind('ml-1 h-4 w-4 flex-shrink-0 flex-row items-center justify-center rounded-full'), closeBtnStyle], [tailwind])}>
-          <Svg style={tailwind('font-normal text-blue-50')} width={8} height={8} viewBox="0 0 8 8" stroke="currentColor" fill="none">
-            <Path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
-          </Svg>
-        </TouchableOpacity>
+      <Animated.View style={[tailwind('absolute z-30'), style]}>
+        <View style={tailwind('flex-row items-center rounded-full bg-blue-400 shadow-lg')}>
+          <TouchableOpacity onPress={this.onUpdateBtnClick} style={cache('FP_updateBtn', updateBtnStyle)}>
+            <Text style={tailwind('text-sm font-normal text-white')}>There is an update</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.onCloseBtnClick} style={cache('FP_cancelBtn', [tailwind('ml-1 h-4 w-4 flex-shrink-0 flex-row items-center justify-center rounded-full'), closeBtnStyle], [tailwind])}>
+            <Svg style={tailwind('font-normal text-blue-50')} width={8} height={8} viewBox="0 0 8 8" stroke="currentColor" fill="none">
+              <Path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
+            </Svg>
+          </TouchableOpacity>
+        </View>
       </Animated.View>
     );
   }

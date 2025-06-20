@@ -46,9 +46,11 @@ class TopBarMain extends React.PureComponent {
       extrapolate: 'clamp',
     });
 
-    const listNameStyle = {
-      transform: [{ translateX: changingTranslateX }, { translateY: changingTranslateY }],
-    };
+    const listNameStyle = /** @type any */({
+      transform: [
+        { translateX: changingTranslateX }, { translateY: changingTranslateY },
+      ],
+    });
 
     return (
       <Animated.View style={listNameStyle}>
@@ -158,10 +160,15 @@ class TopBarMain extends React.PureComponent {
       extrapolate: 'clamp',
     });
 
-    const topBarStyle = { transform: [{ translateY: changingTopBarTranslateY }] };
-    const headerStyle = { transform: [{ translateY: changingHeaderTranslateY }] };
+    const tbStyle = {
+      paddingLeft: insets.left, paddingRight: insets.right,
+      transform: [{ translateY: changingTopBarTranslateY }],
+    };
+    const headerStyle = {
+      paddingTop: insets.top,
+      transform: [{ translateY: changingHeaderTranslateY }],
+    };
     const headerBorderStyle = { opacity: changingHeaderBorderOpacity };
-    const topBarStyleClasses = 'absolute inset-x-0 top-0 z-30 bg-white blk:bg-gray-900';
 
     const listNamePane = (
       <React.Fragment>
@@ -175,12 +182,8 @@ class TopBarMain extends React.PureComponent {
       </React.Fragment>
     );
 
-    topBarStyle['marginLeft'] = insets.left;
-    topBarStyle['marginRight'] = insets.right;
-    headerStyle['marginTop'] = insets.top;
-
     return (
-      <Animated.View style={[tailwind(`w-full items-center ${topBarStyleClasses}`), topBarStyle]}>
+      <Animated.View style={[tailwind('absolute inset-x-0 top-0 z-30 items-center bg-white blk:bg-gray-900'), tbStyle]}>
         <View style={tailwind('w-full max-w-6xl')}>
           <Animated.View style={headerStyle}>
             <View style={tailwind('h-14 flex-row items-center justify-between px-4 md:px-6 lg:px-8')}>

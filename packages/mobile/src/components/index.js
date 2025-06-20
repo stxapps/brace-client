@@ -12,7 +12,9 @@ import {
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD,
   MD_WIDTH, LG_WIDTH,
 } from '../types/const';
-import { getThemeMode, getTailwind } from '../selectors';
+import {
+  getSafeAreaFrame, getSafeAreaInsets, getThemeMode, getTailwind,
+} from '../selectors';
 import { toPx } from '../utils';
 
 export const getTopBarSizes = (safeAreaWidth) => {
@@ -75,20 +77,6 @@ export const getTopBarSizes = (safeAreaWidth) => {
   };
 };
 
-const getSafeAreaInsets = (
-  windowX, windowY, windowWidth, windowHeight, screenWidth, screenHeight, screenInsets,
-) => {
-  const left = Math.max(screenInsets.left - windowX, 0);
-  const top = Math.max(screenInsets.top - windowY, 0);
-  const right = Math.max(
-    (windowX + windowWidth) - (screenWidth - screenInsets.right), 0
-  );
-  const bottom = Math.max(
-    (windowY + windowHeight) - (screenHeight - screenInsets.bottom), 0
-  );
-  return { left, top, right, bottom };
-};
-
 export const useSafeAreaFrame = () => {
   const {
     x: windowX, y: windowY, width: windowWidth, height: windowHeight,
@@ -100,16 +88,12 @@ export const useSafeAreaFrame = () => {
     windowX, windowY, windowWidth, windowHeight, screenWidth, screenHeight, screenInsets,
   );
 
-  const safeAreaX = windowX + safeAreaInsets.left;
-  const safeAreaY = windowY + safeAreaInsets.top;
-  const safeAreaWidth = windowWidth - safeAreaInsets.left - safeAreaInsets.right;
-  const safeAreaHeight = windowHeight - safeAreaInsets.top - safeAreaInsets.bottom;
-
-  return { x: safeAreaX, y: safeAreaY, width: safeAreaWidth, height: safeAreaHeight };
+  return getSafeAreaFrame(
+    windowX, windowY, windowWidth, windowHeight, safeAreaInsets,
+  );
 };
 
 export const useSafeAreaInsets = () => {
-
   const {
     x: windowX, y: windowY, width: windowWidth, height: windowHeight,
   } = useWindowFrame();
@@ -133,13 +117,17 @@ export const withSafeAreaContext = (Component) => {
           const { width: screenWidth, height: screenHeight } = Dimensions.get('screen');
 
           const safeAreaInsets = getSafeAreaInsets(
-            windowX, windowY, windowWidth, windowHeight, screenWidth, screenHeight, screenInsets,
+            windowX, windowY, windowWidth, windowHeight,
+            screenWidth, screenHeight, screenInsets,
+          );
+          const safeAreaFrame = getSafeAreaFrame(
+            windowX, windowY, windowWidth, windowHeight, safeAreaInsets
           );
 
-          const safeAreaX = windowX + safeAreaInsets.left;
-          const safeAreaY = windowY + safeAreaInsets.top;
-          const safeAreaWidth = windowWidth - safeAreaInsets.left - safeAreaInsets.right;
-          const safeAreaHeight = windowHeight - safeAreaInsets.top - safeAreaInsets.bottom;
+          const safeAreaX = safeAreaFrame.x;
+          const safeAreaY = safeAreaFrame.y;
+          const safeAreaWidth = safeAreaFrame.width;
+          const safeAreaHeight = safeAreaFrame.height;
 
           return <Component {...props} safeAreaX={safeAreaX} safeAreaY={safeAreaY} safeAreaWidth={safeAreaWidth} safeAreaHeight={safeAreaHeight} insets={safeAreaInsets} ref={ref} />;
         }}

@@ -3,23 +3,24 @@ import { View, Text, TouchableOpacity, Linking, Image } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
-import { updateBulkEdit } from '../actions';
-import { addSelectedLinkIds, moveLinks, updateQueryString } from '../actions/chunk';
+import { updatePopup, updateBulkEdit } from '../actions';
+import {
+  addSelectedLinkIds, moveLinks, updateQueryString, updateSelectingLinkId,
+} from '../actions/chunk';
 import {
   COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING, UPDATING,
-  EXTRD_UPDATING, LG_WIDTH, PINNED, TAGGED,
+  EXTRD_UPDATING, LG_WIDTH, PINNED, TAGGED, CARD_ITEM_MENU_POPUP,
 } from '../types/const';
 import { makeGetCustomImage, makeGetTnAndDns } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
-  extractUrl, isDecorValid, prependDomainName,
+  extractUrl, isDecorValid, prependDomainName, getRect, adjustRect,
 } from '../utils';
 import cache from '../utils/cache';
 import { PATTERN_MAP } from '../types/patternPaths';
 
 import { useSafeAreaFrame, useTailwind } from '.';
 import GracefulImage from './GracefulImage';
-import CardItemMenuPopup from './CardItemMenuPopup';
 
 const ListItemContent = (props) => {
 
@@ -32,6 +33,7 @@ const ListItemContent = (props) => {
   const customImage = useSelector(state => getCustomImage(state, link));
   const tnAndDns = useSelector(state => getTnAndDns(state, link));
   const [extractedFaviconError, setExtractedFaviconError] = useState(false);
+  const menuBtn = useRef(null);
   const didClick = useRef(false);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
@@ -57,6 +59,17 @@ const ListItemContent = (props) => {
     if (didClick.current) return;
     dispatch(moveLinks(MY_LIST, [link.id]));
     didClick.current = true;
+  };
+
+  const onMenuBtnClick = () => {
+    if (!menuBtn.current) return;
+    menuBtn.current.measure((_fx, _fy, width, height, x, y) => {
+      dispatch(updateSelectingLinkId(link.id));
+
+      const rect = getRect(x, y, width, height);
+      const nRect = adjustRect(rect, 8, 12, -20, -12);
+      dispatch(updatePopup(CARD_ITEM_MENU_POPUP, true, nRect));
+    });
   };
 
   const onExtractedFaviconError = () => {
@@ -222,7 +235,11 @@ const ListItemContent = (props) => {
               <Path d="M14.8034 5.19398C11.9177 2.30766 7.26822 2.27141 4.33065 5.0721L3 3.66082V8.62218H7.6776L6.38633 7.25277C8.14886 5.56148 10.9471 5.58024 12.6821 7.31527C15.3953 10.0285 13.7677 14.9973 9.25014 14.9973V17.9974C11.5677 17.9974 13.384 17.2199 14.8034 15.8005C17.7322 12.8716 17.7322 8.12279 14.8034 5.19398V5.19398Z" />
             </Svg>
           </TouchableOpacity>}
-          <CardItemMenuPopup link={link} />
+          <TouchableOpacity ref={menuBtn} onPress={onMenuBtnClick} style={tailwind('px-2 py-1')}>
+            <Svg style={tailwind('font-normal text-gray-400 blk:text-gray-400')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <Path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </Svg>
+          </TouchableOpacity>
         </View>
       </View>
       {renderTags()}

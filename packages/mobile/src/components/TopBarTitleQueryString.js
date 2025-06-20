@@ -9,7 +9,7 @@ import {
   LIST_NAMES_POPUP, SM_WIDTH, LG_WIDTH, LIST_NAMES_MODE_CHANGE_TAG_NAME,
   LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
-import { getTagNameDisplayName } from '../utils';
+import { getTagNameDisplayName, getRect } from '../utils';
 import cache from '../utils/cache';
 
 import { getTopBarSizes, useSafeAreaFrame, useTailwind } from '.';
@@ -30,9 +30,7 @@ const TopBarTitleQueryString = () => {
         LIST_NAMES_MODE_CHANGE_TAG_NAME, LIST_NAMES_ANIM_TYPE_POPUP,
       ));
 
-      const rect = {
-        x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
-      };
+      const rect = getRect(x, y, width, height);
       dispatch(updatePopup(LIST_NAMES_POPUP, true, rect));
     });
   };

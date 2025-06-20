@@ -10,13 +10,11 @@ import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
 import {
   SafeAreaProvider, initialWindowMetrics, SafeAreaView,
 } from 'react-native-safe-area-context';
-import { MenuProvider } from 'react-native-popup-menu';
-import KeyboardManager from 'react-native-keyboard-manager';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import { setAppBackground } from '@vonovak/react-native-theme-control';
 
 import reducers from './reducers';
-import { init, updateMenuPopupAsBackPressed } from './actions';
+import { init } from './actions';
 import { queue, discard, effect } from './apis/customOffline';
 import {
   FETCH, FETCH_MORE, EXTRACT_CONTENTS, DELETE_OLD_LINKS_IN_TRASH,
@@ -74,14 +72,6 @@ if (__DEV__) {
   );
 }
 const store = createStore(/** @type {any} */(reducers), enhancers);
-
-const backHandler = (menuProvider) => updateMenuPopupAsBackPressed(menuProvider, store.dispatch, store.getState);
-
-if (Platform.OS === 'ios') {
-  KeyboardManager.setEnable(false);
-  KeyboardManager.setEnableDebugging(false);
-  KeyboardManager.setEnableAutoToolbar(false);
-}
 
 /**
  * @return {'light-content'|'dark-content'}
@@ -200,9 +190,7 @@ const Root = () => {
   return (
     <Provider store={store}>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <MenuProvider customStyles={cache('SI_menuProvider', { backdrop: { backgroundColor: 'black', opacity: 0.25 } })} backHandler={backHandler}>
-          <InnerRoot />
-        </MenuProvider>
+        <InnerRoot />
       </SafeAreaProvider>
     </Provider>
   );

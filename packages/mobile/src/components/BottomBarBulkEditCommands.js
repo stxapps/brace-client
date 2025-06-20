@@ -13,7 +13,7 @@ import {
   LIST_NAMES_ANIM_TYPE_BMODAL, BULK_EDIT_MENU_ANIM_TYPE_BMODAL,
 } from '../types/const';
 import { getListNameMap, getThemeMode } from '../selectors';
-import { getListNameDisplayName, toPx } from '../utils';
+import { getListNameDisplayName, toPx, getRect } from '../utils';
 import cache from '../utils/cache';
 import { popupFMV } from '../types/animConfigs';
 
@@ -157,9 +157,7 @@ class BottomBarBulkEditCommands extends React.Component {
         LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_BMODAL,
       );
 
-      const rect = {
-        x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
-      };
+      const rect = getRect(x, y, width, height);
       this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
     });
   };
@@ -169,9 +167,7 @@ class BottomBarBulkEditCommands extends React.Component {
     this.moreBtn.current.measure((_fx, _fy, width, height, x, y) => {
       this.props.updateBulkEditMenuMode(BULK_EDIT_MENU_ANIM_TYPE_BMODAL);
 
-      const rect = {
-        x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
-      };
+      const rect = getRect(x, y, width, height);
       this.props.updatePopup(BULK_EDIT_MENU_POPUP, true, rect);
     });
   };

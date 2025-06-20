@@ -209,12 +209,14 @@ const TranslucentAdding = () => {
 
   const _render = (content) => {
     return (
-      <View style={tailwind('flex-1 items-center justify-end sm:justify-center')}>
+      <>
         <TouchableWithoutFeedback onPress={onBackgroundBtnClick}>
           <View style={tailwind('absolute inset-0 bg-black bg-opacity-50')} />
         </TouchableWithoutFeedback>
-        {content}
-      </View>
+        <View style={tailwind('flex-1 items-center justify-end sm:justify-center')}>
+          {content}
+        </View>
+      </>
     );
   };
 

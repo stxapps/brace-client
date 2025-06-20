@@ -6,11 +6,12 @@ import Svg, { Path } from 'react-native-svg';
 import { updatePopup, signOut } from '../actions';
 import { DOMAIN_NAME, HASH_SUPPORT, ACCESS_ERROR_POPUP, SM_WIDTH } from '../types/const';
 
-import { useSafeAreaFrame, useTailwind } from '.';
+import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
 const AccessErrorPopup = () => {
 
   const { width: safeAreaWidth } = useSafeAreaFrame();
+  const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isAccessErrorPopupShown);
   const didClick = useRef(false);
   const dispatch = useDispatch();
@@ -34,8 +35,12 @@ const AccessErrorPopup = () => {
 
   if (!isShown) return null;
 
+  const canvasStyle = {
+    paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right,
+  };
+
   return (
-    <View style={tailwind('absolute inset-x-0 top-14 z-40 flex-row items-start justify-center md:top-0 elevation-xl')}>
+    <View style={[tailwind('absolute inset-x-0 top-14 z-40 flex-row items-start justify-center md:top-0'), canvasStyle]}>
       <View style={tailwind('w-full max-w-md')}>
         <View style={tailwind('m-4 rounded-md bg-red-50 p-4 shadow-lg')}>
           <View style={tailwind('flex-row')}>
@@ -45,7 +50,7 @@ const AccessErrorPopup = () => {
               </Svg>
             </View>
             <View style={tailwind('ml-3 flex-shrink flex-grow lg:mt-0.5')}>
-              <Text style={tailwind('text-left text-base font-medium text-red-800 lg:text-sm')}>Your access has expired!</Text>
+              <Text style={tailwind('mr-4 text-left text-base font-medium text-red-800 lg:text-sm')}>Your access has expired!</Text>
               <Text style={tailwind('mt-2.5 text-sm font-normal leading-6 text-red-700')}>Please sign out and sign in again. {safeAreaWidth < SM_WIDTH ? '' : '\n'}If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-sm font-normal leading-6 text-red-700 underline')}>contact us</Text>.</Text>
               <View style={tailwind('mt-4')}>
                 <View style={tailwind('-mx-2 -my-1.5 flex-row')}>

@@ -13,7 +13,7 @@ import {
   LIST_NAMES_ANIM_TYPE_POPUP, BULK_EDIT_MENU_ANIM_TYPE_POPUP,
 } from '../types/const';
 import { getListNameMap, getThemeMode } from '../selectors';
-import { getListNameDisplayName, toPx } from '../utils';
+import { getListNameDisplayName, toPx, getRect, adjustRect } from '../utils';
 import cache from '../utils/cache';
 import { popupFMV } from '../types/animConfigs';
 
@@ -155,16 +155,9 @@ class TopBarBulkEditCommands extends React.Component {
         LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
       );
 
-      // Hacky to make sure the popup overlap all the button
-      const newX = x - 4;
-      const newY = y - 4;
-      const newWidth = width + 8;
-      const newHeight = height + 8;
-      const rect = {
-        x: newX, y: newY, width: newWidth, height: newHeight,
-        top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
-      };
-      this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
+      const rect = getRect(x, y, width, height);
+      const nRect = adjustRect(rect, -4, -4, 8, 8);
+      this.props.updatePopup(LIST_NAMES_POPUP, true, nRect);
     });
   };
 
@@ -173,16 +166,9 @@ class TopBarBulkEditCommands extends React.Component {
     this.moreBtn.current.measure((_fx, _fy, width, height, x, y) => {
       this.props.updateBulkEditMenuMode(BULK_EDIT_MENU_ANIM_TYPE_POPUP);
 
-      // Hacky to make sure the popup overlap all the button
-      const newX = x - 4;
-      const newY = y - 4;
-      const newWidth = width + 8;
-      const newHeight = height + 8;
-      const rect = {
-        x: newX, y: newY, width: newWidth, height: newHeight,
-        top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
-      };
-      this.props.updatePopup(BULK_EDIT_MENU_POPUP, true, rect);
+      const rect = getRect(x, y, width, height);
+      const nRect = adjustRect(rect, -4, -4, 8, 8);
+      this.props.updatePopup(BULK_EDIT_MENU_POPUP, true, nRect);
     });
   };
 

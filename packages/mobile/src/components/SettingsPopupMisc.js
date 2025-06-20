@@ -15,7 +15,7 @@ import {
 import {
   getLayoutType, getRawThemeMode, getRawThemeCustomOptions, getThemeMode,
 } from '../selectors';
-import { getFormattedTime } from '../utils';
+import { getFormattedTime, getRect, adjustRect } from '../utils';
 
 import { useTailwind } from '.';
 
@@ -78,12 +78,9 @@ const SettingsPopupMisc = (props) => {
     whtTimeBtn.current.measure((_fx, _fy, width, height, x, y) => {
       dispatch(updateUpdatingThemeMode(WHT_MODE));
 
-      const newX = x - 1, newY = y - 1;
-      const rect = {
-        x: newX, y: newY, width, height,
-        top: newY, right: newX + width, bottom: newY + height, left: newX,
-      };
-      dispatch(updatePopup(TIME_PICK_POPUP, true, rect));
+      const rect = getRect(x, y, width, height);
+      const nRect = adjustRect(rect, -1, -1, 0, 0);
+      dispatch(updatePopup(TIME_PICK_POPUP, true, nRect));
     });
   };
 
@@ -91,12 +88,9 @@ const SettingsPopupMisc = (props) => {
     blkTimeBtn.current.measure((_fx, _fy, width, height, x, y) => {
       dispatch(updateUpdatingThemeMode(BLK_MODE));
 
-      const newX = x - 1, newY = y - 1;
-      const rect = {
-        x: newX, y: newY, width, height,
-        top: newY, right: newX + width, bottom: newY + height, left: newX,
-      };
-      dispatch(updatePopup(TIME_PICK_POPUP, true, rect));
+      const rect = getRect(x, y, width, height);
+      const nRect = adjustRect(rect, -1, -1, 0, 0);
+      dispatch(updatePopup(TIME_PICK_POPUP, true, nRect));
     });
   };
 

@@ -6,11 +6,12 @@ import Svg, { Path } from 'react-native-svg';
 import { updatePopup } from '../actions';
 import { HUB_ERROR_POPUP, SM_WIDTH } from '../types/const';
 
-import { useSafeAreaFrame, useTailwind } from '.';
+import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
 const HubErrorPopup = () => {
 
   const { width: safeAreaWidth } = useSafeAreaFrame();
+  const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isHubErrorPopupShown);
   const didClick = useRef(false);
   const dispatch = useDispatch();
@@ -28,8 +29,12 @@ const HubErrorPopup = () => {
 
   if (!isShown) return null;
 
+  const canvasStyle = {
+    paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right,
+  };
+
   return (
-    <View style={tailwind('absolute inset-x-0 top-14 z-40 flex-row items-start justify-center md:top-0 elevation-xl')}>
+    <View style={[tailwind('absolute inset-x-0 top-14 z-40 flex-row items-start justify-center md:top-0'), canvasStyle]}>
       <View style={tailwind('w-full max-w-md')}>
         <View style={tailwind('m-4 rounded-md bg-red-50 p-4 shadow-lg')}>
           <View style={tailwind('flex-row')}>

@@ -5,7 +5,6 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 import { Circle } from 'react-native-animated-spinkit';
-import KeyboardManager from 'react-native-keyboard-manager';
 
 import { updatePopup } from '../actions';
 import {
@@ -17,7 +16,7 @@ import {
   MODE_VIEW, MODE_EDIT, BLK_MODE,
 } from '../types/const';
 import { makeGetTagNameEditor, getThemeMode } from '../selectors';
-import { validateTagNameDisplayName } from '../utils';
+import { validateTagNameDisplayName, getRect } from '../utils';
 import { initialTagNameEditorState } from '../types/initialStates';
 
 import { useTailwind } from '.';
@@ -33,10 +32,7 @@ const SettingsPopupTags = (props) => {
   };
 
   useEffect(() => {
-    if (Platform.OS === 'ios') KeyboardManager.setEnable(true);
-
     return () => {
-      if (Platform.OS === 'ios') KeyboardManager.setEnable(false);
       if (Platform.OS === 'android') Keyboard.dismiss();
     };
   }, []);
@@ -211,9 +207,7 @@ const _TagNameEditor = (props) => {
   const onMenuBtnClick = () => {
     if (!menuBtn.current) return;
     menuBtn.current.measure((_fx, _fy, width, height, x, y) => {
-      const rect = {
-        x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
-      };
+      const rect = getRect(x, y, width, height);
       dispatch(updateSelectingTagName(tagNameObj.tagName));
       dispatch(updatePopup(SETTINGS_TAGS_MENU_POPUP, true, rect));
     });

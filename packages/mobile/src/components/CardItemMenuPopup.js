@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { ScrollView, View, Text } from 'react-native';
-import { connect } from 'react-redux';
-import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
-import Svg, { Path } from 'react-native-svg';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import {
+  ScrollView, View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated,
+  BackHandler,
+} from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import Clipboard from '@react-native-clipboard/clipboard';
 
 import { updatePopup } from '../actions';
@@ -19,13 +19,13 @@ import {
   ADD_TAGS, MANAGE_TAGS, TAGGED,
 } from '../types/const';
 import {
-  getListNameMap, getLayoutType, makeGetPinStatus, getThemeMode, makeGetTagStatus,
+  getListNameMap, getLayoutType, makeGetPinStatus, makeGetTagStatus, getPopupLink,
 } from '../selectors';
-import { getListNameDisplayName, getLastHalfHeight } from '../utils';
-import cache from '../utils/cache';
+import { isObject, getListNameDisplayName, getLastHalfHeight } from '../utils';
+import { popupFMV } from '../types/animConfigs';
+import { computePositionTranslate } from '../utils/popup';
 
-import { withTailwind } from '.';
-import MenuPopupRenderer from './MenuPopupRenderer';
+import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
 const CARD_ITEM_POPUP_MENU = {
   [MY_LIST]: [COPY_LINK, ARCHIVE, REMOVE, MOVE_TO],
@@ -34,20 +34,32 @@ const CARD_ITEM_POPUP_MENU = {
 };
 const QUERY_STRING_MENU = [COPY_LINK, REMOVE];
 
-class CardItemMenuPopup extends React.PureComponent {
+const CardItemMenuPopup = () => {
 
-  constructor(props) {
-    super(props);
+  const { width: safeAreaWidth, height: safeAreaHeight } = useSafeAreaFrame();
+  const insets = useSafeAreaInsets();
+  const getPinStatus = useMemo(makeGetPinStatus, []);
+  const getTagStatus = useMemo(makeGetTagStatus, []);
+  const isShown = useSelector(state => state.display.isCardItemMenuPopupShown);
+  const anchorPosition = useSelector(state => state.display.cardItemMenuPopupPosition);
+  const listName = useSelector(state => state.display.listName);
+  const queryString = useSelector(state => state.display.queryString);
+  const listNameMap = useSelector(state => getListNameMap(state));
+  const popupLink = useSelector(state => getPopupLink(state));
+  const pinStatus = useSelector(state => getPinStatus(state, popupLink));
+  const tagStatus = useSelector(state => getTagStatus(state, popupLink));
+  const layoutType = useSelector(state => getLayoutType(state));
+  const [popupSize, setPopupSize] = useState(null);
+  const [didCloseAnimEnd, setDidCloseAnimEnd] = useState(!isShown);
+  const [derivedIsShown, setDerivedIsShown] = useState(isShown);
+  const [derivedAnchorPosition, setDerivedAnchorPosition] = useState(anchorPosition);
+  const popupAnim = useRef(new Animated.Value(0)).current;
+  const popupBackHandler = useRef(null);
+  const didClick = useRef(false);
+  const dispatch = useDispatch();
+  const tailwind = useTailwind();
 
-    this.menuBtn = React.createRef();
-    this.didClick = false;
-  }
-
-  populateMenu() {
-    const {
-      listName, queryString, link, pinStatus, tagStatus, layoutType, safeAreaWidth,
-    } = this.props;
-
+  const populateMenu = () => {
     let menu = null;
     if (listName in CARD_ITEM_POPUP_MENU) {
       menu = CARD_ITEM_POPUP_MENU[listName];
@@ -57,7 +69,8 @@ class CardItemMenuPopup extends React.PureComponent {
     if (queryString) menu = QUERY_STRING_MENU;
 
     if (
-      [ADDING, MOVING, UPDATING, EXTRD_UPDATING].includes(link.status) ||
+      !isObject(popupLink) ||
+      [ADDING, MOVING, UPDATING, EXTRD_UPDATING].includes(popupLink.status) ||
       ![null, PINNED].includes(pinStatus) ||
       ![null, TAGGED].includes(tagStatus)
     ) {
@@ -77,181 +90,189 @@ class CardItemMenuPopup extends React.PureComponent {
     }
 
     return { menu };
-  }
-
-  onMenuBtnClick = () => {
-    this.props.updateSelectingLinkId(this.props.link.id);
-
-    this.props.updatePopup(CARD_ITEM_MENU_POPUP, true, null);
-    this.didClick = false;
   };
 
-  onMenuPopupClick = (text) => {
-    if (!text || this.didClick) return true;
+  const onMenuPopupClick = (text) => {
+    if (!text || didClick.current || !isObject(popupLink)) return;
 
-    const { id, url } = this.props.link;
+    const { id, url } = popupLink;
 
     if (text === COPY_LINK) {
       Clipboard.setString(url);
     } else if (text === ARCHIVE) {
-      this.props.moveLinks(ARCHIVE, [id]);
+      dispatch(moveLinks(ARCHIVE, [id]));
     } else if (text === REMOVE) {
-      this.props.moveLinks(TRASH, [id]);
+      dispatch(moveLinks(TRASH, [id]));
     } else if (text === RESTORE) {
-      this.props.moveLinks(MY_LIST, [id]);
+      dispatch(moveLinks(MY_LIST, [id]));
     } else if (text === DELETE) {
-      this.props.updateDeleteAction(DELETE_ACTION_LINK_ITEM_MENU);
-      this.props.updatePopup(CONFIRM_DELETE_POPUP, true);
-      return false;
+      dispatch(updateDeleteAction(DELETE_ACTION_LINK_ITEM_MENU));
+      dispatch(updatePopup(CONFIRM_DELETE_POPUP, true));
+      return;
     } else if (text === MOVE_TO) {
-      this.menuBtn.current.measure((_fx, _fy, width, height, x, y) => {
-        this.props.updateSelectingLinkId(id);
-        this.props.updateListNamesMode(
-          LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
-        );
-
-        const newX = x + 8;
-        const newY = y + 12;
-        const newWidth = width - 8 - 12;
-        const newHeight = height - 12 - 0;
-        const rect = {
-          x: newX, y: newY, width: newWidth, height: newHeight,
-          top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
-        };
-        this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
-        this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
-      });
-
-      this.didClick = true;
-      return true;
+      dispatch(updateSelectingLinkId(id));
+      dispatch(updateListNamesMode(
+        LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
+      ));
+      dispatch(updatePopup(LIST_NAMES_POPUP, true, anchorPosition));
     } else if (text === PIN) {
-      this.props.pinLinks([id]);
+      dispatch(pinLinks([id]));
     } else if (text === MANAGE_PIN) {
-      this.menuBtn.current.measure((_fx, _fy, width, height, x, y) => {
-        this.props.updateSelectingLinkId(id);
-
-        const newX = x + 8;
-        const newY = y + 12;
-        const newWidth = width - 8 - 12;
-        const newHeight = height - 12 - 0;
-        const rect = {
-          x: newX, y: newY, width: newWidth, height: newHeight,
-          top: newY, bottom: newY + newHeight, left: newX, right: newX + newWidth,
-        };
-        this.props.updatePopup(PIN_MENU_POPUP, true, rect);
-        this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
-      });
-
-      this.didClick = true;
-      return true;
+      dispatch(updateSelectingLinkId(id));
+      dispatch(updatePopup(PIN_MENU_POPUP, true, anchorPosition));
     } else if (text === ADD_TAGS || text === MANAGE_TAGS) {
-      this.props.updateSelectingLinkId(id);
-      this.props.updateTagEditorPopup(true, text === ADD_TAGS);
+      dispatch(updateSelectingLinkId(id));
+      dispatch(updateTagEditorPopup(true, text === ADD_TAGS));
     } else if (text === CHANGE) {
-      this.props.updateCustomEditorPopup(true, id);
+      dispatch(updateCustomEditorPopup(true, id));
     } else {
       console.log(`In CardItemMenuPopup, invalid text: ${text}`);
     }
 
-    this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
-    this.didClick = true;
-    return true;
+    dispatch(updatePopup(CARD_ITEM_MENU_POPUP, false));
+    didClick.current = true;
   };
 
-  onMenuBackdropPress = () => {
-    this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
+  const onCancelBtnClick = useCallback(() => {
+    dispatch(updatePopup(CARD_ITEM_MENU_POPUP, false));
+  }, [dispatch]);
+
+  const onPopupLayout = (e) => {
+    if (!popupSize) {
+      setPopupSize(e.nativeEvent.layout);
+    }
   };
 
-  renderMenu() {
-    const { listNameMap, tailwind } = this.props;
-    const { menu } = this.populateMenu();
+  const registerPopupBackHandler = useCallback((doRegister) => {
+    if (doRegister) {
+      if (!popupBackHandler.current) {
+        popupBackHandler.current = BackHandler.addEventListener(
+          'hardwareBackPress',
+          () => {
+            onCancelBtnClick();
+            return true;
+          }
+        );
+      }
+    } else {
+      if (popupBackHandler.current) {
+        popupBackHandler.current.remove();
+        popupBackHandler.current = null;
+      }
+    }
+  }, [onCancelBtnClick]);
 
-    return (
-      <React.Fragment>
+  useEffect(() => {
+    if (isShown && popupSize) {
+      Animated.timing(popupAnim, { toValue: 1, ...popupFMV.visible }).start();
+    }
+  }, [isShown, popupSize, popupAnim]);
+
+  useEffect(() => {
+    let didMount = true;
+    if (isShown) {
+      didClick.current = false;
+    } else {
+      Animated.timing(popupAnim, { toValue: 0, ...popupFMV.hidden }).start(() => {
+        if (didMount) {
+          setPopupSize(null);
+          setDidCloseAnimEnd(true);
+        }
+      });
+    }
+
+    registerPopupBackHandler(isShown);
+    return () => {
+      didMount = false;
+      registerPopupBackHandler(false);
+    };
+  }, [isShown, popupAnim, registerPopupBackHandler]);
+
+  if (derivedIsShown !== isShown) {
+    if (derivedIsShown && !isShown) setDidCloseAnimEnd(false);
+    setDerivedIsShown(isShown);
+  }
+
+  if (!isShown && didCloseAnimEnd) return null;
+
+  if (anchorPosition && anchorPosition !== derivedAnchorPosition) {
+    setDerivedAnchorPosition(anchorPosition);
+  }
+
+  if (!derivedAnchorPosition) return null;
+
+  const { menu } = populateMenu();
+  const buttons = (
+    <ScrollView>
+      <View style={tailwind('py-2')}>
         {menu.map(text => {
           let displayText = text;
           if (text === ARCHIVE) displayText = getListNameDisplayName(text, listNameMap);
           return (
-            <MenuOption key={text} onSelect={() => this.onMenuPopupClick(text)} customStyles={cache('CIMP_menuOption', { optionWrapper: { padding: 0 } })}>
-              <Text style={tailwind('w-full py-2.5 pl-4 pr-4 text-sm font-normal text-gray-700 blk:text-gray-200')} numberOfLines={1} ellipsizeMode="tail">{displayText}</Text>
-            </MenuOption>
+            <TouchableOpacity key={text} onPress={() => onMenuPopupClick(text)} style={tailwind('w-full py-2.5 pl-4 pr-4')}>
+              <Text style={tailwind('text-left text-sm font-normal text-gray-700 blk:text-gray-200')} numberOfLines={1} ellipsizeMode="tail">{displayText}</Text>
+            </TouchableOpacity>
           );
         })}
-      </React.Fragment>
-    );
-  }
+      </View>
+    </ScrollView>
+  );
 
-  render() {
-    const { layoutType, safeAreaHeight, tailwind } = this.props;
+  const popupClassNames = 'absolute z-41 min-w-32 max-w-64 overflow-hidden rounded-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800';
+
+  let panel, bgStyle = { opacity: 0 };
+  if (popupSize) {
+    const maxHeight = getLastHalfHeight(safeAreaHeight - 16, 40, 8, 0, 0.55);
+    const posTrn = computePositionTranslate(
+      derivedAnchorPosition,
+      { width: popupSize.width, height: Math.min(popupSize.height, maxHeight) },
+      { width: safeAreaWidth, height: safeAreaHeight },
+      null,
+      insets,
+      8,
+    );
+
     const popupStyle = {
-      maxHeight: getLastHalfHeight(safeAreaHeight - 16, 40, 8, 0, 0.55),
+      top: posTrn.top, left: posTrn.left, maxHeight, opacity: popupAnim, transform: [],
     };
+    popupStyle.transform.push({
+      translateX: popupAnim.interpolate({
+        inputRange: [0, 1], outputRange: [posTrn.startX, 0],
+      }),
+    });
+    popupStyle.transform.push({
+      translateY: popupAnim.interpolate({
+        inputRange: [0, 1], outputRange: [posTrn.startY, 0],
+      }),
+    });
+    popupStyle.transform.push({
+      scale: popupAnim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }),
+    });
 
-    let menuTriggerView;
-    if (layoutType === LAYOUT_LIST) {
-      menuTriggerView = (
-        <View ref={this.menuBtn} style={tailwind('px-2 py-1')} collapsable={false}>
-          <Svg style={tailwind('font-normal text-gray-400 blk:text-gray-400')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">
-            <Path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </Svg>
-        </View>
-      );
-    } else {
-      menuTriggerView = (
-        <View ref={this.menuBtn} style={[tailwind('flex-shrink-0 flex-grow-0 pt-2 pl-4 pr-2'), { paddingBottom: 6 }]} collapsable={false}>
-          <Svg style={tailwind('font-normal text-gray-400 blk:text-gray-400')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">
-            <Path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </Svg>
-        </View>
-      );
-    }
+    /* @ts-expect-error */
+    bgStyle = { opacity: popupAnim };
 
-    return (
-      /* value of triggerOffsets needs to be aligned with paddings of the three dots */
-      <Menu renderer={MenuPopupRenderer} rendererProps={cache('CIMP_menuRendererProps', { triggerOffsets: { x: 8, y: 12, width: -20, height: -12 } })} onOpen={this.onMenuBtnClick} onBackdropPress={this.onMenuBackdropPress}>
-        <MenuTrigger>
-          {menuTriggerView}
-        </MenuTrigger>
-        <MenuOptions customStyles={cache('CIMP_menuOptionsCustomStyles', { optionsContainer: [tailwind('z-41 min-w-32 max-w-64 rounded-lg bg-white py-2 shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle] }, [safeAreaHeight, tailwind])}>
-          <ScrollView>
-            {this.renderMenu()}
-          </ScrollView>
-        </MenuOptions>
-      </Menu>
+    panel = (
+      <Animated.View onLayout={onPopupLayout} style={[tailwind(popupClassNames), popupStyle]}>
+        {buttons}
+      </Animated.View>
+    );
+  } else {
+    panel = (
+      <Animated.View onLayout={onPopupLayout} style={[tailwind(popupClassNames), { top: safeAreaHeight + 256, left: safeAreaWidth + 256 }]}>
+        {buttons}
+      </Animated.View>
     );
   }
-}
 
-CardItemMenuPopup.propTypes = {
-  link: PropTypes.object.isRequired,
+  return (
+    <View style={tailwind('absolute inset-0 z-40')}>
+      <TouchableWithoutFeedback onPress={onCancelBtnClick}>
+        <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
+      </TouchableWithoutFeedback>
+      {panel}
+    </View>
+  );
 };
 
-const makeMapStateToProps = () => {
-
-  const getPinStatus = makeGetPinStatus();
-  const getTagStatus = makeGetTagStatus();
-
-  const mapStateToProps = (state, props) => {
-    const pinStatus = getPinStatus(state, props.link);
-    const tagStatus = getTagStatus(state, props.link);
-
-    return {
-      listName: state.display.listName,
-      queryString: state.display.queryString,
-      listNameMap: getListNameMap(state),
-      pinStatus,
-      tagStatus,
-      layoutType: getLayoutType(state),
-      themeMode: getThemeMode(state),
-    };
-  };
-
-  return mapStateToProps;
-};
-
-const mapDispatchToProps = {
-  updatePopup, updateSelectingLinkId, moveLinks, pinLinks, updateDeleteAction,
-  updateListNamesMode, updateCustomEditorPopup, updateTagEditorPopup,
-};
-
-export default connect(makeMapStateToProps, mapDispatchToProps)(withTailwind(CardItemMenuPopup));
+export default React.memo(CardItemMenuPopup);

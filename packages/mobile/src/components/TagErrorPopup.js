@@ -9,11 +9,12 @@ import {
 } from '../types/actionTypes';
 import { DOMAIN_NAME, HASH_SUPPORT, SM_WIDTH } from '../types/const';
 
-import { useSafeAreaFrame, useTailwind } from '.';
+import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
 const TagErrorPopup = () => {
 
   const { width: safeAreaWidth } = useSafeAreaFrame();
+  const insets = useSafeAreaInsets();
   const pendingTags = useSelector(state => state.pendingTags);
   const didClick = useRef(false);
   const dispatch = useDispatch();
@@ -46,8 +47,12 @@ const TagErrorPopup = () => {
 
   if (!haveDiedTags) return null;
 
+  const canvasStyle = {
+    paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right,
+  };
+
   return (
-    <View style={tailwind('absolute inset-x-0 top-14 z-40 flex-row items-start justify-center md:top-0 elevation-xl')}>
+    <View style={[tailwind('absolute inset-x-0 top-14 z-40 flex-row items-start justify-center md:top-0'), canvasStyle]}>
       <View style={tailwind('w-full max-w-md')}>
         <View style={tailwind('m-4 rounded-md bg-red-50 p-4 shadow-lg')}>
           <View style={tailwind('flex-row')}>

@@ -145,12 +145,16 @@ const SignInPopup = () => {
 
   if (!isShown && didCloseAnimEnd) return null;
 
+  const canvasStyle = {
+    paddingTop: insets.top, paddingBottom: insets.bottom,
+    paddingLeft: insets.left, paddingRight: insets.right,
+  };
+
   // safeAreaHeight doesn't include status bar height, but minus it anyway.
   const statusBarHeight = 24;
   let appHeight = safeAreaHeight - statusBarHeight;
   const panelHeight = Math.min(480 - 40, appHeight * 0.9);
 
-  const canvasStyle = { paddingLeft: 16 + insets.left, paddingRight: 16 + insets.right };
   const popupStyle = {
     opacity: popupAnim,
     transform: [
@@ -163,16 +167,18 @@ const SignInPopup = () => {
   const bgStyle = { opacity: popupAnim };
 
   return (
-    <View style={[tailwind(`absolute inset-0 items-center justify-center ${Platform.OS === 'ios' ? 'lg:justify-start' : ''}`), canvasStyle]}>
+    <View style={[tailwind('absolute inset-0'), canvasStyle]}>
       {/* No cancel on background of SignInPopup */}
       <TouchableWithoutFeedback>
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>
-      <Animated.View style={[tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl'), popupStyle]}>
-        <View style={{ height: panelHeight }}>
-          <WebView key={`SIP_webView_key_${terminateCount}`} ref={webView} style={tailwind('flex-1')} source={cache('SIP_webView_source', { baseUrl: '', html: stacksAccessSignIn })} originWhitelist={cache('SIP_webView_originWhitelist', ['*'])} onMessage={onMessage} keyboardDisplayRequiresUserAction={false} hideKeyboardAccessoryView={true} textZoom={100} androidLayerType="hardware" onShouldStartLoadWithRequest={onShouldStartLoadWithRequest} onContentProcessDidTerminate={onContentProcessDidTerminate} onRenderProcessGone={onContentProcessDidTerminate} />
-        </View>
-      </Animated.View>
+      <View style={tailwind(`flex-1 items-center justify-center p-4 ${Platform.OS === 'ios' ? 'lg:justify-start' : ''}`)}>
+        <Animated.View style={[tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl'), popupStyle]}>
+          <View style={{ height: panelHeight }}>
+            <WebView key={`SIP_webView_key_${terminateCount}`} ref={webView} style={tailwind('flex-1')} source={cache('SIP_webView_source', { baseUrl: '', html: stacksAccessSignIn })} originWhitelist={cache('SIP_webView_originWhitelist', ['*'])} onMessage={onMessage} keyboardDisplayRequiresUserAction={false} hideKeyboardAccessoryView={true} textZoom={100} androidLayerType="hardware" onShouldStartLoadWithRequest={onShouldStartLoadWithRequest} onContentProcessDidTerminate={onContentProcessDidTerminate} onRenderProcessGone={onContentProcessDidTerminate} />
+          </View>
+        </Animated.View>
+      </View>
     </View>
   );
 };

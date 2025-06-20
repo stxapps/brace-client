@@ -12,7 +12,7 @@ import {
   LIST_NAMES_MODE_CHANGE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP, LOCK_ACTION_UNLOCK_LIST,
 } from '../types/const';
 import { getListNameMap, getThemeMode, getCanChangeListNames } from '../selectors';
-import { getListNameDisplayName } from '../utils';
+import { getListNameDisplayName, getRect } from '../utils';
 import cache from '../utils/cache';
 
 import { getTopBarSizes, withTailwind } from '.';
@@ -38,9 +38,7 @@ class TopBarTitleListName extends React.PureComponent {
         LIST_NAMES_MODE_CHANGE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP,
       );
 
-      const rect = {
-        x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
-      };
+      const rect = getRect(x, y, width, height);
       this.props.updatePopup(LIST_NAMES_POPUP, true, rect);
     });
   };

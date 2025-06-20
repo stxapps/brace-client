@@ -2,22 +2,24 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, TouchableOpacity, Linking, Image } from 'react-native';
 import { connect } from 'react-redux';
+import Svg, { Path } from 'react-native-svg';
 
-import { updateBulkEdit } from '../actions';
-import { addSelectedLinkIds, updateQueryString } from '../actions/chunk';
-import { COLOR, PATTERN, IMAGE } from '../types/const';
+import { updatePopup, updateBulkEdit } from '../actions';
+import {
+  addSelectedLinkIds, updateQueryString, updateSelectingLinkId,
+} from '../actions/chunk';
+import { COLOR, PATTERN, IMAGE, CARD_ITEM_MENU_POPUP } from '../types/const';
 import { makeGetCustomImage, getThemeMode, makeGetTnAndDns } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
-  extractUrl, isEqual, isObject, isString, isDecorValid, prependDomainName,
+  extractUrl, isEqual, isObject, isString, isDecorValid, prependDomainName, getRect,
+  adjustRect,
 } from '../utils';
 import cache from '../utils/cache';
 import { PATTERN_MAP } from '../types/patternPaths';
 
 import { withTailwind } from '.';
 import GracefulImage from './GracefulImage';
-
-import CardItemMenuPopup from './CardItemMenuPopup';
 
 class CardItemContent extends React.Component {
 
@@ -27,6 +29,7 @@ class CardItemContent extends React.Component {
     this.state = {
       extractedFaviconError: false,
     };
+    this.menuBtn = React.createRef();
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -52,6 +55,17 @@ class CardItemContent extends React.Component {
   onLongPress = () => {
     this.props.updateBulkEdit(true);
     this.props.addSelectedLinkIds([this.props.link.id]);
+  };
+
+  onMenuBtnClick = () => {
+    if (!this.menuBtn.current) return;
+    this.menuBtn.current.measure((_fx, _fy, width, height, x, y) => {
+      this.props.updateSelectingLinkId(this.props.link.id);
+
+      const rect = getRect(x, y, width, height);
+      const nRect = adjustRect(rect, 8, 12, -20, -12);
+      this.props.updatePopup(CARD_ITEM_MENU_POPUP, true, nRect);
+    });
   };
 
   onExtractedFaviconError = () => {
@@ -208,7 +222,11 @@ class CardItemContent extends React.Component {
               </TouchableOpacity>
             </View>
           </View>
-          <CardItemMenuPopup link={link} />
+          <TouchableOpacity ref={this.menuBtn} onPress={this.onMenuBtnClick} style={[tailwind('flex-shrink-0 flex-grow-0 pt-2 pl-4 pr-2'), { paddingBottom: 6 }]}>
+            <Svg style={tailwind('font-normal text-gray-400 blk:text-gray-400')} width={24} height={40} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <Path d="M12 5v.01V5zm0 7v.01V12zm0 7v.01V19zm0-13a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </Svg>
+          </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={() => Linking.openURL(ensureContainUrlProtocol(url))}>
           <Text style={tailwind('mt-0 mb-3 ml-4 mr-3 text-base font-medium leading-6 text-gray-800 blk:text-gray-100 lg:mb-4')}>{title}</Text>
@@ -242,6 +260,9 @@ const makeMapStateToProps = () => {
   return mapStateToProps;
 };
 
-const mapDispatchToProps = { updateBulkEdit, addSelectedLinkIds, updateQueryString };
+const mapDispatchToProps = {
+  updatePopup, updateBulkEdit, addSelectedLinkIds, updateQueryString,
+  updateSelectingLinkId,
+};
 
 export default connect(makeMapStateToProps, mapDispatchToProps)(withTailwind(CardItemContent));

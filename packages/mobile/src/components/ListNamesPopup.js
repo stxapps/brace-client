@@ -25,9 +25,9 @@ import {
 import {
   popupFMV, bModalFMV, slideInPopupFMV, slideInModalFMV,
 } from '../types/animConfigs';
+import { computePositionTranslate } from '../utils/popup';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
-import { computePosition, createLayouts, getOriginTranslate } from './MenuPopupRenderer';
 
 const MODE_CHANGE_LIST_NAME = LIST_NAMES_MODE_CHANGE_LIST_NAME;
 const MODE_CHANGE_TAG_NAME = LIST_NAMES_MODE_CHANGE_TAG_NAME;
@@ -455,6 +455,7 @@ const ListNamesPopup = () => {
     const popupStyle = {
       height: popupHeight,
       paddingBottom: insets.bottom,
+      paddingLeft: insets.left, paddingRight: insets.right,
       transform: [{
         translateY: popupAnim.interpolate({
           inputRange: [0, 1], outputRange: [popupHeight, 0],
@@ -468,31 +469,28 @@ const ListNamesPopup = () => {
       </Animated.View>
     );
   } else {
-    const layouts = createLayouts(
+    const posTrn = computePositionTranslate(
       derivedAnchorPosition,
       { width: popupWidth, height: popupHeight },
-      { width: safeAreaWidth + insets.left, height: safeAreaHeight + insets.top },
-    );
-    const popupPosition = computePosition(layouts, null, 8);
-
-    const { top, left, topOrigin, leftOrigin } = popupPosition;
-    const { startX, startY } = getOriginTranslate(
-      topOrigin, leftOrigin, popupWidth, popupHeight
+      { width: safeAreaWidth, height: safeAreaHeight },
+      null,
+      insets,
+      8,
     );
 
     const popupStyle = {
-      top, left,
+      top: posTrn.top, left: posTrn.left,
       width: popupWidth, height: popupHeight,
       opacity: popupAnim, transform: [],
     };
     popupStyle.transform.push({
       translateX: popupAnim.interpolate({
-        inputRange: [0, 1], outputRange: [startX, 0],
+        inputRange: [0, 1], outputRange: [posTrn.startX, 0],
       }),
     });
     popupStyle.transform.push({
       translateY: popupAnim.interpolate({
-        inputRange: [0, 1], outputRange: [startY, 0],
+        inputRange: [0, 1], outputRange: [posTrn.startY, 0],
       }),
     });
     popupStyle.transform.push({
@@ -509,7 +507,7 @@ const ListNamesPopup = () => {
   const bgStyle = { opacity: popupAnim };
 
   return (
-    <View style={tailwind('absolute inset-0 z-40 elevation-xl')}>
+    <View style={tailwind('absolute inset-0 z-40')}>
       <TouchableWithoutFeedback onPress={onCancelBtnClick}>
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>

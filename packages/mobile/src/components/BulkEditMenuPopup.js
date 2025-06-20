@@ -14,9 +14,9 @@ import {
   LIST_NAMES_ANIM_TYPE_POPUP, LIST_NAMES_ANIM_TYPE_BMODAL,
 } from '../types/const';
 import { popupFMV } from '../types/animConfigs';
+import { computePositionTranslate } from '../utils/popup';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
-import { computePosition, createLayouts, getOriginTranslate } from './MenuPopupRenderer';
 
 const ANIM_TYPE_BMODAL = BULK_EDIT_MENU_ANIM_TYPE_BMODAL;
 
@@ -164,14 +164,14 @@ const BulkEditMenuPopup = () => {
 
   let popupClassNames = 'absolute z-41 min-w-36 bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800';
 
-  let panel;
-  let bgStyle = { opacity: 0 };
+  let panel, bgStyle = { opacity: 0 };
   if (popupSize) {
     if (isAnimTypeB) {
       const popupHeight = popupSize.height + insets.bottom;
       const popupStyle = {
         height: popupHeight,
         paddingBottom: insets.bottom,
+        paddingLeft: insets.left, paddingRight: insets.right,
         transform: [{
           translateY: popupAnim.interpolate({
             inputRange: [0, 1], outputRange: [popupHeight, 0],
@@ -189,32 +189,32 @@ const BulkEditMenuPopup = () => {
       );
     } else {
       const maxHeight = safeAreaHeight - 16;
-      const layouts = createLayouts(
+      const posTrn = computePositionTranslate(
         derivedAnchorPosition,
         { width: popupSize.width, height: Math.min(popupSize.height, maxHeight) },
-        { width: safeAreaWidth + insets.left, height: safeAreaHeight + insets.top },
-      );
-      const popupPosition = computePosition(layouts, null, 8);
-
-      const { top, left, topOrigin, leftOrigin } = popupPosition;
-      const { startX, startY } = getOriginTranslate(
-        topOrigin, leftOrigin, popupSize.width, popupSize.height
+        { width: safeAreaWidth, height: safeAreaHeight },
+        null,
+        insets,
+        8,
       );
 
-      const popupStyle = { top, left, opacity: popupAnim, transform: [] };
+      const popupStyle = {
+        top: posTrn.top, left: posTrn.left, opacity: popupAnim, transform: [],
+      };
       popupStyle.transform.push({
         translateX: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [startX, 0],
+          inputRange: [0, 1], outputRange: [posTrn.startX, 0],
         }),
       });
       popupStyle.transform.push({
         translateY: popupAnim.interpolate({
-          inputRange: [0, 1], outputRange: [startY, 0],
+          inputRange: [0, 1], outputRange: [posTrn.startY, 0],
         }),
       });
       popupStyle.transform.push({
         scale: popupAnim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }),
       });
+
       /* @ts-expect-error */
       bgStyle = { opacity: popupAnim };
       popupClassNames += ' rounded-lg';
@@ -234,7 +234,7 @@ const BulkEditMenuPopup = () => {
   }
 
   return (
-    <View style={tailwind('absolute inset-0 z-40 elevation-xl')}>
+    <View style={tailwind('absolute inset-0 z-40')}>
       <TouchableWithoutFeedback onPress={onCancelBtnClick}>
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>

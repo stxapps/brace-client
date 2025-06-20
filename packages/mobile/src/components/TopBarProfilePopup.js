@@ -1,31 +1,31 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated, BackHandler,
+  Linking,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { updatePopup } from '../actions';
-import { unpinLinks, movePinnedLink } from '../actions/chunk';
+import { signOut, updatePopup, refreshFetched } from '../actions';
 import {
-  PIN_MENU_POPUP, PIN_LEFT, PIN_RIGHT, PIN_UP, PIN_DOWN, UNPIN,
-  SWAP_LEFT, SWAP_RIGHT, LAYOUT_LIST, SM_WIDTH,
+  updateSettingsPopup, updateSettingsViewId, lockCurrentList,
+} from '../actions/chunk';
+import {
+  DOMAIN_NAME, HASH_SUPPORT, PROFILE_POPUP, SETTINGS_VIEW_ACCOUNT, LOCK, UNLOCKED,
 } from '../types/const';
-import { getLayoutType } from '../selectors';
+import { getCurrentLockListStatus, getCanChangeListNames } from '../selectors';
 import { popupFMV } from '../types/animConfigs';
 import { computePositionTranslate } from '../utils/popup';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
-const PinMenuPopup = () => {
+const TopBarProfilePopup = () => {
 
   const { width: safeAreaWidth, height: safeAreaHeight } = useSafeAreaFrame();
   const insets = useSafeAreaInsets();
-  const isShown = useSelector(state => state.display.isPinMenuPopupShown);
-  const anchorPosition = useSelector(
-    state => state.display.pinMenuPopupPosition
-  );
-  const selectingLinkId = useSelector(state => state.display.selectingLinkId);
-  const layoutType = useSelector(state => getLayoutType(state));
+  const isShown = useSelector(state => state.display.isProfilePopupShown);
+  const anchorPosition = useSelector(state => state.display.profilePopupPosition);
+  const lockStatus = useSelector(state => getCurrentLockListStatus(state));
+  const canChangeListNames = useSelector(state => getCanChangeListNames(state));
   const [popupSize, setPopupSize] = useState(null);
   const [didCloseAnimEnd, setDidCloseAnimEnd] = useState(!isShown);
   const [derivedIsShown, setDerivedIsShown] = useState(isShown);
@@ -38,25 +38,37 @@ const PinMenuPopup = () => {
 
   const onCancelBtnClick = useCallback(() => {
     if (didClick.current) return;
-    dispatch(updatePopup(PIN_MENU_POPUP, false, null));
+    dispatch(updatePopup(PROFILE_POPUP, false, null));
     didClick.current = true;
   }, [dispatch]);
 
-  const onMenuPopupClick = (text) => {
-    if (!text || didClick.current) return;
+  const onRefreshBtnClick = () => {
+    dispatch(updatePopup(PROFILE_POPUP, false));
+    dispatch(refreshFetched(true, true));
+  };
 
-    onCancelBtnClick();
-    if ([PIN_LEFT, PIN_UP].includes(text)) {
-      dispatch(movePinnedLink(selectingLinkId, SWAP_LEFT));
-    } else if ([PIN_RIGHT, PIN_DOWN].includes(text)) {
-      dispatch(movePinnedLink(selectingLinkId, SWAP_RIGHT));
-    } else if ([UNPIN].includes(text)) {
-      dispatch(unpinLinks([selectingLinkId]));
-    } else {
-      console.log(`In PinMenuPopup, invalid text: ${text}`);
-    }
+  const onSettingsBtnClick = () => {
+    dispatch(updatePopup(PROFILE_POPUP, false));
 
-    didClick.current = true;
+    dispatch(updateSettingsViewId(SETTINGS_VIEW_ACCOUNT, true));
+    dispatch(updateSettingsPopup(true));
+  };
+
+  const onSupportBtnClick = () => {
+    dispatch(updatePopup(PROFILE_POPUP, false));
+    Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT);
+  };
+
+  const onSignOutBtnClick = () => {
+    // No need to update it, will get already unmount
+    //dispatch(updatePopup(PROFILE_POPUP, false));
+    dispatch(signOut());
+  };
+
+  const onLockBtnClick = () => {
+    dispatch(updatePopup(PROFILE_POPUP, false));
+    // Wait for the close animation to finish first
+    setTimeout(() => dispatch(lockCurrentList()), 100);
   };
 
   const onPopupLayout = (e) => {
@@ -123,27 +135,38 @@ const PinMenuPopup = () => {
 
   if (!derivedAnchorPosition) return null;
 
-  let menu = [PIN_LEFT, PIN_RIGHT, UNPIN];
-  if (layoutType === LAYOUT_LIST || safeAreaWidth < SM_WIDTH) {
-    menu = [PIN_UP, PIN_DOWN, UNPIN];
-  }
-
-  const buttons = (
+  const supportAndSignOutButtons = (
     <React.Fragment>
-      <View style={tailwind('h-11 flex-row items-center justify-start pl-4 pr-4 pt-1')}>
-        <Text style={tailwind('text-left text-sm font-semibold text-gray-600 blk:text-gray-200')} numberOfLines={1} ellipsizeMode="tail">Manage pin</Text>
-      </View>
-      {menu.map(text => {
-        return (
-          <TouchableOpacity key={text} onPress={() => onMenuPopupClick(text)} style={tailwind('w-full py-2.5 pl-4 pr-4')}>
-            <Text style={tailwind('text-left text-sm font-normal text-gray-700 blk:text-gray-200')} numberOfLines={1} ellipsizeMode="tail">{text}</Text>
-          </TouchableOpacity>
-        );
-      })}
+      <TouchableOpacity onPress={onSupportBtnClick} style={tailwind('w-full py-2.5 pl-4')}>
+        <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>Support</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={onSignOutBtnClick} style={tailwind('w-full py-2.5 pl-4')}>
+        <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>Sign out</Text>
+      </TouchableOpacity>
     </React.Fragment>
   );
 
-  const popupClassNames = 'absolute min-w-32 max-w-64 rounded-lg bg-white pb-1 shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800';
+  let buttons;
+  if (!canChangeListNames) {
+    buttons = supportAndSignOutButtons;
+  } else {
+    buttons = (
+      <React.Fragment>
+        {lockStatus === UNLOCKED && <TouchableOpacity onPress={onLockBtnClick} style={tailwind('w-full py-2.5 pl-4')}>
+          <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>{LOCK}</Text>
+        </TouchableOpacity>}
+        <TouchableOpacity onPress={onRefreshBtnClick} style={tailwind('w-full py-2.5 pl-4')}>
+          <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>Refresh</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onSettingsBtnClick} style={tailwind('w-full py-2.5 pl-4')}>
+          <Text style={tailwind('text-sm font-normal text-gray-700 blk:text-gray-200')}>Settings</Text>
+        </TouchableOpacity>
+        {supportAndSignOutButtons}
+      </React.Fragment>
+    );
+  }
+
+  const popupClassNames = 'absolute min-w-28 rounded-lg bg-white py-2 shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800';
 
   let panel, bgStyle = { opacity: 0 };
   if (popupSize) {
@@ -199,4 +222,4 @@ const PinMenuPopup = () => {
   );
 };
 
-export default React.memo(PinMenuPopup);
+export default React.memo(TopBarProfilePopup);

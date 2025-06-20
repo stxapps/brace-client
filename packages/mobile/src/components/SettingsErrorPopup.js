@@ -8,11 +8,12 @@ import {
 } from '../actions/chunk';
 import { DOMAIN_NAME, HASH_SUPPORT, DIED_UPDATING, SM_WIDTH } from '../types/const';
 
-import { useSafeAreaFrame, useTailwind } from '.';
+import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
 const _SettingsUpdateErrorPopup = () => {
 
   const { width: safeAreaWidth } = useSafeAreaFrame();
+  const insets = useSafeAreaInsets();
   const settingsStatus = useSelector(state => state.display.settingsStatus);
   const didClick = useRef(false);
   const dispatch = useDispatch();
@@ -36,8 +37,12 @@ const _SettingsUpdateErrorPopup = () => {
 
   if (settingsStatus !== DIED_UPDATING) return null;
 
+  const canvasStyle = {
+    paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right,
+  };
+
   return (
-    <View style={tailwind('absolute inset-x-0 top-14 z-40 flex-row items-start justify-center md:top-0 elevation-xl')}>
+    <View style={[tailwind('absolute inset-x-0 top-14 z-40 flex-row items-start justify-center md:top-0'), canvasStyle]}>
       <View style={tailwind('w-full max-w-md')}>
         <View style={tailwind('m-4 rounded-md bg-red-50 p-4 shadow-lg')}>
           <View style={tailwind('flex-row')}>
@@ -69,6 +74,7 @@ const _SettingsUpdateErrorPopup = () => {
 
 const _SettingsConflictErrorPopup = () => {
 
+  const insets = useSafeAreaInsets();
   const isSettingsPopupShown = useSelector(state => state.display.isSettingsPopupShown);
   const conflictedSettingsContents = useSelector(
     state => state.conflictedSettings.contents
@@ -107,8 +113,12 @@ const _SettingsConflictErrorPopup = () => {
     didClose
   ) return null;
 
+  const canvasStyle = {
+    paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right,
+  };
+
   return (
-    <View style={tailwind('absolute inset-x-0 top-14 z-40 flex-row items-start justify-center md:top-0 elevation-xl')}>
+    <View style={[tailwind('absolute inset-x-0 top-14 z-40 flex-row items-start justify-center md:top-0'), canvasStyle]}>
       <View style={tailwind('w-full max-w-md')}>
         <View style={tailwind('m-4 rounded-md bg-red-50 p-4 shadow-lg')}>
           <View style={tailwind('flex-row')}>
@@ -118,7 +128,7 @@ const _SettingsConflictErrorPopup = () => {
               </Svg>
             </View>
             <View style={tailwind('ml-3 flex-shrink flex-grow lg:mt-0.5')}>
-              <Text style={tailwind('text-left text-base font-medium text-red-800 lg:text-sm')}>Settings version conflicts!</Text>
+              <Text style={tailwind('mr-4 text-left text-base font-medium text-red-800 lg:text-sm')}>Settings version conflicts!</Text>
               <Text style={tailwind('mt-2.5 text-sm font-normal leading-6 text-red-700')}>Please go to Settings and manually choose the correct version.</Text>
               <View style={tailwind('mt-4')}>
                 <View style={tailwind('-mx-2 -my-1.5 flex-row')}>

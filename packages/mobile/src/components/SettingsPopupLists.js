@@ -5,7 +5,6 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 import { Circle } from 'react-native-animated-spinkit';
-import KeyboardManager from 'react-native-keyboard-manager';
 
 import { updatePopup } from '../actions';
 import {
@@ -17,7 +16,7 @@ import {
   MODE_VIEW, MODE_EDIT, SM_WIDTH, BLK_MODE,
 } from '../types/const';
 import { getListNameMap, makeGetListNameEditor, getThemeMode } from '../selectors';
-import { validateListNameDisplayName } from '../utils';
+import { validateListNameDisplayName, getRect } from '../utils';
 import { initialListNameEditorState } from '../types/initialStates';
 
 import { useSafeAreaFrame, useTailwind } from '.';
@@ -33,10 +32,7 @@ const SettingsPopupLists = (props) => {
   };
 
   useEffect(() => {
-    if (Platform.OS === 'ios') KeyboardManager.setEnable(true);
-
     return () => {
-      if (Platform.OS === 'ios') KeyboardManager.setEnable(false);
       if (Platform.OS === 'android') Keyboard.dismiss();
     };
   }, []);
@@ -213,9 +209,7 @@ const _ListNameEditor = (props) => {
   const onMenuBtnClick = () => {
     if (!menuBtn.current) return;
     menuBtn.current.measure((_fx, _fy, width, height, x, y) => {
-      const rect = {
-        x, y, width, height, top: y, right: x + width, bottom: y + height, left: x,
-      };
+      const rect = getRect(x, y, width, height);
       dispatch(updateSelectingListName(listNameObj.listName));
       dispatch(updatePopup(SETTINGS_LISTS_MENU_POPUP, true, rect));
     });

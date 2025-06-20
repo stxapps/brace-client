@@ -157,9 +157,9 @@ const displayReducer = (state = initialState, action) => {
         //isSWWUPopupShown: isShown, // WarnPopup should still be shown
       };
       if (!isShown) {
-        newState.isAddPopupShown = isShown;
+        newState.isAddPopupShown = false;
         newState.addPopupPosition = null;
-        newState.isProfilePopupShown = isShown;
+        newState.isProfilePopupShown = false;
         newState.profilePopupPosition = null;
         newState.isCardItemMenuPopupShown = false;
         newState.cardItemMenuPopupPosition = null;

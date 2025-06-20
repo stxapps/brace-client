@@ -247,20 +247,6 @@ export const isPopupShown = (state) => {
   return getPopupShownId(state) !== null;
 };
 
-export const updateMenuPopupAsBackPressed = (menuProvider, dispatch, getState) => {
-
-  if (menuProvider.isMenuOpen()) {
-    const id = getPopupShownId(getState());
-    if (id) {
-      menuProvider.closeMenu();
-      dispatch(updatePopup(id, false));
-      return true;
-    }
-  }
-
-  return false;
-};
-
 export const signOut = () => async (dispatch, getState) => {
   await userSession.signUserOut();
   await resetState(dispatch);

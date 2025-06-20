@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated } from 'react-native';
+import { View, Animated } from 'react-native';
 import { connect } from 'react-redux';
 
 import { BOTTOM_BAR_HEIGHT } from '../types/const';
@@ -9,9 +9,6 @@ import { bbFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
 import BottomBarCommands from './BottomBarCommands';
-import BottomBarAddPopup from './BottomBarAddPopup';
-import BottomBarSearchPopup from './BottomBarSearchPopup';
-import BottomBarProfilePopup from './BottomBarProfilePopup';
 import BottomBarBulkEditCommands from './BottomBarBulkEditCommands';
 
 class BottomBar extends React.PureComponent {
@@ -39,19 +36,20 @@ class BottomBar extends React.PureComponent {
 
     const { isBulkEditing, insets, tailwind } = this.props;
 
-    const style = {
-      height: toPx(BOTTOM_BAR_HEIGHT) + insets.bottom,
+    const bbStyle = {
+      paddingBottom: insets.bottom,
+      paddingLeft: insets.left, paddingRight: insets.right,
       transform: [{ translateY: this.bottomBarTranslateY }],
     };
+    const style = { height: toPx(BOTTOM_BAR_HEIGHT) };
 
     return (
       <React.Fragment>
-        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 z-30 border-t border-gray-200 bg-white blk:border-gray-700 blk:bg-gray-800'), style]}>
-          {isBulkEditing ? <BottomBarBulkEditCommands /> : <BottomBarCommands />}
+        <Animated.View style={[tailwind('absolute inset-x-0 bottom-0 z-30 bg-white blk:bg-gray-800'), bbStyle]}>
+          <View style={[tailwind('border-t border-gray-200 blk:border-gray-700'), style]}>
+            {isBulkEditing ? <BottomBarBulkEditCommands /> : <BottomBarCommands />}
+          </View>
         </Animated.View>
-        <BottomBarAddPopup />
-        <BottomBarSearchPopup />
-        <BottomBarProfilePopup />
       </React.Fragment>
     );
   }
