@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   View, Text, TouchableOpacity, TextInput, Animated, Keyboard, BackHandler, Platform,
+  Easing,
 } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
@@ -10,7 +11,7 @@ import {
   SEARCH_POPUP, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT, BLK_MODE,
 } from '../types/const';
 import { getThemeMode } from '../selectors';
-import { toPx } from '../utils';
+import { isNumber, toPx } from '../utils';
 import { bbFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -21,7 +22,7 @@ class BottomBarSearchPopup extends React.PureComponent {
     super(props);
 
     this.state = {
-      keyboardHeight: 0,
+      keyboardHeight: 0, keyboardDuration: 0,
     };
 
     this.searchInput = React.createRef();
@@ -110,12 +111,14 @@ class BottomBarSearchPopup extends React.PureComponent {
     if (isSearchPopupShown) {
       if (!this.keyboardDidShowListener) {
         this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', (e) => {
-          this.setState({ keyboardHeight: e.endCoordinates.height });
+          this.setState({
+            keyboardHeight: e.endCoordinates.height, keyboardDuration: e.duration,
+          });
         });
       }
       if (!this.keyboardDidHideListener) {
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardWillHide', () => {
-          this.setState({ keyboardHeight: 0 });
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardWillHide', (e) => {
+          this.setState({ keyboardHeight: 0, keyboardDuration: e.duration });
         });
       }
     } else {
@@ -133,7 +136,7 @@ class BottomBarSearchPopup extends React.PureComponent {
   translateSearchPopup = (prevIsBottomBarShown) => {
     const { isBottomBarShown, isSearchPopupShown, insets } = this.props;
 
-    let toValue;
+    let toValue, isIosAnim = false;
     if (!isBottomBarShown) {
       toValue = toPx(BOTTOM_BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT) + insets.bottom;
     } else {
@@ -143,6 +146,7 @@ class BottomBarSearchPopup extends React.PureComponent {
         const bottom = toPx(BOTTOM_BAR_HEIGHT) + insets.bottom;
         if (Platform.OS === 'ios' && this.state.keyboardHeight > bottom) {
           toValue = -1 * (this.state.keyboardHeight - bottom);
+          isIosAnim = true;
         } else {
           toValue = 0;
         }
@@ -151,6 +155,13 @@ class BottomBarSearchPopup extends React.PureComponent {
 
     if (!prevIsBottomBarShown && isBottomBarShown) {
       Animated.timing(this.searchPopupTranslateY, { toValue, ...bbFMV.visible }).start();
+    } else if (isIosAnim) {
+      let duration = this.state.keyboardDuration;
+      if (!isNumber(duration)) duration = 250;
+
+      Animated.timing(this.searchPopupTranslateY, {
+        toValue, duration, easing: Easing.inOut(Easing.ease), useNativeDriver: true,
+      }).start();
     } else {
       Animated.timing(this.searchPopupTranslateY, {
         toValue: toValue,
