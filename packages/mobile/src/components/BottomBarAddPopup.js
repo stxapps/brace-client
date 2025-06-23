@@ -112,7 +112,7 @@ const BottomBarAddPopup = () => {
   return (
     <>
       <TouchableOpacity activeOpacity={1.0} onPress={onCancelBtnClick} style={tailwind('absolute inset-0 z-40 bg-black bg-opacity-25')} />
-      <KeyboardAvoidingView behavior="position" style={tailwind('absolute inset-x-0 bottom-0 z-41')} contentContainerStyle={[tailwind('rounded-t-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
+      <KeyboardAvoidingView behavior="position" enabled={Platform.OS === 'ios'} style={tailwind('absolute inset-x-0 bottom-0 z-41')} contentContainerStyle={[tailwind('rounded-t-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
         <View style={tailwind('px-4 pt-6 pb-6')}>
           <View style={tailwind('flex-row items-center justify-start')}>
             <Text style={tailwind('flex-none text-sm font-normal text-gray-500 blk:text-gray-300')}>Url:</Text>
