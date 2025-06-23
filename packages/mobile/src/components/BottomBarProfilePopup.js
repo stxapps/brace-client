@@ -120,8 +120,10 @@ class BottomBarProfilePopup extends React.PureComponent {
   };
 
   onSupportBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, false);
     Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT);
+    setTimeout(() => {
+      this.props.updatePopup(PROFILE_POPUP, false);
+    }, 100);
   };
 
   onSignOutBtnClick = () => {

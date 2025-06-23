@@ -55,8 +55,10 @@ const TopBarProfilePopup = () => {
   };
 
   const onSupportBtnClick = () => {
-    dispatch(updatePopup(PROFILE_POPUP, false));
     Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT);
+    setTimeout(() => {
+      dispatch(updatePopup(PROFILE_POPUP, false));
+    }, 100);
   };
 
   const onSignOutBtnClick = () => {
