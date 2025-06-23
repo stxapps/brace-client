@@ -184,7 +184,7 @@ class BottomBarSearchPopup extends React.PureComponent {
     const inputClassNames = Platform.OS === 'ios' ? 'py-2 leading-4' : 'py-0.5';
 
     return (
-      <>
+      <View style={tailwind('flex-row items-center justify-between border-t border-gray-200 px-2 py-2 blk:border-gray-700')}>
         <View style={tailwind('flex-shrink flex-grow')}>
           <TextInput ref={this.searchInput} onChange={this.onSearchInputChange} style={tailwind(`w-full rounded-full border border-gray-400 bg-white pl-4 pr-6 text-sm font-normal text-gray-700 blk:border-gray-600 blk:bg-gray-800 blk:text-gray-200 ${inputClassNames}`)} placeholder="Search" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={searchString} autoCapitalize="none" />
           {/* A bug display: none doesn't work with absolute, need to change to relative. https://github.com/facebook/react-native/issues/18415 */}
@@ -197,7 +197,7 @@ class BottomBarSearchPopup extends React.PureComponent {
         <TouchableOpacity onPress={this.onSearchCancelBtnClick} style={tailwind('ml-2 h-10 flex-shrink-0 flex-grow-0 items-center justify-center rounded-md px-1.5 py-1')}>
           <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-300')}>Cancel</Text>
         </TouchableOpacity>
-      </>
+      </View>
     );
   }
 
@@ -221,9 +221,7 @@ class BottomBarSearchPopup extends React.PureComponent {
       </KeyboardAvoidingView>
     ) : (
       <Animated.View style={[tailwind('absolute inset-x-0 z-10 bg-white blk:bg-gray-800'), style]}>
-        <View style={tailwind('flex-row items-center justify-between border-t border-gray-200 px-2 py-2 blk:border-gray-700')}>
-          {this.renderContent()}
-        </View >
+        {this.renderContent()}
       </Animated.View >
     );
     return popup;
