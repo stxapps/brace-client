@@ -249,7 +249,7 @@ const TagEditorPopup = () => {
       <TouchableWithoutFeedback>
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>
-      <View style={tailwind(`flex-1 justify-center items-center p-4 ${Platform.OS === 'ios' ? 'lg:justify-start' : ''}`)}>
+      <View style={tailwind(`flex-1 items-center justify-center p-4 ${Platform.OS === 'ios' ? 'lg:justify-start' : ''}`)}>
         <Animated.View style={[tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
           <ScrollView style={{ maxHeight: panelHeight }} automaticallyAdjustKeyboardInsets={true} keyboardShouldPersistTaps="handled">
             <View style={tailwind('px-4 pt-8 pb-4 sm:px-6 sm:pb-6')}>
