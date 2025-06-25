@@ -253,7 +253,7 @@ const getSafeAreaFrameFromState = createSelector(
       x: insets.left, y: insets.top, width, height,
       windowWidth, windowHeight, visualWidth, visualHeight,
     };
-  }
+  },
 );
 
 const getSafeAreaInsetsFromState = createSelector(
