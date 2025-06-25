@@ -85,12 +85,11 @@ export const useSafeAreaFrame = () => {
   const screenInsets = useScreenInsets();
 
   const safeAreaInsets = getSafeAreaInsets(
-    windowX, windowY, windowWidth, windowHeight, screenWidth, screenHeight, screenInsets,
+    windowX, windowY, windowWidth, windowHeight,
+    screenWidth, screenHeight, screenInsets,
   );
 
-  return getSafeAreaFrame(
-    windowX, windowY, windowWidth, windowHeight, safeAreaInsets,
-  );
+  return getSafeAreaFrame(windowWidth, windowHeight, safeAreaInsets);
 };
 
 export const useSafeAreaInsets = () => {
@@ -101,7 +100,8 @@ export const useSafeAreaInsets = () => {
   const screenInsets = useScreenInsets();
 
   return getSafeAreaInsets(
-    windowX, windowY, windowWidth, windowHeight, screenWidth, screenHeight, screenInsets,
+    windowX, windowY, windowWidth, windowHeight,
+    screenWidth, screenHeight, screenInsets,
   );
 };
 
@@ -121,7 +121,7 @@ export const withSafeAreaContext = (Component) => {
             screenWidth, screenHeight, screenInsets,
           );
           const safeAreaFrame = getSafeAreaFrame(
-            windowX, windowY, windowWidth, windowHeight, safeAreaInsets
+            windowWidth, windowHeight, safeAreaInsets
           );
 
           const safeAreaX = safeAreaFrame.x;

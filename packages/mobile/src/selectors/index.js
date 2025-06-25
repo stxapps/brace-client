@@ -250,7 +250,8 @@ const getSafeAreaFrameFromState = createSelector(
     height = height - insets.top - (assumeKeyboard ? 0 : insets.bottom);
 
     return {
-      x: 0, y: 0, width, height, windowWidth, windowHeight, visualWidth, visualHeight,
+      x: insets.left, y: insets.top, width, height,
+      windowWidth, windowHeight, visualWidth, visualHeight,
     };
   }
 );
@@ -280,15 +281,16 @@ const getSafeAreaFrameFromArgs = createSelector(
   (...args) => args[0],
   (...args) => args[1],
   (...args) => args[2],
-  (...args) => args[3],
-  (...args) => args[4],
-  (windowX, windowY, windowWidth, windowHeight, safeAreaInsets) => {
-    const safeAreaX = windowX + safeAreaInsets.left;
-    const safeAreaY = windowY + safeAreaInsets.top;
+  (windowWidth, windowHeight, safeAreaInsets) => {
+    const safeAreaX = safeAreaInsets.left;
+    const safeAreaY = safeAreaInsets.top;
     const safeAreaWidth = windowWidth - safeAreaInsets.left - safeAreaInsets.right;
     const safeAreaHeight = windowHeight - safeAreaInsets.top - safeAreaInsets.bottom;
 
-    return { x: safeAreaX, y: safeAreaY, width: safeAreaWidth, height: safeAreaHeight };
+    return {
+      x: safeAreaX, y: safeAreaY, width: safeAreaWidth, height: safeAreaHeight,
+      windowWidth, windowHeight,
+    };
   },
 );
 
