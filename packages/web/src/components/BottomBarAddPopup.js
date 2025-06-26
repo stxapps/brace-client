@@ -81,7 +81,7 @@ class BottomBarAddPopup extends React.PureComponent {
       <React.Fragment>
         <button onClick={this.onAddCancelBtnClick} tabIndex={-1} className={tailwind(`fixed inset-0 z-40 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none ${!isAddPopupShown ? 'hidden' : ''}`)} />
         <div style={popupStyle} className={tailwind(`fixed inset-x-0 bottom-0 z-41 transform rounded-t-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25 ${!isAddPopupShown ? 'translate-y-full' : ''}`)}>
-          <div className={tailwind('px-4 pt-6 pb-6 ')}>
+          <div className={tailwind('px-4 pt-6 pb-6')}>
             <div className={tailwind('flex')}>
               <span className={tailwind('inline-flex items-center text-sm text-gray-500 blk:text-gray-300')}>Url:</span>
               <div className={tailwind('ml-3 flex-1')}>

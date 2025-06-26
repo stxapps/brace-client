@@ -265,7 +265,7 @@ const SettingsPopup = () => {
 
     return (
       <div style={canvasStyle} className={tailwind('fixed inset-0 z-30 bg-white blk:bg-gray-900')}>
-        <div className={tailwind('relative w-full h-full')}>
+        <div className={tailwind('relative h-full w-full')}>
           {_renderPanel(contentWithSidebar)}
           {_renderPanelCloseBtn()}
           {/* Sidebar for mobile */}
@@ -475,7 +475,7 @@ const SettingsPopup = () => {
     );
     return (
       <div style={canvasStyle} className={tailwind('fixed inset-0 z-30 bg-white blk:bg-gray-900')}>
-        <div className={tailwind('relative w-full h-full')}>
+        <div className={tailwind('relative h-full w-full')}>
           {_renderPanel(content)}
           {_renderConflictLoading()}
           {_renderConflictMergeError()}

@@ -180,7 +180,7 @@ const SignIn = (props) => {
             </div>
             <div className={tailwind('ml-3 lg:mt-0.5')}>
               <h3 className={tailwind('text-left text-base font-medium text-red-800 lg:text-sm')}>Multiple accounts are deprecated!</h3>
-              <p className={tailwind('mt-2.5 text-sm text-red-700 leading-5.5')}>Multiple accounts per Secret Key are deprecated and will be removed. Please use one account per Secret Key instead. For more information: <a className={tailwind('rounded-sm underline hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700')} href="http://bit.ly/3Sv6ebK" target="_blank" rel="noreferrer">http://bit.ly/3Sv6ebK</a></p>
+              <p className={tailwind('mt-2.5 text-sm leading-5.5 text-red-700')}>Multiple accounts per Secret Key are deprecated and will be removed. Please use one account per Secret Key instead. For more information: <a className={tailwind('rounded-sm underline hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700')} href="http://bit.ly/3Sv6ebK" target="_blank" rel="noreferrer">http://bit.ly/3Sv6ebK</a></p>
             </div>
           </div>
         </div>

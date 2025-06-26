@@ -41,7 +41,7 @@ const HubErrorPopup = () => {
           </div>
           <div className={tailwind('ml-3 lg:mt-0.5')}>
             <h3 className={tailwind('mr-4 text-left text-base font-medium text-red-800 lg:text-sm')}>Old data server is discontinued!</h3>
-            <p className={tailwind('mt-2.5 text-sm text-red-700 leading-5.5')}>Hiro-hosted data server is discontinued. <br className={tailwind('hidden sm:inline')} />Please migrate your data now. For more information: <a className={tailwind('rounded underline hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700')} href="http://bit.ly/3Sv6ebK" target="_blank" rel="noreferrer">http://bit.ly/3Sv6ebK</a></p>
+            <p className={tailwind('mt-2.5 text-sm leading-5.5 text-red-700')}>Hiro-hosted data server is discontinued. <br className={tailwind('hidden sm:inline')} />Please migrate your data now. For more information: <a className={tailwind('rounded underline hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700')} href="http://bit.ly/3Sv6ebK" target="_blank" rel="noreferrer">http://bit.ly/3Sv6ebK</a></p>
           </div>
         </div>
         <button onClick={onCloseBtnClick} className={tailwind('absolute top-1 right-1 rounded-md bg-red-50 p-1 hover:bg-red-100 focus:bg-red-100 focus:outline-none')} type="button">
