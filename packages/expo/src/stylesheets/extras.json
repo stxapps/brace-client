@@ -1,0 +1,133 @@
+{
+  "font-thin": {
+    "fontFamily": "Inter-Thin"
+  },
+  "font-extralight": {
+    "fontFamily": "Inter-ExtraLight"
+  },
+  "font-light": {
+    "fontFamily": "Inter-Light"
+  },
+  "font-normal": {
+    "fontFamily": "Inter-Regular"
+  },
+  "font-medium": {
+    "fontFamily": "Inter-Medium"
+  },
+  "font-semibold": {
+    "fontFamily": "Inter-SemiBold"
+  },
+  "font-bold": {
+    "fontFamily": "Inter-Bold"
+  },
+  "font-extrabold": {
+    "fontFamily": "Inter-ExtraBold"
+  },
+  "font-black": {
+    "fontFamily": "Inter-Black"
+  },
+  "shadow-xs": {
+    "shadowColor": "#000",
+    "shadowOffset": {
+      "width": 0,
+      "height": 1
+    },
+    "shadowOpacity": 0.05,
+    "shadowRadius": 0,
+
+    "elevation": 0.3
+  },
+  "shadow-sm": {
+    "shadowColor": "#000",
+    "shadowOffset": {
+      "width": 0,
+      "height": 1
+    },
+    "shadowOpacity": 0.05,
+    "shadowRadius": 1.2,
+
+    "elevation": 0.5
+  },
+  "shadow": {
+    "shadowColor": "#000",
+    "shadowOffset": {
+      "width": 0,
+      "height": 1.2
+    },
+    "shadowOpacity": 0.14,
+    "shadowRadius": 1.4,
+
+    "elevation": 1.5
+  },
+  "shadow-md": {
+    "shadowColor": "#000",
+    "shadowOffset": {
+      "width": 0,
+      "height": 2.6
+    },
+    "shadowOpacity": 0.16,
+    "shadowRadius": 2.6,
+
+    "elevation": 3
+  },
+  "shadow-lg": {
+    "shadowColor": "#000",
+    "shadowOffset": {
+      "width": 0,
+      "height": 3
+    },
+    "shadowOpacity": 0.18,
+    "shadowRadius": 8,
+
+    "elevation": 4
+  },
+  "shadow-xl": {
+    "shadowColor": "#000",
+    "shadowOffset": {
+      "width": 0,
+      "height": 8
+    },
+    "shadowOpacity": 0.18,
+    "shadowRadius": 12,
+
+    "elevation": 6
+  },
+  "shadow-inner": {
+    "shadowColor": "rgba(0, 0, 0, 0.06)",
+    "shadowOffset": {
+      "width": 0,
+      "height": 2
+    },
+    "shadowOpacity": 4,
+    "shadowRadius": 0,
+
+    "elevation": 6
+  },
+  "shadow-card-android": {
+    "elevation": 1.1
+  },
+  "elevation-xs": {
+    "elevation": 0.3
+  },
+  "elevation-sm": {
+    "elevation": 0.5
+  },
+  "elevation": {
+    "elevation": 1.5
+  },
+  "elevation-md": {
+    "elevation": 3
+  },
+  "elevation-lg": {
+    "elevation": 4
+  },
+  "elevation-xl": {
+    "elevation": 6
+  },
+  "w-auto": {
+    "width": "auto"
+  },
+  "aspect-7/12": {
+    "aspectRatio": 1.7142857
+  }
+}

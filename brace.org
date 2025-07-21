@@ -973,3 +973,49 @@ This and CI/CD are very important!
 - Join a test program
 - Choose approve purchase, or reject purchase in both purchase popup and in subscription management in Google Play App
 - Choose cancel subscription in subscription management in Google Play App
+* Expo
+** install
+- npx create-expo-app --template tabs
+- npx expo install expo-dev-client -- --save-dev
+- npm i 'https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?3d5bcd6ea9a17f00c76be5913009f2c02f13b95f'
+- npx expo install react-native-flag-secure
+- npm i react-redux redux redux-thunk reselect
+- npm i url-parse @wewatch/lexorank
+- npx expo install expo-share-intent@^4.1.1
+- npx expo install react-native-file-access
+- npx expo install expo-localization
+- npx expo install expo-iap
+- npx expo install expo-document-picker
+- npx expo install react-native-svg
+- npx expo install react-native-svg-transformer -- --save-dev
+- npx expo install react-native-webview
+- npx expo install react-native-keyboard-controller
+- npx expo install react-native-animated-spinkit
+- npx expo install react-native-share
+- npx expo install expo-build-properties
+- npx expo lint
+- npx expo install react-native-navigation-mode
+- npx expo install @react-native-async-storage/async-storage
+- npx expo install @react-native-community/netinfo
+- npm i https://github.com/stxapps/redux-offline#028205cec27dcf1ae05e310fc7e45779ee908949
+- npm i jest-diff@29.7.0
+- npm i react-native-swiper
+- npx expo install expo-clipboard
+- npx expo install expo-image-picker expo-image-manipulator
+- npx expo install @d11/react-native-fast-image
+** build
+- npx expo prebuild --clean
+- ios
+  + open ios/Brace.xcworkspace
+  + choose Brace on the right pane
+  + targets: Brace, on General, update Version, App Category
+  + targets: Brace, on Signing & Capabilities, add In-App Purchase
+  + targets: Brace, on Build Phases, add Target Dependency: SavetoBrace
+  + targets: SavetoBrace, on General, update Version
+  + targets: SavetoBrace, on General, Display Name: Save to Brace
+  + targets: SavetoBrace, on Signing & Capabilities, select team
+- android
+  + copy brace-android-upload-key.keystore to android/app
+  + update keystore info in android/gradle.properties
+  + update signingConfigs/release in android/app/build.gradle
+  + change in buildTypes/release signingConfig to signingConfigs.release
