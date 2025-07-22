@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import * as ImagePicker from 'expo-image-picker';
-import { ImageManipulator } from 'expo-image-manipulator';
+import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 
 import { useSelector, useDispatch } from '../store';
 import fileApi from '../apis/localFile';
@@ -20,6 +20,37 @@ import { dialogFMV } from '../types/animConfigs';
 import cache from '../utils/cache';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useKeyboardHeight, useTailwind } from '.';
+
+const MAX_WIDTH = 1024;
+const MAX_HEIGHT = 597;
+
+const resizeImage = async (asset) => {
+  const { uri, width, height } = asset;
+  const cxt = ImageManipulator.manipulate(uri);
+
+  let outUri = uri;
+  if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+    let newWidth, newHeight;
+
+    const aspectRatio = width / height;
+    if (width / MAX_WIDTH > height / MAX_HEIGHT) {
+      newWidth = MAX_WIDTH;
+      newHeight = MAX_WIDTH / aspectRatio;
+    } else {
+      newHeight = MAX_HEIGHT;
+      newWidth = MAX_HEIGHT * aspectRatio;
+    }
+
+    let imageType = SaveFormat.JPEG;
+    if (uri.slice(-3).toLowerCase() === 'png') imageType = SaveFormat.PNG;
+
+    const ref = await cxt.resize({ width: newWidth, height: newHeight }).renderAsync();
+    const res = await ref.saveAsync({ compress: 0.92, format: imageType });
+    outUri = res.uri;
+  }
+
+  return outUri;
+};
 
 const CustomEditorPopup = () => {
 
@@ -84,35 +115,17 @@ const CustomEditorPopup = () => {
   const onUploadImageBtnClick = async () => {
     try {
       const res = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['images'],
         allowsEditing: true,
-        allowsMultipleSelection: false,
-
-        aspect: [4, 3],
-        quality: 1,
+        mediaTypes: 'images',
+        aspect: [MAX_WIDTH, MAX_HEIGHT],
       });
       dispatch(increaseUpdateStatusBarStyleCount());
 
       if (res.canceled) return;
 
-      const data = res.assets[0];
-      /*const data = await ImagePicker.openPicker({
-        mediaType: 'photo',
-        cropping: true,
-        width: 1024,
-        height: 597,
-        compressImageMaxWidth: 1024,
-        compressImageMaxHeight: 597,
-        showCropGuidelines: false,
-        enableRotationGesture: false,
-        cropperActiveWidgetColor: '#FF6300', // github.com/Yalantis/uCrop/blob/develop/
-        cropperStatusBarColor: '#20242F', // ucrop/src/main/res/values/colors.xml
-        cropperToolbarColor: '#20242F',
-        cropperToolbarWidgetColor: '#F3F4F6',
-      });*/
-
-
-      dispatch(updateCustomEditor(null, { ...data }, 0, 0, 0, 0));
+      const asset = res.assets[0];
+      const path = await resizeImage(asset);
+      dispatch(updateCustomEditor(null, { ...asset, path }, 0, 0, 0, 0));
     } catch (error) {
       console.log('In CustomEditorPopup, ImagePicker error:', error);
       dispatch(increaseUpdateStatusBarStyleCount());
@@ -201,7 +214,7 @@ const CustomEditorPopup = () => {
   }
   const bgStyle = { opacity: popupAnim };
 
-  const inputClassNames = Platform.OS === 'ios' ? 'py-1.5 leading-5' : 'py-0.5';
+  const inputClassNames = Platform.OS === 'ios' ? 'py-1.5 leading-5' : 'py-1';
 
   let imageUrl;
   if (isString(customEditor.image)) imageUrl = customEditor.imageUrl;

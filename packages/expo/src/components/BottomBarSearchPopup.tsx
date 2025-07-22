@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  View, Text, TouchableOpacity, TextInput, Animated, Keyboard, BackHandler, Platform,
+  View, Text, TouchableOpacity, TextInput, Keyboard, BackHandler, Platform,
 } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
@@ -11,33 +11,39 @@ import {
   SEARCH_POPUP, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT, BLK_MODE,
 } from '../types/const';
 import { getThemeMode } from '../selectors';
-import { toPx } from '../utils';
-import { bbFMV } from '../types/animConfigs';
+import { isObject, isNumber, toPx } from '../utils';
 
 import { withTailwind } from '.';
+
+const getKbHt = () => {
+  const kbMtx = Keyboard.metrics();
+  if (isObject(kbMtx) && isNumber(kbMtx.height)) return kbMtx.height;
+  return 0;
+};
 
 class BottomBarSearchPopup extends React.PureComponent<any, any> {
 
   searchInput: any;
-  searchPopupTranslateY: Animated.Value;
   searchPopupBackHandler: any;
+  keyboardWillShowListener: any;
   keyboardDidShowListener: any;
+  keyboardWillChangeListener: any;
+  keyboardDidChangeListener: any;
+  keyboardWillHideListener: any;
   keyboardDidHideListener: any;
   doFocus: boolean;
 
   constructor(props) {
     super(props);
 
-    this.state = {
-      keyboardHeight: 0,
-    };
-
+    this.state = { keyboardHeight: getKbHt() };
     this.searchInput = React.createRef();
-
-    this.searchPopupTranslateY = new Animated.Value(toPx(SEARCH_POPUP_HEIGHT));
-
     this.searchPopupBackHandler = null;
+    this.keyboardWillShowListener = null;
     this.keyboardDidShowListener = null;
+    this.keyboardWillChangeListener = null;
+    this.keyboardDidChangeListener = null;
+    this.keyboardWillHideListener = null;
     this.keyboardDidHideListener = null;
     this.doFocus = true;
   }
@@ -46,13 +52,11 @@ class BottomBarSearchPopup extends React.PureComponent<any, any> {
     const { searchString, isSearchPopupShown } = this.props;
 
     this.registerSearchPopupBackHandler(isSearchPopupShown);
-    this.registerKeyboardListeners(isSearchPopupShown);
+    this.registerKeyboardListeners(true);
 
     if (searchString && !isSearchPopupShown) {
       this.doFocus = false;
       this.props.updatePopup(SEARCH_POPUP, true);
-    } else if (searchString && isSearchPopupShown) {
-      this.translateSearchPopup(true);
     } else if (!searchString && isSearchPopupShown) {
       this.props.updatePopup(SEARCH_POPUP, false);
     }
@@ -60,14 +64,12 @@ class BottomBarSearchPopup extends React.PureComponent<any, any> {
 
   componentDidUpdate(prevProps, prevState) {
 
-    const { isBottomBarShown, isSearchPopupShown } = this.props;
+    const { isSearchPopupShown } = this.props;
     if (prevProps.isSearchPopupShown !== isSearchPopupShown) {
       this.registerSearchPopupBackHandler(isSearchPopupShown);
     }
 
     if (!prevProps.isSearchPopupShown && isSearchPopupShown) {
-      // Register keyboard listerners before input focus
-      this.registerKeyboardListeners(isSearchPopupShown);
       if (this.doFocus) this.searchInput.current.focus();
       this.doFocus = true;
     }
@@ -75,15 +77,6 @@ class BottomBarSearchPopup extends React.PureComponent<any, any> {
     if (prevProps.isSearchPopupShown && !isSearchPopupShown) {
       // Input blur before unregister keyboard listerners
       this.searchInput.current.blur();
-      this.registerKeyboardListeners(isSearchPopupShown);
-    }
-
-    if (
-      prevProps.isBottomBarShown !== isBottomBarShown ||
-      prevProps.isSearchPopupShown !== isSearchPopupShown ||
-      prevState.keyboardHeight !== this.state.keyboardHeight
-    ) {
-      this.translateSearchPopup(prevProps.isBottomBarShown);
     }
   }
 
@@ -114,57 +107,87 @@ class BottomBarSearchPopup extends React.PureComponent<any, any> {
     }
   };
 
-  registerKeyboardListeners = (isSearchPopupShown) => {
-    if (isSearchPopupShown) {
+  registerKeyboardListeners = (doRegister) => {
+    if (doRegister) {
+      if (!this.keyboardWillShowListener) {
+        this.keyboardWillShowListener = Keyboard.addListener(
+          'keyboardWillShow', (e) => {
+            if (this.state.keyboardHeight !== e.endCoordinates.height) {
+              this.setState({ keyboardHeight: e.endCoordinates.height });
+            }
+          }
+        );
+      }
       if (!this.keyboardDidShowListener) {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardWillShow', (e) => {
-          this.setState({ keyboardHeight: e.endCoordinates.height });
-        });
+        this.keyboardDidShowListener = Keyboard.addListener(
+          'keyboardDidShow', (e) => {
+            if (this.state.keyboardHeight !== e.endCoordinates.height) {
+              this.setState({ keyboardHeight: e.endCoordinates.height });
+            }
+          }
+        );
+      }
+      if (!this.keyboardWillChangeListener) {
+        this.keyboardWillChangeListener = Keyboard.addListener(
+          'keyboardWillChangeFrame', (e) => {
+            if (this.state.keyboardHeight !== e.endCoordinates.height) {
+              this.setState({ keyboardHeight: e.endCoordinates.height });
+            }
+          }
+        );
+      }
+      if (!this.keyboardDidChangeListener) {
+        this.keyboardDidChangeListener = Keyboard.addListener(
+          'keyboardDidChangeFrame', (e) => {
+            if (this.state.keyboardHeight !== e.endCoordinates.height) {
+              this.setState({ keyboardHeight: e.endCoordinates.height });
+            }
+          }
+        );
+      }
+      if (!this.keyboardWillHideListener) {
+        this.keyboardWillHideListener = Keyboard.addListener(
+          'keyboardWillHide', () => {
+            if (this.state.keyboardHeight !== 0) {
+              this.setState({ keyboardHeight: 0 });
+            }
+          }
+        );
       }
       if (!this.keyboardDidHideListener) {
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardWillHide', () => {
-          this.setState({ keyboardHeight: 0 });
-        });
+        this.keyboardDidHideListener = Keyboard.addListener(
+          'keyboardDidHide', () => {
+            if (this.state.keyboardHeight !== 0) {
+              this.setState({ keyboardHeight: 0 });
+            }
+          }
+        );
       }
     } else {
+      if (this.keyboardWillShowListener) {
+        this.keyboardWillShowListener.remove();
+        this.keyboardWillShowListener = null;
+      }
       if (this.keyboardDidShowListener) {
         this.keyboardDidShowListener.remove();
         this.keyboardDidShowListener = null;
+      }
+      if (this.keyboardWillChangeListener) {
+        this.keyboardWillChangeListener.remove();
+        this.keyboardWillChangeListener = null;
+      }
+      if (this.keyboardDidChangeListener) {
+        this.keyboardDidChangeListener.remove();
+        this.keyboardDidChangeListener = null;
+      }
+      if (this.keyboardWillHideListener) {
+        this.keyboardWillHideListener.remove();
+        this.keyboardWillHideListener = null;
       }
       if (this.keyboardDidHideListener) {
         this.keyboardDidHideListener.remove();
         this.keyboardDidHideListener = null;
       }
-    }
-  };
-
-  translateSearchPopup = (prevIsBottomBarShown) => {
-    const { isBottomBarShown, isSearchPopupShown, insets } = this.props;
-
-    let toValue;
-    if (!isBottomBarShown) {
-      toValue = toPx(BOTTOM_BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT) + insets.bottom;
-    } else {
-      if (!isSearchPopupShown) {
-        toValue = toPx(SEARCH_POPUP_HEIGHT);
-      } else {
-        const bottom = toPx(BOTTOM_BAR_HEIGHT) + insets.bottom;
-        if (this.state.keyboardHeight > bottom) {
-          toValue = toPx(BOTTOM_BAR_HEIGHT) + insets.bottom;
-        } else {
-          toValue = 0;
-        }
-      }
-    }
-
-    if (!prevIsBottomBarShown && isBottomBarShown) {
-      Animated.timing(this.searchPopupTranslateY, { toValue, ...bbFMV.visible }).start();
-    } else {
-      Animated.timing(this.searchPopupTranslateY, {
-        toValue: toValue,
-        duration: 0,
-        useNativeDriver: true,
-      }).start();
     }
   };
 
@@ -188,7 +211,7 @@ class BottomBarSearchPopup extends React.PureComponent<any, any> {
     const { searchString, themeMode, tailwind } = this.props;
 
     const searchClearBtnClasses = searchString.length === 0 ? 'hidden relative' : 'flex absolute';
-    const inputClassNames = Platform.OS === 'ios' ? 'py-2 leading-4' : 'py-0.5';
+    const inputClassNames = Platform.OS === 'ios' ? 'py-2 leading-4' : 'py-1.5';
 
     return (
       <View style={tailwind('flex-row items-center justify-between border-t border-gray-200 px-2 py-2 blk:border-gray-700')}>
@@ -209,22 +232,29 @@ class BottomBarSearchPopup extends React.PureComponent<any, any> {
   }
 
   render() {
-    const { isSearchPopupShown, insets, tailwind } = this.props;
+    const { isBottomBarShown, isSearchPopupShown, insets, tailwind } = this.props;
 
-    // Only transition when moving with BottomBar
-    //   but when show/hide this search popup, no need animation
-    //   as keyboard is already animated.
-    const style = {
-      bottom: toPx(BOTTOM_BAR_HEIGHT) + insets.bottom,
-      paddingLeft: insets.left, paddingRight: insets.right,
-      transform: [{ translateY: this.searchPopupTranslateY }],
-    };
+    // From measurement,SEARCH_POPUP_HEIGHT is 56.1, so minus 2 to no gap.
+    let bbHeight = 0;
+    if (isBottomBarShown && isSearchPopupShown) {
+      const bottom = toPx(BOTTOM_BAR_HEIGHT) + insets.bottom;
+      if (this.state.keyboardHeight > bottom) {
+        bbHeight = toPx(SEARCH_POPUP_HEIGHT) - 2;
+      } else {
+        bbHeight = (
+          toPx(BOTTOM_BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT) + insets.bottom - 2
+        );
+      }
+    }
+
+    const bbStyle = { height: bbHeight };
+    const style = { paddingLeft: insets.left, paddingRight: insets.right };
 
     return (
-      <KeyboardAvoidingView behavior="position" enabled={isSearchPopupShown} style={tailwind('absolute inset-x-0 bottom-0 z-10')}>
-        <Animated.View style={[tailwind('absolute inset-x-0 bg-white blk:bg-gray-800'), style]}>
+      <KeyboardAvoidingView behavior="position" enabled={isSearchPopupShown} style={[tailwind('absolute inset-x-0 bottom-0 z-10'), bbStyle]}>
+        <View style={[tailwind('bg-white blk:bg-gray-800'), style]}>
           {this.renderContent()}
-        </Animated.View>
+        </View>
       </KeyboardAvoidingView>
     );
   }

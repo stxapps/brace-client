@@ -72,7 +72,7 @@ const config: ExpoConfig = {
     },
     "bundleIdentifier": "com.bracedotto.brace",
     "appleTeamId": process.env.APPLE_TEAM_ID,
-    "version": "0.33.0",
+    "version": "0.34.0",
     "buildNumber": "1"
   },
   "android": {
@@ -83,13 +83,14 @@ const config: ExpoConfig = {
     "edgeToEdgeEnabled": true,
     "blockedPermissions": [
       "android.permission.READ_EXTERNAL_STORAGE",
+      "android.permission.RECORD_AUDIO",
       "android.permission.SYSTEM_ALERT_WINDOW",
       "android.permission.VIBRATE",
       "android.permission.WRITE_EXTERNAL_STORAGE"
     ],
     "package": "com.bracedotto",
-    "versionCode": 59,
-    "version": "0.33.0"
+    "versionCode": 64,
+    "version": "0.34.0"
   },
   "web": {
     "bundler": "metro",

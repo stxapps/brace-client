@@ -12,7 +12,7 @@ import {
   BOTTOM_BAR_HEIGHT, DELETE_ACTION_LINK_COMMANDS, LIST_NAMES_MODE_MOVE_LINKS,
   LIST_NAMES_ANIM_TYPE_BMODAL, BULK_EDIT_MENU_ANIM_TYPE_BMODAL,
 } from '../types/const';
-import { getListNameMap, getThemeMode } from '../selectors';
+import { getThemeMode } from '../selectors';
 import { getListNameDisplayName, toPx, getRect } from '../utils';
 import cache from '../utils/cache';
 import { popupFMV } from '../types/animConfigs';
@@ -318,7 +318,7 @@ const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
     queryString: state.display.queryString,
-    listNameMap: getListNameMap(state),
+    listNameMap: state.settings.listNameMap,
     selectedLinkIds: state.display.selectedLinkIds,
     themeMode: getThemeMode(state),
   };

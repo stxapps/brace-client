@@ -108,7 +108,7 @@ const BottomBarAddPopup = () => {
     paddingBottom: insets.bottom,
     paddingLeft: insets.left, paddingRight: insets.right,
   };
-  const inputClassNames = Platform.OS === 'ios' ? 'py-1.5 leading-5' : 'py-0.5';
+  const inputClassNames = Platform.OS === 'ios' ? 'py-1.5 leading-5' : 'py-1';
 
   return (
     <>

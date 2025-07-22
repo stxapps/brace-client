@@ -220,7 +220,7 @@ const LockEditorPopup = () => {
   const isAddLockMyList = (
     lockAction === LOCK_ACTION_ADD_LOCK_LIST && selectingListName === MY_LIST
   );
-  const inputClassNames = Platform.OS === 'ios' ? 'py-3 leading-4 sm:py-2.5' : 'py-1.5 sm:py-1';
+  const inputClassNames = Platform.OS === 'ios' ? 'leading-4 py-2.5' : 'py-2';
 
   return (
     <View style={[tailwind('absolute inset-0 z-30'), canvasStyle]}>

@@ -19,7 +19,7 @@ import {
   ADD_TAGS, MANAGE_TAGS, TAGGED,
 } from '../types/const';
 import {
-  getListNameMap, getLayoutType, makeGetPinStatus, makeGetTagStatus, getPopupLink,
+  getLayoutType, makeGetPinStatus, makeGetTagStatus, getPopupLink,
 } from '../selectors';
 import { isObject, getListNameDisplayName, getLastHalfHeight } from '../utils';
 import { popupFMV } from '../types/animConfigs';
@@ -44,7 +44,7 @@ const CardItemMenuPopup = () => {
   const anchorPosition = useSelector(state => state.display.cardItemMenuPopupPosition);
   const listName = useSelector(state => state.display.listName);
   const queryString = useSelector(state => state.display.queryString);
-  const listNameMap = useSelector(state => getListNameMap(state));
+  const listNameMap = useSelector(state => state.settings.listNameMap);
   const popupLink = useSelector(state => getPopupLink(state));
   const pinStatus = useSelector(state => getPinStatus(state, popupLink));
   const tagStatus = useSelector(state => getTagStatus(state, popupLink));

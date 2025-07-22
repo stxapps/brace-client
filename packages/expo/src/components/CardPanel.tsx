@@ -10,7 +10,7 @@ import {
   SEARCH_POPUP_HEIGHT, MD_WIDTH,
 } from '../types/const';
 import {
-  getLinks, getHasMoreLinks, getIsFetchingMore, getHasFetchedMore, getThemeMode,
+  getLinks, getIsFetchingMore, getHasFetchedMore, getThemeMode,
 } from '../selectors';
 import { toPx, multiplyPercent } from '../utils';
 import cache from '../utils/cache';
@@ -312,7 +312,7 @@ CardPanel.propTypes = {
 const mapStateToProps = (state, props) => {
   return {
     links: getLinks(state),
-    hasMore: getHasMoreLinks(state),
+    hasMore: state.display.hasMoreLinks,
     isFetchingMore: getIsFetchingMore(state),
     hasFetchedMore: getHasFetchedMore(state),
     listChangedCount: state.display.listChangedCount,

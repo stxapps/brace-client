@@ -260,7 +260,7 @@ const InnerTagNameEditor = (props) => {
     );
   }
 
-  const inputClassNames = Platform.OS === 'ios' ? 'leading-5 py-1' : 'py-0.5';
+  const inputClassNames = Platform.OS === 'ios' ? 'leading-5 py-1' : 'py-2';
 
   return (
     <React.Fragment>
@@ -277,7 +277,7 @@ const InnerTagNameEditor = (props) => {
           </Svg>
         </TouchableOpacity>}
         <View style={tailwind('flex-shrink flex-grow')}>
-          <TextInput ref={input} onFocus={onInputFocus} onBlur={onInputBlur} onChange={onInputChange} onSubmitEditing={onInputKeyPress} style={tailwind(`w-full border-0 bg-transparent px-0 text-base font-norma text-gray-600 blk:text-gray-300 ${inputClassNames}`)} placeholder="Create a new tag" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={state.value} editable={!isBusy} />
+          <TextInput ref={input} onFocus={onInputFocus} onBlur={onInputBlur} onChange={onInputChange} onSubmitEditing={onInputKeyPress} style={tailwind(`w-full border-0 bg-transparent px-0 text-base font-normal text-gray-600 blk:text-gray-300 ${inputClassNames}`)} placeholder="Create a new tag" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={state.value} editable={!isBusy} />
           <Text style={[tailwind('absolute left-0 right-0 text-sm font-medium leading-5 text-red-600 blk:text-red-500'), { bottom: Platform.OS === 'ios' ? -12 : -8 }]} numberOfLines={1} ellipsizeMode="tail">{state.msg}</Text>
         </View>
         {state.mode === MODE_EDIT && <TouchableOpacity onPressIn={onOkBtnPress} onPress={onOkBtnClick} style={tailwind('h-10 w-10 flex-shrink-0 flex-grow-0 items-center justify-center')}>

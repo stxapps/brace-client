@@ -2494,7 +2494,7 @@ export const getTagFPaths = (state) => {
   ) {
     return state.cachedFPaths.fpaths.tagFPaths;
   }
-  return [];
+  return getEmptyArray('getTagFPaths');
 };
 
 export const getRawTags = createSelector(

@@ -17,7 +17,6 @@ import {
   LIST_NAMES_MODE_MOVE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP,
   LIST_NAMES_ANIM_TYPE_BMODAL, SETTINGS_VIEW_LISTS,
 } from '../types/const';
-import { getListNameMap } from '../selectors';
 import {
   getLastHalfHeight, getListNameObj, getLongestListNameDisplayName,
   getMaxListNameChildrenSize,
@@ -49,7 +48,7 @@ const ListNamesPopup = () => {
   const selectingLinkId = useSelector(state => state.display.selectingLinkId);
   const selectedLinkIds = useSelector(state => state.display.selectedLinkIds);
   const selectingListName = useSelector(state => state.display.selectingListName);
-  const listNameMap = useSelector(getListNameMap);
+  const listNameMap = useSelector(state => state.settings.listNameMap);
   const tagNameMap = useSelector(state => state.settings.tagNameMap);
   const updates = useSelector(state => state.fetched);
 

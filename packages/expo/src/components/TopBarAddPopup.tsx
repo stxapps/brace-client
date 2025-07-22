@@ -160,7 +160,7 @@ const TopBarAddPopup = () => {
 
   if (!derivedAnchorPosition) return null;
 
-  const inputClassNames = Platform.OS === 'ios' ? 'py-1.5 leading-5' : 'py-0.5';
+  const inputClassNames = Platform.OS === 'ios' ? 'py-1.5 leading-5' : 'py-1';
   const content = (
     <View style={tailwind('w-72 px-4 pt-6 pb-5 md:w-96')}>
       <View style={tailwind('flex-row items-center justify-start')}>

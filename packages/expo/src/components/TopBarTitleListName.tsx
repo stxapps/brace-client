@@ -11,7 +11,7 @@ import {
   LIST_NAMES_POPUP, LOCK_EDITOR_POPUP, SM_WIDTH, LG_WIDTH,
   LIST_NAMES_MODE_CHANGE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP, LOCK_ACTION_UNLOCK_LIST,
 } from '../types/const';
-import { getListNameMap, getThemeMode, getCanChangeListNames } from '../selectors';
+import { getThemeMode, getCanChangeListNames } from '../selectors';
 import { getListNameDisplayName, getRect } from '../utils';
 import cache from '../utils/cache';
 
@@ -80,7 +80,7 @@ class TopBarTitleListName extends React.PureComponent<any, any> {
 const mapStateToProps = (state, props) => {
   return {
     listName: state.display.listName,
-    listNameMap: getListNameMap(state),
+    listNameMap: state.settings.listNameMap,
     updates: state.fetched,
     themeMode: getThemeMode(state),
     canChangeListNames: getCanChangeListNames(state),

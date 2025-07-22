@@ -22,13 +22,6 @@ import {
 } from '../types/initialStates';
 import vars from '../vars';
 
-export const getListNameMap = createSelector(
-  state => state.settings.listNameMap,
-  (listNameMap) => {
-    return listNameMap;
-  }
-);
-
 export const makeIsLinkIdSelected = () => {
   return createSelector(
     state => state.display.selectedLinkIds,
@@ -131,13 +124,6 @@ export const getLinks = createSelectorLinks(
 
     return searchLinks;
   }
-);
-
-export const getHasMoreLinks = createSelector(
-  state => state.display.hasMoreLinks,
-  (hasMoreLinks) => {
-    return hasMoreLinks;
-  },
 );
 
 export const getIsFetchingMore = createSelector(

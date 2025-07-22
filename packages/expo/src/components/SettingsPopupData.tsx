@@ -40,7 +40,7 @@ class InnerSettingsPopupData extends React.PureComponent<any, any> {
           <Text style={tailwind('pb-2 text-xl font-medium leading-5 text-gray-800 blk:text-gray-100')}>Data</Text>
         </View>
         <View style={tailwind('mt-6 md:mt-0')}>
-          <Text style={tailwind('text-base font-medium leading-4 text-gray-800 blk:text-gray-100')}>Data Server</Text>
+          <Text style={tailwind('text-base font-medium leading-5 text-gray-800 blk:text-gray-100')}>Data Server</Text>
           <Text style={tailwind('mt-3.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Brace.to stores your data in a Stacks data server. You can specify which Stacks data server to store your data in. By default, your Stacks data server is at <Text onPress={() => Linking.openURL(hubNameUrl)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>{hubName}</Text>, provided by <Text onPress={() => Linking.openURL(hubProviderUrl)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>{hubProvider}</Text>. You can also deploy your own Stacks data server. To change your Stacks data server, you must record your server&apos;s information on the Stacks blockchain. Brace.to stores your data on the server specified in the blockchain. For more details, please visit <Text onPress={() => Linking.openURL('https://docs.stacks.co/concepts/gaia')} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>Stacks Gaia</Text>.</Text>
           {isString(hubAddr) && <View style={tailwind('mt-6 sm:flex-row')}>
             <Text style={tailwind('flex-shrink-0 flex-grow-0 text-base font-normal text-gray-500 blk:text-gray-400')}>App hub address:</Text>
@@ -51,19 +51,19 @@ class InnerSettingsPopupData extends React.PureComponent<any, any> {
         </View>
         <View style={tailwind('mt-8')}>
           <TouchableOpacity onPress={this.props.onToImportAllDataViewBtnClick}>
-            <Text style={tailwind('text-base font-medium leading-4 text-gray-800 underline blk:text-gray-100')}>Import Data</Text>
+            <Text style={tailwind('text-base font-medium leading-5 text-gray-800 underline blk:text-gray-100')}>Import Data</Text>
           </TouchableOpacity>
           <Text style={tailwind('mt-3 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Import data from a text file. The file can be a plain text file containing a list of links or a file exported from some read-it-later apps, bookmark managers, or our website/app.</Text>
         </View>
         <View style={tailwind('mt-8')}>
           <TouchableOpacity onPress={this.props.onToExportAllDataViewBtnClick}>
-            <Text style={tailwind('text-base font-medium leading-4 text-gray-800 underline blk:text-gray-100')}>Export All Data</Text>
+            <Text style={tailwind('text-base font-medium leading-5 text-gray-800 underline blk:text-gray-100')}>Export All Data</Text>
           </TouchableOpacity>
           <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Export all your data from the server to your device as a text file.</Text>
         </View>
         <View style={tailwind('mt-8 mb-4')}>
           <TouchableOpacity onPress={this.props.onToDeleteAllDataViewBtnClick}>
-            <Text style={tailwind('text-base font-medium leading-4 text-gray-800 underline blk:text-gray-100')}>Delete All Data</Text>
+            <Text style={tailwind('text-base font-medium leading-5 text-gray-800 underline blk:text-gray-100')}>Delete All Data</Text>
           </TouchableOpacity>
           <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Delete all your data, including but not limited to all your saved links in all lists, all your created lists, and all your settings.</Text>
         </View>

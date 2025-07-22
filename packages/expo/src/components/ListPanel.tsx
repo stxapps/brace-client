@@ -8,9 +8,7 @@ import {
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, BOTTOM_BAR_HEIGHT, SEARCH_POPUP_HEIGHT,
   MD_WIDTH, PC_100,
 } from '../types/const';
-import {
-  getLinks, getHasMoreLinks, getIsFetchingMore, getHasFetchedMore,
-} from '../selectors';
+import { getLinks, getIsFetchingMore, getHasFetchedMore } from '../selectors';
 import { toPx } from '../utils';
 import cache from '../utils/cache';
 import vars from '../vars';
@@ -31,7 +29,7 @@ const ListPanel = (props) => {
   const { columnWidth, scrollY } = props;
   const { width: safeAreaWidth } = useSafeAreaFrame();
   const links = useSelector(state => getLinks(state));
-  const hasMore = useSelector(state => getHasMoreLinks(state));
+  const hasMore = useSelector(state => state.display.hasMoreLinks);
   const isFetchingMore = useSelector(state => getIsFetchingMore(state));
   const hasFetchedMore = useSelector(state => getHasFetchedMore(state));
   const listChangedCount = useSelector(state => state.display.listChangedCount);

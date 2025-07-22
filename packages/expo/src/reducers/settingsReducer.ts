@@ -1,7 +1,6 @@
 import { REHYDRATE } from 'redux-persist/constants';
 
 import { addNextAction } from '../store-next';
-import { updateDefaultPreference } from '../actions';
 import { updateSettingsDeleteStep, mergeSettingsDeleteStep } from '../importWrapper';
 import {
   FETCH_COMMIT, ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME,
@@ -67,7 +66,6 @@ const settingsReducer = (state = initialState, action) => {
       );
     }
 
-    updateDefaultPreference(newState.doExtractContents);
     return newState;
   }
 
@@ -350,7 +348,6 @@ const settingsReducer = (state = initialState, action) => {
     didChange.listNameMap = false;
     didChange.tagNameMap = false;
 
-    updateDefaultPreference(state.doExtractContents);
     addNextAction(updateSettingsDeleteStep(_settingsFPaths));
     return state;
   }
@@ -373,7 +370,6 @@ const settingsReducer = (state = initialState, action) => {
     didChange.tagNameMap = false;
 
     const newState = deriveSettingsState(listNames, tagNames, settings, initialState);
-    updateDefaultPreference(newState.doExtractContents);
     return newState;
   }
 
@@ -386,7 +382,6 @@ const settingsReducer = (state = initialState, action) => {
     didChange.tagNameMap = false;
 
     const newState = deriveSettingsState(listNames, tagNames, settings, initialState);
-    updateDefaultPreference(newState.doExtractContents);
     addNextAction(mergeSettingsDeleteStep(_settingsFPaths));
     return newState;
   }
@@ -400,9 +395,6 @@ const settingsReducer = (state = initialState, action) => {
     didChange.newTagNameObjs = [];
 
     const newState = { ...initialState };
-    if (action.type === DELETE_ALL_DATA) {
-      updateDefaultPreference(newState.doExtractContents);
-    }
     return newState;
   }
 

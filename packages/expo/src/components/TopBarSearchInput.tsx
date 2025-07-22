@@ -22,7 +22,7 @@ class TopBarSearchInput extends React.PureComponent<any, any> {
   render() {
     const { searchString, themeMode, tailwind } = this.props;
 
-    const inputClassNames = Platform.OS === 'ios' ? 'py-2 leading-4' : 'py-0.5';
+    const inputClassNames = Platform.OS === 'ios' ? 'py-2 leading-4' : 'py-1.5';
     const searchClearBtnClasses = searchString.length === 0 ? 'hidden relative' : 'flex absolute';
 
     return (

@@ -23,14 +23,15 @@ export const makeStore = () => {
     init(store);
   };
   offlineConfig.dispatch = (...args) => {
+    // @ts-expect-error
     store.dispatch(...args);
   };
   offlineConfig.persistOptions = {
     blacklist: [
       'user', 'stacksAccess', 'hasMoreLinks', 'images', 'fetched', 'fetchedMore',
-      'isFetchMoreInterrupted', 'refreshFetched', 'display', 'linkEditor', 'customEditor',
-      'tagEditor', 'listNameEditors', 'tagNameEditors', 'timePick', 'lockEditor', 'iap',
-      'conflictedSettings',
+      'isFetchMoreInterrupted', 'refreshFetched', 'display', 'linkEditor',
+      'customEditor', 'tagEditor', 'listNameEditors', 'tagNameEditors', 'timePick',
+      'lockEditor', 'iap', 'conflictedSettings',
     ],
   };
   offlineConfig.filterOutboxRehydrate = (outbox) => {
@@ -47,8 +48,10 @@ export const makeStore = () => {
     nextActions.push(action);
   };
 
-  const enhancers = composeWithDevTools(applyMiddleware(thunk), offline(offlineConfig));
-  const store = createStore(reducers, enhancers);
+  const store = createStore(
+    // @ts-expect-error (github.com/matt-oakes/redux-devtools-expo-dev-plugin/issues/12)
+    reducers, composeWithDevTools(applyMiddleware(thunk), offline(offlineConfig))
+  );
   store.subscribe(() => {
     const itnActions = [...nextActions];
     nextActions = [];
