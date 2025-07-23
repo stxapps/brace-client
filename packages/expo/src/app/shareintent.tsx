@@ -6,6 +6,6 @@ import Share from '@/components/Share';
 export default function ShareIntent() {
   const { hasShareIntent } = useShareIntentContext();
 
-  if (!hasShareIntent) return <Redirect href="/" />
+  if (!hasShareIntent) return <Redirect href="/" />;
   return <Share />;
 }

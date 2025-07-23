@@ -621,7 +621,7 @@ const _importAllData = async (dispatch, getState) => {
       return;
     }
 
-    const result = gResult.assets[0]
+    const result = gResult.assets[0];
     if (!isObject(result) || !isString(result.uri)) {
       dispatch(updateImportAllDataProgress(null));
       Alert.alert('Read file failed!', 'Could not read the content in the file. Please recheck your file.');
