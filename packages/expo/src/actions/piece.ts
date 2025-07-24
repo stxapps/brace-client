@@ -65,11 +65,8 @@ const _handleAppStateChange = async (appState, pathname, dispatch, getState) => 
 
     if (!isUserSignedIn) return;
 
-    let didShare = false; //vars.translucentAdding.didShare;
-    //vars.translucentAdding.didShare = false;
-
     const interval = (Date.now() - vars.fetch.dt) / 1000 / 60 / 60;
-    if (!didShare && interval < 0.6) return;
+    if (interval < 0.6) return;
     if (isPopupShown(getState()) && interval < 0.9) return;
 
     dispatch(refreshFetched());
