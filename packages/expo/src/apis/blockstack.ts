@@ -21,7 +21,7 @@ import {
   getSsltFPaths, getPinFPaths, listLinkMetas, getNLinkMetas, isFetchedLinkId,
   getInUseTagNames, getTagFPaths, getTags, getMainId, createTagFPath, extractTagFPath,
   getNLinkMetasByQt, newObject, getListNameAndLink, getPerformFilesResultsPerId,
-  throwIfPerformFilesError,
+  throwIfPerformFilesError, getResErrMsg,
 } from '../utils';
 import vars from '../vars';
 
@@ -556,8 +556,8 @@ const extractContents = async (params) => {
     body: JSON.stringify({ urls }),
   });
   if (!res.ok) {
-    //const msg = await getResErrMsg(res);
-    //throw new Error(msg);
+    const msg = await getResErrMsg(res);
+    throw new Error(msg);
   }
   const data = await res.json();
   const extractedResults = data.extractedResults;
