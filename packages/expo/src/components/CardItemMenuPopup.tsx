@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   ScrollView, View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated,
-  BackHandler,
+  BackHandler, Platform,
 } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 
@@ -224,7 +224,8 @@ const CardItemMenuPopup = () => {
 
   let panel, bgStyle = { opacity: 0 };
   if (popupSize) {
-    const maxHeight = getLastHalfHeight(safeAreaHeight - 16, 40, 8, 0, 0.55);
+    const itmHgt = Platform.OS === 'ios' ? 42.7 : 40;
+    const maxHeight = getLastHalfHeight(safeAreaHeight - 16, itmHgt, 8, 0, 0.55);
     const posTrn = computePositionTranslate(
       derivedAnchorPosition,
       { width: popupSize.width, height: Math.min(popupSize.height, maxHeight) },

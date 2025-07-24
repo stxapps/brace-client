@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   ScrollView, View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated,
-  BackHandler,
+  BackHandler, Platform,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
@@ -298,24 +298,31 @@ const ListNamesPopup = () => {
   if (isAnimTypeB) {
     popupWidth = safeAreaWidth + insets.left + insets.right;
 
-    popupHeight = Math.min(371, 52 * maxChildrenSize + 56 + 55);
+    const hedHgt = Platform.OS === 'ios' ? 56 : 56;
+    const itmHgt = Platform.OS === 'ios' ? 54.7 : 52;
+    const btmHgt = Platform.OS === 'ios' ? 57 : 55;
+    const minHgt = Platform.OS === 'ios' ? 386.5 : 371; // hedHgt + (itmHgt*5) + btmHgt
+    popupHeight = Math.min(minHgt, hedHgt + (itmHgt * maxChildrenSize) + btmHgt);
     if (maxChildrenSize > 4) {
       popupHeight = getLastHalfHeight(
-        Math.min(popupHeight, safeAreaHeight - 16), 52, 56, 55, 0.55
+        Math.min(popupHeight, safeAreaHeight - 16), itmHgt, hedHgt, btmHgt, 0.55
       );
     } else if (maxChildrenSize > 3) {
       popupHeight = Math.min(popupHeight, safeAreaHeight - 16);
     }
   } else {
+    const hedHgt = Platform.OS === 'ios' ? 44 : 44;
+    const itmHgt = Platform.OS === 'ios' ? 46.7 : 44;
+    const btmHgt = Platform.OS === 'ios' ? 53 : 51;
     if ([MODE_CHANGE_LIST_NAME, MODE_CHANGE_TAG_NAME].includes(derivedMode)) {
       popupWidth = 160;
       if (longestDisplayName.length > 26) popupWidth = 256;
       else if (longestDisplayName.length > 14) popupWidth = 208;
 
-      popupHeight = 44 * (maxChildrenSize + 1) + 4;
+      popupHeight = hedHgt + (itmHgt * maxChildrenSize) + 4;
       if (popupHeight > safeAreaHeight - 16) {
         popupHeight = getLastHalfHeight(
-          Math.min(popupHeight, safeAreaHeight - 16), 44, 0, 0, 0.5
+          Math.min(popupHeight, safeAreaHeight - 16), itmHgt, 0, 0, 0.5
         );
       }
     } else if ([MODE_MOVE_LINKS, MODE_MOVE_LIST_NAME].includes(derivedMode)) {
@@ -323,10 +330,10 @@ const ListNamesPopup = () => {
       if (longestDisplayName.length > 26) popupWidth = 256;
       else if (longestDisplayName.length > 14) popupWidth = 208;
 
-      popupHeight = 44 * (maxChildrenSize + 1) + 51;
+      popupHeight = hedHgt + (itmHgt * maxChildrenSize) + btmHgt;
       if (popupHeight > safeAreaHeight - 16) {
         popupHeight = getLastHalfHeight(
-          Math.min(popupHeight, safeAreaHeight - 16), 44, 0, 51, 0.5
+          Math.min(popupHeight, safeAreaHeight - 16), itmHgt, 0, btmHgt, 0.5
         );
       }
     } else {
