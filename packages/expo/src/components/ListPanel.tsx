@@ -9,6 +9,7 @@ import {
   MD_WIDTH, PC_100,
 } from '../types/const';
 import { getLinks, getIsFetchingMore, getHasFetchedMore } from '../selectors';
+import { popupFMV } from '../types/animConfigs';
 import { toPx } from '../utils';
 import cache from '../utils/cache';
 import vars from '../vars';
@@ -163,11 +164,11 @@ const ListPanel = (props) => {
   useEffect(() => {
     setTimeout(() => {
       if (flatList.current) {
-        flatList.current.scrollToOffset({ offset: 0, animated: true });
+        flatList.current.scrollToOffset({ offset: 0, animated: false });
       }
-      scrollY.setValue(0);
+      Animated.timing(scrollY, { toValue: 0, ...popupFMV.visible }).start();
       vars.scrollPanel.scrollY = 0;
-    }, 1);
+    }, 100);
   }, [scrollY, listChangedCount]);
 
   const panelData = [{ id: PANEL_HEAD }, { id: PANEL_BODY }];

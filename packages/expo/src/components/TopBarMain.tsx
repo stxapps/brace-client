@@ -196,7 +196,7 @@ class TopBarMain extends React.PureComponent<any, any> {
           </Animated.View>
           {listNamePane}
         </View>
-      </Animated.View >
+      </Animated.View>
     );
   }
 }

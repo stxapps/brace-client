@@ -292,6 +292,9 @@ const ListNamesPopup = () => {
     setPrevBackCount(backCount);
   }
 
+  // Only on iPhone, if line height is 20, the text height is 22.7,
+  //   so must use height and verticle center on menu items instead of py-[x].
+
   const isAnimTypeB = derivedAnimType === ANIM_TYPE_BMODAL;
 
   let popupWidth = 0, popupHeight = 0;

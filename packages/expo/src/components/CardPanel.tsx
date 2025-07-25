@@ -12,6 +12,7 @@ import {
 import {
   getLinks, getIsFetchingMore, getHasFetchedMore, getThemeMode,
 } from '../selectors';
+import { popupFMV } from '../types/animConfigs';
 import { toPx, multiplyPercent } from '../utils';
 import cache from '../utils/cache';
 import vars from '../vars';
@@ -55,11 +56,11 @@ class CardPanel extends React.PureComponent<any, any> {
   resetScroll = () => {
     setTimeout(() => {
       if (this.panelFlatList.current) {
-        this.panelFlatList.current.scrollToOffset({ offset: 0, animated: true });
+        this.panelFlatList.current.scrollToOffset({ offset: 0, animated: false });
       }
-      this.props.scrollY.setValue(0);
+      Animated.timing(this.props.scrollY, { toValue: 0, ...popupFMV.visible }).start();
       vars.scrollPanel.scrollY = 0;
-    }, 1);
+    }, 100);
   };
 
   getItemId = (item) => {
