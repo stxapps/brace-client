@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   ScrollView, View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated,
-  BackHandler, Platform,
+  BackHandler,
 } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 
@@ -211,7 +211,7 @@ const CardItemMenuPopup = () => {
           let displayText = text;
           if (text === ARCHIVE) displayText = getListNameDisplayName(text, listNameMap);
           return (
-            <TouchableOpacity key={text} onPress={() => onMenuPopupClick(text)} style={tailwind('w-full py-2.5 pl-4 pr-4')}>
+            <TouchableOpacity key={text} onPress={() => onMenuPopupClick(text)} style={tailwind('h-10 w-full justify-center pl-4 pr-4')}>
               <Text style={tailwind('text-left text-sm font-normal text-gray-700 blk:text-gray-200')} numberOfLines={1} ellipsizeMode="tail">{displayText}</Text>
             </TouchableOpacity>
           );
@@ -224,8 +224,7 @@ const CardItemMenuPopup = () => {
 
   let panel, bgStyle = { opacity: 0 };
   if (popupSize) {
-    const itmHgt = Platform.OS === 'ios' ? 42.7 : 40;
-    const maxHeight = getLastHalfHeight(safeAreaHeight - 16, itmHgt, 8, 0, 0.55);
+    const maxHeight = getLastHalfHeight(safeAreaHeight - 16, 40, 8, 0, 0.55);
     const posTrn = computePositionTranslate(
       derivedAnchorPosition,
       { width: popupSize.width, height: Math.min(popupSize.height, maxHeight) },

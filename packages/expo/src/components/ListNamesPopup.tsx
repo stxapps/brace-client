@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   ScrollView, View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated,
-  BackHandler, Platform,
+  BackHandler,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
@@ -298,10 +298,8 @@ const ListNamesPopup = () => {
   if (isAnimTypeB) {
     popupWidth = safeAreaWidth + insets.left + insets.right;
 
-    const hedHgt = Platform.OS === 'ios' ? 56 : 56;
-    const itmHgt = Platform.OS === 'ios' ? 54.7 : 52;
-    const btmHgt = Platform.OS === 'ios' ? 57 : 55;
-    const minHgt = Platform.OS === 'ios' ? 386.5 : 371; // hedHgt + (itmHgt*5) + btmHgt
+    const [hedHgt, itmHgt, btmHgt] = [56, 52, 56];
+    const minHgt = 372; // hedHgt + (itmHgt*5) + btmHgt
     popupHeight = Math.min(minHgt, hedHgt + (itmHgt * maxChildrenSize) + btmHgt);
     if (maxChildrenSize > 4) {
       popupHeight = getLastHalfHeight(
@@ -311,9 +309,7 @@ const ListNamesPopup = () => {
       popupHeight = Math.min(popupHeight, safeAreaHeight - 16);
     }
   } else {
-    const hedHgt = Platform.OS === 'ios' ? 44 : 44;
-    const itmHgt = Platform.OS === 'ios' ? 46.7 : 44;
-    const btmHgt = Platform.OS === 'ios' ? 53 : 51;
+    const [hedHgt, itmHgt, btmHgt] = [44, 44, 52];
     if ([MODE_CHANGE_LIST_NAME, MODE_CHANGE_TAG_NAME].includes(derivedMode)) {
       popupWidth = 160;
       if (longestDisplayName.length > 26) popupWidth = 256;
@@ -347,7 +343,7 @@ const ListNamesPopup = () => {
     return (
       <View style={tailwind(viewClassNames)}>
         {children.map(obj => {
-          let btnClassNames = isAnimTypeB ? 'py-4' : 'py-3';
+          let btnClassNames = isAnimTypeB ? 'h-13' : 'h-11';
           if (!obj.children || obj.children.length === 0) btnClassNames += ' pr-4';
 
           let disabled = false, forwardDisabled = false;
@@ -366,7 +362,7 @@ const ListNamesPopup = () => {
             <View key={obj.listName} style={tailwind('w-full flex-row items-center justify-start')}>
               <TouchableOpacity onPress={() => onLnItemBtnClick(obj.listName)} style={tailwind(`flex-shrink flex-grow flex-row items-center pl-4 ${btnClassNames}`)} disabled={disabled}>
                 <Text style={tailwind(`text-sm font-normal ${disabled ? 'text-gray-400 blk:text-gray-500' : 'text-gray-700 blk:text-gray-200'}`)} numberOfLines={1} ellipsizeMode="tail">{obj.displayName}</Text>
-                {(derivedMode === MODE_CHANGE_LIST_NAME && obj.listName in derivedUpdates) && <View style={tailwind('ml-1 h-1.5 w-1.5 flex-shrink-0 flex-grow-0 self-start rounded-full bg-blue-400')} />}
+                {(derivedMode === MODE_CHANGE_LIST_NAME && obj.listName in derivedUpdates) && <View style={tailwind('ml-1 mb-2.5 h-1.5 w-1.5 flex-shrink-0 flex-grow-0 rounded-full bg-blue-400')} />}
               </TouchableOpacity>
               {(obj.children && obj.children.length > 0) && <TouchableOpacity onPress={() => onForwardBtnClick(obj.listName)} style={tailwind('h-10 w-10 flex-shrink-0 flex-grow-0 items-center justify-center')} disabled={forwardDisabled}>
                 <Svg style={tailwind(`font-normal ${forwardDisabled ? 'text-gray-300 blk:text-gray-600' : 'text-gray-500 blk:text-gray-300'}`)} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
@@ -386,7 +382,7 @@ const ListNamesPopup = () => {
         {derivedTagNameMap.map(obj => {
           return (
             <View key={obj.tagName} style={tailwind('w-full flex-row items-center justify-start')}>
-              <TouchableOpacity onPress={() => onTgItemBtnClick(obj.tagName)} style={tailwind('flex-shrink flex-grow flex-row items-center py-3 pl-4')}>
+              <TouchableOpacity onPress={() => onTgItemBtnClick(obj.tagName)} style={tailwind('h-11 flex-shrink flex-grow flex-row items-center pl-4')}>
                 <Text style={tailwind('text-left text-sm font-normal text-gray-700 blk:text-gray-200')} numberOfLines={1} ellipsizeMode="tail">{obj.displayName}</Text>
               </TouchableOpacity>
             </View>
@@ -423,7 +419,7 @@ const ListNamesPopup = () => {
     }
 
     const viewClassNames = isAnimTypeB ? 'h-14 pt-1' : 'h-11 pt-1';
-    const moveHereClassNames = isAnimTypeB ? 'py-3' : 'py-2.5';
+    const moveHereClassNames = isAnimTypeB ? 'h-14' : 'h-13';
 
     return (
       <React.Fragment>
