@@ -72,7 +72,7 @@ const config: ExpoConfig = {
     },
     "bundleIdentifier": "com.bracedotto.brace",
     "appleTeamId": process.env.APPLE_TEAM_ID,
-    "version": "0.34.0",
+    "version": "0.35.0",
     "buildNumber": "1"
   },
   "android": {
@@ -89,8 +89,8 @@ const config: ExpoConfig = {
       "android.permission.WRITE_EXTERNAL_STORAGE"
     ],
     "package": "com.bracedotto",
-    "versionCode": 64,
-    "version": "0.34.0"
+    "versionCode": 65,
+    "version": "0.35.0"
   },
   "web": {
     "bundler": "metro",
