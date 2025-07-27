@@ -51,8 +51,8 @@ const config: ExpoConfig = {
     },
     "supportsTablet": true,
     "infoPlist": {
-      "NSPhotoLibraryUsageDescription": "Select a picture for use on your link.",
-      "NSCameraUsageDescription": "Take a picture for use on your link."
+      "NSPhotoLibraryUsageDescription": "Select a picture for use as a link's image.",
+      "NSCameraUsageDescription": "Take a picture for use as a link's image."
     },
     "privacyManifests": {
       "NSPrivacyAccessedAPITypes": [
