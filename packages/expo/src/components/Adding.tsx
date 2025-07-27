@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
 import { useShareIntentContext } from 'expo-share-intent';
 import Svg, { Path } from 'react-native-svg';
@@ -68,6 +68,7 @@ const Adding = () => {
   const links = useSelector(state => state.links[MY_LIST]);
   const themeMode = useSelector(state => getThemeMode(state));
   const [type, setType] = useState(null);
+  const dpcdLinks = useRef([]);
   const tailwind = useTailwind();
   const dispatch = useDispatch();
 
@@ -119,7 +120,10 @@ const Adding = () => {
         link = null;
       }
       if (!isObject(link)) {
-        dispatch(addLink(addingUrl, MY_LIST, false));
+        if (!dpcdLinks.current.includes(addingUrl)) {
+          dispatch(addLink(addingUrl, MY_LIST, false));
+          dpcdLinks.current.push(addingUrl);
+        }
         isAdding = true;
         continue;
       }
