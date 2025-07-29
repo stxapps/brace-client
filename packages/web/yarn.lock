@@ -1869,7 +1869,7 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@stacks/auth@^6.1.1", "@stacks/auth@^6.16.1":
+"@stacks/auth@^6.16.1":
   version "6.16.1"
   resolved "https://registry.yarnpkg.com/@stacks/auth/-/auth-6.16.1.tgz#00aefeb4b31cc59b7d55181e1c5d2b0ef9d46e13"
   integrity sha512-6Co7VZTlfvWVKEYXh+x2TD1e+3XmCPumJut1jRgW6pYPGruZ4Dz/R4xfkf9qX3MEJabLe4AfasSfoqftg0twTg==
@@ -1889,25 +1889,6 @@
     "@types/bn.js" "^5.1.0"
     "@types/node" "^18.0.4"
 
-"@stacks/connect-ui@6.4.1":
-  version "6.4.1"
-  resolved "https://registry.yarnpkg.com/@stacks/connect-ui/-/connect-ui-6.4.1.tgz#fd729571272d73b979a1a5c00322cc52479a053b"
-  integrity sha512-Y6Fp26MUsMQq08zFSWus40rS7RNHrHj6VDJrFUqM9VsksV3wftpsRcy7psQusUvW1DS7fPza67IlM1dcN4rvSg==
-  dependencies:
-    "@stencil/core" "^2.17.1"
-
-"@stacks/connect@^7.7.1":
-  version "7.7.1"
-  resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-7.7.1.tgz#ae2e27852ad5989ce011f25f47f02a20593f8fd4"
-  integrity sha512-MwLRhgRLOGo0Y4IDC0qp9RUX2SZubgse1aI2TN/fz2abNIh1LgmOKUua3w17YiBEZxDD9nyQ4KW1c33bdnrOPw==
-  dependencies:
-    "@stacks/auth" "^6.1.1"
-    "@stacks/connect-ui" "6.4.1"
-    "@stacks/network" "^6.1.1"
-    "@stacks/profile" "^6.1.1"
-    "@stacks/transactions" "^6.1.1"
-    jsontokens "^4.0.1"
-
 "@stacks/encryption@^6.16.1":
   version "6.16.1"
   resolved "https://registry.yarnpkg.com/@stacks/encryption/-/encryption-6.16.1.tgz#459f321d8668d42718f2d043599576a2c99949f1"
@@ -1923,7 +1904,7 @@
     ripemd160-min "^0.0.6"
     varuint-bitcoin "^1.1.2"
 
-"@stacks/network@^6.1.1", "@stacks/network@^6.16.0":
+"@stacks/network@^6.16.0":
   version "6.16.0"
   resolved "https://registry.yarnpkg.com/@stacks/network/-/network-6.16.0.tgz#2d21d0a06fd5ad8f7f2b5fe672049ebac7a9fbd6"
   integrity sha512-uqz9Nb6uf+SeyCKENJN+idt51HAfEeggQKrOMfGjpAeFgZV2CR66soB/ci9+OVQR/SURvasncAz2ScI1blfS8A==
@@ -1931,7 +1912,7 @@
     "@stacks/common" "^6.16.0"
     cross-fetch "^3.1.5"
 
-"@stacks/profile@^6.1.1", "@stacks/profile@^6.16.1":
+"@stacks/profile@^6.16.1":
   version "6.16.1"
   resolved "https://registry.yarnpkg.com/@stacks/profile/-/profile-6.16.1.tgz#ab8c2bef2b135f9eeb256d59016c2f5b6a4457a6"
   integrity sha512-FJcwKN6oVDfmwymivkZfm1PcO7gv5fcWN4HI+jtYdMftrl6yxAB4/XD63FSvshIeLPzBJjnCmaZSnPAV2mtdeA==
@@ -1955,7 +1936,7 @@
     base64-js "^1.5.1"
     jsontokens "^4.0.1"
 
-"@stacks/transactions@^6.1.1", "@stacks/transactions@^6.16.1":
+"@stacks/transactions@^6.16.1":
   version "6.16.1"
   resolved "https://registry.yarnpkg.com/@stacks/transactions/-/transactions-6.16.1.tgz#dee8f83651e1e4713fa3cc5f2c645ec0055319f2"
   integrity sha512-yCtUM+8IN0QJbnnlFhY1wBW7Q30Cxje3Zmy8DgqdBoM/EPPWadez/8wNWFANVAMyUZeQ9V/FY+8MAw4E+pCReA==
@@ -1986,11 +1967,6 @@
     jsontokens "^4.0.1"
     triplesec "^4.0.3"
     zone-file "^2.0.0-beta.3"
-
-"@stencil/core@^2.17.1":
-  version "2.22.3"
-  resolved "https://registry.yarnpkg.com/@stencil/core/-/core-2.22.3.tgz#83987e20bba855c450f6d6780e3a20192603f13f"
-  integrity sha512-kmVA0M/HojwsfkeHsifvHVIYe4l5tin7J5+DLgtl8h6WWfiMClND5K3ifCXXI2ETDNKiEk21p6jql3Fx9o2rng==
 
 "@surma/rollup-plugin-off-main-thread@^2.2.3":
   version "2.2.3"

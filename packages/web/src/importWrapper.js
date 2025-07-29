@@ -1,16 +1,3 @@
-let stacksConnect;
-const importStacksConnect = async () => {
-  if (stacksConnect) return;
-
-  // @ts-expect-error
-  stacksConnect = await import('@stacks/connect');
-};
-
-export const showConnect = async (authOptions) => {
-  await importStacksConnect();
-  stacksConnect.showConnect(authOptions);
-};
-
 let walletApi;
 const importWalletApi = async () => {
   if (walletApi) return;

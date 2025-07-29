@@ -1,216 +1,45 @@
-import { SECP256K1Client, TokenSigner } from 'jsontokens';
+import { SECP256K1Client } from 'jsontokens';
 import { parseZoneFile } from 'zone-file';
 import { makeDIDFromAddress } from '@stacks/auth/dist/esm';
 import {
-  generateSecretKey, generateWallet, getRootNode, deriveAccount, DerivationType,
-  getHubInfo, makeWalletConfig, updateWalletConfigWithApp, getAppPrivateKey,
-  getStxAddress, makeGaiaAssociationToken, DEFAULT_PROFILE, DEFAULT_PROFILE_FILE_NAME,
-  signAndUploadProfile,
+  generateSecretKey, generateWallet, getAppPrivateKey, getStxAddress,
+  makeGaiaAssociationToken, DEFAULT_PROFILE,
 } from '@stacks/wallet-sdk/dist/esm';
 import { getTokenFileUrl } from '@stacks/profile/dist/esm';
 import { TransactionVersion } from '@stacks/transactions/dist/esm';
 import {
-  randomBytes, decryptContent, getPublicKeyFromPrivate, publicKeyToBtcAddress,
+  getPublicKeyFromPrivate, publicKeyToBtcAddress,
 } from '@stacks/encryption/dist/esm';
 import { createFetchFn } from '@stacks/network/dist/esm';
-import { bytesToHex } from '@stacks/common/dist/esm';
 
 import { HR_HUB_URL, SD_HUB_URL } from '../types/const';
-import { isObject, isString, isNumber, sleep } from '../utils';
+import { isObject, isString, sleep } from '../utils';
 
 const fetchFn = createFetchFn();
 
 const DEFAULT_PASSWORD = 'password';
-const N_ACCOUNTS = 10;
-
-const getHubConfig = (hubUrl, hubInfo, privateKey, associationToken) => {
-  const challengeText = hubInfo.challenge_text;
-  const iss = getPublicKeyFromPrivate(privateKey);
-  const salt = bytesToHex(randomBytes(16));
-  const payload = {
-    gaiaChallenge: challengeText,
-    hubUrl,
-    iss,
-    salt,
-    associationToken: associationToken,
-  };
-  const signedPayload = new TokenSigner('ES256K', privateKey).sign(payload);
-  const token = `v1:${signedPayload}`;
-
-  const address = publicKeyToBtcAddress(getPublicKeyFromPrivate(privateKey));
-
-  return {
-    url_prefix: hubInfo.read_url_prefix,
-    max_file_upload_size_megabytes: hubInfo.max_file_upload_size_megabytes,
-    address,
-    token,
-    server: hubUrl,
-  };
-};
-
-const storeWalletConfig = async (walletData) => {
-  const { appData, wallet } = walletData;
-  const { domainName, appName, appIconUrl, appScopes } = appData;
-
-  let { sdHubInfo, sdWalletHubConfig } = walletData;
-  if (!isObject(sdHubInfo)) {
-    sdHubInfo = await getHubInfo(SD_HUB_URL);
-    walletData.sdHubInfo = sdHubInfo;
-  }
-  if (!isObject(sdWalletHubConfig)) {
-    sdWalletHubConfig = getHubConfig(
-      SD_HUB_URL, sdHubInfo, wallet.configPrivateKey, null
-    );
-    walletData.sdWalletHubConfig = sdWalletHubConfig;
-  }
-
-  const account = wallet.accounts[0];
-  const sdWalletConfig = makeWalletConfig(wallet);
-  await updateWalletConfigWithApp({
-    wallet,
-    account,
-    app: {
-      origin: domainName,
-      scopes: appScopes,
-      lastLoginAt: new Date().getTime(),
-      appIcon: appIconUrl,
-      name: appName,
-    },
-    gaiaHubConfig: sdWalletHubConfig,
-    walletConfig: sdWalletConfig,
-  });
-  walletData.sdWalletConfig = sdWalletConfig;
-};
-
-const storeProfile = async (walletData) => {
-  const { wallet } = walletData
-
-  const account = wallet.accounts[0];
-  const profile = { ...(account.profile || DEFAULT_PROFILE) };
-  profile.api = { ...profile.api, gaiaHubUrl: SD_HUB_URL };
-  account.profile = profile;
-
-  let { sdHubInfo, sdProfileHubConfig } = walletData;
-  if (!isObject(sdHubInfo)) {
-    sdHubInfo = await getHubInfo(SD_HUB_URL);
-    walletData.sdHubInfo = sdHubInfo;
-  }
-  if (!isObject(sdProfileHubConfig)) {
-    sdProfileHubConfig = getHubConfig(
-      SD_HUB_URL, sdHubInfo, account.dataPrivateKey, null
-    );
-    walletData.sdProfileHubConfig = sdProfileHubConfig;
-  }
-
-  await signAndUploadProfile({
-    profile, account, gaiaHubUrl: SD_HUB_URL, gaiaHubConfig: sdProfileHubConfig,
-  });
-};
 
 export const createAccount = async (appData) => {
   const secretKey = generateSecretKey(256);
   const wallet = await generateWallet({ secretKey, password: DEFAULT_PASSWORD });
 
   const walletData = { appData, secretKey, wallet, fromCreateAccount: true };
-  await storeWalletConfig(walletData);
-  await storeProfile(walletData);
-
   return walletData;
 };
 
-const getWalletConfig = async (url_prefix, address, privateKey) => {
-  // If server down, throw error. If 404, 403, not found, return null. Else throw error.
-  const url = `${url_prefix}${address}/wallet-config.json`;
-  const res = await fetchFn(url);
-  if (res.ok) {
-    try {
-      const encrypted = await res.text();
-      const configJson = /** @type {string} */(await decryptContent(
-        encrypted, { privateKey }
-      ));
-      const walletConfig = JSON.parse(configJson);
-      return walletConfig;
-    } catch (error) {
-      // treat it like no walletConfig i.e. invalid format
-      return null;
-    }
-  }
-  if ([403, 404].includes(res.status)) return null;
+export const restoreAccount = async (appData, secretKey) => {
+  if (!isString(secretKey)) return { errMsg: 'Please fill in your Secret Key.' };
 
-  throw new Error(`(getWalletConfig) Error ${res.status}`);
-};
-
-const deriveNewAccounts = (rootNode, salt, wAccounts, wcAccounts) => {
-  if (!Array.isArray(wAccounts) || !Array.isArray(wcAccounts)) return wAccounts;
-
-  const newAccounts = wcAccounts.map((account, index) => {
-    let existingAccount = wAccounts[index];
-    if (!isObject(existingAccount)) {
-      existingAccount = deriveAccount({
-        rootNode, index, salt, stxDerivationType: DerivationType.Wallet,
-      });
-    }
-    return { ...existingAccount };
-  });
-
-  return newAccounts;
-};
-
-const restoreWalletConfig = async (walletData) => {
-  const { wallet } = walletData;
-
-  const rootNode = getRootNode(wallet);
-  const salt = wallet.salt;
-
-  let { sdHubInfo, sdWalletHubConfig } = walletData;
-  if (!isObject(sdHubInfo)) {
-    sdHubInfo = await getHubInfo(SD_HUB_URL);
-    walletData.sdHubInfo = sdHubInfo;
-  }
-  if (!isObject(sdWalletHubConfig)) {
-    sdWalletHubConfig = getHubConfig(
-      SD_HUB_URL, sdHubInfo, wallet.configPrivateKey, null
-    );
-    walletData.sdWalletHubConfig = sdWalletHubConfig;
-  }
-
-  const sdWalletConfig = await getWalletConfig(
-    sdWalletHubConfig.url_prefix, sdWalletHubConfig.address, wallet.configPrivateKey
-  );
-  if (isObject(sdWalletConfig)) {
-    wallet.accounts = deriveNewAccounts(
-      rootNode, salt, wallet.accounts, sdWalletConfig.accounts
-    );
-    walletData.sdWalletConfig = sdWalletConfig;
-    return;
-  }
-
+  let wallet;
   try {
-    let { hrHubInfo, hrWalletHubConfig } = walletData;
-    if (!isObject(hrHubInfo)) {
-      hrHubInfo = await getHubInfo(HR_HUB_URL);
-      walletData.hrHubInfo = hrHubInfo;
-    }
-    if (!isObject(hrWalletHubConfig)) {
-      hrWalletHubConfig = getHubConfig(
-        HR_HUB_URL, hrHubInfo, wallet.configPrivateKey, null
-      );
-      walletData.hrWalletHubConfig = hrWalletHubConfig;
-    }
-
-    const hrWalletConfig = await getWalletConfig(
-      hrWalletHubConfig.url_prefix, hrWalletHubConfig.address, wallet.configPrivateKey
-    );
-    if (isObject(hrWalletConfig)) {
-      wallet.accounts = deriveNewAccounts(
-        rootNode, salt, wallet.accounts, hrWalletConfig.accounts
-      );
-      walletData.hrWalletConfig = hrWalletConfig;
-      return;
-    }
+    wallet = await generateWallet({ secretKey, password: DEFAULT_PASSWORD });
   } catch (error) {
-    console.log('restoreWalletConfig from Hiro error:', error);
+    console.log('Error when restore account: ', error);
+    return { errMsg: 'Your Secret Key is invaid. Please check and try again.' };
   }
+
+  const walletData = { appData, wallet };
+  return walletData;
 };
 
 const getUsername = async (account) => {
@@ -235,38 +64,6 @@ const getUsername = async (account) => {
   }
 
   return null;
-};
-
-const restoreUsernames = async (accounts) => {
-  for (let i = 0; i < accounts.length; i += N_ACCOUNTS) {
-    // Hiro usage rate limit is 25 requests per minute (including OPTION).
-    if (i !== 0 && i % 10 === 0) await sleep(60 * 1000);
-
-    const _accounts = accounts.slice(i, i + N_ACCOUNTS);
-    await Promise.all(_accounts.map(async (account) => {
-      account.username = await getUsername(account);
-    }));
-  }
-};
-
-export const restoreAccount = async (appData, secretKey) => {
-  if (!isString(secretKey)) return { errMsg: 'Please fill in your Secret Key.' };
-
-  let wallet;
-  try {
-    wallet = await generateWallet({ secretKey, password: DEFAULT_PASSWORD });
-  } catch (error) {
-    console.log('Error when restore account: ', error);
-    return { errMsg: 'Your Secret Key is invaid. Please check and try again.' };
-  }
-
-  const walletData = { appData, wallet };
-  await restoreWalletConfig(walletData);
-  if (walletData.wallet.accounts.length > 1) {
-    await restoreUsernames(walletData.wallet.accounts);
-  }
-
-  return walletData;
 };
 
 const getProfileUrlFromZoneFile = async (name) => {
@@ -312,166 +109,6 @@ const restoreProfile = async (walletData, accountIndex) => {
       }
     }
   }
-
-  let { sdHubInfo } = walletData;
-  if (!isObject(sdHubInfo)) {
-    sdHubInfo = await getHubInfo(SD_HUB_URL);
-    walletData.sdHubInfo = sdHubInfo;
-  }
-
-  const publicKey = getPublicKeyFromPrivate(account.dataPrivateKey);
-  const address = publicKeyToBtcAddress(publicKey);
-
-  url = `${sdHubInfo.read_url_prefix}${address}/${DEFAULT_PROFILE_FILE_NAME}`;
-
-  const res = await fetchFn(url);
-  if (res.ok) {
-    try {
-      const json = await res.json();
-      const { decodedToken } = json[0];
-      account.profile = decodedToken.payload.claim;
-      return;
-    } catch (error) {
-      // Invalid profile format, treat it like no profile.
-    }
-  } else if ([403, 404].includes(res.status)) {
-    // Not found profile, use the default one.
-  } else {
-    throw new Error(`(restoreProfile) Error ${res.status}`);
-  }
-};
-
-const isHrAlive = async (walletData) => {
-  const { wallet } = walletData;
-
-  try {
-    let { hrHubInfo, hrWalletHubConfig } = walletData;
-    if (!isObject(hrHubInfo)) {
-      hrHubInfo = await getHubInfo(HR_HUB_URL);
-      walletData.hrHubInfo = hrHubInfo;
-    }
-    if (!isObject(hrWalletHubConfig)) {
-      hrWalletHubConfig = getHubConfig(
-        HR_HUB_URL, hrHubInfo, wallet.configPrivateKey, null
-      );
-      walletData.hrWalletHubConfig = hrWalletHubConfig;
-    }
-
-    await getWalletConfig(
-      hrWalletHubConfig.url_prefix, hrWalletHubConfig.address, wallet.configPrivateKey
-    );
-
-    // Can still connect to Hiro hub and storage
-    return true;
-  } catch (error) {
-    console.log('isHrAlive error:', error);
-  }
-
-  return false;
-};
-
-const doUseBefore = (walletConfig, appDomain, accountIndex = null) => {
-  if (!isObject(walletConfig)) return false;
-
-  try {
-    if (isNumber(accountIndex)) {
-      const acc = walletConfig.accounts[accountIndex];
-      for (const k in acc.apps) {
-        if (k === appDomain) return true;
-      }
-    } else {
-      for (const acc of walletConfig.accounts) {
-        for (const k in acc.apps) {
-          if (k === appDomain) return true;
-        }
-      }
-    }
-  } catch (error) {
-    console.log('doUseBefore error:', error);
-  }
-
-  return false;
-};
-
-const updateWalletConfig = async (walletData, accountIndex, hubUrl) => {
-  const { appData, wallet } = walletData;
-  const { domainName, appName, appIconUrl, appScopes } = appData;
-
-  // Update walletConfig only if
-  //   1. Not found anywhere, create to hubUrl
-  //   2. Use StacksDrive hub but not found walletConfig in it
-  //   3. Do not use before
-  const { sdWalletConfig, hrWalletConfig } = walletData;
-
-  const account = wallet.accounts[accountIndex];
-
-  let walletConfig, updateUrl;
-  if (isObject(sdWalletConfig)) {
-    walletConfig = sdWalletConfig;
-
-    const didUse = doUseBefore(walletConfig, domainName, accountIndex);
-    if (!didUse) updateUrl = SD_HUB_URL;
-  } else if (isObject(hrWalletConfig)) {
-    walletConfig = hrWalletConfig;
-    if (hubUrl === SD_HUB_URL) {
-      updateUrl = SD_HUB_URL;
-    } else {
-      const didUse = doUseBefore(walletConfig, domainName, accountIndex);
-      if (!didUse) updateUrl = HR_HUB_URL;
-    }
-  } else {
-    walletConfig = makeWalletConfig(wallet);
-    if (hubUrl === SD_HUB_URL) updateUrl = SD_HUB_URL;
-    else updateUrl = HR_HUB_URL;
-  }
-
-  if (isObject(walletConfig) && isString(updateUrl)) {
-    let { sdHubInfo, sdWalletHubConfig, hrHubInfo, hrWalletHubConfig } = walletData;
-
-    let walletHubConfig;
-    if (updateUrl === SD_HUB_URL) {
-      if (!isObject(sdHubInfo)) {
-        sdHubInfo = await getHubInfo(SD_HUB_URL);
-        walletData.sdHubInfo = sdHubInfo;
-      }
-      if (!isObject(sdWalletHubConfig)) {
-        sdWalletHubConfig = getHubConfig(
-          SD_HUB_URL, sdHubInfo, wallet.configPrivateKey, null
-        );
-        walletData.sdWalletHubConfig = sdWalletHubConfig;
-      }
-      walletHubConfig = sdWalletHubConfig;
-    } else if (updateUrl === HR_HUB_URL) {
-      if (!isObject(hrHubInfo)) {
-        hrHubInfo = await getHubInfo(HR_HUB_URL);
-        walletData.hrHubInfo = hrHubInfo;
-      }
-      if (!isObject(hrWalletHubConfig)) {
-        hrWalletHubConfig = getHubConfig(
-          HR_HUB_URL, hrHubInfo, wallet.configPrivateKey, null
-        );
-        walletData.hrWalletHubConfig = hrWalletHubConfig;
-      }
-      walletHubConfig = hrWalletHubConfig;
-    } else {
-      console.log('Invalid updateUrl:', updateUrl);
-      return;
-    }
-
-    await updateWalletConfigWithApp({
-      wallet,
-      account,
-      app: {
-        origin: domainName,
-        scopes: appScopes,
-        lastLoginAt: new Date().getTime(),
-        appIcon: appIconUrl,
-        name: appName,
-      },
-      gaiaHubConfig: walletHubConfig,
-      walletConfig: walletConfig,
-    });
-  }
 };
 
 export const chooseAccount = async (walletData, accountIndex) => {
@@ -501,12 +138,7 @@ export const chooseAccount = async (walletData, accountIndex) => {
   ) {
     hubUrl = account.profile.api.gaiaHubUrl;
   }
-  if (hubUrl === HR_HUB_URL) {
-    const isAlive = await isHrAlive(walletData);
-    if (!isAlive) hubUrl = SD_HUB_URL;
-  }
-
-  if (!fromCreateAccount) await updateWalletConfig(walletData, accountIndex, hubUrl);
+  if (hubUrl === HR_HUB_URL) hubUrl = SD_HUB_URL;
 
   const userData = {
     username: account.username || '',

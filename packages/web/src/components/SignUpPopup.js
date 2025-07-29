@@ -2,13 +2,11 @@ import React, { useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { m as motion, AnimatePresence } from 'framer-motion';
 
-import userSession from '../userSession';
-import { showConnect } from '../importWrapper';
-import { updatePopup, updateUserData, updateUserSignedIn } from '../actions';
+import { updatePopup, updateUserData } from '../actions';
 import {
   DOMAIN_NAME, APP_NAME, APP_ICON_NAME, APP_SCOPES, SIGN_UP_POPUP, SIGN_IN_POPUP,
 } from '../types/const';
-import { extractUrl, getUrlPathQueryHash } from '../utils';
+import { extractUrl } from '../utils';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
@@ -28,20 +26,6 @@ const SignUpPopup = () => {
 
   const onPopupCloseBtnClick = () => {
     dispatch(updatePopup(SIGN_UP_POPUP, false));
-  };
-
-  const onSignUpWithHiroWalletBtnClick = () => {
-    window.alert('Sign up with a Stacks wallet is deprecated and will be removed. Please sign up directly instead. For more information: http://bit.ly/3Sv6ebK');
-    onPopupCloseBtnClick();
-
-    const authOptions = {
-      appDetails: { name: APP_NAME, icon: appIconUrl },
-      redirectTo: '/' + getUrlPathQueryHash(window.location.href),
-      onFinish: () => dispatch(updateUserSignedIn()),
-      userSession: userSession._userSession,
-      sendToSignIn: false,
-    };
-    showConnect(authOptions); // Bug alert: dynamic import should show loading.
   };
 
   const onSignInBtnClick = () => {
@@ -64,7 +48,7 @@ const SignUpPopup = () => {
     paddingTop: insets.top, paddingBottom: insets.bottom,
     paddingLeft: insets.left, paddingRight: insets.right,
   };
-  const panelHeight = Math.min(576, safeAreaHeight * 0.9);
+  const panelHeight = Math.min(576 - 40, safeAreaHeight * 0.9);
 
   return (
     <AnimatePresence key="AnimatePresence_SUP">
@@ -76,7 +60,7 @@ const SignUpPopup = () => {
           </div>
           <motion.div className={tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
             <div className={tailwind('relative flex flex-col overflow-hidden rounded-lg bg-white')} style={{ height: panelHeight }}>
-              <SignUp domainName={DOMAIN_NAME} appName={APP_NAME} appIconUrl={appIconUrl} appScopes={APP_SCOPES} onPopupCloseBtnClick={onPopupCloseBtnClick} onSignUpWithHiroWalletBtnClick={onSignUpWithHiroWalletBtnClick} onSignInBtnClick={onSignInBtnClick} onBackedUpBtnClick={onBackedUpBtnClick} />
+              <SignUp domainName={DOMAIN_NAME} appName={APP_NAME} appIconUrl={appIconUrl} appScopes={APP_SCOPES} onPopupCloseBtnClick={onPopupCloseBtnClick} onSignInBtnClick={onSignInBtnClick} onBackedUpBtnClick={onBackedUpBtnClick} />
             </div>
           </motion.div>
         </div>
