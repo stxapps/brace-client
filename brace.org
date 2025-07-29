@@ -1002,7 +1002,7 @@ This and CI/CD are very important!
 - npm i react-native-swiper
 - npx expo install expo-clipboard
 - npx expo install expo-image-picker expo-image-manipulator
-- npx expo install @d11/react-native-fast-image
+- npx expo install expo-image
 - npx expo install @stylistic/eslint-plugin -- --save-dev
 ** build
 - npx expo prebuild --clean
