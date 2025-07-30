@@ -4,71 +4,52 @@ import internalHub from './internalHub';
 import userSession from '../userSession';
 import { DOT_JSON, PUT_FILE, DELETE_FILE, N_LINKS, SD_HUB_URL } from '../types/const';
 import {
-  isObject, isString, isNumber, copyFPaths, addFPath, deleteFPath, sleep, randomString,
-  sample, getPerformFilesDataPerId,
+  isObject, isString, isNumber, copyFPaths, addFPath, deleteFPath, randomString,
+  getPerformFilesDataPerId,
 } from '../utils';
+import { getLimiter } from '../utils/limit';
 import vars, { cachedServerFPaths } from '../vars';
 
 const _userSession = userSession._userSession;
 
-let networkInfos = []; // info = { rId, dt, nRequests }
-
-const respectLimit = async (rId, nRequests) => {
-  const LIMIT = vars.user.hubUrl === SD_HUB_URL ? 144 : 72; // Requests per minute
-  const ONE_MINUTE = 60 * 1000;
-  const N_TRIES = 4;
-
-  let result = false;
-  for (let currentTry = 1; currentTry <= N_TRIES; currentTry++) {
-    networkInfos = networkInfos.filter(info => info.dt >= Date.now() - ONE_MINUTE);
-
-    let tReqs = 0, tDT = Date.now(), doExceed = false;
-    for (let i = networkInfos.length - 1; i >= 0; i--) {
-      const info = networkInfos[i];
-      if (info.nRequests + tReqs >= LIMIT) {
-        doExceed = true;
-        break;
-      }
-
-      tReqs += info.nRequests;
-      tDT = info.dt;
-    }
-    if (!doExceed) {
-      updateNetworkInfos(rId, nRequests);
-      result = true;
-      break;
-    }
-    if (currentTry < N_TRIES) {
-      const frac = sample([1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000]);
-      let duration = ONE_MINUTE - (Date.now() - tDT) + frac;
-      if (duration < 0) duration = 0;
-      if (duration > ONE_MINUTE + frac) duration = ONE_MINUTE + frac;
-      await sleep(duration);
-    }
+let limiter, strgLimiter;
+const respectLimit = async (rId, nRequests, isStrg = false) => {
+  let sltdLimiter;
+  if (isStrg) {
+    if (!strgLimiter) strgLimiter = getLimiter(288);
+    sltdLimiter = strgLimiter;
+  } else {
+    if (!limiter) limiter = getLimiter(vars.user.hubUrl === SD_HUB_URL ? 144 : 72);
+    sltdLimiter = limiter;
   }
-  return result;
+
+  await sltdLimiter.respectLimit(rId, nRequests);
 };
-
-const updateNetworkInfos = (rId, nRequests) => {
-  for (const info of networkInfos) {
-    if (info.rId === rId) {
-      [info.dt, info.nRequests] = [Date.now(), nRequests];
-      return;
-    }
+const updateNetworkInfos = (rId, nRequests, isStrg = false) => {
+  let sltdLimiter;
+  if (isStrg) {
+    if (!strgLimiter) strgLimiter = getLimiter(288);
+    sltdLimiter = strgLimiter;
+  } else {
+    if (!limiter) limiter = getLimiter(vars.user.hubUrl === SD_HUB_URL ? 144 : 72);
+    sltdLimiter = limiter;
   }
 
-  networkInfos.push({ rId, dt: Date.now(), nRequests });
+  sltdLimiter.updateNetworkInfos(rId, nRequests);
 };
 
 const getFile = async (fpath, options = {}) => {
   const rId = `${Date.now()}${randomString(4)}`;
-  await respectLimit(rId, 1);
+  if (vars.user.hubUrl === SD_HUB_URL) await respectLimit(rId, 1, true);
+  else await respectLimit(rId, 1);
 
   const storage = new Storage({ userSession: _userSession });
   let content = /** @type {any} */(await storage.getFile(fpath, options));
   if (fpath.endsWith(DOT_JSON)) content = JSON.parse(content);
 
-  updateNetworkInfos(rId, 1);
+  if (vars.user.hubUrl === SD_HUB_URL) updateNetworkInfos(rId, 1, true);
+  else updateNetworkInfos(rId, 1);
+
   return content;
 };
 
@@ -260,8 +241,9 @@ const listFiles = async (callback) => {
     return callback(fpath);
   });
 
-  // Bug alert: 100 is a number of fpaths per request and can be changed.
-  updateNetworkInfos(rId, Math.ceil(result / 100) + 1);
+  // Bug alert: 100, 2400 are a number of fpaths per request and can be changed.
+  const pageSize = vars.user.hubUrl === SD_HUB_URL ? 2400 : 100;
+  updateNetworkInfos(rId, Math.ceil(result / pageSize) + 1);
   return result;
 };
 
