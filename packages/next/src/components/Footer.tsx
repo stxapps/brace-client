@@ -1,8 +1,9 @@
 import React from 'react';
+import Link from 'next/link';
 import { connect } from 'react-redux';
 
 import {
-  HASH_ABOUT, HASH_TERMS, HASH_PRIVACY, HASH_PRICING, HASH_SUPPORT,
+  PATH_ABOUT, PATH_TERMS, PATH_PRIVACY, PATH_PRICING, PATH_SUPPORT,
 } from '../types/const';
 import { getSafeAreaWidth, getThemeMode } from '../selectors';
 
@@ -17,19 +18,19 @@ class Footer extends React.PureComponent<any, any> {
       <footer className={tailwind('mx-auto max-w-6xl overflow-hidden bg-white px-4 pt-28 pb-6 md:px-6 lg:px-8')}>
         <div className={tailwind('-mx-5 -my-2 md:flex md:flex-wrap md:justify-center')}>
           <div className={tailwind('px-3 py-1')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={'/' + HASH_ABOUT}>About</a>
+            <Link className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={PATH_ABOUT} prefetch={false}>About</Link>
           </div>
           <div className={tailwind('mt-2 px-3 py-1 md:mt-0')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={'/' + HASH_TERMS}>Terms</a>
+            <Link className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={PATH_TERMS} prefetch={false}>Terms</Link>
           </div>
           <div className={tailwind('mt-2 px-3 py-1 md:mt-0')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={'/' + HASH_PRIVACY}>Privacy</a>
+            <Link className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={PATH_PRIVACY} prefetch={false}>Privacy</Link>
           </div>
           <div className={tailwind('mt-2 px-3 py-1 md:mt-0')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={'/' + HASH_PRICING}>Pricing</a>
+            <Link className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={PATH_PRICING} prefetch={false}>Pricing</Link>
           </div>
           <div className={tailwind('mt-2 px-3 py-1 md:mt-0')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={'/' + HASH_SUPPORT}>Support</a>
+            <Link className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={PATH_SUPPORT} prefetch={false}>Support</Link>
           </div>
           <div className={tailwind('mt-2 px-3 py-1 md:mt-0')}>
             <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href="https://docs.brace.to" target="_blank" rel="noreferrer">Docs</a>

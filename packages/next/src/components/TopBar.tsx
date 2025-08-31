@@ -1,4 +1,6 @@
 import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -44,9 +46,9 @@ class TopBar extends React.PureComponent<any, any> {
       <div className={tailwind(`mx-auto max-w-6xl px-4 md:px-6 lg:px-8 ${topBarStyleClasses}`)}>
         <div className={tailwind('relative')}>
           <div className={tailwind('flex h-14 items-center justify-between')}>
-            <a className={tailwind('relative rounded focus:outline-none focus:ring focus:ring-offset-2')} href="/">
-              <img className={tailwind('h-8')} src={doSupportTheme && themeMode === BLK_MODE ? LogoBlk : Logo} alt="Brace logo" />
-            </a>
+            <Link className={tailwind('relative rounded focus:outline-none focus:ring focus:ring-offset-2')} href="/">
+              <Image className={tailwind('h-8')} src={doSupportTheme && themeMode === BLK_MODE ? LogoBlk : Logo} alt="Brace logo" />
+            </Link>
             {rightPane}
           </div>
         </div>

@@ -6,8 +6,17 @@ import { makeStore, AppStore } from '@/store';
 import { bindAddNextActionRef } from '@/store-next';
 import { useTailwind } from '@/components';
 
-export function InnerRoot({ children }: { children: React.ReactNode }) {
+function SafeArea({ children }: { children: React.ReactNode }) {
   const tailwind = useTailwind();
+
+  return (
+    <div className={tailwind('safe-area min-h-screen bg-white blk:bg-gray-900')}>
+      {children}
+    </div>
+  );
+}
+
+export function InnerLayout({ children }: { children: React.ReactNode }) {
   const storeRef = useRef<AppStore | null>(null);
   if (!storeRef.current) {
     // Create the store instance the first time this renders
@@ -18,9 +27,9 @@ export function InnerRoot({ children }: { children: React.ReactNode }) {
 
   return (
     <ReduxProvider store={storeRef.current}>
-      <div className={tailwind('safe-area min-h-screen bg-white blk:bg-gray-900')}>
+      <SafeArea>
         {children}
-      </div>
+      </SafeArea>
     </ReduxProvider>
   );
 }

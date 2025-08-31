@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 import { useSelector, useDispatch } from '../store';
 import { updatePopup } from '../actions';
@@ -56,7 +57,7 @@ const EmptyContent = () => {
   if (queryString) {
     return (
       <React.Fragment>
-        <img className={tailwind('mx-auto mt-10 w-40')} src={emptyBox} alt="An empty box lying down" />
+        <Image className={tailwind('mx-auto mt-10 w-40')} src={emptyBox} alt="An empty box lying down" />
         <h3 className={tailwind('mt-6 text-center text-lg font-medium text-gray-800 blk:text-gray-200')}>No links in #{displayName}</h3>
         <p className={tailwind('mx-auto mt-2 max-w-md text-center text-base tracking-wide text-gray-500 blk:text-gray-400')}>Click <span className={tailwind('font-semibold')}>{textName}</span> from the menu to show links here.</p>
       </React.Fragment>
@@ -66,7 +67,7 @@ const EmptyContent = () => {
   if (listName === MY_LIST) {
     return (
       <div style={{ borderRadius: '1.5rem' }} className={tailwind('mx-auto w-full max-w-md bg-gray-50 px-4 pt-16 pb-8 blk:bg-gray-800')}>
-        <img className={tailwind('mx-auto h-16')} src={themeMode === BLK_MODE ? undrawLinkBlk : undrawLink} alt="unDraw link icon" />
+        <Image className={tailwind('mx-auto h-16')} src={themeMode === BLK_MODE ? undrawLinkBlk : undrawLink} alt="unDraw link icon" />
         <h3 className={tailwind('mt-6 text-center text-base text-gray-600 blk:text-gray-300')}>Get started saving links</h3>
         <button onClick={onAddBtnClick} style={{ padding: '0.4375rem 0.8rem 0.4375rem 0.65rem' }} className={tailwind('mx-auto mt-4 flex items-baseline rounded-full bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring blk:bg-gray-100 blk:hover:bg-white')}>
           <svg className={tailwind('w-3 text-white blk:text-gray-900')} viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -75,7 +76,7 @@ const EmptyContent = () => {
           <span className={tailwind('ml-1 text-base font-medium text-gray-50 blk:text-gray-800')}>Save link</span>
         </button>
         <p className={tailwind('mx-auto mt-16 max-w-md text-center text-base text-gray-600 blk:text-gray-300')}>Or type <span className={tailwind('font-semibold')}>"brace.to/"</span> in front of any link <br className={tailwind('new-line-in-address-bar')} />in Address bar.</p>
-        <img className={tailwind('mx-auto mt-4 w-full')} src={themeMode === BLK_MODE ? saveLinkInUrlBarBlk : saveLinkInUrlBar} alt="Save link at address bar" />
+        <Image className={tailwind('mx-auto mt-4 w-full')} src={themeMode === BLK_MODE ? saveLinkInUrlBarBlk : saveLinkInUrlBar} alt="Save link at address bar" />
       </div>
     );
   }
@@ -96,7 +97,7 @@ const EmptyContent = () => {
 
   return (
     <React.Fragment>
-      <img className={tailwind('mx-auto mt-10 w-40')} src={emptyBox} alt="An empty box lying down" />
+      <Image className={tailwind('mx-auto mt-10 w-40')} src={emptyBox} alt="An empty box lying down" />
       <h3 className={tailwind('mt-6 text-center text-lg font-medium text-gray-800 blk:text-gray-200')}>No links in {displayName}</h3>
       <p className={tailwind('mx-auto mt-2 max-w-md text-center text-base tracking-wide text-gray-500 blk:text-gray-400')}>Click <span className={tailwind('font-semibold')}>{textName}</span> from the menu to move links here.</p>
     </React.Fragment>

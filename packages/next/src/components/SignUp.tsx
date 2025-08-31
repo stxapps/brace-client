@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 
 import { walletCreateAccount, walletChooseAccount } from '../importWrapper';
 import { HASH_TERMS, HASH_PRIVACY, HASH_SUPPORT } from '../types/const';
@@ -172,7 +173,7 @@ const SignUp = (props) => {
       <React.Fragment>
         <div className={tailwind('flex items-center justify-center pt-16')}>
           <div className={tailwind('relative flex w-40 items-center justify-between')}>
-            <img className={tailwind('h-16 w-16')} src={appIconUrl} alt="App logo" />
+            <Image className={tailwind('h-16 w-16')} src={appIconUrl} alt="App logo" />
             <div className={tailwind('flex h-16 w-16 items-center justify-center rounded-xl bg-blue-100')}>
               <svg className={tailwind('h-9 w-9 text-blue-700')} viewBox="0 0 36 36" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path fillRule="evenodd" clipRule="evenodd" d="M8.9999 16.2V12.6C8.9999 10.213 9.94811 7.92384 11.6359 6.23601C13.3238 4.54819 15.613 3.59998 17.9999 3.59998C20.3869 3.59998 22.676 4.54819 24.3639 6.23601C26.0517 7.92384 26.9999 10.213 26.9999 12.6V16.2C27.9547 16.2 28.8704 16.5793 29.5455 17.2544C30.2206 17.9295 30.5999 18.8452 30.5999 19.8V28.8C30.5999 29.7548 30.2206 30.6704 29.5455 31.3456C28.8704 32.0207 27.9547 32.4 26.9999 32.4H8.9999C8.04512 32.4 7.12945 32.0207 6.45432 31.3456C5.77919 30.6704 5.3999 29.7548 5.3999 28.8V19.8C5.3999 18.8452 5.77919 17.9295 6.45432 17.2544C7.12945 16.5793 8.04512 16.2 8.9999 16.2ZM23.3999 12.6V16.2H12.5999V12.6C12.5999 11.1678 13.1688 9.7943 14.1815 8.7816C15.1942 7.7689 16.5677 7.19998 17.9999 7.19998C19.4321 7.19998 20.8056 7.7689 21.8183 8.7816C22.831 9.7943 23.3999 11.1678 23.3999 12.6Z" />

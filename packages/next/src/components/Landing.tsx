@@ -96,7 +96,7 @@ class Landing extends React.PureComponent<any, any> {
     }
 
     this.props.updatePopup(SIGN_UP_POPUP, true);
-  }
+  };
 
   render() {
     const { isUserSignedIn, tailwind } = this.props;
@@ -271,7 +271,8 @@ class Landing extends React.PureComponent<any, any> {
                       </a>
                     </div>
                     <div className={tailwind('mx-auto mt-4 w-full max-w-sm md:mt-0 md:mr-0 md:w-1/2')}>
-                      <img src="/images/save-with-extension.7a80634dc0c41346cfe4.png" srcSet="/images/save-with-extension.7a80634dc0c41346cfe4.png 1x, /images/save-with-extension@2x.96ffe7b05dffc9371cd5.png 2x, /images/save-with-extension@3x.534a356da96d5d0dfd5f.png 3x, /images/save-with-extension@4x.4df907894136a6e9eeb9.png 4x" alt="Brace.to web browser extension" loading='lazy' width={480} height={344} />
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/images/save-with-extension.7a80634dc0c41346cfe4.png" srcSet="/images/save-with-extension.7a80634dc0c41346cfe4.png 1x, /images/save-with-extension@2x.96ffe7b05dffc9371cd5.png 2x, /images/save-with-extension@3x.534a356da96d5d0dfd5f.png 3x, /images/save-with-extension@4x.4df907894136a6e9eeb9.png 4x" alt="Brace.to web browser extension" loading="lazy" width={480} height={344} />
                     </div>
                   </div>
                 </div>
@@ -295,8 +296,10 @@ class Landing extends React.PureComponent<any, any> {
                       </a>
                     </div>
                     <div className={tailwind('mt-4 flex items-center justify-evenly md:mt-0 md:w-1/2 md:justify-end md:pr-6 lg:pr-8')}>
-                      <img className={tailwind('share-android-w')} src="/images/share-on-google-pixel-4a.67e41aea98611fddc2e6.png" srcSet="/images/share-on-google-pixel-4a.67e41aea98611fddc2e6.png 1x, /images/share-on-google-pixel-4a@2x.79413e418c63cb635ec3.png 2x, /images/share-on-google-pixel-4a@3x.34e9a43c79685ba34054.png 3x, /images/share-on-google-pixel-4a@4x.77aae1c53310915fb7e1.png 4x" alt="A share screen on Google Pixel 4a" loading='lazy' width={233} height={480} />
-                      <img className={tailwind('share-ios-w md:ml-4 lg:ml-8')} src="/images/share-on-iphone-11-pro.c7e2e1f3308f0cd32de2.png" srcSet="/images/share-on-iphone-11-pro.c7e2e1f3308f0cd32de2.png 1x, /images/share-on-iphone-11-pro@2x.7ed3d242876974f43de9.png 2x, /images/share-on-iphone-11-pro@3x.8daef795ccd9f3b584f5.png 3x, /images/share-on-iphone-11-pro@4x.7acf669140890f4b23ad.png 4x" alt="A share screen on iPhone 11 Pro" loading='lazy' width={239} height={480} />
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img className={tailwind('share-android-w')} src="/images/share-on-google-pixel-4a.67e41aea98611fddc2e6.png" srcSet="/images/share-on-google-pixel-4a.67e41aea98611fddc2e6.png 1x, /images/share-on-google-pixel-4a@2x.79413e418c63cb635ec3.png 2x, /images/share-on-google-pixel-4a@3x.34e9a43c79685ba34054.png 3x, /images/share-on-google-pixel-4a@4x.77aae1c53310915fb7e1.png 4x" alt="A share screen on Google Pixel 4a" loading="lazy" width={233} height={480} />
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img className={tailwind('share-ios-w md:ml-4 lg:ml-8')} src="/images/share-on-iphone-11-pro.c7e2e1f3308f0cd32de2.png" srcSet="/images/share-on-iphone-11-pro.c7e2e1f3308f0cd32de2.png 1x, /images/share-on-iphone-11-pro@2x.7ed3d242876974f43de9.png 2x, /images/share-on-iphone-11-pro@3x.8daef795ccd9f3b584f5.png 3x, /images/share-on-iphone-11-pro@4x.7acf669140890f4b23ad.png 4x" alt="A share screen on iPhone 11 Pro" loading="lazy" width={239} height={480} />
                     </div>
                   </div>
                 </div>
@@ -308,7 +311,8 @@ class Landing extends React.PureComponent<any, any> {
                   <h3 className={tailwind('mt-5 text-xl font-semibold text-white sm:leading-none md:text-center lg:text-2xl-extra lg:leading-none')}>Visit Anytime <br className={tailwind('inline sm:hidden')} />on Any of your Devices</h3>
                   <p className={tailwind('mt-2.5 text-base font-normal text-gray-300 md:mt-3.5 md:text-center lg:text-lg lg:leading-6')}>Every link you save will be beautified with its representative image and title <br className={tailwind('hidden md:inline')} />so you can easily find and recognize it.</p>
                   <div className={tailwind('howitwork-gray-pb relative mt-4')}>
-                    <img className={tailwind('absolute left-1/2 w-full max-w-lg -translate-x-1/2 transform md:max-w-lg lg:max-w-xl')} src="/images/visit-anywhere-ss.ec0465b8b40ce9c3db8f.png" srcSet="/images/visit-anywhere-ss.ec0465b8b40ce9c3db8f.png 1x, /images/visit-anywhere-ss@2x.479fbd2e7161dd62aece.png 2x, /images/visit-anywhere-ss@3x.14ecc542821e1461830f.png 3x, /images/visit-anywhere-ss@4x.4e9580b6d7f6c34b53a3.png 4x" alt="Visit anywhere, anytime" loading='lazy' width={640} height={383} />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img className={tailwind('absolute left-1/2 w-full max-w-lg -translate-x-1/2 transform md:max-w-lg lg:max-w-xl')} src="/images/visit-anywhere-ss.ec0465b8b40ce9c3db8f.png" srcSet="/images/visit-anywhere-ss.ec0465b8b40ce9c3db8f.png 1x, /images/visit-anywhere-ss@2x.479fbd2e7161dd62aece.png 2x, /images/visit-anywhere-ss@3x.14ecc542821e1461830f.png 3x, /images/visit-anywhere-ss@4x.4e9580b6d7f6c34b53a3.png 4x" alt="Visit anywhere, anytime" loading="lazy" width={640} height={383} />
                   </div>
                 </div>
               </div>

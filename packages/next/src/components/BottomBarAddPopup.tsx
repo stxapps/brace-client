@@ -32,7 +32,7 @@ class BottomBarAddPopup extends React.PureComponent<any, any> {
     this.props.updateLinkEditor(
       { url: e.target.value, msg: '', isAskingConfirm: false }
     );
-  }
+  };
 
   onAddInputKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -41,7 +41,7 @@ class BottomBarAddPopup extends React.PureComponent<any, any> {
         window.document.activeElement.blur();
       }
     }
-  }
+  };
 
   onAddOkBtnClick = () => {
     if (this.didClick) return;
@@ -66,11 +66,11 @@ class BottomBarAddPopup extends React.PureComponent<any, any> {
     this.props.addLink(url, null, null);
     this.props.updatePopup(ADD_POPUP, false);
     this.didClick = true;
-  }
+  };
 
   onAddCancelBtnClick = () => {
     this.props.updatePopup(ADD_POPUP, false);
-  }
+  };
 
   render() {
 

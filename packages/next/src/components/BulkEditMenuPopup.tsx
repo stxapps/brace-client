@@ -100,7 +100,7 @@ const BulkEditMenuPopup = () => {
       {menu.map((text, i) => {
         let btnClassNames = isAnimTypeB ? 'py-4' : 'py-2.5';
         if (i === 0) btnClassNames += isAnimTypeB ? ' -mt-1' : ' -mt-0.5';
-        return <button key={text} onClick={() => onMenuPopupClick(text)} className={tailwind(`block w-full truncate rounded-md pl-4 pr-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white ${btnClassNames}`)} role="menuitem">{text}</button>
+        return <button key={text} onClick={() => onMenuPopupClick(text)} className={tailwind(`block w-full truncate rounded-md pl-4 pr-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white ${btnClassNames}`)} role="menuitem">{text}</button>;
       })}
     </div>
   );

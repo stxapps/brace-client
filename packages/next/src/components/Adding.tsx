@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import Link from 'next/link';
 
 import { useSelector, useDispatch } from '../store';
 import { updatePopup } from '../actions';
@@ -174,7 +175,7 @@ const Adding = () => {
     const { addingUrl, param, urlValidatedResult } = urlState;
     const { addingPUrl } = processAddingUrl(addingUrl);
 
-    let rightLink = <a className={tailwind('block rounded-sm text-right text-base font-medium leading-none text-gray-500 hover:text-gray-600 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-200')} href="/">{isUserSignedIn ? 'Go to My List >' : 'Go to Brace.to >'}</a>
+    let rightLink = <Link className={tailwind('block rounded-sm text-right text-base font-medium leading-none text-gray-500 hover:text-gray-600 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-200')} href="/">{isUserSignedIn ? 'Go to My List >' : 'Go to Brace.to >'}</Link>;
     let centerText = null;
     let leftLink = urlValidatedResult === VALID_URL ? <a className={tailwind('mt-6 block rounded-sm text-left text-base leading-none text-gray-500 hover:text-gray-600 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-200 md:mt-0')} href={addingPUrl}>Back to the link</a> : <div />;
 

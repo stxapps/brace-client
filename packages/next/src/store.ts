@@ -47,9 +47,14 @@ export const makeStore = () => {
     nextActions.push(action);
   };
 
-  /** @ts-expect-error */
-  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+  let composeEnhancers = compose;
+  if (typeof window !== 'undefined') {
+    if ((window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) {
+      composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
+    }
+  }
   const store = createStore(
+    /** @ts-expect-error */
     reducers, composeEnhancers(applyMiddleware(thunk), offline(offlineConfig))
   );
   store.subscribe(() => {

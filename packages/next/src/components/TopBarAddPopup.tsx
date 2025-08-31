@@ -161,7 +161,7 @@ class TopBarAddPopup extends React.PureComponent<any, any> {
         <motion.div key="TopBarAddPopup_addPopup" ref={this.menuPopup} style={popupStyle} className={tailwind(popupClassNames)} variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
           {this.renderContent()}
         </motion.div>
-      )
+      );
     } else {
       menuPopup = (
         <div key="TopBarAddPopup_addPopup" ref={this.menuPopup} style={{ top: safeAreaHeight + 256, left: safeAreaWidth + 256 }} className={tailwind(popupClassNames)}>

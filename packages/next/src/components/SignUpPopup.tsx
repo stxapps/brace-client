@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { m as motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
+import { useSelector, useDispatch } from '../store';
 import { updatePopup, updateUserData } from '../actions';
 import {
   DOMAIN_NAME, APP_NAME, APP_ICON_NAME, APP_SCOPES, SIGN_UP_POPUP, SIGN_IN_POPUP,

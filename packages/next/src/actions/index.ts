@@ -31,6 +31,7 @@ import {
 import vars from '../vars';
 
 export const init = async (store) => {
+  if (typeof window === 'undefined') return;
 
   const isUserSignedIn = userSession.isUserSignedIn();
   let username = null, userImage = null, userHubUrl = null;
@@ -223,7 +224,7 @@ export const popHistoryState = (store) => {
       updatePopupAsBackPressed(store.dispatch, store.getState);
 
       window.history.go(1);
-      return
+      return;
     }
 
     // if back button pressed and is bulk editing
@@ -231,7 +232,7 @@ export const popHistoryState = (store) => {
       store.dispatch(updateBulkEdit(false));
 
       window.history.go(1);
-      return
+      return;
     }
 
     // No popup shown and no bulk editing, go back one more

@@ -13,6 +13,12 @@ export const BLOCKSTACK_AUTH = '/blockstack-auth';
 export const BACK_DECIDER = 'BACK_DECIDER';
 export const BACK_POPUP = 'BACK_POPUP';
 
+export const PATH_ABOUT = '/about';
+export const PATH_TERMS = '/terms';
+export const PATH_PRIVACY = '/privacy';
+export const PATH_PRICING = '/pricing';
+export const PATH_SUPPORT = '/support';
+
 export const HASH_LANDING = '#landing';
 export const HASH_LANDING_HOW = '#landing-how';
 export const HASH_LANDING_MOBILE = '#landing-mobile';

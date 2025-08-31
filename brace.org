@@ -1029,7 +1029,9 @@ This and CI/CD are very important!
 - npm i https://github.com/stxapps/redux-offline#028205cec27dcf1ae05e310fc7e45779ee908949
 - npm i -D @tailwindcss/forms @tailwindcss/typography
 - npm i @stacks/auth@6.16.1 @stacks/encryption@6.16.1 @stacks/storage@6.16.1 @stacks/wallet-sdk@6.16.1
-- npm i url-parse react-graceful-image file-saver @wewatch/lexorank blueimp-load-image idb-keyval jest-diff
+- npm i url-parse react-graceful-image file-saver @wewatch/lexorank blueimp-load-image idb-keyval
+- npm i jest-diff@29.7.0
 - npm i motion
 - npm i @serwist/next && npm i -D serwist
 - npm install -D @types/url-parse @types/file-saver
+- npm install -D @stylistic/eslint-plugin

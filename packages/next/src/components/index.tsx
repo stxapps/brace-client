@@ -1,6 +1,6 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 
+import { useSelector } from '../store';
 import {
   TOP_HEADER_HEIGHT, TOP_LIST_NAME_HEIGHT,
   TOP_HEADER_LIST_NAME_SPACE, TOP_HEADER_LIST_NAME_SPACE_MD,
@@ -70,9 +70,11 @@ export const useTailwind = () => {
 };
 
 export const withTailwind = (Component) => {
-  return React.forwardRef((props: any, ref) => {
+  const hoc = React.forwardRef((props: any, ref) => {
     const { safeAreaWidth, themeMode } = props;
     const tailwind = getTailwind(safeAreaWidth, themeMode);
     return <Component {...props} tailwind={tailwind} ref={ref} />;
   });
+  hoc.displayName = 'withTailwindComponent';
+  return hoc;
 };

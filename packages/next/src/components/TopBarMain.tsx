@@ -1,4 +1,6 @@
 import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -109,7 +111,7 @@ class TopBarMain extends React.PureComponent<any, any> {
 
     const tbStyle = {
       paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right,
-    }
+    };
     const style = { height };
 
     let classes = '';
@@ -122,9 +124,9 @@ class TopBarMain extends React.PureComponent<any, any> {
         <div style={style} className={tailwind(`mx-auto max-w-6xl px-4 md:px-6 lg:px-8 ${classes}`)}>
           <div className={tailwind('relative')}>
             <div className={tailwind('flex h-14 items-center justify-between')}>
-              <a className={tailwind('relative rounded focus:outline-none focus:ring focus:ring-offset-2')} href="/">
-                <img className={tailwind('h-8')} src={themeMode === BLK_MODE ? LogoBlk : Logo} alt="Brace logo" />
-              </a>
+              <Link className={tailwind('relative rounded focus:outline-none focus:ring focus:ring-offset-2')} href="/">
+                <Image className={tailwind('h-8')} src={themeMode === BLK_MODE ? LogoBlk : Logo} alt="Brace logo" />
+              </Link>
               {rightPane}
             </div>
             {this.renderStatusPopup()}

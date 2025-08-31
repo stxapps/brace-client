@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { connect } from 'react-redux';
 import Url from 'url-parse';

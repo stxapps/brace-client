@@ -47,7 +47,7 @@ class CardPanel extends React.PureComponent<any, any> {
 
   updateScrollY = () => {
     // https://gist.github.com/enqtran/25c6b222a73dc497cc3a64c090fb6700
-    const scrollHeight = getWindowScrollHeight()
+    const scrollHeight = getWindowScrollHeight();
     const windowHeight = window.innerHeight;
     const scrollY = window.scrollY;
 

@@ -18,7 +18,7 @@ class BottomBar extends React.PureComponent<any, any> {
     const bbStyle = {
       paddingBottom: insets.bottom,
       paddingLeft: insets.left, paddingRight: insets.right,
-    }
+    };
     const style = { height: BOTTOM_BAR_HEIGHT };
 
     return (

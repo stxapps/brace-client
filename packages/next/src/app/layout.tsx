@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import Script from 'next/script'
+import Script from 'next/script';
 
 import './globals.css';
 import './loading.css';
 import './patterns.css';
 
-import { InnerRoot } from './inner-layout';
+import { InnerLayout } from './inner-layout';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });
 
@@ -44,13 +44,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Root({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <body className={`min-h-full antialiased ${inter.variable}`}>
-        <InnerRoot>
+        <InnerLayout>
           {children}
-        </InnerRoot>
+        </InnerLayout>
         <Script id="ios-viewport-mod" strategy="beforeInteractive">{`
           const isIPadIPhoneIPod = () => {
             const ua = navigator.userAgent;

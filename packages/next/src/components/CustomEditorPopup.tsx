@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
 import loadImage from 'blueimp-load-image';
 
@@ -445,7 +446,7 @@ const CustomEditorPopup = () => {
             <div ref={scrollPanel} style={{ maxHeight: panelHeight }} className={tailwind('relative flex flex-col overflow-y-auto overflow-x-hidden rounded-lg bg-white blk:bg-gray-800')}>
               {isString(customEditor.image) && <div className={tailwind('aspect-w-12 aspect-h-7 w-full')}>
                 <div>
-                  <img className={tailwind('h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={customEditor.imageUrl} alt="Custom link's illustration" />
+                  <Image className={tailwind('h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={customEditor.imageUrl} alt="Custom link's illustration" />
                   <button onClick={onClearImageBtnClick} className={tailwind('group absolute bottom-1 right-1 flex h-10 w-10 items-center justify-center focus:outline-none')} type="button" title="Remove">
                     <div className={tailwind('flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 group-focus:ring blk:bg-gray-700')}>
                       <svg className={tailwind('h-4 w-4 text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-200')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

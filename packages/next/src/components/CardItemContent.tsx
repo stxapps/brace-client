@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import GracefulImage from 'react-graceful-image';
@@ -102,7 +103,7 @@ class CardItemContent extends React.Component<any, any> {
 
     if (customImage) image = customImage;
     if (image) {
-      return <img key="img-image-custom" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={image} alt={`illustration of ${url}`} />;
+      return <Image key="img-image-custom" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={image} alt={`illustration of ${url}`} />;
     }
 
     if (extractedResult && extractedResult.image && !doIgnoreExtrdRst) {

@@ -9,7 +9,7 @@
     "copy-hard-coding": "bash bin/copy-hard-coding.sh",
     "build": "npm run patch-js && npm run build-js && npm run copy-hard-coding",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "eslint --no-cache",
     "deploy-test": "bash bin/deploy-test.sh",
     "deploy-prod": "bash bin/deploy-prod.sh",
     "invalidate-test": "aws cloudfront create-invalidation --distribution-id E1IMMCHCDM4Y81 --paths /apple-touch-icon.png /logo192.png /logo512.png",
@@ -26,7 +26,7 @@
     "blueimp-load-image": "^5.16.0",
     "file-saver": "^2.0.5",
     "idb-keyval": "^6.2.2",
-    "jest-diff": "^30.1.1",
+    "jest-diff": "^29.7.0",
     "motion": "^12.23.12",
     "next": "15.5.2",
     "react": "19.1.0",
@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@stylistic/eslint-plugin": "^5.2.3",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.16",
@@ -50,6 +51,7 @@
     "@types/url-parse": "^1.4.11",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
+    "eslint-plugin-tailwindcss": "^4.0.0-beta.0",
     "serwist": "^9.1.1",
     "tailwindcss": "^4",
     "typescript": "^5"

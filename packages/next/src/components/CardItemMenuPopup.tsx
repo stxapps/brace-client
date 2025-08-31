@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 import { updatePopup } from '../actions';
 import {
@@ -214,7 +214,7 @@ class CardItemMenuPopup extends React.PureComponent<any, any> {
         <motion.div key="CIMP_menuPopup" ref={this.menuPopup} style={popupStyle} className={tailwind(popupClassNames)} variants={popupFMV} initial="hidden" animate="visible" exit="hidden">
           {this.renderMenu()}
         </motion.div>
-      )
+      );
     } else {
       menuPopup = (
         <div key="CIMP_menuPopup" ref={this.menuPopup} style={{ top: safeAreaHeight + 256, left: safeAreaWidth + 256 }} className={tailwind(popupClassNames)}>
