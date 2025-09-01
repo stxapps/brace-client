@@ -75,7 +75,7 @@ const EmptyContent = () => {
           </svg>
           <span className={tailwind('ml-1 text-base font-medium text-gray-50 blk:text-gray-800')}>Save link</span>
         </button>
-        <p className={tailwind('mx-auto mt-16 max-w-md text-center text-base text-gray-600 blk:text-gray-300')}>Or type <span className={tailwind('font-semibold')}>"brace.to/"</span> in front of any link <br className={tailwind('new-line-in-address-bar')} />in Address bar.</p>
+        <p className={tailwind('mx-auto mt-16 max-w-md text-center text-base text-gray-600 blk:text-gray-300')}>Or type <span className={tailwind('font-semibold')}>&quot;brace.to/&quot;</span> in front of any link <br className={tailwind('new-line-in-address-bar')} />in Address bar.</p>
         <Image className={tailwind('mx-auto mt-4 w-full')} src={themeMode === BLK_MODE ? saveLinkInUrlBarBlk : saveLinkInUrlBar} alt="Save link at address bar" />
       </div>
     );
@@ -90,7 +90,7 @@ const EmptyContent = () => {
           </svg>
         </div>
         <h3 className={tailwind('mt-6 text-center text-lg font-medium text-gray-800 blk:text-gray-200')}>No links in {displayName}</h3>
-        <p className={tailwind('mx-auto mt-4 max-w-md text-center text-base tracking-wide text-gray-500 blk:text-gray-400')}>Click <span className={tailwind('font-semibold')}>"Remove"</span> from the menu to move links you don't need anymore here.</p>
+        <p className={tailwind('mx-auto mt-4 max-w-md text-center text-base tracking-wide text-gray-500 blk:text-gray-400')}>Click <span className={tailwind('font-semibold')}>&quot;Remove&quot;</span> from the menu to move links you don&apos;t need anymore here.</p>
       </React.Fragment>
     );
   }

@@ -107,7 +107,7 @@ const SignUp = (props) => {
     },
     {
       key: 'faqs1-2',
-      title: "Where should I save my Secret Key?",
+      title: 'Where should I save my Secret Key?',
       body: (
         <React.Fragment>
           <p className={tailwind('text-sm leading-6 text-gray-500')}>Save your Secret Key in a place where only you can find it. For example:</p>
@@ -116,7 +116,7 @@ const SignUp = (props) => {
             <li>Your notes app, protected with a password</li>
             <li>Written down and kept somewhere safe</li>
           </ul>
-          <p className={tailwind('pt-2 pb-3 text-sm leading-6 text-gray-500')}>Don't save it anywhere others can find it, or on a website you do not trust. Anybody with your Secret Key will have access to your data.</p>
+          <p className={tailwind('pt-2 pb-3 text-sm leading-6 text-gray-500')}>Don&apos;t save it anywhere others can find it, or on a website you do not trust. Anybody with your Secret Key will have access to your data.</p>
         </React.Fragment>
       ),
     },
@@ -130,17 +130,17 @@ const SignUp = (props) => {
   const faqs2 = [
     {
       key: 'faqs2-1',
-      title: "What if I lose my Secret Key?",
+      title: 'What if I lose my Secret Key?',
       body: "If you lose your Secret Key, it'll be lost forever. Only you know your Secret Key to ensure that only you can decrypt your data, which means no one can help you recover it.",
     },
     {
       key: 'faqs2-2',
-      title: "When will I need my Secret Key?",
+      title: 'When will I need my Secret Key?',
       body: "You'll need your Secret Key to access your account, i.e., when you sign in on different devices, such as your new phone or laptop.",
     },
     {
       key: 'faqs2-3',
-      title: "Can I change or reset my Secret Key?",
+      title: 'Can I change or reset my Secret Key?',
       body: "Your Secret Key cannot be changed or reset. As it's used to encrypt your content file by file, if you change your Secret Key, every file needs to be decrypted with your old Secret Key and encrypted again with your new Secret Key.",
     },
   ];
@@ -186,13 +186,13 @@ const SignUp = (props) => {
           </div>
         </div>
         <h2 className={tailwind('mt-12 text-center text-xl font-semibold text-gray-900')}>{appName} guarantees your privacy by encrypting everything</h2>
-        <ul className={tailwind('mt-7 divide-y divide-gray-200 border-t border-b border-gray-200')}>
+        <ul className={tailwind('mt-7 divide-y divide-gray-200 border-y border-gray-200')}>
           <li className={tailwind('flex items-center justify-start py-4')}>
             <svg className={tailwind('h-7 w-7 flex-shrink-0 flex-grow-0 text-blue-700')} viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path fillRule="evenodd" clipRule="evenodd" d="M8.00005 14.4V11.2C8.00005 9.07822 8.8429 7.04339 10.3432 5.5431C11.8435 4.04281 13.8783 3.19995 16 3.19995C18.1218 3.19995 20.1566 4.04281 21.6569 5.5431C23.1572 7.04339 24 9.07822 24 11.2V14.4C24.8487 14.4 25.6627 14.7371 26.2628 15.3372C26.8629 15.9373 27.2 16.7513 27.2 17.6V25.6C27.2 26.4486 26.8629 27.2626 26.2628 27.8627C25.6627 28.4628 24.8487 28.8 24 28.8H8.00005C7.15136 28.8 6.33742 28.4628 5.73731 27.8627C5.13719 27.2626 4.80005 26.4486 4.80005 25.6V17.6C4.80005 16.7513 5.13719 15.9373 5.73731 15.3372C6.33742 14.7371 7.15136 14.4 8.00005 14.4ZM20.8 11.2V14.4H11.2V11.2C11.2 9.92691 11.7058 8.70601 12.6059 7.80584C13.5061 6.90566 14.727 6.39995 16 6.39995C17.2731 6.39995 18.494 6.90566 19.3942 7.80584C20.2943 8.70601 20.8 9.92691 20.8 11.2Z" />
             </svg>
             <div className={tailwind('ml-3 flex-shrink flex-grow')}>
-              <p className={tailwind('text-left text-sm text-gray-500')}>You'll get a Secret Key that automatically encrypts everything you do</p>
+              <p className={tailwind('text-left text-sm text-gray-500')}>You&apos;ll get a Secret Key that automatically encrypts everything you do</p>
             </div>
           </li>
           <li className={tailwind('flex items-center justify-start py-4')}>
@@ -201,7 +201,7 @@ const SignUp = (props) => {
               <path d="M19.9265 26.7151L15.6001 22.3871C14.0444 22.2896 12.5778 21.6277 11.4754 20.5257C10.3731 19.4236 9.71079 17.9571 9.61291 16.4015L3.73611 10.5247C2.38445 12.1343 1.36387 13.9949 0.73291 15.9999C2.77131 22.4911 8.83691 27.1999 16.0001 27.1999C17.3553 27.1999 18.6705 27.0319 19.9265 26.7151Z" />
             </svg>
             <div className={tailwind('ml-3 flex-shrink flex-grow')}>
-              <p className={tailwind('text-left text-sm text-gray-500')}>{appName} won't be able to see, access, or modify your content</p>
+              <p className={tailwind('text-left text-sm text-gray-500')}>{appName} won&apos;t be able to see, access, or modify your content</p>
             </div>
           </li>
         </ul>
@@ -221,16 +221,16 @@ const SignUp = (props) => {
     const content = (
       <React.Fragment>
         <h2 className={tailwind('mt-8 text-left text-xl font-semibold text-gray-900')}>Your Secret Key</h2>
-        <p className={tailwind('mt-3 text-sm leading-6 text-gray-500')}>These 24 words below are your Secret Key. They're used to access your account. You sign in on different devices with them. Make sure to save them somewhere safe. If you lose these words, you'll lose your account.</p>
+        <p className={tailwind('mt-3 text-sm leading-6 text-gray-500')}>These 24 words below are your Secret Key. They&apos;re used to access your account. You sign in on different devices with them. Make sure to save them somewhere safe. If you lose these words, you&apos;ll lose your account.</p>
         <div className={tailwind('mt-5 rounded-md border border-gray-200')}>
           <p className={tailwind('border-b border-gray-200 py-1 text-center text-base font-medium text-gray-400')}>Your Secret Key</p>
           <p className={tailwind('p-3 text-center text-sm leading-6 text-gray-700')}>{walletData.current.secretKey}</p>
         </div>
         <div className={tailwind('pt-5')}>
           <button onClick={onClipboardBtnClick} className={tailwind('w-full rounded-md border border-gray-200 bg-white py-2 px-4 text-sm font-medium text-blue-700 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2')} type="button">Copy to clipboard</button>
-          <button onClick={onSavedBtnClick} className={tailwind('mt-3.5 w-full rounded-md border border-transparent bg-blue-700 py-2 px-4 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2')} type="button">I've saved it</button>
+          <button onClick={onSavedBtnClick} className={tailwind('mt-3.5 w-full rounded-md border border-transparent bg-blue-700 py-2 px-4 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2')} type="button">I&apos;ve saved it</button>
         </div>
-        <ul className={tailwind('mt-7 mb-5 divide-y divide-gray-200 border-t border-b border-gray-200')}>
+        <ul className={tailwind('mt-7 mb-5 divide-y divide-gray-200 border-y border-gray-200')}>
           {faqs1.map(faq => <ExpListItem key={faq.key} title={faq.title} body={faq.body} />)}
         </ul>
       </React.Fragment>
@@ -244,13 +244,13 @@ const SignUp = (props) => {
       <React.Fragment>
         <h2 className={tailwind('mt-8 text-left text-xl font-semibold text-gray-900')}>Save your Secret Key</h2>
         <p className={tailwind('mt-3 text-sm leading-6 text-gray-500')}>Paste your Secret Key wherever you keep critical, private information such as passwords.</p>
-        <p className={tailwind('mt-3 text-sm leading-6 text-gray-500')}>Only you know your Secret Key. If you lose it, it'll be lost forever. So save it somewhere you won't forget.</p>
+        <p className={tailwind('mt-3 text-sm leading-6 text-gray-500')}>Only you know your Secret Key. If you lose it, it&apos;ll be lost forever. So save it somewhere you won&apos;t forget.</p>
         <div className={tailwind('pt-6')}>
-          <button onClick={onBackedUpBtnClick} className={tailwind('w-full rounded-md border border-transparent bg-blue-700 py-2 px-4 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2')} type="button">I've backed up my Secret Key</button>
+          <button onClick={onBackedUpBtnClick} className={tailwind('w-full rounded-md border border-transparent bg-blue-700 py-2 px-4 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2')} type="button">I&apos;ve backed up my Secret Key</button>
           <p className={tailwind('mt-3 text-xs leading-5 tracking-wide text-gray-400')}>By clicking the button above, you agree to our <a className={tailwind('rounded-sm text-gray-500 underline hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} href={domainName + '/' + HASH_TERMS} target="_blank" rel="noreferrer">Terms of Service</a> and <a className={tailwind('rounded-sm text-gray-500 underline hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} href={domainName + '/' + HASH_PRIVACY} target="_blank" rel="noreferrer">Privacy Policy</a>.</p>
           <button onClick={onAgainBtnClick} className={tailwind('mt-3 w-full rounded-md border border-transparent bg-white py-2 px-4 text-sm font-medium text-blue-700 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-600')} type="button">View Secret Key again</button>
         </div>
-        <ul className={tailwind('mt-20 mb-8 divide-y divide-gray-200 border-t border-b border-gray-200')}>
+        <ul className={tailwind('mt-20 mb-8 divide-y divide-gray-200 border-y border-gray-200')}>
           {faqs2.map(faq => <ExpListItem key={faq.key} title={faq.title} body={faq.body} />)}
         </ul>
       </React.Fragment>

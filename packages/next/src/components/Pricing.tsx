@@ -52,7 +52,7 @@ const Pricing = () => {
           <p className={tailwind('mt-5 text-center leading-7 text-gray-500')}>One simple no-tricks subscription plan to unlock all extra features</p>
           <div className={tailwind('pt-10 md:flex md:items-center')}>
             <div className={tailwind('')}>
-              <p className={tailwind('leading-7 text-gray-500')}>Brace.to is free, and we offer a paid subscription for using extra features. It's our intention to never show advertisements, and we don't rent, sell, or share your information with other companies. Our optional paid subscription is the only way we make money.</p>
+              <p className={tailwind('leading-7 text-gray-500')}>Brace.to is free, and we offer a paid subscription for using extra features. It&apos;s our intention to never show advertisements, and we don&apos;t rent, sell, or share your information with other companies. Our optional paid subscription is the only way we make money.</p>
               <p className={tailwind('pt-6 leading-7 text-gray-500')}>Please support us and unlock all extra features:</p>
               <div className={tailwind('pt-3 lg:flex lg:justify-between lg:pt-5')}>
                 <div className={tailwind('flex')}>

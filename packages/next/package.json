@@ -9,7 +9,7 @@
     "copy-hard-coding": "bash bin/copy-hard-coding.sh",
     "build": "npm run patch-js && npm run build-js && npm run copy-hard-coding",
     "start": "next start",
-    "lint": "eslint --no-cache",
+    "lint": "eslint",
     "deploy-test": "bash bin/deploy-test.sh",
     "deploy-prod": "bash bin/deploy-prod.sh",
     "invalidate-test": "aws cloudfront create-invalidation --distribution-id E1IMMCHCDM4Y81 --paths /apple-touch-icon.png /logo192.png /logo512.png",

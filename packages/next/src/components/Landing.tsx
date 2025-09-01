@@ -152,7 +152,7 @@ class Landing extends React.PureComponent<any, any> {
                     </div>
                     <div className={tailwind('mt-0.5 ml-4')}>
                       <h3 className={tailwind('text-xl font-medium leading-none text-gray-900')}>Long useful articles</h3>
-                      <p className={tailwind('mt-2 text-base text-gray-500')}>You found a long, useful, and important article but can't read it right now? Not a problem. Just save it to Brace.to to read later.</p>
+                      <p className={tailwind('mt-2 text-base text-gray-500')}>You found a long, useful, and important article but can&apos;t read it right now? Not a problem. Just save it to Brace.to to read later.</p>
                     </div>
                   </div>
                 </li>
@@ -184,7 +184,7 @@ class Landing extends React.PureComponent<any, any> {
                     </div>
                     <div className={tailwind('mt-0.5 ml-4')}>
                       <h3 className={tailwind('text-xl font-medium leading-none text-gray-900')}>Items on online shops</h3>
-                      <p className={tailwind('mt-2 text-base text-gray-500')}>You found an item on an online shop you don't want now but might want to buy later? Not a problem. Just save it to Brace.to.</p>
+                      <p className={tailwind('mt-2 text-base text-gray-500')}>You found an item on an online shop you don&apos;t want now but might want to buy later? Not a problem. Just save it to Brace.to.</p>
                     </div>
                   </div>
                 </li>
@@ -230,7 +230,7 @@ class Landing extends React.PureComponent<any, any> {
                   <div className={tailwind('md:flex md:flex-grow md:items-start')}>
                     <div className={tailwind('md:mt-0.5 md:ml-4 md:w-1/2')}>
                       <h3 className={tailwind('mt-5 text-xl font-semibold leading-none text-white md:mt-0 lg:text-2xl-extra lg:leading-none')}>Save at Brace.to</h3>
-                      <p className={tailwind('mt-2.5 text-base font-normal text-gray-300 md:pr-8 lg:text-lg lg:leading-6')}>Click the '+ add' button on our website.</p>
+                      <p className={tailwind('mt-2.5 text-base font-normal text-gray-300 md:pr-8 lg:text-lg lg:leading-6')}>Click the &apos;+ add&apos; button on our website.</p>
                     </div>
                     <Image className={tailwind('mx-auto mt-4 w-full max-w-md md:mt-0 md:mr-0 md:w-1/2')} src={saveLinkAtTheSite} alt="Save link at brace.to" />
                   </div>
@@ -246,7 +246,7 @@ class Landing extends React.PureComponent<any, any> {
                   <div className={tailwind('md:flex md:flex-grow md:items-start')}>
                     <div className={tailwind('md:mt-0.5 md:ml-4 md:w-1/2')}>
                       <h3 className={tailwind('mt-5 text-xl font-semibold leading-none text-white md:mt-0 lg:text-2xl-extra lg:leading-none')}>Save in Address Bar</h3>
-                      <p className={tailwind('mt-2.5 text-base font-normal text-gray-300 md:pr-8 lg:text-lg lg:leading-6')}>Type 'brace.to' and '/' in front of any link in the web browser address bar.</p>
+                      <p className={tailwind('mt-2.5 text-base font-normal text-gray-300 md:pr-8 lg:text-lg lg:leading-6')}>Type &apos;brace.to&apos; and &apos;/&apos; in front of any link in the web browser address bar.</p>
                     </div>
                     <Image className={tailwind('mx-auto mt-4 w-full max-w-md md:mt-0 md:mr-0 md:w-1/2')} src={saveLinkInUrlBar} alt="Save link in address bar" />
                   </div>
@@ -374,14 +374,14 @@ class Landing extends React.PureComponent<any, any> {
           </section>
           <section className={tailwind('mt-20 flex flex-col items-center justify-center bg-purple-blockstack px-4 pt-24 pb-16 md:px-6 md:pt-32 md:pb-24 lg:px-8')}>
             <div className={tailwind('relative')}>
-              <h2 className={tailwind('text-center text-4xl font-bold leading-none text-white md:text-5xl')}><span className={tailwind('line-through')}>Don't</span> Can't Be Evil</h2>
+              <h2 className={tailwind('text-center text-4xl font-bold leading-none text-white md:text-5xl')}><span className={tailwind('line-through')}>Don&apos;t</span> Can&apos;t Be Evil</h2>
               <Image className={tailwind('absolute right-0 h-5 translate-x-0 translate-y-2 transform sm:translate-x-10')} src={logoFullWhite} alt="Brace logo" />
             </div>
-            <p className={tailwind('mt-20 text-center text-lg font-normal leading-normal text-gray-200')}>Not only that Brace.to doesn't be evil; Brace.to can't be.</p>
+            <p className={tailwind('mt-20 text-center text-lg font-normal leading-normal text-gray-200')}>Not only that Brace.to doesn&apos;t be evil; Brace.to can&apos;t be.</p>
           </section>
           <section className={tailwind('px-4 py-20 md:px-6 lg:px-8')}>
             <h2 className={tailwind('text-left text-3xl font-semibold leading-none text-gray-900 md:text-4xl')}>Some kind words...</h2>
-            <p className={tailwind('mt-3 text-lg font-normal text-gray-500')}>Don't just take our word for it. Hear what real people say about us.</p>
+            <p className={tailwind('mt-3 text-lg font-normal text-gray-500')}>Don&apos;t just take our word for it. Hear what real people say about us.</p>
             <ul className={tailwind('mt-12 grid grid-cols-1 gap-8 lg:grid-cols-3')}>
               <li>
                 <ul>
@@ -440,7 +440,7 @@ class Landing extends React.PureComponent<any, any> {
                   <li className={tailwind('lg:mt-8')}>
                     <figure className={tailwind('mx-auto max-w-2xl rounded-4xl bg-white p-6 shadow-md ring-1 ring-gray-900/5')}>
                       <blockquote>
-                        <p className={tailwind(`text-lg tracking-tight text-gray-800 before:content-['“'] after:content-['”']`)}>I really adore this life improvement app called <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/bracedotto" target="_blank" rel="noreferrer">@bracedotto</a>. It's simple but easy to use, decentralized, and hassle-free. The essence of <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/hashtag/OwnYourInternet" target="_blank" rel="noreferrer">#OwnYourInternet</a> and <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/hashtag/CantBeEvil" target="_blank" rel="noreferrer">#CantBeEvil</a></p>
+                        <p className={tailwind(`text-lg tracking-tight text-gray-800 before:content-['“'] after:content-['”']`)}>I really adore this life improvement app called <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/bracedotto" target="_blank" rel="noreferrer">@bracedotto</a>. It&apos;s simple but easy to use, decentralized, and hassle-free. The essence of <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/hashtag/OwnYourInternet" target="_blank" rel="noreferrer">#OwnYourInternet</a> and <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/hashtag/CantBeEvil" target="_blank" rel="noreferrer">#CantBeEvil</a></p>
                       </blockquote>
                       <figcaption className={tailwind('mt-6 flex items-center')}>
                         <div className={tailwind('overflow-hidden rounded-full bg-gray-50')}>
@@ -476,7 +476,7 @@ class Landing extends React.PureComponent<any, any> {
                   <li className={tailwind('lg:mt-8')}>
                     <figure className={tailwind('mx-auto max-w-2xl rounded-4xl bg-white p-6 shadow-md ring-1 ring-gray-900/5')}>
                       <blockquote>
-                        <p className={tailwind(`text-lg tracking-tight text-gray-800 before:content-['“'] after:content-['”']`)}>Save your articles, websites, and video links using <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/bracedotto" target="_blank" rel="noreferrer">@bracedotto</a> powered by <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/Stacks" target="_blank" rel="noreferrer">@Stacks</a>. Easy to use and secure. You can't beat that! <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/hashtag/Stacks" target="_blank" rel="noreferrer">#Stacks</a></p>
+                        <p className={tailwind(`text-lg tracking-tight text-gray-800 before:content-['“'] after:content-['”']`)}>Save your articles, websites, and video links using <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/bracedotto" target="_blank" rel="noreferrer">@bracedotto</a> powered by <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/Stacks" target="_blank" rel="noreferrer">@Stacks</a>. Easy to use and secure. You can&apos;t beat that! <a className={tailwind('rounded hover:underline focus:outline-none focus:ring')} href="https://x.com/hashtag/Stacks" target="_blank" rel="noreferrer">#Stacks</a></p>
                       </blockquote>
                       <figcaption className={tailwind('mt-6 flex items-center')}>
                         <div className={tailwind('overflow-hidden rounded-full bg-gray-50')}>

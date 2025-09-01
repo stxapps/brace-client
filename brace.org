@@ -1035,3 +1035,4 @@ This and CI/CD are very important!
 - npm i @serwist/next && npm i -D serwist
 - npm install -D @types/url-parse @types/file-saver
 - npm install -D @stylistic/eslint-plugin
+- npm i eslint-plugin-tailwindcss@beta -D
