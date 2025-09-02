@@ -46,11 +46,11 @@ const ListItem = (props) => {
 
     return (
       <React.Fragment>
-        <div className={tailwind('absolute inset-0 bg-black bg-opacity-75')} />
+        <div className={tailwind('absolute inset-0 bg-black/75')} />
         <div className={tailwind('absolute inset-0 flex bg-transparent p-1')}>
           <div className={tailwind('flex min-w-0 flex-shrink flex-grow flex-col items-center justify-center')}>
             <h3 className={tailwind('text-center text-base font-semibold leading-5 text-white')}>{errMsg}</h3>
-            <a className={tailwind('mt-1 rounded-sm px-2 text-center text-sm font-medium tracking-wide text-white hover:underline focus:outline-none focus:ring focus:ring-blue-300')} href={ensureContainUrlProtocol(url)} target="_blank" rel="noreferrer">Go to the link</a>
+            <a className={tailwind('mt-1 rounded-xs px-2 text-center text-sm font-medium tracking-wide text-white hover:underline focus:outline-none focus:ring focus:ring-blue-300')} href={ensureContainUrlProtocol(url)} target="_blank" rel="noreferrer">Go to the link</a>
           </div>
           <div className={tailwind('flex flex-shrink-0 flex-grow-0')}>
             <button onClick={onRetryRetryBtnClick} className={tailwind('group focus:outline-none')}>

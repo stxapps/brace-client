@@ -22,7 +22,6 @@ export const makeStore = () => {
     init(store);
   };
   offlineConfig.dispatch = (...args) => {
-    // @ts-expect-error
     store.dispatch(...args);
   };
   offlineConfig.persistOptions = {

@@ -117,7 +117,7 @@ class TopBarAddPopup extends React.PureComponent<any, any> {
         <div className={tailwind('flex')}>
           <span className={tailwind('inline-flex items-center text-sm text-gray-500 blk:text-gray-300')}>Url:</span>
           <div className={tailwind('ml-3 flex-1')}>
-            <input onChange={this.onAddInputChange} onKeyDown={this.onAddInputKeyPress} className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent')} type="url" placeholder="https://" value={url} autoCapitalize="none" autoFocus />
+            <input onChange={this.onAddInputChange} onKeyDown={this.onAddInputKeyPress} className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent')} type="url" placeholder="https://" value={url} autoCapitalize="none" autoFocus />
           </div>
         </div>
         {msg !== '' && <p className={tailwind('pt-3 text-sm text-red-500')}>{msg}</p>}
@@ -139,7 +139,7 @@ class TopBarAddPopup extends React.PureComponent<any, any> {
 
     const { menuPopupSize } = this.state;
 
-    const popupClassNames = 'fixed z-41 w-96 overflow-auto rounded-lg bg-white px-4 pt-6 pb-5 shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25';
+    const popupClassNames = 'fixed z-41 w-96 overflow-auto rounded-lg bg-white px-4 pt-6 pb-5 shadow-xl ring-1 ring-black/5 blk:bg-gray-800 blk:ring-white/25';
 
     let menuPopup;
     if (menuPopupSize) {
@@ -172,7 +172,7 @@ class TopBarAddPopup extends React.PureComponent<any, any> {
 
     return (
       <AnimatePresence key="AnimatePresence_TopBarAddPopup">
-        <motion.button key="TopBarAddPopup_cancelBtn" onClick={this.onAddCancelBtnClick} tabIndex={-1} className={tailwind('fixed inset-0 z-40 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
+        <motion.button key="TopBarAddPopup_cancelBtn" onClick={this.onAddCancelBtnClick} tabIndex={-1} className={tailwind('fixed inset-0 z-40 h-full w-full cursor-default bg-black/25 focus:outline-none')} variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
         {menuPopup}
       </AnimatePresence>
     );

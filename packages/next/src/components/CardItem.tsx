@@ -67,7 +67,7 @@ class CardItem extends React.Component<any, any> {
 
     return (
       <React.Fragment>
-        <div className={tailwind('absolute inset-0 bg-black bg-opacity-75')} />
+        <div className={tailwind('absolute inset-0 bg-black/75')} />
         <div className={tailwind('absolute inset-0 flex flex-col items-center justify-center bg-transparent px-4')}>
           <h3 className={tailwind('text-center text-base font-semibold text-white')}>Oops..., something went wrong!</h3>
           <div className={tailwind('flex items-center justify-center pt-4')}>
@@ -138,7 +138,7 @@ class CardItem extends React.Component<any, any> {
     );
 
     return (
-      <div className={tailwind('relative mx-auto max-w-md overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm blk:border-gray-700 blk:bg-gray-800 sm:max-w-none')}>
+      <div className={tailwind('relative mx-auto max-w-md overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xs blk:border-gray-700 blk:bg-gray-800 sm:max-w-none')}>
         <CardItemContent link={link} />
         {[ADDING, MOVING, UPDATING, EXTRD_UPDATING].includes(status) && this.renderBusy()}
         {isPinning && this.renderPinning()}

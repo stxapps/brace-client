@@ -1,4 +1,5 @@
 import React from 'react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { connect } from 'react-redux';
 import Url from 'url-parse';
@@ -13,8 +14,6 @@ import { isNumber, getOffsetTop } from '../utils';
 import { withTailwind } from '.';
 import TopBar from './TopBar';
 import Footer from './Footer';
-import SignUpPopup from './SignUpPopup';
-import SignInPopup from './SignInPopup';
 
 import playStore from '../images/play-store-icon.svg';
 import appStore from '../images/app-store-icon.svg';
@@ -40,6 +39,9 @@ import kindWordsGX from '../images/kind_words_godfred_xcuz.jpg';
 import kindWordsMA from '../images/kind_words_moses_adang.jpg';
 import kindWordsPF from '../images/kind_words_paul_f.jpg';
 import kindWordsSR from '../images/kind_words_santiago_rivera.png';
+
+const SignUpPopup = dynamic(() => import('./SignUpPopup'), { ssr: false });
+const SignInPopup = dynamic(() => import('./SignInPopup'), { ssr: false });
 
 class Landing extends React.PureComponent<any, any> {
 
@@ -106,11 +108,11 @@ class Landing extends React.PureComponent<any, any> {
         <TopBar rightPane={isUserSignedIn ? SHOW_BLANK : SHOW_SIGN_IN} />
         <div className={tailwind('mx-auto flow-root w-full max-w-6xl bg-white')}>
           <section className={tailwind('flex items-center px-4 pt-16 pb-4 md:px-6 lg:px-8 lg:pt-12')}>
-            <div className={tailwind('w-full md:w-55/100 lg:pt-10')}>
+            <div className={tailwind('w-full md:w-[55%] lg:pt-10')}>
               <Image className={tailwind('mx-auto w-11/12 max-w-sm object-contain md:hidden')} src={saveLinksToVisitLater} alt="Save links to visit later" />
               <h1 className={tailwind('first-h1-text mt-16 font-bold leading-none text-gray-900 md:mt-0')}>Save links <br className={tailwind('inline sm:hidden md:inline lg:hidden')} />to visit later</h1>
               <p className={tailwind('mt-4 text-lg font-normal text-gray-500 md:pr-4')}>Your bookmark manager with privacy at heart. Brace.to helps you save links to everything and visit them later easily, anytime, on any of your devices. Powered by Stacks technology, all your saved links are encrypted, and only you can decrypt them and see the content inside.</p>
-              <button onClick={this.onSignUpBtnClick} style={{ padding: '0.625rem 1.25rem' }} className={tailwind('mt-6 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring focus:ring-offset-2')}>
+              <button onClick={this.onSignUpBtnClick} style={{ padding: '0.625rem 1.25rem' }} className={tailwind('mt-6 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-3 focus:ring-blue-500/50 focus:ring-offset-2')}>
                 <span className={tailwind('text-lg font-medium text-gray-50')}>Get Started</span>
                 <svg className={tailwind('ml-2 w-2 text-gray-50')} viewBox="0 0 6 10" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path fillRule="evenodd" clipRule="evenodd" d="M0.29289 9.7071C-0.09763 9.3166 -0.09763 8.6834 0.29289 8.2929L3.5858 5L0.29289 1.70711C-0.09763 1.31658 -0.09763 0.68342 0.29289 0.29289C0.68342 -0.09763 1.31658 -0.09763 1.70711 0.29289L5.7071 4.29289C6.0976 4.68342 6.0976 5.3166 5.7071 5.7071L1.70711 9.7071C1.31658 10.0976 0.68342 10.0976 0.29289 9.7071Z" />
@@ -118,25 +120,25 @@ class Landing extends React.PureComponent<any, any> {
               </button>
               <div className={tailwind('mt-3 flex items-end md:mt-4')}>
                 <a className={tailwind('group focus:outline-none')} href="https://play.google.com/store/apps/details?id=com.bracedotto" target="_blank" rel="noreferrer">
-                  <Image className={tailwind('w-6 rounded-sm group-focus:ring md:w-8')} src={playStore} alt="Play store" />
+                  <Image className={tailwind('w-6 rounded-xs group-focus:ring md:w-8')} src={playStore} alt="Play store" />
                 </a>
                 <a className={tailwind('group focus:outline-none')} href="https://apps.apple.com/us/app/id1531456778" target="_blank" rel="noreferrer">
-                  <Image className={tailwind('ml-4 w-6 rounded-sm group-focus:ring md:w-8')} src={appStore} alt="App store" />
+                  <Image className={tailwind('ml-4 w-6 rounded-xs group-focus:ring md:w-8')} src={appStore} alt="App store" />
                 </a>
                 <a className={tailwind('group focus:outline-none')} href="https://chrome.google.com/webstore/detail/brace/hennjddhjodlmdnopaggbjjkpokpbdnn" target="_blank" rel="noreferrer">
-                  <Image className={tailwind('ml-4 w-6 rounded-sm group-focus:ring md:w-8')} src={chromeWebStore} alt="Chrome web store" />
+                  <Image className={tailwind('ml-4 w-6 rounded-xs group-focus:ring md:w-8')} src={chromeWebStore} alt="Chrome web store" />
                 </a>
                 <a className={tailwind('group focus:outline-none')} href="https://addons.mozilla.org/en-US/firefox/addon/brace/" target="_blank" rel="noreferrer">
-                  <Image className={tailwind('ml-4 -mb-0.5 w-7 rounded-sm group-focus:ring md:w-10')} src={firefoxAddons} alt="Firefox addons" />
+                  <Image className={tailwind('ml-4 -mb-0.5 w-7 rounded-xs group-focus:ring md:w-10')} src={firefoxAddons} alt="Firefox addons" />
                 </a>
               </div>
             </div>
-            <div className={tailwind('hidden md:block md:w-45/100')}>
+            <div className={tailwind('hidden md:block md:w-[45%]')}>
               <Image className={tailwind('ml-auto object-contain md:w-full lg:w-11/12')} src={saveLinksToVisitLater} alt="Save links to visit later" />
             </div>
           </section>
           <section className={tailwind('px-4 pt-24 pb-4 md:px-6 lg:px-8')}>
-            <Image className={tailwind('mx-auto h-16')} src={undrawLink} alt="unDraw link icon" />
+            <Image className={tailwind('mx-auto h-16 w-auto')} src={undrawLink} alt="unDraw link icon" />
             <h2 className={tailwind('mt-4 text-center text-3xl font-semibold leading-none text-gray-900 md:text-4xl')}>Never miss a link <br className={tailwind('inline md:hidden')} />ever again</h2>
             <p className={tailwind('mt-4 text-lg font-normal text-gray-500 sm:text-center')}>Many interesting, useful, and important stuff is <br className={tailwind('hidden sm:inline md:hidden')} />on the internet. <br className={tailwind('hidden md:inline')} />Brace.to helps you save them so that you will never miss anything.</p>
             <div className={tailwind('mt-10 md:mt-12')}>
@@ -264,10 +266,10 @@ class Landing extends React.PureComponent<any, any> {
                       <h3 className={tailwind('mt-5 text-xl font-semibold leading-none text-white md:mt-0 lg:text-2xl-extra lg:leading-none')}>Save with our Extension</h3>
                       <p className={tailwind('mt-2.5 text-base font-normal text-gray-300 md:pr-8 lg:text-lg lg:leading-6')}>Install our Chrome or Firefox web browser extension and just click on our extension icon next to the address bar.</p>
                       <a className={tailwind('group focus:outline-none')} href="https://chrome.google.com/webstore/detail/brace/hennjddhjodlmdnopaggbjjkpokpbdnn" target="_blank" rel="noreferrer">
-                        <Image className={tailwind('mt-4 h-16 rounded group-hover:ring group-focus:ring')} src={availableInChromeWebStore} alt="Available in Chrome Web Store" />
+                        <Image className={tailwind('mt-4 h-16 w-auto rounded group-hover:ring group-focus:ring')} src={availableInChromeWebStore} alt="Available in Chrome Web Store" />
                       </a>
                       <a className={tailwind('group focus:outline-none')} href="https://addons.mozilla.org/en-US/firefox/addon/brace/" target="_blank" rel="noreferrer">
-                        <Image className={tailwind('mt-4 h-16 rounded group-hover:ring group-focus:ring')} src={availableInFirefoxAddons} alt="Available in Firefox Addons" />
+                        <Image className={tailwind('mt-4 h-16 w-auto rounded group-hover:ring group-focus:ring')} src={availableInFirefoxAddons} alt="Available in Firefox Addons" />
                       </a>
                     </div>
                     <div className={tailwind('mx-auto mt-4 w-full max-w-sm md:mt-0 md:mr-0 md:w-1/2')}>
@@ -320,7 +322,7 @@ class Landing extends React.PureComponent<any, any> {
           </section>
           <section className={tailwind('px-4 pt-24 pb-4 md:px-6 lg:px-8')}>
             <div className={tailwind('block md:flex md:flex-row md:items-center md:justify-center')}>
-              <Image className={tailwind('h-16 md:mt-1 md:h-28 xl:mt-2')} src={stacksShort} alt="Stacks Logo" />
+              <Image className={tailwind('h-16 w-auto md:mt-1 md:h-28 xl:mt-2')} src={stacksShort} alt="Stacks Logo" />
               <div className={tailwind('mt-4 md:mt-0 md:ml-3')}>
                 <h2 className={tailwind('text-left text-3xl font-semibold leading-tight text-gray-900 md:text-center md:text-4xl')}>Your privacy at heart <br className={tailwind('hidden md:inline')} />powered by <a className={tailwind('rounded text-purple-blockstack hover:underline focus:outline-none focus:ring')} href="https://www.hiro.so/stacks-js" target="_blank" rel="noreferrer">Stacks</a></h2>
                 <p className={tailwind('mt-4 text-left text-lg text-gray-500 md:mt-2 md:text-center')}>Your account is <span className={tailwind('inline md:hidden')}>truly</span> yours. <br className={tailwind('inline sm:hidden')} />Your data is <span className={tailwind('inline md:hidden')}>truly</span> yours.</p>
@@ -375,7 +377,7 @@ class Landing extends React.PureComponent<any, any> {
           <section className={tailwind('mt-20 flex flex-col items-center justify-center bg-purple-blockstack px-4 pt-24 pb-16 md:px-6 md:pt-32 md:pb-24 lg:px-8')}>
             <div className={tailwind('relative')}>
               <h2 className={tailwind('text-center text-4xl font-bold leading-none text-white md:text-5xl')}><span className={tailwind('line-through')}>Don&apos;t</span> Can&apos;t Be Evil</h2>
-              <Image className={tailwind('absolute right-0 h-5 translate-x-0 translate-y-2 transform sm:translate-x-10')} src={logoFullWhite} alt="Brace logo" />
+              <Image className={tailwind('absolute right-0 h-5 w-auto translate-x-0 translate-y-2 transform sm:translate-x-10')} src={logoFullWhite} alt="Brace logo" />
             </div>
             <p className={tailwind('mt-20 text-center text-lg font-normal leading-normal text-gray-200')}>Not only that Brace.to doesn&apos;t be evil; Brace.to can&apos;t be.</p>
           </section>
@@ -521,7 +523,7 @@ class Landing extends React.PureComponent<any, any> {
           </section>
           <section className={tailwind('mb-4 flex justify-center bg-gray-50 py-24 md:py-32')}>
             <div className={tailwind('relative')}>
-              <Image className={tailwind('start-saving-links-img static mx-auto h-16 md:absolute md:top-0 md:left-0')} src={undrawLink} alt="unDraw link icon" />
+              <Image className={tailwind('start-saving-links-img static mx-auto h-16 w-auto md:absolute md:top-0 md:left-0')} src={undrawLink} alt="unDraw link icon" />
               <h2 className={tailwind('first-h1-text mt-4 text-center font-bold leading-none text-gray-900')}>Start saving links</h2>
               <button onClick={this.onSignUpBtnClick} style={{ padding: '0.875rem 1.375rem' }} className={tailwind('mx-auto mt-6 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring focus:ring-offset-2')}>
                 <span className={tailwind('text-lg font-medium text-gray-50')}>Get started now</span>

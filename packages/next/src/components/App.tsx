@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import dynamic from 'next/dynamic';
 import { connect } from 'react-redux';
 import Url from 'url-parse';
 
@@ -14,10 +15,11 @@ import {
 import Loading from './Loading';
 import Landing from './Landing';
 import Back from './Back';
-import ErrorBoundary from './ErrorBoundary';
 
-const _AppChunk = import('./AppChunk');
-const AppChunk = React.lazy(() => _AppChunk);
+const AppChunk = dynamic(
+  () => import('./AppChunk'),
+  { ssr: false, loading: () => <Loading /> },
+);
 
 class App extends React.PureComponent<any, any> {
 
@@ -53,13 +55,7 @@ class App extends React.PureComponent<any, any> {
     else if (type === APP_RENDER_LANDING) return <Landing />;
     else if (type === APP_RENDER_BACK) return <Back />;
 
-    return (
-      <ErrorBoundary>
-        <React.Suspense fallback={<Loading />}>
-          <AppChunk type={type} />
-        </React.Suspense>
-      </ErrorBoundary>
-    );
+    return <AppChunk type={type} />;
   }
 }
 

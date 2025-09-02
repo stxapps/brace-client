@@ -60,7 +60,7 @@ class TopBarTitleListName extends React.PureComponent<any, any> {
 
     return (
       <div className={tailwind('relative inline-block')}>
-        <button onClick={this.onListNameBtnClick} className={tailwind('flex items-center rounded-sm bg-white focus:outline-none focus:ring blk:bg-gray-900')}>
+        <button onClick={this.onListNameBtnClick} className={tailwind('flex items-center rounded-xs bg-white focus:outline-none focus:ring blk:bg-gray-900')}>
           <h2 style={textStyle} className={tailwind('mr-1 truncate text-lg font-medium leading-7 text-gray-900 blk:text-gray-50')}>{displayName}</h2>
           {listName in updates && <div className={tailwind('h-1.5 w-1.5 self-start rounded-full bg-blue-400')} />}
           <svg className={tailwind('w-5 text-gray-900 blk:text-white')} viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">

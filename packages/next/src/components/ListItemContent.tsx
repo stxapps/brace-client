@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import Image from 'next/image';
 import GracefulImage from 'react-graceful-image';
 
 import { useSelector, useDispatch } from '../store';
@@ -110,7 +109,8 @@ const ListItemContent = (props) => {
 
     if (customImage) image = customImage;
     if (image) {
-      return <Image key="img-image-custom" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5')} src={image} alt={`illustration of ${url}`} />;
+      {/* eslint-disable-next-line @next/next/no-img-element */ }
+      return <img key="img-image-custom" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black/5')} src={image} alt={`illustration of ${url}`} />;
     }
 
     if (extractedResult && extractedResult.image && !doIgnoreExtrdRst) {
@@ -118,7 +118,7 @@ const ListItemContent = (props) => {
     }
     if (image) {
       // This GracefulImage needs to be different from the one below so that it's not just rerender but recreate a new component with a new src and new retry. React knows by using different keys.
-      return <GracefulImage key="image-graceful-image-extracted-result" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5')} src={image} alt={`illustration of ${url}`} />;
+      return <GracefulImage key="image-graceful-image-extracted-result" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black/5')} src={image} alt={`illustration of ${url}`} />;
     }
 
     // Only plain color background or plain color background with a letter
@@ -226,19 +226,19 @@ const ListItemContent = (props) => {
     <React.Fragment>
       <div className={tailwind('flex items-center')}>
         <div className={tailwind('w-16 flex-shrink-0 flex-grow-0 pl-px')}>
-          <div onTouchStart={onTouchPress} onTouchMove={onTouchPressRelease} onTouchEnd={onTouchPressRelease} onTouchCancel={onTouchPressRelease} onMouseDown={onClickPress} onMouseMove={onClickPressRelease} onMouseUp={onClickPressRelease} onMouseLeave={onClickPressRelease} className={tailwind('relative overflow-hidden rounded pb-7/12')}>
+          <div onTouchStart={onTouchPress} onTouchMove={onTouchPressRelease} onTouchEnd={onTouchPressRelease} onTouchCancel={onTouchPressRelease} onMouseDown={onClickPress} onMouseMove={onClickPressRelease} onMouseUp={onClickPressRelease} onMouseLeave={onClickPressRelease} className={tailwind('relative overflow-hidden rounded pb-[58.333333%]')}>
             {renderImage()}
           </div>
         </div>
         <div className={tailwind('min-w-0 flex-1 py-3.5 pl-3 sm:pl-4')}>
           <a className={tailwind('group focus:outline-none')} href={ensureContainUrlProtocol(url)} target="_blank" rel="noreferrer">
-            <h4 className={tailwind(`rounded-sm text-left text-sm font-semibold leading-5 text-gray-800 line-clamp-3 group-hover:text-gray-900 group-focus:ring blk:text-gray-100 blk:group-hover:text-white ${classNames}`)}>{title}</h4>
+            <h4 className={tailwind(`rounded-xs text-left text-sm font-semibold leading-5 text-gray-800 line-clamp-3 group-hover:text-gray-900 group-focus:ring blk:text-gray-100 blk:group-hover:text-white ${classNames}`)}>{title}</h4>
           </a>
           <div className={tailwind('flex items-center justify-start pt-0.5')}>
             {renderFavicon()}
             <div className={tailwind('min-w-0 flex-shrink flex-grow')}>
               <p className={tailwind('truncate pl-2 text-left text-sm text-gray-500 blk:text-gray-400')}>
-                <a className={tailwind('rounded-sm hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-300')} href={origin} target="_blank" rel="noreferrer">
+                <a className={tailwind('rounded-xs hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-300')} href={origin} target="_blank" rel="noreferrer">
                   {host}
                 </a>
               </p>

@@ -88,8 +88,8 @@ class BottomBarProfilePopup extends React.PureComponent<any, any> {
 
     return (
       <AnimatePresence key="AnimatePresence_BB_ProfilePopup">
-        <motion.button key="BB_ProfilePopup_cancelBtn" onClick={this.onProfileCancelBtnClick} tabIndex={-1} className={tailwind('fixed inset-0 z-40 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={bModalBgFMV} initial="hidden" animate="visible" exit="hidden" />
-        <motion.div key="BB_ProfilePopup_menuPopup" style={popupStyle} className={tailwind('fixed inset-x-0 bottom-0 z-41 rounded-t-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25')} variants={bModalFMV} initial="hidden" animate="visible" exit="hidden">
+        <motion.button key="BB_ProfilePopup_cancelBtn" onClick={this.onProfileCancelBtnClick} tabIndex={-1} className={tailwind('fixed inset-0 z-40 h-full w-full cursor-default bg-black/25 focus:outline-none')} variants={bModalBgFMV} initial="hidden" animate="visible" exit="hidden" />
+        <motion.div key="BB_ProfilePopup_menuPopup" style={popupStyle} className={tailwind('fixed inset-x-0 bottom-0 z-41 rounded-t-lg bg-white shadow-xl ring-1 ring-black/5 blk:bg-gray-800 blk:ring-white/25')} variants={bModalFMV} initial="hidden" animate="visible" exit="hidden">
           <div className={tailwind('pt-4 pb-4')}>
             {buttons}
           </div>

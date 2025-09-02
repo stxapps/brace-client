@@ -199,7 +199,7 @@ const SettingsPopup = () => {
           {/* Sidebar for desktop */}
           <div key="sidebar-for-desktop" className={tailwind('hidden md:flex md:flex-shrink-0 md:flex-grow-0')}>
             <div className={tailwind('flex w-48 flex-col')}>
-              <div className={tailwind('mt-2 mb-6 flex h-0 min-h-xl flex-1 flex-col border-r border-gray-200 blk:border-gray-700')}>
+              <div className={tailwind('mt-2 mb-6 flex h-0 min-h-144 flex-1 flex-col border-r border-gray-200 blk:border-gray-700')}>
                 <div className={tailwind('flex flex-1 flex-col')}>
                   <nav className={tailwind('mt-2 flex-1 space-y-2 pr-2')}>
                     <button onClick={onAccountBtnClick} className={tailwind(`group flex w-full items-center rounded-md px-2 py-2 text-sm font-medium leading-5 focus:outline-none ${isViewSelected(VIEW_ACCOUNT) ? selectedMenuTextStyleClasses : menuTextStyleClasses}`)}>
@@ -430,7 +430,7 @@ const SettingsPopup = () => {
 
     return (
       <React.Fragment>
-        <div className={tailwind('absolute inset-0 bg-white bg-opacity-25 blk:bg-gray-900 blk:bg-opacity-25')} />
+        <div className={tailwind('absolute inset-0 bg-white/25 blk:bg-gray-900/25')} />
         <div className={tailwind('absolute top-1/3 left-1/2 flex -translate-x-1/2 -translate-y-1/2 transform items-center justify-center')}>
           <div className={tailwind('ball-clip-rotate blk:ball-clip-rotate-blk')}>
             <div />
@@ -457,7 +457,7 @@ const SettingsPopup = () => {
               </div>
               <div className={tailwind('ml-3 lg:mt-0.5')}>
                 <h3 className={tailwind('text-left text-base font-medium text-red-800 lg:text-sm')}>Oops..., something went wrong!</h3>
-                <p className={tailwind('mt-2.5 text-sm text-red-700')}>Please wait a moment and try again.<br />If the problem persists, please <a className={tailwind('rounded-sm underline hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a>.</p>
+                <p className={tailwind('mt-2.5 text-sm text-red-700')}>Please wait a moment and try again.<br />If the problem persists, please <a className={tailwind('rounded-xs underline hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a>.</p>
               </div>
             </div>
           </div>

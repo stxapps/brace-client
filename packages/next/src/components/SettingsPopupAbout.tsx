@@ -28,44 +28,44 @@ const SettingsPopupAbout = (props) => {
         <h3 className={tailwind('pb-2 text-xl font-medium leading-none text-gray-800 blk:text-gray-100')}>About</h3>
       </div>
       <div className={tailwind('mt-5 md:mt-0')}>
-        <Image className={tailwind('hidden h-7 blk:h-9 md:block')} src={themeMode === BLK_MODE ? LogoBlk : Logo} alt="Brace logo" />
+        <Image className={tailwind('hidden h-7 w-auto blk:h-9 md:block')} src={themeMode === BLK_MODE ? LogoBlk : Logo} alt="Brace logo" />
         <div className={tailwind('-ml-2 md:flex md:pt-8')}>
           <div className={tailwind('py-2')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href={'/' + HASH_LANDING} target="_blank" rel="noreferrer">Home page</a>
+            <a className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href={'/' + HASH_LANDING} target="_blank" rel="noreferrer">Home page</a>
           </div>
           <div className={tailwind('py-2 md:ml-10')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href={'/' + HASH_LANDING_HOW} target="_blank" rel="noreferrer">How to</a>
+            <a className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href={'/' + HASH_LANDING_HOW} target="_blank" rel="noreferrer">How to</a>
           </div>
           <div className={tailwind('py-2 md:ml-10')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href={'/' + HASH_LANDING_MOBILE} target="_blank" rel="noreferrer">Mobile apps</a>
+            <a className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href={'/' + HASH_LANDING_MOBILE} target="_blank" rel="noreferrer">Mobile apps</a>
           </div>
         </div>
         <div className={tailwind('-ml-2 pt-8 md:flex')}>
           <div className={tailwind('py-2')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href={'/' + HASH_ABOUT} target="_blank" rel="noreferrer">About</a>
+            <a className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href={'/' + HASH_ABOUT} target="_blank" rel="noreferrer">About</a>
           </div>
           <div className={tailwind('py-2 md:ml-10')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href={'/' + HASH_TERMS} target="_blank" rel="noreferrer">Terms</a>
+            <a className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href={'/' + HASH_TERMS} target="_blank" rel="noreferrer">Terms</a>
           </div>
           <div className={tailwind('py-2 md:ml-10')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href={'/' + HASH_PRIVACY} target="_blank" rel="noreferrer">Privacy</a>
+            <a className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href={'/' + HASH_PRIVACY} target="_blank" rel="noreferrer">Privacy</a>
           </div>
           <div className={tailwind('py-2 md:ml-10')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">Support</a>
+            <a className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">Support</a>
           </div>
           <div className={tailwind('hidden py-2 md:ml-10 lg:block')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href="https://docs.brace.to" target="_blank" rel="noreferrer">Docs</a>
+            <a className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href="https://docs.brace.to" target="_blank" rel="noreferrer">Docs</a>
           </div>
           <div className={tailwind('hidden py-2 md:ml-10 lg:block')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href="https://medium.com/@stxapps" target="_blank" rel="noreferrer">Blog</a>
+            <a className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href="https://medium.com/@stxapps" target="_blank" rel="noreferrer">Blog</a>
           </div>
         </div>
         <div className={tailwind('-ml-2 pt-8 md:flex lg:hidden')}>
           <div className={tailwind('py-2')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href="https://docs.brace.to" target="_blank" rel="noreferrer">Docs</a>
+            <a className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href="https://docs.brace.to" target="_blank" rel="noreferrer">Docs</a>
           </div>
           <div className={tailwind('py-2 md:ml-10')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href="https://medium.com/@stxapps" target="_blank" rel="noreferrer">Blog</a>
+            <a className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring blk:text-gray-400 blk:hover:text-white')} href="https://medium.com/@stxapps" target="_blank" rel="noreferrer">Blog</a>
           </div>
         </div>
         <div className={tailwind('flex items-center justify-start pt-14')}>
@@ -86,7 +86,7 @@ const SettingsPopupAbout = (props) => {
           </a>
         </div>
         <div className={tailwind('pt-16 lg:flex lg:justify-between')}>
-          <p className={tailwind('text-left text-base text-gray-400 blk:text-gray-500')}>© {(new Date()).getFullYear()} <a className={tailwind('rounded-sm text-gray-400 hover:text-gray-500 focus:outline-none focus:ring blk:text-gray-500 blk:hover:text-gray-400')} href="https://www.stxapps.com" target="_blank" rel="noreferrer">STX Apps Co., Ltd.</a></p>
+          <p className={tailwind('text-left text-base text-gray-400 blk:text-gray-500')}>© {(new Date()).getFullYear()} <a className={tailwind('rounded-xs text-gray-400 hover:text-gray-500 focus:outline-none focus:ring blk:text-gray-500 blk:hover:text-gray-400')} href="https://www.stxapps.com" target="_blank" rel="noreferrer">STX Apps Co., Ltd.</a></p>
           <p className={tailwind('text-left text-base text-gray-400 blk:text-gray-500')}>Crafted with ❤ and ℅ for a better web</p>
         </div>
       </div>

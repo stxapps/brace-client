@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import Link from 'next/link';
 import { connect } from 'react-redux';
@@ -29,7 +30,7 @@ class Privacy extends React.PureComponent<any, any> {
             <p className={tailwind('pt-3 leading-7')}>We don&apos;t rent, sell or share your information with other companies or advertisers. Our optional paid subscription is the only way we make money, so our incentives are aligned with yours.</p>
 
             <h2 className={tailwind('pt-8 text-xl font-semibold text-gray-900')}>Intro</h2>
-            <p className={tailwind('pt-3 leading-7')}>At <a className={tailwind('rounded-sm font-medium text-gray-900 underline focus:outline-none focus:ring')} href="https://www.stxapps.com" target="_blank" rel="noreferrer">STX App Co., Ltd.</a>, we believe you have the right to know how your data is being used, and that businesses should align their incentives with their customers&apos;. In our case, as a software company, we take great pride in the fact that we only make money if you choose to upgrade to our optional paid subscription, which means we never have to sell data or clutter up the interface with annoying ads.</p>
+            <p className={tailwind('pt-3 leading-7')}>At <a className={tailwind('rounded-xs font-medium text-gray-900 underline focus:outline-none focus:ring')} href="https://www.stxapps.com" target="_blank" rel="noreferrer">STX App Co., Ltd.</a>, we believe you have the right to know how your data is being used, and that businesses should align their incentives with their customers&apos;. In our case, as a software company, we take great pride in the fact that we only make money if you choose to upgrade to our optional paid subscription, which means we never have to sell data or clutter up the interface with annoying ads.</p>
             <p className={tailwind('pt-5 leading-7')}>To be totally transparent, we created this Privacy Policy to explain, in plain English, how we handle data, including any &quot;Personally identifiable information&quot; (PII). PII, as used in US privacy law and information security, is information that can be used on its own or with other information to identify, contact, or locate a single person, or to identify an individual in context. Please read our Privacy Policy carefully to get a clear understanding of how we collect, use, protect or otherwise handle your data.</p>
 
             <h2 className={tailwind('pt-8 text-xl font-semibold text-gray-900')}>Information We Collect and How We Use Information</h2>
@@ -68,18 +69,18 @@ class Privacy extends React.PureComponent<any, any> {
             <h2 className={tailwind('pt-8 text-xl font-semibold text-gray-900')}>Privacy Policy Changes</h2>
             <p className={tailwind('pt-3 leading-7')}>Although most changes are likely to be minor, we may change our Privacy Policy from time to time, and in our sole discretion. We encourage you to frequently check this page for any changes to its Privacy Policy. Your continued use of our services after any change in this Privacy Policy will constitute your acceptance of such change.</p>
 
-            <p className={tailwind('pt-5 leading-7')}>Your continued use of our services will be regarded as acceptance of our privacy policy. If you have any questions about this Privacy Policy, please contact us at <a className={tailwind('rounded-sm font-medium text-gray-900 underline focus:outline-none focus:ring')} href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#98;&#114;&#97;&#99;&#101;&#46;&#116;&#111;"><span className={tailwind('e-mail')} data-user="troppus" data-website="ot.ecarb"></span></a>. Alternatively, you may contact us at:</p>
+            <p className={tailwind('pt-5 leading-7')}>Your continued use of our services will be regarded as acceptance of our privacy policy. If you have any questions about this Privacy Policy, please contact us at <a className={tailwind('rounded-xs font-medium text-gray-900 underline focus:outline-none focus:ring')} href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#98;&#114;&#97;&#99;&#101;&#46;&#116;&#111;"><span className={tailwind('e-mail')} data-user="troppus" data-website="ot.ecarb"></span></a>. Alternatively, you may contact us at:</p>
             <p className={tailwind('pt-3 leading-7')}>STX Apps Co., Ltd.<br />ATTN: Brace.to Team<br />247 Chan 31 Sathon<br />Bangkok 10120 TH</p>
 
             <div className={tailwind('pt-12 text-right')}>
-              <button className={tailwind('group rounded-sm hover:text-gray-600 focus:outline-none focus:ring')} onClick={() => window.scrollTo(0, 0)}>
+              <button className={tailwind('group rounded-xs hover:text-gray-600 focus:outline-none focus:ring')} onClick={() => window.scrollTo(0, 0)}>
                 <span className={tailwind('pl-1')}>Back to top</span>
                 <svg className={tailwind('mb-1 ml-1 inline-block w-5 text-gray-400 group-hover:text-gray-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path fillRule="evenodd" clipRule="evenodd" d="M3.29289 9.70711C2.90237 9.31658 2.90237 8.68342 3.29289 8.29289L9.29289 2.29289C9.68342 1.90237 10.3166 1.90237 10.7071 2.29289L16.7071 8.29289C17.0976 8.68342 17.0976 9.31658 16.7071 9.70711C16.3166 10.0976 15.6834 10.0976 15.2929 9.70711L11 5.41421V17C11 17.5523 10.5523 18 10 18C9.44772 18 9 17.5523 9 17V5.41421L4.70711 9.70711C4.31658 10.0976 3.68342 10.0976 3.29289 9.70711Z" />
                 </svg>
               </button>
               <br />
-              <Link className={tailwind('group mt-2 inline-block rounded-sm hover:text-gray-600 focus:outline-none focus:ring')} href="/">
+              <Link className={tailwind('group mt-2 inline-block rounded-xs hover:text-gray-600 focus:outline-none focus:ring')} href="/">
                 <span className={tailwind('pl-0.5')}>Go home</span>
                 <svg className={tailwind('mb-1 ml-1 inline-block w-5 text-gray-400 group-hover:text-gray-500')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path d="M10.7071 2.29289C10.3166 1.90237 9.68342 1.90237 9.29289 2.29289L2.29289 9.29289C1.90237 9.68342 1.90237 10.3166 2.29289 10.7071C2.68342 11.0976 3.31658 11.0976 3.70711 10.7071L4 10.4142V17C4 17.5523 4.44772 18 5 18H7C7.55228 18 8 17.5523 8 17V15C8 14.4477 8.44772 14 9 14H11C11.5523 14 12 14.4477 12 15V17C12 17.5523 12.4477 18 13 18H15C15.5523 18 16 17.5523 16 17V10.4142L16.2929 10.7071C16.6834 11.0976 17.3166 11.0976 17.7071 10.7071C18.0976 10.3166 18.0976 9.68342 17.7071 9.29289L10.7071 2.29289Z" />

@@ -125,7 +125,7 @@ const SignIn = (props) => {
             </button>
           </div>
         </div>
-        {isLoadingShown && <div className={tailwind('absolute inset-0 flex items-center justify-center bg-white bg-opacity-25')}>
+        {isLoadingShown && <div className={tailwind('absolute inset-0 flex items-center justify-center bg-white/25')}>
           <div className={tailwind('ball-clip-rotate')}>
             <div />
           </div>
@@ -142,14 +142,14 @@ const SignIn = (props) => {
         <p className={tailwind('mt-2 text-sm leading-6 text-gray-500')}>Enter your Secret Key below to sign in.</p>
         <div className={tailwind('pt-3.5')}>
           <label htmlFor="secret-key-input" className={tailwind('sr-only')}>Secret Key</label>
-          <textarea ref={textarea} onChange={onSecretKeyInputChange} className={tailwind('block h-36 w-full resize-none rounded-md border border-gray-300 py-2.5 px-4 text-sm leading-6 text-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:h-32 sm:py-3')} value={secretKeyInput} id="secret-key-input" name="secret-key-input" autoCapitalize="none"></textarea>
+          <textarea ref={textarea} onChange={onSecretKeyInputChange} className={tailwind('block h-36 w-full resize-none rounded-md border border-gray-300 py-2.5 px-4 text-sm leading-6 text-gray-700 shadow-xs focus:border-blue-500 focus:ring-blue-500 sm:h-32 sm:py-3')} value={secretKeyInput} id="secret-key-input" name="secret-key-input" autoCapitalize="none"></textarea>
         </div>
         <div className={tailwind(errMsg ? '' : 'pt-5')}>
           {errMsg && <p className={tailwind('py-2 text-sm text-red-600')}>{errMsg}</p>}
           <button onClick={onContinueBtnClick} className={tailwind('w-full rounded-md border border-transparent bg-blue-700 py-2 px-4 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2')} type="button">Continue</button>
         </div>
         <div className={tailwind('mt-24 mb-1.5 flex pt-2 sm:mt-28 sm:pt-1')}>
-          <button onClick={props.onSignUpBtnClick} className={tailwind('rounded-sm text-sm font-medium text-blue-700 hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} type="button">Sign up</button>
+          <button onClick={props.onSignUpBtnClick} className={tailwind('rounded-xs text-sm font-medium text-blue-700 hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} type="button">Sign up</button>
         </div>
       </React.Fragment>
     );
@@ -175,7 +175,7 @@ const ErrorAlert = (props) => {
           </div>
           <div className={tailwind('ml-3 lg:mt-0.5')}>
             <h3 className={tailwind('text-left text-base font-medium text-red-800 lg:text-sm')}>Oops..., something went wrong!</h3>
-            <p className={tailwind('mt-2.5 text-sm text-red-700')}>Please wait a moment and try again. <br className={tailwind('hidden sm:inline')} />If the problem persists, please <a className={tailwind('rounded-sm underline hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700')} href={props.domainName + '/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a>.</p>
+            <p className={tailwind('mt-2.5 text-sm text-red-700')}>Please wait a moment and try again. <br className={tailwind('hidden sm:inline')} />If the problem persists, please <a className={tailwind('rounded-xs underline hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700')} href={props.domainName + '/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a>.</p>
           </div>
           <div className={tailwind('ml-auto pl-3')}>
             <div className={tailwind('-mx-1.5 -my-1.5')}>

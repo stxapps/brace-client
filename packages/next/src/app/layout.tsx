@@ -46,8 +46,8 @@ export const metadata: Metadata = {
 
 export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body className={`min-h-full antialiased ${inter.variable}`}>
+    <html lang="en" className={`${inter.variable}`}>
+      <body className="min-h-full antialiased">
         <InnerLayout>
           {children}
         </InnerLayout>

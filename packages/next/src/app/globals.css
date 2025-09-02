@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
@@ -6,31 +6,17 @@
 @custom-variant blk (&);
 
 @theme {
-  --color-gray-logo: #1A202C;
-  --color-purple-blockstack: #211F6D;
-  --min-w-28: 7rem;
-  --min-w-32: 8rem;
-  --min-w-36: 9rem;
-  --min-h-14: 3.5rem;
-  --min-h-xl: 36rem;
-  --max-w-16: 4rem;
-  --max-w-40: 10rem;
-  --max-w-48: 12rem;
-  --max-w-56: 14rem;
-  --max-w-64: 16rem;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  --color-purple-blockstack: #211f6d;
   --text-2xl-extra: 1.625rem;
   --text-2xl-extra--line-height: 2.17rem;
-  --z-41: 41;
-  --z-51: 51;
-  --leading-5\.5: 1.375rem;
-  --leading-6\.5: 1.625rem;
-  --spacing-45\/100: 45%;
-  --spacing-55\/100: 55%;
-  --radius-4xl: 2rem;
-}
 
-@theme inline {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --flex-grow-0: 0;
+  --flex-grow: 1;
+  --flex-shrink-0: 0;
+  --flex-shrink: 1;
 }
 
 @layer base {
@@ -82,32 +68,24 @@
 
   .first-h1-text {
     @apply text-4xl;
-  }
 
-  @screen md {
-    .first-h1-text {
+    @variant md {
       font-size: 2.625rem;
     }
-  }
 
-  @screen lg {
-    .first-h1-text {
+    @variant lg {
       font-size: 2.95rem;
     }
   }
 
   .bookmark-icon-left {
     left: 1rem;
-  }
 
-  @screen md {
-    .bookmark-icon-left {
+    @variant md {
       left: 1.5rem;
     }
-  }
 
-  @screen lg {
-    .bookmark-icon-left {
+    @variant lg {
       left: 2rem;
     }
   }
@@ -115,10 +93,8 @@
   .available-on-size {
     width: 100%;
     max-height: 4rem;
-  }
 
-  @screen md {
-    .available-on-size {
+    @variant md {
       width: auto;
     }
   }
@@ -135,48 +111,40 @@
 
   .howitwork-pb {
     padding-bottom: 25%;
+
+    @media (min-width: 537px) {
+      @apply pb-32;
+    }
+
+    @variant lg {
+      @apply pb-40;
+    }
   }
 
   .howitwork-gray-pb {
     padding-bottom: 38.5%;
-  }
 
-  @media (min-width: 537px) {
-    .howitwork-pb {
-      @apply pb-32;
-    }
-
-    .howitwork-gray-pb {
+    @media (min-width: 537px) {
       @apply pb-48;
     }
-  }
 
-  @screen lg {
-    .howitwork-pb {
-      @apply pb-40;
-    }
-
-    .howitwork-gray-pb {
+    @variant lg {
       @apply pb-56;
     }
   }
 
   .start-saving-links-img {
     @apply transform-none;
-  }
 
-  @screen md {
-    .start-saving-links-img {
+    @variant md {
       transform: translateX(-4.5rem);
     }
   }
 
   .new-line-in-address-bar {
     @apply hidden;
-  }
 
-  @media (min-width: 396px) {
-    .new-line-in-address-bar {
+    @media (min-width: 396px) {
       @apply inline;
     }
   }
@@ -188,7 +156,7 @@
   }
 
   .zoom-range {
-    @apply appearance-none h-2 w-32 rounded cursor-ew-resize bg-gray-200 bg-gradient-to-r from-gray-400 to-gray-400 bg-no-repeat bg-auto rounded-full;
+    @apply appearance-none h-2 w-32 rounded cursor-ew-resize bg-gray-200 bg-linear-to-r from-gray-400 to-gray-400 bg-no-repeat bg-auto rounded-full;
   }
 
   .zoom-range::-webkit-slider-runnable-track {
@@ -196,7 +164,7 @@
   }
 
   .zoom-range::-webkit-slider-thumb {
-    @apply appearance-none border-0 h-4 w-4 bg-gray-500 rounded-full shadow-sm;
+    @apply appearance-none border-0 h-4 w-4 bg-gray-500 rounded-full shadow-xs;
   }
 
   .zoom-range::-moz-range-track {
@@ -204,7 +172,7 @@
   }
 
   .zoom-range::-moz-range-thumb {
-    @apply appearance-none border-0 h-4 w-4 bg-gray-500 rounded-full shadow-sm;
+    @apply appearance-none border-0 h-4 w-4 bg-gray-500 rounded-full shadow-xs;
   }
 
   .zoom-range-blk {
@@ -220,20 +188,27 @@
   }
 }
 
-@layer utilities {
-  .hyphens-auto {
-    hyphens: auto;
+/*
+  The default outline-none is still applied, plus rules below,
+    making the whole outline-none the same as outline-hidden.
+  In the long run, should change outline-none to outline-hidden.
+*/
+@utility outline-none {
+  @media (forced-colors: active) {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
   }
+}
 
-  .pt-full {
-    padding-top: 100%;
+/*
+  The default ring is just ring-1, plus rules below
+    make it like ring-3 ring-blue-500/50.
+  In the long run, should use ring-3 ring-blue-500/50 instead.
+*/
+@utility ring {
+  --tw-ring-color: color-mix(in srgb, oklch(62.3% 0.214 259.815) 50%, transparent);
+  @supports (color: color-mix(in lab, red, red)) {
+    --tw-ring-color: color-mix(in oklab, var(--color-blue-500) 50%, transparent);
   }
-
-  .pb-7\/12 {
-    padding-bottom: 58.333333%;
-  }
-
-  .list-alpha {
-    list-style-type: lower-alpha;
-  }
+  --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
 }

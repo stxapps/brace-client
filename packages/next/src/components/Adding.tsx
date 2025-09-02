@@ -1,4 +1,6 @@
+'use client';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
 import { useSelector, useDispatch } from '../store';
@@ -16,8 +18,9 @@ import {
 
 import { useTailwind } from '.';
 import TopBar from './TopBar';
-import SignUpPopup from './SignUpPopup';
-import SignInPopup from './SignInPopup';
+
+const SignUpPopup = dynamic(() => import('./SignUpPopup'), { ssr: false });
+const SignInPopup = dynamic(() => import('./SignInPopup'), { ssr: false });
 
 const MAX_LINK_LENGTH = 157;
 
@@ -175,13 +178,13 @@ const Adding = () => {
     const { addingUrl, param, urlValidatedResult } = urlState;
     const { addingPUrl } = processAddingUrl(addingUrl);
 
-    let rightLink = <Link className={tailwind('block rounded-sm text-right text-base font-medium leading-none text-gray-500 hover:text-gray-600 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-200')} href="/">{isUserSignedIn ? 'Go to My List >' : 'Go to Brace.to >'}</Link>;
+    let rightLink = <Link className={tailwind('block rounded-xs text-right text-base font-medium leading-none text-gray-500 hover:text-gray-600 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-200')} href="/">{isUserSignedIn ? 'Go to My List >' : 'Go to Brace.to >'}</Link>;
     let centerText = null;
-    let leftLink = urlValidatedResult === VALID_URL ? <a className={tailwind('mt-6 block rounded-sm text-left text-base leading-none text-gray-500 hover:text-gray-600 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-200 md:mt-0')} href={addingPUrl}>Back to the link</a> : <div />;
+    let leftLink = urlValidatedResult === VALID_URL ? <a className={tailwind('mt-6 block rounded-xs text-left text-base leading-none text-gray-500 hover:text-gray-600 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-200 md:mt-0')} href={addingPUrl}>Back to the link</a> : <div />;
 
     if (isObject(param) && param[URL_QUERY_CLOSE_KEY] === URL_QUERY_CLOSE_WINDOW) {
       leftLink = null;
-      centerText = <button onClick={() => window.close()} className={tailwind('block w-full rounded-sm py-2 text-center text-base text-gray-500 hover:text-gray-600 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-200')}>Close this window</button>;
+      centerText = <button onClick={() => window.close()} className={tailwind('block w-full rounded-xs py-2 text-center text-base text-gray-500 hover:text-gray-600 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-200')}>Close this window</button>;
       rightLink = null;
     }
 
@@ -209,7 +212,7 @@ const Adding = () => {
           </div>
         </div>
         {isUrl && <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-center text-base text-gray-500 blk:text-gray-400')}>
-          <a className={tailwind('break-all rounded-sm hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-300')} href={addingPUrl} target="_blank" rel="noreferrer">{addingTUrl}</a>
+          <a className={tailwind('break-all rounded-xs hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-300')} href={addingPUrl} target="_blank" rel="noreferrer">{addingTUrl}</a>
           <br />
           <span className={tailwind('break-normal text-lg font-semibold text-gray-900 blk:text-gray-50')}>is being saved.</span>
         </p>}
@@ -229,7 +232,7 @@ const Adding = () => {
           <path fillRule="evenodd" clipRule="evenodd" d="M70.2426 40.2427C72.5856 37.8995 72.5856 34.1005 70.2426 31.7573C67.8996 29.4142 64.1004 29.4142 61.7574 31.7573L42 51.5148L34.2427 43.7573C31.8995 41.4142 28.1005 41.4142 25.7573 43.7573C23.4142 46.1005 23.4142 49.8996 25.7573 52.2426L37.7573 64.2426C40.1005 66.5856 43.8995 66.5856 46.2427 64.2426L70.2426 40.2427Z" fill={themeMode === BLK_MODE ? 'rgb(22, 101, 52)' : 'rgb(21, 128, 61)'} />
         </svg>
         <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-center text-base text-gray-500 blk:text-gray-400')}>
-          <a className={tailwind('break-all rounded-sm hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-300')} href={addingPUrl} target="_blank" rel="noreferrer">{addingTUrl}</a>
+          <a className={tailwind('break-all rounded-xs hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-300')} href={addingPUrl} target="_blank" rel="noreferrer">{addingTUrl}</a>
           <br />
           <span className={tailwind('break-normal text-lg font-semibold text-gray-900 blk:text-gray-50')}>has been saved.</span>
         </p>
@@ -250,7 +253,7 @@ const Adding = () => {
           <path fillRule="evenodd" clipRule="evenodd" d="M70.2426 40.2427C72.5856 37.8995 72.5856 34.1005 70.2426 31.7573C67.8996 29.4142 64.1004 29.4142 61.7574 31.7573L42 51.5148L34.2427 43.7573C31.8995 41.4142 28.1005 41.4142 25.7573 43.7573C23.4142 46.1005 23.4142 49.8996 25.7573 52.2426L37.7573 64.2426C40.1005 66.5856 43.8995 66.5856 46.2427 64.2426L70.2426 40.2427Z" fill={themeMode === BLK_MODE ? 'rgb(22, 101, 52)' : 'rgb(21, 128, 61)'} />
         </svg>
         <p className={tailwind('mx-auto mt-5 w-full max-w-xs text-center text-base text-gray-500 blk:text-gray-400')}>
-          <a className={tailwind('break-all rounded-sm hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-300')} href={addingPUrl} target="_blank" rel="noreferrer">{addingTUrl}</a>
+          <a className={tailwind('break-all rounded-xs hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-300')} href={addingPUrl} target="_blank" rel="noreferrer">{addingTUrl}</a>
           <br />
           <span className={tailwind('break-normal text-lg font-semibold text-gray-900 blk:text-gray-50')}>already exists</span>
         </p>
@@ -273,7 +276,7 @@ const Adding = () => {
         </button>
         <div className={tailwind('mt-10 flex items-center justify-center')}>
           <p className={tailwind('text-base text-gray-500 blk:text-gray-400')}>No account yet?</p>
-          <button onClick={onSignUpBtnClick} className={tailwind('ml-2 rounded-sm text-base font-medium text-gray-600 hover:text-gray-700 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-100')}>Sign up</button>
+          <button onClick={onSignUpBtnClick} className={tailwind('ml-2 rounded-xs text-base font-medium text-gray-600 hover:text-gray-700 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-100')}>Sign up</button>
         </div>
         {renderNav()}
       </React.Fragment>

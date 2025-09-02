@@ -181,7 +181,7 @@ class TopBarBulkEditCommands extends React.Component<any, any> {
     const svgStyle = { width: '1.125rem', height: '1.125rem' };
 
     return (
-      <div className={tailwind('relative flex min-w-[17rem] items-center justify-end')}>
+      <div className={tailwind('relative flex min-w-68 items-center justify-end')}>
         {isArchiveBtnShown && <div className={tailwind('relative ml-4')}>
           <button onClick={this.onBulkEditArchiveBtnClick} className={tailwind('group focus:outline-none')}>
             <div style={btnStyle} className={tailwind('flex items-center justify-center rounded-full border border-gray-400 bg-white group-hover:border-gray-500 group-focus:ring blk:border-gray-400 blk:bg-gray-900 blk:group-hover:border-gray-300')}>

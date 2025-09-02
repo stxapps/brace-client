@@ -408,7 +408,7 @@ const ListNamesPopup = () => {
       paddingLeft: insets.left, paddingRight: insets.right,
     };
     panel = (
-      <motion.div key="LNP_popup" style={popupStyle} className={tailwind('fixed inset-x-0 bottom-0 z-41 rounded-t-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25')} variants={bModalFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+      <motion.div key="LNP_popup" style={popupStyle} className={tailwind('fixed inset-x-0 bottom-0 z-41 rounded-t-lg bg-white shadow-xl ring-1 ring-black/5 blk:bg-gray-800 blk:ring-white/25')} variants={bModalFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
         {_render()}
       </motion.div>
     );
@@ -424,7 +424,7 @@ const ListNamesPopup = () => {
     const popupStyle = { ...posStyle, width: popupWidth, height: popupHeight };
 
     panel = (
-      <motion.div key="LNP_popup" style={popupStyle} className={tailwind('fixed z-41 overflow-auto rounded-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25')} variants={popupFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+      <motion.div key="LNP_popup" style={popupStyle} className={tailwind('fixed z-41 overflow-auto rounded-lg bg-white shadow-xl ring-1 ring-black/5 blk:bg-gray-800 blk:ring-white/25')} variants={popupFMV} initial="hidden" animate="visible" exit="hidden" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
         {_render()}
       </motion.div>
     );
@@ -434,7 +434,7 @@ const ListNamesPopup = () => {
 
   return (
     <AnimatePresence key="AP_lnPopup">
-      <motion.button key="LNP_cancelBtn" ref={cancelBtn} onClick={onCancelBtnClick} className={tailwind('fixed inset-0 z-40 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={bgFMV} initial="hidden" animate="visible" exit="hidden" />
+      <motion.button key="LNP_cancelBtn" ref={cancelBtn} onClick={onCancelBtnClick} className={tailwind('fixed inset-0 z-40 h-full w-full cursor-default bg-black/25 focus:outline-none')} variants={bgFMV} initial="hidden" animate="visible" exit="hidden" />
       {panel}
     </AnimatePresence>
   );

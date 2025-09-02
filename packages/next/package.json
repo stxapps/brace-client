@@ -3,7 +3,7 @@
   "version": "0.41.0",
   "private": true,
   "scripts": {
-    "patch-js": "node bin/patch.js",
+    "patch-js": "npx tsx bin/patch.ts",
     "dev": "next dev --experimental-https --hostname 0.0.0.0 --turbopack",
     "build-js": "next build --turbopack",
     "copy-hard-coding": "bash bin/copy-hard-coding.sh",

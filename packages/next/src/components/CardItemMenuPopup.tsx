@@ -192,7 +192,7 @@ class CardItemMenuPopup extends React.PureComponent<any, any> {
 
     const { menuPopupSize } = this.state;
 
-    const popupClassNames = 'fixed z-41 min-w-32 max-w-64 overflow-auto rounded-lg bg-white py-2 shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25';
+    const popupClassNames = 'fixed z-41 min-w-32 max-w-64 overflow-auto rounded-lg bg-white py-2 shadow-xl ring-1 ring-black/5 blk:bg-gray-800 blk:ring-white/25';
 
     let menuPopup;
     if (menuPopupSize) {
@@ -225,7 +225,7 @@ class CardItemMenuPopup extends React.PureComponent<any, any> {
 
     return (
       <AnimatePresence key="AnimatePresence_CIMP_menuPopup">
-        <motion.button key="CIMP_cancelBtn" onClick={this.onCancelBtnClick} tabIndex={-1} className={tailwind('fixed inset-0 z-40 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
+        <motion.button key="CIMP_cancelBtn" onClick={this.onCancelBtnClick} tabIndex={-1} className={tailwind('fixed inset-0 z-40 h-full w-full cursor-default bg-black/25 focus:outline-none')} variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
         {menuPopup}
       </AnimatePresence>
     );

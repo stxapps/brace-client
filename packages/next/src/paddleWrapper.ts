@@ -6,7 +6,10 @@ import {
 } from './types/const';
 import { isObject, isString, randomString } from './utils';
 
-const doSandbox = !window.location.href.startsWith(DOMAIN_NAME);
+let doSandbox = false;
+if (typeof window !== 'undefined') {
+  doSandbox = !window.location.href.startsWith(DOMAIN_NAME);
+}
 
 const getVendor = () => {
   return doSandbox ? 11185 : 163987;

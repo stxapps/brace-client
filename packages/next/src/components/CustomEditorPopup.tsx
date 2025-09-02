@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
 import loadImage from 'blueimp-load-image';
 
@@ -440,13 +439,14 @@ const CustomEditorPopup = () => {
         <div onTouchMove={onTouchMove} onTouchEnd={onMouseUp} onTouchCancel={onMouseLeave} onMouseMove={onMouseMove} onMouseUp={onMouseUp} onMouseLeave={onMouseLeave} className={tailwind('flex items-center justify-center p-4')} style={{ minHeight: windowHeight }}>
           <div className={tailwind('fixed inset-0')}>
             {/* No cancel on background of CustomEditorPopup */}
-            <motion.button ref={cancelBtn} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
+            <motion.button ref={cancelBtn} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black/25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
           </div>
-          <motion.div className={tailwind('w-full max-w-sm overflow-hidden rounded-lg shadow-xl ring-1 ring-black ring-opacity-5 blk:ring-white blk:ring-opacity-25')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+          <motion.div className={tailwind('w-full max-w-sm overflow-hidden rounded-lg shadow-xl ring-1 ring-black/5 blk:ring-white/25')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
             <div ref={scrollPanel} style={{ maxHeight: panelHeight }} className={tailwind('relative flex flex-col overflow-y-auto overflow-x-hidden rounded-lg bg-white blk:bg-gray-800')}>
-              {isString(customEditor.image) && <div className={tailwind('aspect-w-12 aspect-h-7 w-full')}>
+              {isString(customEditor.image) && <div className={tailwind('aspect-12/7 w-full')}>
                 <div>
-                  <Image className={tailwind('h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={customEditor.imageUrl} alt="Custom link's illustration" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img className={tailwind('h-full w-full object-cover object-center ring-1 ring-black/5 blk:ring-0')} src={customEditor.imageUrl} alt="Custom link's illustration" />
                   <button onClick={onClearImageBtnClick} className={tailwind('group absolute bottom-1 right-1 flex h-10 w-10 items-center justify-center focus:outline-none')} type="button" title="Remove">
                     <div className={tailwind('flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 group-focus:ring blk:bg-gray-700')}>
                       <svg className={tailwind('h-4 w-4 text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-200')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -456,9 +456,9 @@ const CustomEditorPopup = () => {
                   </button>
                 </div>
               </div>}
-              {!customEditor.image && <div className={tailwind('aspect-w-12 aspect-h-7 w-full')}>
+              {!customEditor.image && <div className={tailwind('aspect-12/7 w-full')}>
                 {/* aspect-ratio is padding-bottom underneath and this div is absolute inset-0 */}
-                <div className={tailwind('flex items-center justify-center bg-white ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-1 blk:ring-white blk:ring-opacity-10')}>
+                <div className={tailwind('flex items-center justify-center bg-white ring-1 ring-black/5 blk:bg-gray-800 blk:ring-1 blk:ring-white/10')}>
                   <button onClick={onUploadImageBtnClick} className={tailwind('group mt-4 flex flex-col items-center justify-center rounded-lg p-2 focus:outline-none focus:ring')} type="button" title="Upload">
                     <svg className={tailwind('h-9 w-9 text-gray-400 group-hover:text-gray-500 blk:text-gray-400 blk:group-hover:text-gray-300')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                       <path fillRule="evenodd" clipRule="evenodd" d="M4 3C3.46957 3 2.96086 3.21071 2.58579 3.58579C2.21071 3.96086 2 4.46957 2 5V15C2 15.5304 2.21071 16.0391 2.58579 16.4142C2.96086 16.7893 3.46957 17 4 17H16C16.5304 17 17.0391 16.7893 17.4142 16.4142C17.7893 16.0391 18 15.5304 18 15V5C18 4.46957 17.7893 3.96086 17.4142 3.58579C17.0391 3.21071 16.5304 3 16 3H4ZM16 15H4L8 7L11 13L13 9L16 15Z" />
@@ -469,7 +469,7 @@ const CustomEditorPopup = () => {
                 </div>
               </div>}
               {isObject(customEditor.image) && <React.Fragment>
-                <div className={tailwind('aspect-w-12 aspect-h-8 w-full bg-gray-100 blk:bg-gray-700')}>
+                <div className={tailwind('aspect-12/8 w-full bg-gray-100 blk:bg-gray-700')}>
                   {/* aspect-ratio is padding-bottom underneath and this div is absolute inset-0 */}
                   <div className={tailwind('flex items-center justify-center')}>
                     <canvas ref={imageCanvas} onTouchStart={onCanvasMouseDown} onMouseDown={onCanvasMouseDown} onDragStart={onCanvasDragStart} className={tailwind('h-full w-full cursor-grab touch-none overflow-hidden rounded-t-lg')}></canvas>
@@ -510,7 +510,7 @@ const CustomEditorPopup = () => {
               <div className={tailwind(`flex px-4 ${isObject(customEditor.image) ? 'pt-2' : 'pt-4'}`)}>
                 <span className={tailwind('inline-flex items-center text-sm text-gray-500 blk:text-gray-300')}>Title:</span>
                 <div className={tailwind('ml-3 flex-1')}>
-                  <input onChange={onTitleInputChange} onKeyDown={onTitleInputKeyPress} className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-500 blk:focus:border-transparent')} type="text" placeholder="Title" value={customEditor.title} />
+                  <input onChange={onTitleInputChange} onKeyDown={onTitleInputKeyPress} className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-500 blk:focus:border-transparent')} type="text" placeholder="Title" value={customEditor.title} />
                 </div>
               </div>
               <div className={tailwind('px-4 pt-3 pb-4')}>

@@ -80,10 +80,10 @@ const ConfirmDiscardPopup = () => {
       <div style={canvasStyle} className={tailwind('fixed inset-0 z-50 overflow-y-auto')} aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div style={{ minHeight: safeAreaHeight }} className={tailwind('flex items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0')}>
           <div className={tailwind('fixed inset-0')}>
-            <motion.button ref={cancelBtn} onClick={onConfirmDiscardCancelBtnClick} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
+            <motion.button ref={cancelBtn} onClick={onConfirmDiscardCancelBtnClick} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black/25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
           </div>
           <span style={spanStyle} className={tailwind('hidden sm:inline-block sm:align-middle')} aria-hidden="true">&#8203;</span>
-          <motion.div className={tailwind('relative inline-block overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl blk:bg-gray-800 blk:ring-1 blk:ring-white blk:ring-opacity-25 sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden">
+          <motion.div className={tailwind('relative inline-block overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl blk:bg-gray-800 blk:ring-1 blk:ring-white/25 sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden">
             <div className={tailwind('sm:flex sm:items-start')}>
               <div className={tailwind('mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10')}>
                 <svg className={tailwind('h-6 w-6 text-red-600')} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">

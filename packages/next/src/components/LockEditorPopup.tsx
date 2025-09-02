@@ -140,9 +140,9 @@ const LockEditorPopup = () => {
       <div style={canvasStyle} className={tailwind('fixed inset-0 z-30 overflow-hidden')}>
         <div className={tailwind('flex items-center justify-center p-4')} style={{ minHeight: windowHeight }}>
           <div className={tailwind('fixed inset-0')}>
-            <motion.button onClick={onCancelBtnClick} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
+            <motion.button onClick={onCancelBtnClick} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black/25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
           </div>
-          <motion.div className={tailwind('w-full max-w-[23rem] overflow-hidden rounded-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-1 blk:ring-white blk:ring-opacity-25 lg:mb-20')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+          <motion.div className={tailwind('w-full max-w-92 overflow-hidden rounded-lg bg-white shadow-xl ring-1 ring-black/5 blk:bg-gray-800 blk:ring-1 blk:ring-white/25 lg:mb-20')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
             <div className={tailwind('relative flex flex-col overflow-hidden rounded-lg bg-white blk:bg-gray-800')} style={{ maxHeight: panelHeight }}>
               <div className={tailwind('relative flex-1 overflow-y-auto overflow-x-hidden px-4 pt-8 pb-4 sm:px-6 sm:pb-6')}>
                 <h2 className={tailwind('text-left text-xl font-semibold text-gray-800 blk:text-gray-100')}>{title}</h2>
@@ -150,7 +150,7 @@ const LockEditorPopup = () => {
                 <div className={tailwind([LOCK_ACTION_ADD_LOCK_LIST].includes(lockAction) ? 'pt-1' : 'pt-3.5')}>
                   <label htmlFor="password-input" className={tailwind('sr-only')}>Password</label>
                   <div className={tailwind('relative mt-1 bg-white blk:bg-gray-800')}>
-                    <input ref={passwordInput} onChange={onPasswordInputChange} className={tailwind('block w-full rounded-full border border-gray-400 bg-white py-[0.5625rem] pl-4 pr-6 text-sm text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent sm:py-[0.4375rem]')} placeholder="Password" value={passwordInputValue} id="password-input" name="password-input" autoCapitalize="none" type={doShowPassword ? 'text' : 'password'}></input>
+                    <input ref={passwordInput} onChange={onPasswordInputChange} className={tailwind('block w-full rounded-full border border-gray-400 bg-white py-2.25 pl-4 pr-6 text-sm text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent sm:py-1.75')} placeholder="Password" value={passwordInputValue} id="password-input" name="password-input" autoCapitalize="none" type={doShowPassword ? 'text' : 'password'}></input>
                     <button onClick={() => setDoShowPassword(!doShowPassword)} className={tailwind('group absolute inset-y-0 right-0 flex items-center pr-2 focus:outline-none')} >
                       <svg className={tailwind('h-4 w-4 cursor-pointer rounded text-gray-400 group-hover:text-gray-500 group-focus-visible:text-gray-500 group-focus-visible:ring blk:text-gray-500 blk:group-hover:text-gray-400 blk:group-focus-visible:text-gray-400')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                         {doShowPassword && <React.Fragment>
@@ -166,11 +166,11 @@ const LockEditorPopup = () => {
                   </div>
                 </div>
                 {isAddLockMyList && <div className={tailwind('mt-5 flex items-center')}>
-                  <input onChange={onChangeListNamesInputChange} checked={canChangeListNames} className={tailwind('h-4 w-4 cursor-pointer rounded border-gray-400 bg-white text-blue-500 transition duration-150 ease-in-out focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 blk:border-gray-400 blk:bg-gray-800 blk:focus:ring-offset-gray-800')} id="change-list-names-input" name="change-list-names-input" type="checkbox" />
+                  <input onChange={onChangeListNamesInputChange} checked={canChangeListNames} className={tailwind('h-4 w-4 cursor-pointer rounded border-gray-400 bg-white text-blue-500 transition duration-150 ease-in-out focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-400 blk:bg-gray-800 blk:focus:ring-offset-gray-800')} id="change-list-names-input" name="change-list-names-input" type="checkbox" />
                   <label htmlFor="change-list-names-input" className={tailwind('ml-2.5 block cursor-pointer text-sm text-gray-500 blk:text-gray-400')}>When locked, allow to change to other lists</label>
                 </div>}
                 {isAddLockList && <div className={tailwind(`flex items-center ${isAddLockMyList ? 'mt-3.5' : 'mt-5'}`)}>
-                  <input onChange={onExportInputChange} checked={canExport} className={tailwind('h-4 w-4 cursor-pointer rounded border-gray-400 bg-white text-blue-500 transition duration-150 ease-in-out focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 blk:border-gray-400 blk:bg-gray-800 blk:focus:ring-offset-gray-800')} id="in-export-input" name="in-export-input" type="checkbox" />
+                  <input onChange={onExportInputChange} checked={canExport} className={tailwind('h-4 w-4 cursor-pointer rounded border-gray-400 bg-white text-blue-500 transition duration-150 ease-in-out focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-400 blk:bg-gray-800 blk:focus:ring-offset-gray-800')} id="in-export-input" name="in-export-input" type="checkbox" />
                   <label htmlFor="in-export-input" className={tailwind('ml-2.5 block cursor-pointer text-sm text-gray-500 blk:text-gray-400')}>{exportText}</label>
                 </div>}
                 <div className={tailwind(errMsg ? '' : isAddLockList ? 'pt-5' : 'pt-3.5')}>
@@ -185,7 +185,7 @@ const LockEditorPopup = () => {
                   </button>
                 </div>
               </div>
-              {isLoadingShown && <div className={tailwind('absolute inset-0 flex items-center justify-center bg-white bg-opacity-25 blk:bg-gray-800 blk:bg-opacity-25')}>
+              {isLoadingShown && <div className={tailwind('absolute inset-0 flex items-center justify-center bg-white/25 blk:bg-gray-800/25')}>
                 <div className={tailwind('ball-clip-rotate blk:ball-clip-rotate-blk')}>
                   <div />
                 </div>

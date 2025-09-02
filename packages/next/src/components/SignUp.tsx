@@ -158,7 +158,7 @@ const SignUp = (props) => {
             </button>
           </div>
         </div>
-        {isLoadingShown && <div className={tailwind('absolute inset-0 flex items-center justify-center bg-white bg-opacity-25')}>
+        {isLoadingShown && <div className={tailwind('absolute inset-0 flex items-center justify-center bg-white/25')}>
           <div className={tailwind('ball-clip-rotate')}>
             <div />
           </div>
@@ -173,7 +173,7 @@ const SignUp = (props) => {
       <React.Fragment>
         <div className={tailwind('flex items-center justify-center pt-16')}>
           <div className={tailwind('relative flex w-40 items-center justify-between')}>
-            <Image className={tailwind('h-16 w-16')} src={appIconUrl} alt="App logo" />
+            <Image className={tailwind('h-16 w-16')} src={appIconUrl} width={64} height={64} alt="App logo" />
             <div className={tailwind('flex h-16 w-16 items-center justify-center rounded-xl bg-blue-100')}>
               <svg className={tailwind('h-9 w-9 text-blue-700')} viewBox="0 0 36 36" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path fillRule="evenodd" clipRule="evenodd" d="M8.9999 16.2V12.6C8.9999 10.213 9.94811 7.92384 11.6359 6.23601C13.3238 4.54819 15.613 3.59998 17.9999 3.59998C20.3869 3.59998 22.676 4.54819 24.3639 6.23601C26.0517 7.92384 26.9999 10.213 26.9999 12.6V16.2C27.9547 16.2 28.8704 16.5793 29.5455 17.2544C30.2206 17.9295 30.5999 18.8452 30.5999 19.8V28.8C30.5999 29.7548 30.2206 30.6704 29.5455 31.3456C28.8704 32.0207 27.9547 32.4 26.9999 32.4H8.9999C8.04512 32.4 7.12945 32.0207 6.45432 31.3456C5.77919 30.6704 5.3999 29.7548 5.3999 28.8V19.8C5.3999 18.8452 5.77919 17.9295 6.45432 17.2544C7.12945 16.5793 8.04512 16.2 8.9999 16.2ZM23.3999 12.6V16.2H12.5999V12.6C12.5999 11.1678 13.1688 9.7943 14.1815 8.7816C15.1942 7.7689 16.5677 7.19998 17.9999 7.19998C19.4321 7.19998 20.8056 7.7689 21.8183 8.7816C22.831 9.7943 23.3999 11.1678 23.3999 12.6Z" />
@@ -209,7 +209,7 @@ const SignUp = (props) => {
           <button onClick={onGetSecretKeyBtnClick} className={tailwind('w-full rounded-md border border-transparent bg-blue-700 py-2 px-4 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2')} type="button">Get your Secret Key</button>
         </div>
         <div className={tailwind('mt-10 mb-1.5 flex pt-1')}>
-          <button onClick={props.onSignInBtnClick} className={tailwind('rounded-sm text-sm font-medium text-blue-700 hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} type="button">Sign in</button>
+          <button onClick={props.onSignInBtnClick} className={tailwind('rounded-xs text-sm font-medium text-blue-700 hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} type="button">Sign in</button>
         </div>
       </React.Fragment>
     );
@@ -247,7 +247,7 @@ const SignUp = (props) => {
         <p className={tailwind('mt-3 text-sm leading-6 text-gray-500')}>Only you know your Secret Key. If you lose it, it&apos;ll be lost forever. So save it somewhere you won&apos;t forget.</p>
         <div className={tailwind('pt-6')}>
           <button onClick={onBackedUpBtnClick} className={tailwind('w-full rounded-md border border-transparent bg-blue-700 py-2 px-4 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2')} type="button">I&apos;ve backed up my Secret Key</button>
-          <p className={tailwind('mt-3 text-xs leading-5 tracking-wide text-gray-400')}>By clicking the button above, you agree to our <a className={tailwind('rounded-sm text-gray-500 underline hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} href={domainName + '/' + HASH_TERMS} target="_blank" rel="noreferrer">Terms of Service</a> and <a className={tailwind('rounded-sm text-gray-500 underline hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} href={domainName + '/' + HASH_PRIVACY} target="_blank" rel="noreferrer">Privacy Policy</a>.</p>
+          <p className={tailwind('mt-3 text-xs leading-5 tracking-wide text-gray-400')}>By clicking the button above, you agree to our <a className={tailwind('rounded-xs text-gray-500 underline hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} href={domainName + '/' + HASH_TERMS} target="_blank" rel="noreferrer">Terms of Service</a> and <a className={tailwind('rounded-xs text-gray-500 underline hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} href={domainName + '/' + HASH_PRIVACY} target="_blank" rel="noreferrer">Privacy Policy</a>.</p>
           <button onClick={onAgainBtnClick} className={tailwind('mt-3 w-full rounded-md border border-transparent bg-white py-2 px-4 text-sm font-medium text-blue-700 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-600')} type="button">View Secret Key again</button>
         </div>
         <ul className={tailwind('mt-20 mb-8 divide-y divide-gray-200 border-y border-gray-200')}>
@@ -299,7 +299,7 @@ const ExpListItem = (props) => {
 
   return (
     <li>
-      <button onClick={onOpenBtnClick} className={tailwind('flex w-full items-center justify-between rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} type="button">
+      <button onClick={onOpenBtnClick} className={tailwind('flex w-full items-center justify-between rounded-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1')} type="button">
         <p className={tailwind('flex-shrink flex-grow py-3 text-left text-sm text-gray-500')}>{title}</p>
         <div className={tailwind('ml-3 flex-shrink-0 flex-grow-0')}>
           {arrowSvg}
@@ -324,7 +324,7 @@ const ErrorAlert = (props) => {
           </div>
           <div className={tailwind('ml-3 lg:mt-0.5')}>
             <h3 className={tailwind('text-left text-base font-medium text-red-800 lg:text-sm')}>Oops..., something went wrong!</h3>
-            <p className={tailwind('mt-2.5 text-sm text-red-700')}>Please wait a moment and try again. <br className={tailwind('hidden sm:inline')} />If the problem persists, please <a className={tailwind('rounded-sm underline hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700')} href={props.domainName + '/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a>.</p>
+            <p className={tailwind('mt-2.5 text-sm text-red-700')}>Please wait a moment and try again. <br className={tailwind('hidden sm:inline')} />If the problem persists, please <a className={tailwind('rounded-xs underline hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-700')} href={props.domainName + '/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a>.</p>
           </div>
           <div className={tailwind('ml-auto pl-3')}>
             <div className={tailwind('-mx-1.5 -my-1.5')}>

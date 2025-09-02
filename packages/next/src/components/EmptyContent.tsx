@@ -67,7 +67,7 @@ const EmptyContent = () => {
   if (listName === MY_LIST) {
     return (
       <div style={{ borderRadius: '1.5rem' }} className={tailwind('mx-auto w-full max-w-md bg-gray-50 px-4 pt-16 pb-8 blk:bg-gray-800')}>
-        <Image className={tailwind('mx-auto h-16')} src={themeMode === BLK_MODE ? undrawLinkBlk : undrawLink} alt="unDraw link icon" />
+        <Image className={tailwind('mx-auto h-16 w-auto')} src={themeMode === BLK_MODE ? undrawLinkBlk : undrawLink} alt="unDraw link icon" />
         <h3 className={tailwind('mt-6 text-center text-base text-gray-600 blk:text-gray-300')}>Get started saving links</h3>
         <button onClick={onAddBtnClick} style={{ padding: '0.4375rem 0.8rem 0.4375rem 0.65rem' }} className={tailwind('mx-auto mt-4 flex items-baseline rounded-full bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring blk:bg-gray-100 blk:hover:bg-white')}>
           <svg className={tailwind('w-3 text-white blk:text-gray-900')} viewBox="0 0 16 14" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">

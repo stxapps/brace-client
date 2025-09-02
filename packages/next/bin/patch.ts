@@ -70,6 +70,23 @@ const patchLexoRank = () => {
   fs.writeFileSync(fpath, outs.join('\n') + '\n');
 };
 
+const patchReduxOffline = () => {
+  let match = '    dispatch?: any => void,';
+  let repmt = '    dispatch?: (any) => void;';
+  replaceMatchedLine(
+    'node_modules/@redux-offline/redux-offline/typings.d.ts',
+    [{ match, repmt }],
+  );
+
+  match = '    filterOutboxRehydrate?: (outbox: Outbox) => Outbox,';
+  repmt = '    filterOutboxRehydrate?: (outbox: Outbox) => Outbox;';
+  replaceMatchedLine(
+    'node_modules/@redux-offline/redux-offline/typings.d.ts',
+    [{ match, repmt }],
+  );
+};
+
 patchFetch();
 patchCryptoUtils();
 patchLexoRank();
+patchReduxOffline();

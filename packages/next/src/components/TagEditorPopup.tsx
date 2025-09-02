@@ -104,9 +104,9 @@ const TagEditorPopup = () => {
         <div style={canvasStyle} className={tailwind('fixed inset-0 z-30 overflow-hidden')}>
           <div className={tailwind('flex items-start justify-center p-4')} style={{ minHeight: windowHeight }}>
             <div className={tailwind('fixed inset-0')}>
-              <motion.button onClick={onPopupCloseBtnClick} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
+              <motion.button onClick={onPopupCloseBtnClick} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black/25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
             </div>
-            <motion.div className={tailwind('mt-14 w-full max-w-[25rem] overflow-hidden rounded-lg bg-yellow-50 shadow-lg md:mt-2.5')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+            <motion.div className={tailwind('mt-14 w-full max-w-100 overflow-hidden rounded-lg bg-yellow-50 shadow-lg md:mt-2.5')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
               <div className={tailwind('relative overflow-hidden rounded-lg bg-yellow-50 p-4')} style={{ maxHeight: panelHeight }}>
                 <div className={tailwind('flex')}>
                   <div className={tailwind('flex-shrink-0')}>
@@ -172,16 +172,16 @@ const TagEditorPopup = () => {
         <div className={tailwind('flex items-center justify-center p-4')} style={{ minHeight: windowHeight }}>
           <div className={tailwind('fixed inset-0')}>
             {/* No cancel on background of TagEditorPopup */}
-            <motion.button className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
+            <motion.button className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black/25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />
           </div>
-          <motion.div className={tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-1 blk:ring-white blk:ring-opacity-25 lg:mb-20')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+          <motion.div className={tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl ring-1 ring-black/5 blk:bg-gray-800 blk:ring-1 blk:ring-white/25 lg:mb-20')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
             <div className={tailwind('relative flex flex-col overflow-hidden rounded-lg bg-white blk:bg-gray-800')} style={{ maxHeight: panelHeight }}>
               <div className={tailwind('relative flex-1 overflow-y-auto overflow-x-hidden px-4 pt-8 pb-4 sm:px-6 sm:pb-6')}>
                 <h2 className={tailwind('text-left text-xl font-semibold text-gray-800 blk:text-gray-100')}>{title}</h2>
                 {tagEditor.values.length === 0 && <div className={tailwind('pt-4')}>
                   <p className={tailwind('text-sm leading-6 text-gray-500 blk:text-gray-400')}>{desc}</p>
                 </div>}
-                {tagEditor.values.length > 0 && <div className={tailwind('flex min-h-[4rem] flex-wrap items-center justify-start pt-5')}>
+                {tagEditor.values.length > 0 && <div className={tailwind('flex min-h-16 flex-wrap items-center justify-start pt-5')}>
                   {tagEditor.values.map((value, i) => {
                     return (
                       <div key={`TagEditorValue-${value.tagName}`} className={tailwind(`mb-2 flex max-w-full items-center justify-start rounded-full bg-gray-100 pl-3 blk:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
@@ -198,8 +198,8 @@ const TagEditorPopup = () => {
                 {tagEditor.msg && <p className={tailwind('py-2 text-sm text-red-500')}>{tagEditor.msg}</p>}
                 <div className={tailwind(`flex items-center justify-start ${tagEditor.msg ? '' : 'pt-5'}`)}>
                   <label htmlFor="new-tag-input" className={tailwind('sr-only')}>Add a new tag</label>
-                  <input onChange={onDnInputChange} onKeyDown={onDnInputKeyPress} className={tailwind('block w-full flex-1 rounded-full border border-gray-400 bg-white px-3.5 py-[0.3125rem] text-sm text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-50 blk:border-gray-500 blk:bg-gray-800 blk:text-gray-200 blk:placeholder:text-gray-400 blk:focus:border-transparent')} placeholder="Add a new tag" value={tagEditor.displayName} id="new-tag-input" name="new-tag-input" type="text" />
-                  <button onClick={onAddBtnClick} className={tailwind('group ml-2 flex flex-shrink-0 flex-grow-0 items-center rounded-full border border-gray-400 bg-white py-[0.3125rem] pl-1.5 pr-2.5 hover:border-gray-500 focus:outline-none focus:ring blk:border-gray-500 blk:bg-gray-800 blk:hover:border-gray-400')} type="button">
+                  <input onChange={onDnInputChange} onKeyDown={onDnInputKeyPress} className={tailwind('block w-full flex-1 rounded-full border border-gray-400 bg-white px-3.5 py-1.25 text-sm text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-500 blk:bg-gray-800 blk:text-gray-200 blk:placeholder:text-gray-400 blk:focus:border-transparent')} placeholder="Add a new tag" value={tagEditor.displayName} id="new-tag-input" name="new-tag-input" type="text" />
+                  <button onClick={onAddBtnClick} className={tailwind('group ml-2 flex flex-shrink-0 flex-grow-0 items-center rounded-full border border-gray-400 bg-white py-1.25 pl-1.5 pr-2.5 hover:border-gray-500 focus:outline-none focus:ring blk:border-gray-500 blk:bg-gray-800 blk:hover:border-gray-400')} type="button">
                     <svg className={tailwind('h-4 w-4 text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-100')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                       <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
                     </svg>

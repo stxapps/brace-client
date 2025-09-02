@@ -32,7 +32,7 @@ const SWWUPopup = () => {
 
   return (
     <div style={canvasStyle} className={tailwind('fixed inset-x-0 top-14 z-40 flex items-start justify-center md:top-2.5')}>
-      <div className={tailwind('relative m-4 max-w-[25rem] rounded-md bg-yellow-50 p-4 shadow-lg')}>
+      <div className={tailwind('relative m-4 max-w-100 rounded-md bg-yellow-50 p-4 shadow-lg')}>
         <div className={tailwind('flex')}>
           <div className={tailwind('flex-shrink-0')}>
             <svg className={tailwind('h-6 w-6 text-yellow-400')} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">

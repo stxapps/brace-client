@@ -18,28 +18,28 @@ class Footer extends React.PureComponent<any, any> {
       <footer className={tailwind('mx-auto max-w-6xl overflow-hidden bg-white px-4 pt-28 pb-6 md:px-6 lg:px-8')}>
         <div className={tailwind('-mx-5 -my-2 md:flex md:flex-wrap md:justify-center')}>
           <div className={tailwind('px-3 py-1')}>
-            <Link className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={PATH_ABOUT} prefetch={false}>About</Link>
+            <Link className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={PATH_ABOUT} prefetch={false}>About</Link>
           </div>
           <div className={tailwind('mt-2 px-3 py-1 md:mt-0')}>
-            <Link className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={PATH_TERMS} prefetch={false}>Terms</Link>
+            <Link className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={PATH_TERMS} prefetch={false}>Terms</Link>
           </div>
           <div className={tailwind('mt-2 px-3 py-1 md:mt-0')}>
-            <Link className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={PATH_PRIVACY} prefetch={false}>Privacy</Link>
+            <Link className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={PATH_PRIVACY} prefetch={false}>Privacy</Link>
           </div>
           <div className={tailwind('mt-2 px-3 py-1 md:mt-0')}>
-            <Link className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={PATH_PRICING} prefetch={false}>Pricing</Link>
+            <Link className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={PATH_PRICING} prefetch={false}>Pricing</Link>
           </div>
           <div className={tailwind('mt-2 px-3 py-1 md:mt-0')}>
-            <Link className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={PATH_SUPPORT} prefetch={false}>Support</Link>
+            <Link className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href={PATH_SUPPORT} prefetch={false}>Support</Link>
           </div>
           <div className={tailwind('mt-2 px-3 py-1 md:mt-0')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href="https://docs.brace.to" target="_blank" rel="noreferrer">Docs</a>
+            <a className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href="https://docs.brace.to" target="_blank" rel="noreferrer">Docs</a>
           </div>
           <div className={tailwind('mt-2 px-3 py-1 md:mt-0')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href="https://medium.com/@stxapps" target="_blank" rel="noreferrer">Blog</a>
+            <a className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href="https://medium.com/@stxapps" target="_blank" rel="noreferrer">Blog</a>
           </div>
           <div className={tailwind('mt-2 px-3 py-1 md:mt-0')}>
-            <a className={tailwind('block rounded-sm px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href="https://status.brace.to" target="_blank" rel="noreferrer">Status</a>
+            <a className={tailwind('block rounded-xs px-2 py-1 text-base text-gray-500 hover:text-gray-900 focus:outline-none focus:ring')} href="https://status.brace.to" target="_blank" rel="noreferrer">Status</a>
           </div>
         </div>
         <div className={tailwind('flex items-center justify-start pt-10 md:justify-center md:pt-6')}>
@@ -65,7 +65,7 @@ class Footer extends React.PureComponent<any, any> {
           </a>
         </div>
         <div className={tailwind('pt-16 md:flex md:justify-between')}>
-          <p className={tailwind('text-left text-base text-gray-400')}>©{(new Date()).getFullYear()} <a className={tailwind('rounded-sm text-gray-400 hover:text-gray-500 focus:outline-none focus:ring')} href="https://www.stxapps.com" target="_blank" rel="noreferrer">STX Apps Co., Ltd.</a></p>
+          <p className={tailwind('text-left text-base text-gray-400')}>©{(new Date()).getFullYear()} <a className={tailwind('rounded-xs text-gray-400 hover:text-gray-500 focus:outline-none focus:ring')} href="https://www.stxapps.com" target="_blank" rel="noreferrer">STX Apps Co., Ltd.</a></p>
           <p className={tailwind('text-left text-base text-gray-400')}>Crafted with ❤ and ℅ for a better web</p>
         </div>
       </footer>

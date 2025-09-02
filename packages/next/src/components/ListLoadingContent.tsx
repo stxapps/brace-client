@@ -19,7 +19,7 @@ const ListLoadingContentItem = () => {
     <li className={tailwind('relative')}>
       <div className={tailwind('flex items-center')}>
         <div className={tailwind('w-16 flex-shrink-0 flex-grow-0 pl-px')}>
-          <div className={tailwind('rounded bg-gray-200 pb-7/12 blk:bg-gray-700')} />
+          <div className={tailwind('rounded bg-gray-200 pb-[58.333333%] blk:bg-gray-700')} />
         </div>
         <div className={tailwind('min-w-0 flex-1 py-3.5 pl-3 sm:pl-4')}>
           <div className={tailwind('')}>

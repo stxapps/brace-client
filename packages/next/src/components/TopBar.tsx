@@ -47,7 +47,7 @@ class TopBar extends React.PureComponent<any, any> {
         <div className={tailwind('relative')}>
           <div className={tailwind('flex h-14 items-center justify-between')}>
             <Link className={tailwind('relative rounded focus:outline-none focus:ring focus:ring-offset-2')} href="/">
-              <Image className={tailwind('h-8')} src={doSupportTheme && themeMode === BLK_MODE ? LogoBlk : Logo} alt="Brace logo" />
+              <Image className={tailwind('h-8 w-auto')} src={doSupportTheme && themeMode === BLK_MODE ? LogoBlk : Logo} alt="Brace logo" />
             </Link>
             {rightPane}
           </div>

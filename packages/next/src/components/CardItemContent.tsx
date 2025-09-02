@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import GracefulImage from 'react-graceful-image';
@@ -103,7 +102,8 @@ class CardItemContent extends React.Component<any, any> {
 
     if (customImage) image = customImage;
     if (image) {
-      return <Image key="img-image-custom" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={image} alt={`illustration of ${url}`} />;
+      {/* eslint-disable-next-line @next/next/no-img-element */ }
+      return <img key="img-image-custom" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black/5 blk:ring-0')} src={image} alt={`illustration of ${url}`} />;
     }
 
     if (extractedResult && extractedResult.image && !doIgnoreExtrdRst) {
@@ -111,7 +111,7 @@ class CardItemContent extends React.Component<any, any> {
     }
     if (image) {
       // This GracefulImage needs to be different from the one below so that it's not just rerender but recreate a new component with a new src and new retry. React knows by using different keys.
-      return <GracefulImage key="image-graceful-image-extracted-result" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black ring-opacity-5 blk:ring-0')} src={image} alt={`illustration of ${url}`} />;
+      return <GracefulImage key="image-graceful-image-extracted-result" className={tailwind('absolute h-full w-full object-cover object-center ring-1 ring-black/5 blk:ring-0')} src={image} alt={`illustration of ${url}`} />;
     }
 
     let fg = null;
@@ -129,7 +129,7 @@ class CardItemContent extends React.Component<any, any> {
 
     // Only plain color background or plain color background with a letter
     if (isDecorValid(decor) && decor.image.bg.type === COLOR) {
-      let blkClassNames = 'blk:ring-1 blk:ring-white blk:ring-opacity-10';
+      let blkClassNames = 'blk:ring-1 blk:ring-white/10';
       if (decor.image.bg.value !== 'bg-gray-800') blkClassNames = '';
       return (
         <React.Fragment>
@@ -243,7 +243,7 @@ class CardItemContent extends React.Component<any, any> {
 
     return (
       <React.Fragment>
-        <div onTouchStart={this.onTouchPress} onTouchMove={this.onTouchPressRelease} onTouchEnd={this.onTouchPressRelease} onTouchCancel={this.onTouchPressRelease} onMouseDown={this.onClickPress} onMouseMove={this.onClickPressRelease} onMouseUp={this.onClickPressRelease} onMouseLeave={this.onClickPressRelease} className={tailwind('relative pb-7/12')}>
+        <div onTouchStart={this.onTouchPress} onTouchMove={this.onTouchPressRelease} onTouchEnd={this.onTouchPressRelease} onTouchCancel={this.onTouchPressRelease} onMouseDown={this.onClickPress} onMouseMove={this.onClickPressRelease} onMouseUp={this.onClickPressRelease} onMouseLeave={this.onClickPressRelease} className={tailwind('relative pb-[58.333333%]')}>
           {this.renderImage()}
         </div>
         <div className={tailwind('flex items-center justify-between')}>
@@ -252,7 +252,7 @@ class CardItemContent extends React.Component<any, any> {
               {this.renderFavicon()}
               <div className={tailwind('min-w-0 flex-shrink flex-grow')}>
                 <p className={tailwind('truncate pl-2 text-base text-gray-500 blk:text-gray-300')}>
-                  <a className={tailwind('rounded-sm hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-200')} href={origin} target="_blank" rel="noreferrer">
+                  <a className={tailwind('rounded-xs hover:text-gray-600 focus:outline-none focus:ring blk:hover:text-gray-200')} href={origin} target="_blank" rel="noreferrer">
                     {host}
                   </a>
                 </p>
@@ -268,7 +268,7 @@ class CardItemContent extends React.Component<any, any> {
           </div>
         </div>
         <a className={tailwind('group focus:outline-none')} href={ensureContainUrlProtocol(url)} target="_blank" rel="noreferrer">
-          <h4 className={tailwind(`mt-0 mb-3 ml-4 mr-3 rounded-sm text-base font-medium leading-6 text-gray-800 group-hover:text-gray-900 group-focus:ring blk:text-gray-100 blk:group-hover:text-white lg:mb-4 ${classNames}`)}>
+          <h4 className={tailwind(`mt-0 mb-3 ml-4 mr-3 rounded-xs text-base font-medium leading-6 text-gray-800 group-hover:text-gray-900 group-focus:ring blk:text-gray-100 blk:group-hover:text-white lg:mb-4 ${classNames}`)}>
             {title}
           </h4>
         </a>

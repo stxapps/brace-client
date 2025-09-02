@@ -101,7 +101,7 @@ const TopBarProfilePopup = () => {
     );
   }
 
-  const popupClassNames = 'fixed z-41 w-28 overflow-auto rounded-lg bg-white py-2 shadow-xl ring-1 ring-black ring-opacity-5 blk:bg-gray-800 blk:ring-white blk:ring-opacity-25';
+  const popupClassNames = 'fixed z-41 w-28 overflow-auto rounded-lg bg-white py-2 shadow-xl ring-1 ring-black/5 blk:bg-gray-800 blk:ring-white/25';
 
   let panel;
   if (popupSize) {
@@ -131,7 +131,7 @@ const TopBarProfilePopup = () => {
 
   return (
     <AnimatePresence key="AP_topBarProfilePopup">
-      <motion.button key="TBPP_cancelBtn" ref={cancelBtn} onClick={onCancelBtnClick} className={tailwind('fixed inset-0 z-40 h-full w-full cursor-default bg-black bg-opacity-25 focus:outline-none')} variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
+      <motion.button key="TBPP_cancelBtn" ref={cancelBtn} onClick={onCancelBtnClick} className={tailwind('fixed inset-0 z-40 h-full w-full cursor-default bg-black/25 focus:outline-none')} variants={popupBgFMV} initial="hidden" animate="visible" exit="hidden" />
       {panel}
     </AnimatePresence>
   );
