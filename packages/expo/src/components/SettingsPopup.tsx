@@ -374,7 +374,7 @@ const SettingsPopup = () => {
         <View style={tailwind('flex-1 flex-row')}>
           {/* Sidebar for desktop */}
           <View key="sidebar-for-desktop" style={tailwind('hidden md:flex md:flex-shrink-0 md:flex-grow-0')}>
-            <View style={tailwind('mt-2 mb-6 min-h-xl w-48 border-r border-gray-200 blk:border-gray-700')}>
+            <View style={tailwind('mt-2 mb-6 min-h-144 w-48 border-r border-gray-200 blk:border-gray-700')}>
               <View style={tailwind('mt-2 pr-2')}>
                 <TouchableOpacity onPress={onAccountBtnClick} style={tailwind(`w-full flex-row items-center rounded-md px-2 py-2 ${isViewSelected(VIEW_ACCOUNT) ? selectedMenuBtnStyleClasses : menuBtnStyleClasses}`)}>
                   <Svg style={tailwind(`mr-3 font-normal ${isViewSelected(VIEW_ACCOUNT) ? selectedMenuSvgStyleClasses : menuSvgStyleClasses}`)} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">

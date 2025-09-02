@@ -21,7 +21,7 @@ const SettingsPopupConflict = (props) => {
 
   return (
     <React.Fragment>
-      <View style={tailwind('min-h-xl w-full max-w-3xl px-4 pb-4 md:px-6 md:pb-6 lg:px-8 lg:pb-8')}>
+      <View style={tailwind('min-h-144 w-full max-w-3xl px-4 pb-4 md:px-6 md:pb-6 lg:px-8 lg:pb-8')}>
         <View style={tailwind('h-16 w-full')} />
         <Text style={tailwind('pt-5 text-lg font-medium text-gray-800 blk:text-gray-200')}>{conflictedSettings.contents.length} Versions of Settings found</Text>
         <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>Please choose the correct version of the settings.</Text>

@@ -82,14 +82,14 @@ class CardItemContent extends React.Component<any, any> {
 
     if (customImage) image = customImage;
     if (image) {
-      return <Image key="img-image-custom" style={tailwind('w-full rounded-t-lg bg-white blk:bg-gray-900 aspect-7/12 shadow-xs')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
+      return <Image key="img-image-custom" style={tailwind('w-full rounded-t-lg bg-white blk:bg-gray-900 aspect-7/12 shadow-xxs')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
     }
 
     if (extractedResult && extractedResult.image && !doIgnoreExtrdRst) {
       image = extractedResult.image;
     }
     if (image) {
-      return <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full rounded-t-lg bg-white blk:bg-gray-900 aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
+      return <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full rounded-t-lg bg-white blk:bg-gray-900 aspect-7/12 shadow-xxs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
     }
 
     let fg = null;
@@ -112,7 +112,7 @@ class CardItemContent extends React.Component<any, any> {
       if (decor.image.bg.value !== 'bg-gray-800') blkClassNames = '';
       return (
         <React.Fragment>
-          <View style={tailwind(`w-full items-center justify-center rounded-t-lg aspect-7/12 shadow-xs ${decor.image.bg.value} ${blkClassNames}`)}>
+          <View style={tailwind(`w-full items-center justify-center rounded-t-lg aspect-7/12 shadow-xxs ${decor.image.bg.value} ${blkClassNames}`)}>
             {fg}
           </View>
         </React.Fragment>
@@ -122,7 +122,7 @@ class CardItemContent extends React.Component<any, any> {
     // Only pattern background or pattern background with a big letter
     if (isDecorValid(decor) && decor.image.bg.type === PATTERN) {
       return (
-        <View style={tailwind('w-full items-center justify-center rounded-t-lg bg-white blk:bg-gray-900 aspect-7/12 shadow-xs')}>
+        <View style={tailwind('w-full items-center justify-center rounded-t-lg bg-white blk:bg-gray-900 aspect-7/12 shadow-xxs')}>
           <GracefulImage key="image-graceful-image-pattern" style={tailwind('absolute inset-0 rounded-t-lg bg-white blk:bg-gray-900')} contentStyle={tailwind('rounded-t-lg')} source={PATTERN_MAP[decor.image.bg.value]} />
           {fg}
         </View>
@@ -131,7 +131,7 @@ class CardItemContent extends React.Component<any, any> {
 
     // Random image
     if (isDecorValid(decor) && decor.image.bg.type === IMAGE) {
-      return <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full rounded-t-lg bg-white blk:bg-gray-900 aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_decorImage_${decor.image.bg.value}`, { uri: prependDomainName(decor.image.bg.value) }, [decor.image.bg.value])} />;
+      return <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full rounded-t-lg bg-white blk:bg-gray-900 aspect-7/12 shadow-xxs')} contentStyle={tailwind('rounded-t-lg')} source={cache(`CI_decorImage_${decor.image.bg.value}`, { uri: prependDomainName(decor.image.bg.value) }, [decor.image.bg.value])} />;
     }
 
     console.log(`In CardItemContent.renderImage, invalid decor: ${JSON.stringify(decor)}`);

@@ -188,7 +188,7 @@ const SettingsPopupMisc = (props) => {
         <Text style={tailwind('text-base font-medium leading-4 text-gray-800 blk:text-gray-100')}>Appearance</Text>
         {systemText}
         <View style={tailwind('mt-2.5 w-full items-center justify-start')}>
-          <View style={tailwind('w-full max-w-sm rounded-md bg-white shadow-sm blk:bg-gray-900')}>
+          <View style={tailwind('w-full max-w-sm rounded-md bg-white shadow-xs blk:bg-gray-900')}>
             <View style={tailwind('flex-row justify-evenly')}>
               <TouchableOpacity onPress={() => onDoUseLocalThemeBtnClick(false)} style={tailwind('flex-shrink flex-grow rounded-tl-md border border-b-0 border-gray-300 bg-white py-4 blk:border-gray-700 blk:bg-gray-900')}>
                 <Text style={tailwind(`text-center text-sm font-medium ${themeDefaultBtnClassNames}`)}>Sync</Text>
@@ -269,7 +269,7 @@ const SettingsPopupMisc = (props) => {
             <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Choose whether your saved links are displayed in the Cards view or in the List view. For Sync, your choosing is synced across your devices. For Device, you can choose and use the setting for this device only.</Text>
           </View>
           <View style={tailwind('mt-2.5 items-center sm:ml-4 sm:flex-shrink-0 sm:flex-grow-0')}>
-            <View style={tailwind('w-full max-w-48 rounded-md bg-white shadow-sm blk:bg-gray-900 sm:w-48')}>
+            <View style={tailwind('w-full max-w-48 rounded-md bg-white shadow-xs blk:bg-gray-900 sm:w-48')}>
               <View style={tailwind('flex-row justify-evenly')}>
                 <TouchableOpacity onPress={() => onDoUseLocalLayoutBtnClick(false)} style={tailwind('flex-shrink flex-grow rounded-tl-md border border-b-0 border-gray-300 bg-white py-4 blk:border-gray-700 blk:bg-gray-900')}>
                   <Text style={tailwind(`text-center text-sm font-medium ${layoutDefaultBtnClassNames}`)}>Sync</Text>
@@ -311,7 +311,7 @@ const SettingsPopupMisc = (props) => {
             <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Choose whether your saved links are sorted by saved date in <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>ascending order</Text> (links you save first appear first) or <Text style={tailwind('text-base font-semibold leading-6.5 text-gray-500 blk:text-gray-300')}>descending order</Text> (links you save last appear first) when you browse your saved links.</Text>
           </View>
           <View style={tailwind('mt-2.5 items-center sm:ml-4 sm:flex-shrink-0 sm:flex-grow-0')}>
-            <View style={tailwind('w-full max-w-48 rounded-md bg-white shadow-sm blk:bg-gray-900 sm:w-48')}>
+            <View style={tailwind('w-full max-w-48 rounded-md bg-white shadow-xs blk:bg-gray-900 sm:w-48')}>
               <TouchableOpacity onPress={() => onDoDescendingInputChange('ascending')} style={tailwind('')}>
                 <View style={tailwind(`flex-row rounded-tl-md rounded-tr-md border p-4 ${ascendingBtnClassNames}`)}>
                   <View style={tailwind('h-5 flex-row items-center')}>

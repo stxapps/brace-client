@@ -229,7 +229,7 @@ const CustomEditorPopup = () => {
       <View style={tailwind(`flex-1 items-center justify-center p-4 ${Platform.OS === 'ios' ? 'lg:justify-start' : ''}`)}>
         <Animated.View style={[tailwind('w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
           <ScrollView style={{ maxHeight: panelHeight }} automaticallyAdjustKeyboardInsets={true} keyboardShouldPersistTaps="handled">
-            {imageUrl && <View style={tailwind('w-full rounded-t-lg bg-white blk:border-b blk:border-gray-700 blk:bg-gray-800 aspect-7/12 shadow-xs')}>
+            {imageUrl && <View style={tailwind('w-full rounded-t-lg bg-white blk:border-b blk:border-gray-700 blk:bg-gray-800 aspect-7/12 shadow-xxs')}>
               <Image style={tailwind('h-full w-full')} source={cache(`CEP_image_${imageUrl}`, { uri: imageUrl }, [imageUrl])} />
               <TouchableOpacity onPress={onClearImageBtnClick} style={tailwind('absolute bottom-1 right-1 flex h-10 w-10 items-center justify-center')}>
                 <View style={tailwind('flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 blk:bg-gray-700')}>
@@ -239,7 +239,7 @@ const CustomEditorPopup = () => {
                 </View>
               </TouchableOpacity>
             </View>}
-            {!imageUrl && <View style={tailwind('w-full items-center justify-center rounded-t-lg bg-white blk:border-b blk:border-gray-700 blk:bg-gray-800 aspect-7/12 shadow-xs')}>
+            {!imageUrl && <View style={tailwind('w-full items-center justify-center rounded-t-lg bg-white blk:border-b blk:border-gray-700 blk:bg-gray-800 aspect-7/12 shadow-xxs')}>
               <TouchableOpacity onPress={onUploadImageBtnClick} style={tailwind('mt-4 items-center justify-center rounded-lg p-2')}>
                 <Svg width={36} height={36} style={tailwind('font-normal text-gray-400 blk:text-gray-400')} viewBox="0 0 20 20" fill="currentColor">
                   <Path fillRule="evenodd" clipRule="evenodd" d="M4 3C3.46957 3 2.96086 3.21071 2.58579 3.58579C2.21071 3.96086 2 4.46957 2 5V15C2 15.5304 2.21071 16.0391 2.58579 16.4142C2.96086 16.7893 3.46957 17 4 17H16C16.5304 17 17.0391 16.7893 17.4142 16.4142C17.7893 16.0391 18 15.5304 18 15V5C18 4.46957 17.7893 3.96086 17.4142 3.58579C17.0391 3.21071 16.5304 3 16 3H4ZM16 15H4L8 7L11 13L13 9L16 15Z" />

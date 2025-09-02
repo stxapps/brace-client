@@ -4315,11 +4315,11 @@
 	"min-h-14": {
 		"minHeight": 56
 	},
+	"min-h-144": {
+		"minHeight": 576
+	},
 	"min-h-full": {
 		"minHeight": "100%"
-	},
-	"min-h-xl": {
-		"minHeight": 576
 	},
 	"w-0": {
 		"width": 0
@@ -4758,7 +4758,7 @@
 		"borderBottomRightRadius": 0,
 		"borderBottomLeftRadius": 0
 	},
-	"rounded-sm": {
+	"rounded-xs": {
 		"borderTopLeftRadius": 2,
 		"borderTopRightRadius": 2,
 		"borderBottomRightRadius": 2,

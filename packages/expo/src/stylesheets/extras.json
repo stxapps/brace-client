@@ -26,7 +26,7 @@
   "font-black": {
     "fontFamily": "Inter-Black"
   },
-  "shadow-xs": {
+  "shadow-xxs": {
     "shadowColor": "#000",
     "shadowOffset": {
       "width": 0,
@@ -37,7 +37,7 @@
 
     "elevation": 0.3
   },
-  "shadow-sm": {
+  "shadow-xs": {
     "shadowColor": "#000",
     "shadowOffset": {
       "width": 0,

@@ -88,21 +88,21 @@ const ListItemContent = (props) => {
 
     if (customImage) image = customImage;
     if (image) {
-      return <Image key="img-image-custom" style={tailwind('w-full rounded bg-white blk:bg-gray-900 aspect-7/12 shadow-xs')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
+      return <Image key="img-image-custom" style={tailwind('w-full rounded bg-white blk:bg-gray-900 aspect-7/12 shadow-xxs')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
     }
 
     if (extractedResult && extractedResult.image && !doIgnoreExtrdRst) {
       image = extractedResult.image;
     }
     if (image) {
-      return <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full rounded bg-white blk:bg-gray-900 aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
+      return <GracefulImage key="image-graceful-image-extracted-result" style={tailwind('w-full rounded bg-white blk:bg-gray-900 aspect-7/12 shadow-xxs')} contentStyle={tailwind('rounded')} source={cache(`CI_image_${image}`, { uri: image }, [image])} />;
     }
 
     // Only plain color background or plain color background with a letter
     if (isDecorValid(decor) && decor.image.bg.type === COLOR) {
       return (
         <React.Fragment>
-          <View style={tailwind(`w-full items-center justify-center rounded aspect-7/12 shadow-xs ${decor.image.bg.value}`)} />
+          <View style={tailwind(`w-full items-center justify-center rounded aspect-7/12 shadow-xxs ${decor.image.bg.value}`)} />
         </React.Fragment>
       );
     }
@@ -110,7 +110,7 @@ const ListItemContent = (props) => {
     // Only pattern background or pattern background with a big letter
     if (isDecorValid(decor) && decor.image.bg.type === PATTERN) {
       return (
-        <View style={tailwind('w-full items-center justify-center rounded bg-white blk:bg-gray-900 aspect-7/12 shadow-xs')}>
+        <View style={tailwind('w-full items-center justify-center rounded bg-white blk:bg-gray-900 aspect-7/12 shadow-xxs')}>
           <GracefulImage key="image-graceful-image-pattern" style={tailwind('absolute inset-0 rounded bg-white blk:bg-gray-900')} contentStyle={tailwind('rounded')} source={PATTERN_MAP[decor.image.bg.value]} />
         </View>
       );
@@ -118,7 +118,7 @@ const ListItemContent = (props) => {
 
     // Random image
     if (isDecorValid(decor) && decor.image.bg.type === IMAGE) {
-      return <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full rounded bg-white blk:bg-gray-900 aspect-7/12 shadow-xs')} contentStyle={tailwind('rounded')} source={cache(`CI_decorImage_${decor.image.bg.value}`, { uri: prependDomainName(decor.image.bg.value) }, [decor.image.bg.value])} />;
+      return <GracefulImage key="image-graceful-image-decor" style={tailwind('w-full rounded bg-white blk:bg-gray-900 aspect-7/12 shadow-xxs')} contentStyle={tailwind('rounded')} source={cache(`CI_decorImage_${decor.image.bg.value}`, { uri: prependDomainName(decor.image.bg.value) }, [decor.image.bg.value])} />;
     }
 
     console.log(`In ListItemContent.renderImage, invalid decor: ${JSON.stringify(decor)}`);
