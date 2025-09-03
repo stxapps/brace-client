@@ -41,7 +41,7 @@ const _verifyPurchase = async (rawPurchase) => {
 
   let verifyResult;
   try {
-    const res = await global.fetch(IAP_VERIFY_URL, {
+    const res = await globalThis.fetch(IAP_VERIFY_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ const getIapStatus = async (doForce) => {
     randomId: randomId,
   };
 
-  const res = await global.fetch(IAP_STATUS_URL, {
+  const res = await globalThis.fetch(IAP_STATUS_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

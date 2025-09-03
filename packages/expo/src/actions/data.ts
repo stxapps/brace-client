@@ -145,7 +145,7 @@ const parseRawImportedFile = async (dispatch, getState, text) => {
     if (getState().settings.doExtractContents && values.length - i < 240) {
       const urls = selectedValues.map(value => value.content.url);
       try {
-        await global.fetch(BRACE_PRE_EXTRACT_URL, {
+        await globalThis.fetch(BRACE_PRE_EXTRACT_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

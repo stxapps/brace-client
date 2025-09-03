@@ -548,7 +548,7 @@ const extractContents = async (params) => {
 
   const urls = toLinks.map(link => link.url);
 
-  const res = await global.fetch(BRACE_EXTRACT_URL, {
+  const res = await globalThis.fetch(BRACE_EXTRACT_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

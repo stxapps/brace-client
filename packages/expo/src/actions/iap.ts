@@ -55,7 +55,7 @@ const verifyPurchase = async (rawPurchase: iapApi.ProductPurchase) => {
 
   let verifyResult;
   try {
-    const res = await global.fetch(IAP_VERIFY_URL, {
+    const res = await globalThis.fetch(IAP_VERIFY_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ const getIapStatus = async (doForce) => {
     doForce: doForce,
   };
 
-  const res = await global.fetch(IAP_STATUS_URL, {
+  const res = await globalThis.fetch(IAP_STATUS_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -1039,7 +1039,7 @@ export const addLink = (url, listName, doExtractContents) => async (
   // If doExtractContents is false but from settings is true, send pre-extract to server
   if (doExtractContents === false && getState().settings.doExtractContents === true) {
     try {
-      await global.fetch(BRACE_PRE_EXTRACT_URL, {
+      await globalThis.fetch(BRACE_PRE_EXTRACT_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

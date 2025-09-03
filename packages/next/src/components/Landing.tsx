@@ -109,7 +109,7 @@ class Landing extends React.PureComponent<any, any> {
         <div className={tailwind('mx-auto flow-root w-full max-w-6xl bg-white')}>
           <section className={tailwind('flex items-center px-4 pt-16 pb-4 md:px-6 lg:px-8 lg:pt-12')}>
             <div className={tailwind('w-full md:w-[55%] lg:pt-10')}>
-              <Image className={tailwind('mx-auto w-11/12 max-w-sm object-contain md:hidden')} src={saveLinksToVisitLater} alt="Save links to visit later" />
+              <Image className={tailwind('mx-auto w-11/12 max-w-sm object-contain md:hidden')} src={saveLinksToVisitLater} alt="Save links to visit later" priority={true} />
               <h1 className={tailwind('first-h1-text mt-16 font-bold leading-none text-gray-900 md:mt-0')}>Save links <br className={tailwind('inline sm:hidden md:inline lg:hidden')} />to visit later</h1>
               <p className={tailwind('mt-4 text-lg font-normal text-gray-500 md:pr-4')}>Your bookmark manager with privacy at heart. Brace.to helps you save links to everything and visit them later easily, anytime, on any of your devices. Powered by Stacks technology, all your saved links are encrypted, and only you can decrypt them and see the content inside.</p>
               <button onClick={this.onSignUpBtnClick} style={{ padding: '0.625rem 1.25rem' }} className={tailwind('mt-6 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-3 focus:ring-blue-500/50 focus:ring-offset-2')}>
@@ -134,7 +134,7 @@ class Landing extends React.PureComponent<any, any> {
               </div>
             </div>
             <div className={tailwind('hidden md:block md:w-[45%]')}>
-              <Image className={tailwind('ml-auto object-contain md:w-full lg:w-11/12')} src={saveLinksToVisitLater} alt="Save links to visit later" />
+              <Image className={tailwind('ml-auto object-contain md:w-full lg:w-11/12')} src={saveLinksToVisitLater} alt="Save links to visit later" priority={true} />
             </div>
           </section>
           <section className={tailwind('px-4 pt-24 pb-4 md:px-6 lg:px-8')}>

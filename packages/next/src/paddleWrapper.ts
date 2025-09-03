@@ -115,7 +115,7 @@ const requestPurchase = async (productId) => {
 
     randomId = `${randomString(8)}-${randomString(8)}-${randomString(8)}-${randomString(8)}`;
     try {
-      await global.fetch(IAP_PADDLE_PRE_URL, {
+      await globalThis.fetch(IAP_PADDLE_PRE_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
