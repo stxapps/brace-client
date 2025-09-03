@@ -2,33 +2,37 @@ import {
   RESET_STATE as OFFLINE_RESET_STATE,
 } from '@redux-offline/redux-offline/lib/constants';
 import Url from 'url-parse';
+import PQueue from 'p-queue';
 
 import userSession from '../userSession';
 import cacheApi from '../apis/localCache';
 import fileApi from '../apis/localFile';
 import lsgApi from '../apis/localSg';
 import {
-  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW, UPDATE_HISTORY_POSITION,
-  UPDATE_STACKS_ACCESS, UPDATE_SEARCH_STRING, UPDATE_POPUP, UPDATE_BULK_EDITING,
-  REFRESH_FETCHED, ADD_LINKS, DELETE_LINKS, MOVE_LINKS_ADD_STEP,
-  MOVE_LINKS_DELETE_STEP, TRY_UPDATE_SETTINGS, MERGE_SETTINGS, PIN_LINK, UNPIN_LINK,
-  MOVE_PINNED_LINK_ADD_STEP, UPDATE_SYSTEM_THEME_MODE, UPDATE_IS_24H_FORMAT,
-  UPDATE_CUSTOM_DATA, UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_T_STEP,
+  INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW, UPDATE_STACKS_ACCESS,
+  UPDATE_SEARCH_STRING, UPDATE_POPUP, UPDATE_BULK_EDITING, REFRESH_FETCHED, ADD_LINKS,
+  DELETE_LINKS, MOVE_LINKS_ADD_STEP, MOVE_LINKS_DELETE_STEP, TRY_UPDATE_SETTINGS,
+  MERGE_SETTINGS, PIN_LINK, UNPIN_LINK, MOVE_PINNED_LINK_ADD_STEP,
+  UPDATE_SYSTEM_THEME_MODE, UPDATE_IS_24H_FORMAT, UPDATE_CUSTOM_DATA,
+  UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_T_STEP,
   INCREASE_UPDATE_STATUS_BAR_STYLE_COUNT, RESET_STATE,
 } from '../types/actionTypes';
 import {
-  BACK_DECIDER, BACK_POPUP, ALL, HASH_BACK, SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP,
-  SEARCH_POPUP, PROFILE_POPUP, CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP,
-  BULK_EDIT_MENU_POPUP, CUSTOM_EDITOR_POPUP, TAG_EDITOR_POPUP, PAYWALL_POPUP,
-  CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP, SETTINGS_POPUP,
-  SETTINGS_LISTS_MENU_POPUP, SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP,
-  LOCK_EDITOR_POPUP, SWWU_POPUP, WHT_MODE, BLK_MODE, PADDLE_RANDOM_ID,
+  SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
+  CARD_ITEM_MENU_POPUP, LIST_NAMES_POPUP, PIN_MENU_POPUP, BULK_EDIT_MENU_POPUP,
+  CUSTOM_EDITOR_POPUP, TAG_EDITOR_POPUP, PAYWALL_POPUP, CONFIRM_DELETE_POPUP,
+  CONFIRM_DISCARD_POPUP, SETTINGS_POPUP, SETTINGS_LISTS_MENU_POPUP,
+  SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP, LOCK_EDITOR_POPUP, SWWU_POPUP, WHT_MODE,
+  BLK_MODE, PADDLE_RANDOM_ID,
 } from '../types/const';
 import {
   isEqual, isObject, throttle, getUserUsername, getUserImageUrl, getWindowInsets,
-  getEditingListNameEditors, getEditingTagNameEditors,
+  getEditingListNameEditors, getEditingTagNameEditors, randomString,
+  getPopupHistoryStateIndex,
 } from '../utils';
 import vars from '../vars';
+
+const taskQueue = new PQueue({ concurrency: 1 });
 
 export const init = async (store) => {
   if (typeof window === 'undefined') return;
@@ -58,7 +62,6 @@ export const init = async (store) => {
     },
   });
 
-  popHistoryState(store);
   window.addEventListener('popstate', function () {
     popHistoryState(store);
   });
@@ -181,102 +184,126 @@ export const isPopupShown = (state) => {
   return getPopupShownId(state) !== null;
 };
 
-const updatePopupAsBackPressed = (dispatch, getState) => {
+const getCanBckPopups = (getState) => {
+  const state = getState();
+  const canBckPopups = {
+    [SIGN_UP_POPUP]: {
+      canFwd: true, isShown: state.display.isSignUpPopupShown,
+    },
+    [SIGN_IN_POPUP]: {
+      canFwd: true, isShown: state.display.isSignInPopupShown,
+    },
+    [ADD_POPUP]: {
+      canFwd: true, isShown: state.display.isAddPopupShown,
+    },
+    [SEARCH_POPUP]: {
+      canFwd: true, isShown: state.display.isSearchPopupShown,
+    },
+    [PROFILE_POPUP]: {
+      canFwd: true, isShown: state.display.isProfilePopupShown,
+    },
+    [CARD_ITEM_MENU_POPUP]: {
+      canFwd: false, isShown: state.display.isCardItemMenuPopupShown,
+    },
+    [LIST_NAMES_POPUP]: {
+      canFwd: false, isShown: state.display.isListNamesPopupShown,
+    },
+    [PIN_MENU_POPUP]: {
+      canFwd: false, isShown: state.display.isPinMenuPopupShown,
+    },
+    [BULK_EDIT_MENU_POPUP]: {
+      canFwd: false, isShown: state.display.isBulkEditMenuPopupShown,
+    },
+    [CUSTOM_EDITOR_POPUP]: {
+      canFwd: false, isShown: state.display.isCustomEditorPopupShown,
+    },
+    [TAG_EDITOR_POPUP]: {
+      canFwd: false, isShown: state.display.isTagEditorPopupShown,
+    },
+    [CONFIRM_DELETE_POPUP]: {
+      canFwd: false, isShown: state.display.isConfirmDeletePopupShown,
+    },
+    [CONFIRM_DISCARD_POPUP]: {
+      canFwd: false, isShown: state.display.isConfirmDiscardPopupShown,
+    },
+    [SETTINGS_POPUP]: {
+      canFwd: true, isShown: state.display.isSettingsPopupShown,
+    },
+    [SETTINGS_LISTS_MENU_POPUP]: {
+      canFwd: false, isShown: state.display.isSettingsListsMenuPopupShown,
+    },
+    [SETTINGS_TAGS_MENU_POPUP]: {
+      canFwd: false, isShown: state.display.isSettingsTagsMenuPopupShown,
+    },
+    [TIME_PICK_POPUP]: {
+      canFwd: false, isShown: state.display.isTimePickPopupShown,
+    },
+    [PAYWALL_POPUP]: {
+      canFwd: false, isShown: state.display.isPaywallPopupShown,
+    },
+    [LOCK_EDITOR_POPUP]: {
+      canFwd: false, isShown: state.display.isLockEditorPopupShown,
+    },
+  };
+  return canBckPopups;
+};
 
-  // Close other popups before search,
-  //   this depends on getPopupShownId to return other ids before search id
-  let id = getPopupShownId(getState());
-  if (!id) {
-    console.log('updatePopupAsBackPressed is called while no popup is shown.');
-    id = ALL;
-  }
+const canPopupBckBtn = (canBckPopups, id) => {
+  if (isObject(canBckPopups[id])) return true;
+  return false;
+};
 
-  if (id === ADD_POPUP) {
-    if (window.document.activeElement instanceof HTMLInputElement) {
-      window.document.activeElement.blur();
-    }
-  }
-  if (id === SEARCH_POPUP) {
-    // Clear search string
-    //   and need to defocus too to prevent keyboard appears on mobile
-    dispatch(updateSearchString(''));
+const canPopupFwdBtn = (canBckPopups, id) => {
+  if (isObject(canBckPopups[id])) return canBckPopups[id].canFwd;
+  return false;
+};
 
-    if (window.document.activeElement instanceof HTMLInputElement) {
-      window.document.activeElement.blur();
-    }
-  }
-
-  dispatch(updatePopup(id, false));
+const isPopupShownWthId = (canBckPopups, id) => {
+  if (isObject(canBckPopups[id])) return canBckPopups[id].isShown;
+  console.log('Called isPopupShownWthId with unsupported id:', id);
+  return false;
 };
 
 export const popHistoryState = (store) => {
+  const canBckPopups = getCanBckPopups(store.getState);
 
-  let historyPosition = window.history.state;
-  if (
-    historyPosition === BACK_DECIDER &&
-    store.getState().window.historyPosition === BACK_POPUP
-  ) {
+  const chs = window.history.state;
+  const idx = getPopupHistoryStateIndex(vars.popupHistory.states, chs);
 
-    // if back button pressed and there is a popup shown
-    if (isPopupShown(store.getState())) {
-      // disable back button by forcing to go forward in history states
-      // No need to update state here as window.history.go triggers popstate event
-      updatePopupAsBackPressed(store.dispatch, store.getState);
+  const cPopupIds = vars.popupHistory.states.slice(idx + 1).map(s => s.id);
+  for (const id of cPopupIds) {
+    if (isPopupShownWthId(canBckPopups, id)) {
+      store.dispatch({
+        type: UPDATE_POPUP, payload: { id, isShown: false },
+      });
 
-      window.history.go(1);
-      return;
-    }
-
-    // if back button pressed and is bulk editing
-    if (store.getState().display.isBulkEditing) {
-      store.dispatch(updateBulkEdit(false));
-
-      window.history.go(1);
-      return;
-    }
-
-    // No popup shown and no bulk editing, go back one more
-    // need to update state first before going off so that when back know that back from somewhere else
-    store.dispatch({
-      type: UPDATE_WINDOW,
-      payload: {
-        href: window.location.href,
-        historyPosition: null,
-      },
-    });
-
-    // https://stackoverflow.com/questions/3588315/how-to-check-if-the-user-can-go-back-in-browser-history-or-not
-    const href = window.location.href;
-    window.history.go(-1);
-    setTimeout(function () {
-      // if location was not changed, then there is no history back
-      if (href === window.location.href) {
-        window.history.replaceState(null, '', HASH_BACK);
-        window.history.pushState(null, '', href);
-        window.history.go(-1);
+      if (id === ADD_POPUP) {
+        if (window.document.activeElement instanceof HTMLInputElement) {
+          window.document.activeElement.blur();
+        }
       }
-    }, 500);
-    return;
+      if (id === SEARCH_POPUP) {
+        // Clear search string
+        //   and need to defocus too to prevent keyboard appears on mobile
+        store.dispatch(updateSearchString(''));
+
+        if (window.document.activeElement instanceof HTMLInputElement) {
+          window.document.activeElement.blur();
+        }
+      }
+    }
   }
 
-  if (historyPosition === BACK_DECIDER) {
-    // A page forwards to BACK_DECIDER, forward one more to BACK_POPUP
-    // No need to update state here as window.history.go triggers popstate event
-    window.history.go(1);
-    return;
+  if (idx >= 0) { // Support forward by open the current one if can.
+    const phs = vars.popupHistory.states[idx];
+    if (
+      canPopupFwdBtn(canBckPopups, phs.id) && !isPopupShownWthId(canBckPopups, phs.id)
+    ) {
+      store.dispatch({
+        type: UPDATE_POPUP, payload: { id: phs.id, isShown: true },
+      });
+    }
   }
-
-  store.dispatch({
-    type: UPDATE_WINDOW,
-    payload: {
-      href: window.location.href,
-      historyPosition: historyPosition,
-    },
-  });
-};
-
-export const updateHistoryPosition = historyPosition => {
-  return { type: UPDATE_HISTORY_POSITION, payload: historyPosition };
 };
 
 export const signOut = () => async (dispatch, getState) => {
@@ -350,11 +377,53 @@ export const updateStacksAccess = (data) => {
   return { type: UPDATE_STACKS_ACCESS, payload: data };
 };
 
-export const updatePopup = (id, isShown, anchorPosition = null) => {
-  return {
-    type: UPDATE_POPUP,
-    payload: { id, isShown, anchorPosition },
-  };
+const updatePopupInQueue = (
+  id, isShown, anchorPosition, dispatch, getState
+) => () => {
+  return new Promise<void>((resolve) => {
+    dispatch({
+      type: UPDATE_POPUP,
+      payload: { id, isShown, anchorPosition },
+    });
+
+    const canBckPopups = getCanBckPopups(getState);
+    if (!canPopupBckBtn(canBckPopups, id)) {
+      resolve();
+      return;
+    }
+
+    if (isShown) {
+      const phs = { phsId: `${Date.now()}-${randomString(4)}`, id };
+
+      const chs = window.history.state;
+      const idx = getPopupHistoryStateIndex(vars.popupHistory.states, chs);
+      if (idx >= 0) {
+        vars.popupHistory.states = [
+          ...vars.popupHistory.states.slice(0, idx + 1), phs,
+        ];
+      } else {
+        vars.popupHistory.states.push(phs);
+      }
+
+      window.history.pushState(phs, '', window.location.href);
+      resolve();
+      return;
+    }
+
+    const onPopState = () => {
+      window.removeEventListener('popstate', onPopState);
+      resolve();
+    };
+    window.addEventListener('popstate', onPopState);
+    window.history.back();
+  });
+};
+
+export const updatePopup = (id, isShown, anchorPosition = null) => async (
+  dispatch, getState
+) => {
+  const task = updatePopupInQueue(id, isShown, anchorPosition, dispatch, getState);
+  taskQueue.add(task);
 };
 
 export const updateSearchString = (searchString) => {

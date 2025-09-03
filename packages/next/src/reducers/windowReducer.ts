@@ -1,8 +1,7 @@
 import { REHYDRATE } from 'redux-persist/constants';
 
 import {
-  INIT, UPDATE_WINDOW, UPDATE_HREF, UPDATE_HISTORY_POSITION, UPDATE_SYSTEM_THEME_MODE,
-  UPDATE_IS_24H_FORMAT,
+  INIT, UPDATE_WINDOW, UPDATE_HREF, UPDATE_SYSTEM_THEME_MODE, UPDATE_IS_24H_FORMAT,
 } from '../types/actionTypes';
 import { WHT_MODE } from '../types/const';
 import { isObject, getWindowSize, getWindowInsets } from '../utils';
@@ -10,7 +9,6 @@ import { isObject, getWindowSize, getWindowInsets } from '../utils';
 const [size, insets] = [getWindowSize(), getWindowInsets()];
 const initialState = {
   href: null,
-  historyPosition: null,
   width: size.width,
   height: size.height,
   visualWidth: size.visualWidth,
@@ -51,10 +49,6 @@ const windowReducer = (state = initialState, action) => {
 
   if (action.type === UPDATE_HREF) {
     return { ...state, href: action.payload };
-  }
-
-  if (action.type === UPDATE_HISTORY_POSITION) {
-    return { ...state, historyPosition: action.payload };
   }
 
   if (action.type === UPDATE_SYSTEM_THEME_MODE) {

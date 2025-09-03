@@ -29,6 +29,7 @@
     "jest-diff": "^29.7.0",
     "motion": "^12.23.12",
     "next": "15.5.2",
+    "p-queue": "^8.1.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-graceful-image": "^1.5.0",

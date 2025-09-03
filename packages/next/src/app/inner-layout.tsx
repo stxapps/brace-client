@@ -1,10 +1,24 @@
 'use client';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import { Provider as ReduxProvider } from 'react-redux';
 
-import { makeStore, AppStore } from '@/store';
+import { makeStore, AppStore, useDispatch } from '@/store';
 import { bindAddNextActionRef } from '@/store-next';
-import { useTailwind } from '@/components';
+import { updateHref } from '@/actions';
+import { useTailwind, useHash } from '@/components';
+
+function Initializer() {
+  const pathname = usePathname();
+  const hash = useHash();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(updateHref(window.location.href));
+  }, [pathname, hash, dispatch]);
+
+  return null;
+}
 
 function SafeArea({ children }: { children: React.ReactNode }) {
   const tailwind = useTailwind();
@@ -27,6 +41,7 @@ export function InnerLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <ReduxProvider store={storeRef.current}>
+      <Initializer />
       <SafeArea>
         {children}
       </SafeArea>

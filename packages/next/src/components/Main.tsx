@@ -1,13 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Url from 'url-parse';
 
-import { updateHistoryPosition } from '../actions';
 import { fetch } from '../actions/chunk';
 import { endIapConnection } from '../actions/iap';
 import {
-  BACK_DECIDER, BACK_POPUP, PC_100, PC_50, PC_33, SHOW_BLANK, SHOW_COMMANDS,
-  SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
+  PC_100, PC_50, PC_33, SHOW_BLANK, SHOW_COMMANDS, SM_WIDTH, LG_WIDTH, LAYOUT_LIST,
 } from '../types/const';
 import {
   getIsShowingLinkIdsNull, getLayoutType, getThemeMode, getSafeAreaWidth,
@@ -51,18 +48,6 @@ import SWWUPopup from './SWWUPopup';
 class Main extends React.PureComponent<any, any> {
 
   componentDidMount() {
-    if (window.history.state === null) {
-      this.props.updateHistoryPosition(BACK_POPUP);
-
-      // In case there is empty hash /#, remove it.
-      const urlObj = new Url(window.location.href, {});
-      if (urlObj.hash === '#') urlObj.set('hash', '');
-      const href = urlObj.toString();
-
-      window.history.replaceState(BACK_DECIDER, '', href);
-      window.history.pushState(BACK_POPUP, '', href);
-    }
-
     this.props.fetch();
   }
 
@@ -157,6 +142,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { updateHistoryPosition, fetch, endIapConnection };
+const mapDispatchToProps = { fetch, endIapConnection };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(Main));

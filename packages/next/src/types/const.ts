@@ -10,9 +10,6 @@ export const APP_URL_SCHEME = 'bracedotto';
 export const APP_DOMAIN_NAME = 'bracedotto://app';
 export const BLOCKSTACK_AUTH = '/blockstack-auth';
 
-export const BACK_DECIDER = 'BACK_DECIDER';
-export const BACK_POPUP = 'BACK_POPUP';
-
 export const PATH_ABOUT = '/about';
 export const PATH_TERMS = '/terms';
 export const PATH_PRIVACY = '/privacy';

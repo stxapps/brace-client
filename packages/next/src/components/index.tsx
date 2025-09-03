@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { useSelector } from '../store';
 import {
@@ -77,4 +77,23 @@ export const withTailwind = (Component) => {
   });
   hoc.displayName = 'withTailwindComponent';
   return hoc;
+};
+
+export const useHash = () => {
+  const [hash, setHash] = useState(() =>
+    typeof window !== 'undefined' ? window.location.hash : ''
+  );
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      setHash(window.location.hash);
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
+
+  return hash;
 };

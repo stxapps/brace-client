@@ -2855,3 +2855,10 @@ export const getResErrMsg = async (res) => {
   if (isFldStr(bodyText)) msg += ' ' + bodyText;
   return msg;
 };
+
+export const getPopupHistoryStateIndex = (states, hs) => {
+  if (!isObject(hs) || !isFldStr(hs.phsId)) return -1;
+
+  const idx = states.findIndex(s => s.phsId === hs.phsId);
+  return idx;
+};

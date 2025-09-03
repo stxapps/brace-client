@@ -1032,6 +1032,7 @@ This and CI/CD are very important!
 - npm i url-parse react-graceful-image file-saver @wewatch/lexorank blueimp-load-image idb-keyval
 - npm i jest-diff@29.7.0
 - npm i motion
+- npm i p-queue
 - npm i @serwist/next && npm i -D serwist
 - npm install -D @types/url-parse @types/file-saver
 - npm install -D @stylistic/eslint-plugin
