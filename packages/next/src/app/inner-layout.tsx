@@ -6,11 +6,12 @@ import { Provider as ReduxProvider } from 'react-redux';
 import type { RouteChangeCompleteEventDetail } from '@/declarations';
 import { makeStore, AppStore, useSelector, useDispatch } from '@/store';
 import { bindAddNextActionRef } from '@/store-next';
-import { updateHref, linkTo } from '@/actions';
+import { init, updateHref, linkTo } from '@/actions';
 import { useTailwind, useHash } from '@/components';
 
 function Initializer() {
-  const rtmCount = useSelector(state => state.display.redirectToMainCount);
+  const didPersistCallback = useSelector(state => state.appState.didPersistCallback);
+  const rtmCount = useSelector(state => state.appState.redirectToMainCount);
   const prevRtmCount = useRef(rtmCount);
   const dispatch = useDispatch();
   const pathname = usePathname();
@@ -19,9 +20,13 @@ function Initializer() {
   const router = useRouter();
 
   useEffect(() => {
+    if (didPersistCallback) dispatch(init());
+  }, [didPersistCallback, dispatch]);
+
+  useEffect(() => {
     if (rtmCount > prevRtmCount.current) dispatch(linkTo(router, '/'));
     prevRtmCount.current = rtmCount;
-  }, [rtmCount]);
+  }, [rtmCount, dispatch, router]);
 
   useEffect(() => {
     dispatch(updateHref(window.location.href));

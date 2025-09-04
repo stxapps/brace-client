@@ -8,9 +8,9 @@ import {
   HASH_LANDING, HASH_LANDING_HOW, HASH_LANDING_MOBILE, HASH_ABOUT, HASH_TERMS,
   HASH_PRIVACY, HASH_PRICING, HASH_SUPPORT, HASH_BACK, APP_RENDER_LOADING,
   APP_RENDER_LANDING, APP_RENDER_ABOUT, APP_RENDER_TERMS, APP_RENDER_PRIVACY,
-  APP_RENDER_PRICING, APP_RENDER_SUPPORT, APP_RENDER_BACK, APP_RENDER_ADDING,
-  APP_RENDER_MAIN,
+  APP_RENDER_PRICING, APP_RENDER_SUPPORT, APP_RENDER_BACK, APP_RENDER_MAIN,
 } from '../types/const';
+import { isFldStr } from '../utils';
 
 import Loading from './Loading';
 import Landing from './Landing';
@@ -24,13 +24,15 @@ const AppChunk = dynamic(
 class App extends React.PureComponent<any, any> {
 
   getType() {
-    const hrefObj = new Url(this.props.href);
-    if (hrefObj.pathname !== '/') return APP_RENDER_ADDING;
-
-    if (this.props.href === null || this.props.isHandlingSignIn) {
+    if (
+      ![true, false].includes(this.props.isUserSignedIn) ||
+      !isFldStr(this.props.href) ||
+      this.props.isHandlingSignIn
+    ) {
       return APP_RENDER_LOADING;
     }
 
+    const hrefObj = new Url(this.props.href);
     if (
       hrefObj.hash === HASH_LANDING ||
       hrefObj.hash === HASH_LANDING_HOW ||

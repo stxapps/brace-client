@@ -5,7 +5,7 @@ import Link, { LinkProps } from 'next/link';
 import { useSelector } from '../store';
 import { isString } from '../utils';
 
-type CustomLinkProps = LinkProps & HTMLAttributes<HTMLAnchorElement>
+type CustomLinkProps = LinkProps & HTMLAttributes<HTMLAnchorElement>;
 
 const CustomLink: React.FC<CustomLinkProps> = (props) => {
   const wHref = useSelector(state => state.window.href);

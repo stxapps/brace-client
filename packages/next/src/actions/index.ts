@@ -33,8 +33,12 @@ import vars from '../vars';
 
 const taskQueue = new PQueue({ concurrency: 1 });
 
-export const init = async (store) => {
-  if (typeof window === 'undefined') return;
+let _didInit;
+export const init = () => async (dispatch, getState) => {
+  if (_didInit) return;
+  _didInit = true;
+
+  const store = { dispatch, getState };
 
   const isUserSignedIn = userSession.isUserSignedIn();
   let username = null, userImage = null, userHubUrl = null;
@@ -55,7 +59,6 @@ export const init = async (store) => {
       username,
       userImage,
       userHubUrl,
-      href: window.location.href,
       systemThemeMode: darkMatches ? BLK_MODE : WHT_MODE,
       is24HFormat,
     },
@@ -336,7 +339,7 @@ export const updateUserSignedIn = () => async (dispatch, getState) => {
     },
   });
 
-  dispatch(increaseRedirectToMainCount());
+  dispatch({ type: INCREASE_REDIRECT_TO_MAIN_COUNT });
 };
 
 const resetState = async (dispatch) => {
@@ -358,10 +361,6 @@ const resetState = async (dispatch) => {
 
   // clear all user data!
   dispatch({ type: RESET_STATE });
-};
-
-const increaseRedirectToMainCount = () => {
-  return { type: INCREASE_REDIRECT_TO_MAIN_COUNT };
 };
 
 export const updateStacksAccess = (data) => {
@@ -484,10 +483,10 @@ const linkToInQueue = (router, href) => () => {
     }
 
     const onRouteChangeComplete = () => {
-      window.removeEventListener('onRouteChangeComplete', onRouteChangeComplete)
+      window.removeEventListener('routeChangeComplete', onRouteChangeComplete);
       resolve();
-    }
-    window.addEventListener('onRouteChangeComplete', onRouteChangeComplete)
+    };
+    window.addEventListener('routeChangeComplete', onRouteChangeComplete);
     router.push(href);
   });
 };
