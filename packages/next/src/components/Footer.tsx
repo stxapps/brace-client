@@ -1,5 +1,4 @@
 import React from 'react';
-import Link from 'next/link';
 import { connect } from 'react-redux';
 
 import {
@@ -8,6 +7,7 @@ import {
 import { getSafeAreaWidth, getThemeMode } from '../selectors';
 
 import { withTailwind } from '.';
+import Link from './CustomLink';
 
 class Footer extends React.PureComponent<any, any> {
 

@@ -1,7 +1,6 @@
 import {
   RESET_STATE as OFFLINE_RESET_STATE,
 } from '@redux-offline/redux-offline/lib/constants';
-import Url from 'url-parse';
 import PQueue from 'p-queue';
 
 import userSession from '../userSession';
@@ -10,11 +9,11 @@ import fileApi from '../apis/localFile';
 import lsgApi from '../apis/localSg';
 import {
   INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW, UPDATE_STACKS_ACCESS,
-  UPDATE_SEARCH_STRING, UPDATE_POPUP, UPDATE_BULK_EDITING, REFRESH_FETCHED, ADD_LINKS,
-  DELETE_LINKS, MOVE_LINKS_ADD_STEP, MOVE_LINKS_DELETE_STEP, TRY_UPDATE_SETTINGS,
-  MERGE_SETTINGS, PIN_LINK, UNPIN_LINK, MOVE_PINNED_LINK_ADD_STEP,
-  UPDATE_SYSTEM_THEME_MODE, UPDATE_IS_24H_FORMAT, UPDATE_CUSTOM_DATA,
-  UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_T_STEP,
+  INCREASE_REDIRECT_TO_MAIN_COUNT, UPDATE_SEARCH_STRING, UPDATE_POPUP,
+  UPDATE_BULK_EDITING, REFRESH_FETCHED, ADD_LINKS, DELETE_LINKS, MOVE_LINKS_ADD_STEP,
+  MOVE_LINKS_DELETE_STEP, TRY_UPDATE_SETTINGS, MERGE_SETTINGS, PIN_LINK, UNPIN_LINK,
+  MOVE_PINNED_LINK_ADD_STEP, UPDATE_SYSTEM_THEME_MODE, UPDATE_IS_24H_FORMAT,
+  UPDATE_CUSTOM_DATA, UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_T_STEP,
   INCREASE_UPDATE_STATUS_BAR_STYLE_COUNT, RESET_STATE,
 } from '../types/actionTypes';
 import {
@@ -200,7 +199,7 @@ const getCanBckPopups = (getState) => {
       canFwd: true, isShown: state.display.isSearchPopupShown,
     },
     [PROFILE_POPUP]: {
-      canFwd: true, isShown: state.display.isProfilePopupShown,
+      canFwd: false, isShown: state.display.isProfilePopupShown,
     },
     [CARD_ITEM_MENU_POPUP]: {
       canFwd: false, isShown: state.display.isCardItemMenuPopupShown,
@@ -264,7 +263,7 @@ const isPopupShownWthId = (canBckPopups, id) => {
   return false;
 };
 
-export const popHistoryState = (store) => {
+const popHistoryState = (store) => {
   const canBckPopups = getCanBckPopups(store.getState);
 
   const chs = window.history.state;
@@ -337,7 +336,7 @@ export const updateUserSignedIn = () => async (dispatch, getState) => {
     },
   });
 
-  redirectToMain();
+  dispatch(increaseRedirectToMainCount());
 };
 
 const resetState = async (dispatch) => {
@@ -361,16 +360,8 @@ const resetState = async (dispatch) => {
   dispatch({ type: RESET_STATE });
 };
 
-const redirectToMain = () => {
-  // Need timeout for window.history.back() to update the href first.
-  setTimeout(() => {
-    const urlObj = new Url(window.location.href, {});
-    if (urlObj.pathname === '/' && ['', '#'].includes(urlObj.hash)) return;
-
-    // Empty hash like this, so no reload, popHistoryState is called,
-    //   but # in the url. componentDidMount in Main will handle it.
-    window.location.hash = '';
-  }, 1);
+const increaseRedirectToMainCount = () => {
+  return { type: INCREASE_REDIRECT_TO_MAIN_COUNT };
 };
 
 export const updateStacksAccess = (data) => {
@@ -467,4 +458,41 @@ export const showSWWUPopup = () => async (dispatch, getState) => {
 
 export const increaseUpdateStatusBarStyleCount = () => {
   return { type: INCREASE_UPDATE_STATUS_BAR_STYLE_COUNT };
+};
+
+const linkToInQueue = (router, href) => () => {
+  return new Promise<void>((resolve) => {
+    const wUrl = window.location;
+    const tUrl = new URL(href, window.location.origin);
+
+    if (wUrl.pathname === tUrl.pathname && wUrl.search === tUrl.search) {
+      const wHash = wUrl.hash === '#' ? '' : wUrl.hash;
+      const tHash = tUrl.hash === '#' ? '' : tUrl.hash;
+
+      if (wHash === tHash) {
+        resolve();
+        return;
+      }
+
+      const onHashchange = () => {
+        window.removeEventListener('hashchange', onHashchange);
+        resolve();
+      };
+      window.addEventListener('hashchange', onHashchange);
+      window.location.hash = tUrl.hash; // if '', the url still has '#'. Fine for now.
+      return;
+    }
+
+    const onRouteChangeComplete = () => {
+      window.removeEventListener('onRouteChangeComplete', onRouteChangeComplete)
+      resolve();
+    }
+    window.addEventListener('onRouteChangeComplete', onRouteChangeComplete)
+    router.push(href);
+  });
+};
+
+export const linkTo = (router, href) => async () => {
+  const task = linkToInQueue(router, href);
+  taskQueue.add(task);
 };

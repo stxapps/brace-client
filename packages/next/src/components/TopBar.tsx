@@ -1,6 +1,5 @@
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -9,6 +8,7 @@ import { SIGN_IN_POPUP, SHOW_SIGN_IN, BLK_MODE } from '../types/const';
 import { getSafeAreaWidth, getThemeMode } from '../selectors';
 
 import { withTailwind } from '.';
+import Link from './CustomLink';
 
 import Logo from '../images/logo-short.svg';
 import LogoBlk from '../images/logo-short-blk.svg';

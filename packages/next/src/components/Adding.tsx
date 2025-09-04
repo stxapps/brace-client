@@ -1,7 +1,6 @@
 'use client';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
 
 import { useSelector, useDispatch } from '../store';
 import { updatePopup } from '../actions';
@@ -18,6 +17,7 @@ import {
 
 import { useTailwind } from '.';
 import TopBar from './TopBar';
+import Link from './CustomLink';
 
 const SignUpPopup = dynamic(() => import('./SignUpPopup'), { ssr: false });
 const SignInPopup = dynamic(() => import('./SignInPopup'), { ssr: false });

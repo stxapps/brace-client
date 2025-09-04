@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { useSelector } from '../store';
 import {
@@ -96,4 +97,13 @@ export const useHash = () => {
   }, []);
 
   return hash;
+};
+
+export const withRouter = (Component) => {
+  const hoc = React.forwardRef((props: any, ref) => {
+    const router = useRouter();
+    return <Component {...props} router={router} ref={ref} />;
+  });
+  hoc.displayName = 'withRouterComponent';
+  return hoc;
 };

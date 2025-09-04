@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import Link from 'next/link';
 import { connect } from 'react-redux';
 
 import { getSafeAreaWidth, getThemeMode } from '../selectors';
@@ -9,6 +8,7 @@ import { SHOW_BLANK } from '../types/const';
 import { withTailwind } from '.';
 import TopBar from './TopBar';
 import Footer from './Footer';
+import Link from './CustomLink';
 
 class Terms extends React.PureComponent<any, any> {
 

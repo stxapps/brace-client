@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import Url from 'url-parse';
 
 import { useSelector, useDispatch } from '../store';
-import { signOut, updatePopup } from '../actions';
+import { signOut, updatePopup, linkTo } from '../actions';
 import {
   updateSettingsPopup, updateSettingsViewId, lockCurrentList,
 } from '../actions/chunk';
@@ -30,6 +30,7 @@ const TopBarProfilePopup = () => {
   const didClick = useRef(false);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
+  const router = useRouter();
 
   const onCancelBtnClick = () => {
     if (didClick.current) return;
@@ -46,11 +47,7 @@ const TopBarProfilePopup = () => {
 
   const onSupportBtnClick = () => {
     dispatch(updatePopup(PROFILE_POPUP, false));
-
-    const urlObj = new Url(window.location.href, {});
-    urlObj.set('pathname', '/');
-    urlObj.set('hash', HASH_SUPPORT);
-    window.location.href = urlObj.toString();
+    dispatch(linkTo(router, '/' + HASH_SUPPORT));
   };
 
   const onSignOutBtnClick = () => {

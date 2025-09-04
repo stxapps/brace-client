@@ -1,10 +1,10 @@
 'use client';
 import React, { useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { useSelector, useDispatch } from '../store';
-import { updatePopup } from '../actions';
+import { updatePopup, linkTo } from '../actions';
 import { updateSettingsPopup, updateSettingsViewId } from '../actions/chunk';
 import { SHOW_BLANK, SIGN_UP_POPUP, SETTINGS_VIEW_IAP } from '../types/const';
 import { getValidPurchase } from '../selectors';
@@ -13,6 +13,7 @@ import { isObject } from '../utils';
 import { useTailwind } from '.';
 import TopBar from './TopBar';
 import Footer from './Footer';
+import Link from './CustomLink';
 
 const SignUpPopup = dynamic(() => import('./SignUpPopup'), { ssr: false });
 const SignInPopup = dynamic(() => import('./SignInPopup'), { ssr: false });
@@ -23,13 +24,11 @@ const Pricing = () => {
   const purchase = useSelector(state => getValidPurchase(state));
   const dispatch = useDispatch();
   const tailwind = useTailwind();
+  const router = useRouter();
 
   const onGetStartedBtnClick = () => {
     if (isUserSignedIn) {
-      // Empty hash like this, so no reload, popHistoryState is called,
-      //   but # in the url. componentDidMount in Main will handle it.
-      window.location.hash = '';
-
+      dispatch(linkTo(router, '/'));
       dispatch(updateSettingsViewId(SETTINGS_VIEW_IAP, false));
       dispatch(updateSettingsPopup(true));
       return;

@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { connect } from 'react-redux';
 
 import { SHOW_BLANK } from '../types/const';
@@ -9,6 +8,7 @@ import { getSafeAreaWidth, getThemeMode } from '../selectors';
 
 import TopBar from './TopBar';
 import Footer from './Footer';
+import Link from './CustomLink';
 
 import stacksShort from '../images/stacks-short.svg';
 import reactReduxNative from '../images/react-redux-native.png';

@@ -1,21 +1,39 @@
 'use client';
-import { useEffect, useRef } from 'react';
-import { usePathname } from 'next/navigation';
+import { useEffect, useRef, Suspense } from 'react';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { Provider as ReduxProvider } from 'react-redux';
 
-import { makeStore, AppStore, useDispatch } from '@/store';
+import type { RouteChangeCompleteEventDetail } from '@/declarations';
+import { makeStore, AppStore, useSelector, useDispatch } from '@/store';
 import { bindAddNextActionRef } from '@/store-next';
-import { updateHref } from '@/actions';
+import { updateHref, linkTo } from '@/actions';
 import { useTailwind, useHash } from '@/components';
 
 function Initializer() {
-  const pathname = usePathname();
-  const hash = useHash();
+  const rtmCount = useSelector(state => state.display.redirectToMainCount);
+  const prevRtmCount = useRef(rtmCount);
   const dispatch = useDispatch();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const hash = useHash();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (rtmCount > prevRtmCount.current) dispatch(linkTo(router, '/'));
+    prevRtmCount.current = rtmCount;
+  }, [rtmCount]);
 
   useEffect(() => {
     dispatch(updateHref(window.location.href));
-  }, [pathname, hash, dispatch]);
+  }, [pathname, searchParams, hash, dispatch]);
+
+  useEffect(() => {
+    const detail: RouteChangeCompleteEventDetail = { pathname, searchParams };
+    const event = new CustomEvent<RouteChangeCompleteEventDetail>(
+      'routeChangeComplete', { detail }
+    );
+    window.dispatchEvent(event);
+  }, [pathname, searchParams]);
 
   return null;
 }
@@ -41,7 +59,9 @@ export function InnerLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <ReduxProvider store={storeRef.current}>
-      <Initializer />
+      <Suspense fallback={null}>
+        <Initializer />
+      </Suspense>
       <SafeArea>
         {children}
       </SafeArea>

@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import Link from 'next/link';
 import { connect } from 'react-redux';
 
 import { SHOW_BLANK } from '../types/const';
@@ -9,6 +8,7 @@ import { getSafeAreaWidth, getThemeMode } from '../selectors';
 import { withTailwind } from '.';
 import TopBar from './TopBar';
 import Footer from './Footer';
+import Link from './CustomLink';
 
 class Support extends React.PureComponent<any, any> {
 

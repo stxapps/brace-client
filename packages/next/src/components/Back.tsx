@@ -1,10 +1,10 @@
 import React from 'react';
-import Link from 'next/link';
 import { connect } from 'react-redux';
 
 import { getSafeAreaWidth, getThemeMode } from '../selectors';
 
 import { withTailwind } from '.';
+import Link from './CustomLink';
 
 class Back extends React.PureComponent<any, any> {
 

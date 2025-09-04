@@ -1,6 +1,5 @@
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -14,6 +13,7 @@ import TopBarCommands from './TopBarCommands';
 import TopBarBulkEditCommands from './TopBarBulkEditCommands';
 import TopBarTitle from './TopBarTitle';
 import StatusPopup from './StatusPopup';
+import Link from './CustomLink';
 
 import Logo from '../images/logo-short.svg';
 import LogoBlk from '../images/logo-short-blk.svg';

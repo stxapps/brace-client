@@ -1,9 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from 'motion/react';
-import Url from 'url-parse';
 
-import { signOut, updatePopup } from '../actions';
+import { signOut, updatePopup, linkTo } from '../actions';
 import {
   updateSettingsPopup, updateSettingsViewId, lockCurrentList,
 } from '../actions/chunk';
@@ -16,7 +15,7 @@ import {
 } from '../types/const';
 import { bModalBgFMV, bModalFMV } from '../types/animConfigs';
 
-import { withTailwind } from '.';
+import { withTailwind, withRouter } from '.';
 
 class BottomBarProfilePopup extends React.PureComponent<any, any> {
 
@@ -33,11 +32,7 @@ class BottomBarProfilePopup extends React.PureComponent<any, any> {
 
   onSupportBtnClick = () => {
     this.props.updatePopup(PROFILE_POPUP, false);
-
-    const urlObj = new Url(window.location.href, {});
-    urlObj.set('pathname', '/');
-    urlObj.set('hash', HASH_SUPPORT);
-    window.location.href = urlObj.toString();
+    this.props.linkTo(this.props.router, '/' + HASH_SUPPORT);
   };
 
   onSignOutBtnClick = () => {
@@ -111,7 +106,8 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
-  signOut, updatePopup, updateSettingsPopup, updateSettingsViewId, lockCurrentList,
+  signOut, updatePopup, linkTo, updateSettingsPopup, updateSettingsViewId,
+  lockCurrentList,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(BottomBarProfilePopup));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withTailwind(BottomBarProfilePopup)));
