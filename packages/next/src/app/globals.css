@@ -175,15 +175,15 @@
     @apply appearance-none border-0 h-4 w-4 bg-gray-500 rounded-full shadow-xs;
   }
 
-  .zoom-range-blk {
+  .blk\:zoom-range-blk {
     @apply bg-gray-700 from-gray-400 to-gray-400;
   }
 
-  .zoom-range-blk::-webkit-slider-thumb {
+  .blk\:zoom-range-blk::-webkit-slider-thumb {
     @apply bg-gray-300;
   }
 
-  .zoom-range-blk::-moz-range-thumb {
+  .blk\:zoom-range-blk::-moz-range-thumb {
     @apply bg-gray-300;
   }
 }

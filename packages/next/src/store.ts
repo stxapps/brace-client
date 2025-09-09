@@ -18,6 +18,7 @@ export const makeStore = () => {
   offlineConfig.discard = discard;
   offlineConfig.effect = effect;
   offlineConfig.persistCallback = () => {
+    if (typeof window === 'undefined') return;
     store.dispatch({ type: ACK_PERSIST_CALLBACK });
   };
   offlineConfig.dispatch = (...args) => {
@@ -45,15 +46,15 @@ export const makeStore = () => {
     nextActions.push(action);
   };
 
-  let composeEnhancers = compose;
+  let composeWithDevTools = compose;
   if (typeof window !== 'undefined') {
     if ((window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) {
-      composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
+      composeWithDevTools = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
     }
   }
   const store = createStore(
     /** @ts-expect-error */
-    reducers, composeEnhancers(applyMiddleware(thunk), offline(offlineConfig))
+    reducers, composeWithDevTools(applyMiddleware(thunk), offline(offlineConfig))
   );
   store.subscribe(() => {
     const itnActions = [...nextActions];

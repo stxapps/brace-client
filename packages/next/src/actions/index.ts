@@ -25,13 +25,13 @@ import {
   BLK_MODE, PADDLE_RANDOM_ID,
 } from '../types/const';
 import {
-  isEqual, isObject, throttle, getUserUsername, getUserImageUrl, getWindowInsets,
-  getEditingListNameEditors, getEditingTagNameEditors, randomString,
+  isEqual, isObject, isFldStr, throttle, getUserUsername, getUserImageUrl,
+  getWindowInsets, getEditingListNameEditors, getEditingTagNameEditors, randomString,
   getPopupHistoryStateIndex,
 } from '../utils';
 import vars from '../vars';
 
-const taskQueue = new PQueue({ concurrency: 1 });
+const navQueue = new PQueue({ concurrency: 1 });
 
 let _didInit;
 export const init = () => async (dispatch, getState) => {
@@ -296,21 +296,39 @@ const popHistoryState = (store) => {
     }
   }
 
+  /* action    canPopupFwdBtn    isShown
+     forward       true           true       do nothing
+     forward       true           false      set show
+     forward       false          true       Impossible (do nothing)
+     forward       false          false      go back
+     back          true           true       do nothing
+     back          true           false      Impossible (set show)
+     back          false          true       do nothing
+     back          false          false      Impossible (set show)
+  */
   if (idx >= 0) { // Support forward by open the current one if can.
     const phs = vars.popupHistory.states[idx];
-    if (
-      canPopupFwdBtn(canBckPopups, phs.id) && !isPopupShownWthId(canBckPopups, phs.id)
-    ) {
-      store.dispatch({
-        type: UPDATE_POPUP, payload: { id: phs.id, isShown: true },
-      });
+    if (canPopupFwdBtn(canBckPopups, phs.id)) {
+      if (!isPopupShownWthId(canBckPopups, phs.id)) {
+        store.dispatch({
+          type: UPDATE_POPUP, payload: { id: phs.id, isShown: true },
+        });
+      }
+    } else {
+      if (!isPopupShownWthId(canBckPopups, phs.id)) {
+        window.history.back();
+      }
     }
   }
 };
 
 export const signOut = () => async (dispatch, getState) => {
-  userSession.signUserOut();
-  await resetState(dispatch);
+  // Wait for profilePopup to close first so the popup does not get already unmount.
+  const task = async () => {
+    userSession.signUserOut();
+    await resetState(dispatch);
+  };
+  navQueue.add(task);
 };
 
 export const updateUserData = (data) => async (dispatch, getState) => {
@@ -368,52 +386,90 @@ export const updateStacksAccess = (data) => {
 };
 
 const updatePopupInQueue = (
-  id, isShown, anchorPosition, dispatch, getState
+  id, isShown, anchorPosition, replaceId, dispatch, getState
 ) => () => {
   return new Promise<void>((resolve) => {
-    dispatch({
-      type: UPDATE_POPUP,
-      payload: { id, isShown, anchorPosition },
-    });
-
     const canBckPopups = getCanBckPopups(getState);
+
+    dispatch({
+      type: UPDATE_POPUP, payload: { id, isShown, anchorPosition },
+    });
+    if (isShown && isFldStr(replaceId)) {
+      dispatch({
+        type: UPDATE_POPUP, payload: { id: replaceId, isShown: false },
+      });
+    }
+
     if (!canPopupBckBtn(canBckPopups, id)) {
       resolve();
       return;
     }
 
-    if (isShown) {
+    /* isShown   currShown   replaceId
+         true       true       null       do nothing
+         true       true       str        back
+         true       false      null       history.push
+         true       false      str        history.replace
+         false      true       null       back
+         false      true       str        Impossible (back)
+         false      false      null       do nothing
+         false      false      str        Impossible (do nothing)
+    */
+    if (isShown && !isPopupShownWthId(canBckPopups, id)) {
       const phs = { phsId: `${Date.now()}-${randomString(4)}`, id };
 
       const chs = window.history.state;
       const idx = getPopupHistoryStateIndex(vars.popupHistory.states, chs);
-      if (idx >= 0) {
-        vars.popupHistory.states = [
-          ...vars.popupHistory.states.slice(0, idx + 1), phs,
-        ];
+
+      if (isFldStr(replaceId)) {
+        if (idx >= 0) {
+          vars.popupHistory.states = [
+            ...vars.popupHistory.states.slice(0, idx),
+            phs,
+            ...vars.popupHistory.states.slice(idx + 1)
+          ];
+        } else {
+          console.log('In updatePopupInQueue, invalid replaceId:', replaceId);
+        }
+        window.history.replaceState(phs, '', window.location.href);
       } else {
-        vars.popupHistory.states.push(phs);
+        if (idx >= 0) {
+          vars.popupHistory.states = [
+            ...vars.popupHistory.states.slice(0, idx + 1), phs,
+          ];
+        } else {
+          vars.popupHistory.states.push(phs);
+        }
+        window.history.pushState(phs, '', window.location.href);
       }
 
-      window.history.pushState(phs, '', window.location.href);
       resolve();
       return;
     }
+    if (
+      (isShown && isPopupShownWthId(canBckPopups, id) && isFldStr(replaceId)) ||
+      (!isShown && isPopupShownWthId(canBckPopups, id))
+    ) {
+      const onPopState = () => {
+        window.removeEventListener('popstate', onPopState);
+        resolve();
+      };
+      window.addEventListener('popstate', onPopState);
+      window.history.back();
+      return;
+    }
 
-    const onPopState = () => {
-      window.removeEventListener('popstate', onPopState);
-      resolve();
-    };
-    window.addEventListener('popstate', onPopState);
-    window.history.back();
+    resolve();
   });
 };
 
-export const updatePopup = (id, isShown, anchorPosition = null) => async (
-  dispatch, getState
-) => {
-  const task = updatePopupInQueue(id, isShown, anchorPosition, dispatch, getState);
-  taskQueue.add(task);
+export const updatePopup = (
+  id, isShown, anchorPosition = null, replaceId = null
+) => async (dispatch, getState) => {
+  const task = updatePopupInQueue(
+    id, isShown, anchorPosition, replaceId, dispatch, getState
+  );
+  navQueue.add(task);
 };
 
 export const updateSearchString = (searchString) => {
@@ -493,5 +549,5 @@ const linkToInQueue = (router, href) => () => {
 
 export const linkTo = (router, href) => async () => {
   const task = linkToInQueue(router, href);
-  taskQueue.add(task);
+  navQueue.add(task);
 };

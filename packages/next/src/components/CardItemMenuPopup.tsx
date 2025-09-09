@@ -126,12 +126,16 @@ class CardItemMenuPopup extends React.PureComponent<any, any> {
     const { id, url } = this.props.popupLink;
 
     if (text === COPY_LINK) {
+      this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
       copyTextToClipboard(url);
     } else if (text === ARCHIVE) {
+      this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
       this.props.moveLinks(ARCHIVE, [id]);
     } else if (text === REMOVE) {
+      this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
       this.props.moveLinks(TRASH, [id]);
     } else if (text === RESTORE) {
+      this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
       this.props.moveLinks(MY_LIST, [id]);
     } else if (text === DELETE) {
       this.props.updateDeleteAction(DELETE_ACTION_LINK_ITEM_MENU);
@@ -142,22 +146,25 @@ class CardItemMenuPopup extends React.PureComponent<any, any> {
       this.props.updateListNamesMode(
         LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
       );
-      this.props.updatePopup(LIST_NAMES_POPUP, true, anchorPosition);
+      this.props.updatePopup(
+        LIST_NAMES_POPUP, true, anchorPosition, CARD_ITEM_MENU_POPUP,
+      );
     } else if (text === PIN) {
-      this.props.pinLinks([id]);
+      this.props.pinLinks([id], CARD_ITEM_MENU_POPUP);
     } else if (text === MANAGE_PIN) {
       this.props.updateSelectingLinkId(id);
-      this.props.updatePopup(PIN_MENU_POPUP, true, anchorPosition);
+      this.props.updatePopup(
+        PIN_MENU_POPUP, true, anchorPosition, CARD_ITEM_MENU_POPUP
+      );
     } else if (text === ADD_TAGS || text === MANAGE_TAGS) {
       this.props.updateSelectingLinkId(id);
-      this.props.updateTagEditorPopup(true, text === ADD_TAGS);
+      this.props.updateTagEditorPopup(true, text === ADD_TAGS, CARD_ITEM_MENU_POPUP);
     } else if (text === CHANGE) {
-      this.props.updateCustomEditorPopup(true, id);
+      this.props.updateCustomEditorPopup(true, id, CARD_ITEM_MENU_POPUP);
     } else {
       console.log(`In CardItemMenuPopup, invalid text: ${text}`);
     }
 
-    this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
     this.didClick = true;
   };
 
@@ -176,7 +183,7 @@ class CardItemMenuPopup extends React.PureComponent<any, any> {
         {menu.map(text => {
           let displayText = text;
           if (text === ARCHIVE) displayText = getListNameDisplayName(text, listNameMap);
-          return <button key={text} onClick={() => this.onMenuPopupClick(text)} className={tailwind('block w-full truncate rounded-md py-2.5 pl-4 pr-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')}>{displayText}</button>;
+          return <button key={text} onClick={() => this.onMenuPopupClick(text)} className={tailwind('flex h-10 w-full items-center truncate rounded-md pl-4 pr-4 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring focus:ring-inset blk:text-gray-200 blk:hover:bg-gray-700 blk:hover:text-white')}>{displayText}</button>;
         })}
       </React.Fragment>
     );

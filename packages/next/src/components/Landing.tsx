@@ -4,14 +4,14 @@ import Image from 'next/image';
 import { connect } from 'react-redux';
 import Url from 'url-parse';
 
-import { updatePopup } from '../actions';
+import { updatePopup, linkTo } from '../actions';
 import {
   HASH_LANDING_HOW, HASH_LANDING_MOBILE, SIGN_UP_POPUP, SHOW_BLANK, SHOW_SIGN_IN,
 } from '../types/const';
 import { getSafeAreaWidth, getThemeMode } from '../selectors';
 import { isNumber, getOffsetTop } from '../utils';
 
-import { withTailwind } from '.';
+import { withTailwind, withRouter } from '.';
 import TopBar from './TopBar';
 import Footer from './Footer';
 
@@ -90,10 +90,7 @@ class Landing extends React.PureComponent<any, any> {
   onSignUpBtnClick = () => {
     const { isUserSignedIn } = this.props;
     if (isUserSignedIn) {
-      const urlObj = new Url(window.location.href, {});
-      urlObj.set('pathname', '/');
-      urlObj.set('hash', '');
-      window.location.href = urlObj.toString();
+      this.props.linkTo(this.props.router, '/');
       return;
     }
 
@@ -551,4 +548,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { updatePopup })(withTailwind(Landing));
+export default connect(mapStateToProps, { updatePopup, linkTo })(withRouter(withTailwind(Landing)));

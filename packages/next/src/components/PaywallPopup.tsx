@@ -31,10 +31,9 @@ const PaywallPopup = () => {
 
   const onOkBtnClick = () => {
     if (didClick.current) return;
-    onCancelBtnClick();
 
     dispatch(updateSettingsViewId(SETTINGS_VIEW_IAP, false));
-    dispatch(updateSettingsPopup(true));
+    dispatch(updateSettingsPopup(true, false, PAYWALL_POPUP));
     didClick.current = true;
   };
 

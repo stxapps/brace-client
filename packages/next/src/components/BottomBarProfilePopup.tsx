@@ -24,10 +24,8 @@ class BottomBarProfilePopup extends React.PureComponent<any, any> {
   };
 
   onSettingsBtnClick = () => {
-    this.props.updatePopup(PROFILE_POPUP, false);
-
     this.props.updateSettingsViewId(SETTINGS_VIEW_ACCOUNT, true);
-    this.props.updateSettingsPopup(true);
+    this.props.updateSettingsPopup(true, false, PROFILE_POPUP);
   };
 
   onSupportBtnClick = () => {
@@ -36,8 +34,8 @@ class BottomBarProfilePopup extends React.PureComponent<any, any> {
   };
 
   onSignOutBtnClick = () => {
-    // No need to update it, will get already unmount
-    //this.props.updatePopup(PROFILE_POPUP, false);
+    // Need to call history.back() properly
+    this.props.updatePopup(PROFILE_POPUP, false);
     this.props.signOut();
   };
 

@@ -29,8 +29,7 @@ const SignUpPopup = () => {
   };
 
   const onSignInBtnClick = () => {
-    onPopupCloseBtnClick();
-    dispatch(updatePopup(SIGN_IN_POPUP, true));
+    dispatch(updatePopup(SIGN_IN_POPUP, true, null, SIGN_UP_POPUP));
   };
 
   const onBackedUpBtnClick = (data) => {

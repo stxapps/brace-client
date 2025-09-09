@@ -443,22 +443,19 @@ const CustomEditorPopup = () => {
           </div>
           <motion.div className={tailwind('w-full max-w-sm overflow-hidden rounded-lg shadow-xl ring-1 ring-black/5 blk:ring-white/25')} variants={dialogFMV} initial="hidden" animate="visible" exit="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
             <div ref={scrollPanel} style={{ maxHeight: panelHeight }} className={tailwind('relative flex flex-col overflow-y-auto overflow-x-hidden rounded-lg bg-white blk:bg-gray-800')}>
-              {isString(customEditor.image) && <div className={tailwind('aspect-12/7 w-full')}>
-                <div>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img className={tailwind('h-full w-full object-cover object-center ring-1 ring-black/5 blk:ring-0')} src={customEditor.imageUrl} alt="Custom link's illustration" />
-                  <button onClick={onClearImageBtnClick} className={tailwind('group absolute bottom-1 right-1 flex h-10 w-10 items-center justify-center focus:outline-none')} type="button" title="Remove">
-                    <div className={tailwind('flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 group-focus:ring blk:bg-gray-700')}>
-                      <svg className={tailwind('h-4 w-4 text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-200')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path fillRule="evenodd" clipRule="evenodd" d="M9 2C8.62123 2 8.27497 2.214 8.10557 2.55279L7.38197 4H4C3.44772 4 3 4.44772 3 5C3 5.55228 3.44772 6 4 6V16C4 17.1046 4.89543 18 6 18H14C15.1046 18 16 17.1046 16 16V6C16.5523 6 17 5.55228 17 5C17 4.44772 16.5523 4 16 4H12.618L11.8944 2.55279C11.725 2.214 11.3788 2 11 2H9ZM7 8C7 7.44772 7.44772 7 8 7C8.55228 7 9 7.44772 9 8V14C9 14.5523 8.55228 15 8 15C7.44772 15 7 14.5523 7 14V8ZM12 7C11.4477 7 11 7.44772 11 8V14C11 14.5523 11.4477 15 12 15C12.5523 15 13 14.5523 13 14V8C13 7.44772 12.5523 7 12 7Z" />
-                      </svg>
-                    </div>
-                  </button>
-                </div>
+              {isString(customEditor.image) && <div className={tailwind('relative aspect-12/7 w-full')}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img className={tailwind('h-full w-full object-cover object-center ring-1 ring-black/5 blk:ring-0')} src={customEditor.imageUrl} alt="Custom link's illustration" />
+                <button onClick={onClearImageBtnClick} className={tailwind('group absolute bottom-1 right-1 flex h-10 w-10 items-center justify-center focus:outline-none')} type="button" title="Remove">
+                  <div className={tailwind('flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 group-focus:ring blk:bg-gray-700')}>
+                    <svg className={tailwind('h-4 w-4 text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-200')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path fillRule="evenodd" clipRule="evenodd" d="M9 2C8.62123 2 8.27497 2.214 8.10557 2.55279L7.38197 4H4C3.44772 4 3 4.44772 3 5C3 5.55228 3.44772 6 4 6V16C4 17.1046 4.89543 18 6 18H14C15.1046 18 16 17.1046 16 16V6C16.5523 6 17 5.55228 17 5C17 4.44772 16.5523 4 16 4H12.618L11.8944 2.55279C11.725 2.214 11.3788 2 11 2H9ZM7 8C7 7.44772 7.44772 7 8 7C8.55228 7 9 7.44772 9 8V14C9 14.5523 8.55228 15 8 15C7.44772 15 7 14.5523 7 14V8ZM12 7C11.4477 7 11 7.44772 11 8V14C11 14.5523 11.4477 15 12 15C12.5523 15 13 14.5523 13 14V8C13 7.44772 12.5523 7 12 7Z" />
+                    </svg>
+                  </div>
+                </button>
               </div>}
-              {!customEditor.image && <div className={tailwind('aspect-12/7 w-full')}>
-                {/* aspect-ratio is padding-bottom underneath and this div is absolute inset-0 */}
-                <div className={tailwind('flex items-center justify-center bg-white ring-1 ring-black/5 blk:bg-gray-800 blk:ring-1 blk:ring-white/10')}>
+              {!customEditor.image && <div className={tailwind('relative aspect-12/7 w-full')}>
+                <div className={tailwind('flex items-center justify-center h-full w-full bg-white ring-1 ring-black/5 blk:bg-gray-800 blk:ring-1 blk:ring-white/10')}>
                   <button onClick={onUploadImageBtnClick} className={tailwind('group mt-4 flex flex-col items-center justify-center rounded-lg p-2 focus:outline-none focus:ring')} type="button" title="Upload">
                     <svg className={tailwind('h-9 w-9 text-gray-400 group-hover:text-gray-500 blk:text-gray-400 blk:group-hover:text-gray-300')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                       <path fillRule="evenodd" clipRule="evenodd" d="M4 3C3.46957 3 2.96086 3.21071 2.58579 3.58579C2.21071 3.96086 2 4.46957 2 5V15C2 15.5304 2.21071 16.0391 2.58579 16.4142C2.96086 16.7893 3.46957 17 4 17H16C16.5304 17 17.0391 16.7893 17.4142 16.4142C17.7893 16.0391 18 15.5304 18 15V5C18 4.46957 17.7893 3.96086 17.4142 3.58579C17.0391 3.21071 16.5304 3 16 3H4ZM16 15H4L8 7L11 13L13 9L16 15Z" />
@@ -469,9 +466,8 @@ const CustomEditorPopup = () => {
                 </div>
               </div>}
               {isObject(customEditor.image) && <React.Fragment>
-                <div className={tailwind('aspect-12/8 w-full bg-gray-100 blk:bg-gray-700')}>
-                  {/* aspect-ratio is padding-bottom underneath and this div is absolute inset-0 */}
-                  <div className={tailwind('flex items-center justify-center')}>
+                <div className={tailwind('relative aspect-12/8 w-full bg-gray-100 blk:bg-gray-700')}>
+                  <div className={tailwind('flex items-center justify-center h-full w-full')}>
                     <canvas ref={imageCanvas} onTouchStart={onCanvasMouseDown} onMouseDown={onCanvasMouseDown} onDragStart={onCanvasDragStart} className={tailwind('h-full w-full cursor-grab touch-none overflow-hidden rounded-t-lg')}></canvas>
                   </div>
                 </div>

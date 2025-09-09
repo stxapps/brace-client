@@ -39,10 +39,8 @@ const TopBarProfilePopup = () => {
   };
 
   const onSettingsBtnClick = () => {
-    dispatch(updatePopup(PROFILE_POPUP, false));
-
     dispatch(updateSettingsViewId(SETTINGS_VIEW_ACCOUNT, true));
-    dispatch(updateSettingsPopup(true));
+    dispatch(updateSettingsPopup(true, false, PROFILE_POPUP));
   };
 
   const onSupportBtnClick = () => {
@@ -51,8 +49,8 @@ const TopBarProfilePopup = () => {
   };
 
   const onSignOutBtnClick = () => {
-    // No need to update it, will get already unmount
-    //this.props.updatePopup(PROFILE_POPUP, false);
+    // Need to call history.back() properly
+    dispatch(updatePopup(PROFILE_POPUP, false));
     dispatch(signOut());
   };
 

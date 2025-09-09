@@ -46,21 +46,23 @@ const BulkEditMenuPopup = () => {
   const onMenuPopupClick = (text) => {
     if (!text || didClick.current) return;
 
-    onCancelBtnClick();
     if (text === MOVE_TO) {
       let lnAnimType = LIST_NAMES_ANIM_TYPE_POPUP;
       if (isAnimTypeB) lnAnimType = LIST_NAMES_ANIM_TYPE_BMODAL;
 
       dispatch(updateListNamesMode(LIST_NAMES_MODE_MOVE_LINKS, lnAnimType));
-      dispatch(updatePopup(LIST_NAMES_POPUP, true, anchorPosition));
+      dispatch(updatePopup(
+        LIST_NAMES_POPUP, true, anchorPosition, BULK_EDIT_MENU_POPUP,
+      ));
     } else if (text === PIN) {
-      dispatch(pinLinks(selectedLinkIds));
+      dispatch(pinLinks(selectedLinkIds, BULK_EDIT_MENU_POPUP));
       dispatch(updateBulkEdit(false));
     } else if (text === UNPIN) {
+      onCancelBtnClick();
       dispatch(unpinLinks(selectedLinkIds));
       dispatch(updateBulkEdit(false));
     } else if (text === MANAGE_TAGS) {
-      dispatch(updateTagEditorPopup(true, true));
+      dispatch(updateTagEditorPopup(true, true, BULK_EDIT_MENU_POPUP));
     } else {
       console.log(`In BulkEditMenuPopup, invalid text: ${text}`);
     }

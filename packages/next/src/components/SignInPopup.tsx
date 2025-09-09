@@ -29,8 +29,7 @@ const SignInPopup = () => {
   };
 
   const onSignUpBtnClick = () => {
-    onPopupCloseBtnClick();
-    dispatch(updatePopup(SIGN_UP_POPUP, true));
+    dispatch(updatePopup(SIGN_UP_POPUP, true, null, SIGN_IN_POPUP));
   };
 
   const onChooseAccountBtnClick = (data) => {
