@@ -11,15 +11,13 @@ self.addEventListener('install', () => {
 });
 
 self.addEventListener('activate', async () => {
-  // Unregister the service worker.
+  // When this new service worker activates, it will take over.
+  // First, we clear out all the old caches.
+  const cacheNames = await caches.keys();
+  await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+
+  // Then, we unregister this service worker, so it doesn't stick around.
   await self.registration.unregister();
 
-  // Get a list of all clients (open tabs/windows) and force them to reload.
-  // This is crucial to break them out of the old service worker's control.
-  const clients = await self.clients.matchAll({
-    type: 'window', includeUncontrolled: true,
-  });
-  for (const client of clients) {
-    client.navigate(client.url);
-  }
+  // Users will get the new version on their next navigation or manual page refresh.
 });
