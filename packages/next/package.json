@@ -10,8 +10,8 @@
     "build": "npm run patch-js && npm run build-js && npm run copy-hard-coding",
     "start": "next start",
     "lint": "eslint",
-    "deploy-test": "bash bin/deploy-test.sh",
-    "deploy-prod": "bash bin/deploy-prod.sh",
+    "deploy-test": "bash bin/deploy.sh s3://test-brace-web E1IMMCHCDM4Y81",
+    "deploy-prod": "bash bin/deploy.sh s3://brace-web ECEBYZH814VT0",
     "invalidate-test": "aws cloudfront create-invalidation --distribution-id E1IMMCHCDM4Y81 --paths /apple-touch-icon.png /logo192.png /logo512.png",
     "invalidate-prod": "aws cloudfront create-invalidation --distribution-id ECEBYZH814VT0 --paths /apple-touch-icon.png /logo192.png /logo512.png"
   },

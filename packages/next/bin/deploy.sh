@@ -8,9 +8,14 @@ set -u
 #   to exit with a non-zero status.
 set -o pipefail
 
-# --- Environment Configuration ---
-readonly S3_BUCKET="s3://test-brace-web"
-readonly CLOUDFRONT_DISTRIBUTION_ID="E1IMMCHCDM4Y81"
+# Check for required arguments
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <S3_BUCKET> <CLOUDFRONT_DISTRIBUTION_ID>"
+    exit 1
+fi
+
+readonly S3_BUCKET="$1"
+readonly CLOUDFRONT_DISTRIBUTION_ID="$2"
 readonly SOURCE_DIR="out"
 
 # --- Cache-Control Headers ---
