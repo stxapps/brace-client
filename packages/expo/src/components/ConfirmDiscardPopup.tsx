@@ -109,7 +109,7 @@ const ConfirmDiscardPopup = () => {
   };
   const bgStyle = { opacity: popupAnim };
 
-  const cancelBtnStyle = {};
+  const cancelBtnStyle: any = {};
   if (safeAreaWidth < SM_WIDTH) {
     cancelBtnStyle.paddingTop = 7;
     cancelBtnStyle.paddingBottom = 7;

@@ -6,7 +6,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import type { RouteChangeCompleteEventDetail } from '@/declarations';
 import { makeStore, AppStore, useSelector, useDispatch } from '@/store';
 import { bindAddNextActionRef } from '@/store-next';
-import { init, updateHref, linkTo } from '@/actions';
+import { init, updateHref, linkTo, showSWWUPopup } from '@/actions';
 import { useTailwind, useHash } from '@/components';
 
 function Initializer() {
@@ -39,6 +39,18 @@ function Initializer() {
     );
     window.dispatchEvent(event);
   }, [pathname, searchParams]);
+
+  useEffect(() => {
+    const isPWAInstalled = window.matchMedia('(display-mode: standalone)').matches;
+    if (
+      isPWAInstalled && 'serviceWorker' in navigator && window.serwist !== undefined
+    ) {
+      window.serwist.register();
+      window.serwist.addEventListener('waiting', () => {
+        dispatch(showSWWUPopup());
+      });
+    }
+  }, [dispatch]);
 
   return null;
 }

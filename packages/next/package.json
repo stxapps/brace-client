@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "patch-js": "npx tsx bin/patch.ts",
-    "dev": "next dev --experimental-https --hostname 0.0.0.0 --turbopack",
-    "build-js": "next build --turbopack",
+    "dev": "next dev --experimental-https --hostname 0.0.0.0",
+    "build-js": "next build",
     "copy-hard-coding": "bash bin/copy-hard-coding.sh",
     "build": "npm run patch-js && npm run build-js && npm run copy-hard-coding",
     "start": "next start",

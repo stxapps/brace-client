@@ -175,6 +175,10 @@
     @apply appearance-none border-0 h-4 w-4 bg-gray-500 rounded-full shadow-xs;
   }
 
+  .zoom-range-blk {
+    /* To suppress eslint warning */
+  }
+
   .blk\:zoom-range-blk {
     @apply bg-gray-700 from-gray-400 to-gray-400;
   }
