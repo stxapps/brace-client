@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "target": "es2021",
+    "lib": ["es2021"],
+    "moduleResolution": "node",
+    "noEmit": true
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "func",
+  "version": "0.0.0",
+  "description": "CloudFront functions for brace.to.",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/aws-cloudfront-function": "^1.0.5"
+  }
+}

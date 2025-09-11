@@ -22,7 +22,7 @@ readonly SOURCE_DIR="out"
 readonly CACHE_IMMUTABLE="max-age=31536000, public, immutable"
 readonly CACHE_YEAR="max-age=31536000"
 readonly CACHE_WEEK="max-age=604800"
-readonly CACHE_NONE="no-cache"
+readonly CACHE_REVALIDATE="public, max-age=0, must-revalidate"
 
 echo "Starting deployment to ${S3_BUCKET}..."
 
@@ -81,8 +81,8 @@ aws s3 sync "${SOURCE_DIR}" "${S3_BUCKET}" \
 # Copy service worker files.
 # These should not be cached by browsers to ensure updates are picked up.
 echo "Copying service worker files with no-cache..."
-aws s3 cp "${SOURCE_DIR}/service-worker.js" "${S3_BUCKET}/service-worker.js" --acl public-read --cache-control "${CACHE_NONE}"
-aws s3 cp "${SOURCE_DIR}/sw.js" "${S3_BUCKET}/sw.js" --acl public-read --cache-control "${CACHE_NONE}"
+aws s3 cp "${SOURCE_DIR}/service-worker.js" "${S3_BUCKET}/service-worker.js" --acl public-read --cache-control "${CACHE_REVALIDATE}"
+aws s3 cp "${SOURCE_DIR}/sw.js" "${S3_BUCKET}/sw.js" --acl public-read --cache-control "${CACHE_REVALIDATE}"
 
 # Sync remaining root files (HTML pages, manifests, etc.) with no-cache.
 # This ensures users always get the latest HTML pointing to the latest assets.
@@ -98,7 +98,7 @@ aws s3 sync "${SOURCE_DIR}" "${S3_BUCKET}" \
     --exclude "sw.js" \
     --delete \
     --acl public-read \
-    --cache-control "${CACHE_NONE}"
+    --cache-control "${CACHE_REVALIDATE}"
 
 # Invalidate the CloudFront cache to make sure all changes are live.
 # Invalidating "/*" is a broad approach but ensures all changes are picked up.
