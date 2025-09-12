@@ -632,7 +632,10 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
         excludingIds: safLinkIds,
       });
       [metas, metasWithPcEc] = [_result.metas, _result.metasWithPcEc];
-      [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
+      // https://github.com/swc-project/swc/issues/11084
+      //[bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
+      bin.hasMore = _result.hasMore;
+      bin.hasDisorder = _result.hasDisorder;
     } else {
       if (isStale) {
         const { hasMore, hasDisorder, objsWithPcEc } = getNLinkObjs({
@@ -653,7 +656,10 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
         pinFPaths, pendingPins, excludingIds: safLinkIds,
       });
       [metas, metasWithPcEc] = [_result.metas, _result.metasWithPcEc];
-      [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
+      // https://github.com/swc-project/swc/issues/11084
+      //[bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
+      bin.hasMore = _result.hasMore;
+      bin.hasDisorder = _result.hasDisorder;
     }
     for (const meta of metas) {
       if (isFetchedLinkId(vars.fetch.fetchedLinkIds, links, meta.listName, meta.id)) {
