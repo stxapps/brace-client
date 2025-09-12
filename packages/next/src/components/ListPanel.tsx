@@ -112,7 +112,7 @@ const ListPanel = (props) => {
     setTimeout(() => {
       window.scrollTo(0, 0);
       vars.scrollPanel.scrollY = 0;
-    }, 1);
+    }, 100);
   }, [listChangedCount]);
 
   useEffect(() => {

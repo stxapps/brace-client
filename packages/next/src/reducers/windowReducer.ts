@@ -37,7 +37,6 @@ const windowReducer = (state = initialState, action) => {
   if (action.type === INIT) {
     return {
       ...state,
-      href: action.payload.href,
       themeMode: action.payload.systemThemeMode,
       is24HFormat: action.payload.is24HFormat,
     };

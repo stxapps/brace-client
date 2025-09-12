@@ -36,8 +36,10 @@ class CardPanel extends React.PureComponent<any, any> {
 
   componentDidUpdate(prevProps) {
     if (this.props.listChangedCount !== prevProps.listChangedCount) {
-      window.scrollTo(0, 0);
-      vars.scrollPanel.scrollY = 0;
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        vars.scrollPanel.scrollY = 0;
+      }, 100);
     }
   }
 
