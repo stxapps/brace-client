@@ -28,10 +28,10 @@
     "idb-keyval": "^6.2.2",
     "jest-diff": "^29.7.0",
     "motion": "^12.23.12",
-    "next": "15.5.2",
+    "next": "15.5.3",
     "p-queue": "^8.1.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
     "react-graceful-image": "^1.5.0",
     "react-redux": "^9.2.0",
     "redux": "^5.0.1",
@@ -47,14 +47,18 @@
     "@tailwindcss/typography": "^0.5.16",
     "@types/file-saver": "^2.0.7",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "19.1.12",
+    "@types/react-dom": "19.1.9",
     "@types/url-parse": "^1.4.11",
     "eslint": "^9",
-    "eslint-config-next": "15.5.2",
+    "eslint-config-next": "15.5.3",
     "eslint-plugin-tailwindcss": "^4.0.0-beta.0",
     "serwist": "^9.1.1",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "@types/react": "19.1.12",
+    "@types/react-dom": "19.1.9"
   }
 }
