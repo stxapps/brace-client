@@ -1037,3 +1037,32 @@ This and CI/CD are very important!
 - npm install -D @types/url-parse @types/file-saver
 - npm install -D @stylistic/eslint-plugin
 - npm i eslint-plugin-tailwindcss@beta -D
+* Migrate from CRA to Next
+** Steps on AWS
+1.1 In AWS S3 -> Permissions -> CORS
+    [
+        {
+            "AllowedHeaders": [
+                "*"
+            ],
+            "AllowedMethods": [
+                "GET",
+                "HEAD"
+            ],
+            "AllowedOrigins": [
+                "*"
+            ],
+            "ExposeHeaders": [],
+            "MaxAgeSeconds": 31536000
+        }
+    ]
+1.2 Create custom cache policy: CustomUseOriginCacheControlHeaders-QueryStrings
+1.3 Create custom origin request policy: CustomCORS-S3Origin
+1.4 Create CF functions: test-brace-web-rewrite, brace-web-rewrite
+2.1 upload files to S3, don't invalidate CF yet!
+2.2 In AWS S3 -> Properties -> Static Website Hosting -> Error document change to 404.html
+2.3 Set CF behavior -> Cache key and origin requests to recommended
+    Cache: CustomUseOriginCacheControlHeaders-QueryStrings
+    Origin request: Managed-CORS-S3Origin
+2.4 Set CF behavior -> Function associations -> Viewer request -> brace-web-rewrite
+2.5 invalidate CF
