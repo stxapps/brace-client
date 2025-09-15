@@ -1645,6 +1645,19 @@ export const updateSettingsPopup = (
   if (isShown) {
     dispatch(updateFetched(null, false, false));
     dispatch(updateFetchedMore(null, false));
+  } else {
+    // Paddle with Master card causes closing the settings popup not working.
+    // Like there are several same items in history stack
+    //   and need to back serveral times.
+    for (const ms of [800, 400, 400]) {
+      await sleep(ms);
+      if (getState().display.isSettingsPopupShown) {
+        console.log('Settings popup is still showing, close again.');
+        dispatch(updatePopup(SETTINGS_POPUP, false));
+        continue;
+      }
+      break;
+    }
   }
 };
 

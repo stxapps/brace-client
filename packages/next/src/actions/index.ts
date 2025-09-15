@@ -31,7 +31,14 @@ import {
 } from '../utils';
 import vars from '../vars';
 
-const navQueue = new PQueue({ concurrency: 1 });
+const navQueue = new PQueue({ concurrency: 1, timeout: 1200, throwOnTimeout: true });
+const navQueueAdd = async (task) => {
+  try {
+    await navQueue.add(task);
+  } catch (e) {
+    console.log('navQueue error:', e);
+  }
+};
 
 let _didInit;
 export const init = () => async (dispatch, getState) => {
@@ -328,7 +335,7 @@ export const signOut = () => async (dispatch, getState) => {
     userSession.signUserOut();
     await resetState(dispatch);
   };
-  navQueue.add(task);
+  navQueueAdd(task);
 };
 
 export const updateUserData = (data) => async (dispatch, getState) => {
@@ -469,7 +476,7 @@ export const updatePopup = (
   const task = updatePopupInQueue(
     id, isShown, anchorPosition, replaceId, dispatch, getState
   );
-  navQueue.add(task);
+  navQueueAdd(task);
 };
 
 export const updateSearchString = (searchString) => {
@@ -549,5 +556,5 @@ const linkToInQueue = (router, href) => () => {
 
 export const linkTo = (router, href) => async () => {
   const task = linkToInQueue(router, href);
-  navQueue.add(task);
+  navQueueAdd(task);
 };
