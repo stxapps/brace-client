@@ -24,7 +24,13 @@ function Initializer() {
   }, [didPersistCallback, dispatch]);
 
   useEffect(() => {
-    if (rtmCount > prevRtmCount.current) dispatch(linkTo(router, '/'));
+    if (rtmCount > prevRtmCount.current) {
+      // 1. Root -> do nothing (handle in linkTo)
+      // 2. Pages both /pricing and /#pricing -> link to '/'
+      // 3. Adding (paths contains dots) -> do nothing
+      if (window.location.pathname.includes('.')) return;
+      dispatch(linkTo(router, '/'));
+    }
     prevRtmCount.current = rtmCount;
   }, [rtmCount, dispatch, router]);
 

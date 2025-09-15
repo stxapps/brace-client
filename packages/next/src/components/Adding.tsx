@@ -53,7 +53,6 @@ const processAddingUrl = (addingUrl) => {
 };
 
 const Adding = () => {
-
   const isUserSignedIn = useSelector(state => state.user.isUserSignedIn);
   const href = useSelector(state => state.window.href);
   const links = useSelector(state => state.links[MY_LIST]);
@@ -63,7 +62,7 @@ const Adding = () => {
     addingUrl: null, param: null, urlValidatedResult: null,
   });
   const doCancelDiedLink = useRef(true);
-  const didDispatch = useRef(false);
+  const dpcdLinks = useRef([]);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
 
@@ -86,19 +85,14 @@ const Adding = () => {
   const processLink = useCallback(() => {
     if (![true, false].includes(isUserSignedIn) || !isString(href)) return;
 
-    let { addingUrl, param, urlValidatedResult } = urlState;
-
-    let newValues = {};
-    if (!isString(addingUrl)) {
-      addingUrl = getUrlPathQueryHash(href);
-
-      const res = separateUrlAndParam(addingUrl, URL_QUERY_CLOSE_KEY);
-      [addingUrl, param] = [res.separatedUrl, res.param];
-
-      urlValidatedResult = validateUrl(addingUrl);
-
-      newValues = { addingUrl, param, urlValidatedResult };
-    }
+    // Use window.location.href instead of the href from reducers because
+    //   when pressing browser back button, this processLink can be executed
+    //   before the href from reducers get updated.
+    const pqh = getUrlPathQueryHash(window.location.href);
+    const uap = separateUrlAndParam(pqh, URL_QUERY_CLOSE_KEY);
+    const [addingUrl, param] = [uap.separatedUrl, uap.param];
+    const urlValidatedResult = validateUrl(addingUrl);
+    const newValues = { addingUrl, param, urlValidatedResult };
 
     if (isUserSignedIn === false) {
       updateType(RENDER_NOT_SIGNED_IN);
@@ -121,8 +115,10 @@ const Adding = () => {
       doCancelDiedLink.current = false;
     }
     if (!isObject(link)) {
-      dispatch(addLink(addingUrl, MY_LIST, false));
-      didDispatch.current = true;
+      if (!dpcdLinks.current.includes(addingUrl)) {
+        dispatch(addLink(addingUrl, MY_LIST, false));
+        dpcdLinks.current.push(addingUrl);
+      }
 
       updateType(RENDER_ADDING);
       updateUrlState(newValues);
@@ -130,7 +126,9 @@ const Adding = () => {
     }
 
     if (link.status === ADDED) {
-      const newType = didDispatch.current ? RENDER_ADDED : RENDER_IN_OTHER_PROCESSING;
+      let newType = RENDER_IN_OTHER_PROCESSING;
+      if (dpcdLinks.current.includes(addingUrl)) newType = RENDER_ADDED;
+
       updateType(newType);
       updateUrlState(newValues);
       return;
@@ -141,7 +139,7 @@ const Adding = () => {
       return;
     }
   }, [
-    isUserSignedIn, href, links, urlState, updateType, updateUrlState, dispatch,
+    isUserSignedIn, href, links, updateType, updateUrlState, dispatch,
   ]);
 
   const onSignUpBtnClick = () => {
