@@ -142,7 +142,7 @@ const IapHome = (props) => {
             </svg>
             <p className={tailwind('ml-1 flex-shrink flex-grow text-base text-red-600 blk:text-red-500')}>Unable to verify the purchase</p>
           </div>
-          <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Please wait a moment and <button onClick={onRetryVerifyPurchaseBtnClick} className={tailwind('inline underline')}>try again</button>.</p>
+          <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Please wait a moment and <button onClick={onRetryVerifyPurchaseBtnClick} className={tailwind('inline rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')}>try again</button>.</p>
           <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>If the problem persists, please <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a> with your app public key below and the order ID in your order confirmation email.</p>
           <div className={tailwind('mt-6 flex flex-col sm:flex-row')}>
             <p className={tailwind('flex-shrink-0 flex-grow-0 text-base text-gray-500 blk:text-gray-400')}>App public key:</p>
@@ -160,7 +160,7 @@ const IapHome = (props) => {
             </svg>
             <p className={tailwind('ml-1 flex-shrink flex-grow text-base text-red-600 blk:text-red-500')}>Oops..., something went wrong!</p>
           </div>
-          <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Please wait a moment and <button onClick={onRetryRequestPurchaseBtnClick} className={tailwind('inline underline')}>try again</button>.</p>
+          <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Please wait a moment and <button onClick={onRetryRequestPurchaseBtnClick} className={tailwind('inline rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')}>try again</button>.</p>
           <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>If the problem persists, please <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a>.</p>
         </div>
       );
@@ -186,7 +186,7 @@ const IapHome = (props) => {
             </svg>
             <p className={tailwind('ml-1 flex-shrink flex-grow text-base text-red-600 blk:text-red-500')}>Oops..., unable to connect to the App Store</p>
           </div>
-          <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Please wait a moment and <button onClick={onRetryGetProductsBtnClick} className={tailwind('inline underline')}>try again</button>.</p>
+          <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Please wait a moment and <button onClick={onRetryGetProductsBtnClick} className={tailwind('inline rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')}>try again</button>.</p>
           <p className={tailwind('mt-6 text-base leading-relaxed text-gray-500 blk:text-gray-400')}>If the problem persists, please <a className={tailwind('rounded underline hover:text-gray-700 focus:outline-none focus:ring blk:hover:text-gray-200')} href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a>.</p>
         </div>
       );
