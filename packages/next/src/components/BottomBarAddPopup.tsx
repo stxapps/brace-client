@@ -69,7 +69,9 @@ class BottomBarAddPopup extends React.PureComponent<any, any> {
   };
 
   onAddCancelBtnClick = () => {
+    if (this.didClick) return;
     this.props.updatePopup(ADD_POPUP, false);
+    this.didClick = true;
   };
 
   render() {

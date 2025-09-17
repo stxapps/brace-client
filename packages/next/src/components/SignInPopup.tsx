@@ -21,24 +21,34 @@ const SignInPopup = () => {
   const appIconUrl = useMemo(() => {
     return extractUrl(window.location.href).origin + '/' + APP_ICON_NAME;
   }, []);
+  const didClick = useRef(false);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
 
   const onPopupCloseBtnClick = () => {
+    if (didClick.current) return;
     dispatch(updatePopup(SIGN_IN_POPUP, false));
+    didClick.current = true;
   };
 
   const onSignUpBtnClick = () => {
+    if (didClick.current) return;
     dispatch(updatePopup(SIGN_UP_POPUP, true, null, SIGN_IN_POPUP));
+    didClick.current = true;
   };
 
   const onChooseAccountBtnClick = (data) => {
+    if (didClick.current) return;
     onPopupCloseBtnClick();
     dispatch(updateUserData(data));
+    didClick.current = true;
   };
 
   useEffect(() => {
-    if (isShown) cancelBtn.current.focus();
+    if (isShown) {
+      cancelBtn.current.focus();
+      didClick.current = false;
+    }
   }, [isShown]);
 
   if (!isShown) return <AnimatePresence key="AnimatePresence_SIP" />;

@@ -169,9 +169,9 @@ class CardItemMenuPopup extends React.PureComponent<any, any> {
   };
 
   onCancelBtnClick = () => {
-    // In Chrome desktop, touch mode,
-    //   double clicks on menu popup, the second click is on cancelBtn.
+    if (this.didClick) return;
     this.props.updatePopup(CARD_ITEM_MENU_POPUP, false);
+    this.didClick = true;
   };
 
   renderMenu() {

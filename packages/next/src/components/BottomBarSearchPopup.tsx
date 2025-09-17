@@ -13,12 +13,14 @@ class BottomBarSearchPopup extends React.PureComponent<any, any> {
 
   searchInput: any;
   animate: any;
+  didClick: boolean;
 
   constructor(props) {
     super(props);
 
     this.searchInput = React.createRef();
     this.animate = this.getAnimate(null, props);
+    this.didClick = false;
   }
 
   componentDidMount() {
@@ -36,6 +38,7 @@ class BottomBarSearchPopup extends React.PureComponent<any, any> {
     const { isSearchPopupShown } = this.props;
     if (!prevProps.isSearchPopupShown && isSearchPopupShown) {
       this.searchInput.current.focus();
+      this.didClick = false;
     }
 
     if (prevProps.isSearchPopupShown && !isSearchPopupShown) {
@@ -70,8 +73,10 @@ class BottomBarSearchPopup extends React.PureComponent<any, any> {
   };
 
   onSearchCancelBtnClick = () => {
+    if (this.didClick) return;
     this.props.updateSearchString('');
     this.props.updatePopup(SEARCH_POPUP, false);
+    this.didClick = true;
   };
 
   render() {

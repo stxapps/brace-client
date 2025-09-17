@@ -19,30 +19,53 @@ import { withTailwind, withRouter } from '.';
 
 class BottomBarProfilePopup extends React.PureComponent<any, any> {
 
+  didClick: boolean;
+
+  constructor(props) {
+    super(props);
+    this.didClick = false;
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!prevProps.isProfilePopupShown && this.props.isProfilePopupShown) {
+      this.didClick = false;
+    }
+  }
+
   onProfileCancelBtnClick = () => {
+    if (this.didClick) return;
     this.props.updatePopup(PROFILE_POPUP, false);
+    this.didClick = true;
   };
 
   onSettingsBtnClick = () => {
+    if (this.didClick) return;
     this.props.updateSettingsViewId(SETTINGS_VIEW_ACCOUNT, true);
     this.props.updateSettingsPopup(true, false, PROFILE_POPUP);
+    this.didClick = true;
   };
 
   onSupportBtnClick = () => {
+    if (this.didClick) return;
     this.props.updatePopup(PROFILE_POPUP, false);
     this.props.linkTo(this.props.router, '/' + HASH_SUPPORT);
+    this.didClick = true;
   };
 
   onSignOutBtnClick = () => {
+    if (this.didClick) return;
     // Need to call history.back() properly
     this.props.updatePopup(PROFILE_POPUP, false);
     this.props.signOut();
+    this.didClick = true;
   };
 
   onLockBtnClick = () => {
+    if (this.didClick) return;
     this.props.updatePopup(PROFILE_POPUP, false);
     // Wait for the close animation to finish first
     setTimeout(() => this.props.lockCurrentList(), 100);
+    this.didClick = true;
   };
 
   render() {

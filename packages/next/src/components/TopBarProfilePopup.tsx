@@ -39,25 +39,33 @@ const TopBarProfilePopup = () => {
   };
 
   const onSettingsBtnClick = () => {
+    if (didClick.current) return;
     dispatch(updateSettingsViewId(SETTINGS_VIEW_ACCOUNT, true));
     dispatch(updateSettingsPopup(true, false, PROFILE_POPUP));
+    didClick.current = true;
   };
 
   const onSupportBtnClick = () => {
+    if (didClick.current) return;
     dispatch(updatePopup(PROFILE_POPUP, false));
     dispatch(linkTo(router, '/' + HASH_SUPPORT));
+    didClick.current = true;
   };
 
   const onSignOutBtnClick = () => {
+    if (didClick.current) return;
     // Need to call history.back() properly
     dispatch(updatePopup(PROFILE_POPUP, false));
     dispatch(signOut());
+    didClick.current = true;
   };
 
   const onLockBtnClick = () => {
+    if (didClick.current) return;
     dispatch(updatePopup(PROFILE_POPUP, false));
     // Wait for the close animation to finish first
     setTimeout(() => dispatch(lockCurrentList()), 100);
+    didClick.current = true;
   };
 
   useEffect(() => {
