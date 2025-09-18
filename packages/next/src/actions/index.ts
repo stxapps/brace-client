@@ -7,6 +7,7 @@ import userSession from '../userSession';
 import cacheApi from '../apis/localCache';
 import fileApi from '../apis/localFile';
 import lsgApi from '../apis/localSg';
+import { updateStgsAndInfo } from '../importWrapper';
 import {
   INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW, UPDATE_STACKS_ACCESS,
   INCREASE_REDIRECT_TO_MAIN_COUNT, UPDATE_SEARCH_STRING, UPDATE_POPUP,
@@ -14,7 +15,7 @@ import {
   MOVE_LINKS_DELETE_STEP, TRY_UPDATE_SETTINGS, MERGE_SETTINGS, PIN_LINK, UNPIN_LINK,
   MOVE_PINNED_LINK_ADD_STEP, UPDATE_SYSTEM_THEME_MODE, UPDATE_IS_24H_FORMAT,
   UPDATE_CUSTOM_DATA, UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_T_STEP,
-  INCREASE_UPDATE_STATUS_BAR_STYLE_COUNT, RESET_STATE,
+  INCREASE_UPDATE_STATUS_BAR_STYLE_COUNT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import {
   SIGN_UP_POPUP, SIGN_IN_POPUP, ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP,
@@ -280,8 +281,14 @@ const popHistoryState = (store) => {
   const idx = getPopupHistoryStateIndex(vars.popupHistory.states, chs);
 
   const cPopupIds = vars.popupHistory.states.slice(idx + 1).map(s => s.id);
-  for (const id of cPopupIds) {
+  const uPopupIds = [...new Set(cPopupIds)];
+  for (const id of uPopupIds) {
     if (isPopupShownWthId(canBckPopups, id)) {
+      if (id === SETTINGS_POPUP) {
+        // Must keep align with updateSettingsPopup(false, false)
+        //   and if forward, must keep align with updateSettingsPopup(true).
+        store.dispatch(updateStgsAndInfo());
+      }
       store.dispatch({
         type: UPDATE_POPUP, payload: { id, isShown: false },
       });
@@ -437,6 +444,7 @@ const updatePopupInQueue = (
           ];
         } else {
           console.log('In updatePopupInQueue, invalid replaceId:', replaceId);
+          vars.popupHistory.states = [phs];
         }
         window.history.replaceState(phs, '', window.location.href);
       } else {
@@ -445,7 +453,7 @@ const updatePopupInQueue = (
             ...vars.popupHistory.states.slice(0, idx + 1), phs,
           ];
         } else {
-          vars.popupHistory.states.push(phs);
+          vars.popupHistory.states = [phs];
         }
         window.history.pushState(phs, '', window.location.href);
       }
@@ -556,5 +564,13 @@ const linkToInQueue = (router, href) => () => {
 
 export const linkTo = (router, href) => async () => {
   const task = linkToInQueue(router, href);
+  navQueueAdd(task);
+};
+
+export const queueDeleteAllData = () => async (dispatch, getState) => {
+  // Wait for SettingsPopup to close first so history.back() works correctly.
+  const task = async () => {
+    dispatch({ type: DELETE_ALL_DATA });
+  };
   navQueueAdd(task);
 };

@@ -6,14 +6,15 @@ import { saveAs } from 'file-saver';
 import dataApi from '../apis/data';
 import cacheApi from '../apis/localCache';
 import fileApi from '../apis/localFile';
+import { updatePopup, queueDeleteAllData } from '../actions';
 import {
   UPDATE_IMPORT_ALL_DATA_PROGRESS, UPDATE_EXPORT_ALL_DATA_PROGRESS,
-  UPDATE_DELETE_ALL_DATA_PROGRESS, DELETE_ALL_DATA,
+  UPDATE_DELETE_ALL_DATA_PROGRESS,
 } from '../types/actionTypes';
 import {
   MY_LIST, TRASH, ARCHIVE, LINKS, SSLTS, IMAGES, SETTINGS, PINS, TAGS, DOT_JSON, BASE64,
   LAYOUT_CARD, LAYOUT_LIST, CD_ROOT, PUT_FILE, DELETE_FILE, SD_HUB_URL,
-  BRACE_PRE_EXTRACT_URL,
+  BRACE_PRE_EXTRACT_URL, SETTINGS_POPUP,
 } from '../types/const';
 import {
   isEqual, isString, isObject, isNumber, randomString, getUrlFirstChar, randomDecor,
@@ -951,7 +952,12 @@ export const deleteAllData = () => async (dispatch, getState) => {
     await cacheApi.deleteAllFiles();
     await fileApi.deleteAllFiles();
 
-    dispatch({ type: DELETE_ALL_DATA });
+    // Need to close the settings popup to properly call window.history.back(),
+    //   as DELETE_ALL_DATA will set isSettingsPopupShown to false.
+    if (getState().display.isSettingsPopupShown) {
+      dispatch(updatePopup(SETTINGS_POPUP, false));
+    }
+    dispatch(queueDeleteAllData());
   } catch (error) {
     dispatch(updateDeleteAllDataProgress({ total: -1, done: -1, error: `${error}` }));
     return;
