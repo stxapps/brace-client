@@ -47,15 +47,44 @@ function Initializer() {
   }, [pathname, searchParams]);
 
   useEffect(() => {
-    const isPWAInstalled = window.matchMedia('(display-mode: standalone)').matches;
-    if (
-      isPWAInstalled && 'serviceWorker' in navigator && window.serwist !== undefined
-    ) {
+    if (!('serviceWorker' in navigator && window.serwist !== undefined)) return;
+
+    const mediaQuery = window.matchMedia('(display-mode: standalone)');
+
+    let didListenMedia = false, didRegister = false;
+    const onWaiting = () => {
+      dispatch(showSWWUPopup());
+    };
+    const register = () => {
+      if (didRegister) return;
       window.serwist.register();
-      window.serwist.addEventListener('waiting', () => {
-        dispatch(showSWWUPopup());
-      });
-    }
+      window.serwist.addEventListener('waiting', onWaiting);
+      didRegister = true;
+    };
+    const onMediaChange = () => {
+      if (mediaQuery.matches) register();
+    };
+    const check = async () => {
+      if (mediaQuery.matches) {
+        register();
+        return;
+      }
+
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (reg) {
+        register();
+        return;
+      }
+
+      mediaQuery.addEventListener('change', onMediaChange);
+      didListenMedia = true;
+    };
+
+    check();
+    return () => {
+      if (didListenMedia) mediaQuery.removeEventListener('change', onMediaChange);
+      if (didRegister) window.serwist.removeEventListener('waiting', onWaiting);
+    };
   }, [dispatch]);
 
   return null;
