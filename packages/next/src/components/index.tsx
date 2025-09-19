@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { useSelector } from '../store';
 import {
@@ -81,17 +81,24 @@ export const withTailwind = (Component) => {
 };
 
 export const useHash = () => {
+  const pathname = usePathname();
   const [hash, setHash] = useState(() =>
     typeof window !== 'undefined' ? window.location.hash : ''
   );
+
+  useEffect(() => {
+    setHash(window.location.hash);
+  }, [pathname]);
 
   useEffect(() => {
     const handleHashChange = () => {
       setHash(window.location.hash);
     };
 
+    window.addEventListener('popstate', handleHashChange);
     window.addEventListener('hashchange', handleHashChange);
     return () => {
+      window.removeEventListener('popstate', handleHashChange);
       window.removeEventListener('hashchange', handleHashChange);
     };
   }, []);

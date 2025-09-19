@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, Suspense } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { Provider as ReduxProvider } from 'react-redux';
 
@@ -86,6 +86,21 @@ function Initializer() {
       if (didRegister) window.serwist.removeEventListener('waiting', onWaiting);
     };
   }, [dispatch]);
+
+  // Fix Back/Forward between URLs have hash changing.
+  // https://github.com/bootleq/feeders/commit/c211ff7c527bc3ca24694a2e39b21e62778e0348
+  useEffect(() => {
+    const onPopState = () => {
+      if (window.location.pathname !== pathname) {
+        router.replace(window.location.href);
+      }
+    };
+
+    window.addEventListener('popstate', onPopState);
+    return () => {
+      window.removeEventListener('popstate', onPopState);
+    };
+  }, [pathname, router]);
 
   return null;
 }
