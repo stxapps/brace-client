@@ -5,6 +5,7 @@ const withSerwist = withSerwistInit({
   swSrc: 'src/sw.ts',
   swDest: 'public/sw.js',
   register: false,
+  reloadOnOnline: false,
 });
 
 const nextConfig: NextConfig = {
