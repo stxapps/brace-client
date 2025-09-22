@@ -36,7 +36,7 @@ function Initializer() {
 
   useEffect(() => {
     dispatch(updateHref(window.location.href));
-  }, [pathname, searchParams, hash, dispatch]);
+  }, [didPersistCallback, pathname, searchParams, hash, dispatch]);
 
   useEffect(() => {
     const detail: RouteChangeCompleteEventDetail = { pathname, searchParams };
