@@ -8,7 +8,7 @@ import {
 } from '../types/actionTypes';
 import {
   SHOWING_STATUSES, PINNED, WHT_MODE, BLK_MODE, SYSTEM_MODE, CUSTOM_MODE, MY_LIST,
-  TAGGED, LOCKED,
+  TAGGED, LOCKED, SM_WIDTH, MD_WIDTH, LG_WIDTH, XL_WIDTH,
 } from '../types/const';
 import {
   isStringIn, isObject, isString, isEqual, getListNameObj, getStatusCounts, getMainId,
@@ -199,6 +199,14 @@ const _getInsets = (insetTop, insetRight, insetBottom, insetLeft) => {
   return { left, top, right, bottom };
 };
 
+const _getBreakpoint = (w: number): number => {
+  if (w < SM_WIDTH) return 0;
+  if (w < MD_WIDTH) return SM_WIDTH;
+  if (w < LG_WIDTH) return MD_WIDTH;
+  if (w < XL_WIDTH) return LG_WIDTH;
+  return XL_WIDTH;
+};
+
 const getSafeAreaFrameFromState = createSelector(
   state => state.window.width,
   state => state.window.height,
@@ -220,6 +228,19 @@ const getSafeAreaFrameFromState = createSelector(
     if (isNumber(visualWidth)) {
       visualWidth = Math.round(visualWidth);
       width = visualWidth;
+
+      // HACK: visualWidth is less than windowWidth when a scrollbar is present.
+      //   Tailwind's responsive prefixes (sm:, md:, lg:, xl:) use windowWidth,
+      //   but our components use visualWidth for conditional styling.
+      //   This causes inconsistencies around breakpoints.
+      //   For example, windowWidth is 770 (>= md 768) but visualWidth is 753 (< 768).
+      //   To resolve this, when the two widths fall into different breakpoint
+      //   categories, we adjust the width to the boundary of the window breakpoint.
+      //   This is the minimal width increase needed to align the component's logic
+      //   with Tailwind's styling.
+      const vBp = _getBreakpoint(visualWidth);
+      const wBp = _getBreakpoint(windowWidth);
+      if (vBp < wBp) width = wBp;
     } else {
       visualWidth = windowWidth;
     }
