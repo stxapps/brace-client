@@ -166,11 +166,11 @@ const LockEditorPopup = () => {
                   </div>
                 </div>
                 {isAddLockMyList && <div className={tailwind('mt-5 flex items-center')}>
-                  <input onChange={onChangeListNamesInputChange} checked={canChangeListNames} className={tailwind('h-4 w-4 cursor-pointer rounded border-gray-400 bg-white text-blue-500 transition duration-150 ease-in-out focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-400 blk:bg-gray-800 blk:focus:ring-offset-gray-800')} id="change-list-names-input" name="change-list-names-input" type="checkbox" />
+                  <input onChange={onChangeListNamesInputChange} checked={canChangeListNames} className={tailwind('h-4 w-4 cursor-pointer rounded border-gray-400 text-blue-500 transition duration-150 ease-in-out focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-400 blk:bg-gray-800 blk:checked:bg-blue-600 blk:focus:ring-offset-gray-800')} id="change-list-names-input" name="change-list-names-input" type="checkbox" />
                   <label htmlFor="change-list-names-input" className={tailwind('ml-2.5 block cursor-pointer text-sm text-gray-500 blk:text-gray-400')}>When locked, allow to change to other lists</label>
                 </div>}
                 {isAddLockList && <div className={tailwind(`flex items-center ${isAddLockMyList ? 'mt-3.5' : 'mt-5'}`)}>
-                  <input onChange={onExportInputChange} checked={canExport} className={tailwind('h-4 w-4 cursor-pointer rounded border-gray-400 bg-white text-blue-500 transition duration-150 ease-in-out focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-400 blk:bg-gray-800 blk:focus:ring-offset-gray-800')} id="in-export-input" name="in-export-input" type="checkbox" />
+                  <input onChange={onExportInputChange} checked={canExport} className={tailwind('h-4 w-4 cursor-pointer rounded border-gray-400 text-blue-500 transition duration-150 ease-in-out focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-400 blk:bg-gray-800 blk:checked:bg-blue-600 blk:focus:ring-offset-gray-800')} id="in-export-input" name="in-export-input" type="checkbox" />
                   <label htmlFor="in-export-input" className={tailwind('ml-2.5 block cursor-pointer text-sm text-gray-500 blk:text-gray-400')}>{exportText}</label>
                 </div>}
                 <div className={tailwind(errMsg ? '' : isAddLockList ? 'pt-5' : 'pt-3.5')}>
