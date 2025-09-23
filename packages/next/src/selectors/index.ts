@@ -228,19 +228,6 @@ const getSafeAreaFrameFromState = createSelector(
     if (isNumber(visualWidth)) {
       visualWidth = Math.round(visualWidth);
       width = visualWidth;
-
-      // HACK: visualWidth is less than windowWidth when a scrollbar is present.
-      //   Tailwind's responsive prefixes (sm:, md:, lg:, xl:) use windowWidth,
-      //   but our components use visualWidth for conditional styling.
-      //   This causes inconsistencies around breakpoints.
-      //   For example, windowWidth is 770 (>= md 768) but visualWidth is 753 (< 768).
-      //   To resolve this, when the two widths fall into different breakpoint
-      //   categories, we adjust the width to the boundary of the window breakpoint.
-      //   This is the minimal width increase needed to align the component's logic
-      //   with Tailwind's styling.
-      const vBp = _getBreakpoint(visualWidth);
-      const wBp = _getBreakpoint(windowWidth);
-      if (vBp < wBp) width = wBp;
     } else {
       visualWidth = windowWidth;
     }
@@ -252,11 +239,24 @@ const getSafeAreaFrameFromState = createSelector(
       visualHeight = windowHeight;
     }
 
-    const assumeKeyboard = windowHeight - visualHeight > 80;
+    const assumeKeyboard = windowHeight - visualHeight > 150;
 
     const insets = _getInsets(insetTop, insetRight, insetBottom, insetLeft);
     width = width - insets.left - insets.right;
     height = height - insets.top - (assumeKeyboard ? 0 : insets.bottom);
+
+    // HACK: visualWidth is less than windowWidth when a scrollbar is present.
+    //   Tailwind's responsive prefixes (sm:, md:, lg:, xl:) use windowWidth,
+    //   but our components use visualWidth for conditional styling.
+    //   This causes inconsistencies around breakpoints.
+    //   For example, windowWidth is 770 (>= md 768) but visualWidth is 753 (< 768).
+    //   To resolve this, when the two widths fall into different breakpoint
+    //   categories, we adjust the width to the boundary of the window breakpoint.
+    //   This is the minimal width increase needed to align the component's logic
+    //   with Tailwind's styling.
+    const bp = _getBreakpoint(width);
+    const wBp = _getBreakpoint(windowWidth);
+    if (bp < wBp) width = wBp;
 
     return {
       x: insets.left, y: insets.top, width, height,
