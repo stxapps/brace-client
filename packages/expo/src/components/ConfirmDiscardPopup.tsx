@@ -38,6 +38,7 @@ const ConfirmDiscardPopup = () => {
   const onConfirmDiscardOkBtnClick = () => {
     if (didClick.current) return;
 
+    onConfirmDiscardCancelBtnClick();
     if (
       discardAction === DISCARD_ACTION_UPDATE_LIST_NAME ||
       discardAction === DISCARD_ACTION_UPDATE_TAG_NAME
@@ -47,7 +48,6 @@ const ConfirmDiscardPopup = () => {
       console.log(`Invalid discard action: ${discardAction}`);
     }
 
-    onConfirmDiscardCancelBtnClick();
     didClick.current = true;
   };
 

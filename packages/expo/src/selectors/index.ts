@@ -204,34 +204,34 @@ const getSafeAreaFrameFromState = createSelector(
   state => state.window.height,
   state => state.window.visualWidth,
   state => state.window.visualHeight,
+  state => state.window.visualScale,
   state => state.window.insetTop,
   state => state.window.insetRight,
   state => state.window.insetBottom,
   state => state.window.insetLeft,
   (
-    windowWidth, windowHeight, visualWidth, visualHeight,
+    windowWidth, windowHeight, visualWidth, visualHeight, visualScale,
     insetTop, insetRight, insetBottom, insetLeft,
   ) => {
-
     [windowWidth, windowHeight] = [Math.round(windowWidth), Math.round(windowHeight)];
 
-    let [width, height] = [windowWidth, windowHeight];
+    if (!isNumber(visualScale)) visualScale = 1;
 
+    let [width, height] = [windowWidth, windowHeight];
     if (isNumber(visualWidth)) {
       visualWidth = Math.round(visualWidth);
-      width = visualWidth;
+      width = Math.round(visualWidth * visualScale);
     } else {
       visualWidth = windowWidth;
     }
-
     if (isNumber(visualHeight)) {
       visualHeight = Math.round(visualHeight);
-      height = visualHeight;
+      height = Math.round(visualHeight * visualScale);
     } else {
       visualHeight = windowHeight;
     }
 
-    const assumeKeyboard = windowHeight - visualHeight > 80;
+    const assumeKeyboard = windowHeight - height > 150;
 
     const insets = _getInsets(insetTop, insetRight, insetBottom, insetLeft);
     width = width - insets.left - insets.right;
@@ -239,7 +239,7 @@ const getSafeAreaFrameFromState = createSelector(
 
     return {
       x: insets.left, y: insets.top, width, height,
-      windowWidth, windowHeight, visualWidth, visualHeight,
+      windowWidth, windowHeight, visualWidth, visualHeight, visualScale,
     };
   },
 );

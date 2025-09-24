@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "patch-js": "node bin/patch.js",
+    "patch-js": "npx tsx bin/patch.js",
     "export-stacks-access-as-string": "node bin/export-stacks-access-as-string.js ../../../stacks-access-in-webview .",
     "prebuild": "npx expo prebuild --clean",
     "android": "npx expo run:android",

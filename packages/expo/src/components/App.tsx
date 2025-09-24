@@ -8,8 +8,10 @@ import Main from './Main';
 class App extends React.PureComponent<any, any> {
 
   render() {
-
-    if (this.props.href === null || this.props.isHandlingSignIn) {
+    if (
+      ![true, false].includes(this.props.isUserSignedIn) ||
+      this.props.isHandlingSignIn
+    ) {
       return <Loading />;
     }
 
@@ -24,7 +26,6 @@ class App extends React.PureComponent<any, any> {
 const mapStateToProps = (state) => {
   return {
     isUserSignedIn: state.user.isUserSignedIn,
-    href: state.window.href,
     isHandlingSignIn: state.display.isHandlingSignIn,
   };
 };

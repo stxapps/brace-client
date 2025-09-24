@@ -10,8 +10,11 @@ export const APP_URL_SCHEME = 'bracedotto';
 export const APP_DOMAIN_NAME = 'bracedotto://app';
 export const BLOCKSTACK_AUTH = '/blockstack-auth';
 
-export const BACK_DECIDER = 'BACK_DECIDER';
-export const BACK_POPUP = 'BACK_POPUP';
+export const PATH_ABOUT = '/about';
+export const PATH_TERMS = '/terms';
+export const PATH_PRIVACY = '/privacy';
+export const PATH_PRICING = '/pricing';
+export const PATH_SUPPORT = '/support';
 
 export const HASH_LANDING = '#landing';
 export const HASH_LANDING_HOW = '#landing-how';
@@ -186,7 +189,7 @@ export const EXTRACT_EXCEEDING_N_URLS = 'EXTRACT_EXCEEDING_N_URLS';
 
 export const SM_WIDTH = 640;
 export const MD_WIDTH = 768;
-export const LG_WIDTH = 1024;
+export const LG_WIDTH = 992;
 export const XL_WIDTH = 1280;
 
 export const MAX_SELECTED_LINK_IDS = 10;

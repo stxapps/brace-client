@@ -98,12 +98,16 @@ const CardItemMenuPopup = () => {
     const { id, url } = popupLink;
 
     if (text === COPY_LINK) {
+      dispatch(updatePopup(CARD_ITEM_MENU_POPUP, false));
       Clipboard.setString(url);
     } else if (text === ARCHIVE) {
+      dispatch(updatePopup(CARD_ITEM_MENU_POPUP, false));
       dispatch(moveLinks(ARCHIVE, [id]));
     } else if (text === REMOVE) {
+      dispatch(updatePopup(CARD_ITEM_MENU_POPUP, false));
       dispatch(moveLinks(TRASH, [id]));
     } else if (text === RESTORE) {
+      dispatch(updatePopup(CARD_ITEM_MENU_POPUP, false));
       dispatch(moveLinks(MY_LIST, [id]));
     } else if (text === DELETE) {
       dispatch(updateDeleteAction(DELETE_ACTION_LINK_ITEM_MENU));
@@ -114,22 +118,25 @@ const CardItemMenuPopup = () => {
       dispatch(updateListNamesMode(
         LIST_NAMES_MODE_MOVE_LINKS, LIST_NAMES_ANIM_TYPE_POPUP,
       ));
-      dispatch(updatePopup(LIST_NAMES_POPUP, true, anchorPosition));
+      dispatch(updatePopup(
+        LIST_NAMES_POPUP, true, anchorPosition, CARD_ITEM_MENU_POPUP,
+      ));
     } else if (text === PIN) {
-      dispatch(pinLinks([id]));
+      dispatch(pinLinks([id], CARD_ITEM_MENU_POPUP));
     } else if (text === MANAGE_PIN) {
       dispatch(updateSelectingLinkId(id));
-      dispatch(updatePopup(PIN_MENU_POPUP, true, anchorPosition));
+      dispatch(updatePopup(
+        PIN_MENU_POPUP, true, anchorPosition, CARD_ITEM_MENU_POPUP,
+      ));
     } else if (text === ADD_TAGS || text === MANAGE_TAGS) {
       dispatch(updateSelectingLinkId(id));
-      dispatch(updateTagEditorPopup(true, text === ADD_TAGS));
+      dispatch(updateTagEditorPopup(true, text === ADD_TAGS, CARD_ITEM_MENU_POPUP));
     } else if (text === CHANGE) {
-      dispatch(updateCustomEditorPopup(true, id));
+      dispatch(updateCustomEditorPopup(true, id, CARD_ITEM_MENU_POPUP));
     } else {
       console.log(`In CardItemMenuPopup, invalid text: ${text}`);
     }
 
-    dispatch(updatePopup(CARD_ITEM_MENU_POPUP, false));
     didClick.current = true;
   };
 

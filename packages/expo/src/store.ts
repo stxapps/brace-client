@@ -8,10 +8,9 @@ import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
 import { composeWithDevTools } from 'redux-devtools-expo-dev-plugin';
 
 import reducers from '@/reducers';
-import { init } from '@/actions';
 import { queue, discard, effect } from '@/apis/customOffline';
 import {
-  FETCH, FETCH_MORE, EXTRACT_CONTENTS, DELETE_OLD_LINKS_IN_TRASH,
+  ACK_PERSIST_CALLBACK, FETCH, FETCH_MORE, EXTRACT_CONTENTS, DELETE_OLD_LINKS_IN_TRASH,
 } from '@/types/actionTypes';
 import { isObject } from '@/utils';
 
@@ -20,10 +19,9 @@ export const makeStore = () => {
   offlineConfig.discard = discard;
   offlineConfig.effect = effect;
   offlineConfig.persistCallback = () => {
-    init(store);
+    store.dispatch({ type: ACK_PERSIST_CALLBACK });
   };
   offlineConfig.dispatch = (...args) => {
-    // @ts-expect-error
     store.dispatch(...args);
   };
   offlineConfig.persistOptions = {
@@ -31,7 +29,7 @@ export const makeStore = () => {
       'user', 'stacksAccess', 'hasMoreLinks', 'images', 'fetched', 'fetchedMore',
       'isFetchMoreInterrupted', 'refreshFetched', 'display', 'linkEditor',
       'customEditor', 'tagEditor', 'listNameEditors', 'tagNameEditors', 'timePick',
-      'lockEditor', 'iap', 'conflictedSettings',
+      'lockEditor', 'iap', 'conflictedSettings', 'appState',
     ],
   };
   offlineConfig.filterOutboxRehydrate = (outbox) => {

@@ -54,8 +54,8 @@ import {
   TAGGED, NOT_SUPPORTED, STATUS,
 } from '../types/const';
 import {
-  isEqual, isArrayEqual, isString, isObject, isNumber, randomString, getMainId,
-  getLinkMainIds, getUrlFirstChar, validateUrl, randomDecor, getListNameObj,
+  isEqual, isArrayEqual, isString, isObject, isNumber, isFldStr, randomString,
+  getMainId, getLinkMainIds, getUrlFirstChar, validateUrl, randomDecor, getListNameObj,
   getAllListNames, doEnableExtraFeatures, createDataFName, getLinkFPaths,
   getSsltFPaths, getStaticFPaths, createSettingsFPath, extractSsltFPath,
   extractPinFPath, getPinFPaths, getPins, separatePinnedValues, sortLinks,
@@ -632,7 +632,8 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
         excludingIds: safLinkIds,
       });
       [metas, metasWithPcEc] = [_result.metas, _result.metasWithPcEc];
-      [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
+      bin.hasMore = _result.hasMore;
+      bin.hasDisorder = _result.hasDisorder;
     } else {
       if (isStale) {
         const { hasMore, hasDisorder, objsWithPcEc } = getNLinkObjs({
@@ -653,7 +654,8 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
         pinFPaths, pendingPins, excludingIds: safLinkIds,
       });
       [metas, metasWithPcEc] = [_result.metas, _result.metasWithPcEc];
-      [bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
+      bin.hasMore = _result.hasMore;
+      bin.hasDisorder = _result.hasDisorder;
     }
     for (const meta of metas) {
       if (isFetchedLinkId(vars.fetch.fetchedLinkIds, links, meta.listName, meta.id)) {
@@ -1587,9 +1589,9 @@ export const cleanUpStaticFiles = () => async (dispatch, getState) => {
   }
 };
 
-export const updateSettingsPopup = (isShown, doCheckEditing = false) => async (
-  dispatch, getState
-) => {
+export const updateSettingsPopup = (
+  isShown, doCheckEditing = false, popupToReplace = null
+) => async (dispatch, getState) => {
   /*
     A settings snapshot is made when FETCH_COMMIT and UPDATE_SETTINGS_COMMIT
     For FETCH_COMMIT and UPDATE_SETTINGS_COMMIT, check action type in snapshotReducer
@@ -1634,7 +1636,7 @@ export const updateSettingsPopup = (isShown, doCheckEditing = false) => async (
     dispatch(updateStgsAndInfo());
   }
 
-  dispatch(updatePopup(SETTINGS_POPUP, isShown));
+  dispatch(updatePopup(SETTINGS_POPUP, isShown, null, popupToReplace));
 
   if (isShown) {
     dispatch(updateFetched(null, false, false));
@@ -1977,14 +1979,16 @@ export const updatePaywallFeature = (feature) => {
   return { type: UPDATE_PAYWALL_FEATURE, payload: feature };
 };
 
-export const pinLinks = (ids) => async (dispatch, getState) => {
+export const pinLinks = (ids, popupToReplace) => async (dispatch, getState) => {
   const purchases = getState().info.purchases;
 
   if (!doEnableExtraFeatures(purchases)) {
     dispatch(updatePaywallFeature(FEATURE_PIN));
-    dispatch(updatePopup(PAYWALL_POPUP, true));
+    dispatch(updatePopup(PAYWALL_POPUP, true, null, popupToReplace));
     return;
   }
+
+  if (isFldStr(popupToReplace)) dispatch(updatePopup(popupToReplace, false));
 
   const pinFPaths = getPinFPaths(getState());
   const pendingPins = getState().pendingPins;
@@ -2345,20 +2349,22 @@ export const updateThemeCustomOptions = () => async (dispatch, getState) => {
   dispatch(updateTheme(_themeMode, _customOptions));
 };
 
-export const updateCustomEditorPopup = (isShown, id) => async (dispatch, getState) => {
+export const updateCustomEditorPopup = (
+  isShown, id, popupToReplace
+) => async (dispatch, getState) => {
   if (isShown) {
     const purchases = getState().info.purchases;
 
     if (!doEnableExtraFeatures(purchases)) {
       dispatch(updatePaywallFeature(FEATURE_CUSTOM));
-      dispatch(updatePopup(PAYWALL_POPUP, true));
+      dispatch(updatePopup(PAYWALL_POPUP, true, null, popupToReplace));
       return;
     }
 
     dispatch(updateSelectingLinkId(id));
   }
 
-  dispatch(updatePopup(CUSTOM_EDITOR_POPUP, isShown));
+  dispatch(updatePopup(CUSTOM_EDITOR_POPUP, isShown, null, popupToReplace));
 };
 
 export const updateCustomEditor = (
@@ -2490,17 +2496,19 @@ export const updateLockEditor = (payload) => {
   return { type: UPDATE_LOCK_EDITOR, payload };
 };
 
-export const showAddLockEditorPopup = (actionType) => async (dispatch, getState) => {
+export const showAddLockEditorPopup = (actionType, popupToReplace) => async (
+  dispatch, getState
+) => {
   const purchases = getState().info.purchases;
 
   if (!doEnableExtraFeatures(purchases)) {
     dispatch(updatePaywallFeature(FEATURE_LOCK));
-    dispatch(updatePopup(PAYWALL_POPUP, true));
+    dispatch(updatePopup(PAYWALL_POPUP, true, null, popupToReplace));
     return;
   }
 
   dispatch(updateLockAction(actionType));
-  dispatch(updatePopup(LOCK_EDITOR_POPUP, true));
+  dispatch(updatePopup(LOCK_EDITOR_POPUP, true, null, popupToReplace));
 };
 
 export const addLockList = (
@@ -2685,15 +2693,15 @@ const _initTagEditorState = (getState) => {
   return editor;
 };
 
-export const updateTagEditorPopup = (isShown, doCheckEnableExtraFeatures) => async (
-  dispatch, getState
-) => {
+export const updateTagEditorPopup = (
+  isShown, doCheckEnableExtraFeatures, popupToReplace
+) => async (dispatch, getState) => {
   if (isShown) {
     if (doCheckEnableExtraFeatures) {
       const purchases = getState().info.purchases;
       if (!doEnableExtraFeatures(purchases)) {
         dispatch(updatePaywallFeature(FEATURE_TAG));
-        dispatch(updatePopup(PAYWALL_POPUP, true));
+        dispatch(updatePopup(PAYWALL_POPUP, true, null, popupToReplace));
         return;
       }
     }
@@ -2704,7 +2712,7 @@ export const updateTagEditorPopup = (isShown, doCheckEnableExtraFeatures) => asy
     dispatch({ type: UPDATE_TAG_EDITOR, payload });
   }
 
-  dispatch(updatePopup(TAG_EDITOR_POPUP, isShown));
+  dispatch(updatePopup(TAG_EDITOR_POPUP, isShown, null, popupToReplace));
 };
 
 export const updateTagEditor = (values, hints, displayName, color, msg) => {

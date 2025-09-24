@@ -34,6 +34,10 @@ export const runAfterFetchTask = () => async (dispatch, getState) => {
   dispatch(actionChunk.runAfterFetchTask());
 };
 
+export const updateStgsAndInfo = () => async (dispatch, getState) => {
+  dispatch(actionChunk.updateStgsAndInfo());
+};
+
 export const updateSettingsDeleteStep = (_settingsFPaths) => async (
   dispatch, getState
 ) => {

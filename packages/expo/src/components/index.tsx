@@ -107,8 +107,7 @@ export const useSafeAreaInsets = () => {
 };
 
 export const withSafeAreaContext = (Component) => {
-  // eslint-disable-next-line react/display-name
-  return React.forwardRef((props, ref) => (
+  const hoc = React.forwardRef((props, ref) => (
     <SafeAreaFrameContext.Consumer>
       {(windowFrame) => <SafeAreaInsetsContext.Consumer>
         {(screenInsets) => {
@@ -136,6 +135,8 @@ export const withSafeAreaContext = (Component) => {
       </SafeAreaInsetsContext.Consumer>}
     </SafeAreaFrameContext.Consumer>
   ));
+  hoc.displayName = 'withSafeAreaContextComponent';
+  return hoc;
 };
 
 const getKbHt = () => {
@@ -189,12 +190,13 @@ export const useTailwind = () => {
 };
 
 export const withTailwind = (Component) => {
-  // eslint-disable-next-line react/display-name
-  return withSafeAreaContext(React.forwardRef((props: any, ref) => {
+  const hoc = React.forwardRef((props: any, ref) => {
     const { safeAreaWidth, themeMode } = props;
     const tailwind = getTailwind(safeAreaWidth, themeMode);
     return <Component {...props} tailwind={tailwind} ref={ref} />;
-  }));
+  });
+  hoc.displayName = 'withTailwindComponent';
+  return withSafeAreaContext(hoc);
 };
 
 export const useAppState = () => {

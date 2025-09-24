@@ -716,9 +716,12 @@ export const negRem = (a) => {
   return (-1 * a).toString() + 'rem';
 };
 
-export const toPx = (rem, fontSize = 16) => {
-  if (rem.endsWith('rem')) rem = rem.slice(0, -3);
-  return parseFloat(rem) * fontSize;
+export const toPx = (rem) => {
+  let fontSize = '16px';
+  if (typeof window !== 'undefined' && isObject(window)) {
+    fontSize = getComputedStyle(window.document.documentElement).fontSize;
+  }
+  return parseFloat(rem) * parseFloat(fontSize);
 };
 
 export const multiplyPercent = (value, percent) => {
@@ -2001,7 +2004,8 @@ export const deriveFPaths = (custom, toCustom) => {
 };
 
 export const getWindowSize = () => {
-  let width = null, height = null, visualWidth = null, visualHeight = null;
+  let width = null, height = null;
+  let visualWidth = null, visualHeight = null, visualScale = null;
   if (typeof window !== 'undefined' && isObject(window)) {
     if (isNumber(window.innerWidth)) width = window.innerWidth;
     if (isNumber(window.innerHeight)) height = window.innerHeight;
@@ -2013,10 +2017,13 @@ export const getWindowSize = () => {
       if (isNumber(window.visualViewport.height)) {
         visualHeight = window.visualViewport.height;
       }
+      if (isNumber(window.visualViewport.scale)) {
+        visualScale = window.visualViewport.scale;
+      }
     }
   }
 
-  return { width, height, visualWidth, visualHeight };
+  return { width, height, visualWidth, visualHeight, visualScale };
 };
 
 export const getWindowInsets = () => {
@@ -2854,4 +2861,11 @@ export const getResErrMsg = async (res) => {
   if (isFldStr(res.statusText)) msg += ' ' + res.statusText;
   if (isFldStr(bodyText)) msg += ' ' + bodyText;
   return msg;
+};
+
+export const getPopupHistoryStateIndex = (states, hs) => {
+  if (!isObject(hs) || !isFldStr(hs.phsId)) return -1;
+
+  const idx = states.findIndex(s => s.phsId === hs.phsId);
+  return idx;
 };

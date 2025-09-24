@@ -1,5 +1,9 @@
 import platformWrapper from './platformWrapper';
 
+const popupHistory = {
+  states: [],
+};
+
 export const didChange = {
   doExtractContents: false,
   doDeleteOldLinksInTrash: false,
@@ -60,7 +64,7 @@ const user = {
 };
 
 const vars = {
-  cachedServerFPaths, scrollPanel, fetch, randomHouseworkTasks, iap, platform,
-  importAllData, appState, user,
+  popupHistory, cachedServerFPaths, scrollPanel, fetch, randomHouseworkTasks, iap,
+  platform, importAllData, appState, user,
 };
 export default vars;

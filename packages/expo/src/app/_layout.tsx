@@ -12,6 +12,7 @@ import {
   makeStore, AppStore, useDispatch, useSelector,
 } from '@/store';
 import { bindAddNextActionRef } from '@/store-next';
+import { init } from '@/actions';
 import { handleAppStateChange } from '@/actions/piece';
 import { useAppState } from '@/components';
 import { BLK_MODE } from '@/types/const';
@@ -28,18 +29,18 @@ TextInput.defaultProps = TextInput.defaultProps || {};
 TextInput.defaultProps.allowFontScaling = false;
 
 function Initializer() {
+  const didPersistCallback = useSelector(state => state.appState.didPersistCallback);
   const appState = useAppState();
   const pathname = usePathname();
-  const prevAppState = useRef(null);
-  const prevPathname = useRef(null);
+  const prevAppState = useRef(appState);
+  const prevPathname = useRef(pathname);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (prevAppState.current === null || prevPathname.current === null) {
-      prevAppState.current = appState;
-      prevPathname.current = pathname;
-      return;
-    }
+    if (didPersistCallback) dispatch(init());
+  }, [didPersistCallback, dispatch]);
+
+  useEffect(() => {
     if (appState !== prevAppState.current || pathname !== prevPathname.current) {
       dispatch(handleAppStateChange(appState, pathname));
     }

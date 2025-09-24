@@ -20,10 +20,15 @@ import {
   SETTINGS_LISTS_MENU_POPUP, SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP,
   LOCK_EDITOR_POPUP, SWWU_POPUP, WHT_MODE, BLK_MODE,
 } from '../types/const';
-import { getUserUsername, getUserImageUrl } from '../utils';
+import { isFldStr, getUserUsername, getUserImageUrl } from '../utils';
 import vars from '../vars';
 
-export const init = async (store) => {
+let _didInit;
+export const init = () => async (dispatch, getState) => {
+  if (_didInit) return;
+  _didInit = true;
+
+  const store = { dispatch, getState };
 
   const hasSession = await userSession.hasSession();
   if (!hasSession) {
@@ -55,7 +60,6 @@ export const init = async (store) => {
       username,
       userImage,
       userHubUrl,
-      href: DOMAIN_NAME + '/',
       systemThemeMode: darkMatches ? BLK_MODE : WHT_MODE,
       is24HFormat,
     },
@@ -170,11 +174,17 @@ export const updateStacksAccess = (data) => {
   return { type: UPDATE_STACKS_ACCESS, payload: data };
 };
 
-export const updatePopup = (id, isShown, anchorPosition = null) => {
-  return {
-    type: UPDATE_POPUP,
-    payload: { id, isShown, anchorPosition },
-  };
+export const updatePopup = (
+  id, isShown, anchorPosition = null, replaceId = null
+) => async (dispatch, getState) => {
+  dispatch({
+    type: UPDATE_POPUP, payload: { id, isShown, anchorPosition },
+  });
+  if (isShown && isFldStr(replaceId)) {
+    dispatch({
+      type: UPDATE_POPUP, payload: { id: replaceId, isShown: false },
+    });
+  }
 };
 
 export const updateSearchString = (searchString) => {

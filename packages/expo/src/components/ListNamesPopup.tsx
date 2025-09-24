@@ -125,10 +125,9 @@ const ListNamesPopup = () => {
 
   const onNewBtnClick = () => {
     if (didClick.current) return;
-    onCancelBtnClick();
 
     dispatch(updateSettingsViewId(SETTINGS_VIEW_LISTS, false));
-    dispatch(updateSettingsPopup(true));
+    dispatch(updateSettingsPopup(true, false, LIST_NAMES_POPUP));
     didClick.current = true;
   };
 

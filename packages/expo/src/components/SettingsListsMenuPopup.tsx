@@ -80,12 +80,13 @@ const SettingsListsMenuPopup = () => {
 
   const onMoveToBtnClick = () => {
     if (didClick.current) return;
-    onCancelBtnClick();
 
     dispatch(updateListNamesMode(
       LIST_NAMES_MODE_MOVE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP,
     ));
-    dispatch(updatePopup(LIST_NAMES_POPUP, true, anchorPosition));
+    dispatch(updatePopup(
+      LIST_NAMES_POPUP, true, anchorPosition, SETTINGS_LISTS_MENU_POPUP,
+    ));
     didClick.current = true;
   };
 
@@ -100,16 +101,16 @@ const SettingsListsMenuPopup = () => {
 
   const onAddLockBtnClick = () => {
     if (didClick.current) return;
-    onCancelBtnClick();
-    dispatch(showAddLockEditorPopup(LOCK_ACTION_ADD_LOCK_LIST));
+    dispatch(showAddLockEditorPopup(
+      LOCK_ACTION_ADD_LOCK_LIST, SETTINGS_LISTS_MENU_POPUP,
+    ));
     didClick.current = true;
   };
 
   const onRemoveLockBtnClick = () => {
     if (didClick.current) return;
-    onCancelBtnClick();
     dispatch(updateLockAction(LOCK_ACTION_REMOVE_LOCK_LIST));
-    dispatch(updatePopup(LOCK_EDITOR_POPUP, true, null));
+    dispatch(updatePopup(LOCK_EDITOR_POPUP, true, null, SETTINGS_LISTS_MENU_POPUP));
     didClick.current = true;
   };
 
