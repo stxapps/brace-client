@@ -98,6 +98,7 @@ export const init = () => async (dispatch, getState) => {
         payload: {
           visualWidth: window.visualViewport.width,
           visualHeight: window.visualViewport.height,
+          visualScale: window.visualViewport.scale,
           insetTop: insets.top,
           insetRight: insets.right,
           insetBottom: insets.bottom,

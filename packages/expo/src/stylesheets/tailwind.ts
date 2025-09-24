@@ -1,4 +1,6 @@
-import { WHT_MODE, BLK_MODE } from '../types/const';
+import {
+  WHT_MODE, BLK_MODE, SM_WIDTH, MD_WIDTH, LG_WIDTH, XL_WIDTH,
+} from '../types/const';
 import { isNumber, isString } from '../utils';
 
 import tailwindStyles from './tailwind.json';
@@ -95,7 +97,7 @@ const filterByTheme = (classes, themeMode) => {
   return selectedClasses;
 };
 
-const SCREEN_VALUES = [0, 640, 768, 1024, 1280];
+const SCREEN_VALUES = [0, SM_WIDTH, MD_WIDTH, LG_WIDTH, XL_WIDTH];
 const SCREEN_PREFIXES = ['', 'sm:', 'md:', 'lg:', 'xl:'];
 
 const filterByScreen = (classes, windowWidth) => {

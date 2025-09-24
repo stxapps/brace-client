@@ -128,19 +128,8 @@ const SettingsPopup = () => {
   };
 
   useEffect(() => {
-    if (isShown) window.document.body.style.overflowY = 'hidden';
-    else window.document.body.style.overflowY = '';
-  }, [isShown]);
-
-  useEffect(() => {
     if (overflowPanel.current) overflowPanel.current.scrollTo(0, 0);
   }, [viewId]);
-
-  useEffect(() => {
-    return () => {
-      window.document.body.style.overflowY = '';
-    };
-  }, []);
 
   if (!isShown) return null;
 

@@ -13,6 +13,7 @@ const initialState = {
   height: size.height,
   visualWidth: size.visualWidth,
   visualHeight: size.visualHeight,
+  visualScale: size.visualScale,
   insetTop: insets.top,
   insetRight: insets.right,
   insetBottom: insets.bottom,

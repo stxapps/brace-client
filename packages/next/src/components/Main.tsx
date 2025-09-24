@@ -12,6 +12,7 @@ import {
 
 import { withTailwind } from '.';
 
+import ScrollControl from './ScrollControl';
 import TopBarMain from './TopBarMain';
 import TopBarAddPopup from './TopBarAddPopup';
 import TopBarProfilePopup from './TopBarProfilePopup';
@@ -85,6 +86,7 @@ class Main extends React.PureComponent<any, any> {
     //   so if not rehydrated, show loading under Settings.
     return (
       <React.Fragment>
+        <ScrollControl />
         <TopBarMain rightPane={topBarRightPane} />
         {layoutType === LAYOUT_LIST ?
           <ListPanel columnWidth={columnWidth} /> :
