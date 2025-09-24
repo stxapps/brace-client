@@ -23,7 +23,7 @@
     "@redux-offline/redux-offline": "github:stxapps/redux-offline#028205cec27dcf1ae05e310fc7e45779ee908949",
     "@vonovak/react-native-theme-control": "^6.0.2",
     "@wewatch/lexorank": "^1.0.3",
-    "axios": "^1.8.2",
+    "axios": "^1.12.0",
     "jest-diff": "^29.7.0",
     "react": "18.3.1",
     "react-native": "0.75.4",
