@@ -717,7 +717,10 @@ export const negRem = (a) => {
 };
 
 export const toPx = (rem) => {
-  const fontSize = getComputedStyle(window.document.documentElement).fontSize;
+  let fontSize = '16px';
+  if (typeof window !== 'undefined' && isObject(window)) {
+    fontSize = getComputedStyle(window.document.documentElement).fontSize;
+  }
   return parseFloat(rem) * parseFloat(fontSize);
 };
 

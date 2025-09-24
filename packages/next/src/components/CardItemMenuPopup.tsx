@@ -154,7 +154,7 @@ class CardItemMenuPopup extends React.PureComponent<any, any> {
     } else if (text === MANAGE_PIN) {
       this.props.updateSelectingLinkId(id);
       this.props.updatePopup(
-        PIN_MENU_POPUP, true, anchorPosition, CARD_ITEM_MENU_POPUP
+        PIN_MENU_POPUP, true, anchorPosition, CARD_ITEM_MENU_POPUP,
       );
     } else if (text === ADD_TAGS || text === MANAGE_TAGS) {
       this.props.updateSelectingLinkId(id);

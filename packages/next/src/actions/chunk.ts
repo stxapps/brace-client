@@ -632,8 +632,6 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
         excludingIds: safLinkIds,
       });
       [metas, metasWithPcEc] = [_result.metas, _result.metasWithPcEc];
-      // https://github.com/swc-project/swc/issues/11084
-      //[bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
       bin.hasMore = _result.hasMore;
       bin.hasDisorder = _result.hasDisorder;
     } else {
@@ -656,8 +654,6 @@ export const fetchMore = (doForCompare = false) => async (dispatch, getState) =>
         pinFPaths, pendingPins, excludingIds: safLinkIds,
       });
       [metas, metasWithPcEc] = [_result.metas, _result.metasWithPcEc];
-      // https://github.com/swc-project/swc/issues/11084
-      //[bin.hasMore, bin.hasDisorder] = [_result.hasMore, _result.hasDisorder];
       bin.hasMore = _result.hasMore;
       bin.hasDisorder = _result.hasDisorder;
     }

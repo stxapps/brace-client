@@ -79,7 +79,7 @@ const SettingsListsMenuPopup = () => {
       LIST_NAMES_MODE_MOVE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP,
     ));
     dispatch(updatePopup(
-      LIST_NAMES_POPUP, true, anchorPosition, SETTINGS_LISTS_MENU_POPUP
+      LIST_NAMES_POPUP, true, anchorPosition, SETTINGS_LISTS_MENU_POPUP,
     ));
     didClick.current = true;
   };
