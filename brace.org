@@ -1037,7 +1037,6 @@ This and CI/CD are very important!
 - npm install -D @types/url-parse @types/file-saver
 - npm install -D @stylistic/eslint-plugin
 - npm i eslint-plugin-tailwindcss@beta -D
-* Migrate from CRA to Next
 ** Steps on AWS
 1.1 In AWS S3 -> Permissions -> CORS
     [

@@ -12,8 +12,7 @@ import {
 import { getCurrentLockListStatus } from '../selectors';
 import { addRem, toPx } from '../utils';
 
-import { useSafeAreaFrame, useTailwind } from '.';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
 const LockPanel = (props) => {
 

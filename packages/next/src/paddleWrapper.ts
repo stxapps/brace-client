@@ -55,8 +55,7 @@ const eventCallback = (data) => {
 };
 
 const initConnection = async () => {
-  // @ts-expect-error
-  api = window.Paddle;
+  api = (window as any).Paddle;
   if (!isObject(api)) {
     throw new Error('Invalid window.Paddle');
   }

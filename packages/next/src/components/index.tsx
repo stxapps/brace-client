@@ -8,7 +8,7 @@ import {
   TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD,
   MD_WIDTH, LG_WIDTH,
 } from '../types/const';
-import { toPx } from '../utils';
+import { isFldStr, toPx } from '../utils';
 import {
   getSafeAreaFrame, getSafeAreaInsets, getThemeMode, getTailwind,
 } from '../selectors';
@@ -66,14 +66,21 @@ export const useSafeAreaInsets = () => {
 export const useTailwind = () => {
   const { width: safeAreaWidth } = useSafeAreaFrame();
   const themeMode = useSelector(state => getThemeMode(state));
-  const tailwind = getTailwind(safeAreaWidth, themeMode);
+
+  const isUserSignedIn = useSelector(state => state.user.isUserSignedIn);
+  const href = useSelector(state => state.window.href);
+
+  // Make SSR and loading state have the same width to prevent rehydration error.
+  let twWidth = 9999;
+  if ([true, false].includes(isUserSignedIn) && isFldStr(href)) twWidth = safeAreaWidth;
+
+  const tailwind = getTailwind(twWidth, themeMode);
   return tailwind;
 };
 
 export const withTailwind = (Component) => {
   const hoc = React.forwardRef((props: any, ref) => {
-    const { safeAreaWidth, themeMode } = props;
-    const tailwind = getTailwind(safeAreaWidth, themeMode);
+    const tailwind = useTailwind();
     return <Component {...props} tailwind={tailwind} ref={ref} />;
   });
   hoc.displayName = 'withTailwindComponent';

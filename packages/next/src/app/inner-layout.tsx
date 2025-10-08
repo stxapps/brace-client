@@ -109,7 +109,7 @@ function SafeArea({ children }: { children: React.ReactNode }) {
   const tailwind = useTailwind();
 
   return (
-    <div className={tailwind('safe-area min-h-screen bg-white blk:bg-gray-900')}>
+    <div className={tailwind('safe-area min-h-dvh bg-white blk:bg-gray-900')}>
       {children}
     </div>
   );

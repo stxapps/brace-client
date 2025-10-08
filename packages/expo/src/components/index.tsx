@@ -191,8 +191,7 @@ export const useTailwind = () => {
 
 export const withTailwind = (Component) => {
   const hoc = React.forwardRef((props: any, ref) => {
-    const { safeAreaWidth, themeMode } = props;
-    const tailwind = getTailwind(safeAreaWidth, themeMode);
+    const tailwind = useTailwind();
     return <Component {...props} tailwind={tailwind} ref={ref} />;
   });
   hoc.displayName = 'withTailwindComponent';

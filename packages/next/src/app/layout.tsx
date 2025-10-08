@@ -47,11 +47,11 @@ export const metadata: Metadata = {
 export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${inter.variable}`}>
-      <body className="min-h-full antialiased">
+      <body className="antialiased">
         <InnerLayout>
           {children}
         </InnerLayout>
-        <Script id="ios-viewport-mod" strategy="beforeInteractive">{`
+        <Script id="ios-viewport-mod" strategy="afterInteractive">{`
           const isIPadIPhoneIPod = () => {
             const ua = navigator.userAgent;
             if (/iPad|iPhone|iPod/.test(ua)) {
