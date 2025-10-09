@@ -11,7 +11,8 @@ import { updateStgsAndInfo } from '../importWrapper';
 import {
   INIT, UPDATE_USER, UPDATE_HREF, UPDATE_WINDOW, UPDATE_STACKS_ACCESS,
   INCREASE_REDIRECT_TO_MAIN_COUNT, UPDATE_SEARCH_STRING, UPDATE_POPUP,
-  UPDATE_BULK_EDITING, REFRESH_FETCHED, ADD_LINKS, DELETE_LINKS, MOVE_LINKS_ADD_STEP,
+  UPDATE_BULK_EDITING, ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS,
+  REFRESH_FETCHED, ADD_LINKS, DELETE_LINKS, MOVE_LINKS_ADD_STEP,
   MOVE_LINKS_DELETE_STEP, TRY_UPDATE_SETTINGS, MERGE_SETTINGS, PIN_LINK, UNPIN_LINK,
   MOVE_PINNED_LINK_ADD_STEP, UPDATE_SYSTEM_THEME_MODE, UPDATE_IS_24H_FORMAT,
   UPDATE_CUSTOM_DATA, UPDATE_TAG_DATA_S_STEP, UPDATE_TAG_DATA_T_STEP,
@@ -28,7 +29,7 @@ import {
 import {
   isEqual, isObject, isFldStr, throttle, getUserUsername, getUserImageUrl,
   getWindowInsets, getEditingListNameEditors, getEditingTagNameEditors, randomString,
-  getPopupHistoryStateIndex,
+  getPopupHistoryStateIndex, reorderPopupHistoryStates,
 } from '../utils';
 import vars from '../vars';
 
@@ -46,8 +47,6 @@ export const init = () => async (dispatch, getState) => {
   if (_didInit) return;
   _didInit = true;
 
-  const store = { dispatch, getState };
-
   const isUserSignedIn = userSession.isUserSignedIn();
   let username = null, userImage = null, userHubUrl = null;
   if (isUserSignedIn) {
@@ -60,7 +59,7 @@ export const init = () => async (dispatch, getState) => {
   const darkMatches = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const is24HFormat = null;
 
-  store.dispatch({
+  dispatch({
     type: INIT,
     payload: {
       isUserSignedIn,
@@ -73,12 +72,12 @@ export const init = () => async (dispatch, getState) => {
   });
 
   window.addEventListener('popstate', function () {
-    popHistoryState(store);
+    onPopStateChange(dispatch, getState);
   });
 
   window.addEventListener('resize', throttle(() => {
     const insets = getWindowInsets();
-    store.dispatch({
+    dispatch({
       type: UPDATE_WINDOW,
       payload: {
         width: window.innerWidth,
@@ -93,7 +92,7 @@ export const init = () => async (dispatch, getState) => {
   if (isObject(window.visualViewport)) {
     window.visualViewport.addEventListener('resize', throttle(() => {
       const insets = getWindowInsets();
-      store.dispatch({
+      dispatch({
         type: UPDATE_WINDOW,
         payload: {
           visualWidth: window.visualViewport.width,
@@ -112,7 +111,7 @@ export const init = () => async (dispatch, getState) => {
     const isUserSignedIn = userSession.isUserSignedIn();
     if (!isUserSignedIn) return;
 
-    const { busy, online, outbox, retryScheduled } = store.getState().offline;
+    const { busy, online, outbox, retryScheduled } = getState().offline;
     if ((busy || (online && outbox.length > 0)) && !retryScheduled) {
       const found = outbox.some(action => {
         if (!isObject(action)) return false;
@@ -129,25 +128,25 @@ export const init = () => async (dispatch, getState) => {
       }
     }
 
-    if (!store.getState().display.isSettingsPopupShown) return;
+    if (!getState().display.isSettingsPopupShown) return;
 
-    const settings = store.getState().settings;
-    const snapshotSettings = store.getState().snapshot.settings;
+    const settings = getState().settings;
+    const snapshotSettings = getState().snapshot.settings;
     if (!isEqual(settings, snapshotSettings)) {
       e.preventDefault();
       return e.returnValue = 'It looks like your changes to the settings haven\'t been saved. Do you want to leave immediately and discard your changes?';
     }
 
-    const listNameEditors = store.getState().listNameEditors;
-    const listNameMap = store.getState().settings.listNameMap;
+    const listNameEditors = getState().listNameEditors;
+    const listNameMap = getState().settings.listNameMap;
     const editingLNEs = getEditingListNameEditors(listNameEditors, listNameMap);
     if (isObject(editingLNEs)) {
       e.preventDefault();
       return e.returnValue = 'It looks like your changes to the list names haven\'t been saved. Do you want to leave this site and discard your changes?';
     }
 
-    const tagNameEditors = store.getState().tagNameEditors;
-    const tagNameMap = store.getState().settings.tagNameMap;
+    const tagNameEditors = getState().tagNameEditors;
+    const tagNameMap = getState().settings.tagNameMap;
     const editingTNEs = getEditingTagNameEditors(tagNameEditors, tagNameMap);
     if (isObject(editingTNEs)) {
       e.preventDefault();
@@ -157,7 +156,7 @@ export const init = () => async (dispatch, getState) => {
 
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
     const systemThemeMode = e.matches ? BLK_MODE : WHT_MODE;
-    store.dispatch({ type: UPDATE_SYSTEM_THEME_MODE, payload: systemThemeMode });
+    dispatch({ type: UPDATE_SYSTEM_THEME_MODE, payload: systemThemeMode });
   });
 };
 
@@ -231,12 +230,6 @@ const getCanBckPopups = (getState) => {
     [TAG_EDITOR_POPUP]: {
       canFwd: false, isShown: state.display.isTagEditorPopupShown,
     },
-    [CONFIRM_DELETE_POPUP]: {
-      canFwd: false, isShown: state.display.isConfirmDeletePopupShown,
-    },
-    [CONFIRM_DISCARD_POPUP]: {
-      canFwd: false, isShown: state.display.isConfirmDiscardPopupShown,
-    },
     [SETTINGS_POPUP]: {
       canFwd: true, isShown: state.display.isSettingsPopupShown,
     },
@@ -248,6 +241,12 @@ const getCanBckPopups = (getState) => {
     },
     [TIME_PICK_POPUP]: {
       canFwd: false, isShown: state.display.isTimePickPopupShown,
+    },
+    [CONFIRM_DELETE_POPUP]: {
+      canFwd: false, isShown: state.display.isConfirmDeletePopupShown,
+    },
+    [CONFIRM_DISCARD_POPUP]: {
+      canFwd: false, isShown: state.display.isConfirmDiscardPopupShown,
     },
     [PAYWALL_POPUP]: {
       canFwd: false, isShown: state.display.isPaywallPopupShown,
@@ -275,22 +274,48 @@ const isPopupShownWthId = (canBckPopups, id) => {
   return false;
 };
 
-const popHistoryState = (store) => {
-  const canBckPopups = getCanBckPopups(store.getState);
-
+const onPopStateChange = (dispatch, getState) => {
   const chs = window.history.state;
   const idx = getPopupHistoryStateIndex(vars.popupHistory.states, chs);
 
-  const cPopupIds = vars.popupHistory.states.slice(idx + 1).map(s => s.id);
+  // Bulk edit
+  let isBulkEditing = false;
+  if (idx >= 0) {
+    for (let i = idx; i >= 0; i--) {
+      const phs = vars.popupHistory.states[i];
+      if (phs.type === UPDATE_BULK_EDITING) isBulkEditing = true;
+    }
+  }
+
+  const curIsBulkEditing = getState().display.isBulkEditing;
+
+  /* bulkEdit  curBulkEdit
+      false      false               do nothing
+      false      true                set false
+      true       false               set true
+      true       true                do nothing
+  */
+  if (
+    (!isBulkEditing && curIsBulkEditing) ||
+    (isBulkEditing && !curIsBulkEditing)
+  ) {
+    dispatch({ type: UPDATE_BULK_EDITING, payload: isBulkEditing });
+  }
+
+  // Popups
+  const canBckPopups = getCanBckPopups(getState);
+
+  const hss = vars.popupHistory.states.slice(idx + 1);
+  const cPopupIds = hss.filter(s => s.type === UPDATE_POPUP).map(s => s.id);
   const uPopupIds = [...new Set(cPopupIds)];
   for (const id of uPopupIds) {
     if (isPopupShownWthId(canBckPopups, id)) {
       if (id === SETTINGS_POPUP) {
         // Must keep align with updateSettingsPopup(false, false)
         //   and if forward, must keep align with updateSettingsPopup(true).
-        store.dispatch(updateStgsAndInfo());
+        dispatch(updateStgsAndInfo());
       }
-      store.dispatch({
+      dispatch({
         type: UPDATE_POPUP, payload: { id, isShown: false },
       });
 
@@ -302,7 +327,7 @@ const popHistoryState = (store) => {
       if (id === SEARCH_POPUP) {
         // Clear search string
         //   and need to defocus too to prevent keyboard appears on mobile
-        store.dispatch(updateSearchString(''));
+        dispatch(updateSearchString(''));
 
         if (window.document.activeElement instanceof HTMLInputElement) {
           window.document.activeElement.blur();
@@ -323,15 +348,17 @@ const popHistoryState = (store) => {
   */
   if (idx >= 0) { // Support forward by open the current one if can.
     const phs = vars.popupHistory.states[idx];
-    if (canPopupFwdBtn(canBckPopups, phs.id)) {
-      if (!isPopupShownWthId(canBckPopups, phs.id)) {
-        store.dispatch({
-          type: UPDATE_POPUP, payload: { id: phs.id, isShown: true },
-        });
-      }
-    } else {
-      if (!isPopupShownWthId(canBckPopups, phs.id)) {
-        window.history.back();
+    if (phs.type === UPDATE_POPUP) {
+      if (canPopupFwdBtn(canBckPopups, phs.id)) {
+        if (!isPopupShownWthId(canBckPopups, phs.id)) {
+          dispatch({
+            type: UPDATE_POPUP, payload: { id: phs.id, isShown: true },
+          });
+        }
+      } else {
+        if (!isPopupShownWthId(canBckPopups, phs.id)) {
+          window.history.back();
+        }
       }
     }
   }
@@ -422,19 +449,19 @@ const updatePopupInQueue = (
 
     /* isShown   currShown   replaceId
          true       true       null       do nothing
-         true       true       str        back
+         true       true       str        back (Paywall to already open SettingsPopup)
          true       false      null       history.push
          true       false      str        history.replace
          false      true       null       back
-         false      true       str        Impossible (back)
+         false      true       str        invalid (back)
          false      false      null       do nothing
-         false      false      str        Impossible (do nothing)
+         false      false      str        invalid (do nothing)
     */
+    const chs = window.history.state;
+    const idx = getPopupHistoryStateIndex(vars.popupHistory.states, chs);
+    const type = UPDATE_POPUP;
     if (isShown && !isPopupShownWthId(canBckPopups, id)) {
-      const phs = { phsId: `${Date.now()}-${randomString(4)}`, id };
-
-      const chs = window.history.state;
-      const idx = getPopupHistoryStateIndex(vars.popupHistory.states, chs);
+      const phs = { phsId: `${Date.now()}-${randomString(4)}`, type, id };
 
       if (isFldStr(replaceId)) {
         if (idx >= 0) {
@@ -447,7 +474,7 @@ const updatePopupInQueue = (
           console.log('In updatePopupInQueue, invalid replaceId:', replaceId);
           vars.popupHistory.states = [phs];
         }
-        window.history.replaceState(phs, '', window.location.href);
+        window.history.replaceState({ phsId: phs.phsId }, '', window.location.href);
       } else {
         if (idx >= 0) {
           vars.popupHistory.states = [
@@ -456,7 +483,7 @@ const updatePopupInQueue = (
         } else {
           vars.popupHistory.states = [phs];
         }
-        window.history.pushState(phs, '', window.location.href);
+        window.history.pushState({ phsId: phs.phsId }, '', window.location.href);
       }
 
       resolve();
@@ -466,6 +493,11 @@ const updatePopupInQueue = (
       (isShown && isPopupShownWthId(canBckPopups, id) && isFldStr(replaceId)) ||
       (!isShown && isPopupShownWthId(canBckPopups, id))
     ) {
+      const backId = !isShown ? id : replaceId;
+      vars.popupHistory.states = reorderPopupHistoryStates(
+        vars.popupHistory.states, idx, type, backId
+      );
+
       const onPopState = () => {
         window.removeEventListener('popstate', onPopState);
         resolve();
@@ -496,8 +528,100 @@ export const updateHref = (href) => {
   return { type: UPDATE_HREF, payload: href };
 };
 
-export const updateBulkEdit = (isBulkEditing) => {
-  return { type: UPDATE_BULK_EDITING, payload: isBulkEditing };
+const updateBulkEditInQueue = (
+  isBulkEditing, selectedLinkId, popupToReplace, dispatch, getState
+) => () => {
+  return new Promise<void>((resolve) => {
+    const curValue = getState().display.isBulkEditing;
+
+    dispatch({ type: UPDATE_BULK_EDITING, payload: isBulkEditing });
+    if (isBulkEditing && isFldStr(selectedLinkId)) {
+      dispatch(addSelectedLinkIds([selectedLinkId]));
+    }
+    if (isBulkEditing && isFldStr(popupToReplace)) {
+      dispatch({
+        type: UPDATE_POPUP, payload: { id: popupToReplace, isShown: false },
+      });
+    }
+
+    /* isBulkEditing   curValue   popupToReplace
+        true             true         null          do nothing
+        true             true         str           back
+        true             false        null          history.push
+        true             false        str           history.replace
+        false            true         null          back
+        false            true         str           not support
+        false            false        null          do nothing
+        false            false        str           not support
+    */
+    const chs = window.history.state;
+    const idx = getPopupHistoryStateIndex(vars.popupHistory.states, chs);
+    const type = UPDATE_BULK_EDITING, id = 'true';
+    if (isBulkEditing && !curValue) {
+      const phs = { phsId: `${Date.now()}-${randomString(4)}`, type, id };
+
+      if (isFldStr(popupToReplace)) {
+        if (idx >= 0) {
+          vars.popupHistory.states = [
+            ...vars.popupHistory.states.slice(0, idx),
+            phs,
+            ...vars.popupHistory.states.slice(idx + 1)
+          ];
+        } else {
+          console.log('In updateBulkEditInQueue, invalid replaceId:', popupToReplace);
+          vars.popupHistory.states = [phs];
+        }
+        window.history.replaceState({ phsId: phs.phsId }, '', window.location.href);
+      } else {
+        if (idx >= 0) {
+          vars.popupHistory.states = [
+            ...vars.popupHistory.states.slice(0, idx + 1), phs,
+          ];
+        } else {
+          vars.popupHistory.states = [phs];
+        }
+        window.history.pushState({ phsId: phs.phsId }, '', window.location.href);
+      }
+
+      resolve();
+      return;
+    }
+    if (
+      (isBulkEditing && curValue && isFldStr(popupToReplace)) ||
+      (!isBulkEditing && curValue)
+    ) {
+      vars.popupHistory.states = reorderPopupHistoryStates(
+        vars.popupHistory.states, idx, type, id
+      );
+
+      const onPopState = () => {
+        window.removeEventListener('popstate', onPopState);
+        resolve();
+      };
+      window.addEventListener('popstate', onPopState);
+      window.history.back();
+      return;
+    }
+
+    resolve();
+  });
+};
+
+export const updateBulkEdit = (
+  isBulkEditing, selectedLinkId = null, popupToReplace = null,
+) => async (dispatch, getState) => {
+  const task = updateBulkEditInQueue(
+    isBulkEditing, selectedLinkId, popupToReplace, dispatch, getState
+  );
+  navQueueAdd(task);
+};
+
+export const addSelectedLinkIds = (ids) => {
+  return { type: ADD_SELECTED_LINK_IDS, payload: ids };
+};
+
+export const deleteSelectedLinkIds = (ids) => {
+  return { type: DELETE_SELECTED_LINK_IDS, payload: ids };
 };
 
 export const refreshFetched = (doShowLoading = false, doScrollTop = false) => async (

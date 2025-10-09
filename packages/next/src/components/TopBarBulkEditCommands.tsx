@@ -69,10 +69,7 @@ class TopBarBulkEditCommands extends React.Component<any, any> {
     if (this.checkNoLinkIdSelected() || this.didClick) return;
 
     const { selectedLinkIds } = this.props;
-
     this.props.moveLinks(ARCHIVE, selectedLinkIds);
-    this.props.updateBulkEdit(false);
-
     this.didClick = true;
   };
 
@@ -80,10 +77,7 @@ class TopBarBulkEditCommands extends React.Component<any, any> {
     if (this.checkNoLinkIdSelected() || this.didClick) return;
 
     const { selectedLinkIds } = this.props;
-
     this.props.moveLinks(TRASH, selectedLinkIds);
-    this.props.updateBulkEdit(false);
-
     this.didClick = true;
   };
 
@@ -91,10 +85,7 @@ class TopBarBulkEditCommands extends React.Component<any, any> {
     if (this.checkNoLinkIdSelected() || this.didClick) return;
 
     const { selectedLinkIds } = this.props;
-
     this.props.moveLinks(MY_LIST, selectedLinkIds);
-    this.props.updateBulkEdit(false);
-
     this.didClick = true;
   };
 

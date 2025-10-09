@@ -3,9 +3,7 @@ import GracefulImage from 'react-graceful-image';
 
 import { useSelector, useDispatch } from '../store';
 import { updatePopup, updateBulkEdit } from '../actions';
-import {
-  updateSelectingLinkId, addSelectedLinkIds, moveLinks, updateQueryString,
-} from '../actions/chunk';
+import { updateSelectingLinkId, moveLinks, updateQueryString } from '../actions/chunk';
 import {
   CARD_ITEM_MENU_POPUP, COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING,
   UPDATING, EXTRD_UPDATING, LG_WIDTH, REMOVE, RESTORE, PINNED, TAGGED,
@@ -37,8 +35,7 @@ const ListItemContent = (props) => {
 
   const onClickPress = (event) => {
     clickPressTimer.current = setTimeout(() => {
-      dispatch(updateBulkEdit(true));
-      dispatch(addSelectedLinkIds([link.id]));
+      dispatch(updateBulkEdit(true, link.id));
     }, 500);
   };
 
@@ -48,8 +45,7 @@ const ListItemContent = (props) => {
 
   const onTouchPress = (event) => {
     touchPressTimer.current = setTimeout(() => {
-      dispatch(updateBulkEdit(true));
-      dispatch(addSelectedLinkIds([link.id]));
+      dispatch(updateBulkEdit(true, link.id));
     }, 500);
   };
 

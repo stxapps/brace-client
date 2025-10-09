@@ -4,9 +4,7 @@ import { connect } from 'react-redux';
 import GracefulImage from 'react-graceful-image';
 
 import { updatePopup, updateBulkEdit } from '../actions';
-import {
-  updateSelectingLinkId, addSelectedLinkIds, updateQueryString,
-} from '../actions/chunk';
+import { updateSelectingLinkId, updateQueryString } from '../actions/chunk';
 import { CARD_ITEM_MENU_POPUP, COLOR, PATTERN, IMAGE } from '../types/const';
 import {
   makeGetCustomImage, getSafeAreaWidth, getThemeMode, makeGetTnAndDns,
@@ -59,8 +57,7 @@ class CardItemContent extends React.Component<any, any> {
 
   onClickPress = (event) => {
     this.clickPressTimer = setTimeout(() => {
-      this.props.updateBulkEdit(true);
-      this.props.addSelectedLinkIds([this.props.link.id]);
+      this.props.updateBulkEdit(true, this.props.link.id);
     }, 500);
   };
 
@@ -70,8 +67,7 @@ class CardItemContent extends React.Component<any, any> {
 
   onTouchPress = (event) => {
     this.touchPressTimer = setTimeout(() => {
-      this.props.updateBulkEdit(true);
-      this.props.addSelectedLinkIds([this.props.link.id]);
+      this.props.updateBulkEdit(true, this.props.link.id);
     }, 500);
   };
 
@@ -303,8 +299,7 @@ const makeMapStateToProps = () => {
 };
 
 const mapDispatchToProps = {
-  updatePopup, updateSelectingLinkId, updateBulkEdit, addSelectedLinkIds,
-  updateQueryString,
+  updatePopup, updateSelectingLinkId, updateBulkEdit, updateQueryString,
 };
 
 export default connect(makeMapStateToProps, mapDispatchToProps)(withTailwind(CardItemContent));

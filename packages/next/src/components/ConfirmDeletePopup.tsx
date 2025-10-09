@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from 'motion/react';
 
-import { updatePopup, updateBulkEdit } from '../actions';
+import { updatePopup } from '../actions';
 import { deleteLinks, deleteListNames, deleteTagNames } from '../actions/chunk';
 import {
   CARD_ITEM_MENU_POPUP, CONFIRM_DELETE_POPUP, DELETE_ACTION_LINK_COMMANDS,
@@ -54,7 +54,6 @@ class ConfirmDeletePopup extends React.Component<any, any> {
     if (deleteAction === DELETE_ACTION_LINK_COMMANDS) {
       this.props.deleteLinks(selectedLinkIds);
       this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
-      this.props.updateBulkEdit(false);
     } else if (deleteAction === DELETE_ACTION_LINK_ITEM_MENU) {
       this.props.deleteLinks([selectingLinkId]);
       this.props.updatePopup(CONFIRM_DELETE_POPUP, false);
@@ -150,7 +149,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
-  updatePopup, deleteLinks, updateBulkEdit, deleteListNames, deleteTagNames,
+  updatePopup, deleteLinks, deleteListNames, deleteTagNames,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(ConfirmDeletePopup));

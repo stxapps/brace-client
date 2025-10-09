@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
 import { useSelector, useDispatch } from '../store';
-import { updatePopup, updateBulkEdit } from '../actions';
+import { updatePopup } from '../actions';
 import { updateTagEditor, addTagEditorTagName, updateTagData } from '../actions/chunk';
 import {
   TAG_EDITOR_POPUP, TAGGED, ADD_TAGS, MANAGE_TAGS, NOT_SUPPORTED,
@@ -29,11 +29,9 @@ const TagEditorPopup = () => {
 
   const onSaveBtnClick = () => {
     if (didClick.current) return;
-    didClick.current = true;
-
     dispatch(updatePopup(TAG_EDITOR_POPUP, false));
     dispatch(updateTagData(tagEditor.ids, tagEditor.values));
-    dispatch(updateBulkEdit(false));
+    didClick.current = true;
   };
 
   const onHintSelect = (hint) => {
@@ -128,7 +126,7 @@ const TagEditorPopup = () => {
               </div>
             </motion.div>
           </div>
-        </div >
+        </div>
       </AnimatePresence>
     );
   }
@@ -224,7 +222,7 @@ const TagEditorPopup = () => {
             </div>
           </motion.div>
         </div>
-      </div >
+      </div>
     </AnimatePresence>
   );
 };

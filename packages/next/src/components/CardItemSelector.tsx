@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { motion, AnimatePresence } from 'motion/react';
 
-import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions/chunk';
+import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
 import {
   SD_HUB_URL, MAX_SELECTED_LINK_IDS, SD_MAX_SELECTED_LINK_IDS,
 } from '../types/const';

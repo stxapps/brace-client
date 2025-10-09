@@ -134,7 +134,6 @@ const ListNamesPopup = () => {
       if (derivedSelectedLinkIds.length > 0) ids = derivedSelectedLinkIds;
 
       dispatch(moveLinks(selectedListName, ids));
-      dispatch(updateBulkEdit(false));
     } else if (derivedMode === MODE_CHANGE_LIST_NAME) {
       dispatch(changeListName(selectedListName));
     } else {
@@ -163,7 +162,6 @@ const ListNamesPopup = () => {
       } else {
         console.log('In ListNamesPopup.onMoveHereBtnClick, invalid currentListName');
       }
-      dispatch(updateBulkEdit(false));
     } else {
       console.log('In ListNamesPopup.onMoveHereBtnClick, invalid mode:', derivedMode);
     }

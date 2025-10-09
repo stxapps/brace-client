@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
 import { useSelector, useDispatch } from '../store';
-import { updatePopup, updateBulkEdit } from '../actions';
+import { updatePopup } from '../actions';
 import {
-  updateListNamesMode, pinLinks, unpinLinks, updateTagEditorPopup,
+  updateListNamesMode, bulkPinLinks, bulkUnpinLinks, updateTagEditorPopup,
 } from '../actions/chunk';
 import {
   BULK_EDIT_MENU_POPUP, LIST_NAMES_POPUP, BULK_EDIT_MENU_ANIM_TYPE_BMODAL, MOVE_TO, PIN,
@@ -55,12 +55,10 @@ const BulkEditMenuPopup = () => {
         LIST_NAMES_POPUP, true, anchorPosition, BULK_EDIT_MENU_POPUP,
       ));
     } else if (text === PIN) {
-      dispatch(pinLinks(selectedLinkIds, BULK_EDIT_MENU_POPUP));
-      dispatch(updateBulkEdit(false));
+      dispatch(bulkPinLinks(selectedLinkIds, BULK_EDIT_MENU_POPUP));
     } else if (text === UNPIN) {
       onCancelBtnClick();
-      dispatch(unpinLinks(selectedLinkIds));
-      dispatch(updateBulkEdit(false));
+      dispatch(bulkUnpinLinks(selectedLinkIds));
     } else if (text === MANAGE_TAGS) {
       dispatch(updateTagEditorPopup(true, true, BULK_EDIT_MENU_POPUP));
     } else {
