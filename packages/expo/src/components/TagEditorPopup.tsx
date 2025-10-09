@@ -6,7 +6,7 @@ import {
 import Svg, { Path } from 'react-native-svg';
 
 import { useSelector, useDispatch } from '../store';
-import { updatePopup, updateBulkEdit } from '../actions';
+import { updatePopup } from '../actions';
 import { updateTagEditor, addTagEditorTagName, updateTagData } from '../actions/chunk';
 import {
   TAG_EDITOR_POPUP, TAGGED, ADD_TAGS, MANAGE_TAGS, BLK_MODE, SM_WIDTH, LG_WIDTH,
@@ -41,11 +41,9 @@ const TagEditorPopup = () => {
 
   const onSaveBtnClick = () => {
     if (didClick.current) return;
-    didClick.current = true;
-
     dispatch(updatePopup(TAG_EDITOR_POPUP, false));
     dispatch(updateTagData(tagEditor.ids, tagEditor.values));
-    dispatch(updateBulkEdit(false));
+    didClick.current = true;
   };
 
   const onHintSelect = (hint) => {

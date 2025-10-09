@@ -9,8 +9,9 @@ import cacheApi from '../apis/localCache';
 import fileApi from '../apis/localFile';
 import {
   INIT, UPDATE_USER, UPDATE_HREF, UPDATE_STACKS_ACCESS, UPDATE_SEARCH_STRING,
-  UPDATE_POPUP, UPDATE_BULK_EDITING, REFRESH_FETCHED, UPDATE_SYSTEM_THEME_MODE,
-  UPDATE_IS_24H_FORMAT, INCREASE_UPDATE_STATUS_BAR_STYLE_COUNT, RESET_STATE,
+  UPDATE_POPUP, UPDATE_BULK_EDITING, ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS,
+  REFRESH_FETCHED, UPDATE_SYSTEM_THEME_MODE, UPDATE_IS_24H_FORMAT,
+  INCREASE_UPDATE_STATUS_BAR_STYLE_COUNT, RESET_STATE,
 } from '../types/actionTypes';
 import {
   DOMAIN_NAME, APP_URL_SCHEME, BLOCKSTACK_AUTH, SIGN_UP_POPUP, SIGN_IN_POPUP,
@@ -27,8 +28,6 @@ let _didInit;
 export const init = () => async (dispatch, getState) => {
   if (_didInit) return;
   _didInit = true;
-
-  const store = { dispatch, getState };
 
   const hasSession = await userSession.hasSession();
   if (!hasSession) {
@@ -53,7 +52,7 @@ export const init = () => async (dispatch, getState) => {
   const darkMatches = Appearance.getColorScheme() === 'dark';
   const is24HFormat = await is24HourFormat();
 
-  store.dispatch({
+  dispatch({
     type: INIT,
     payload: {
       isUserSignedIn,
@@ -66,22 +65,22 @@ export const init = () => async (dispatch, getState) => {
   });
 
   Keyboard.addListener('keyboardWillShow', () => {
-    store.dispatch(increaseUpdateStatusBarStyleCount());
+    dispatch(increaseUpdateStatusBarStyleCount());
   });
   Keyboard.addListener('keyboardDidShow', () => {
-    store.dispatch(increaseUpdateStatusBarStyleCount());
+    dispatch(increaseUpdateStatusBarStyleCount());
   });
   Keyboard.addListener('keyboardDidHide', () => {
-    store.dispatch(increaseUpdateStatusBarStyleCount());
+    dispatch(increaseUpdateStatusBarStyleCount());
   });
 
   Appearance.addChangeListener((e) => {
     const systemThemeMode = e.colorScheme === 'dark' ? BLK_MODE : WHT_MODE;
-    store.dispatch({ type: UPDATE_SYSTEM_THEME_MODE, payload: systemThemeMode });
+    dispatch({ type: UPDATE_SYSTEM_THEME_MODE, payload: systemThemeMode });
   });
 
   AppState.addEventListener('change', (nextAppState) => {
-    if (nextAppState === 'active') store.dispatch(increaseUpdateStatusBarStyleCount());
+    if (nextAppState === 'active') dispatch(increaseUpdateStatusBarStyleCount());
   });
 };
 
@@ -195,8 +194,26 @@ export const updateHref = (href) => {
   return { type: UPDATE_HREF, payload: href };
 };
 
-export const updateBulkEdit = (isBulkEditing) => {
-  return { type: UPDATE_BULK_EDITING, payload: isBulkEditing };
+export const updateBulkEdit = (
+  isBulkEditing, selectedLinkId = null, popupToReplace = null,
+) => async (dispatch, getState) => {
+  dispatch({ type: UPDATE_BULK_EDITING, payload: isBulkEditing });
+  if (isBulkEditing && isFldStr(selectedLinkId)) {
+    dispatch(addSelectedLinkIds([selectedLinkId]));
+  }
+  if (isBulkEditing && isFldStr(popupToReplace)) {
+    dispatch({
+      type: UPDATE_POPUP, payload: { id: popupToReplace, isShown: false },
+    });
+  }
+};
+
+export const addSelectedLinkIds = (ids) => {
+  return { type: ADD_SELECTED_LINK_IDS, payload: ids };
+};
+
+export const deleteSelectedLinkIds = (ids) => {
+  return { type: DELETE_SELECTED_LINK_IDS, payload: ids };
 };
 
 export const refreshFetched = (doShowLoading = false, doScrollTop = false) => async (

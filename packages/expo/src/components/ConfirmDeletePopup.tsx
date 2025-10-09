@@ -5,7 +5,7 @@ import {
 import Svg, { Path } from 'react-native-svg';
 
 import { useSelector, useDispatch } from '../store';
-import { updatePopup, updateBulkEdit } from '../actions';
+import { updatePopup } from '../actions';
 import { deleteLinks, deleteListNames, deleteTagNames } from '../actions/chunk';
 import {
   CARD_ITEM_MENU_POPUP, CONFIRM_DELETE_POPUP, DELETE_ACTION_LINK_COMMANDS,
@@ -46,7 +46,6 @@ const ConfirmDeletePopup = () => {
     if (deleteAction === DELETE_ACTION_LINK_COMMANDS) {
       dispatch(deleteLinks(selectedLinkIds));
       dispatch(updatePopup(CONFIRM_DELETE_POPUP, false));
-      dispatch(updateBulkEdit(false));
     } else if (deleteAction === DELETE_ACTION_LINK_ITEM_MENU) {
       dispatch(deleteLinks([selectingLinkId]));
       dispatch(updatePopup(CONFIRM_DELETE_POPUP, false));

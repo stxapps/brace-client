@@ -4,9 +4,7 @@ import Svg, { Path } from 'react-native-svg';
 
 import { useSelector, useDispatch } from '../store';
 import { updatePopup, updateBulkEdit } from '../actions';
-import {
-  addSelectedLinkIds, moveLinks, updateQueryString, updateSelectingLinkId,
-} from '../actions/chunk';
+import { moveLinks, updateQueryString, updateSelectingLinkId } from '../actions/chunk';
 import {
   COLOR, PATTERN, IMAGE, MY_LIST, ARCHIVE, TRASH, ADDING, MOVING, UPDATING,
   EXTRD_UPDATING, LG_WIDTH, PINNED, TAGGED, CARD_ITEM_MENU_POPUP,
@@ -39,8 +37,7 @@ const ListItemContent = (props) => {
   const tailwind = useTailwind();
 
   const onLongPress = () => {
-    dispatch(updateBulkEdit(true));
-    dispatch(addSelectedLinkIds([link.id]));
+    dispatch(updateBulkEdit(true, link.id));
   };
 
   const onArchiveBtnClick = () => {

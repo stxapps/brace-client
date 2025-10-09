@@ -3,10 +3,10 @@ import { View, Text, TouchableOpacity, Animated } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { useSelector, useDispatch } from '../store';
+import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions';
 import {
   SD_HUB_URL, MAX_SELECTED_LINK_IDS, SD_MAX_SELECTED_LINK_IDS,
 } from '../types/const';
-import { addSelectedLinkIds, deleteSelectedLinkIds } from '../actions/chunk';
 import { makeIsLinkIdSelected, getSelectedLinkIdsLength } from '../selectors';
 import { popupFMV } from '../types/animConfigs';
 

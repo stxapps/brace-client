@@ -5,9 +5,7 @@ import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
 import { updatePopup, updateBulkEdit } from '../actions';
-import {
-  addSelectedLinkIds, updateQueryString, updateSelectingLinkId,
-} from '../actions/chunk';
+import { updateQueryString, updateSelectingLinkId } from '../actions/chunk';
 import { COLOR, PATTERN, IMAGE, CARD_ITEM_MENU_POPUP } from '../types/const';
 import { makeGetCustomImage, getThemeMode, makeGetTnAndDns } from '../selectors';
 import {
@@ -55,8 +53,7 @@ class CardItemContent extends React.Component<any, any> {
   }
 
   onLongPress = () => {
-    this.props.updateBulkEdit(true);
-    this.props.addSelectedLinkIds([this.props.link.id]);
+    this.props.updateBulkEdit(true, this.props.link.id);
   };
 
   onMenuBtnClick = () => {
@@ -263,8 +260,7 @@ const makeMapStateToProps = () => {
 };
 
 const mapDispatchToProps = {
-  updatePopup, updateBulkEdit, addSelectedLinkIds, updateQueryString,
-  updateSelectingLinkId,
+  updatePopup, updateSelectingLinkId, updateBulkEdit, updateQueryString,
 };
 
 export default connect(makeMapStateToProps, mapDispatchToProps)(withTailwind(CardItemContent));

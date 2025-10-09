@@ -4,9 +4,9 @@ import {
 } from 'react-native';
 
 import { useSelector, useDispatch } from '../store';
-import { updatePopup, updateBulkEdit } from '../actions';
+import { updatePopup } from '../actions';
 import {
-  updateListNamesMode, pinLinks, unpinLinks, updateTagEditorPopup,
+  updateListNamesMode, bulkPinLinks, bulkUnpinLinks, updateTagEditorPopup,
 } from '../actions/chunk';
 import {
   BULK_EDIT_MENU_POPUP, LIST_NAMES_POPUP, BULK_EDIT_MENU_ANIM_TYPE_BMODAL, MOVE_TO, PIN,
@@ -51,21 +51,21 @@ const BulkEditMenuPopup = () => {
   const onMenuPopupClick = (text) => {
     if (!text || didClick.current) return;
 
-    onCancelBtnClick();
     if (text === MOVE_TO) {
       let lnAnimType = LIST_NAMES_ANIM_TYPE_POPUP;
       if (isAnimTypeB) lnAnimType = LIST_NAMES_ANIM_TYPE_BMODAL;
 
       dispatch(updateListNamesMode(LIST_NAMES_MODE_MOVE_LINKS, lnAnimType));
-      dispatch(updatePopup(LIST_NAMES_POPUP, true, anchorPosition));
+      dispatch(updatePopup(
+        LIST_NAMES_POPUP, true, anchorPosition, BULK_EDIT_MENU_POPUP,
+      ));
     } else if (text === PIN) {
-      dispatch(pinLinks(selectedLinkIds));
-      dispatch(updateBulkEdit(false));
+      dispatch(bulkPinLinks(selectedLinkIds, BULK_EDIT_MENU_POPUP));
     } else if (text === UNPIN) {
-      dispatch(unpinLinks(selectedLinkIds));
-      dispatch(updateBulkEdit(false));
+      onCancelBtnClick();
+      dispatch(bulkUnpinLinks(selectedLinkIds));
     } else if (text === MANAGE_TAGS) {
-      dispatch(updateTagEditorPopup(true, true));
+      dispatch(updateTagEditorPopup(true, true, BULK_EDIT_MENU_POPUP));
     } else {
       console.log(`In BulkEditMenuPopup, invalid text: ${text}`);
     }

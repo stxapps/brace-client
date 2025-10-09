@@ -6,18 +6,17 @@ import fileApi from '../apis/localFile';
 import ecApi from '../apis/encryption';
 import {
   UPDATE_LIST_NAME, UPDATE_QUERY_STRING, UPDATE_LINK_EDITOR, UPDATE_STATUS,
-  ADD_SELECTED_LINK_IDS, DELETE_SELECTED_LINK_IDS, UPDATE_SELECTING_LINK_ID, FETCH,
-  FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED, UPDATE_FETCHED, FETCH_MORE,
-  FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK, CACHE_FETCHED_MORE, UPDATE_FETCHED_MORE,
-  ADD_FETCHING_INFO, DELETE_FETCHING_INFO, SET_SHOWING_LINK_IDS, ADD_LINKS,
-  ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK, DELETE_LINKS, DELETE_LINKS_COMMIT,
-  DELETE_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP, MOVE_LINKS_ADD_STEP_COMMIT,
-  MOVE_LINKS_ADD_STEP_ROLLBACK, CANCEL_DIED_LINKS, DELETE_OLD_LINKS_IN_TRASH,
-  DELETE_OLD_LINKS_IN_TRASH_COMMIT, DELETE_OLD_LINKS_IN_TRASH_ROLLBACK,
-  EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT, EXTRACT_CONTENTS_ROLLBACK,
-  UPDATE_EXTRACTED_CONTENTS, UPDATE_LIST_NAME_EDITORS, ADD_LIST_NAMES,
-  UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME, DELETE_LIST_NAMES,
-  UPDATE_SELECTING_LIST_NAME, UPDATE_DO_EXTRACT_CONTENTS,
+  UPDATE_SELECTING_LINK_ID, FETCH, FETCH_COMMIT, FETCH_ROLLBACK, CACHE_FETCHED,
+  UPDATE_FETCHED, FETCH_MORE, FETCH_MORE_COMMIT, FETCH_MORE_ROLLBACK,
+  CACHE_FETCHED_MORE, UPDATE_FETCHED_MORE, ADD_FETCHING_INFO, DELETE_FETCHING_INFO,
+  SET_SHOWING_LINK_IDS, ADD_LINKS, ADD_LINKS_COMMIT, ADD_LINKS_ROLLBACK, DELETE_LINKS,
+  DELETE_LINKS_COMMIT, DELETE_LINKS_ROLLBACK, MOVE_LINKS_ADD_STEP,
+  MOVE_LINKS_ADD_STEP_COMMIT, MOVE_LINKS_ADD_STEP_ROLLBACK, CANCEL_DIED_LINKS,
+  DELETE_OLD_LINKS_IN_TRASH, DELETE_OLD_LINKS_IN_TRASH_COMMIT,
+  DELETE_OLD_LINKS_IN_TRASH_ROLLBACK, EXTRACT_CONTENTS, EXTRACT_CONTENTS_COMMIT,
+  EXTRACT_CONTENTS_ROLLBACK, UPDATE_EXTRACTED_CONTENTS, UPDATE_LIST_NAME_EDITORS,
+  ADD_LIST_NAMES, UPDATE_LIST_NAMES, MOVE_LIST_NAME, MOVE_TO_LIST_NAME,
+  DELETE_LIST_NAMES, UPDATE_SELECTING_LIST_NAME, UPDATE_DO_EXTRACT_CONTENTS,
   UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH, UPDATE_DO_DESCENDING_ORDER, TRY_UPDATE_SETTINGS,
   TRY_UPDATE_SETTINGS_COMMIT, TRY_UPDATE_SETTINGS_ROLLBACK, UPDATE_SETTINGS,
   TRY_UPDATE_INFO, TRY_UPDATE_INFO_COMMIT, TRY_UPDATE_INFO_ROLLBACK,
@@ -71,7 +70,7 @@ import {
 import { initialSettingsState, initialTagEditorState } from '../types/initialStates';
 import vars from '../vars';
 
-import { isPopupShown, updatePopup } from '.';
+import { isPopupShown, updatePopup, updateBulkEdit } from '.';
 import { checkPurchases } from './iap';
 
 export const updateHubAddr = () => async (dispatch, getState) => {
@@ -108,14 +107,6 @@ export const updateLinkEditor = (values) => {
 
 export const updateStatus = (status) => {
   return { type: UPDATE_STATUS, payload: status };
-};
-
-export const addSelectedLinkIds = (ids) => {
-  return { type: ADD_SELECTED_LINK_IDS, payload: ids };
-};
-
-export const deleteSelectedLinkIds = (ids) => {
-  return { type: DELETE_SELECTED_LINK_IDS, payload: ids };
 };
 
 export const updateSelectingLinkId = (id) => {
@@ -1068,6 +1059,9 @@ export const addLink = (url, listName, doExtractContents) => async (
 };
 
 export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
+  const { isBulkEditing } = getState().display;
+  if (isBulkEditing) dispatch(updateBulkEdit(false));
+
   if (ids.length === 0) return;
 
   const links = getState().links;
@@ -1148,6 +1142,9 @@ export const cleanUpSslts = () => async (dispatch, getState) => {
 };
 
 export const deleteLinks = (dIds) => async (dispatch, getState) => {
+  const { isBulkEditing } = getState().display;
+  if (isBulkEditing) dispatch(updateBulkEdit(false));
+
   const links = getState().links;
   const pendingSslts = getState().pendingSslts;
 
@@ -2274,6 +2271,22 @@ export const cleanUpPins = () => async (dispatch, getState) => {
   }
 };
 
+// Need to separate bulk edit here, not in the actions like moveLinks,
+//   because unpinLinks can be called in reducers and might intervene the isBulkEditing.
+export const bulkPinLinks = (ids, popupToReplace) => async (dispatch, getState) => {
+  const isBulkEditing = getState().display.isBulkEditing;
+  if (isBulkEditing) dispatch(updateBulkEdit(false));
+
+  await pinLinks(ids, popupToReplace)(dispatch, getState);
+};
+
+export const bulkUnpinLinks = (ids) => async (dispatch, getState) => {
+  const isBulkEditing = getState().display.isBulkEditing;
+  if (isBulkEditing) dispatch(updateBulkEdit(false));
+
+  await unpinLinks(ids)(dispatch, getState);
+};
+
 export const updateDoUseLocalTheme = (doUse) => {
   return { type: UPDATE_DO_USE_LOCAL_THEME, payload: doUse };
 };
@@ -2707,7 +2720,10 @@ export const updateTagEditorPopup = (
     }
 
     const payload = _initTagEditorState(getState);
-    if (payload.mode === INVALID) return;
+    if (payload.mode === INVALID) {
+      if (isFldStr(popupToReplace)) dispatch(updatePopup(popupToReplace, false));
+      return;
+    }
 
     dispatch({ type: UPDATE_TAG_EDITOR, payload });
   }
@@ -2766,6 +2782,9 @@ export const addTagEditorTagName = (values, hints, displayName, color) => async 
 };
 
 export const updateTagData = (ids, values) => async (dispatch, getState) => {
+  const { isBulkEditing } = getState().display;
+  if (isBulkEditing) dispatch(updateBulkEdit(false));
+
   if (!Array.isArray(ids) || ids.length === 0) {
     console.log('In updateTagData, invalid ids: ', ids);
     return;

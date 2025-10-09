@@ -6,7 +6,7 @@ import {
 import Svg, { Path } from 'react-native-svg';
 
 import { useSelector, useDispatch } from '../store';
-import { updatePopup, updateBulkEdit } from '../actions';
+import { updatePopup } from '../actions';
 import {
   updateQueryString, changeListName, moveLinks, moveToListName, updateListNamesMode,
   updateSettingsPopup, updateSettingsViewId,
@@ -141,7 +141,6 @@ const ListNamesPopup = () => {
       if (derivedSelectedLinkIds.length > 0) ids = derivedSelectedLinkIds;
 
       dispatch(moveLinks(selectedListName, ids));
-      dispatch(updateBulkEdit(false));
     } else if (derivedMode === MODE_CHANGE_LIST_NAME) {
       dispatch(changeListName(selectedListName));
     } else {
@@ -170,7 +169,6 @@ const ListNamesPopup = () => {
       } else {
         console.log('In ListNamesPopup.onMoveHereBtnClick, invalid currentListName');
       }
-      dispatch(updateBulkEdit(false));
     } else {
       console.log('In ListNamesPopup.onMoveHereBtnClick, invalid mode:', derivedMode);
     }
