@@ -114,7 +114,7 @@
   .howitwork-pb {
     padding-bottom: 25%;
 
-    @media (min-width: 537px) {
+    @media (min-width: 33.5625rem) {
       @apply pb-32;
     }
 
@@ -126,7 +126,7 @@
   .howitwork-gray-pb {
     padding-bottom: 38.5%;
 
-    @media (min-width: 537px) {
+    @media (min-width: 33.5625rem) {
       @apply pb-48;
     }
 
@@ -146,7 +146,7 @@
   .new-line-in-address-bar {
     @apply hidden;
 
-    @media (min-width: 396px) {
+    @media (min-width: 24.75rem) {
       @apply inline;
     }
   }

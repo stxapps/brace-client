@@ -15,44 +15,42 @@
 
 .square-spin > img {
   animation-fill-mode: both;
-  width: 48px;
-  height: 48px;
   animation: square-spin 3s 0s cubic-bezier(0.09, 0.57, 0.49, 0.9) infinite;
 }
 
 .lds-ellipsis {
   display: inline-block;
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 5rem;
+  height: 5rem;
 }
 
 .lds-ellipsis div {
   position: absolute;
-  top: 33px;
-  width: 13px;
-  height: 13px;
+  top: 2.0625rem;
+  width: 0.8125rem;
+  height: 0.8125rem;
   border-radius: 50%;
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 
 .lds-ellipsis div:nth-child(1) {
-  left: 8px;
+  left: 0.5rem;
   animation: lds-ellipsis1 0.6s infinite;
 }
 
 .lds-ellipsis div:nth-child(2) {
-  left: 8px;
+  left: 0.5rem;
   animation: lds-ellipsis2 0.6s infinite;
 }
 
 .lds-ellipsis div:nth-child(3) {
-  left: 32px;
+  left: 2rem;
   animation: lds-ellipsis2 0.6s infinite;
 }
 
 .lds-ellipsis div:nth-child(4) {
-  left: 56px;
+  left: 3.5rem;
   animation: lds-ellipsis3 0.6s infinite;
 }
 
@@ -79,7 +77,7 @@
     transform: translate(0, 0);
   }
   100% {
-    transform: translate(24px, 0);
+    transform: translate(1.5rem, 0);
   }
 }
 
@@ -87,16 +85,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .ball-clip-rotate > div {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   background: 0 0!important;
   border-radius: 100%;
-  border: 1px solid rgb(107, 114, 128);
+  border: 0.0625rem solid rgb(107, 114, 128);
   border-bottom-color: transparent;
   animation: ball-clip-rotate .75s 0s linear infinite;
 }
@@ -117,16 +115,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .ball-clip-rotate-blk > div {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   background: 0 0!important;
   border-radius: 100%;
-  border: 1px solid rgb(156, 163, 175);
+  border: 0.0625rem solid rgb(156, 163, 175);
   border-bottom-color: transparent;
   animation: ball-clip-rotate .75s 0s linear infinite;
 }
@@ -147,16 +145,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .blk\:ball-clip-rotate-blk > div {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   background: 0 0!important;
   border-radius: 100%;
-  border: 1px solid rgb(156, 163, 175);
+  border: 0.0625rem solid rgb(156, 163, 175);
   border-bottom-color: transparent;
   animation: ball-clip-rotate .75s 0s linear infinite;
 }

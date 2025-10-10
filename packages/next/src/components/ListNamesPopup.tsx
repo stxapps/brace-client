@@ -15,7 +15,7 @@ import {
 } from '../types/const';
 import {
   getLastHalfHeight, getListNameObj, getLongestListNameDisplayName,
-  getMaxListNameChildrenSize,
+  getMaxListNameChildrenSize, toPx,
 } from '../utils';
 import {
   popupBgFMV, popupFMV, bModalBgFMV, bModalFMV, slideInPopupFMV, slideInModalFMV,
@@ -247,8 +247,8 @@ const ListNamesPopup = () => {
   if (isAnimTypeB) {
     popupWidth = safeAreaWidth + insets.left + insets.right;
 
-    const [hedHgt, itmHgt, btmHgt] = [56, 52, 56];
-    const minHgt = 372; // hedHgt + (itmHgt*5) + btmHgt
+    const [hedHgt, itmHgt, btmHgt] = [toPx('3.5rem'), toPx('3.25rem'), toPx('3.5rem')];
+    const minHgt = toPx('23.25rem'); // hedHgt + (itmHgt*5) + btmHgt
     popupHeight = Math.min(minHgt, hedHgt + (itmHgt * maxChildrenSize) + btmHgt);
     if (maxChildrenSize > 4) {
       popupHeight = getLastHalfHeight(
@@ -258,22 +258,22 @@ const ListNamesPopup = () => {
       popupHeight = Math.min(popupHeight, safeAreaHeight - 16);
     }
   } else {
-    const [hedHgt, itmHgt, btmHgt] = [44, 44, 52];
+    const [hedHgt, itmHgt, btmHgt] = [toPx('2.75rem'), toPx('2.75rem'), toPx('3.25rem')];
     if ([MODE_CHANGE_LIST_NAME, MODE_CHANGE_TAG_NAME].includes(derivedMode)) {
-      popupWidth = 160;
-      if (longestDisplayName.length > 26) popupWidth = 256;
-      else if (longestDisplayName.length > 14) popupWidth = 208;
+      popupWidth = toPx('10rem');
+      if (longestDisplayName.length > 26) popupWidth = toPx('16rem');
+      else if (longestDisplayName.length > 14) popupWidth = toPx('13rem');
 
-      popupHeight = hedHgt + (itmHgt * maxChildrenSize) + 4;
+      popupHeight = hedHgt + (itmHgt * maxChildrenSize) + toPx('0.25rem');
       if (popupHeight > safeAreaHeight - 16) {
         popupHeight = getLastHalfHeight(
           Math.min(popupHeight, safeAreaHeight - 16), itmHgt, 0, 0, 0.5
         );
       }
     } else if ([MODE_MOVE_LINKS, MODE_MOVE_LIST_NAME].includes(derivedMode)) {
-      popupWidth = 168;
-      if (longestDisplayName.length > 26) popupWidth = 256;
-      else if (longestDisplayName.length > 14) popupWidth = 208;
+      popupWidth = toPx('10.5rem');
+      if (longestDisplayName.length > 26) popupWidth = toPx('16rem');
+      else if (longestDisplayName.length > 14) popupWidth = toPx('13rem');
 
       popupHeight = hedHgt + (itmHgt * maxChildrenSize) + btmHgt;
       if (popupHeight > safeAreaHeight - 16) {

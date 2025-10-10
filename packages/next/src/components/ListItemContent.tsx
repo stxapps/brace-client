@@ -11,7 +11,7 @@ import {
 import { makeGetCustomImage, makeGetTnAndDns } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
-  extractUrl, isDecorValid, prependDomainName, adjustRect,
+  extractUrl, isDecorValid, prependDomainName, adjustRect, toPx,
 } from '../utils';
 
 import { useSafeAreaFrame, useTailwind } from '.';
@@ -75,7 +75,9 @@ const ListItemContent = (props) => {
     dispatch(updateSelectingLinkId(link.id));
 
     const rect = e.currentTarget.getBoundingClientRect();
-    const nRect = adjustRect(rect, 8, 12, -20, -12);
+    const nRect = adjustRect(
+      rect, toPx('0.5rem'), toPx('0.75rem'), toPx('-1.25rem'), toPx('-0.75rem')
+    );
     dispatch(updatePopup(CARD_ITEM_MENU_POPUP, true, nRect));
     if (window.document.activeElement instanceof HTMLElement) {
       window.document.activeElement.blur();

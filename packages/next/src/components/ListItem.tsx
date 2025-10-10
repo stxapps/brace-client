@@ -7,7 +7,7 @@ import {
 } from '../types/const';
 import { makeGetPinStatus, makeGetTagStatus } from '../selectors';
 import {
-  ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isTaggingStatus,
+  ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isTaggingStatus, toPx,
 } from '../utils';
 
 import { useSafeAreaFrame, useTailwind } from '.';
@@ -42,7 +42,8 @@ const ListItem = (props) => {
 
   const renderRetry = () => {
     const { url } = link;
-    const errMsg = safeAreaWidth < SM_WIDTH ? 'Something went wrong!' : 'Oops..., something went wrong!';
+    let errMsg = 'Oops..., something went wrong!';
+    if (safeAreaWidth < toPx(SM_WIDTH)) errMsg = 'Something went wrong!';
 
     return (
       <React.Fragment>
@@ -70,7 +71,7 @@ const ListItem = (props) => {
   };
 
   const renderBusy = () => {
-    const svgStyle = { top: '42px', left: '20px' };
+    const svgStyle = { top: '2.625rem', left: '1.25rem' };
 
     return (
       <div className={tailwind('absolute top-0 right-0 h-10 w-10 overflow-hidden bg-transparent')}>
@@ -84,7 +85,7 @@ const ListItem = (props) => {
   };
 
   const renderPinning = () => {
-    const svgStyle = { top: '28px', left: '34px' };
+    const svgStyle = { top: '1.75rem', left: '2.125rem' };
 
     return (
       <div className={tailwind('absolute top-0 left-0 h-10 w-10 overflow-hidden bg-transparent')}>
@@ -98,7 +99,7 @@ const ListItem = (props) => {
   };
 
   const renderPin = () => {
-    const svgStyle = { top: '27px', left: '32px' };
+    const svgStyle = { top: '1.6875rem', left: '2rem' };
 
     return (
       <div className={tailwind('absolute top-0 left-0 h-10 w-10 overflow-hidden bg-transparent')}>

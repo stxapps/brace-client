@@ -144,7 +144,7 @@ class Landing extends React.PureComponent<any, any> {
                   <div className={tailwind('flex')}>
                     <div className={tailwind('flex-shrink-0')}>
                       <div className={tailwind('flex h-12 w-12 items-center justify-center rounded-md bg-gray-600')}>
-                        <svg style={{ width: '18px' }} className={tailwind('text-white')} viewBox="0 0 47 56" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <svg style={{ width: '1.125rem' }} className={tailwind('text-white')} viewBox="0 0 47 56" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                           <path d="M29.325.175c5.138 2.74 13.856 11.394 17.342 16.056-3.001-2.1-9.436-3.867-14.213-2.751.518-3.426-.431-10.58-3.129-13.305zm17.342 25.492V56H0V0h19.621c11.333 0 7.782 18.667 7.782 18.667 7.02-1.739 19.264-.978 19.264 7zM9.333 37.333H21V28H9.333v9.333zm28 4.667h-28v2.333h28V42zm0-7H25.667v2.333h11.666V35zm0-7H25.667v2.333h11.666V28z" />
                         </svg>
                       </div>

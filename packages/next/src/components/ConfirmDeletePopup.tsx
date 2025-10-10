@@ -13,6 +13,7 @@ import {
   getSafeAreaWidth, getSafeAreaHeight, getSafeAreaInsets, getThemeMode,
 } from '../selectors';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
+import { toPx } from '../utils';
 
 import { withTailwind } from '.';
 
@@ -91,10 +92,10 @@ class ConfirmDeletePopup extends React.Component<any, any> {
     };
 
     const spanStyle: any = {};
-    if (safeAreaWidth >= SM_WIDTH) spanStyle.height = safeAreaHeight;
+    if (safeAreaWidth >= toPx(SM_WIDTH)) spanStyle.height = safeAreaHeight;
 
     const cancelBtnStyle: any = {};
-    if (safeAreaWidth < SM_WIDTH) {
+    if (safeAreaWidth < toPx(SM_WIDTH)) {
       cancelBtnStyle.paddingTop = '0.44rem';
       cancelBtnStyle.paddingBottom = '0.44rem';
     }

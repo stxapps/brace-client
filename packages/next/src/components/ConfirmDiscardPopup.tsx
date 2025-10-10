@@ -9,6 +9,7 @@ import {
   SM_WIDTH,
 } from '../types/const';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
+import { toPx } from '../utils';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
@@ -59,10 +60,10 @@ const ConfirmDiscardPopup = () => {
   };
 
   const spanStyle: any = {};
-  if (safeAreaWidth >= SM_WIDTH) spanStyle.height = safeAreaHeight;
+  if (safeAreaWidth >= toPx(SM_WIDTH)) spanStyle.height = safeAreaHeight;
 
   const cancelBtnStyle: any = {};
-  if (safeAreaWidth < SM_WIDTH) {
+  if (safeAreaWidth < toPx(SM_WIDTH)) {
     cancelBtnStyle.paddingTop = '0.44rem';
     cancelBtnStyle.paddingBottom = '0.44rem';
   }

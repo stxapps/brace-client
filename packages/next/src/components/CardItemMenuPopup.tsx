@@ -20,6 +20,7 @@ import {
 } from '../selectors';
 import {
   copyTextToClipboard, getListNameDisplayName, isObject, isEqual, getLastHalfHeight,
+  toPx,
 } from '../utils';
 import { popupBgFMV, popupFMV } from '../types/animConfigs';
 import { computePositionStyle } from '../utils/popup';
@@ -112,7 +113,7 @@ class CardItemMenuPopup extends React.PureComponent<any, any> {
       menu = [...menu, CHANGE];
     }
 
-    if (layoutType === LAYOUT_LIST && safeAreaWidth >= LG_WIDTH) {
+    if (layoutType === LAYOUT_LIST && safeAreaWidth >= toPx(LG_WIDTH)) {
       menu = menu.filter(text => ![ARCHIVE, REMOVE, RESTORE].includes(text));
     }
 
@@ -203,7 +204,9 @@ class CardItemMenuPopup extends React.PureComponent<any, any> {
 
     let menuPopup;
     if (menuPopupSize) {
-      const maxHeight = getLastHalfHeight(safeAreaHeight - 16, 40, 8, 0, 0.55);
+      const maxHeight = getLastHalfHeight(
+        safeAreaHeight - 16, toPx('2.5rem'), toPx('0.5rem'), toPx('0rem'), 0.55
+      );
       const posStyle = computePositionStyle(
         anchorPosition,
         {

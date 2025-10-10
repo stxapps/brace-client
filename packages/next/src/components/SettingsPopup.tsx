@@ -12,6 +12,7 @@ import {
 import {
   canvasFMV, sideBarOverlayFMV, sideBarFMV, popupFMV,
 } from '../types/animConfigs';
+import { toPx } from '../utils';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
@@ -139,11 +140,11 @@ const SettingsPopup = () => {
   };
 
   const _renderPanelCloseBtn = () => {
-    const MAX_W_6XL = 1152; // If change max-w-6xl below, need to update this too.
+    const MAX_W_6XL = '72rem'; // If change max-w-6xl below, need to update this too.
     const closeBtnStyle = { right: 0 };
-    if (safeAreaWidth >= LG_WIDTH) closeBtnStyle.right = 6;
-    if (safeAreaWidth >= MAX_W_6XL) {
-      closeBtnStyle.right = 6 + ((safeAreaWidth - MAX_W_6XL) / 2);
+    if (safeAreaWidth >= toPx(LG_WIDTH)) closeBtnStyle.right = toPx('0.375rem');
+    if (safeAreaWidth >= toPx(MAX_W_6XL)) {
+      closeBtnStyle.right = toPx('0.375rem') + ((safeAreaWidth - toPx(MAX_W_6XL)) / 2);
     }
 
     return (

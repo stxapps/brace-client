@@ -160,13 +160,6 @@ export const TOP_BAR_HEIGHT_MD = '6.75rem';
 export const BOTTOM_BAR_HEIGHT = '3.5rem';
 export const SEARCH_POPUP_HEIGHT = '3.625rem';
 
-export const SHARE_BORDER_RADIUS = {
-  borderTopLeftRadius: 16,
-  borderTopRightRadius: 16,
-  borderBottomRightRadius: 16,
-  borderBottomLeftRadius: 16,
-};
-
 export const VALID_URL = 'VALID_URL';
 export const NO_URL = 'NO_URL';
 export const ASK_CONFIRM_URL = 'ASK_CONFIRM_URL';
@@ -187,10 +180,10 @@ export const EXTRACT_ERROR = 'EXTRACT_ERROR';
 export const EXTRACT_INVALID_URL = 'EXTRACT_INVALID_URL';
 export const EXTRACT_EXCEEDING_N_URLS = 'EXTRACT_EXCEEDING_N_URLS';
 
-export const SM_WIDTH = 640;
-export const MD_WIDTH = 768;
-export const LG_WIDTH = 992;
-export const XL_WIDTH = 1280;
+export const SM_WIDTH = '40rem';
+export const MD_WIDTH = '48rem';
+export const LG_WIDTH = '62rem';
+export const XL_WIDTH = '80rem';
 
 export const MAX_SELECTED_LINK_IDS = 10;
 export const SD_MAX_SELECTED_LINK_IDS = 40;

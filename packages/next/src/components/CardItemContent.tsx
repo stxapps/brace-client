@@ -12,6 +12,7 @@ import {
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
   extractUrl, isEqual, isObject, isString, isDecorValid, prependDomainName, adjustRect,
+  toPx,
 } from '../utils';
 
 import { withTailwind } from '.';
@@ -79,7 +80,9 @@ class CardItemContent extends React.Component<any, any> {
     this.props.updateSelectingLinkId(this.props.link.id);
 
     const rect = e.currentTarget.getBoundingClientRect();
-    const nRect = adjustRect(rect, 8, 12, -20, -12);
+    const nRect = adjustRect(
+      rect, toPx('0.5rem'), toPx('0.75rem'), toPx('-1.25rem'), toPx('-0.75rem')
+    );
     this.props.updatePopup(CARD_ITEM_MENU_POPUP, true, nRect);
     if (window.document.activeElement instanceof HTMLElement) {
       window.document.activeElement.blur();

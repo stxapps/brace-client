@@ -8,7 +8,7 @@ import {
   SM_WIDTH, MD_WIDTH, LOCK_EDITOR_POPUP, LOCK_ACTION_UNLOCK_LIST, LOCKED,
 } from '../types/const';
 import { getCurrentLockListStatus } from '../selectors';
-import { addRem } from '../utils';
+import { addRem, toPx } from '../utils';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
@@ -30,7 +30,7 @@ const LockPanel = (props) => {
 
   if (lockStatus !== LOCKED) return null;
 
-  let pt = safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD;
+  let pt = safeAreaWidth < toPx(MD_WIDTH) ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD;
 
   let pb = '1.5rem';
   if (columnWidth === PC_100) {
@@ -43,9 +43,9 @@ const LockPanel = (props) => {
   };
   const style = { paddingTop: pt, paddingBottom: pb };
   const btnStyle = {
-    height: safeAreaWidth < SM_WIDTH ? '2.5rem' : '2.125rem',
-    paddingLeft: safeAreaWidth < SM_WIDTH ? '0.75rem' : '0.625rem',
-    paddingRight: safeAreaWidth < SM_WIDTH ? '0.875rem' : '0.75rem',
+    height: safeAreaWidth < toPx(SM_WIDTH) ? '2.5rem' : '2.125rem',
+    paddingLeft: safeAreaWidth < toPx(SM_WIDTH) ? '0.75rem' : '0.625rem',
+    paddingRight: safeAreaWidth < toPx(SM_WIDTH) ? '0.875rem' : '0.75rem',
   };
 
   return (

@@ -82,7 +82,7 @@ class CardItem extends React.Component<any, any> {
 
   renderBusy() {
     const { tailwind } = this.props;
-    const svgStyle = { top: '66px', left: '34px' };
+    const svgStyle = { top: '4.125rem', left: '2.125rem' };
 
     return (
       <div className={tailwind('absolute top-0 right-0 h-16 w-16 overflow-hidden bg-transparent')}>
@@ -97,7 +97,7 @@ class CardItem extends React.Component<any, any> {
 
   renderPinning() {
     const { tailwind } = this.props;
-    const svgStyle = { top: '46px', left: '54px' };
+    const svgStyle = { top: '2.875rem', left: '3.375rem' };
 
     return (
       <div className={tailwind('absolute top-0 left-0 h-16 w-16 overflow-hidden bg-transparent')}>
@@ -112,7 +112,7 @@ class CardItem extends React.Component<any, any> {
 
   renderPin() {
     const { tailwind } = this.props;
-    const svgStyle = { top: '42px', left: '54px' };
+    const svgStyle = { top: '2.625rem', left: '3.375rem' };
 
     return (
       <div className={tailwind('absolute top-0 left-0 h-16 w-16 overflow-hidden bg-transparent')}>
