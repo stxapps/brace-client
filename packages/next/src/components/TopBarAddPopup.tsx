@@ -8,7 +8,7 @@ import { ADD_POPUP, NO_URL, ASK_CONFIRM_URL, URL_MSGS } from '../types/const';
 import {
   getSafeAreaWidth, getSafeAreaHeight, getSafeAreaInsets, getThemeMode,
 } from '../selectors';
-import { isObject, isEqual, validateUrl, getRect } from '../utils';
+import { isObject, isEqual, validateUrl, getRect, toPx } from '../utils';
 import { popupBgFMV, popupFMV } from '../types/animConfigs';
 import { computePositionStyle } from '../utils/popup';
 
@@ -191,8 +191,8 @@ const mapStateToProps = (state, props) => {
     const { headerPaddingX, commandsWidth } = getTopBarSizes(safeAreaWidth);
 
     const x = insets.left + safeAreaWidth - commandsWidth - (headerPaddingX / 2);
-    const y = insets.top + 12 + 42;
-    derivedAnchorPosition = getRect(x, y, 66, 32);
+    const y = insets.top + toPx('0.75rem') + toPx('2.625rem');
+    derivedAnchorPosition = getRect(x, y, toPx('4.125rem'), toPx('2rem'));
   }
 
   return {

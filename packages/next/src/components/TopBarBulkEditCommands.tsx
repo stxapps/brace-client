@@ -12,7 +12,7 @@ import {
   BULK_EDIT_MENU_ANIM_TYPE_POPUP,
 } from '../types/const';
 import { getSafeAreaWidth, getThemeMode } from '../selectors';
-import { getListNameDisplayName, adjustRect } from '../utils';
+import { getListNameDisplayName, adjustRect, toPx } from '../utils';
 import { popupFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
@@ -103,7 +103,9 @@ class TopBarBulkEditCommands extends React.Component<any, any> {
     );
 
     const rect = e.currentTarget.getBoundingClientRect();
-    const nRect = adjustRect(rect, -4, -4, 8, 8);
+    const nRect = adjustRect(
+      rect, toPx('-0.25rem'), toPx('-0.25rem'), toPx('0.5rem'), toPx('0.5rem')
+    );
     this.props.updatePopup(LIST_NAMES_POPUP, true, nRect);
   };
 
@@ -113,7 +115,9 @@ class TopBarBulkEditCommands extends React.Component<any, any> {
     this.props.updateBulkEditMenuMode(BULK_EDIT_MENU_ANIM_TYPE_POPUP);
 
     const rect = e.currentTarget.getBoundingClientRect();
-    const nRect = adjustRect(rect, -4, -4, 8, 8);
+    const nRect = adjustRect(
+      rect, toPx('-0.25rem'), toPx('-0.25rem'), toPx('0.5rem'), toPx('0.5rem')
+    );
     this.props.updatePopup(BULK_EDIT_MENU_POPUP, true, nRect);
   };
 

@@ -11,7 +11,7 @@ import {
   MODE_VIEW, MODE_EDIT, SM_WIDTH,
 } from '../types/const';
 import { makeGetListNameEditor } from '../selectors';
-import { validateListNameDisplayName } from '../utils';
+import { validateListNameDisplayName, toPx } from '../utils';
 import { initialListNameEditorState } from '../types/initialStates';
 
 import { useSafeAreaFrame, useTailwind } from '.';
@@ -267,7 +267,7 @@ const InnerListNameEditor = (props) => {
     }
   }
 
-  const tabWidth = safeAreaWidth < SM_WIDTH ? 16 : 32;
+  const tabWidth = safeAreaWidth < toPx(SM_WIDTH) ? toPx('1rem') : toPx('2rem');
   const viewStyle = { paddingLeft: tabWidth * level };
 
   return (

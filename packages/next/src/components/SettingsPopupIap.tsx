@@ -15,7 +15,7 @@ import {
   ERROR, ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, APPSTORE, PLAYSTORE, PADDLE, MD_WIDTH,
 } from '../types/const';
 import { getValidProduct, getValidPurchase } from '../selectors';
-import { getFormattedDate, isString } from '../utils';
+import { getFormattedDate, isString, toPx } from '../utils';
 
 import { useSafeAreaFrame, useTailwind } from '.';
 
@@ -561,7 +561,7 @@ const InnerSettingsPopupIapRestore = (props) => {
     <div className={tailwind('p-4 md:p-6 md:pt-4')}>
       <div className={tailwind('border-b border-gray-200 blk:border-gray-700 md:border-b-0')}>
         <button onClick={onBackToIapViewBtnClick} className={tailwind('group pb-1 focus:outline-none md:pb-0')}>
-          <span className={tailwind('rounded text-sm text-gray-500 group-focus:ring blk:text-gray-400')}>{'<'} <span className={tailwind('group-hover:underline')}>{safeAreaWidth < MD_WIDTH ? 'Settings / ' : ''}Subscription</span></span>
+          <span className={tailwind('rounded text-sm text-gray-500 group-focus:ring blk:text-gray-400')}>{'<'} <span className={tailwind('group-hover:underline')}>{safeAreaWidth < toPx(MD_WIDTH) ? 'Settings / ' : ''}Subscription</span></span>
         </button>
         <h3 className={tailwind('pb-2 text-xl font-medium leading-none text-gray-800 blk:text-gray-100 md:pb-0')}>Restore Purchases</h3>
       </div>

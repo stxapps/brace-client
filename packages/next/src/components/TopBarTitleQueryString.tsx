@@ -7,7 +7,7 @@ import {
   LIST_NAMES_POPUP, SM_WIDTH, LG_WIDTH, LIST_NAMES_MODE_CHANGE_TAG_NAME,
   LIST_NAMES_ANIM_TYPE_POPUP,
 } from '../types/const';
-import { getTagNameDisplayName } from '../utils';
+import { getTagNameDisplayName, toPx } from '../utils';
 
 import { getTopBarSizes, useSafeAreaFrame, useTailwind } from '.';
 
@@ -36,16 +36,19 @@ const TopBarTitleQueryString = () => {
   const tagName = queryString.trim();
   const displayName = getTagNameDisplayName(tagName, tagNameMap);
 
-  let textMaxWidth = 160;
-  if (safeAreaWidth >= SM_WIDTH) textMaxWidth = 320;
-  if (safeAreaWidth >= LG_WIDTH) textMaxWidth = 512;
+  let textMaxWidth = toPx('10rem');
+  if (safeAreaWidth >= toPx(SM_WIDTH)) textMaxWidth = toPx('20rem');
+  if (safeAreaWidth >= toPx(LG_WIDTH)) textMaxWidth = toPx('32rem');
 
-  if (safeAreaWidth >= SM_WIDTH) {
+  if (safeAreaWidth >= toPx(SM_WIDTH)) {
     const {
       headerPaddingX, commandsWidth,
       listNameDistanceX, listNameArrowWidth, listNameArrowSpace,
     } = getTopBarSizes(safeAreaWidth);
-    let headerSpaceLeftover = safeAreaWidth - headerPaddingX - listNameDistanceX - listNameArrowWidth - listNameArrowSpace - commandsWidth - 4;
+    let headerSpaceLeftover = (
+      safeAreaWidth - headerPaddingX - listNameDistanceX - listNameArrowWidth -
+      listNameArrowSpace - commandsWidth - toPx('0.25rem')
+    );
 
     textMaxWidth = Math.min(textMaxWidth, headerSpaceLeftover);
   }

@@ -8,7 +8,7 @@ import {
 } from '../actions/data';
 import { getSafeAreaWidth, getThemeMode } from '../selectors';
 import { HASH_SUPPORT, SD_HUB_URL, MD_WIDTH } from '../types/const';
-import { isString } from '../utils';
+import { isString, toPx } from '../utils';
 
 import { useSafeAreaFrame, withTailwind, useTailwind } from '.';
 
@@ -161,7 +161,7 @@ const InnerSettingsPopupDataImport = (props) => {
     <div className={tailwind('p-4 md:p-6 md:pt-4')}>
       <div className={tailwind('border-b border-gray-200 blk:border-gray-700 md:border-b-0')}>
         <button onClick={onBackToDataViewBtnClick} className={tailwind('group pb-1 focus:outline-none md:pb-0')}>
-          <span className={tailwind('rounded text-sm text-gray-500 group-focus:ring blk:text-gray-400')}>{'<'} <span className={tailwind('group-hover:underline')}>{safeAreaWidth < MD_WIDTH ? 'Settings / ' : ''}Data</span></span>
+          <span className={tailwind('rounded text-sm text-gray-500 group-focus:ring blk:text-gray-400')}>{'<'} <span className={tailwind('group-hover:underline')}>{safeAreaWidth < toPx(MD_WIDTH) ? 'Settings / ' : ''}Data</span></span>
         </button>
         <h3 className={tailwind('pb-2 text-xl font-medium leading-none text-gray-800 blk:text-gray-100 md:pb-0')}>Import Data</h3>
       </div>
@@ -262,7 +262,7 @@ class InnerSettingsPopupDataExport extends React.PureComponent<any, any> {
       <div className={tailwind('p-4 md:p-6 md:pt-4')}>
         <div className={tailwind('border-b border-gray-200 blk:border-gray-700 md:border-b-0')}>
           <button onClick={this.props.onBackToDataViewBtnClick} className={tailwind('group pb-1 focus:outline-none md:pb-0')}>
-            <span className={tailwind('rounded text-sm text-gray-500 group-focus:ring blk:text-gray-400')}>{'<'} <span className={tailwind('group-hover:underline')}>{safeAreaWidth < MD_WIDTH ? 'Settings / ' : ''}Data</span></span>
+            <span className={tailwind('rounded text-sm text-gray-500 group-focus:ring blk:text-gray-400')}>{'<'} <span className={tailwind('group-hover:underline')}>{safeAreaWidth < toPx(MD_WIDTH) ? 'Settings / ' : ''}Data</span></span>
           </button>
           <h3 className={tailwind('pb-2 text-xl font-medium leading-none text-gray-800 blk:text-gray-100 md:pb-0')}>Export All Data</h3>
         </div>
@@ -397,7 +397,7 @@ class InnerSettingsPopupDataDelete extends React.PureComponent<any, any> {
       <div className={tailwind('p-4 md:p-6 md:pt-4')}>
         <div className={tailwind('border-b border-gray-200 blk:border-gray-700 md:border-b-0')}>
           <button onClick={this.props.onBackToDataViewBtnClick} className={tailwind('group pb-1 focus:outline-none md:pb-0')}>
-            <span className={tailwind('rounded text-sm text-gray-500 group-focus:ring blk:text-gray-400')}>{'<'} <span className={tailwind('group-hover:underline')}>{safeAreaWidth < MD_WIDTH ? 'Settings / ' : ''}Data</span></span>
+            <span className={tailwind('rounded text-sm text-gray-500 group-focus:ring blk:text-gray-400')}>{'<'} <span className={tailwind('group-hover:underline')}>{safeAreaWidth < toPx(MD_WIDTH) ? 'Settings / ' : ''}Data</span></span>
           </button>
           <h3 className={tailwind('pb-2 text-xl font-medium leading-none text-gray-800 blk:text-gray-100 md:pb-0')}>Delete All Data</h3>
         </div>

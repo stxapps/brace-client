@@ -12,7 +12,7 @@ import {
 import {
   getSafeAreaWidth, getThemeMode, getCanChangeListNames,
 } from '../selectors';
-import { getListNameDisplayName } from '../utils';
+import { getListNameDisplayName, toPx } from '../utils';
 
 import { getTopBarSizes, withTailwind } from '.';
 
@@ -42,17 +42,20 @@ class TopBarTitleListName extends React.PureComponent<any, any> {
     const { listName, listNameMap, updates, safeAreaWidth, tailwind } = this.props;
     const displayName = getListNameDisplayName(listName, listNameMap);
 
-    let textMaxWidth = 160;
-    if (safeAreaWidth >= SM_WIDTH) textMaxWidth = 320;
-    if (safeAreaWidth >= LG_WIDTH) textMaxWidth = 512;
+    let textMaxWidth = toPx('10rem');
+    if (safeAreaWidth >= toPx(SM_WIDTH)) textMaxWidth = toPx('20rem');
+    if (safeAreaWidth >= toPx(LG_WIDTH)) textMaxWidth = toPx('32rem');
 
-    if (safeAreaWidth >= SM_WIDTH) {
+    if (safeAreaWidth >= toPx(SM_WIDTH)) {
       const {
         headerPaddingX, commandsWidth,
         listNameDistanceX, listNameArrowWidth, listNameArrowSpace,
       } = getTopBarSizes(safeAreaWidth);
-      let headerSpaceLeftover = safeAreaWidth - headerPaddingX - listNameDistanceX - listNameArrowWidth - listNameArrowSpace - commandsWidth - 4;
-      if (listName in updates) headerSpaceLeftover -= 8;
+      let headerSpaceLeftover = (
+        safeAreaWidth - headerPaddingX - listNameDistanceX - listNameArrowWidth -
+        listNameArrowSpace - commandsWidth - toPx('0.25rem')
+      );
+      if (listName in updates) headerSpaceLeftover -= toPx('0.5rem');
 
       textMaxWidth = Math.min(textMaxWidth, headerSpaceLeftover);
     }

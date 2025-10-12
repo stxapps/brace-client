@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { updatePopup, updateBulkEdit } from '../actions';
 import { ADD_POPUP, PROFILE_POPUP } from '../types/const';
 import { getSafeAreaWidth, getThemeMode } from '../selectors';
-import { adjustRect } from '../utils';
+import { adjustRect, toPx } from '../utils';
 
 import { withTailwind } from '.';
 
@@ -14,7 +14,9 @@ class TopBarCommands extends React.PureComponent<any, any> {
 
   onAddBtnClick = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const nRect = adjustRect(rect, 0, 42, 0, 0);
+    const nRect = adjustRect(
+      rect, toPx('0rem'), toPx('2.625rem'), toPx('0rem'), toPx('0rem')
+    );
     this.props.updatePopup(ADD_POPUP, true, nRect);
   };
 
@@ -24,7 +26,9 @@ class TopBarCommands extends React.PureComponent<any, any> {
 
   onProfileBtnClick = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const nRect = adjustRect(rect, -4, -4, 8, 8);
+    const nRect = adjustRect(
+      rect, toPx('-0.25rem'), toPx('-0.25rem'), toPx('0.5rem'), toPx('0.5rem')
+    );
     this.props.updatePopup(PROFILE_POPUP, true, nRect);
   };
 

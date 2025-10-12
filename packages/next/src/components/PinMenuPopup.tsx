@@ -10,6 +10,7 @@ import {
 } from '../types/const';
 import { getLayoutType } from '../selectors';
 import { popupBgFMV, popupFMV } from '../types/animConfigs';
+import { toPx } from '../utils';
 import { computePositionStyle } from '../utils/popup';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
@@ -71,7 +72,7 @@ const PinMenuPopup = () => {
   );
 
   let menu = [PIN_LEFT, PIN_RIGHT, UNPIN];
-  if (layoutType === LAYOUT_LIST || safeAreaWidth < SM_WIDTH) {
+  if (layoutType === LAYOUT_LIST || safeAreaWidth < toPx(SM_WIDTH)) {
     menu = [PIN_UP, PIN_DOWN, UNPIN];
   }
 
