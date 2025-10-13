@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, TouchableOpacity, Platform } from 'react-native';
+import { ScrollView, View, TouchableOpacity, Platform } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { useSelector, useDispatch } from '../store';
@@ -13,6 +13,7 @@ import { getCurrentLockListStatus } from '../selectors';
 import { addRem, toPx } from '../utils';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
+import Text from './CustomText';
 
 const LockPanel = (props) => {
 

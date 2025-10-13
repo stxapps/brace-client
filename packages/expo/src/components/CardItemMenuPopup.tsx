@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
-  ScrollView, View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated,
-  BackHandler,
+  ScrollView, View, TouchableOpacity, TouchableWithoutFeedback, Animated, BackHandler,
 } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 
@@ -26,6 +25,7 @@ import { popupFMV } from '../types/animConfigs';
 import { computePositionTranslate } from '../utils/popup';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
+import Text from './CustomText';
 
 const CARD_ITEM_POPUP_MENU = {
   [MY_LIST]: [COPY_LINK, ARCHIVE, REMOVE, MOVE_TO],

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
@@ -16,6 +16,7 @@ import { getListNameDisplayName, getRect, toPx } from '../utils';
 import cache from '../utils/cache';
 
 import { getTopBarSizes, withTailwind } from '.';
+import Text from './CustomText';
 
 class TopBarTitleListName extends React.PureComponent<any, any> {
 

@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useCallback } from 'react';
-import {
-  View, Text, TouchableOpacity, TextInput, BackHandler, Platform,
-} from 'react-native';
+import { View, TouchableOpacity, BackHandler, Platform } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import { useSelector, useDispatch } from '../store';
@@ -12,6 +10,8 @@ import { getThemeMode } from '../selectors';
 import { validateUrl } from '../utils';
 
 import { useSafeAreaInsets, useTailwind } from '.';
+import Text from './CustomText';
+import TextInput from './CustomTextInput';
 
 const BottomBarAddPopup = () => {
 

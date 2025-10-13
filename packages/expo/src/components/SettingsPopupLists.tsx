@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useMemo } from 'react';
-import {
-  View, Text, TouchableOpacity, TextInput, Keyboard, Platform,
-} from 'react-native';
+import { View, TouchableOpacity, Keyboard, Platform } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { Circle } from 'react-native-animated-spinkit';
 
@@ -20,6 +18,8 @@ import { validateListNameDisplayName, getRect, toPx } from '../utils';
 import { initialListNameEditorState } from '../types/initialStates';
 
 import { useSafeAreaFrame, useTailwind } from '.';
+import Text from './CustomText';
+import TextInput from './CustomTextInput';
 
 const SettingsPopupLists = (props) => {
 

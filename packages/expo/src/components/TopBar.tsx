@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 
 import { updatePopup } from '../actions';
@@ -8,6 +8,7 @@ import { SIGN_IN_POPUP, SHOW_SIGN_IN, BLK_MODE } from '../types/const';
 import { getThemeMode } from '../selectors';
 
 import { withTailwind } from '.';
+import Text from './CustomText';
 
 import Logo from '../images/logo-short.svg';
 import LogoBlk from '../images/logo-short-blk.svg';

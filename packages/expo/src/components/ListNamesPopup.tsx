@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
-  ScrollView, View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated,
-  BackHandler,
+  ScrollView, View, TouchableOpacity, TouchableWithoutFeedback, Animated, BackHandler,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
@@ -27,6 +26,7 @@ import {
 import { computePositionTranslate } from '../utils/popup';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
+import Text from './CustomText';
 
 const MODE_CHANGE_LIST_NAME = LIST_NAMES_MODE_CHANGE_LIST_NAME;
 const MODE_CHANGE_TAG_NAME = LIST_NAMES_MODE_CHANGE_TAG_NAME;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, Text, TouchableOpacity, Linking } from 'react-native';
+import { ScrollView, View, TouchableOpacity, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import Swiper from 'react-native-swiper';
 import Svg, { Path, Circle } from 'react-native-svg';
@@ -13,10 +13,10 @@ import { toPx } from '../utils';
 import cache from '../utils/cache';
 
 import { withTailwind } from '.';
-
 import TopBar from './TopBar';
 import SignUpPopup from './SignUpPopup';
 import SignInPopup from './SignInPopup';
+import Text from './CustomText';
 
 import SaveLinksToVisitLater from '../images/save-links-to-visit-later.svg';
 import UndrawLink from '../images/undraw-link.svg';

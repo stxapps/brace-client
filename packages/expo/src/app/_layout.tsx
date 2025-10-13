@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Text, TextInput, Platform, StatusBar } from 'react-native';
+import { Platform, StatusBar } from 'react-native';
 import { Provider as ReduxProvider } from 'react-redux';
 import { Slot, useRouter, usePathname, ExternalPathString } from 'expo-router';
 import { ShareIntentProvider } from 'expo-share-intent';
@@ -18,15 +18,6 @@ import { useAppState } from '@/components';
 import { BLK_MODE } from '@/types/const';
 import { getThemeMode } from '@/selectors';
 import cache from '@/utils/cache';
-
-// @ts-expect-error
-Text.defaultProps = Text.defaultProps || {};
-// @ts-expect-error
-Text.defaultProps.allowFontScaling = false;
-// @ts-expect-error
-TextInput.defaultProps = TextInput.defaultProps || {};
-// @ts-expect-error
-TextInput.defaultProps.allowFontScaling = false;
 
 function Initializer() {
   const didPersistCallback = useSelector(state => state.appState.didPersistCallback);

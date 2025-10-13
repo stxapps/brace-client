@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  ScrollView, View, Text, TouchableOpacity, TouchableWithoutFeedback, TextInput,
-  Animated, BackHandler, Platform, Keyboard,
+  ScrollView, View, TouchableOpacity, TouchableWithoutFeedback, Animated, BackHandler,
+  Platform, Keyboard,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
@@ -17,6 +17,8 @@ import { dialogFMV } from '../types/animConfigs';
 import { toPx } from '../utils';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useKeyboardHeight, useTailwind } from '.';
+import Text from './CustomText';
+import TextInput from './CustomTextInput';
 
 const TagEditorPopup = () => {
 

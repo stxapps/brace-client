@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  ScrollView, View, Text, TouchableOpacity, TouchableWithoutFeedback, Image, TextInput,
-  Animated, BackHandler, Platform, Keyboard,
+  ScrollView, View, TouchableOpacity, TouchableWithoutFeedback, Image, Animated,
+  BackHandler, Platform, Keyboard,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import * as ImagePicker from 'expo-image-picker';
@@ -22,6 +22,8 @@ import { dialogFMV } from '../types/animConfigs';
 import cache from '../utils/cache';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useKeyboardHeight, useTailwind } from '.';
+import Text from './CustomText';
+import TextInput from './CustomTextInput';
 
 const MAX_WIDTH = 1024;
 const MAX_HEIGHT = 597;

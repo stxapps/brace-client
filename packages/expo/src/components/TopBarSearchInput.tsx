@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, TextInput, Platform } from 'react-native';
+import { View, TouchableOpacity, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
@@ -8,6 +8,7 @@ import { BLK_MODE } from '../types/const';
 import { getThemeMode } from '../selectors';
 
 import { withTailwind } from '.';
+import TextInput from './CustomTextInput';
 
 class TopBarSearchInput extends React.PureComponent<any, any> {
 

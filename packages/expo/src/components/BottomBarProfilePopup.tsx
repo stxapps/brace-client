@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  View, Text, TouchableOpacity, Linking, Animated, BackHandler,
-} from 'react-native';
+import { View, TouchableOpacity, Linking, Animated, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 
 import { signOut, updatePopup, refreshFetched } from '../actions';
@@ -17,6 +15,7 @@ import {
 import { bModalFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
+import Text from './CustomText';
 
 // height is 190 from onLayout
 const PROFILE_POPUP_HEIGHT = 190;

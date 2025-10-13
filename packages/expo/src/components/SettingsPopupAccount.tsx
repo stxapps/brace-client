@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Linking } from 'react-native';
+import { View, TouchableOpacity, Linking } from 'react-native';
 import { connect } from 'react-redux';
 
 import { getThemeMode } from '../selectors';
 
 import { withTailwind } from '.';
+import Text from './CustomText';
 
 class SettingsPopupAccount extends React.PureComponent<any, any> {
 

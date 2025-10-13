@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
-  FlatList, View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated,
-  BackHandler,
+  FlatList, View, TouchableOpacity, TouchableWithoutFeedback, Animated, BackHandler,
 } from 'react-native';
 
 import { useSelector, useDispatch } from '../store';
@@ -15,6 +14,7 @@ import { popupFMV } from '../types/animConfigs';
 import { computePositionTranslate } from '../utils/popup';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
+import Text from './CustomText';
 
 const ITEM_HEIGHT = 48;
 

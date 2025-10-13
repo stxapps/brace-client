@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated, BackHandler,
-  Linking,
+  View, TouchableOpacity, TouchableWithoutFeedback, Animated, BackHandler, Linking,
 } from 'react-native';
 
 import { useSelector, useDispatch } from '../store';
@@ -17,6 +16,7 @@ import { popupFMV } from '../types/animConfigs';
 import { computePositionTranslate } from '../utils/popup';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
+import Text from './CustomText';
 
 const TopBarProfilePopup = () => {
 

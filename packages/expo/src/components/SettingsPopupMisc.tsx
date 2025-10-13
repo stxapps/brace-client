@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { View, Text, TouchableOpacity, Switch, Linking, Platform } from 'react-native';
+import { View, TouchableOpacity, Switch, Linking, Platform } from 'react-native';
 
 import { useSelector, useDispatch } from '../store';
 import { updatePopup } from '../actions';
@@ -18,6 +18,7 @@ import {
 import { getFormattedTime, getRect, adjustRect } from '../utils';
 
 import { useTailwind } from '.';
+import Text from './CustomText';
 
 const SettingsPopupMisc = (props) => {
 

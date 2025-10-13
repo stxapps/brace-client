@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FlatList, View, Text, TouchableOpacity, Animated } from 'react-native';
+import { FlatList, View, TouchableOpacity, Animated } from 'react-native';
 import { connect } from 'react-redux';
 import { Flow } from 'react-native-animated-spinkit';
 
@@ -18,10 +18,10 @@ import cache from '../utils/cache';
 import vars from '../vars';
 
 import { withTailwind } from '.';
-
 import CardLoadingContentItem from './CardLoadingContentItem';
 import CardItem from './CardItem';
 import EmptyContent from './EmptyContent';
+import Text from './CustomText';
 
 const PANEL_HEAD = 'PANEL_HEAD';
 const PANEL_BODY = 'PANEL_BODY';

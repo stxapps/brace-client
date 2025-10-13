@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, TouchableOpacity, Linking, Image } from 'react-native';
+import { View, TouchableOpacity, Linking, Image } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
@@ -18,6 +18,7 @@ import { PATTERN_MAP } from '../types/patternPaths';
 
 import { withTailwind } from '.';
 import GracefulImage from './GracefulImage';
+import Text from './CustomText';
 
 class CardItemContent extends React.Component<any, any> {
 

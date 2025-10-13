@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  View, Text, TouchableOpacity, TextInput, Keyboard, BackHandler, Platform,
-} from 'react-native';
+import { View, TouchableOpacity, Keyboard, BackHandler, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
@@ -14,6 +12,8 @@ import { getThemeMode } from '../selectors';
 import { isObject, isNumber, toPx } from '../utils';
 
 import { withTailwind } from '.';
+import Text from './CustomText';
+import TextInput from './CustomTextInput';
 
 const getKbHt = () => {
   const kbMtx = Keyboard.metrics();

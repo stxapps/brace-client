@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
-  View, Text, TouchableOpacity, TouchableWithoutFeedback, TextInput, Animated,
-  BackHandler, Platform,
+  View, TouchableOpacity, TouchableWithoutFeedback, Animated, BackHandler, Platform,
 } from 'react-native';
 
 import { useSelector, useDispatch } from '../store';
@@ -14,6 +13,8 @@ import { popupFMV } from '../types/animConfigs';
 import { computePositionTranslate } from '../utils/popup';
 
 import { getTopBarSizes, useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
+import Text from './CustomText';
+import TextInput from './CustomTextInput';
 
 const TopBarAddPopup = () => {
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated, BackHandler,
+  View, TouchableOpacity, TouchableWithoutFeedback, Animated, BackHandler,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
@@ -14,6 +14,7 @@ import {
 import { dialogFMV } from '../types/animConfigs';
 
 import { useSafeAreaInsets, useTailwind } from '.';
+import Text from './CustomText';
 
 const PaywallPopup = () => {
 

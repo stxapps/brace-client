@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import { ScrollView, View, TouchableOpacity } from 'react-native';
 import { useShareIntentContext } from 'expo-share-intent';
 import Svg, { Path } from 'react-native-svg';
 import { Flow } from 'react-native-animated-spinkit';
@@ -15,6 +15,7 @@ import { isObject, isString, validateUrl, indexesOf } from '../utils';
 
 import { useSafeAreaFrame, useTailwind } from '.';
 import TopBar from './TopBar';
+import Text from './CustomText';
 
 const MAX_ADDING_URLS = 3;
 

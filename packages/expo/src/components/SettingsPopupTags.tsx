@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useMemo } from 'react';
-import {
-  View, Text, TouchableOpacity, TextInput, Keyboard, Platform,
-} from 'react-native';
+import { View, TouchableOpacity, Keyboard, Platform } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { Circle } from 'react-native-animated-spinkit';
 
@@ -20,6 +18,8 @@ import { validateTagNameDisplayName, getRect } from '../utils';
 import { initialTagNameEditorState } from '../types/initialStates';
 
 import { useTailwind } from '.';
+import Text from './CustomText';
+import TextInput from './CustomTextInput';
 
 const SettingsPopupTags = (props) => {
 

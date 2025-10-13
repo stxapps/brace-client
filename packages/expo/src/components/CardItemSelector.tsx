@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, TouchableOpacity, Animated } from 'react-native';
+import { View, TouchableOpacity, Animated } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
@@ -14,6 +14,7 @@ import {
 import { popupFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
+import Text from './CustomText';
 
 class CardItemSelector extends React.Component<any, any> {
 

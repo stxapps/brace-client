@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
@@ -12,6 +12,7 @@ import { toPx } from '../utils';
 import cache from '../utils/cache';
 
 import { withTailwind } from '.';
+import Text from './CustomText';
 
 class BottomBarCommands extends React.PureComponent<any, any> {
 

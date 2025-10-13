@@ -10,10 +10,9 @@ import {
   DOMAIN_NAME, APP_NAME, APP_ICON_NAME, APP_SCOPES, SIGN_UP_POPUP, SIGN_IN_POPUP,
   LG_WIDTH,
 } from '../types/const';
-import { splitOnFirst, escapeDoubleQuotes } from '../utils';
+import { splitOnFirst, escapeDoubleQuotes, toPx } from '../utils';
 import cache from '../utils/cache';
 import { dialogFMV } from '../types/animConfigs';
-import { toPx } from '../utils';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useKeyboardHeight, useTailwind } from '.';
 

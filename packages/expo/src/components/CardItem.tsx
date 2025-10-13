@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, TouchableOpacity, Linking, Platform } from 'react-native';
+import { View, TouchableOpacity, Linking, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
@@ -18,9 +18,9 @@ import {
 import cache from '../utils/cache';
 
 import { withTailwind } from '.';
-
 import CardItemContent from './CardItemContent';
 import CardItemSelector from './CardItemSelector';
+import Text from './CustomText';
 
 class CardItem extends React.Component<any, any> {
 

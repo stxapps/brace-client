@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Platform } from 'react-native';
+import { View, TouchableOpacity, Platform } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { useSelector, useDispatch } from '../store';
@@ -10,6 +10,7 @@ import { getListNameDisplayName, getTagNameDisplayName } from '../utils';
 import cache from '../utils/cache';
 
 import { useTailwind } from '.';
+import Text from './CustomText';
 
 import EmptyBox from '../images/empty-box-sided.svg';
 import UndrawLink from '../images/undraw-link.svg';

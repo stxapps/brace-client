@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useCallback, useMemo } from 'react';
-import { FlatList, View, Text, TouchableOpacity, Animated } from 'react-native';
+import { FlatList, View, TouchableOpacity, Animated } from 'react-native';
 import { Flow } from 'react-native-animated-spinkit';
 
 import { useSelector, useDispatch } from '../store';
@@ -15,10 +15,10 @@ import cache from '../utils/cache';
 import vars from '../vars';
 
 import { useSafeAreaFrame, useTailwind } from '.';
-
 import ListLoadingContentItem from './ListLoadingContentItem';
 import ListItem from './ListItem';
 import EmptyContent from './EmptyContent';
+import Text from './CustomText';
 
 const PANEL_HEAD = 'PANEL_HEAD';
 const PANEL_BODY = 'PANEL_BODY';

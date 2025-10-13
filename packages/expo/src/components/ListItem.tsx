@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useMemo } from 'react';
-import { View, Text, TouchableOpacity, Linking } from 'react-native';
+import { View, TouchableOpacity, Linking } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { useSelector, useDispatch } from '../store';
@@ -15,6 +15,7 @@ import {
 import { useSafeAreaFrame, useTailwind } from '.';
 import ListItemContent from './ListItemContent';
 import ListItemSelector from './ListItemSelector';
+import Text from './CustomText';
 
 const ListItem = (props) => {
 

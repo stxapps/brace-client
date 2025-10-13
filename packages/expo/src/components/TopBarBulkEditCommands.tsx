@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, BackHandler, Animated } from 'react-native';
+import { View, TouchableOpacity, BackHandler, Animated } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
@@ -18,6 +18,7 @@ import cache from '../utils/cache';
 import { popupFMV } from '../types/animConfigs';
 
 import { withTailwind } from '.';
+import Text from './CustomText';
 
 class TopBarBulkEditCommands extends React.Component<any, any> {
 

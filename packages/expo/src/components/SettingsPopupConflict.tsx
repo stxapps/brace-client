@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { useSelector, useDispatch } from '../store';
@@ -8,6 +8,7 @@ import { initialSettingsState } from '../types/initialStates';
 import { extractDataId, getFormattedDT } from '../utils';
 
 import { useTailwind } from '.';
+import Text from './CustomText';
 
 const SettingsPopupConflict = (props) => {
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { View, Text, TouchableOpacity, Linking, Image } from 'react-native';
+import { View, TouchableOpacity, Linking, Image } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { useSelector, useDispatch } from '../store';
@@ -19,6 +19,7 @@ import { PATTERN_MAP } from '../types/patternPaths';
 
 import { useSafeAreaFrame, useTailwind } from '.';
 import GracefulImage from './GracefulImage';
+import Text from './CustomText';
 
 const ListItemContent = (props) => {
 

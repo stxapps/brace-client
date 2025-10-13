@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Linking } from 'react-native';
+import { View, TouchableOpacity, Linking } from 'react-native';
 import { Svg, Path } from 'react-native-svg';
 
 import { useSelector } from '../store';
@@ -10,6 +10,7 @@ import {
 import { getThemeMode } from '../selectors';
 
 import { useTailwind } from '.';
+import Text from './CustomText';
 
 import Logo from '../images/logo-short.svg';
 import LogoBlk from '../images/logo-short-blk.svg';

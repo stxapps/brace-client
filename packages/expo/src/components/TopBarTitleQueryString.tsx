@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { useSelector, useDispatch } from '../store';
@@ -13,6 +13,7 @@ import { getTagNameDisplayName, getRect, toPx } from '../utils';
 import cache from '../utils/cache';
 
 import { getTopBarSizes, useSafeAreaFrame, useTailwind } from '.';
+import Text from './CustomText';
 
 const TopBarTitleQueryString = () => {
 

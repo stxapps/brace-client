@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Animated } from 'react-native';
+import { View, TouchableOpacity, Animated } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
@@ -11,6 +11,7 @@ import { fetchedPopupFMV } from '../types/animConfigs';
 import { toPx } from '../utils';
 
 import { withTailwind } from '.';
+import Text from './CustomText';
 
 class FetchedPopup extends React.PureComponent<any, any> {
 

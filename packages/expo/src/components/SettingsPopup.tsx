@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
-  ScrollView, View, Text, TouchableOpacity, TouchableWithoutFeedback, Animated,
-  BackHandler, PanResponder, Linking, Platform, Keyboard,
+  ScrollView, View, TouchableOpacity, TouchableWithoutFeedback, Animated, BackHandler,
+  PanResponder, Linking, Platform, Keyboard,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { Circle } from 'react-native-animated-spinkit';
@@ -23,7 +23,6 @@ import {
   useSafeAreaFrame, useSafeAreaInsets, useKeyboardHeight, useTailwind,
   useCanEdgeHorizontalSwipe,
 } from '.';
-
 import SettingsPopupAccount from './SettingsPopupAccount';
 import { SettingsPopupIap, SettingsPopupIapRestore } from './SettingsPopupIap';
 import {
@@ -35,6 +34,7 @@ import SettingsPopupTags from './SettingsPopupTags';
 import SettingsPopupMisc from './SettingsPopupMisc';
 import SettingsPopupAbout from './SettingsPopupAbout';
 import SettingsPopupConflict from './SettingsPopupConflict';
+import Text from './CustomText';
 
 const VIEW_ACCOUNT = SETTINGS_VIEW_ACCOUNT;
 const VIEW_IAP = SETTINGS_VIEW_IAP;
