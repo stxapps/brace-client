@@ -12,6 +12,7 @@ import {
 import { SM_WIDTH } from '../types/const';
 import { getStatus, getThemeMode } from '../selectors';
 import { statusPopupFMV } from '../types/animConfigs';
+import { toPx } from '../utils';
 
 import { withTailwind } from '.';
 
@@ -120,7 +121,7 @@ class StatusPopup extends React.PureComponent<any, any> {
     }
 
     if (status) {
-      this.msg = safeAreaWidth < SM_WIDTH ? MSGS_SHRT[status] : MSGS[status];
+      this.msg = safeAreaWidth < toPx(SM_WIDTH) ? MSGS_SHRT[status] : MSGS[status];
 
       if ([
         FETCH_COMMIT,

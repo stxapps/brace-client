@@ -15,7 +15,9 @@ import {
   CUSTOM_EDITOR_POPUP, IMAGES, CD_ROOT, BLK_MODE, LG_WIDTH,
 } from '../types/const';
 import { getCustomEditor, getThemeMode } from '../selectors';
-import { isObject, isString, randomString, getFileExt, getMainId } from '../utils';
+import {
+  isObject, isString, randomString, getFileExt, getMainId, toPx,
+} from '../utils';
 import { dialogFMV } from '../types/animConfigs';
 import cache from '../utils/cache';
 
@@ -209,7 +211,7 @@ const CustomEditorPopup = () => {
       { scale: popupAnim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }) },
     ],
   };
-  if (Platform.OS === 'ios' && safeAreaWidth >= LG_WIDTH) {
+  if (Platform.OS === 'ios' && safeAreaWidth >= toPx(LG_WIDTH)) {
     popupStyle.marginTop = Math.round(appHeight / 6);
   }
   const bgStyle = { opacity: popupAnim };

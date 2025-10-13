@@ -5,6 +5,7 @@ import Svg, { Path } from 'react-native-svg';
 import { useSelector, useDispatch } from '../store';
 import { updatePopup, signOut } from '../actions';
 import { DOMAIN_NAME, HASH_SUPPORT, ACCESS_ERROR_POPUP, SM_WIDTH } from '../types/const';
+import { toPx } from '../utils';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
@@ -51,7 +52,7 @@ const AccessErrorPopup = () => {
             </View>
             <View style={tailwind('ml-3 flex-shrink flex-grow lg:mt-0.5')}>
               <Text style={tailwind('mr-4 text-left text-base font-medium text-red-800 lg:text-sm')}>Your access has expired!</Text>
-              <Text style={tailwind('mt-2.5 text-sm font-normal leading-6 text-red-700')}>Please sign out and sign in again. {safeAreaWidth < SM_WIDTH ? '' : '\n'}If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-sm font-normal leading-6 text-red-700 underline')}>contact us</Text>.</Text>
+              <Text style={tailwind('mt-2.5 text-sm font-normal leading-6 text-red-700')}>Please sign out and sign in again. {safeAreaWidth < toPx(SM_WIDTH) ? '' : '\n'}If the problem persists, please <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_SUPPORT)} style={tailwind('text-sm font-normal leading-6 text-red-700 underline')}>contact us</Text>.</Text>
               <View style={tailwind('mt-4')}>
                 <View style={tailwind('-mx-2 -my-1.5 flex-row')}>
                   <TouchableOpacity onPress={onSignOutBtnClick} style={tailwind('rounded-md bg-red-50 px-2 py-1.5')}>

@@ -8,6 +8,7 @@ import { MD_WIDTH } from '../types/const';
 import { getThemeMode } from '../selectors';
 import cache from '../utils/cache';
 import { fetchedPopupFMV } from '../types/animConfigs';
+import { toPx } from '../utils';
 
 import { withTailwind } from '.';
 
@@ -74,7 +75,7 @@ class FetchedPopup extends React.PureComponent<any, any> {
   getTop(props) {
     const { safeAreaWidth, insets } = this.props;
 
-    const initialTop = safeAreaWidth < MD_WIDTH ? 74 : 82;
+    const initialTop = safeAreaWidth < toPx(MD_WIDTH) ? 74 : 82;
     return initialTop + insets.top;
   }
 

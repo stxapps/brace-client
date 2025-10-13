@@ -13,7 +13,7 @@ import {
   DOMAIN_NAME, HASH_SUPPORT, SD_HUB_URL, MD_WIDTH, BLK_MODE,
 } from '../types/const';
 import { getThemeMode } from '../selectors';
-import { isString } from '../utils';
+import { isString, toPx } from '../utils';
 
 import { useSafeAreaFrame, withTailwind, useTailwind } from '.';
 
@@ -168,7 +168,7 @@ const InnerSettingsPopupDataImport = (props) => {
     <View style={tailwind('p-4 md:p-6 md:pt-4')}>
       <View style={tailwind('border-b border-gray-200 blk:border-gray-700 md:border-b-0')}>
         <TouchableOpacity onPress={onBackToDataViewBtnClick} style={tailwind('pb-1 md:pb-0')}>
-          <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>{'<'} {safeAreaWidth < MD_WIDTH ? 'Settings / ' : ''}Data</Text>
+          <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>{'<'} {safeAreaWidth < toPx(MD_WIDTH) ? 'Settings / ' : ''}Data</Text>
         </TouchableOpacity>
         <Text style={tailwind('pb-2 text-xl font-medium leading-5 text-gray-800 blk:text-gray-100 md:pb-0')}>Import Data</Text>
       </View>
@@ -270,7 +270,7 @@ const InnerSettingsPopupDataExport = (props) => {
     <View style={tailwind('p-4 md:p-6 md:pt-4')}>
       <View style={tailwind('border-b border-gray-200 blk:border-gray-700 md:border-b-0')}>
         <TouchableOpacity onPress={onBackToDataViewBtnClick} style={tailwind('pb-1 md:pb-0')}>
-          <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>{'<'} {safeAreaWidth < MD_WIDTH ? 'Settings / ' : ''}Data</Text>
+          <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>{'<'} {safeAreaWidth < toPx(MD_WIDTH) ? 'Settings / ' : ''}Data</Text>
         </TouchableOpacity>
         <Text style={tailwind('pb-2 text-xl font-medium leading-5 text-gray-800 blk:text-gray-100 md:pb-0')}>Export All Data</Text>
       </View>
@@ -401,7 +401,7 @@ class InnerSettingsPopupDataDelete extends React.PureComponent<any, any> {
       <View style={tailwind('p-4 md:p-6 md:pt-4')}>
         <View style={tailwind('border-b border-gray-200 blk:border-gray-700 md:border-b-0')}>
           <TouchableOpacity onPress={this.props.onBackToDataViewBtnClick} style={tailwind('pb-1 md:pb-0')}>
-            <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>{'<'} {safeAreaWidth < MD_WIDTH ? 'Settings / ' : ''}Data</Text>
+            <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>{'<'} {safeAreaWidth < toPx(MD_WIDTH) ? 'Settings / ' : ''}Data</Text>
           </TouchableOpacity>
           <Text style={tailwind('pb-2 text-xl font-medium leading-5 text-gray-800 blk:text-gray-100 md:pb-0')}>Delete All Data</Text>
         </View>

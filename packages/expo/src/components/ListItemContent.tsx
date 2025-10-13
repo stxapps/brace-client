@@ -12,7 +12,7 @@ import {
 import { makeGetCustomImage, makeGetTnAndDns } from '../selectors';
 import {
   removeTailingSlash, ensureContainUrlProtocol, ensureContainUrlSecureProtocol,
-  extractUrl, isDecorValid, prependDomainName, getRect, adjustRect,
+  extractUrl, isDecorValid, prependDomainName, getRect, adjustRect, toPx,
 } from '../utils';
 import cache from '../utils/cache';
 import { PATTERN_MAP } from '../types/patternPaths';
@@ -184,7 +184,7 @@ const ListItemContent = (props) => {
   }
 
   const canSelect = (
-    safeAreaWidth >= LG_WIDTH &&
+    safeAreaWidth >= toPx(LG_WIDTH) &&
     ![ADDING, MOVING, UPDATING, EXTRD_UPDATING].includes(link.status) &&
     [null, PINNED].includes(pinStatus) &&
     [null, TAGGED].includes(tagStatus)

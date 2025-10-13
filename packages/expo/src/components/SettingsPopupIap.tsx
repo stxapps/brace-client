@@ -19,7 +19,7 @@ import {
   BLK_MODE,
 } from '../types/const';
 import { getValidProduct, getValidPurchase, getThemeMode } from '../selectors';
-import { getFormattedDate, isString, isFldStr } from '../utils';
+import { getFormattedDate, isString, isFldStr, toPx } from '../utils';
 
 import { useSafeAreaFrame, useTailwind } from '.';
 
@@ -576,7 +576,7 @@ const InnerSettingsPopupIapRestore = (props) => {
     <View style={tailwind('p-4 md:p-6 md:pt-4')}>
       <View style={tailwind('border-b border-gray-200 blk:border-gray-700 md:border-b-0')}>
         <TouchableOpacity onPress={onBackToIapViewBtnClick} style={tailwind('pb-1 md:pb-0')}>
-          <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>{'<'} {safeAreaWidth < MD_WIDTH ? 'Settings / ' : ''}Subscription</Text>
+          <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>{'<'} {safeAreaWidth < toPx(MD_WIDTH) ? 'Settings / ' : ''}Subscription</Text>
         </TouchableOpacity>
         <Text style={tailwind('pb-2 text-xl font-medium leading-6 text-gray-800 blk:text-gray-100 md:pb-0')}>Restore Purchases</Text>
       </View>

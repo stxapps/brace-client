@@ -12,6 +12,7 @@ import {
 } from '../types/const';
 import { getLayoutType } from '../selectors';
 import { popupFMV } from '../types/animConfigs';
+import { toPx } from '../utils';
 import { computePositionTranslate } from '../utils/popup';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
@@ -126,7 +127,7 @@ const PinMenuPopup = () => {
   if (!derivedAnchorPosition) return null;
 
   let menu = [PIN_LEFT, PIN_RIGHT, UNPIN];
-  if (layoutType === LAYOUT_LIST || safeAreaWidth < SM_WIDTH) {
+  if (layoutType === LAYOUT_LIST || safeAreaWidth < toPx(SM_WIDTH)) {
     menu = [PIN_UP, PIN_DOWN, UNPIN];
   }
 

@@ -13,6 +13,7 @@ import {
 } from '../selectors';
 import {
   ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isTaggingStatus, isEqual,
+  toPx,
 } from '../utils';
 import cache from '../utils/cache';
 
@@ -180,7 +181,7 @@ class CardItem extends React.Component<any, any> {
 
     // Need to do this as React Native doesn't support maxWidth: "none"
     //   even though it's in tailwind-rn.
-    let viewStyle = safeAreaWidth < SM_WIDTH ? 'max-w-md' : '';
+    let viewStyle = safeAreaWidth < toPx(SM_WIDTH) ? 'max-w-md' : '';
 
     if (Platform.OS === 'ios') viewStyle += ' border border-gray-200 shadow-xs';
     else viewStyle += ' shadow-card-android';

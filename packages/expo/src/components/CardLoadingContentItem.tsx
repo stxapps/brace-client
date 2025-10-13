@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { SM_WIDTH } from '../types/const';
-import { sample } from '../utils';
+import { sample, toPx } from '../utils';
 
 import { useSafeAreaFrame, useTailwind } from '.';
 
@@ -18,7 +18,7 @@ const CardLoadingContentItem = (props) => {
 
   // Need to do this as React Native doesn't support maxWidth: "none"
   //   even though it's in tailwind-rn.
-  const viewStyle = safeAreaWidth < SM_WIDTH ? 'max-w-md' : '';
+  const viewStyle = safeAreaWidth < toPx(SM_WIDTH) ? 'max-w-md' : '';
 
   const hostStyle = { width: sample(widths.slice(0, 8)) };
   const nLines = sample([1, 2, 3]);

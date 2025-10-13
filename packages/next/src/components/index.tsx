@@ -6,10 +6,10 @@ import {
   TOP_HEADER_HEIGHT, TOP_LIST_NAME_HEIGHT, TOP_HEADER_LIST_NAME_SPACE,
   TOP_HEADER_LIST_NAME_SPACE_MD, TOP_BAR_HEIGHT, TOP_BAR_HEIGHT_MD, MD_WIDTH, LG_WIDTH,
 } from '../types/const';
-import { isFldStr, toPx } from '../utils';
 import {
   getSafeAreaFrame, getSafeAreaInsets, getThemeMode, getTailwind,
 } from '../selectors';
+import { isFldStr, toPx } from '../utils';
 
 export const getTopBarSizes = (safeAreaWidth) => {
 

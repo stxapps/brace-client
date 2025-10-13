@@ -5,6 +5,7 @@ import Svg, { Path } from 'react-native-svg';
 import { useSelector, useDispatch } from '../store';
 import { updatePopup } from '../actions';
 import { HUB_ERROR_POPUP, SM_WIDTH } from '../types/const';
+import { toPx } from '../utils';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
@@ -45,7 +46,7 @@ const HubErrorPopup = () => {
             </View>
             <View style={tailwind('ml-3 flex-shrink flex-grow lg:mt-0.5')}>
               <Text style={tailwind('mr-4 text-left text-base font-medium text-red-800 lg:text-sm')}>Old data server is discontinued!</Text>
-              <Text style={tailwind('mt-2.5 text-sm font-normal leading-5.5 text-red-700')}>Hiro-hosted data server is discontinued. {safeAreaWidth < SM_WIDTH ? '' : '\n'}Please migrate your data now. For more information: <Text onPress={() => Linking.openURL('http://bit.ly/3Sv6ebK')} style={tailwind('text-sm font-normal leading-5.5 text-red-700 underline')}>http://bit.ly/3Sv6ebK</Text></Text>
+              <Text style={tailwind('mt-2.5 text-sm font-normal leading-5.5 text-red-700')}>Hiro-hosted data server is discontinued. {safeAreaWidth < toPx(SM_WIDTH) ? '' : '\n'}Please migrate your data now. For more information: <Text onPress={() => Linking.openURL('http://bit.ly/3Sv6ebK')} style={tailwind('text-sm font-normal leading-5.5 text-red-700 underline')}>http://bit.ly/3Sv6ebK</Text></Text>
             </View>
           </View>
           <TouchableOpacity onPress={onCloseBtnClick} style={tailwind('absolute top-1 right-1 rounded-md bg-red-50 p-1')}>

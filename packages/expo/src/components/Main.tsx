@@ -10,6 +10,7 @@ import {
   IMAGES,
 } from '../types/const';
 import { getIsShowingLinkIdsNull, getLayoutType } from '../selectors';
+import { toPx } from '../utils';
 
 import { withSafeAreaContext } from '.';
 
@@ -76,8 +77,8 @@ class Main extends React.PureComponent<any, any> {
 
   getColumnWidth = (safeAreaWidth) => {
     let columnWidth = PC_100;
-    if (safeAreaWidth >= SM_WIDTH) columnWidth = PC_50;
-    if (safeAreaWidth >= LG_WIDTH) columnWidth = PC_33;
+    if (safeAreaWidth >= toPx(SM_WIDTH)) columnWidth = PC_50;
+    if (safeAreaWidth >= toPx(LG_WIDTH)) columnWidth = PC_33;
 
     return columnWidth;
   };

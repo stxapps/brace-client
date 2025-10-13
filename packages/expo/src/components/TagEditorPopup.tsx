@@ -14,6 +14,7 @@ import {
 } from '../types/const';
 import { getThemeMode } from '../selectors';
 import { dialogFMV } from '../types/animConfigs';
+import { toPx } from '../utils';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useKeyboardHeight, useTailwind } from '.';
 
@@ -168,7 +169,7 @@ const TagEditorPopup = () => {
   if (tagEditor.mode === NOT_SUPPORTED) {
     popupStyle.maxWidth = 400;
   } else {
-    if (Platform.OS === 'ios' && safeAreaWidth >= LG_WIDTH) {
+    if (Platform.OS === 'ios' && safeAreaWidth >= toPx(LG_WIDTH)) {
       popupStyle.marginTop = Math.round(appHeight / 6);
     }
   }
@@ -232,11 +233,11 @@ const TagEditorPopup = () => {
     title = MANAGE_TAGS;
     if (tagEditor.hints.length === 0) {
       desc = (
-        <React.Fragment>No tag for this link. Enter a new one and press {safeAreaWidth < SM_WIDTH ? '' : '\n'}the Add button.</React.Fragment>
+        <React.Fragment>No tag for this link. Enter a new one and press {safeAreaWidth < toPx(SM_WIDTH) ? '' : '\n'}the Add button.</React.Fragment>
       );
     } else {
       desc = (
-        <React.Fragment>No tag for this link. Enter a new one, {safeAreaWidth < SM_WIDTH ? '\n' : ''}or select from the hint below.</React.Fragment>
+        <React.Fragment>No tag for this link. Enter a new one, {safeAreaWidth < toPx(SM_WIDTH) ? '\n' : ''}or select from the hint below.</React.Fragment>
       );
     }
   }

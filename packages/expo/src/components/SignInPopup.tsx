@@ -13,6 +13,7 @@ import {
 import { splitOnFirst, escapeDoubleQuotes } from '../utils';
 import cache from '../utils/cache';
 import { dialogFMV } from '../types/animConfigs';
+import { toPx } from '../utils';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useKeyboardHeight, useTailwind } from '.';
 
@@ -164,7 +165,7 @@ const SignInPopup = () => {
       { scale: popupAnim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }) },
     ],
   };
-  if (Platform.OS === 'ios' && safeAreaWidth >= LG_WIDTH) {
+  if (Platform.OS === 'ios' && safeAreaWidth >= toPx(LG_WIDTH)) {
     popupStyle.marginTop = Math.round(appHeight / 6);
   }
   const bgStyle = { opacity: popupAnim };

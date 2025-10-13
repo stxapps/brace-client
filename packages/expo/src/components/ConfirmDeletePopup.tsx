@@ -13,6 +13,7 @@ import {
   SM_WIDTH,
 } from '../types/const';
 import { dialogFMV } from '../types/animConfigs';
+import { toPx } from '../utils';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
@@ -123,7 +124,7 @@ const ConfirmDeletePopup = () => {
   const bgStyle = { opacity: popupAnim };
 
   const cancelBtnStyle: any = {};
-  if (safeAreaWidth < SM_WIDTH) {
+  if (safeAreaWidth < toPx(SM_WIDTH)) {
     cancelBtnStyle.paddingTop = 7;
     cancelBtnStyle.paddingBottom = 7;
   }

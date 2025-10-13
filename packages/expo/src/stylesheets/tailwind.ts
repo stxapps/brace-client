@@ -1,7 +1,7 @@
 import {
   WHT_MODE, BLK_MODE, SM_WIDTH, MD_WIDTH, LG_WIDTH, XL_WIDTH,
 } from '../types/const';
-import { isNumber, isString } from '../utils';
+import { isNumber, isString, toPx } from '../utils';
 
 import tailwindStyles from './tailwind.json';
 import extrasStyles from './extras.json';
@@ -97,7 +97,7 @@ const filterByTheme = (classes, themeMode) => {
   return selectedClasses;
 };
 
-const SCREEN_VALUES = [0, SM_WIDTH, MD_WIDTH, LG_WIDTH, XL_WIDTH];
+const SCREEN_VALUES = ['0rem', SM_WIDTH, MD_WIDTH, LG_WIDTH, XL_WIDTH];
 const SCREEN_PREFIXES = ['', 'sm:', 'md:', 'lg:', 'xl:'];
 
 const filterByScreen = (classes, windowWidth) => {
@@ -120,7 +120,7 @@ const filterByScreen = (classes, windowWidth) => {
 
   let selectedClasses = themeBuckets[0];
   for (let i = 1; i < SCREEN_VALUES.length; i++) {
-    if (windowWidth >= SCREEN_VALUES[i]) {
+    if (windowWidth >= toPx(SCREEN_VALUES[i])) {
       selectedClasses = [...selectedClasses, ...themeBuckets[i]];
     }
   }

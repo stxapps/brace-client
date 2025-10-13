@@ -106,8 +106,10 @@ const ListPanel = (props) => {
 
   const renderPanel = useCallback(({ item }) => {
     if (item.id === PANEL_HEAD) {
-      let pt = safeAreaWidth < MD_WIDTH ? toPx(TOP_BAR_HEIGHT) : toPx(TOP_BAR_HEIGHT_MD);
+      let pt = toPx(TOP_BAR_HEIGHT_MD);
+      if (safeAreaWidth < toPx(MD_WIDTH)) pt = toPx(TOP_BAR_HEIGHT);
       pt += toPx('1.5rem');
+
       return (
         <View style={cache('LP_panelHead', { paddingTop: pt }, [safeAreaWidth])} />
       );

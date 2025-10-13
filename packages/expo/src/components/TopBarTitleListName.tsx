@@ -12,7 +12,7 @@ import {
   LIST_NAMES_MODE_CHANGE_LIST_NAME, LIST_NAMES_ANIM_TYPE_POPUP, LOCK_ACTION_UNLOCK_LIST,
 } from '../types/const';
 import { getThemeMode, getCanChangeListNames } from '../selectors';
-import { getListNameDisplayName, getRect } from '../utils';
+import { getListNameDisplayName, getRect, toPx } from '../utils';
 import cache from '../utils/cache';
 
 import { getTopBarSizes, withTailwind } from '.';
@@ -50,15 +50,18 @@ class TopBarTitleListName extends React.PureComponent<any, any> {
     const displayName = getListNameDisplayName(listName, listNameMap);
 
     let textMaxWidth = 160;
-    if (safeAreaWidth >= SM_WIDTH) textMaxWidth = 320;
-    if (safeAreaWidth >= LG_WIDTH) textMaxWidth = 512;
+    if (safeAreaWidth >= toPx(SM_WIDTH)) textMaxWidth = 320;
+    if (safeAreaWidth >= toPx(LG_WIDTH)) textMaxWidth = 512;
 
-    if (safeAreaWidth >= SM_WIDTH) {
+    if (safeAreaWidth >= toPx(SM_WIDTH)) {
       const {
         headerPaddingX, commandsWidth,
         listNameDistanceX, listNameArrowWidth, listNameArrowSpace,
       } = getTopBarSizes(safeAreaWidth);
-      let headerSpaceLeftover = safeAreaWidth - headerPaddingX - listNameDistanceX - listNameArrowWidth - listNameArrowSpace - commandsWidth - 4;
+      let headerSpaceLeftover = (
+        safeAreaWidth - headerPaddingX - listNameDistanceX - listNameArrowWidth -
+        listNameArrowSpace - commandsWidth - 4
+      );
       if (listName in updates) headerSpaceLeftover -= 8;
 
       textMaxWidth = Math.min(textMaxWidth, headerSpaceLeftover);

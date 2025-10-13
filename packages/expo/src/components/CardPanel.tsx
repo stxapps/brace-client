@@ -197,8 +197,11 @@ class CardPanel extends React.PureComponent<any, any> {
     const { hasFetchedMore, isFetchingMore, safeAreaWidth, tailwind } = this.props;
 
     if (item.id === PANEL_HEAD) {
-      let pt = safeAreaWidth < MD_WIDTH ? toPx(TOP_BAR_HEIGHT) : toPx(TOP_BAR_HEIGHT_MD);
-      pt += safeAreaWidth < MD_WIDTH ? toPx('1.5rem') : toPx('2.5rem');
+      let pt = toPx(TOP_BAR_HEIGHT_MD) + toPx('2.5rem');
+      if (safeAreaWidth < toPx(MD_WIDTH)) {
+        pt = toPx(TOP_BAR_HEIGHT) + toPx('1.5rem');
+      }
+
       return (
         <View style={cache('CP_panelHead', { paddingTop: pt }, [safeAreaWidth])} />
       );

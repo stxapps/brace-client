@@ -17,6 +17,7 @@ import {
 } from '../types/const';
 import { getThemeMode } from '../selectors';
 import { dialogFMV } from '../types/animConfigs';
+import { toPx } from '../utils';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useKeyboardHeight, useTailwind } from '.';
 
@@ -180,7 +181,7 @@ const LockEditorPopup = () => {
     ],
     maxWidth: 368,
   };
-  if (Platform.OS === 'ios' && safeAreaWidth >= LG_WIDTH) {
+  if (Platform.OS === 'ios' && safeAreaWidth >= toPx(LG_WIDTH)) {
     popupStyle.marginTop = Math.round(appHeight / 6);
   }
   const bgStyle = { opacity: popupAnim };

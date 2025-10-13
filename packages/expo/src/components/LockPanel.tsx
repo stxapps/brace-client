@@ -32,8 +32,10 @@ const LockPanel = (props) => {
 
   if (lockStatus !== LOCKED) return null;
 
-  let pt = safeAreaWidth < MD_WIDTH ? toPx(TOP_BAR_HEIGHT) : toPx(TOP_BAR_HEIGHT_MD);
-  pt += safeAreaWidth < MD_WIDTH ? toPx('1.5rem') : toPx('2.5rem');
+  let pt = toPx(TOP_BAR_HEIGHT_MD) + toPx('2.5rem');
+  if (safeAreaWidth < toPx(MD_WIDTH)) {
+    pt = toPx(TOP_BAR_HEIGHT) + toPx('1.5rem');
+  }
 
   let pb = toPx('1.5rem');
   if (columnWidth === PC_100) {
@@ -46,9 +48,9 @@ const LockPanel = (props) => {
   };
   const style = { paddingTop: pt, paddingBottom: pb };
   const btnStyle = {
-    height: safeAreaWidth < SM_WIDTH ? 40 : 34,
-    paddingLeft: safeAreaWidth < SM_WIDTH ? 12 : 10,
-    paddingRight: safeAreaWidth < SM_WIDTH ? 14 : 12,
+    height: safeAreaWidth < toPx(SM_WIDTH) ? 40 : 34,
+    paddingLeft: safeAreaWidth < toPx(SM_WIDTH) ? 12 : 10,
+    paddingRight: safeAreaWidth < toPx(SM_WIDTH) ? 14 : 12,
   };
 
   return (

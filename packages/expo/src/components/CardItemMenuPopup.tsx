@@ -21,7 +21,7 @@ import {
 import {
   getLayoutType, makeGetPinStatus, makeGetTagStatus, getPopupLink,
 } from '../selectors';
-import { isObject, getListNameDisplayName, getLastHalfHeight } from '../utils';
+import { isObject, getListNameDisplayName, getLastHalfHeight, toPx } from '../utils';
 import { popupFMV } from '../types/animConfigs';
 import { computePositionTranslate } from '../utils/popup';
 
@@ -85,7 +85,7 @@ const CardItemMenuPopup = () => {
       menu = [...menu, CHANGE];
     }
 
-    if (layoutType === LAYOUT_LIST && safeAreaWidth >= LG_WIDTH) {
+    if (layoutType === LAYOUT_LIST && safeAreaWidth >= toPx(LG_WIDTH)) {
       menu = menu.filter(text => ![ARCHIVE, REMOVE, RESTORE].includes(text));
     }
 

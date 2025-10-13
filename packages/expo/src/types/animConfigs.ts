@@ -1,9 +1,11 @@
 import { LayoutAnimation, Easing } from 'react-native';
 
+import { toPx } from '../utils';
+
 import { SM_WIDTH } from './const';
 
 export const cardItemFMV = (safeAreaWidth) => {
-  if (safeAreaWidth < SM_WIDTH) {
+  if (safeAreaWidth < toPx(SM_WIDTH)) {
     return LayoutAnimation.create(
       225,
       LayoutAnimation.Types.easeInEaseOut,

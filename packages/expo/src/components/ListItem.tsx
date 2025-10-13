@@ -9,7 +9,7 @@ import {
 } from '../types/const';
 import { makeGetPinStatus, makeGetTagStatus } from '../selectors';
 import {
-  ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isTaggingStatus,
+  ensureContainUrlProtocol, isDiedStatus, isPinningStatus, isTaggingStatus, toPx,
 } from '../utils';
 
 import { useSafeAreaFrame, useTailwind } from '.';
@@ -44,7 +44,8 @@ const ListItem = (props) => {
 
   const renderRetry = () => {
     const { url } = link;
-    const errMsg = safeAreaWidth < SM_WIDTH ? 'Something went wrong!' : 'Oops..., something went wrong!';
+    let errMsg = 'Oops..., something went wrong!';
+    if (safeAreaWidth < toPx(SM_WIDTH)) errMsg = 'Something went wrong!';
 
     return (
       <React.Fragment>

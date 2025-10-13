@@ -9,6 +9,7 @@ import {
   SIGN_UP_POPUP, SHOW_SIGN_IN, SM_WIDTH, MD_WIDTH, LG_WIDTH,
 } from '../types/const';
 import { getThemeMode } from '../selectors';
+import { toPx } from '../utils';
 import cache from '../utils/cache';
 
 import { withTailwind } from '.';
@@ -32,11 +33,11 @@ class Landing extends React.PureComponent<any, any> {
     const { safeAreaWidth, safeAreaHeight, tailwind } = this.props;
 
     let saveLinksSvgWidth = 240;
-    if (safeAreaWidth >= SM_WIDTH) saveLinksSvgWidth = 288;
+    if (safeAreaWidth >= toPx(SM_WIDTH)) saveLinksSvgWidth = 288;
     // iPhone 11 Pro Max landscape is wider than MD (414x896)
     if (safeAreaHeight >= (640 - 24)) {
-      if (safeAreaWidth >= MD_WIDTH) saveLinksSvgWidth = 432;
-      if (safeAreaWidth >= LG_WIDTH) saveLinksSvgWidth = 384;
+      if (safeAreaWidth >= toPx(MD_WIDTH)) saveLinksSvgWidth = 432;
+      if (safeAreaWidth >= toPx(LG_WIDTH)) saveLinksSvgWidth = 384;
     }
 
     const saveLinksSvgHeight = saveLinksSvgWidth * 270 / 232;
@@ -64,7 +65,7 @@ class Landing extends React.PureComponent<any, any> {
         <View style={tailwind('h-full w-full items-center justify-center px-4 md:px-6 lg:px-8')}>
           <UndrawLink width={64} height={64} />
           <Text style={tailwind('mt-4 text-center text-3xl font-semibold text-gray-900 md:text-4xl')}>Never miss a link ever again</Text>
-          <Text style={tailwind('mt-4 text-center text-lg font-normal text-gray-500')}>Many interesting, useful, and important stuff is {safeAreaWidth >= SM_WIDTH && safeAreaWidth < MD_WIDTH ? '\n' : ''}on the internet. {safeAreaWidth >= MD_WIDTH ? '\n' : ''}Brace.to helps you save them so that you will never miss anything.</Text>
+          <Text style={tailwind('mt-4 text-center text-lg font-normal text-gray-500')}>Many interesting, useful, and important stuff is {safeAreaWidth >= toPx(SM_WIDTH) && safeAreaWidth < toPx(MD_WIDTH) ? '\n' : ''}on the internet. {safeAreaWidth >= toPx(MD_WIDTH) ? '\n' : ''}Brace.to helps you save them so that you will never miss anything.</Text>
         </View>
         <View style={tailwind('h-full w-full items-center justify-center px-4 md:px-6 lg:px-8')}>
           <View style={tailwind('w-full max-w-md flex-row')}>
@@ -127,7 +128,7 @@ class Landing extends React.PureComponent<any, any> {
         <View style={tailwind('h-full w-full items-center justify-center px-4 md:px-6 lg:px-8')}>
           <StacksShort width={80} height={80} />
           <Text style={tailwind('mt-4 text-center text-3xl font-semibold text-gray-900 md:text-4xl')}>Your privacy at heart powered by <Text onPress={() => Linking.openURL('https://www.hiro.so/stacks-js')} style={tailwind('text-3xl font-semibold text-purple-blockstack md:text-4xl')}>Stacks</Text></Text>
-          <Text style={tailwind('mt-4 text-center text-lg font-normal text-gray-500 md:text-xl')}>Your account is truly yours. {safeAreaWidth >= SM_WIDTH ? '' : '\n'}Your data is truly yours.</Text>
+          <Text style={tailwind('mt-4 text-center text-lg font-normal text-gray-500 md:text-xl')}>Your account is truly yours. {safeAreaWidth >= toPx(SM_WIDTH) ? '' : '\n'}Your data is truly yours.</Text>
         </View>
         <View style={tailwind('h-full w-full items-center justify-center px-4 md:px-6 lg:px-8')}>
           <View style={cache('L_blockstackGrayBox', [tailwind('max-w-sm bg-gray-50 p-4'), borderRadius], [tailwind])}>

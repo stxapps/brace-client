@@ -17,6 +17,7 @@ import {
 } from '../types/const';
 import { getThemeMode } from '../selectors';
 import { dialogFMV, sidebarFMV, popupFMV } from '../types/animConfigs';
+import { toPx } from '../utils';
 
 import {
   useSafeAreaFrame, useSafeAreaInsets, useKeyboardHeight, useTailwind,
@@ -309,11 +310,11 @@ const SettingsPopup = () => {
   const _renderPanelCloseBtn = () => {
     const MAX_W_6XL = 1152; // If change max-w-6xl below, need to update this too.
     const closeBtnStyle = { top: 0, right: 0 };
-    if (safeAreaWidth >= LG_WIDTH) closeBtnStyle.right = 6;
+    if (safeAreaWidth >= toPx(LG_WIDTH)) closeBtnStyle.right = 6;
     if (safeAreaWidth >= MAX_W_6XL) {
       closeBtnStyle.right = 6 + ((safeAreaWidth - MAX_W_6XL) / 2);
     }
-    const closeBtnSvgWidth = safeAreaWidth < MD_WIDTH ? 20 : 28;
+    const closeBtnSvgWidth = safeAreaWidth < toPx(MD_WIDTH) ? 20 : 28;
 
     return (
       <View style={[tailwind('absolute'), closeBtnStyle]}>
