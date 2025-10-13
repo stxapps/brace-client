@@ -12,7 +12,8 @@ import {
 } from '../types/actionTypes';
 import {
   HASH_LANDING_MOBILE, HASH_TERMS, HASH_PRIVACY, HASH_SUPPORT, VALID, INVALID, UNKNOWN,
-  ERROR, ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, APPSTORE, PLAYSTORE, PADDLE, MD_WIDTH,
+  ERROR, ACTIVE, NO_RENEW, GRACE, ON_HOLD, PAUSED, APPSTORE, PLAYSTORE, PADDLE,
+  MD_WIDTH,
 } from '../types/const';
 import { getValidProduct, getValidPurchase } from '../selectors';
 import { getFormattedDate, isString, toPx } from '../utils';

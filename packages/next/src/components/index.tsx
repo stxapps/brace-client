@@ -31,8 +31,8 @@ export const getTopBarSizes = (safeAreaWidth) => {
   const statusPopupDistanceY = toPx('2.25rem'); // 36px
 
   let headerPaddingX = toPx('1rem') * 2; // From px-4 md:px-6 lg:px-8
-  if (safeAreaWidth >= MD_WIDTH) headerPaddingX = toPx('1.5rem') * 2;
-  if (safeAreaWidth >= LG_WIDTH) headerPaddingX = toPx('2rem') * 2;
+  if (safeAreaWidth >= toPx(MD_WIDTH)) headerPaddingX = toPx('1.5rem') * 2;
+  if (safeAreaWidth >= toPx(LG_WIDTH)) headerPaddingX = toPx('2rem') * 2;
 
   const listNameArrowWidth = toPx('1.25rem'); // From inspect
   const listNameArrowSpace = toPx('0.25rem'); // From inspect

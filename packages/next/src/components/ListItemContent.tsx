@@ -210,7 +210,7 @@ const ListItemContent = (props) => {
   }
 
   const canSelect = (
-    safeAreaWidth >= LG_WIDTH &&
+    safeAreaWidth >= toPx(LG_WIDTH) &&
     ![ADDING, MOVING, UPDATING, EXTRD_UPDATING].includes(link.status) &&
     [null, PINNED].includes(pinStatus) &&
     [null, TAGGED].includes(tagStatus)

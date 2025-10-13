@@ -6,6 +6,7 @@ import { updateFetched } from '../actions/chunk';
 import { getSafeAreaWidth, getSafeAreaInsets, getThemeMode } from '../selectors';
 import { MD_WIDTH } from '../types/const';
 import { fetchedPopupFMV } from '../types/animConfigs';
+import { toPx } from '../utils';
 
 import { withTailwind } from '.';
 
@@ -44,7 +45,7 @@ class FetchedPopup extends React.PureComponent<any, any> {
       <AnimatePresence key="AnimatePresence_FetchedPopup" />
     );
 
-    const initialTop = safeAreaWidth < MD_WIDTH ? '4.625rem' : '5.125rem';
+    const initialTop = safeAreaWidth < toPx(MD_WIDTH) ? '4.625rem' : '5.125rem';
     const style = { top: initialTop, paddingTop: insets.top };
     const updateBtnStyle = { padding: '0.25rem 0rem 0.3125rem 0.75rem' };
     const closeBtnStyle = { marginRight: '0.5rem' };

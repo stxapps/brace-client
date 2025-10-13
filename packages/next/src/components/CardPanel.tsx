@@ -11,7 +11,7 @@ import {
 import {
   getLinks, getIsFetchingMore, getHasFetchedMore, getSafeAreaWidth, getThemeMode,
 } from '../selectors';
-import { addRem, getWindowScrollHeight, throttle } from '../utils';
+import { addRem, getWindowScrollHeight, throttle, toPx } from '../utils';
 import vars from '../vars';
 
 import { withTailwind } from '.';
@@ -179,7 +179,7 @@ class CardPanel extends React.PureComponent<any, any> {
     }
 
     const style = {
-      paddingTop: safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD,
+      paddingTop: safeAreaWidth < toPx(MD_WIDTH) ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD,
       paddingBottom,
     };
 
