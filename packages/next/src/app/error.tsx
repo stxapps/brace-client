@@ -26,7 +26,7 @@ export default function Error({
               <p className="mt-2.5 text-base text-gray-500">It&apos;s likely to be a network issue. Please wait a moment, check your internet connection and try to refresh the page. If the problem persists, please <a className="rounded-xs underline hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400" href={'/' + HASH_SUPPORT} target="_blank" rel="noreferrer">contact us</a>.</p>
               <p className="mt-2.5 text-sm text-gray-500">{error.message}</p>
               <div className="mt-6">
-                <button onClick={() => reset()} className="rounded-full bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring">Try again</button>
+                <button onClick={() => reset()} className="rounded-full bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-red-700 focus:outline-none focus:ring">Try again</button>
               </div>
             </div>
           </div>
