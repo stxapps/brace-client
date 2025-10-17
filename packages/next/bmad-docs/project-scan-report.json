@@ -1,0 +1,148 @@
+{
+  "workflow_version": "1.2.0",
+  "timestamps": {
+    "started": "2025-10-15T10:00:00.000Z",
+    "last_updated": "2025-10-16T10:00:00.000Z"
+  },
+  "mode": "initial_scan",
+  "scan_level": "deep",
+  "project_root": "/home/wit/Drive/Workspace/brace-client/packages/next",
+  "output_folder": "/home/wit/Drive/Workspace/brace-client/packages/next/bmad-docs",
+  "completed_steps": [
+    {
+      "step": "step_1",
+      "status": "completed",
+      "timestamp": "2025-10-15T10:05:00.000Z",
+      "summary": "Classified as monolith with 1 parts"
+    },
+    {
+      "step": "step_2",
+      "status": "completed",
+      "timestamp": "2025-10-15T10:10:00.000Z",
+      "summary": "Found 2 existing docs"
+    },
+    {
+      "step": "step_3",
+      "status": "completed",
+      "timestamp": "2025-10-15T10:15:00.000Z",
+      "summary": "Tech stack: Next.js on TypeScript"
+    },
+    {
+      "step": "step_4",
+      "status": "completed",
+      "timestamp": "2025-10-16T10:00:00.000Z",
+      "summary": "Conditional analysis complete. API contracts, data models, state management, and UI components identified. No explicit CI/CD found."
+    },
+    {
+      "step": "step_5",
+      "status": "completed",
+      "timestamp": "2025-10-16T10:00:00.000Z",
+      "summary": "Source tree documented"
+    },
+    {
+      "step": "step_6",
+      "status": "completed",
+      "timestamp": "2025-10-16T10:00:00.000Z",
+      "summary": "Dev setup and deployment documented"
+    },
+    {
+      "step": "step_7",
+      "status": "skipped",
+      "timestamp": "2025-10-16T10:00:00.000Z",
+      "summary": "Skipped because the project is a monolith (not multi-part)."
+    }
+  ],
+  "current_step": "step_8",
+  "findings": {
+    "project_classification": {
+      "repository_type": "monolith",
+      "parts_count": 1,
+      "primary_tech": "Next.js"
+    },
+    "project_types": [
+      {
+        "part_id": "part_1",
+        "project_type_id": "web",
+        "display_name": "Web Application"
+      }
+    ],
+    "technology_stack": {
+      "part_1": {
+        "framework": "Next.js",
+        "language": "TypeScript",
+        "ui_library": "React",
+        "state_management": "Redux",
+        "styling": "Tailwind CSS",
+        "authentication": "Stacks",
+        "storage": "Stacks"
+      }
+    },
+    "architecture_match": {
+      "part_1": "web-nextjs-ssr-monorepo"
+    },
+    "api_contracts": {
+      "server.ts": ["getFile", "putFile", "deleteFile", "performFiles", "listFiles"],
+      "internalHub.ts": ["performFiles"],
+      "data.ts": ["listFPaths", "getFiles", "performFiles"],
+      "localCache.ts": ["getFile", "putFile", "deleteFile", "deleteAllFiles"]
+    },
+    "data_models_inferred": [
+      "initialSettingsState",
+      "initialLocalSettingsState",
+      "initialInfoState",
+      "initialListNameEditorState",
+      "initialLockSettingsState",
+      "initialTagEditorState",
+      "initialTagNameEditorState"
+    ],
+    "state_management": {
+      "architecture": "Redux-like",
+      "reducers_path": "src/reducers/",
+      "action_types_path": "src/types/actionTypes.ts",
+      "initial_states_path": "src/types/initialStates.ts"
+    },
+    "ui_components_inventory": {
+      "layout_structure": ["App.tsx", "Main.tsx", "TopBar.tsx", "BottomBar.tsx", "CardPanel.tsx", "ListPanel.tsx", "Footer.tsx"],
+      "page_section": ["Landing.tsx", "About.tsx", "Pricing.tsx", "Privacy.tsx", "Support.tsx", "Terms.tsx", "Adding.tsx"],
+      "item_display": ["CardItem.tsx", "CardItemContent.tsx", "CardItemSelector.tsx", "CardLoadingContent.tsx", "ListItem.tsx", "ListItemContent.tsx", "ListItemSelector.tsx", "ListLoadingContent.tsx"],
+      "popup_modal": ["AccessErrorPopup.tsx", "BottomBarAddPopup.tsx", "BottomBarProfilePopup.tsx", "BottomBarSearchPopup.tsx", "BulkEditMenuPopup.tsx", "CardItemMenuPopup.tsx", "ConfirmDeletePopup.tsx", "ConfirmDiscardPopup.tsx", "CustomEditorPopup.tsx", "FetchedPopup.tsx", "HubErrorPopup.tsx", "ListNamesPopup.tsx", "LockEditorPopup.tsx", "PaywallPopup.tsx", "PinErrorPopup.tsx", "PinMenuPopup.tsx", "SettingsErrorPopup.tsx", "SettingsListsMenuPopup.tsx", "SettingsPopup.tsx", "SettingsPopupAbout.tsx", "SettingsPopupAccount.tsx", "SettingsPopupConflict.tsx", "SettingsPopupData.tsx", "SettingsPopupIap.tsx", "SettingsPopupLists.tsx", "SettingsPopupMisc.tsx", "SettingsPopupTags.tsx", "SettingsTagsMenuPopup.tsx", "SignInPopup.tsx", "SignUpPopup.tsx", "StatusPopup.tsx", "SWWUPopup.tsx", "TagEditorPopup.tsx", "TagErrorPopup.tsx"],
+      "form_input": ["TopBarSearchInput.tsx"],
+      "utility_helper": ["CustomLink.tsx", "EmptyContent.tsx", "Loading.tsx", "ScrollControl.tsx", "SignIn.tsx", "SignUp.tsx"]
+    },
+    "deployment_config": {
+      "ci_cd_found": false
+    },
+    "development_operational_info": {
+      "prerequisites_dependencies": {
+        "runtime": ["next", "react", "react-dom", "@redux-offline/redux-offline", "@serwist/next", "@stacks/auth", "@stacks/encryption", "@stacks/storage", "@stacks/wallet-sdk", "@wewatch/lexorank", "blueimp-load-image", "file-saver", "idb-keyval", "jest-diff", "motion", "p-queue", "react-graceful-image", "react-redux", "redux", "redux-thunk", "reselect", "url-parse"],
+        "development": ["@eslint/eslintrc", "@stylistic/eslint-plugin", "@tailwindcss/forms", "@tailwindcss/postcss", "@tailwindcss/typography", "@types/file-saver", "@types/node", "@types/react", "@types/react-dom", "@types/url-parse", "eslint", "eslint-config-next", "eslint-plugin-tailwindcss", "serwist", "tailwindcss", "typescript"]
+      },
+      "installation_steps": "npm install",
+      "environment_setup": "No .env files found; environment variables might be managed externally.",
+      "build_commands": {
+        "build-js": "next build",
+        "build": "npm run patch-js && npm run build-js && npm run copy-hard-coding"
+      },
+      "run_commands": {
+        "dev": "next dev --experimental-https --hostname 0.0.0.0",
+        "start": "next start"
+      },
+      "test_commands": {
+        "lint": "eslint",
+        "unit_tests": "No explicit unit testing command found."
+      },
+      "deployment_configuration": {
+        "platform": "AWS S3 and CloudFront",
+        "scripts": ["deploy.sh", "invalidate-test", "invalidate-prod"],
+        "nextjs_output": "static HTML export",
+        "service_worker": "Serwist (src/sw.ts -> public/sw.js)"
+      },
+      "contribution_guidelines": "Not explicitly found."
+    }
+  ],
+  "outputs_generated": [
+    "project-scan-report.json",
+    "source-tree-analysis.md"
+  ],
+  "resume_instructions": "Starting from step 8"
+}
