@@ -190,6 +190,16 @@ export const getLayoutType = createSelector(
   },
 );
 
+export const getAddLinkDefaultMode = createSelector(
+  state => state.settings.addLinkDefaultMode,
+  state => state.localSettings.doUseLocalLayout,
+  state => state.localSettings.addLinkDefaultMode,
+  (addLinkDefaultMode, doUseLocalLayout, localAddLinkDefaultMode) => {
+    if (doUseLocalLayout) return localAddLinkDefaultMode;
+    return addLinkDefaultMode;
+  },
+);
+
 const _getInsets = (insetTop, insetRight, insetBottom, insetLeft) => {
   let [top, right, bottom, left] = [0, 0, 0, 0];
   if (isNumber(insetTop)) top = Math.round(insetTop);

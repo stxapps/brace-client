@@ -1,0 +1,52 @@
+<context>
+  <story_id>1.2</story_id>
+  <story_title>Implement state management for Advanced Mode</story_title>
+
+  <user_story>
+    As Olivia the Organizer, I want the application to remember my choice of using the advanced link adding mode, so that I don't have to click "More Options" every time I add a link.
+  </user_story>
+
+  <acceptance_criteria>
+    - `linkEditorReducer` is updated to store `isAdvanced`, `listId`, and `tags`.
+    - `UPDATE_LINK_EDITOR` action updates these new values in the reducer.
+    - The "More Options" button in `BottomBarAddPopup` and `TopBarAddPopup` is driven by Redux state.
+    - The visibility of advanced options is determined by the Redux store when the popup opens.
+  </acceptance_criteria>
+
+  <dev_notes>
+    This story focuses on connecting the UI from Story 1.1 to the Redux store. The logic for actually using the `listId` and `tags` when creating the link will be handled in a subsequent story.
+  </dev_notes>
+
+  <relevant_files>
+    <file path="src/reducers/linkEditorReducer.ts">
+      <summary>This file defines the `linkEditor` slice of the Redux state. It needs to be modified to include `isAdvanced`, `listId`, and `tags` in its initial state and handle their updates.</summary>
+      <key_logic>
+        - Add `isAdvanced: false`, `listId: null`, `tags: []` to `initialState`.
+        - The existing `UPDATE_LINK_EDITOR` action handler will automatically merge the new payload, so no changes are needed there.
+      </key_logic>
+    </file>
+    <file path="src/actions/chunk.ts">
+      <summary>Contains the `updateLinkEditor` action creator. This action will be dispatched by the UI components to update the state in `linkEditorReducer`.</summary>
+      <key_logic>
+        - The `updateLinkEditor` action creator is generic and already supports passing any key-value pairs to the reducer, so no changes are required. It will be used to dispatch `{ isAdvanced: true }`.
+      </key_logic>
+    </file>
+    <file path="src/components/BottomBarAddPopup.tsx">
+      <summary>This component currently has local state for `isAdvanced`. This needs to be refactored to use the Redux state from `linkEditor`.</summary>
+      <key_logic>
+        - Remove the local `isAdvanced` state.
+        - Map `state.linkEditor.isAdvanced` to the component's props.
+        - In the `toggleAdvanced` function, dispatch `updateLinkEditor({ isAdvanced: !this.props.isAdvanced })`.
+      </key_logic>
+    </file>
+    <file path="src/components/TopBarAddPopup.tsx">
+      <summary>Similar to `BottomBarAddPopup`, this component also needs to be refactored to use Redux state for managing the advanced mode UI.</summary>
+      <key_logic>
+        - Remove the local `isAdvanced` state.
+        - Map `state.linkEditor.isAdvanced` to the component's props.
+        - In the `toggleAdvanced` function, dispatch `updateLinkEditor({ isAdvanced: !this.props.isAdvanced })`.
+      </key_logic>
+    </file>
+  </relevant_files>
+
+</context>

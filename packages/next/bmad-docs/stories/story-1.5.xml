@@ -1,0 +1,33 @@
+<context>
+  <story_id>1.5</story_id>
+  <story_title>Implement paywall for non-paying users</story_title>
+
+  <user_story>
+    As a non-paying user, I want to be informed about the benefits of a paid plan when I try to use advanced features, so that I can decide whether to upgrade my account.
+  </user_story>
+
+  <acceptance_criteria>
+    - When a non-paying user tries to save a link with advanced options (`listId` or `tags`), the `addLink` action is prevented.
+    - The `PaywallPopup` is displayed instead of saving the link.
+    - The `addLink` action in `actions/chunk.ts` checks the user's subscription status before proceeding with the advanced save.
+  </acceptance_criteria>
+
+  <dev_notes>
+    This story focuses on enforcing the paywall for the advanced link adding feature. The `PaywallPopup` component is assumed to exist and be functional.
+  </dev_notes>
+
+  <relevant_files>
+    <file path="src/actions/chunk.ts">
+      <summary>This file contains the `addLink` action creator. It needs to be modified to include the paywall check.</summary>
+      <key_logic>
+        - At the beginning of the `addLink` action, check if `listId` or `tags` are present.
+        - If they are, check the user's subscription status from the Redux state (e.g., `state.user.isPaying`).
+        - If the user is not a paying user, dispatch an action to show the `PaywallPopup` and then return, stopping the rest of the `addLink` logic.
+      </key_logic>
+    </file>
+    <file path="src/components/PaywallPopup.tsx">
+      <summary>This component will be displayed to non-paying users. No changes are needed to this file, but it will be triggered by the updated `addLink` action.</summary>
+    </file>
+  </relevant_files>
+
+</context>

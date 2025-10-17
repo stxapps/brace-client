@@ -28,6 +28,7 @@ export const initialSettingsState = {
   themeCustomOptions: [
     { ...whtModeThemeCustomOptions }, { ...blkModeThemeCustomOptions },
   ],
+  addLinkDefaultMode: 'basic',
 };
 
 export const initialLocalSettingsState = {
@@ -38,6 +39,7 @@ export const initialLocalSettingsState = {
   themeCustomOptions: [
     { ...whtModeThemeCustomOptions }, { ...blkModeThemeCustomOptions },
   ],
+  addLinkDefaultMode: 'basic',
   cleanUpStaticFilesDT: null,
   signInDT: null,
 };

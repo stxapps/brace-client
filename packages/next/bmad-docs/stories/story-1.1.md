@@ -1,6 +1,6 @@
 # Story 1.1: Implement UI for Advanced Link Adding Mode
 
-**Status:** TODO
+**Status:** Done
 
 ## Story
 

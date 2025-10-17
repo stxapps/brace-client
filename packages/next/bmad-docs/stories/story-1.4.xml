@@ -1,0 +1,34 @@
+<context>
+  <story_id>1.4</story_id>
+  <story_title>Implement "Default Mode" user setting</story_title>
+
+  <user_story>
+    As Olivia the Organizer, I want to set a default mode for adding links (e.g., "Advanced"), so that the "Add Link" popup always opens in my preferred state.
+  </user_story>
+
+  <acceptance_criteria>
+    - A new UI is added to `SettingsPopupMisc.tsx` for selecting the default "Add Link" mode ("Basic," "Advanced," "Use Last Mode").
+    - The preference is saved in both `settingsReducer` and `LocalSettingsReducer`.
+    - A new selector in `selectors/index.ts` calculates the initial mode based on subscription, `linkEditor` state, and the new setting.
+    - The action that opens the "Add Link" popup uses this selector to set the initial state.
+  </acceptance_criteria>
+
+  <relevant_files>
+    <file path="components/SettingsPopupMisc.tsx">
+      <summary>Add UI controls (e.g., radio buttons) for the new "Default Mode" setting.</summary>
+    </file>
+    <file path="reducers/settingsReducer.ts">
+      <summary>Add state to hold the synced `addLinkDefaultMode` preference.</summary>
+    </file>
+    <file path="reducers/LocalSettingsReducer.ts">
+      <summary>Add state to hold the local `addLinkDefaultMode` preference.</summary>
+    </file>
+    <file path="selectors/index.ts">
+      <summary>Create a new selector to compute the initial `isAdvanced` mode based on the logic in the tech spec.</summary>
+    </file>
+    <file path="actions/chunk.ts">
+      <summary>Update the action that shows the "Add Link" popup to use the new selector and initialize the `isAdvanced` state.</summary>
+    </file>
+  </relevant_files>
+
+</context>

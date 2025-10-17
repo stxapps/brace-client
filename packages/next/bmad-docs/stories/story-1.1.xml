@@ -1,0 +1,52 @@
+<context>
+  <story_id>1.1</story_id>
+  <story_title>Implement UI for Advanced Link Adding Mode</story_title>
+
+  <user_story>
+    As Olivia the Organizer, I want to see and interact with the advanced options for adding a link, so that I can begin the process of adding a link with a list and tags in a single step.
+  </user_story>
+
+  <acceptance_criteria>
+    - "More Options" button is visible on the "Add Link" popup.
+    - Clicking "More Options" reveals "Choose List" button and "Tags" input.
+    - Button text changes to "Less Options" when advanced options are visible.
+    - Clicking "Less Options" hides the advanced options.
+    - UI must be consistent with the existing design system.
+    - UI must be responsive.
+    - UI must be accessible (WCAG 2.1 AA).
+  </acceptance_criteria>
+
+  <technical_spec_summary>
+    - Implement a "More Options" toggle button in `BottomBarAddPopup.tsx`, `TopBarAddPopup.tsx`, and `Adding.tsx`.
+    - This toggle will control the visibility of new UI elements for list and tag selection.
+    - The state for the advanced mode's visibility and selected values (list, tags) will be managed in the `linkEditorReducer`.
+    - The `addLink` action in `actions/chunk.ts` will be modified to handle the new optional `listId` and `tags` parameters.
+    - Re-use the existing `ListNamesPopup` and `TagEditorPopup` components for the selection functionality.
+  </technical_spec_summary>
+
+  <ux_spec_summary>
+    - The feature follows the "Progressive Disclosure" principle, showing advanced options only when requested.
+    - The user flow involves clicking "More Options", which reveals UI to select a list (triggering `ListNamesPopup`) and add tags (using functionality similar to `TagEditorPopup`).
+    - The new components must adhere strictly to the existing Brace.to design system for a consistent look and feel.
+    - The layout must be responsive and adapt to mobile screens by stacking the new options vertically.
+  </ux_spec_summary>
+
+  <relevant_files>
+    <file path="src/components/BottomBarAddPopup.tsx">
+      <summary>This component is the primary popup for adding links on mobile/narrow screens. The "More Options" button and conditional rendering logic for the advanced fields will be added here.</summary>
+    </file>
+    <file path="src/components/TopBarAddPopup.tsx">
+      <summary>This is the desktop version of the add link popup. It will require the same UI changes as the BottomBarAddPopup for the "More Options" toggle and advanced fields.</summary>
+    </file>
+    <file path="src/components/Adding.tsx">
+      <summary>This component handles the logic for adding a link from a URL. It may need to be updated to pass the new list and tag data to the `addLink` action.</summary>
+    </file>
+    <file path="src/components/ListNamesPopup.tsx">
+      <summary>To be reused for the "Choose List" functionality. No modifications should be needed, but it will be triggered from the "Add Link" popup.</summary>
+    </file>
+    <file path="src/components/TagEditorPopup.tsx">
+      <summary>Its functionality for adding/editing tags should be reused for the new "Tags" input field. This might involve extracting logic into a reusable hook or component.</summary>
+    </file>
+  </relevant_files>
+
+</context>

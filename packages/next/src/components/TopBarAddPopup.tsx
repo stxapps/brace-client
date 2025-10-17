@@ -98,7 +98,7 @@ class TopBarAddPopup extends React.PureComponent<any, any> {
       }
     }
 
-    this.props.addLink(url, null, null);
+    this.props.addLink(url, null, null, this.props.listId, this.props.tags);
     this.props.updatePopup(ADD_POPUP, false);
 
     this.didClick = true;
@@ -110,9 +110,13 @@ class TopBarAddPopup extends React.PureComponent<any, any> {
     this.didClick = true;
   };
 
+  toggleAdvanced = () => {
+    this.props.updateLinkEditor({ isAdvanced: !this.props.isAdvanced });
+  };
+
   renderContent() {
     const { tailwind } = this.props;
-    const { url, msg, isAskingConfirm } = this.props;
+    const { url, msg, isAskingConfirm, isAdvanced } = this.props;
 
     return (
       <>
@@ -122,10 +126,33 @@ class TopBarAddPopup extends React.PureComponent<any, any> {
             <input onChange={this.onAddInputChange} onKeyDown={this.onAddInputKeyPress} className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent')} type="url" placeholder="https://" value={url} autoCapitalize="none" autoFocus />
           </div>
         </div>
+        {isAdvanced && (
+          <div className={tailwind('mt-4 space-y-4')}>
+            <div className={tailwind('flex items-center')}>
+              <span className={tailwind('text-sm text-gray-500 blk:text-gray-300')}>List:</span>
+              <div className={tailwind('ml-3 flex-1')}>
+                <button className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-left text-base text-gray-700 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100')}>
+                  Choose List
+                </button>
+              </div>
+            </div>
+            <div className={tailwind('flex items-center')}>
+              <span className={tailwind('text-sm text-gray-500 blk:text-gray-300')}>Tags:</span>
+              <div className={tailwind('ml-3 flex-1')}>
+                <input className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent')} type="text" placeholder="Add tags" />
+              </div>
+            </div>
+          </div>
+        )}
         {msg !== '' && <p className={tailwind('pt-3 text-sm text-red-500')}>{msg}</p>}
-        <div className={tailwind(`${msg !== '' ? 'pt-3' : 'pt-5'}`)}>
-          <button onClick={this.onAddOkBtnClick} style={{ paddingTop: '0.4375rem', paddingBottom: '0.4375rem' }} className={tailwind('rounded-full bg-gray-800 px-4 text-sm font-medium text-gray-50 hover:bg-gray-900 focus:outline-none focus:ring blk:bg-gray-100 blk:text-gray-800 blk:hover:bg-white')}>{isAskingConfirm ? 'Sure' : 'Save'}</button>
-          <button onClick={this.onAddCancelBtnClick} className={tailwind('ml-2 rounded-md px-2.5 py-1.5 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring focus:ring-inset blk:text-gray-300 blk:hover:bg-gray-700')}>Cancel</button>
+        <div className={tailwind(`flex items-center justify-between ${msg !== '' ? 'pt-3' : 'pt-5'}`)}>
+          <div>
+            <button onClick={this.onAddOkBtnClick} style={{ paddingTop: '0.4375rem', paddingBottom: '0.4375rem' }} className={tailwind('rounded-full bg-gray-800 px-4 text-sm font-medium text-gray-50 hover:bg-gray-900 focus:outline-none focus:ring blk:bg-gray-100 blk:text-gray-800 blk:hover:bg-white')}>{isAskingConfirm ? 'Sure' : 'Save'}</button>
+            <button onClick={this.onAddCancelBtnClick} className={tailwind('ml-2 rounded-md px-2.5 py-1.5 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring focus:ring-inset blk:text-gray-300 blk:hover:bg-gray-700')}>Cancel</button>
+          </div>
+          <button onClick={this.toggleAdvanced} className={tailwind('rounded-md px-2.5 py-1.5 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring focus:ring-inset blk:text-gray-300 blk:hover:bg-gray-700')}>
+            {isAdvanced ? 'Less Options' : 'More Options'}
+          </button>
         </div>
       </>
     );
@@ -201,6 +228,9 @@ const mapStateToProps = (state, props) => {
     url: state.linkEditor.url,
     msg: state.linkEditor.msg,
     isAskingConfirm: state.linkEditor.isAskingConfirm,
+    isAdvanced: state.linkEditor.isAdvanced,
+    listId: state.linkEditor.listId,
+    tags: state.linkEditor.tags,
     themeMode: getThemeMode(state),
     safeAreaWidth,
     safeAreaHeight: getSafeAreaHeight(state),

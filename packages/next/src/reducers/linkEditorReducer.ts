@@ -9,6 +9,9 @@ const initialState = {
   url: '',
   msg: '',
   isAskingConfirm: false,
+  isAdvanced: false,
+  listId: null,
+  tags: [],
 };
 
 const linkEditorReducer = (state = initialState, action) => {

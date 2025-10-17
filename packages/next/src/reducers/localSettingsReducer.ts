@@ -34,6 +34,10 @@ const localSettingsReducer = (state = initialState, action) => {
     return { ...state, themeMode: mode, themeCustomOptions: customOptions };
   }
 
+  if (action.type === UPDATE_LOCAL_ADD_LINK_DEFAULT_MODE) {
+    return { ...state, addLinkDefaultMode: action.payload };
+  }
+
   if (action.type === UPDATE_CUSTOM_DATA_COMMIT) {
     if (state.cleanUpStaticFilesDT === null) {
       return { ...state, cleanUpStaticFilesDT: Date.now() };

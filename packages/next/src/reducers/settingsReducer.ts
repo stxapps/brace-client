@@ -331,6 +331,10 @@ const settingsReducer = (state = initialState, action) => {
     return { ...state, doDescendingOrder: action.payload };
   }
 
+  if (action.type === UPDATE_DEFAULT_ADD_LINK_MODE) {
+    return { ...state, addLinkDefaultMode: action.payload };
+  }
+
   if (action.type === UPDATE_DEFAULT_LAYOUT_TYPE) {
     return { ...state, layoutType: action.payload };
   }

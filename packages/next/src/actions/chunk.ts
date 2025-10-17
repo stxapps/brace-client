@@ -1000,14 +1000,24 @@ const _getAddLinkInsertIndex = (getState) => {
   return showingLinkIds.length;
 };
 
-export const addLink = (url, listName, doExtractContents) => async (
-  dispatch, getState
-) => {
-  if (!isString(listName)) listName = getState().display.listName;
-  if (listName === TRASH) listName = MY_LIST;
+export const addLink = (
+  url, listName, doExtractContents, listId = null, tags = []
+) => async (dispatch, getState) => {
 
-  const queryString = getState().display.queryString;
-  if (queryString) listName = MY_LIST;
+  if ((listId || tags.length > 0) && !getState().user.isPaying) {
+    dispatch(updatePopup(PAYWALL_POPUP, true));
+    return;
+  }
+
+  if (listId) {
+    listName = listId;
+  } else {
+    if (!isString(listName)) listName = getState().display.listName;
+    if (listName === TRASH) listName = MY_LIST;
+
+    const queryString = getState().display.queryString;
+    if (queryString) listName = MY_LIST;
+  }
 
   // First 2 terms are main of an id, should always be unique.
   // The third term is changed when move around
@@ -1020,10 +1030,13 @@ export const addLink = (url, listName, doExtractContents) => async (
   const addedDT = Date.now();
   const id = `${addedDT}-${randomString(4)}-${randomString(4)}`;
   const decor = randomDecor(getUrlFirstChar(url));
-  const link = { id, url, addedDT, decor };
+  const link: any = { id, url, addedDT, decor };
+  if (tags.length > 0) {
+    link.tags = tags;
+  }
 
   let insertIndex;
-  if (!queryString && listName === getState().display.listName) {
+  if (!getState().display.queryString && listName === getState().display.listName) {
     insertIndex = _getAddLinkInsertIndex(getState);
   }
 

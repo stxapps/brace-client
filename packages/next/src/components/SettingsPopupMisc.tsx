@@ -4,11 +4,16 @@ import { useSelector, useDispatch } from '../store';
 import {
   updateDoExtractContents, updateDoDeleteOldLinksInTrash, updateDoDescendingOrder,
   updateDoUseLocalLayout, updateLayoutType, updateDoUseLocalTheme, updateTheme,
+  updateAddLinkDefaultMode,
 } from '../actions/chunk';
 import {
   HASH_PRIVACY, LAYOUT_CARD, LAYOUT_LIST, WHT_MODE, BLK_MODE, SYSTEM_MODE, CUSTOM_MODE,
+  ADD_LINK_DEFAULT_MODE_BASIC, ADD_LINK_DEFAULT_MODE_ADVANCED,
+  ADD_LINK_DEFAULT_MODE_LAST_USED,
 } from '../types/const';
-import { getLayoutType, getRawThemeMode, getRawThemeCustomOptions } from '../selectors';
+import {
+  getLayoutType, getRawThemeMode, getRawThemeCustomOptions, getAddLinkDefaultMode,
+} from '../selectors';
 
 import { useTailwind } from '.';
 
@@ -25,6 +30,7 @@ const SettingsPopupMisc = (props) => {
   const layoutType = useSelector(state => getLayoutType(state));
   const themeMode = useSelector(state => getRawThemeMode(state));
   const customOptions = useSelector(state => getRawThemeCustomOptions(state));
+  const addLinkDefaultMode = useSelector(state => getAddLinkDefaultMode(state));
   const whtTimeInput = useRef(null);
   const blkTimeInput = useRef(null);
   const dispatch = useDispatch();
@@ -45,6 +51,10 @@ const SettingsPopupMisc = (props) => {
     else throw new Error(`Invalid value: ${value}`);
 
     dispatch(updateDoDescendingOrder(doDescend));
+  };
+
+  const onAddLinkDefaultModeChange = (value) => {
+    dispatch(updateAddLinkDefaultMode(value));
   };
 
   const onDoUseLocalLayoutBtnClick = (doUse) => {
@@ -308,6 +318,38 @@ const SettingsPopupMisc = (props) => {
         <span onClick={onDoDeleteBtnClick} role="checkbox" tabIndex={0} aria-checked="true" aria-labelledby="auto-cleanup-option-label" aria-describedby="auto-cleanup-option-description" className={tailwind(`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring blk:focus:ring-offset-2 blk:focus:ring-offset-gray-900 ${doDeleteBtnClassNames}`)}>
           <span aria-hidden="true" className={tailwind(`inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out blk:bg-gray-300 ${doDeleteBtnInnerClassNames}`)} />
         </span>
+      </div>
+      <div className={tailwind('mt-10 flex flex-col')}>
+        <h4 id="add-link-default-mode-option-label" className={tailwind('text-base font-medium leading-none text-gray-800 blk:text-gray-100')}>Add Link Default Mode</h4>
+        <div className={tailwind('sm:flex sm:items-start sm:justify-between sm:space-x-4')}>
+          <p id="add-link-default-mode-option-description" className={tailwind('mt-2.5 flex-shrink flex-grow text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Choose the default mode for adding a link.</p>
+          <div className={tailwind('mx-auto mt-2.5 w-full max-w-48 rounded-md bg-white shadow-xs blk:bg-gray-900 sm:mt-1 sm:w-48 sm:max-w-none sm:flex-shrink-0 sm:flex-grow-0')}>
+            <button onClick={() => onAddLinkDefaultModeChange(ADD_LINK_DEFAULT_MODE_BASIC)} className={tailwind(`group flex w-full rounded-tl-md rounded-tr-md border p-4 focus:outline-none ${addLinkDefaultMode === ADD_LINK_DEFAULT_MODE_BASIC ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700'}`)}>
+              <div className={tailwind('flex h-5 items-center')}>
+                <div className={tailwind(`flex h-4 w-4 items-center justify-center rounded-full group-focus:ring-2 group-focus:ring-offset-2 ${addLinkDefaultMode === ADD_LINK_DEFAULT_MODE_BASIC ? 'bg-blue-600 group-focus:ring-blue-600 group-focus:ring-offset-blue-100 blk:bg-blue-400 blk:group-focus:ring-gray-800 blk:group-focus:ring-offset-blue-600' : 'border border-gray-500 bg-white group-focus:ring-blue-600 group-focus:ring-offset-white blk:border-gray-500 blk:bg-gray-900 blk:group-focus:ring-blue-600 blk:group-focus:ring-offset-gray-900'}`)}>
+                  <div className={tailwind(`h-1.5 w-1.5 rounded-full ${addLinkDefaultMode === ADD_LINK_DEFAULT_MODE_BASIC ? 'bg-white' : 'bg-white blk:bg-gray-900'}`)} />
+                </div>
+              </div>
+              <p className={tailwind(`ml-3 text-sm font-medium leading-5 ${addLinkDefaultMode === ADD_LINK_DEFAULT_MODE_BASIC ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300'}`)}>Basic</p>
+            </button>
+            <button onClick={() => onAddLinkDefaultModeChange(ADD_LINK_DEFAULT_MODE_ADVANCED)} className={tailwind(`group flex w-full border p-4 focus:outline-none ${addLinkDefaultMode === ADD_LINK_DEFAULT_MODE_ADVANCED ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-t-0 border-gray-200 blk:border-gray-700'}`)}>
+              <div className={tailwind('flex h-5 items-center')}>
+                <div className={tailwind(`flex h-4 w-4 items-center justify-center rounded-full group-focus:ring-2 group-focus:ring-offset-2 ${addLinkDefaultMode === ADD_LINK_DEFAULT_MODE_ADVANCED ? 'bg-blue-600 group-focus:ring-blue-600 group-focus:ring-offset-blue-100 blk:bg-blue-400 blk:group-focus:ring-gray-800 blk:group-focus:ring-offset-blue-600' : 'border border-gray-500 bg-white group-focus:ring-blue-600 group-focus:ring-offset-white blk:border-gray-500 blk:bg-gray-900 blk:group-focus:ring-blue-600 blk:group-focus:ring-offset-gray-900'}`)}>
+                  <div className={tailwind(`h-1.5 w-1.5 rounded-full ${addLinkDefaultMode === ADD_LINK_DEFAULT_MODE_ADVANCED ? 'bg-white' : 'bg-white blk:bg-gray-900'}`)} />
+                </div>
+              </div>
+              <p className={tailwind(`ml-3 text-sm font-medium leading-5 ${addLinkDefaultMode === ADD_LINK_DEFAULT_MODE_ADVANCED ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300'}`)}>Advanced</p>
+            </button>
+            <button onClick={() => onAddLinkDefaultModeChange(ADD_LINK_DEFAULT_MODE_LAST_USED)} className={tailwind(`group flex w-full rounded-bl-md rounded-br-md border p-4 focus:outline-none ${addLinkDefaultMode === ADD_LINK_DEFAULT_MODE_LAST_USED ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-t-0 border-gray-200 blk:border-gray-700'}`)}>
+              <div className={tailwind('flex h-5 items-center')}>
+                <div className={tailwind(`flex h-4 w-4 items-center justify-center rounded-full group-focus:ring-2 group-focus:ring-offset-2 ${addLinkDefaultMode === ADD_LINK_DEFAULT_MODE_LAST_USED ? 'bg-blue-600 group-focus:ring-blue-600 group-focus:ring-offset-blue-100 blk:bg-blue-400 blk:group-focus:ring-gray-800 blk:group-focus:ring-offset-blue-600' : 'border border-gray-500 bg-white group-focus:ring-blue-600 group-focus:ring-offset-white blk:border-gray-500 blk:bg-gray-900 blk:group-focus:ring-blue-600 blk:group-focus:ring-offset-gray-900'}`)}>
+                  <div className={tailwind(`h-1.5 w-1.5 rounded-full ${addLinkDefaultMode === ADD_LINK_DEFAULT_MODE_LAST_USED ? 'bg-white' : 'bg-white blk:bg-gray-900'}`)} />
+                </div>
+              </div>
+              <p className={tailwind(`ml-3 text-sm font-medium leading-5 ${addLinkDefaultMode === ADD_LINK_DEFAULT_MODE_LAST_USED ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300'}`)}>Last Used</p>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
