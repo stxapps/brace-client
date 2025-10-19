@@ -144,7 +144,7 @@ const ListPanel = (props) => {
   }
 
   const style = {
-    paddingTop: safeAreaWidth < MD_WIDTH ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD,
+    paddingTop: safeAreaWidth < toPx(MD_WIDTH) ? TOP_BAR_HEIGHT : TOP_BAR_HEIGHT_MD,
     paddingBottom,
   };
 
