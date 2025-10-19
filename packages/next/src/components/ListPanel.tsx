@@ -7,7 +7,7 @@ import {
   MD_WIDTH, PC_100,
 } from '../types/const';
 import { getLinks, getIsFetchingMore, getHasFetchedMore } from '../selectors';
-import { addRem, getWindowScrollHeight, throttle } from '../utils';
+import { addRem, getWindowScrollHeight, throttle, toPx } from '../utils';
 import vars from '../vars';
 
 import { useSafeAreaFrame, useTailwind } from '.';
