@@ -1,6 +1,6 @@
 {
   "name": "brace-client-web",
-  "version": "0.42.0",
+  "version": "0.43.0",
   "private": true,
   "scripts": {
     "patch-js": "npx tsx bin/patch.ts",
