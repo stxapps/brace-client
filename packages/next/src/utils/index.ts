@@ -729,8 +729,13 @@ export const negRem = (a) => {
 
 export const toPx = (rem) => {
   let fontSize = '16px';
-  if (typeof window !== 'undefined' && isObject(window)) {
-    fontSize = getComputedStyle(window.document.documentElement).fontSize;
+  if (
+    typeof window !== 'undefined' &&
+    typeof window.document !== 'undefined' &&
+    typeof window.document.documentElement !== 'undefined' &&
+    typeof window.getComputedStyle === 'function'
+  ) {
+    fontSize = window.getComputedStyle(window.document.documentElement).fontSize;
   }
   return parseFloat(rem) * parseFloat(fontSize);
 };
@@ -2041,11 +2046,11 @@ export const getWindowInsets = () => {
   let top = null, right = null, bottom = null, left = null;
   if (
     typeof window !== 'undefined' &&
-    typeof document !== 'undefined' &&
-    isObject(window) &&
-    isObject(document.documentElement)
+    typeof window.document !== 'undefined' &&
+    typeof window.document.documentElement !== 'undefined' &&
+    typeof window.getComputedStyle === 'function'
   ) {
-    const cs = window.getComputedStyle(document.documentElement);
+    const cs = window.getComputedStyle(window.document.documentElement);
     const st = cs.getPropertyValue('--env-safe-area-inset-top');
     const sr = cs.getPropertyValue('--env-safe-area-inset-right');
     const sb = cs.getPropertyValue('--env-safe-area-inset-bottom');
