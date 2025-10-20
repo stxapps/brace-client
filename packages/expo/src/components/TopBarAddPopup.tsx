@@ -30,9 +30,16 @@ const TopBarAddPopup = () => {
   const anchorPosition = useMemo(() => {
     let pos = addAnchorPosition;
     if (isShown && !isObject(pos)) {
+      const MAX_W_6XL = 1152; // If change max-w-6xl in TopBar, must update this too.
       const { headerPaddingX, commandsWidth } = getTopBarSizes(safeAreaWidth);
 
-      const x = insets.left + safeAreaWidth - commandsWidth - (headerPaddingX / 2);
+      let x = insets.left, barWidth = safeAreaWidth;
+      if (safeAreaWidth > MAX_W_6XL) {
+        x += (safeAreaWidth - MAX_W_6XL) / 2;
+        barWidth = MAX_W_6XL;
+      }
+      x += barWidth - commandsWidth - (headerPaddingX / 2);
+
       const y = insets.top + 12 + 42;
       pos = getRect(x, y, 66, 32);
     }

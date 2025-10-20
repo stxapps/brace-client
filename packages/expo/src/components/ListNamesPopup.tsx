@@ -382,7 +382,7 @@ const ListNamesPopup = () => {
         {derivedTagNameMap.map(obj => {
           return (
             <View key={obj.tagName} style={tailwind('w-full flex-row items-center justify-start')}>
-              <TouchableOpacity onPress={() => onTgItemBtnClick(obj.tagName)} style={tailwind('h-11 flex-shrink flex-grow flex-row items-center pl-4')}>
+              <TouchableOpacity onPress={() => onTgItemBtnClick(obj.tagName)} style={tailwind('h-11 flex-shrink flex-grow flex-row items-center pl-4 pr-2')}>
                 <Text style={tailwind('text-left text-sm font-normal text-gray-700 blk:text-gray-200')} numberOfLines={1} ellipsizeMode="tail">{obj.displayName}</Text>
               </TouchableOpacity>
             </View>

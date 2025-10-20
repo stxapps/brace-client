@@ -331,7 +331,7 @@ const ListNamesPopup = () => {
         {derivedTagNameMap.map(obj => {
           return (
             <div key={obj.tagName} className={tailwind('flex w-full flex-row items-center justify-start')}>
-              <button onClick={() => onTgItemBtnClick(obj.tagName)} className={tailwind('group flex h-11 min-w-0 flex-shrink flex-grow flex-row items-center pl-4 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none blk:hover:bg-gray-700 blk:focus:bg-gray-700')}>
+              <button onClick={() => onTgItemBtnClick(obj.tagName)} className={tailwind('group flex h-11 min-w-0 flex-shrink flex-grow flex-row items-center pl-4 pr-2 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none blk:hover:bg-gray-700 blk:focus:bg-gray-700')}>
                 <p className={tailwind('truncate text-left text-sm text-gray-700 group-hover:text-gray-900 group-focus:text-gray-900 blk:text-gray-200 blk:group-hover:text-white blk:group-focus:text-white')}>{obj.displayName}</p>
               </button>
             </div>

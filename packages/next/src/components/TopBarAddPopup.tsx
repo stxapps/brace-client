@@ -188,9 +188,16 @@ const mapStateToProps = (state, props) => {
 
   let derivedAnchorPosition = state.display.addPopupPosition;
   if (isShown && !isObject(derivedAnchorPosition)) {
+    const MAX_W_6XL = '72rem'; // If change max-w-6xl in TopBar, must update this too.
     const { headerPaddingX, commandsWidth } = getTopBarSizes(safeAreaWidth);
 
-    const x = insets.left + safeAreaWidth - commandsWidth - (headerPaddingX / 2);
+    let x = insets.left, barWidth = safeAreaWidth;
+    if (safeAreaWidth > toPx(MAX_W_6XL)) {
+      x += (safeAreaWidth - toPx(MAX_W_6XL)) / 2;
+      barWidth = toPx(MAX_W_6XL);
+    }
+    x += barWidth - commandsWidth - (headerPaddingX / 2);
+
     const y = insets.top + toPx('0.75rem') + toPx('2.625rem');
     derivedAnchorPosition = getRect(x, y, toPx('4.125rem'), toPx('2rem'));
   }
