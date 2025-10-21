@@ -1,3 +1,0 @@
-Change fonts causing hash values to change, need to update font references in stacks-access-in-webview, justnote-editor-in-webview, and justnote-html-for-pdf!
-
-Need to copy old-hash-value files to build-hard-coding for old-version apps too!
