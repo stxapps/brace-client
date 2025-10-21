@@ -1009,11 +1009,12 @@ This and CI/CD are very important!
 - ios
   + open ios/Brace.xcworkspace
   + choose Brace on the right pane
-  + targets: Brace, on General, update Version, App Category
+  + targets: Brace, on General:
+    ~ update Version, App Category: Productivity, Display Name: Brace
   + targets: Brace, on Signing & Capabilities, add In-App Purchase
   + targets: Brace, on Build Phases, add Target Dependency: SavetoBrace
-  + targets: SavetoBrace, on General, update Version
-  + targets: SavetoBrace, on General, Display Name: Save to Brace
+  + targets: SavetoBrace, on General:
+    ~ update Version, Miminum iOS, Display Name: Save to Brace
   + targets: SavetoBrace, on Signing & Capabilities, select team
 - android
   + copy brace-android-upload-key.keystore to android/app
