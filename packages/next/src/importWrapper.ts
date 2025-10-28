@@ -119,6 +119,13 @@ export const updateCustomDataDeleteStep = (
   ));
 };
 
+export const updateTagDataFromAddLinks = (successIds) => async (
+  dispatch, getState
+) => {
+  await importActionChunk();
+  dispatch(actionChunk.updateTagDataFromAddLinks(successIds));
+};
+
 export const updateTagDataTStep = (ids, valuesPerId) => async (dispatch, getState) => {
   await importActionChunk();
   dispatch(actionChunk.updateTagDataTStep(ids, valuesPerId));

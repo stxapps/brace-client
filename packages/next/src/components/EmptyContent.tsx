@@ -2,8 +2,8 @@ import React from 'react';
 import Image from 'next/image';
 
 import { useSelector, useDispatch } from '../store';
-import { updatePopup } from '../actions';
-import { ADD_POPUP, MY_LIST, TRASH, ARCHIVE, BLK_MODE } from '../types/const';
+import { updateAddPopup } from '../actions/chunk';
+import { MY_LIST, TRASH, ARCHIVE, BLK_MODE } from '../types/const';
 import { getThemeMode } from '../selectors';
 import { getListNameDisplayName, getTagNameDisplayName } from '../utils';
 
@@ -27,7 +27,7 @@ const EmptyContent = () => {
   const tailwind = useTailwind();
 
   const onAddBtnClick = () => {
-    dispatch(updatePopup(ADD_POPUP, true));
+    dispatch(updateAddPopup(true));
   };
 
   let displayName = getListNameDisplayName(listName, listNameMap);

@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { updatePopup, updateBulkEdit } from '../actions';
-import { ADD_POPUP, PROFILE_POPUP } from '../types/const';
+import { updateAddPopup } from '../actions/chunk';
+import { PROFILE_POPUP } from '../types/const';
 import { getSafeAreaWidth, getThemeMode } from '../selectors';
 import { adjustRect, toPx } from '../utils';
 
@@ -17,7 +18,7 @@ class TopBarCommands extends React.PureComponent<any, any> {
     const nRect = adjustRect(
       rect, toPx('0rem'), toPx('2.625rem'), toPx('0rem'), toPx('0rem')
     );
-    this.props.updatePopup(ADD_POPUP, true, nRect);
+    this.props.updateAddPopup(true, nRect);
   };
 
   onBulkEditBtnClick = () => {
@@ -75,6 +76,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { updatePopup, updateBulkEdit };
+const mapDispatchToProps = { updatePopup, updateAddPopup, updateBulkEdit };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(TopBarCommands));

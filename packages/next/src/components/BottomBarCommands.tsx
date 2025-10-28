@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { updatePopup, updateBulkEdit } from '../actions';
-import { ADD_POPUP, SEARCH_POPUP, PROFILE_POPUP } from '../types/const';
+import { updateAddPopup } from '../actions/chunk';
+import { SEARCH_POPUP, PROFILE_POPUP } from '../types/const';
 import { getSafeAreaWidth, getThemeMode } from '../selectors';
 
 import { withTailwind } from '.';
@@ -10,7 +11,7 @@ import { withTailwind } from '.';
 class BottomBarCommands extends React.PureComponent<any, any> {
 
   onAddBtnClick = () => {
-    this.props.updatePopup(ADD_POPUP, true);
+    this.props.updateAddPopup(true);
   };
 
   onSearchBtnClick = () => {
@@ -85,4 +86,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-export default connect(mapStateToProps, { updatePopup, updateBulkEdit })(withTailwind(BottomBarCommands));
+const mapDispatchToProps = { updatePopup, updateAddPopup, updateBulkEdit };
+
+export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(BottomBarCommands));

@@ -3,11 +3,12 @@ import { motion, AnimatePresence } from 'motion/react';
 
 import { useSelector, useDispatch } from '../store';
 import { updatePopup } from '../actions';
-import { updateTagEditor, addTagEditorTagName, updateTagData } from '../actions/chunk';
+import { updateTagEditor, updateTagData } from '../actions/chunk';
 import {
   TAG_EDITOR_POPUP, TAGGED, ADD_TAGS, MANAGE_TAGS, NOT_SUPPORTED,
 } from '../types/const';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
+import { selectHint, deselectValue, addTagName } from '../utils/tag';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
@@ -17,6 +18,7 @@ const TagEditorPopup = () => {
   const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isTagEditorPopupShown);
   const tagEditor = useSelector(state => state.tagEditor);
+  const tagNameMap = useSelector(state => state.settings.tagNameMap);
   const didClick = useRef(false);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
@@ -39,19 +41,8 @@ const TagEditorPopup = () => {
     didClick.current = true;
 
     const { values, hints } = tagEditor;
-
-    const found = values.some(value => value.tagName === hint.tagName);
-    if (found && hint.isBlur) return;
-
-    const newValues = [
-      ...values,
-      { tagName: hint.tagName, displayName: hint.displayName, color: hint.color },
-    ];
-    const newHints = hints.map(_hint => {
-      if (_hint.tagName !== hint.tagName) return _hint;
-      return { ..._hint, isBlur: true };
-    });
-    dispatch(updateTagEditor(newValues, newHints, null, null, ''));
+    const payload = selectHint(values, hints, hint);
+    dispatch(updateTagEditor(payload));
   };
 
   const onValueDeselect = (value) => {
@@ -59,17 +50,12 @@ const TagEditorPopup = () => {
     didClick.current = true;
 
     const { values, hints } = tagEditor;
-
-    const newValues = values.filter(_value => _value.tagName !== value.tagName);
-    const newHints = hints.map(hint => {
-      if (hint.tagName !== value.tagName) return hint;
-      return { ...hint, isBlur: false };
-    });
-    dispatch(updateTagEditor(newValues, newHints, null, null, ''));
+    const payload = deselectValue(values, hints, value);
+    dispatch(updateTagEditor(payload));
   };
 
   const onDnInputChange = (e) => {
-    dispatch(updateTagEditor(null, null, e.target.value, null, ''));
+    dispatch(updateTagEditor({ displayName: e.target.value }));
   };
 
   const onDnInputKeyPress = (e) => {
@@ -81,7 +67,8 @@ const TagEditorPopup = () => {
     didClick.current = true;
 
     const { values, hints, displayName, color } = tagEditor;
-    dispatch(addTagEditorTagName(values, hints, displayName, color));
+    const payload = addTagName(tagNameMap, values, hints, displayName, color);
+    dispatch(updateTagEditor(payload));
   };
 
   useEffect(() => {

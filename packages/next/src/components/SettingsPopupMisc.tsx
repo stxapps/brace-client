@@ -4,11 +4,15 @@ import { useSelector, useDispatch } from '../store';
 import {
   updateDoExtractContents, updateDoDeleteOldLinksInTrash, updateDoDescendingOrder,
   updateDoUseLocalLayout, updateLayoutType, updateDoUseLocalTheme, updateTheme,
+  updateDoUseLocalAddMode, updateAddMode,
 } from '../actions/chunk';
 import {
   HASH_PRIVACY, LAYOUT_CARD, LAYOUT_LIST, WHT_MODE, BLK_MODE, SYSTEM_MODE, CUSTOM_MODE,
+  ADD_MODE_BASIC, ADD_MODE_ADVANCED,
 } from '../types/const';
-import { getLayoutType, getRawThemeMode, getRawThemeCustomOptions } from '../selectors';
+import {
+  getLayoutType, getRawThemeMode, getRawThemeCustomOptions, getRawAddMode,
+} from '../selectors';
 
 import { useTailwind } from '.';
 
@@ -22,9 +26,11 @@ const SettingsPopupMisc = (props) => {
   const doDescendingOrder = useSelector(state => state.settings.doDescendingOrder);
   const doUseLocalLayout = useSelector(state => state.localSettings.doUseLocalLayout);
   const doUseLocalTheme = useSelector(state => state.localSettings.doUseLocalTheme);
+  const doUseLocalAddMode = useSelector(state => state.localSettings.doUseLocalAddMode);
   const layoutType = useSelector(state => getLayoutType(state));
   const themeMode = useSelector(state => getRawThemeMode(state));
   const customOptions = useSelector(state => getRawThemeCustomOptions(state));
+  const addMode = useSelector(state => getRawAddMode(state));
   const whtTimeInput = useRef(null);
   const blkTimeInput = useRef(null);
   const dispatch = useDispatch();
@@ -45,6 +51,14 @@ const SettingsPopupMisc = (props) => {
     else throw new Error(`Invalid value: ${value}`);
 
     dispatch(updateDoDescendingOrder(doDescend));
+  };
+
+  const onDoUseLocalAddModeBtnClick = (doUse) => {
+    dispatch(updateDoUseLocalAddMode(doUse));
+  };
+
+  const onAddModeInputChange = (value) => {
+    dispatch(updateAddMode(value));
   };
 
   const onDoUseLocalLayoutBtnClick = (doUse) => {
@@ -115,6 +129,21 @@ const SettingsPopupMisc = (props) => {
   const descendingBtnInnerClassNames = doDescendingOrder ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
   const descendingRBtnClassNames = doDescendingOrder ? 'bg-blue-600 group-focus:ring-blue-600 group-focus:ring-offset-blue-100 blk:bg-blue-400 blk:group-focus:ring-gray-800 blk:group-focus:ring-offset-blue-600' : 'border border-gray-500 bg-white group-focus:ring-blue-600 group-focus:ring-offset-white blk:border-gray-500 blk:bg-gray-900 blk:group-focus:ring-blue-600 blk:group-focus:ring-offset-gray-900';
   const descendingRBtnInnerClassNames = doDescendingOrder ? 'bg-white' : 'bg-white blk:bg-gray-900';
+
+  const addModeDefaultBtnClassNames = !doUseLocalAddMode ? 'text-gray-700 blk:text-gray-200' : 'text-gray-500 blk:text-gray-400';
+  const addModeLocalBtnClassNames = doUseLocalAddMode ? 'text-gray-700 blk:text-gray-200' : 'text-gray-500 blk:text-gray-400';
+
+  let addModeBscBtnClassNames = addMode === ADD_MODE_BASIC ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
+  if (addMode === ADD_MODE_BASIC) addModeBscBtnClassNames += ' border-b-0';
+  const addModeBscBtnInnerClassNames = addMode === ADD_MODE_BASIC ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
+  const addModeBscRBtnClassNames = addMode === ADD_MODE_BASIC ? 'bg-blue-600 group-focus:ring-blue-600 group-focus:ring-offset-blue-100 blk:bg-blue-400 blk:group-focus:ring-gray-800 blk:group-focus:ring-offset-blue-600' : 'border border-gray-500 bg-white group-focus:ring-blue-600 group-focus:ring-offset-white blk:border-gray-500 blk:bg-gray-900 blk:group-focus:ring-blue-600 blk:group-focus:ring-offset-gray-900';
+  const addModeBscRBtnInnerClassNames = addMode === ADD_MODE_BASIC ? 'bg-white' : 'bg-white blk:bg-gray-900';
+
+  let addModeAvdBtnClassNames = addMode === ADD_MODE_ADVANCED ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
+  if (addMode === ADD_MODE_ADVANCED) addModeAvdBtnClassNames += ' border-b-0';
+  const addModeAvdBtnInnerClassNames = addMode === ADD_MODE_ADVANCED ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
+  const addModeAvdRBtnClassNames = addMode === ADD_MODE_ADVANCED ? 'bg-blue-600 group-focus:ring-blue-600 group-focus:ring-offset-blue-100 blk:bg-blue-400 blk:group-focus:ring-gray-800 blk:group-focus:ring-offset-blue-600' : 'border border-gray-500 bg-white group-focus:ring-blue-600 group-focus:ring-offset-white blk:border-gray-500 blk:bg-gray-900 blk:group-focus:ring-blue-600 blk:group-focus:ring-offset-gray-900';
+  const addModeAvdRBtnInnerClassNames = addMode === ADD_MODE_ADVANCED ? 'bg-white' : 'bg-white blk:bg-gray-900';
 
   const layoutDefaultBtnClassNames = !doUseLocalLayout ? 'text-gray-700 blk:text-gray-200' : 'text-gray-500 blk:text-gray-400';
   const layoutLocalBtnClassNames = doUseLocalLayout ? 'text-gray-700 blk:text-gray-200' : 'text-gray-500 blk:text-gray-400';
@@ -299,6 +328,40 @@ const SettingsPopupMisc = (props) => {
         <span onClick={onDoExtractBtnClick} role="checkbox" tabIndex={0} aria-checked="true" aria-labelledby="link-previews-option-label" aria-describedby="link-previews-option-description" className={tailwind(`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring blk:focus:ring-offset-2 blk:focus:ring-offset-gray-900 ${doExtractBtnClassNames}`)}>
           <span aria-hidden="true" className={tailwind(`inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out blk:bg-gray-300 ${doExtractBtnInnerClassNames}`)} />
         </span>
+      </div>
+      <div className={tailwind('mt-10 flex flex-col')}>
+        <h4 id="add-mode-option-label" className={tailwind('text-base font-medium leading-none text-gray-800 blk:text-gray-100')}>Add Mode</h4>
+        <div className={tailwind('sm:flex sm:items-start sm:justify-between sm:space-x-4')}>
+          <p id="add-mode-option-description" className={tailwind('mt-2.5 flex-shrink flex-grow text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Choose whether your link editor are displayed in the Basic, Advanced (includes list and tags selection), or Last used mode. For Sync, your choosing is synced across your devices. For Device, you can choose and use the setting for this device only.</p>
+          <div className={tailwind('mx-auto mt-2.5 w-full max-w-48 rounded-md bg-white shadow-xs blk:bg-gray-900 sm:mt-1 sm:w-48 sm:max-w-none sm:flex-shrink-0 sm:flex-grow-0')}>
+            <div className={tailwind('relative flex justify-evenly')}>
+              <button onClick={() => onDoUseLocalAddModeBtnClick(false)} className={tailwind(`relative flex-shrink flex-grow rounded-tl-md border border-b-0 border-gray-300 bg-white py-4 text-center text-sm font-medium focus:outline-none focus-visible:ring focus-visible:ring-inset blk:border-gray-700 blk:bg-gray-900 ${addModeDefaultBtnClassNames}`)} type="button">
+                Sync
+                {!doUseLocalAddMode && <div className={tailwind('absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 blk:bg-blue-300')} />}
+              </button>
+              <button onClick={() => onDoUseLocalAddModeBtnClick(true)} className={tailwind(`relative flex-shrink flex-grow rounded-tr-md border border-l-0 border-b-0 border-gray-300 bg-white py-4 text-center text-sm font-medium focus:outline-none focus-visible:ring focus-visible:ring-inset blk:border-gray-700 blk:bg-gray-900 ${addModeLocalBtnClassNames}`)} type="button">
+                Device
+                {doUseLocalAddMode && <div className={tailwind('absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 blk:bg-blue-300')} />}
+              </button>
+            </div>
+            <button onClick={() => onAddModeInputChange(ADD_MODE_BASIC)} className={tailwind(`group flex w-full border p-4 focus:outline-none ${addModeBscBtnClassNames}`)}>
+              <div className={tailwind('flex h-5 items-center')}>
+                <div className={tailwind(`flex h-4 w-4 items-center justify-center rounded-full group-focus:ring-2 group-focus:ring-offset-2 ${addModeBscRBtnClassNames}`)}>
+                  <div className={tailwind(`h-1.5 w-1.5 rounded-full ${addModeBscRBtnInnerClassNames}`)} />
+                </div>
+              </div>
+              <p className={tailwind(`ml-3 text-sm font-medium leading-5 ${addModeBscBtnInnerClassNames}`)}>Basic</p>
+            </button>
+            <button onClick={() => onAddModeInputChange(ADD_MODE_ADVANCED)} className={tailwind(`group flex w-full border p-4 focus:outline-none ${addModeAvdBtnClassNames}`)}>
+              <div className={tailwind('flex h-5 items-center')}>
+                <div className={tailwind(`flex h-4 w-4 items-center justify-center rounded-full group-focus:ring-2 group-focus:ring-offset-2 ${addModeAvdRBtnClassNames}`)}>
+                  <div className={tailwind(`h-1.5 w-1.5 rounded-full ${addModeAvdRBtnInnerClassNames}`)} />
+                </div>
+              </div>
+              <p className={tailwind(`ml-3 text-sm font-medium leading-5 ${addModeAvdBtnInnerClassNames}`)}>Advanced</p>
+            </button>
+          </div>
+        </div>
       </div>
       <div className={tailwind('mt-10 mb-4 flex items-center justify-between space-x-4')}>
         <div className={tailwind('flex flex-col')}>

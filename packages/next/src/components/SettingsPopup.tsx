@@ -254,12 +254,12 @@ const SettingsPopup = () => {
     );
 
     return (
-      <div style={canvasStyle} className={tailwind('fixed inset-0 z-30 bg-white blk:bg-gray-900')}>
+      <div style={canvasStyle} className={tailwind('fixed inset-0 z-31 bg-white blk:bg-gray-900')}>
         <div className={tailwind('relative h-full w-full')}>
           {_renderPanel(contentWithSidebar)}
           {_renderPanelCloseBtn()}
           {/* Sidebar for mobile */}
-          <motion.div key="sidebar-for-mobile" className={tailwind('absolute inset-0 z-30 md:hidden')} variants={canvasFMV} initial={false} animate={animate}>
+          <motion.div key="sidebar-for-mobile" className={tailwind('absolute inset-0 z-31 md:hidden')} variants={canvasFMV} initial={false} animate={animate}>
             <div className={tailwind('relative flex h-full')}>
               <motion.button onClick={onSidebarCloseBtnClick} className={tailwind('absolute inset-0 h-full w-full')} variants={sideBarOverlayFMV}>
                 <div className={tailwind('absolute inset-0 bg-gray-100 blk:bg-gray-800')} />
@@ -461,7 +461,7 @@ const SettingsPopup = () => {
       <SettingsPopupConflict />
     );
     return (
-      <div style={canvasStyle} className={tailwind('fixed inset-0 z-30 bg-white blk:bg-gray-900')}>
+      <div style={canvasStyle} className={tailwind('fixed inset-0 z-31 bg-white blk:bg-gray-900')}>
         <div className={tailwind('relative h-full w-full')}>
           {_renderPanel(content)}
           {_renderConflictLoading()}

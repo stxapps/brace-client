@@ -8,8 +8,8 @@ import {
   CANCEL_DIED_TAGS, ADD_TAG_NAMES, UPDATE_TAG_NAMES, MOVE_TAG_NAME, DELETE_TAG_NAMES,
   UPDATE_DO_EXTRACT_CONTENTS, UPDATE_DO_DELETE_OLD_LINKS_IN_TRASH,
   UPDATE_DO_DESCENDING_ORDER, UPDATE_DEFAULT_LAYOUT_TYPE, UPDATE_DEFAULT_THEME,
-  UPDATE_SETTINGS_COMMIT, UPDATE_UNCHANGED_SETTINGS, CANCEL_DIED_SETTINGS,
-  MERGE_SETTINGS_COMMIT, DELETE_ALL_DATA, RESET_STATE,
+  UPDATE_DEFAULT_ADD_MODE, UPDATE_SETTINGS_COMMIT, UPDATE_UNCHANGED_SETTINGS,
+  CANCEL_DIED_SETTINGS, MERGE_SETTINGS_COMMIT, DELETE_ALL_DATA, RESET_STATE,
 } from '../types/actionTypes';
 import { MY_LIST, TRASH, ARCHIVE, SWAP_LEFT, SWAP_RIGHT } from '../types/const';
 import {
@@ -338,6 +338,10 @@ const settingsReducer = (state = initialState, action) => {
   if (action.type === UPDATE_DEFAULT_THEME) {
     const { mode, customOptions } = action.payload;
     return { ...state, themeMode: mode, themeCustomOptions: customOptions };
+  }
+
+  if (action.type === UPDATE_DEFAULT_ADD_MODE) {
+    return { ...state, addMode: action.payload };
   }
 
   if (action.type === UPDATE_SETTINGS_COMMIT) {

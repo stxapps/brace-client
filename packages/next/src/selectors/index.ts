@@ -654,3 +654,13 @@ export const makeGetTagNameEditor = () => {
     { memoizeOptions: { resultEqualityCheck: isEqual } },
   );
 };
+
+export const getRawAddMode = createSelector(
+  state => state.settings.addMode,
+  state => state.localSettings.doUseLocalAddMode,
+  state => state.localSettings.addMode,
+  (addMode, doUseLocalAddMode, localAddMode) => {
+    if (doUseLocalAddMode) return localAddMode;
+    return addMode;
+  },
+);
