@@ -1,23 +1,32 @@
 'use client';
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 
 import { useSelector, useDispatch } from '../store';
-import { updatePopup } from '../actions';
-import { addLink, cancelDiedLinks } from '../actions/chunk';
+import { updatePopup, linkTo } from '../actions';
 import {
-  HASH_SUPPORT, SIGN_UP_POPUP, SIGN_IN_POPUP, MY_LIST, ADDED, DIED_ADDING,
-  URL_QUERY_CLOSE_KEY, URL_QUERY_CLOSE_WINDOW, SHOW_BLANK, VALID_URL, NO_URL, BLK_MODE,
+  initLinkEditor, updateLinkEditor as _updateLinkEditor, addLinkFromAdding,
+  cancelDiedLinks, updateSelectingListName, updateListNamesMode,
+} from '../actions/chunk';
+import {
+  HASH_SUPPORT, SIGN_UP_POPUP, SIGN_IN_POPUP, ADDED, DIED_ADDING, URL_QUERY_CLOSE_KEY,
+  URL_QUERY_CLOSE_WINDOW, SHOW_BLANK, VALID_URL, NO_URL, BLK_MODE, ADD_MODE_BASIC,
+  ADD_MODE_ADVANCED, LIST_NAMES_POPUP, LIST_NAMES_MODE_ADD_LINK,
+  LIST_NAMES_ANIM_TYPE_POPUP, URL_MSGS,
 } from '../types/const';
 import { getThemeMode } from '../selectors';
 import {
   getUrlPathQueryHash, validateUrl, separateUrlAndParam, ensureContainUrlProtocol,
-  isObject, isString, isEqual, truncateString,
+  isObject, isString, isFldStr, truncateString, adjustRect, toPx,
+  getListNameDisplayName,
 } from '../utils';
+import { selectHint, deselectValue, addTagName, renameKeys } from '../utils/tag';
 
 import { useTailwind } from '.';
 import TopBar from './TopBar';
 import Link from './CustomLink';
+import ListNamesPopup from './ListNamesPopup';
 
 const SignUpPopup = dynamic(() => import('./SignUpPopup'), { ssr: false });
 const SignInPopup = dynamic(() => import('./SignInPopup'), { ssr: false });
@@ -30,13 +39,19 @@ const RENDER_IN_OTHER_PROCESSING = 'RENDER_IN_OTHER_PROCESSING';
 const RENDER_NOT_SIGNED_IN = 'RENDER_NOT_SIGNED_IN';
 const RENDER_INVALID = 'RENDER_INVALID';
 const RENDER_ERROR = 'RENDER_ERROR';
+const RENDER_EDITOR = 'RENDER_EDITOR';
 
-const getLinkFromAddingUrl = (addingUrl, links) => {
+const updateLinkEditor = (payload) => {
+  return _updateLinkEditor(payload, true);
+};
+
+const getLinkFromAddingUrl = (listName, addingUrl, linksPerLn) => {
   if (!isString(addingUrl)) return null;
+  if (!isObject(linksPerLn[listName])) return null;
 
-  for (const _id in links) {
-    if (links[_id].url === addingUrl) {
-      return links[_id];
+  for (const id in linksPerLn[listName]) {
+    if (linksPerLn[listName][id].url === addingUrl) {
+      return linksPerLn[listName][id];
     }
   }
 
@@ -55,58 +70,26 @@ const processAddingUrl = (addingUrl) => {
 const Adding = () => {
   const isUserSignedIn = useSelector(state => state.user.isUserSignedIn);
   const href = useSelector(state => state.window.href);
-  const links = useSelector(state => state.links[MY_LIST]);
+  const linksPerLn = useSelector(state => state.links);
+  const linkEditor = useSelector(state => state.linkEditor);
+  const listNameMap = useSelector(state => state.settings.listNameMap);
+  const tagNameMap = useSelector(state => state.settings.tagNameMap);
   const themeMode = useSelector(state => getThemeMode(state));
-  const [type, setType] = useState(null);
-  const [urlState, setUrlState] = useState({
-    addingUrl: null, param: null, urlValidatedResult: null,
-  });
+  const intEdtLink = useRef(null);
+  const rndEdtLink = useRef(null);
+  const fnlEdtLink = useRef(null);
   const doCancelDiedLink = useRef(true);
   const dpcdLinks = useRef([]);
+  const didClick = useRef(false);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
+  const router = useRouter();
 
-  const updateType = useCallback((newType) => {
-    if (newType !== type) setType(newType);
-  }, [type, setType]);
+  const innerProcessLink = useCallback((linksPerLn, linkEditor, dispatch) => {
+    const addingUrl = linkEditor.url;
+    const listName = linkEditor.listName;
 
-  const updateUrlState = useCallback((newValues) => {
-    let doUpdate = false;
-    for (const key in newValues) {
-      if (!isEqual(newValues[key], urlState[key])) {
-        doUpdate = true;
-        break;
-      }
-    }
-
-    if (doUpdate) setUrlState({ ...urlState, ...newValues });
-  }, [urlState, setUrlState]);
-
-  const processLink = useCallback(() => {
-    if (![true, false].includes(isUserSignedIn) || !isString(href)) return;
-
-    // Use window.location.href instead of the href from reducers because
-    //   when pressing browser back button, this processLink can be executed
-    //   before the href from reducers get updated.
-    const pqh = getUrlPathQueryHash(window.location.href);
-    const uap = separateUrlAndParam(pqh, URL_QUERY_CLOSE_KEY);
-    const [addingUrl, param] = [uap.separatedUrl, uap.param];
-    const urlValidatedResult = validateUrl(addingUrl);
-    const newValues = { addingUrl, param, urlValidatedResult };
-
-    if (isUserSignedIn === false) {
-      updateType(RENDER_NOT_SIGNED_IN);
-      updateUrlState(newValues);
-      return;
-    }
-
-    if (urlValidatedResult === NO_URL) {
-      updateType(RENDER_INVALID);
-      updateUrlState(newValues);
-      return;
-    }
-
-    let link = getLinkFromAddingUrl(addingUrl, links);
+    let link = getLinkFromAddingUrl(listName, addingUrl, linksPerLn);
     if (doCancelDiedLink.current) {
       if (isObject(link) && link.status === DIED_ADDING) {
         dispatch(cancelDiedLinks([link.id]));
@@ -116,12 +99,11 @@ const Adding = () => {
     }
     if (!isObject(link)) {
       if (!dpcdLinks.current.includes(addingUrl)) {
-        dispatch(addLink(addingUrl, MY_LIST, false));
+        dispatch(addLinkFromAdding());
         dpcdLinks.current.push(addingUrl);
       }
 
-      updateType(RENDER_ADDING);
-      updateUrlState(newValues);
+      dispatch(updateLinkEditor({ addingType: RENDER_ADDING }));
       return;
     }
 
@@ -129,18 +111,65 @@ const Adding = () => {
       let newType = RENDER_IN_OTHER_PROCESSING;
       if (dpcdLinks.current.includes(addingUrl)) newType = RENDER_ADDED;
 
-      updateType(newType);
-      updateUrlState(newValues);
+      dispatch(updateLinkEditor({ addingType: newType }));
       return;
     }
     if (link.status === DIED_ADDING) {
-      updateType(RENDER_ERROR);
-      updateUrlState(newValues);
+      dispatch(updateLinkEditor({ addingType: RENDER_ERROR }));
       return;
     }
-  }, [
-    isUserSignedIn, href, links, updateType, updateUrlState, dispatch,
-  ]);
+  }, []);
+
+  const processLink = useCallback(() => {
+    if (![true, false].includes(isUserSignedIn) || !isString(href)) return;
+
+    // Use window.location.href instead of the href from reducers because
+    //   when pressing browser back button, this processLink can be executed
+    //   before the href from reducers get updated.
+    const pqh = getUrlPathQueryHash(window.location.href);
+    const uap = separateUrlAndParam(pqh, URL_QUERY_CLOSE_KEY);
+    const [addingUrl, addingParam] = [uap.separatedUrl, uap.param];
+    const urlValidatedResult = validateUrl(addingUrl);
+    const pndgValues = { url: addingUrl, addingParam, urlValidatedResult };
+
+    if (isUserSignedIn === false) {
+      const newValues = { ...pndgValues, addingType: RENDER_NOT_SIGNED_IN };
+      dispatch(updateLinkEditor(newValues));
+      return;
+    }
+
+    if (intEdtLink.current !== addingUrl) {
+      dispatch(initLinkEditor());
+      dispatch(updateLinkEditor({ url: addingUrl }));
+      intEdtLink.current = addingUrl;
+      return;
+    }
+    if (linkEditor.mode === ADD_MODE_BASIC) {
+      if (urlValidatedResult === NO_URL) {
+        const newValues = { ...pndgValues, addingType: RENDER_INVALID };
+        dispatch(updateLinkEditor(newValues));
+        return;
+      }
+
+      innerProcessLink(linksPerLn, linkEditor, dispatch);
+      return;
+    }
+    if (linkEditor.mode === ADD_MODE_ADVANCED) {
+      if (rndEdtLink.current !== addingUrl) {
+        const newValues = { ...pndgValues, addingType: RENDER_EDITOR };
+        dispatch(updateLinkEditor(newValues));
+        rndEdtLink.current = addingUrl;
+        return;
+      }
+      if (fnlEdtLink.current === linkEditor.url) {
+        innerProcessLink(linksPerLn, linkEditor, dispatch);
+        return;
+      }
+      return;
+    }
+
+    console.log('Invalid mode', linkEditor);
+  }, [isUserSignedIn, href, linksPerLn, linkEditor, innerProcessLink, dispatch]);
 
   const onSignUpBtnClick = () => {
     dispatch(updatePopup(SIGN_UP_POPUP, true));
@@ -155,17 +184,105 @@ const Adding = () => {
     processLink();
   };
 
+  const onAddInputChange = (e) => {
+    dispatch(updateLinkEditor(
+      { url: e.target.value, isAskingConfirm: false }
+    ));
+  };
+
+  const onAddInputKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      onAddOkBtnClick();
+      if (window.document.activeElement instanceof HTMLInputElement) {
+        window.document.activeElement.blur();
+      }
+    }
+  };
+
+  const onAddOkBtnClick = () => {
+    const addingUrl = linkEditor.url.trim();
+    const urlValidatedResult = validateUrl(addingUrl);
+    if (urlValidatedResult === NO_URL) {
+      dispatch(updateLinkEditor(
+        { msg: URL_MSGS[urlValidatedResult], isAskingConfirm: false }
+      ));
+      return;
+    }
+
+    fnlEdtLink.current = linkEditor.url;
+    processLink();
+  };
+
+  const onAddCancelBtnClick = () => {
+    dispatch(linkTo(router, '/'));
+  };
+
+  const onListNameBtnClick = (e) => {
+    dispatch(updateSelectingListName(linkEditor.listName));
+    dispatch(updateListNamesMode(
+      LIST_NAMES_MODE_ADD_LINK, LIST_NAMES_ANIM_TYPE_POPUP,
+    ));
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const nRect = adjustRect(
+      rect, toPx('-0.25rem'), toPx('-0.25rem'), toPx('0.5rem'), toPx('0.5rem')
+    );
+    dispatch(updatePopup(LIST_NAMES_POPUP, true, nRect));
+  };
+
+  const onTagHintSelect = (hint) => {
+    if (didClick.current) return;
+    didClick.current = true;
+
+    const { tagValues, tagHints } = linkEditor;
+    const payload = renameKeys(selectHint(tagValues, tagHints, hint));
+    dispatch(updateLinkEditor(payload));
+  };
+
+  const onTagValueDeselect = (value) => {
+    if (didClick.current) return;
+    didClick.current = true;
+
+    const { tagValues, tagHints } = linkEditor;
+    const payload = renameKeys(deselectValue(tagValues, tagHints, value));
+    dispatch(updateLinkEditor(payload));
+  };
+
+  const onTagDnInputChange = (e) => {
+    dispatch(updateLinkEditor({ tagDisplayName: e.target.value }));
+  };
+
+  const onTagDnInputKeyPress = (e) => {
+    if (e.key === 'Enter') onTagAddBtnClick();
+  };
+
+  const onTagAddBtnClick = () => {
+    if (didClick.current) return;
+    didClick.current = true;
+
+    const { tagValues, tagHints, tagDisplayName, tagColor } = linkEditor;
+    const payload = renameKeys(addTagName(
+      tagNameMap, tagValues, tagHints, tagDisplayName, tagColor
+    ));
+    dispatch(updateLinkEditor(payload));
+  };
+
   useEffect(() => {
     processLink();
   }, [processLink]);
+
+  useEffect(() => {
+    didClick.current = false;
+  }, [linkEditor]);
 
   const _render = (content) => {
     return (
       <div className={tailwind('min-h-screen bg-white blk:bg-gray-900')}>
         <TopBar rightPane={SHOW_BLANK} doSupportTheme={true} />
-        <div className={tailwind('mx-auto w-full max-w-md px-4 pt-28 md:px-6 md:pt-36 lg:px-8')}>
+        <div className={tailwind('mx-auto max-w-md px-4 pt-28 md:px-6 md:pt-36 lg:px-8')}>
           {content}
         </div>
+        <ListNamesPopup />
         <SignUpPopup />
         <SignInPopup />
       </div>
@@ -173,14 +290,14 @@ const Adding = () => {
   };
 
   const renderNav = () => {
-    const { addingUrl, param, urlValidatedResult } = urlState;
-    const { addingPUrl } = processAddingUrl(addingUrl);
+    const { addingParam, urlValidatedResult } = linkEditor;
+    const { addingPUrl } = processAddingUrl(linkEditor.url);
 
     let rightLink = <Link className={tailwind('block rounded-xs text-right text-base font-medium leading-none text-gray-500 hover:text-gray-600 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-200')} href="/">{isUserSignedIn ? 'Go to My List >' : 'Go to Brace.to >'}</Link>;
     let centerText = null;
     let leftLink = urlValidatedResult === VALID_URL ? <a className={tailwind('mt-6 block rounded-xs text-left text-base leading-none text-gray-500 hover:text-gray-600 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-200 md:mt-0')} href={addingPUrl}>Back to the link</a> : <div />;
 
-    if (isObject(param) && param[URL_QUERY_CLOSE_KEY] === URL_QUERY_CLOSE_WINDOW) {
+    if (isObject(addingParam) && addingParam[URL_QUERY_CLOSE_KEY] === URL_QUERY_CLOSE_WINDOW) {
       leftLink = null;
       centerText = <button onClick={() => window.close()} className={tailwind('block w-full rounded-xs py-2 text-center text-base text-gray-500 hover:text-gray-600 focus:outline-none focus:ring blk:text-gray-300 blk:hover:text-gray-200')}>Close this window</button>;
       rightLink = null;
@@ -196,7 +313,7 @@ const Adding = () => {
   };
 
   const renderAdding = () => {
-    const { addingPUrl, addingTUrl } = processAddingUrl(urlState.addingUrl);
+    const { addingPUrl, addingTUrl } = processAddingUrl(linkEditor.url);
     const isUrl = addingPUrl.length > 0 && addingTUrl.length > 0;
 
     const content = (
@@ -221,7 +338,7 @@ const Adding = () => {
   };
 
   const renderAdded = () => {
-    const { addingPUrl, addingTUrl } = processAddingUrl(urlState.addingUrl);
+    const { addingPUrl, addingTUrl } = processAddingUrl(linkEditor.url);
 
     const content = (
       <React.Fragment>
@@ -242,7 +359,7 @@ const Adding = () => {
   };
 
   const renderInOtherProcessing = () => {
-    const { addingPUrl, addingTUrl } = processAddingUrl(urlState.addingUrl);
+    const { addingPUrl, addingTUrl } = processAddingUrl(linkEditor.url);
 
     const content = (
       <React.Fragment>
@@ -315,12 +432,113 @@ const Adding = () => {
     return _render(content);
   };
 
-  if (type === RENDER_NOT_SIGNED_IN) return renderNotSignedIn();
-  if (type === RENDER_INVALID) return renderInvalid();
-  if (type === RENDER_ERROR) return renderError();
-  if (type === RENDER_ADDED) return renderAdded();
-  if (type === RENDER_IN_OTHER_PROCESSING) return renderInOtherProcessing();
-  return renderAdding();
+  const renderEditor = () => {
+    let displayName = null;
+    if (isFldStr(linkEditor.listName)) {
+      displayName = getListNameDisplayName(linkEditor.listName, listNameMap);
+    }
+
+    let tagDesc = null;
+    if (linkEditor.tagHints.length === 0) {
+      tagDesc = (
+        <React.Fragment>Enter a new tag and press the Add button.</React.Fragment>
+      );
+    } else {
+      tagDesc = (
+        <React.Fragment>Enter a new tag or select from the hint.</React.Fragment>
+      );
+    }
+
+    const content = (
+      <React.Fragment>
+        <div className={tailwind('fixed inset-0 top-14 bg-gray-50')}></div>
+        <div className={tailwind('relative mx-auto -mt-10 max-w-md px-4 pt-10 pb-5 rounded-xl bg-white')}>
+          <div className={tailwind('mx-auto size-24 flex items-center justify-center bg-gray-200 rounded-full')}>
+            <svg className={tailwind('size-10 text-gray-400')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13.586 3.58601C13.7705 3.39499 13.9912 3.24262 14.2352 3.13781C14.4792 3.03299 14.7416 2.97782 15.0072 2.97551C15.2728 2.9732 15.5361 3.0238 15.7819 3.12437C16.0277 3.22493 16.251 3.37343 16.4388 3.56122C16.6266 3.74901 16.7751 3.97231 16.8756 4.2181C16.9762 4.46389 17.0268 4.72725 17.0245 4.99281C17.0222 5.25837 16.967 5.52081 16.8622 5.76482C16.7574 6.00883 16.605 6.22952 16.414 6.41401L15.621 7.20701L12.793 4.37901L13.586 3.58601ZM11.379 5.79301L3 14.172V17H5.828L14.208 8.62101L11.378 5.79301H11.379Z" />
+            </svg>
+          </div>
+          <div className={tailwind('flex pt-5')}>
+            <span className={tailwind('inline-flex items-center text-sm text-gray-500 blk:text-gray-300')}>Url:</span>
+            <div className={tailwind('ml-3 flex-1')}>
+              <input onChange={onAddInputChange} onKeyDown={onAddInputKeyPress} className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent')} type="url" placeholder="https://" value={linkEditor.url} autoCapitalize="none" />
+            </div>
+          </div>
+          <div className={tailwind('flex items-baseline pt-3')}>
+            <span className={tailwind('inline-flex items-center w-12 flex-shrink-0 flex-grow-0 text-sm text-gray-500 blk:text-gray-300')}>List:</span>
+            <button onClick={onListNameBtnClick} className={tailwind('flex min-w-0 items-center rounded-xs bg-white focus:outline-none focus:ring blk:bg-gray-900')}>
+              <span className={tailwind('truncate text-base text-gray-700 blk:text-gray-100')}>{displayName}</span>
+              <svg className={tailwind('w-5 flex-shrink-0 flex-grow-0 text-gray-600 blk:text-gray-100')} viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
+          <div className={tailwind('flex pt-2')}>
+            <div className={tailwind('inline-flex items-center flex-shrink-0 flex-grow-0 h-13 w-12')}>
+              <p className={tailwind('text-sm text-gray-500 blk:text-gray-300')}>Tags:</p>
+            </div>
+            <div className={tailwind('flex-shrink flex-grow')}>
+              {linkEditor.tagValues.length === 0 && <div className={tailwind('flex min-h-13 items-center justify-start')}>
+                <p className={tailwind('text-sm text-gray-500 blk:text-gray-400')}>{tagDesc}</p>
+              </div>}
+              {linkEditor.tagValues.length > 0 && <div className={tailwind('flex min-h-13 flex-wrap items-center justify-start pt-2')}>
+                {linkEditor.tagValues.map((value, i) => {
+                  return (
+                    <div key={`TagEditorValue-${value.tagName}`} className={tailwind(`mb-2 flex max-w-full items-center justify-start rounded-full bg-gray-100 pl-3 blk:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
+                      <div className={tailwind('flex-shrink flex-grow-0 truncate text-sm text-gray-600 blk:text-gray-300')}>{value.displayName}</div>
+                      <button onClick={() => onTagValueDeselect(value)} className={tailwind('group ml-1 flex-shrink-0 flex-grow-0 items-center justify-center rounded-full py-1.5 pr-1.5 focus:outline-none')} type="button">
+                        <svg className={tailwind('h-5 w-5 cursor-pointer rounded-full text-gray-400 group-hover:text-gray-500 group-focus:ring blk:text-gray-400 blk:group-hover:text-gray-300')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                          <path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM8.70711 7.29289C8.31658 6.90237 7.68342 6.90237 7.29289 7.29289C6.90237 7.68342 6.90237 8.31658 7.29289 8.70711L8.58579 10L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L10 11.4142L11.2929 12.7071C11.6834 13.0976 12.3166 13.0976 12.7071 12.7071C13.0976 12.3166 13.0976 11.6834 12.7071 11.2929L11.4142 10L12.7071 8.70711C13.0976 8.31658 13.0976 7.68342 12.7071 7.29289C12.3166 6.90237 11.6834 6.90237 11.2929 7.29289L10 8.58579L8.70711 7.29289Z" />
+                        </svg>
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>}
+              {linkEditor.tagMsg && <p className={tailwind('text-sm text-red-500')}>{linkEditor.tagMsg}</p>}
+              <div className={tailwind(`flex items-center justify-start ${linkEditor.tagMsg ? 'pt-0.5' : 'pt-1'}`)}>
+                <label htmlFor="new-tag-input" className={tailwind('sr-only')}>Add a new tag</label>
+                <input onChange={onTagDnInputChange} onKeyDown={onTagDnInputKeyPress} className={tailwind('block w-full flex-1 rounded-full border border-gray-400 bg-white px-3.5 py-1.25 text-sm text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-500 blk:bg-gray-800 blk:text-gray-200 blk:placeholder:text-gray-400 blk:focus:border-transparent')} placeholder="Add a new tag" value={linkEditor.tagDisplayName} id="new-tag-input" name="new-tag-input" type="text" />
+                <button onClick={onTagAddBtnClick} className={tailwind('group ml-2 flex flex-shrink-0 flex-grow-0 items-center rounded-full border border-gray-400 bg-white py-1.25 pl-1.5 pr-2.5 hover:border-gray-500 focus:outline-none focus:ring blk:border-gray-500 blk:bg-gray-800 blk:hover:border-gray-400')} type="button">
+                  <svg className={tailwind('h-4 w-4 text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-100')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                  </svg>
+                  <span className={tailwind('text-sm text-gray-500 group-hover:text-gray-600 blk:text-gray-400 blk:group-hover:text-gray-300')}>Add</span>
+                </button>
+              </div>
+              {linkEditor.tagHints.length > 0 && <div className={tailwind('flex flex-wrap items-center justify-start pt-3.5')}>
+                <div className={tailwind('mb-2 text-sm text-gray-500 blk:text-gray-400')}>Hint:</div>
+                {linkEditor.tagHints.map(hint => {
+                  return (
+                    <button key={`TagEditorHint-${hint.tagName}`} onClick={() => onTagHintSelect(hint)} className={tailwind(`group ml-2 mb-2 block max-w-full rounded-full bg-gray-100 px-3 py-1.5 focus:outline-none focus:ring blk:bg-gray-700 ${hint.isBlur ? '' : 'hover:bg-gray-200 blk:hover:bg-gray-600'}`)} type="button" disabled={hint.isBlur}>
+                      <div className={tailwind(`truncate text-sm ${hint.isBlur ? 'text-gray-400 blk:text-gray-500' : 'text-gray-600 group-hover:text-gray-700 blk:text-gray-300 blk:group-hover:text-gray-100'}`)}>{hint.displayName}</div>
+                    </button>
+                  );
+                })}
+              </div>}
+            </div>
+          </div>
+          {linkEditor.msg !== '' && <p className={tailwind('pt-4 text-sm text-red-500')}>{linkEditor.msg}</p>}
+          <div className={tailwind(`${linkEditor.msg !== '' ? 'pt-2' : 'pt-5'}`)}>
+            <button onClick={onAddOkBtnClick} style={{ paddingTop: '0.4375rem', paddingBottom: '0.4375rem' }} className={tailwind('rounded-full bg-gray-800 px-4 text-sm font-medium text-gray-50 hover:bg-gray-900 focus:outline-none focus:ring blk:bg-gray-100 blk:text-gray-800 blk:hover:bg-white')}>{linkEditor.isAskingConfirm ? 'Sure' : 'Save'}</button>
+            <button onClick={onAddCancelBtnClick} className={tailwind('ml-2 rounded-md px-2.5 py-1.5 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring focus:ring-inset blk:text-gray-300 blk:hover:bg-gray-700')}>Cancel</button>
+          </div>
+        </div>
+      </React.Fragment>
+    );
+
+    return _render(content);
+  };
+
+  const { addingType } = linkEditor;
+  if (addingType === RENDER_NOT_SIGNED_IN) return renderNotSignedIn();
+  if (addingType === RENDER_INVALID) return renderInvalid();
+  if (addingType === RENDER_ERROR) return renderError();
+  if (addingType === RENDER_ADDED) return renderAdded();
+  if (addingType === RENDER_IN_OTHER_PROCESSING) return renderInOtherProcessing();
+  if (addingType === RENDER_ADDING) return renderAdding();
+  if (addingType === RENDER_EDITOR) return renderEditor();
+  return null;
 };
 
 export default React.memo(Adding);

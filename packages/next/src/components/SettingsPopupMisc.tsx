@@ -134,13 +134,12 @@ const SettingsPopupMisc = (props) => {
   const addModeLocalBtnClassNames = doUseLocalAddMode ? 'text-gray-700 blk:text-gray-200' : 'text-gray-500 blk:text-gray-400';
 
   let addModeBscBtnClassNames = addMode === ADD_MODE_BASIC ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
-  if (addMode === ADD_MODE_BASIC) addModeBscBtnClassNames += ' border-b-0';
+  if (addMode === ADD_MODE_ADVANCED) addModeBscBtnClassNames += ' border-b-0';
   const addModeBscBtnInnerClassNames = addMode === ADD_MODE_BASIC ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
   const addModeBscRBtnClassNames = addMode === ADD_MODE_BASIC ? 'bg-blue-600 group-focus:ring-blue-600 group-focus:ring-offset-blue-100 blk:bg-blue-400 blk:group-focus:ring-gray-800 blk:group-focus:ring-offset-blue-600' : 'border border-gray-500 bg-white group-focus:ring-blue-600 group-focus:ring-offset-white blk:border-gray-500 blk:bg-gray-900 blk:group-focus:ring-blue-600 blk:group-focus:ring-offset-gray-900';
   const addModeBscRBtnInnerClassNames = addMode === ADD_MODE_BASIC ? 'bg-white' : 'bg-white blk:bg-gray-900';
 
-  let addModeAvdBtnClassNames = addMode === ADD_MODE_ADVANCED ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
-  if (addMode === ADD_MODE_ADVANCED) addModeAvdBtnClassNames += ' border-b-0';
+  let addModeAvdBtnClassNames = addMode === ADD_MODE_ADVANCED ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-t-0 border-gray-200 blk:border-gray-700';
   const addModeAvdBtnInnerClassNames = addMode === ADD_MODE_ADVANCED ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
   const addModeAvdRBtnClassNames = addMode === ADD_MODE_ADVANCED ? 'bg-blue-600 group-focus:ring-blue-600 group-focus:ring-offset-blue-100 blk:bg-blue-400 blk:group-focus:ring-gray-800 blk:group-focus:ring-offset-blue-600' : 'border border-gray-500 bg-white group-focus:ring-blue-600 group-focus:ring-offset-white blk:border-gray-500 blk:bg-gray-900 blk:group-focus:ring-blue-600 blk:group-focus:ring-offset-gray-900';
   const addModeAvdRBtnInnerClassNames = addMode === ADD_MODE_ADVANCED ? 'bg-white' : 'bg-white blk:bg-gray-900';
@@ -352,7 +351,7 @@ const SettingsPopupMisc = (props) => {
               </div>
               <p className={tailwind(`ml-3 text-sm font-medium leading-5 ${addModeBscBtnInnerClassNames}`)}>Basic</p>
             </button>
-            <button onClick={() => onAddModeInputChange(ADD_MODE_ADVANCED)} className={tailwind(`group flex w-full border p-4 focus:outline-none ${addModeAvdBtnClassNames}`)}>
+            <button onClick={() => onAddModeInputChange(ADD_MODE_ADVANCED)} className={tailwind(`group flex w-full rounded-bl-md rounded-br-md border p-4 focus:outline-none ${addModeAvdBtnClassNames}`)}>
               <div className={tailwind('flex h-5 items-center')}>
                 <div className={tailwind(`flex h-4 w-4 items-center justify-center rounded-full group-focus:ring-2 group-focus:ring-offset-2 ${addModeAvdRBtnClassNames}`)}>
                   <div className={tailwind(`h-1.5 w-1.5 rounded-full ${addModeAvdRBtnInnerClassNames}`)} />

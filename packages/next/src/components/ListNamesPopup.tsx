@@ -219,7 +219,7 @@ const ListNamesPopup = () => {
 
       if (mode === MODE_CHANGE_TAG_NAME) {
         setCurrentListName(null);
-      } else if (mode === MODE_MOVE_LIST_NAME) {
+      } else if ([MODE_MOVE_LIST_NAME, MODE_ADD_LINK].includes(mode)) {
         const { parent: p } = getListNameObj(selectingListName, listNameMap);
         setCurrentListName(p);
       } else {

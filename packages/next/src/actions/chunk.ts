@@ -52,6 +52,7 @@ import {
   VALID_PASSWORD, PASSWORD_MSGS, IN_USE_LIST_NAME, LIST_NAME_MSGS, IN_USE_TAG_NAME,
   TAG_NAME_MSGS, VALID_URL, DELETE_ACTION_LIST_NAME, DELETE_ACTION_TAG_NAME, PUT_FILE,
   DELETE_FILE, TAGGED, NOT_SUPPORTED, STATUS, ADD_MODE_BASIC, ADD_MODE_ADVANCED,
+  NO_URL, ASK_CONFIRM_URL, URL_MSGS,
 } from '../types/const';
 import {
   initialLinkEditorState, initialSettingsState, initialTagEditorState,
@@ -995,6 +996,18 @@ export const initLinkEditor = () => async (dispatch, getState) => {
 
   const editor = cloneDeep(initialLinkEditorState);
   [editor.mode, editor.listName] = [ADD_MODE_BASIC, listName];
+
+  if (queryString) {
+    // Only tag name for now
+    const tagName = queryString.trim();
+    const { tagNameObj } = getTagNameObj(tagName, tagNameMap);
+    if (isObject(tagNameObj)) {
+      editor.tagValues.push({
+        tagName, displayName: tagNameObj.displayName, color: tagNameObj.color,
+      });
+    }
+  }
+
   if (doEnableExtraFeatures(purchases)) {
     const doUseLocalAddMode = getState().localSettings.doUseLocalAddMode;
     editor.mode = doUseLocalAddMode ?
@@ -1004,26 +1017,18 @@ export const initLinkEditor = () => async (dispatch, getState) => {
     if (editor.mode === ADD_MODE_ADVANCED) {
       for (const tagNameObj of tagNameMap) {
         const { tagName, displayName, color } = tagNameObj;
-        editor.tagHints.push({ tagName, displayName, color, isBlur: false });
-      }
-
-      if (queryString) {
-        // Only tag name for now
-        const tagName = queryString.trim();
-        const { tagNameObj } = getTagNameObj(tagName, tagNameMap);
-        if (isObject(tagNameObj)) {
-          editor.tagValues.push({
-            tagName, displayName: tagNameObj.displayName, color: tagNameObj.color,
-          });
-        }
+        const isBlur = editor.tagValues.some(value => value.tagName === tagName);
+        editor.tagHints.push({ tagName, displayName, color, isBlur });
       }
     }
   }
 
-  dispatch(updateLinkEditor(editor));
+  dispatch({ type: UPDATE_LINK_EDITOR, payload: editor });
 };
 
-export const updateLinkEditor = (payload) => async (dispatch, getState) => {
+export const updateLinkEditor = (payload, doChangeCheck = false) => async (
+  dispatch, getState
+) => {
   if (isFldStr(payload.mode) && payload.mode !== getState().linkEditor.mode) {
     const queryString = getState().display.queryString;
     const tagNameMap = getState().settings.tagNameMap;
@@ -1039,27 +1044,39 @@ export const updateLinkEditor = (payload) => async (dispatch, getState) => {
     [payload.tagValues, payload.tagHints] = [[], []];
     [payload.tagDisplayName, payload.tagColor, payload.tagMsg] = ['', '', ''];
 
+    if (queryString) {
+      // Only tag name for now
+      const tagName = queryString.trim();
+      const { tagNameObj } = getTagNameObj(tagName, tagNameMap);
+      if (isObject(tagNameObj)) {
+        payload.tagValues.push({
+          tagName, displayName: tagNameObj.displayName, color: tagNameObj.color,
+        });
+      }
+    }
+
     if (payload.mode === ADD_MODE_ADVANCED) {
       for (const tagNameObj of tagNameMap) {
         const { tagName, displayName, color } = tagNameObj;
-        payload.tagHints.push({ tagName, displayName, color, isBlur: false });
-      }
-
-      if (queryString) {
-        // Only tag name for now
-        const tagName = queryString.trim();
-        const { tagNameObj } = getTagNameObj(tagName, tagNameMap);
-        if (isObject(tagNameObj)) {
-          payload.tagValues.push({
-            tagName, displayName: tagNameObj.displayName, color: tagNameObj.color,
-          });
-        }
+        const isBlur = payload.tagValues.some(value => value.tagName === tagName);
+        payload.tagHints.push({ tagName, displayName, color, isBlur });
       }
     }
   }
 
+  if (!isFldStr(payload.msg)) payload.msg = '';
   if (!isFldStr(payload.tagMsg)) payload.tagMsg = '';
 
+  if (doChangeCheck) {
+    let doChange = false;
+    for (const key in payload) {
+      if (!isEqual(payload[key], getState().linkEditor[key])) {
+        doChange = true;
+        break;
+      }
+    }
+    if (!doChange) return;
+  }
   dispatch({ type: UPDATE_LINK_EDITOR, payload });
 };
 
@@ -1084,17 +1101,9 @@ const _getAddLinkInsertIndex = (getState) => {
   return showingLinkIds.length;
 };
 
-export const addLink = (doExtractContents) => async (dispatch, getState) => {
-  const { mode, url, tagValues } = getState().linkEditor;
-
-  const purchases = getState().info.purchases;
-  if (mode === ADD_MODE_ADVANCED && !doEnableExtraFeatures(purchases)) {
-    dispatch(updatePaywallFeature(FEATURE_ADD));
-    dispatch(updatePopup(PAYWALL_POPUP, true, null, null));
-    return;
-  }
-
-  let { listName } = getState().linkEditor;
+const _addLink = async (
+  url, listName, doExtractContents, tagValues, dispatch, getState
+) => {
   if (!isFldStr(listName)) listName = getState().display.listName;
   if (listName === TRASH) listName = MY_LIST;
 
@@ -1124,7 +1133,7 @@ export const addLink = (doExtractContents) => async (dispatch, getState) => {
   }
 
   if (tagValues.length > 0) {
-    const tagValuesPerId = { id: tagValues };
+    const tagValuesPerId = { [id]: tagValues };
 
     const tagFPaths = getTagFPaths(getState());
     const tagNameMap = getState().settings.tagNameMap;
@@ -1166,6 +1175,45 @@ export const addLink = (doExtractContents) => async (dispatch, getState) => {
     },
   });
   addFetchedToVars(null, [link], vars);
+};
+
+export const addLink = () => async (dispatch, getState) => {
+  const { mode, isAskingConfirm, listName, tagValues } = getState().linkEditor;
+
+  const url = getState().linkEditor.url.trim();
+  if (!isAskingConfirm) {
+    const urlValidatedResult = validateUrl(url);
+    if (urlValidatedResult === NO_URL) {
+      dispatch(updateLinkEditor(
+        { msg: URL_MSGS[urlValidatedResult], isAskingConfirm: false }
+      ));
+      return;
+    }
+    if (urlValidatedResult === ASK_CONFIRM_URL) {
+      dispatch(updateLinkEditor(
+        { msg: URL_MSGS[urlValidatedResult], isAskingConfirm: true }
+      ));
+      return;
+    }
+  }
+
+  const purchases = getState().info.purchases;
+  if (mode === ADD_MODE_ADVANCED && !doEnableExtraFeatures(purchases)) {
+    dispatch(updatePaywallFeature(FEATURE_ADD));
+    dispatch(updatePopup(PAYWALL_POPUP, true, null, null));
+    dispatch({ type: UPDATE_LINK_EDITOR, payload: {} }); // need to reset didClick
+    return;
+  }
+
+  dispatch(updateAddPopup(false));
+
+  await _addLink(url, listName, null, tagValues, dispatch, getState);
+};
+
+export const addLinkFromAdding = () => async (dispatch, getState) => {
+  const { listName, tagValues } = getState().linkEditor;
+  const url = getState().linkEditor.url.trim();
+  await _addLink(url, listName, false, tagValues, dispatch, getState);
 };
 
 export const moveLinks = (toListName, ids) => async (dispatch, getState) => {
@@ -1378,7 +1426,7 @@ export const retryDiedLinks = (ids) => async (dispatch, getState) => {
 export const cancelDiedLinks = (canceledIds) => async (dispatch, getState) => {
   const links = getState().links;
 
-  const listNames = [], ids = [], statuses = [], fromIds = [];
+  const listNames = [], ids = [], statuses = [], fromIds = [], addIds = [];
   for (const id of canceledIds) {
     const { listName, link } = getListNameAndLink(id, links);
     if (!isString(listName) || !isObject(link)) {
@@ -1392,17 +1440,13 @@ export const cancelDiedLinks = (canceledIds) => async (dispatch, getState) => {
     statuses.push(status);
     fromIds.push(isString(fromId) ? fromId : isObject(fromLink) ? fromLink.id : null);
 
-    if (status === ADD_LINKS_ROLLBACK) {
-      // check pendingTags, if exist, get tagNames
-      // check tagNames if unused?
-      // also dispatch cancel died tags?
-
-
-    }
+    if (status === ADD_LINKS_ROLLBACK) addIds.push(id);
   }
 
   const payload = { listNames, ids, statuses, fromIds };
   dispatch({ type: CANCEL_DIED_LINKS, payload });
+
+  if (addIds.length > 0) dispatch(cancelDiedTags(addIds));
 };
 
 const getToExtractLinks = (getState, listNames, ids) => {
@@ -2900,7 +2944,7 @@ export const updateTagDataFromAddLinks = (successIds) => async (
   if (ids.length === 0) return;
 
   await updateTagDataSStep(ids, valuesPerId)(dispatch, getState);
-}
+};
 
 const updateTagDataSStep = (rawIds, rawValuesPerId) => async (
   dispatch, getState
@@ -2965,7 +3009,7 @@ export const retryDiedTags = () => async (dispatch, getState) => {
   }
 };
 
-export const cancelDiedTags = () => async (dispatch, getState) => {
+export const cancelDiedTags = (addIds = null) => async (dispatch, getState) => {
   const settings = getState().settings;
   const snapshotSettings = getState().snapshot.settings;
   const pendingTags = getState().pendingTags;
@@ -2973,23 +3017,44 @@ export const cancelDiedTags = () => async (dispatch, getState) => {
   const isTamEqual = isEqual(settings.tagNameMap, snapshotSettings.tagNameMap);
 
   const ids = [], newTagNames = [], usedTagNames = [], unusedTagNames = [];
-  for (const id in pendingTags) {
-    const { status, newTagNameObjs } = pendingTags[id];
+  if (Array.isArray(addIds)) {
+    for (const id of addIds) {
+      if (id in pendingTags) {
+        ids.push(id);
 
-    if ([
-      UPDATE_TAG_DATA_S_STEP_ROLLBACK, UPDATE_TAG_DATA_T_STEP_ROLLBACK,
-    ].includes(status)) {
-      ids.push(id);
-    }
-
-    if (status === UPDATE_TAG_DATA_S_STEP_ROLLBACK) {
-      for (const obj of newTagNameObjs) {
-        if (!newTagNames.includes(obj.tagName)) newTagNames.push(obj.tagName);
+        const { newTagNameObjs } = pendingTags[id];
+        for (const obj of newTagNameObjs) {
+          if (!newTagNames.includes(obj.tagName)) newTagNames.push(obj.tagName);
+        }
       }
-      continue;
     }
-    for (const obj of newTagNameObjs) {
-      if (!usedTagNames.includes(obj.tagName)) usedTagNames.push(obj.tagName);
+    for (const id in pendingTags) {
+      if (ids.includes(id)) continue;
+
+      const { newTagNameObjs } = pendingTags[id];
+      for (const obj of newTagNameObjs) {
+        if (!usedTagNames.includes(obj.tagName)) usedTagNames.push(obj.tagName);
+      }
+    }
+  } else {
+    for (const id in pendingTags) {
+      const { status, newTagNameObjs } = pendingTags[id];
+
+      if ([
+        UPDATE_TAG_DATA_S_STEP_ROLLBACK, UPDATE_TAG_DATA_T_STEP_ROLLBACK,
+      ].includes(status)) {
+        ids.push(id);
+      }
+
+      if (status === UPDATE_TAG_DATA_S_STEP_ROLLBACK) {
+        for (const obj of newTagNameObjs) {
+          if (!newTagNames.includes(obj.tagName)) newTagNames.push(obj.tagName);
+        }
+        continue;
+      }
+      for (const obj of newTagNameObjs) {
+        if (!usedTagNames.includes(obj.tagName)) usedTagNames.push(obj.tagName);
+      }
     }
   }
 

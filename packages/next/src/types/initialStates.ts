@@ -61,6 +61,9 @@ export const initialLinkEditorState = {
   tagDisplayName: '',
   tagColor: '',
   tagMsg: '',
+  addingType: null,
+  addingParam: null,
+  urlValidatedResult: null,
 };
 
 export const initialListNameEditorState = {

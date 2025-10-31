@@ -6,7 +6,7 @@ import { updatePopup } from '../actions';
 import { updateSettingsPopup, updateSettingsViewId } from '../actions/chunk';
 import {
   PAYWALL_POPUP, SETTINGS_VIEW_IAP, FEATURE_PIN, FEATURE_APPEARANCE, FEATURE_CUSTOM,
-  FEATURE_LOCK, FEATURE_TAG, SM_WIDTH,
+  FEATURE_LOCK, FEATURE_TAG, FEATURE_ADD, SM_WIDTH,
 } from '../types/const';
 import { dialogBgFMV, dialogFMV } from '../types/animConfigs';
 import { toPx } from '../utils';
@@ -63,6 +63,8 @@ const PaywallPopup = () => {
     featureText = 'Lock lists are an extra feature.';
   } else if (feature === FEATURE_TAG) {
     featureText = 'Tags are an extra feature.';
+  } else if (feature === FEATURE_ADD) {
+    featureText = 'Advanced add is an extra feature.';
   }
 
   const spanStyle: any = {};
