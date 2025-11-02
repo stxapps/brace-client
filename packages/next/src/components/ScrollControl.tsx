@@ -2,7 +2,11 @@ import React, { useLayoutEffect } from 'react';
 
 import { useSelector } from '../store';
 
-const ScrollControl = () => {
+interface ScrollControlProps {
+  forceScroll?: boolean;
+}
+
+const ScrollControl = ({ forceScroll = true }: ScrollControlProps) => {
 
   const isSettingsPopupShown = useSelector(state => state.display.isSettingsPopupShown);
 
@@ -35,10 +39,10 @@ const ScrollControl = () => {
         html.style.paddingRight = `${scrollbarWidth}px`;
       }
     } else {
-      html.style.overflowY = 'scroll';
+      html.style.overflowY = forceScroll ? 'scroll' : '';
       html.style.paddingRight = '';
     }
-  }, [isSettingsPopupShown]);
+  }, [isSettingsPopupShown, forceScroll]);
 
   return null;
 };

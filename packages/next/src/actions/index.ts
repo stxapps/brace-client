@@ -204,7 +204,7 @@ const getCanBckPopups = (getState) => {
       canFwd: true, isShown: state.display.isSignInPopupShown,
     },
     [ADD_POPUP]: {
-      canFwd: true, isShown: state.display.isAddPopupShown,
+      canFwd: false, isShown: state.display.isAddPopupShown,
     },
     [SEARCH_POPUP]: {
       canFwd: true, isShown: state.display.isSearchPopupShown,

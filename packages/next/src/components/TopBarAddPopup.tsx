@@ -209,7 +209,7 @@ const TopBarAddPopup = () => {
               {linkEditor.tagValues.length === 0 && <div className={tailwind('flex min-h-13 items-center justify-start')}>
                 <p className={tailwind('text-sm text-gray-500 blk:text-gray-400')}>{tagDesc}</p>
               </div>}
-              {linkEditor.tagValues.length > 0 && <div className={tailwind('flex min-h-13 flex-wrap items-center justify-start pt-2')}>
+              {linkEditor.tagValues.length > 0 && <div className={tailwind('flex min-h-13 flex-wrap items-start justify-start pt-2.5')}>
                 {linkEditor.tagValues.map((value, i) => {
                   return (
                     <div key={`TagEditorValue-${value.tagName}`} className={tailwind(`mb-2 flex max-w-full items-center justify-start rounded-full bg-gray-100 pl-3 blk:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
