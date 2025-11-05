@@ -8,8 +8,9 @@ import {
 } from '../actions/chunk';
 import {
   LIST_NAMES_POPUP, LIST_NAMES_MODE_ADD_LINK, LIST_NAMES_ANIM_TYPE_BMODAL,
-  ADD_MODE_BASIC, ADD_MODE_ADVANCED,
+  ADD_MODE_BASIC, ADD_MODE_ADVANCED, BLK_MODE,
 } from '../types/const';
+import { getThemeMode } from '../selectors';
 import { isFldStr, getListNameDisplayName } from '../utils';
 import { selectHint, deselectValue, addTagName, renameKeys } from '../utils/tag';
 
@@ -22,6 +23,7 @@ const BottomBarAddPopup = () => {
   const linkEditor = useSelector(state => state.linkEditor);
   const listNameMap = useSelector(state => state.settings.listNameMap);
   const tagNameMap = useSelector(state => state.settings.tagNameMap);
+  const themeMode = useSelector(state => getThemeMode(state));
   const addInput = useRef(null);
   const didClick = useRef(false);
   const dispatch = useDispatch();
@@ -142,9 +144,9 @@ const BottomBarAddPopup = () => {
             <input ref={addInput} onChange={onAddInputChange} onKeyDown={onAddInputKeyPress} className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent')} type="url" placeholder="https://" value={linkEditor.url} autoCapitalize="none" />
           </div>
         </div>
-        <button onClick={onAdvancedBtnClick} className={tailwind('mt-5 -ml-2.5 flex items-center rounded-md text-sm text-gray-500 px-2.5 py-1.5 hover:text-gray-600 focus:outline-none focus-visible:ring blk:text-gray-300 blk:hover:text-gray-200')}>
+        <button onClick={onAdvancedBtnClick} className={tailwind('mt-5 -ml-2.5 flex items-center rounded-md text-sm text-gray-500 px-2.5 py-1.5 hover:text-gray-600 focus:outline-none focus-visible:ring blk:text-gray-400 blk:hover:text-gray-300')}>
           {linkEditor.mode !== ADD_MODE_ADVANCED && <svg className={tailwind('size-3')} viewBox="0 0 14 14" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path d="M7 1V7M7 7V13M7 7H13M7 7H1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M7 1V7M7 7V13M7 7H13M7 7H1" strokeWidth={themeMode === BLK_MODE ? '2' : '1.5'} strokeLinecap="round" strokeLinejoin="round" />
           </svg>}
           {linkEditor.mode === ADD_MODE_ADVANCED && <svg className={tailwind('size-3')} viewBox="0 0 14 14" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M13 7H1" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
@@ -154,7 +156,7 @@ const BottomBarAddPopup = () => {
         {linkEditor.mode === ADD_MODE_ADVANCED && <div className={tailwind('pt-3')}>
           <div className={tailwind('flex items-baseline')}>
             <span className={tailwind('inline-flex items-center w-12 flex-shrink-0 flex-grow-0 text-sm text-gray-500 blk:text-gray-300')}>List:</span>
-            <button onClick={onListNameBtnClick} className={tailwind('flex min-w-0 items-center rounded-xs bg-white focus:outline-none focus:ring blk:bg-gray-900')}>
+            <button onClick={onListNameBtnClick} className={tailwind('flex min-w-0 items-center rounded-xs bg-white focus:outline-none focus:ring blk:bg-gray-800')}>
               <span className={tailwind('truncate text-base text-gray-700 blk:text-gray-100')}>{displayName}</span>
               <svg className={tailwind('w-5 flex-shrink-0 flex-grow-0 text-gray-600 blk:text-gray-100')} viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

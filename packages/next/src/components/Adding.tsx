@@ -453,23 +453,23 @@ const Adding = () => {
 
     const content = (
       <div className={tailwind('mx-auto max-w-82')}>
-        <div className={tailwind('mx-auto size-24 flex items-center justify-center bg-gray-200 rounded-full')}>
-          <svg className={tailwind('size-10 text-gray-400')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <div className={tailwind('mx-auto size-24 flex items-center justify-center bg-gray-200 rounded-full blk:bg-gray-700')}>
+          <svg className={tailwind('size-10 text-gray-400 blk:text-gray-400')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M13.586 3.58601C13.7705 3.39499 13.9912 3.24262 14.2352 3.13781C14.4792 3.03299 14.7416 2.97782 15.0072 2.97551C15.2728 2.9732 15.5361 3.0238 15.7819 3.12437C16.0277 3.22493 16.251 3.37343 16.4388 3.56122C16.6266 3.74901 16.7751 3.97231 16.8756 4.2181C16.9762 4.46389 17.0268 4.72725 17.0245 4.99281C17.0222 5.25837 16.967 5.52081 16.8622 5.76482C16.7574 6.00883 16.605 6.22952 16.414 6.41401L15.621 7.20701L12.793 4.37901L13.586 3.58601ZM11.379 5.79301L3 14.172V17H5.828L14.208 8.62101L11.378 5.79301H11.379Z" />
           </svg>
         </div>
         <div className={tailwind('flex pt-8')}>
           <span className={tailwind('inline-flex items-center text-sm text-gray-500 blk:text-gray-300')}>Url:</span>
           <div className={tailwind('ml-3 flex-1')}>
-            <input onChange={onAddInputChange} onKeyDown={onAddInputKeyPress} className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent')} type="url" placeholder="https://" value={linkEditor.url} autoCapitalize="none" />
+            <input onChange={onAddInputChange} onKeyDown={onAddInputKeyPress} className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-600 blk:bg-gray-800 blk:text-gray-200 blk:placeholder:text-gray-400 blk:focus:border-transparent')} type="url" placeholder="https://" value={linkEditor.url} autoCapitalize="none" />
           </div>
         </div>
-        <div className={tailwind('mt-6 border-t border-gray-200')} />
+        <div className={tailwind('mt-6 border-t border-gray-200 blk:border-gray-700')} />
         <div className={tailwind('flex items-baseline pt-4.5')}>
           <span className={tailwind('inline-flex items-center w-12 flex-shrink-0 flex-grow-0 text-sm text-gray-500 blk:text-gray-300')}>List:</span>
           <button onClick={onListNameBtnClick} className={tailwind('flex min-w-0 items-center rounded-xs bg-white focus:outline-none focus:ring blk:bg-gray-900')}>
             <span className={tailwind('truncate text-base text-gray-700 blk:text-gray-100')}>{displayName}</span>
-            <svg className={tailwind('w-5 flex-shrink-0 flex-grow-0 text-gray-600 blk:text-gray-100')} viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg className={tailwind('w-5 flex-shrink-0 flex-grow-0 text-gray-600 blk:text-gray-200')} viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
@@ -499,8 +499,8 @@ const Adding = () => {
             {linkEditor.tagMsg && <p className={tailwind('text-sm text-red-500')}>{linkEditor.tagMsg}</p>}
             <div className={tailwind(`flex items-center justify-start ${linkEditor.tagMsg ? 'pt-0.5' : 'pt-1'}`)}>
               <label htmlFor="new-tag-input" className={tailwind('sr-only')}>Add a new tag</label>
-              <input onChange={onTagDnInputChange} onKeyDown={onTagDnInputKeyPress} className={tailwind('block w-full flex-1 rounded-full border border-gray-400 bg-white px-3.5 py-1.25 text-sm text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-500 blk:bg-gray-800 blk:text-gray-200 blk:placeholder:text-gray-400 blk:focus:border-transparent')} placeholder="Add a new tag" value={linkEditor.tagDisplayName} id="new-tag-input" name="new-tag-input" type="text" />
-              <button onClick={onTagAddBtnClick} className={tailwind('group ml-2 flex flex-shrink-0 flex-grow-0 items-center rounded-full border border-gray-400 bg-white py-1.25 pl-1.5 pr-2.5 hover:border-gray-500 focus:outline-none focus:ring blk:border-gray-500 blk:bg-gray-800 blk:hover:border-gray-400')} type="button">
+              <input onChange={onTagDnInputChange} onKeyDown={onTagDnInputKeyPress} className={tailwind('block w-full flex-1 rounded-full border border-gray-400 bg-white px-3.5 py-1.25 text-sm text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-500 blk:bg-gray-900 blk:text-gray-200 blk:placeholder:text-gray-400 blk:focus:border-transparent')} placeholder="Add a new tag" value={linkEditor.tagDisplayName} id="new-tag-input" name="new-tag-input" type="text" />
+              <button onClick={onTagAddBtnClick} className={tailwind('group ml-2 flex flex-shrink-0 flex-grow-0 items-center rounded-full border border-gray-400 bg-white py-1.25 pl-1.5 pr-2.5 hover:border-gray-500 focus:outline-none focus:ring blk:border-gray-500 blk:bg-gray-900 blk:hover:border-gray-400')} type="button">
                 <svg className={tailwind('h-4 w-4 text-gray-500 group-hover:text-gray-600 blk:text-gray-300 blk:group-hover:text-gray-100')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
                 </svg>
@@ -519,7 +519,7 @@ const Adding = () => {
             </div>}
           </div>
         </div>
-        <div className={tailwind('mt-6 border-t border-gray-200')} />
+        <div className={tailwind('mt-6 border-t border-gray-200 blk:border-gray-700')} />
         {linkEditor.msg !== '' && <p className={tailwind('mt-2 text-sm text-red-500')}>{linkEditor.msg}</p>}
         <div className={tailwind(`${linkEditor.msg !== '' ? 'pt-2' : 'pt-5'}`)}>
           <button onClick={onAddOkBtnClick} style={{ paddingTop: '0.4375rem', paddingBottom: '0.4375rem' }} className={tailwind('rounded-full bg-gray-800 px-4 text-sm font-medium text-gray-50 hover:bg-gray-900 focus:outline-none focus:ring blk:bg-gray-100 blk:text-gray-800 blk:hover:bg-white')}>{linkEditor.isAskingConfirm ? 'Sure' : 'Save'}</button>
