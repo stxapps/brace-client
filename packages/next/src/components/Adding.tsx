@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from '../store';
 import { updatePopup, linkTo } from '../actions';
 import {
-  initLinkEditor, updateLinkEditor as _updateLinkEditor, addLinkFromAdding,
-  cancelDiedLinks, updateSelectingListName, updateListNamesMode,
+  initLinkEditor, updateLinkEditor, addLinkFromAdding, cancelDiedLinks,
+  updateSelectingListName, updateListNamesMode,
 } from '../actions/chunk';
 import {
   HASH_SUPPORT, SIGN_UP_POPUP, SIGN_IN_POPUP, ADDED, DIED_ADDING, URL_QUERY_CLOSE_KEY,
@@ -41,10 +41,6 @@ const RENDER_NOT_SIGNED_IN = 'RENDER_NOT_SIGNED_IN';
 const RENDER_INVALID = 'RENDER_INVALID';
 const RENDER_ERROR = 'RENDER_ERROR';
 const RENDER_EDITOR = 'RENDER_EDITOR';
-
-const updateLinkEditor = (payload) => {
-  return _updateLinkEditor(payload, true);
-};
 
 const getLinkFromAddingUrl = (listName, addingUrl, linksPerLn) => {
   if (!isString(addingUrl)) return null;
@@ -104,7 +100,7 @@ const Adding = () => {
         dpcdLinks.current.push(addingUrl);
       }
 
-      dispatch(updateLinkEditor({ addingType: RENDER_ADDING }));
+      dispatch(updateLinkEditor({ addingType: RENDER_ADDING }, true));
       return;
     }
 
@@ -112,11 +108,11 @@ const Adding = () => {
       let newType = RENDER_IN_OTHER_PROCESSING;
       if (dpcdLinks.current.includes(addingUrl)) newType = RENDER_ADDED;
 
-      dispatch(updateLinkEditor({ addingType: newType }));
+      dispatch(updateLinkEditor({ addingType: newType }, true));
       return;
     }
     if (link.status === DIED_ADDING) {
-      dispatch(updateLinkEditor({ addingType: RENDER_ERROR }));
+      dispatch(updateLinkEditor({ addingType: RENDER_ERROR }, true));
       return;
     }
   }, []);
@@ -135,20 +131,20 @@ const Adding = () => {
 
     if (isUserSignedIn === false) {
       const newValues = { ...pndgValues, addingType: RENDER_NOT_SIGNED_IN };
-      dispatch(updateLinkEditor(newValues));
+      dispatch(updateLinkEditor(newValues, true));
       return;
     }
 
     if (intEdtLink.current !== addingUrl) {
       dispatch(initLinkEditor());
-      dispatch(updateLinkEditor({ url: addingUrl }));
+      dispatch(updateLinkEditor({ url: addingUrl }, true));
       intEdtLink.current = addingUrl;
       return;
     }
     if (linkEditor.mode === ADD_MODE_BASIC) {
       if (urlValidatedResult === NO_URL) {
         const newValues = { ...pndgValues, addingType: RENDER_INVALID };
-        dispatch(updateLinkEditor(newValues));
+        dispatch(updateLinkEditor(newValues, true));
         return;
       }
 
@@ -158,7 +154,7 @@ const Adding = () => {
     if (linkEditor.mode === ADD_MODE_ADVANCED) {
       if (rndEdtLink.current !== addingUrl) {
         const newValues = { ...pndgValues, addingType: RENDER_EDITOR };
-        dispatch(updateLinkEditor(newValues));
+        dispatch(updateLinkEditor(newValues, true));
         rndEdtLink.current = addingUrl;
         return;
       }
@@ -182,6 +178,7 @@ const Adding = () => {
 
   const onRetryBtnClick = () => {
     doCancelDiedLink.current = true;
+    dpcdLinks.current = [];
     processLink();
   };
 
@@ -452,7 +449,7 @@ const Adding = () => {
     }
 
     const content = (
-      <div className={tailwind('mx-auto max-w-82')}>
+      <div className={tailwind('mx-auto max-w-82 pb-38 md:pb-46')}>
         <div className={tailwind('mx-auto size-24 flex items-center justify-center bg-gray-200 rounded-full blk:bg-gray-700')}>
           <svg className={tailwind('size-10 text-gray-400 blk:text-gray-400')} viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M13.586 3.58601C13.7705 3.39499 13.9912 3.24262 14.2352 3.13781C14.4792 3.03299 14.7416 2.97782 15.0072 2.97551C15.2728 2.9732 15.5361 3.0238 15.7819 3.12437C16.0277 3.22493 16.251 3.37343 16.4388 3.56122C16.6266 3.74901 16.7751 3.97231 16.8756 4.2181C16.9762 4.46389 17.0268 4.72725 17.0245 4.99281C17.0222 5.25837 16.967 5.52081 16.8622 5.76482C16.7574 6.00883 16.605 6.22952 16.414 6.41401L15.621 7.20701L12.793 4.37901L13.586 3.58601ZM11.379 5.79301L3 14.172V17H5.828L14.208 8.62101L11.378 5.79301H11.379Z" />
@@ -465,16 +462,16 @@ const Adding = () => {
           </div>
         </div>
         <div className={tailwind('mt-6 border-t border-gray-200 blk:border-gray-700')} />
-        <div className={tailwind('flex items-baseline pt-4.5')}>
+        <div className={tailwind('flex items-baseline pt-3.5')}>
           <span className={tailwind('inline-flex items-center w-12 flex-shrink-0 flex-grow-0 text-sm text-gray-500 blk:text-gray-300')}>List:</span>
-          <button onClick={onListNameBtnClick} className={tailwind('flex min-w-0 items-center rounded-xs bg-white focus:outline-none focus:ring blk:bg-gray-900')}>
+          <button onClick={onListNameBtnClick} className={tailwind('flex min-w-0 items-center rounded-md bg-white py-1 focus:outline-none focus:ring blk:bg-gray-900')}>
             <span className={tailwind('truncate text-base text-gray-700 blk:text-gray-100')}>{displayName}</span>
             <svg className={tailwind('w-5 flex-shrink-0 flex-grow-0 text-gray-600 blk:text-gray-200')} viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
         </div>
-        <div className={tailwind('flex pt-2')}>
+        <div className={tailwind('flex pt-1')}>
           <div className={tailwind('inline-flex items-center flex-shrink-0 flex-grow-0 h-13 w-12')}>
             <p className={tailwind('text-sm text-gray-500 blk:text-gray-300')}>Tags:</p>
           </div>

@@ -64,7 +64,7 @@ const PaywallPopup = () => {
   } else if (feature === FEATURE_TAG) {
     featureText = 'Tags are an extra feature.';
   } else if (feature === FEATURE_ADD) {
-    featureText = 'Advanced add is an extra feature.';
+    featureText = 'Advanced mode is an extra feature.';
   }
 
   const spanStyle: any = {};

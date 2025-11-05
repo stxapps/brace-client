@@ -144,7 +144,7 @@ const BottomBarAddPopup = () => {
             <input ref={addInput} onChange={onAddInputChange} onKeyDown={onAddInputKeyPress} className={tailwind('w-full rounded-full border border-gray-400 bg-white px-3.5 py-1 text-base text-gray-700 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring focus:ring-blue-500/50 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 blk:placeholder:text-gray-400 blk:focus:border-transparent')} type="url" placeholder="https://" value={linkEditor.url} autoCapitalize="none" />
           </div>
         </div>
-        <button onClick={onAdvancedBtnClick} className={tailwind('mt-5 -ml-2.5 flex items-center rounded-md text-sm text-gray-500 px-2.5 py-1.5 hover:text-gray-600 focus:outline-none focus-visible:ring blk:text-gray-400 blk:hover:text-gray-300')}>
+        <button onClick={onAdvancedBtnClick} className={tailwind('mt-5 -ml-0.5 flex items-center rounded-md text-sm text-gray-500 px-0.5 py-1.5 hover:text-gray-600 focus:outline-none focus-visible:ring blk:text-gray-400 blk:hover:text-gray-300')}>
           {linkEditor.mode !== ADD_MODE_ADVANCED && <svg className={tailwind('size-3')} viewBox="0 0 14 14" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M7 1V7M7 7V13M7 7H13M7 7H1" strokeWidth={themeMode === BLK_MODE ? '2' : '1.5'} strokeLinecap="round" strokeLinejoin="round" />
           </svg>}
@@ -153,17 +153,17 @@ const BottomBarAddPopup = () => {
           </svg>}
           <span className={tailwind('ml-1')}>Advanced</span>
         </button>
-        {linkEditor.mode === ADD_MODE_ADVANCED && <div className={tailwind('pt-3')}>
+        {linkEditor.mode === ADD_MODE_ADVANCED && <div className={tailwind('pt-2')}>
           <div className={tailwind('flex items-baseline')}>
             <span className={tailwind('inline-flex items-center w-12 flex-shrink-0 flex-grow-0 text-sm text-gray-500 blk:text-gray-300')}>List:</span>
-            <button onClick={onListNameBtnClick} className={tailwind('flex min-w-0 items-center rounded-xs bg-white focus:outline-none focus:ring blk:bg-gray-800')}>
+            <button onClick={onListNameBtnClick} className={tailwind('flex min-w-0 items-center rounded-md bg-white py-1 focus:outline-none focus:ring blk:bg-gray-800')}>
               <span className={tailwind('truncate text-base text-gray-700 blk:text-gray-100')}>{displayName}</span>
               <svg className={tailwind('w-5 flex-shrink-0 flex-grow-0 text-gray-600 blk:text-gray-100')} viewBox="0 0 24 24" stroke="currentColor" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
           </div>
-          <div className={tailwind('flex pt-2')}>
+          <div className={tailwind('flex pt-1')}>
             <div className={tailwind('inline-flex items-center flex-shrink-0 flex-grow-0 h-13 w-12')}>
               <p className={tailwind('text-sm text-gray-500 blk:text-gray-300')}>Tags:</p>
             </div>

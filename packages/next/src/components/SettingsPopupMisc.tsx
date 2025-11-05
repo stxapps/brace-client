@@ -331,7 +331,7 @@ const SettingsPopupMisc = (props) => {
       <div className={tailwind('mt-10 flex flex-col')}>
         <h4 id="add-mode-option-label" className={tailwind('text-base font-medium leading-none text-gray-800 blk:text-gray-100')}>Add Mode</h4>
         <div className={tailwind('sm:flex sm:items-start sm:justify-between sm:space-x-4')}>
-          <p id="add-mode-option-description" className={tailwind('mt-2.5 flex-shrink flex-grow text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Choose whether your link editor are displayed in the Basic, Advanced (includes list and tags selection), or Last used mode. For Sync, your choosing is synced across your devices. For Device, you can choose and use the setting for this device only.</p>
+          <p id="add-mode-option-description" className={tailwind('mt-2.5 flex-shrink flex-grow text-base leading-relaxed text-gray-500 blk:text-gray-400')}>Choose whether your link editor are displayed in the Basic or Advanced (includes list and tags selection) mode. For Sync, your choosing is synced across your devices. For Device, you can choose and use the setting for this device only.</p>
           <div className={tailwind('mx-auto mt-2.5 w-full max-w-48 rounded-md bg-white shadow-xs blk:bg-gray-900 sm:mt-1 sm:w-48 sm:max-w-none sm:flex-shrink-0 sm:flex-grow-0')}>
             <div className={tailwind('relative flex justify-evenly')}>
               <button onClick={() => onDoUseLocalAddModeBtnClick(false)} className={tailwind(`relative flex-shrink flex-grow rounded-tl-md border border-b-0 border-gray-300 bg-white py-4 text-center text-sm font-medium focus:outline-none focus-visible:ring focus-visible:ring-inset blk:border-gray-700 blk:bg-gray-900 ${addModeDefaultBtnClassNames}`)} type="button">

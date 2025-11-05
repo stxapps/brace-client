@@ -1440,7 +1440,7 @@ export const cancelDiedLinks = (canceledIds) => async (dispatch, getState) => {
     statuses.push(status);
     fromIds.push(isString(fromId) ? fromId : isObject(fromLink) ? fromLink.id : null);
 
-    if (status === ADD_LINKS_ROLLBACK) addIds.push(id);
+    if (status === DIED_ADDING) addIds.push(id);
   }
 
   const payload = { listNames, ids, statuses, fromIds };
