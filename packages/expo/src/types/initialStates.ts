@@ -1,5 +1,5 @@
 import {
-  MY_LIST, TRASH, ARCHIVE, MODE_VIEW, LAYOUT_CARD, WHT_MODE, BLK_MODE,
+  MY_LIST, TRASH, ARCHIVE, MODE_VIEW, LAYOUT_CARD, WHT_MODE, BLK_MODE, ADD_MODE_BASIC,
 } from '../types/const';
 
 export const myListListNameObj = { listName: MY_LIST, displayName: MY_LIST };
@@ -28,6 +28,7 @@ export const initialSettingsState = {
   themeCustomOptions: [
     { ...whtModeThemeCustomOptions }, { ...blkModeThemeCustomOptions },
   ],
+  addMode: ADD_MODE_BASIC,
 };
 
 export const initialLocalSettingsState = {
@@ -38,6 +39,8 @@ export const initialLocalSettingsState = {
   themeCustomOptions: [
     { ...whtModeThemeCustomOptions }, { ...blkModeThemeCustomOptions },
   ],
+  doUseLocalAddMode: false,
+  addMode: ADD_MODE_BASIC,
   cleanUpStaticFilesDT: null,
   signInDT: null,
 };
@@ -45,6 +48,22 @@ export const initialLocalSettingsState = {
 export const initialInfoState = {
   purchases: null, // an array with elements as purchase objs
   checkPurchasesDT: null,
+};
+
+export const initialLinkEditorState = {
+  mode: null,
+  url: '',
+  msg: '',
+  isAskingConfirm: false,
+  listName: null,
+  tagValues: [], // [{ tagName, displayName, color }, ...]
+  tagHints: [], // [{ tagName, displayName, color, isShown }, ...]
+  tagDisplayName: '',
+  tagColor: '',
+  tagMsg: '',
+  addingType: null,
+  addingParam: null,
+  urlValidatedResult: null,
 };
 
 export const initialListNameEditorState = {

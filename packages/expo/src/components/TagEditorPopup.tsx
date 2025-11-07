@@ -7,7 +7,7 @@ import Svg, { Path } from 'react-native-svg';
 
 import { useSelector, useDispatch } from '../store';
 import { updatePopup } from '../actions';
-import { updateTagEditor, addTagEditorTagName, updateTagData } from '../actions/chunk';
+import { updateTagEditor, updateTagData } from '../actions/chunk';
 import {
   TAG_EDITOR_POPUP, TAGGED, ADD_TAGS, MANAGE_TAGS, BLK_MODE, SM_WIDTH, LG_WIDTH,
   NOT_SUPPORTED,
@@ -15,6 +15,7 @@ import {
 import { getThemeMode } from '../selectors';
 import { dialogFMV } from '../types/animConfigs';
 import { toPx } from '../utils';
+import { selectHint, deselectValue, addTagName } from '../utils/tag';
 
 import { useSafeAreaFrame, useSafeAreaInsets, useKeyboardHeight, useTailwind } from '.';
 import Text from './CustomText';
@@ -27,6 +28,7 @@ const TagEditorPopup = () => {
   const keyboardHeight = useKeyboardHeight(Platform.OS === 'android');
   const isShown = useSelector(state => state.display.isTagEditorPopupShown);
   const tagEditor = useSelector(state => state.tagEditor);
+  const tagNameMap = useSelector(state => state.settings.tagNameMap);
   const themeMode = useSelector(state => getThemeMode(state));
   const [didCloseAnimEnd, setDidCloseAnimEnd] = useState(!isShown);
   const [derivedIsShown, setDerivedIsShown] = useState(isShown);
@@ -54,19 +56,8 @@ const TagEditorPopup = () => {
     didClick.current = true;
 
     const { values, hints } = tagEditor;
-
-    const found = values.some(value => value.tagName === hint.tagName);
-    if (found && hint.isBlur) return;
-
-    const newValues = [
-      ...values,
-      { tagName: hint.tagName, displayName: hint.displayName, color: hint.color },
-    ];
-    const newHints = hints.map(_hint => {
-      if (_hint.tagName !== hint.tagName) return _hint;
-      return { ..._hint, isBlur: true };
-    });
-    dispatch(updateTagEditor(newValues, newHints, null, null, ''));
+    const payload = selectHint(values, hints, hint);
+    dispatch(updateTagEditor(payload));
   };
 
   const onValueDeselect = (value) => {
@@ -74,18 +65,12 @@ const TagEditorPopup = () => {
     didClick.current = true;
 
     const { values, hints } = tagEditor;
-
-    const newValues = values.filter(_value => _value.tagName !== value.tagName);
-    const newHints = hints.map(hint => {
-      if (hint.tagName !== value.tagName) return hint;
-      return { ...hint, isBlur: false };
-    });
-    dispatch(updateTagEditor(newValues, newHints, null, null, ''));
+    const payload = deselectValue(values, hints, value);
+    dispatch(updateTagEditor(payload));
   };
 
   const onDnInputChange = (e) => {
-    const text = e.nativeEvent.text;
-    dispatch(updateTagEditor(null, null, text, null, ''));
+    dispatch(updateTagEditor({ displayName: e.nativeEvent.text }));
   };
 
   const onDnInputKeyPress = () => {
@@ -97,7 +82,8 @@ const TagEditorPopup = () => {
     didClick.current = true;
 
     const { values, hints, displayName, color } = tagEditor;
-    dispatch(addTagEditorTagName(values, hints, displayName, color));
+    const payload = addTagName(tagNameMap, values, hints, displayName, color);
+    dispatch(updateTagEditor(payload));
   };
 
   const registerPopupBackHandler = useCallback((doRegister) => {

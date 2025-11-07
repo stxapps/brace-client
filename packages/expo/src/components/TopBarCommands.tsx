@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
 
 import { updatePopup, updateBulkEdit } from '../actions';
-import { ADD_POPUP, PROFILE_POPUP } from '../types/const';
+import { updateAddPopup } from '../actions/chunk';
+import { PROFILE_POPUP } from '../types/const';
 import { getThemeMode } from '../selectors';
 import { getRect, adjustRect } from '../utils';
 import cache from '../utils/cache';
@@ -29,7 +30,7 @@ class TopBarCommands extends React.PureComponent<any, any> {
     this.addBtn.current.measure((_fx, _fy, width, height, x, y) => {
       const rect = getRect(x, y, width, height);
       const nRect = adjustRect(rect, 0, 42, 0, 0);
-      this.props.updatePopup(ADD_POPUP, true, nRect);
+      this.props.updateAddPopup(true, nRect);
     });
   };
 
@@ -86,6 +87,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const mapDispatchToProps = { updatePopup, updateBulkEdit };
+const mapDispatchToProps = { updatePopup, updateAddPopup, updateBulkEdit };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTailwind(TopBarCommands));

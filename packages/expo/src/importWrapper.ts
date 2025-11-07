@@ -74,6 +74,12 @@ export const updateCustomDataDeleteStep = (
   ));
 };
 
+export const updateTagDataFromAddLinks = (successIds) => async (
+  dispatch, getState
+) => {
+  dispatch(actionChunk.updateTagDataFromAddLinks(successIds));
+};
+
 export const updateTagDataTStep = (ids, valuesPerId) => async (dispatch, getState) => {
   dispatch(actionChunk.updateTagDataTStep(ids, valuesPerId));
 };

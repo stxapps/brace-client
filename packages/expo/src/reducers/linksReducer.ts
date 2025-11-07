@@ -4,6 +4,7 @@ import { addNextAction } from '../store-next';
 import {
   updateHubAddr, tryUpdateFetched, tryUpdateFetchedMore, cleanUpSslts, extractContents,
   tryUpdateExtractedContents, runAfterFetchTask, unpinLinks, updateCustomDataDeleteStep,
+  updateTagDataFromAddLinks,
 } from '../importWrapper';
 import {
   UPDATE_LIST_NAME, UPDATE_QUERY_STRING, FETCH_COMMIT, FETCH_ROLLBACK, UPDATE_FETCHED,
@@ -224,9 +225,11 @@ const linksReducer = (state = initialState, action) => {
     }
 
     const { doExtractContents } = action.meta;
-    if (doExtractContents === false) return newState;
+    addNextAction(updateTagDataFromAddLinks(successIds));
+    if (doExtractContents !== false) {
+      addNextAction(extractContents(successListNames, successIds));
+    }
 
-    addNextAction(extractContents(successListNames, successIds));
     return newState;
   }
 

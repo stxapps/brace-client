@@ -2908,3 +2908,89 @@ export const reorderPopupHistoryStates = (states, idx, type, id) => {
 
   return newStates;
 };
+
+export function cloneDeep<T>(obj: T, seen = new WeakMap<object, any>()): T {
+  if (obj === null || typeof obj !== 'object') return obj;
+
+  if (seen.has(obj as object)) {
+    return seen.get(obj as object);
+  }
+
+  if (obj instanceof Date) {
+    return new Date(obj.getTime()) as any;
+  }
+
+  if (obj instanceof RegExp) {
+    return new RegExp(obj.source, obj.flags) as any;
+  }
+
+  if (typeof ArrayBuffer !== 'undefined' && obj instanceof ArrayBuffer) {
+    const cloned = new ArrayBuffer(obj.byteLength);
+    new Uint8Array(cloned).set(new Uint8Array(obj));
+    return cloned as any;
+  }
+
+  if (typeof DataView !== 'undefined' && obj instanceof DataView) {
+    const clonedBuffer = cloneDeep(obj.buffer, seen) as ArrayBuffer;
+    return new DataView(clonedBuffer, obj.byteOffset, obj.byteLength) as any;
+  }
+
+  if (
+    typeof ArrayBuffer !== 'undefined' &&
+    ArrayBuffer.isView(obj) &&
+    !(obj instanceof DataView)
+  ) {
+    const buffer = (obj as any).buffer;
+    const clonedBuffer = cloneDeep(buffer, seen) as ArrayBuffer;
+    const TypedArrayCtor = obj.constructor as {
+      new(buffer: ArrayBuffer, byteOffset?: number, length?: number): typeof obj;
+    };
+    return new TypedArrayCtor(
+      clonedBuffer, (obj as any).byteOffset, (obj as any).length
+    ) as any;
+  }
+
+  if (Array.isArray(obj)) {
+    const cloned: any[] = [];
+    seen.set(obj, cloned);
+    obj.forEach((item, i) => {
+      cloned[i] = cloneDeep(item, seen);
+    });
+    return cloned as any;
+  }
+
+  if (obj instanceof Map) {
+    const cloned = new Map();
+    seen.set(obj, cloned);
+    for (const [key, value] of obj) {
+      cloned.set(cloneDeep(key, seen), cloneDeep(value, seen));
+    }
+    return cloned as any;
+  }
+
+  if (obj instanceof Set) {
+    const cloned = new Set();
+    seen.set(obj, cloned);
+    for (const value of obj) {
+      cloned.add(cloneDeep(value, seen));
+    }
+    return cloned as any;
+  }
+
+  const clonedObj = Object.create(Object.getPrototypeOf(obj));
+  seen.set(obj, clonedObj);
+
+  const keys = Reflect.ownKeys(obj);
+  for (const key of keys) {
+    const descriptor = Object.getOwnPropertyDescriptor(obj, key);
+    if (descriptor) {
+      const clonedDesc: PropertyDescriptor = { ...descriptor };
+      if ('value' in descriptor) {
+        clonedDesc.value = cloneDeep(descriptor.value, seen);
+      }
+      Object.defineProperty(clonedObj, key, clonedDesc);
+    }
+  }
+
+  return clonedObj as T;
+}

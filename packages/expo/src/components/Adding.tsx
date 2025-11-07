@@ -1,61 +1,55 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { ScrollView, View, TouchableOpacity } from 'react-native';
+import React, { useEffect, useCallback, useRef } from 'react';
+import { ScrollView, View, TouchableOpacity, Platform } from 'react-native';
 import { useShareIntentContext } from 'expo-share-intent';
 import Svg, { Path } from 'react-native-svg';
 import { Flow } from 'react-native-animated-spinkit';
 
 import { useSelector, useDispatch } from '../store';
-import { addLink, cancelDiedLinks } from '../actions/chunk';
+import { updatePopup } from '../actions';
 import {
-  MY_LIST, ADDING, ADDED, DIED_ADDING, NO_URL, VALID_URL, HTTP, HTTPS, BLK_MODE,
-  SHOW_BLANK,
+  initLinkEditor, updateLinkEditor, addLinkFromAdding, cancelDiedLinks,
+  updateSelectingListName, updateListNamesMode,
+} from '../actions/chunk';
+import {
+  ADDED, DIED_ADDING, NO_URL, BLK_MODE, SHOW_BLANK, ADD_MODE_BASIC, ADD_MODE_ADVANCED,
+  LIST_NAMES_POPUP, LIST_NAMES_MODE_ADD_LINK, LIST_NAMES_ANIM_TYPE_POPUP, URL_MSGS,
 } from '../types/const';
 import { getThemeMode } from '../selectors';
-import { isObject, isString, validateUrl, indexesOf } from '../utils';
+import {
+  isObject, isString, isFldStr, validateUrl, getRect, adjustRect, toPx,
+  getListNameDisplayName,
+} from '../utils';
+import { selectHint, deselectValue, addTagName, renameKeys } from '../utils/tag';
 
 import { useSafeAreaFrame, useTailwind } from '.';
 import TopBar from './TopBar';
+import GlobalPopups from './GlobalPopups';
 import Text from './CustomText';
-
-const MAX_ADDING_URLS = 3;
+import TextInput from './CustomTextInput';
 
 const RENDER_ADDING = 'RENDER_ADDING';
 const RENDER_ADDED = 'RENDER_ADDED';
 const RENDER_NOT_SIGNED_IN = 'RENDER_NOT_SIGNED_IN';
 const RENDER_INVALID = 'RENDER_INVALID';
 const RENDER_ERROR = 'RENDER_ERROR';
+const RENDER_EDITOR = 'RENDER_EDITOR';
 
 const getText = (intent) => {
   if (!isObject(intent)) return '';
 
-  if (isString(intent.webUrl)) return intent.webUrl;
-  if (isString(intent.text)) return intent.text;
+  if (isString(intent.webUrl)) return intent.webUrl.trim();
+  if (isString(intent.text)) return intent.text.trim();
 
   return '';
 };
 
-const pickUrls = (urls) => {
-  const validUrls = [], illUrls = [];
-  for (const url of urls) {
-    const urlValidateResult = validateUrl(url);
-    if (urlValidateResult === NO_URL) continue;
-    if (urlValidateResult === VALID_URL) {
-      validUrls.push(url);
-      continue;
-    }
-    illUrls.push(url);
-  }
-
-  if (validUrls.length > 0) return validUrls.slice(0, MAX_ADDING_URLS);
-  return illUrls.slice(0, MAX_ADDING_URLS);
-};
-
-const getLinkFromAddingUrl = (addingUrl, links) => {
+const getLinkFromAddingUrl = (listName, addingUrl, linksPerLn) => {
   if (!isString(addingUrl)) return null;
+  if (!isObject(linksPerLn[listName])) return null;
 
-  for (const _id in links) {
-    if (links[_id].url === addingUrl) {
-      return links[_id];
+  for (const id in linksPerLn[listName]) {
+    if (linksPerLn[listName][id].url === addingUrl) {
+      return linksPerLn[listName][id];
     }
   }
 
@@ -66,94 +60,204 @@ const Adding = () => {
   const { shareIntent, error, resetShareIntent } = useShareIntentContext();
   const { height: safeAreaHeight } = useSafeAreaFrame();
   const isUserSignedIn = useSelector(state => state.user.isUserSignedIn);
-  const links = useSelector(state => state.links[MY_LIST]);
+  const linksPerLn = useSelector(state => state.links);
+  const linkEditor = useSelector(state => state.linkEditor);
+  const listNameMap = useSelector(state => state.settings.listNameMap);
+  const tagNameMap = useSelector(state => state.settings.tagNameMap);
   const themeMode = useSelector(state => getThemeMode(state));
-  const [type, setType] = useState(null);
+  const intEdtLink = useRef(null);
+  const rndEdtLink = useRef(null);
+  const fnlEdtLink = useRef(null);
   const dpcdLinks = useRef([]);
-  const tailwind = useTailwind();
+  const listNameBtn = useRef(null);
+  const didClick = useRef(false);
   const dispatch = useDispatch();
+  const tailwind = useTailwind();
 
-  const process = useCallback(async () => {
+  const innerProcessLink = useCallback((linksPerLn, linkEditor, dispatch) => {
+    const addingUrl = linkEditor.url;
+    const listName = linkEditor.listName;
+
+    let link = getLinkFromAddingUrl(listName, addingUrl, linksPerLn);
+    if (isObject(link) && link.status === DIED_ADDING) {
+      dispatch(cancelDiedLinks([link.id]));
+      link = null;
+    }
+    if (!isObject(link)) {
+      if (!dpcdLinks.current.includes(addingUrl)) {
+        dispatch(addLinkFromAdding());
+        dpcdLinks.current.push(addingUrl);
+      }
+
+      dispatch(updateLinkEditor({ addingType: RENDER_ADDING }, true));
+      return;
+    }
+
+    if (link.status === ADDED) {
+      dispatch(updateLinkEditor({ addingType: RENDER_ADDED }, true));
+      return;
+    }
+    if (link.status === DIED_ADDING) {
+      dispatch(updateLinkEditor({ addingType: RENDER_ERROR }, true));
+      return;
+    }
+  }, []);
+
+  const processLink = useCallback(async () => {
     if (![true, false].includes(isUserSignedIn)) return;
 
     if (isUserSignedIn === false) {
-      setType(RENDER_NOT_SIGNED_IN);
+      const newValues = { addingType: RENDER_NOT_SIGNED_IN };
+      dispatch(updateLinkEditor(newValues, true));
       return;
     }
 
     if (error) {
-      setType(RENDER_ERROR);
+      const newValues = { addingType: RENDER_ERROR };
+      dispatch(updateLinkEditor(newValues, true));
       return;
     }
 
-    let text = getText(shareIntent);
-    text = text.trim();
-    if (text.length === 0) {
-      setType(RENDER_INVALID);
+    const addingUrl = getText(shareIntent);
+    if (addingUrl.length === 0) {
+      const newValues = { addingType: RENDER_INVALID };
+      dispatch(updateLinkEditor(newValues, true));
       return;
     }
 
-    const i1 = indexesOf(text, HTTP.slice(0, -1));
-    const i2 = indexesOf(text, HTTPS.slice(0, -1));
-
-    let indexes = [...new Set([...i1, ...i2])].sort();
-    if (indexes[0] !== 0) indexes = [0, ...indexes];
-
-    const pendingUrls = [];
-    for (let i = 0; i < indexes.length; i++) {
-      const s = indexes[i];
-      const e = i + 1 < indexes.length ? indexes[i + 1] : text.length;
-      const t = text.slice(s, e).trim();
-      if (t.length > 0) pendingUrls.push(t);
-    }
-
-    const addingUrls = pickUrls(pendingUrls);
-    if (addingUrls.length === 0) {
-      setType(RENDER_INVALID);
+    if (intEdtLink.current !== addingUrl) {
+      dispatch(initLinkEditor());
+      dispatch(updateLinkEditor({ url: addingUrl }, true));
+      intEdtLink.current = addingUrl;
       return;
     }
-
-    let isAdding = false, haveDied = false;
-    for (const addingUrl of addingUrls) {
-      let link = getLinkFromAddingUrl(addingUrl, links);
-      if (isObject(link) && link.status === DIED_ADDING) {
-        dispatch(cancelDiedLinks([link.id]));
-        link = null;
+    if (linkEditor.mode === ADD_MODE_BASIC) {
+      innerProcessLink(linksPerLn, linkEditor, dispatch);
+      return;
+    }
+    if (linkEditor.mode === ADD_MODE_ADVANCED) {
+      if (rndEdtLink.current !== addingUrl) {
+        const newValues = { addingType: RENDER_EDITOR };
+        dispatch(updateLinkEditor(newValues, true));
+        rndEdtLink.current = addingUrl;
+        return;
       }
-      if (!isObject(link)) {
-        if (!dpcdLinks.current.includes(addingUrl)) {
-          dispatch(addLink(addingUrl, MY_LIST, false));
-          dpcdLinks.current.push(addingUrl);
-        }
-        isAdding = true;
-        continue;
+      if (fnlEdtLink.current === linkEditor.url) {
+        innerProcessLink(linksPerLn, linkEditor, dispatch);
+        return;
       }
-      if (link.status === ADDING) isAdding = true;
-      else if (link.status === ADDED) continue;
-      else if (link.status === DIED_ADDING) haveDied = true;
+      return;
     }
 
-    if (isAdding) setType(RENDER_ADDING);
-    else if (haveDied) setType(RENDER_ERROR);
-    else setType(RENDER_ADDED);
-  }, [shareIntent, error, isUserSignedIn, links, dispatch]);
+    console.log('Invalid mode', linkEditor);
+  }, [
+    shareIntent, error, isUserSignedIn, linksPerLn, linkEditor, innerProcessLink,
+    dispatch,
+  ]);
+
+  const onAddInputChange = (e) => {
+    dispatch(updateLinkEditor(
+      { url: e.nativeEvent.text, isAskingConfirm: false }
+    ));
+  };
+
+  const onAddInputKeyPress = () => {
+    onAddOkBtnClick();
+  };
+
+  const onAddOkBtnClick = () => {
+    const addingUrl = linkEditor.url.trim();
+    const urlValidatedResult = validateUrl(addingUrl);
+    if (urlValidatedResult === NO_URL) {
+      dispatch(updateLinkEditor(
+        { msg: URL_MSGS[urlValidatedResult], isAskingConfirm: false }
+      ));
+      return;
+    }
+
+    fnlEdtLink.current = linkEditor.url;
+    processLink();
+  };
+
+  const onAddCancelBtnClick = useCallback(() => {
+    resetShareIntent();
+  }, [resetShareIntent]);
+
+  const onListNameBtnClick = () => {
+    listNameBtn.current.measure((_fx, _fy, width, height, x, y) => {
+      dispatch(updateSelectingListName(linkEditor.listName));
+      dispatch(updateListNamesMode(
+        LIST_NAMES_MODE_ADD_LINK, LIST_NAMES_ANIM_TYPE_POPUP,
+      ));
+
+      const rect = getRect(x, y, width, height);
+      const nRect = adjustRect(
+        rect, toPx('-0.25rem'), toPx('-0.25rem'), toPx('0.5rem'), toPx('0.5rem')
+      );
+      dispatch(updatePopup(LIST_NAMES_POPUP, true, nRect));
+    });
+  };
+
+  const onTagHintSelect = (hint) => {
+    if (didClick.current) return;
+    didClick.current = true;
+
+    const { tagValues, tagHints } = linkEditor;
+    const payload = renameKeys(selectHint(tagValues, tagHints, hint));
+    dispatch(updateLinkEditor(payload));
+  };
+
+  const onTagValueDeselect = (value) => {
+    if (didClick.current) return;
+    didClick.current = true;
+
+    const { tagValues, tagHints } = linkEditor;
+    const payload = renameKeys(deselectValue(tagValues, tagHints, value));
+    dispatch(updateLinkEditor(payload));
+  };
+
+  const onTagDnInputChange = (e) => {
+    dispatch(updateLinkEditor({ tagDisplayName: e.nativeEvent.text }));
+  };
+
+  const onTagDnInputKeyPress = () => {
+    onTagAddBtnClick();
+  };
+
+  const onTagAddBtnClick = () => {
+    if (didClick.current) return;
+    didClick.current = true;
+
+    const { tagValues, tagHints, tagDisplayName, tagColor } = linkEditor;
+    const payload = renameKeys(addTagName(
+      tagNameMap, tagValues, tagHints, tagDisplayName, tagColor
+    ));
+    dispatch(updateLinkEditor(payload));
+  };
 
   useEffect(() => {
-    process();
-  }, [process]);
+    processLink();
+  }, [processLink]);
+
+  useEffect(() => {
+    didClick.current = false;
+  }, [linkEditor]);
 
   const _render = (content) => {
     const classes = safeAreaHeight >= 640 ? '-mt-24 justify-center' : 'pt-28 md:pt-36';
 
     return (
-      <ScrollView style={tailwind('flex-1')} contentContainerStyle={[tailwind('bg-white blk:bg-gray-900'), { minHeight: safeAreaHeight }]}>
-        <TopBar rightPane={SHOW_BLANK} doSupportTheme={true} />
-        <View style={tailwind(`flex-1 items-center ${classes}`)}>
-          <View style={tailwind('w-full max-w-md items-center px-4 md:px-6 lg:px-8')}>
-            {content}
+      <React.Fragment>
+        <ScrollView style={tailwind('flex-1')} contentContainerStyle={[tailwind('bg-white blk:bg-gray-900'), { minHeight: safeAreaHeight }]}>
+          <TopBar rightPane={SHOW_BLANK} doSupportTheme={true} />
+          <View style={tailwind(`flex-1 items-center ${classes}`)}>
+            <View style={tailwind('w-full max-w-md items-center px-4 pb-8 md:px-6 lg:px-8')}>
+              {content}
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+        <GlobalPopups />
+      </React.Fragment>
     );
   };
 
@@ -265,11 +369,119 @@ const Adding = () => {
     return _render(content);
   };
 
-  if (type === RENDER_NOT_SIGNED_IN) return renderNotSignedIn();
-  if (type === RENDER_INVALID) return renderInvalid();
-  if (type === RENDER_ERROR) return renderError();
-  if (type === RENDER_ADDED) return renderAdded();
-  return renderAdding();
+  const renderEditor = () => {
+    let displayName = null;
+    if (isFldStr(linkEditor.listName)) {
+      displayName = getListNameDisplayName(linkEditor.listName, listNameMap);
+    }
+
+    let tagDesc = null;
+    if (linkEditor.tagHints.length === 0) {
+      tagDesc = (
+        <React.Fragment>Enter a new tag and press +Add.</React.Fragment>
+      );
+    } else {
+      tagDesc = (
+        <React.Fragment>Enter a new tag or select below.</React.Fragment>
+      );
+    }
+
+    const inputClassNames = Platform.OS === 'ios' ? 'py-1.5 leading-5' : 'py-1';
+
+    const tagInputStyle: any = { paddingVertical: Platform.OS === 'ios' ? 6 : 5.5 };
+    if (Platform.OS === 'ios') tagInputStyle.lineHeight = 18;
+
+    const content = (
+      <View style={tailwind('max-w-82 pb-38 md:pb-46')}>
+        <View style={tailwind('w-full items-center justify-center')}>
+          <View style={tailwind('h-24 w-24 flex items-center justify-center bg-gray-200 rounded-full blk:bg-gray-700')}>
+            <Svg style={tailwind('text-gray-400 blk:text-gray-400')} width={40} height={40} viewBox="0 0 20 20" fill="currentColor">
+              <Path d="M13.586 3.58601C13.7705 3.39499 13.9912 3.24262 14.2352 3.13781C14.4792 3.03299 14.7416 2.97782 15.0072 2.97551C15.2728 2.9732 15.5361 3.0238 15.7819 3.12437C16.0277 3.22493 16.251 3.37343 16.4388 3.56122C16.6266 3.74901 16.7751 3.97231 16.8756 4.2181C16.9762 4.46389 17.0268 4.72725 17.0245 4.99281C17.0222 5.25837 16.967 5.52081 16.8622 5.76482C16.7574 6.00883 16.605 6.22952 16.414 6.41401L15.621 7.20701L12.793 4.37901L13.586 3.58601ZM11.379 5.79301L3 14.172V17H5.828L14.208 8.62101L11.378 5.79301H11.379Z" />
+            </Svg>
+          </View>
+        </View>
+        <View style={tailwind('flex-row items-center justify-start pt-8')}>
+          <Text style={tailwind('flex-none text-sm font-normal text-gray-500 blk:text-gray-300')}>Url:</Text>
+          <TextInput onChange={onAddInputChange} onSubmitEditing={onAddInputKeyPress} style={tailwind(`ml-3 flex-1 rounded-full border border-gray-400 bg-white px-3.5 text-base font-normal text-gray-700 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 ${inputClassNames}`)} keyboardType="url" placeholder="https://" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={linkEditor.url} autoCapitalize="none" />
+        </View>
+        <View style={tailwind('mt-6 border-t border-gray-200 blk:border-gray-700')} />
+        <View style={tailwind('flex-row items-center justify-start pt-3.5')}>
+          <Text style={tailwind('w-12 flex-shrink-0 flex-grow-0 text-sm font-normal text-gray-500 blk:text-gray-300')}>List:</Text>
+          <TouchableOpacity ref={listNameBtn} onPress={onListNameBtnClick} style={tailwind('flex-row items-center rounded-md bg-white py-1 blk:bg-gray-900')}>
+            <Text style={tailwind('text-base font-normal text-gray-700 blk:text-gray-100')} numberOfLines={1} ellipsizeMode="tail">{displayName}</Text>
+            <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-gray-600 blk:text-gray-200')} width={20} height={20} viewBox="0 0 24 24" stroke="currentColor" fill="none">
+              <Path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </Svg>
+          </TouchableOpacity>
+        </View>
+        <View style={tailwind('flex-row items-start justify-start pt-1')}>
+          <View style={tailwind('flex-row items-center justify-start flex-shrink-0 flex-grow-0 h-13 w-12')}>
+            <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-300')}>Tags:</Text>
+          </View>
+          <View style={tailwind('flex-shrink flex-grow')}>
+            {linkEditor.tagValues.length === 0 && <View style={tailwind('flex-row min-h-13 items-center justify-start')}>
+              <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>{tagDesc}</Text>
+            </View>}
+            {linkEditor.tagValues.length > 0 && <View style={tailwind('flex-row min-h-13 flex-wrap items-center justify-start pt-2.5')}>
+              {linkEditor.tagValues.map((value, i) => {
+                return (
+                  <View key={`TagEditorValue-${value.tagName}`} style={tailwind(`mb-2 max-w-full flex-row items-center justify-start rounded-full bg-gray-100 pl-3 blk:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
+                    <Text style={tailwind('flex-shrink flex-grow-0 text-sm font-normal text-gray-600 blk:text-gray-300')} numberOfLines={1} ellipsizeMode="tail">{value.displayName}</Text>
+                    <TouchableOpacity onPress={() => onTagValueDeselect(value)} style={tailwind('ml-1 flex-shrink-0 flex-grow-0 items-center justify-center rounded-full py-1.5 pr-1.5')}>
+                      <Svg style={tailwind('rounded-full font-normal text-gray-400 blk:text-gray-400')} width={20} height={20} viewBox="0 0 20 20" fill="currentColor">
+                        <Path fillRule="evenodd" clipRule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM8.70711 7.29289C8.31658 6.90237 7.68342 6.90237 7.29289 7.29289C6.90237 7.68342 6.90237 8.31658 7.29289 8.70711L8.58579 10L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071C7.68342 13.0976 8.31658 13.0976 8.70711 12.7071L10 11.4142L11.2929 12.7071C11.6834 13.0976 12.3166 13.0976 12.7071 12.7071C13.0976 12.3166 13.0976 11.6834 12.7071 11.2929L11.4142 10L12.7071 8.70711C13.0976 8.31658 13.0976 7.68342 12.7071 7.29289C12.3166 6.90237 11.6834 6.90237 11.2929 7.29289L10 8.58579L8.70711 7.29289Z" />
+                      </Svg>
+                    </TouchableOpacity>
+                  </View>
+                );
+              })}
+            </View>}
+            {linkEditor.tagMsg && <Text style={tailwind('text-sm font-normal text-red-500')}>{linkEditor.tagMsg}</Text>}
+            <View style={tailwind(`flex-row items-center justify-start ${linkEditor.tagMsg ? 'pt-0.5' : 'pt-1'}`)}>
+              <TextInput onChange={onTagDnInputChange} onSubmitEditing={onTagDnInputKeyPress} style={[tailwind('flex-1 rounded-full border border-gray-400 bg-white px-3.5 text-sm font-normal text-gray-700 blk:border-gray-500 blk:bg-gray-800 blk:text-gray-200'), tagInputStyle]} placeholder="Add a new tag" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={linkEditor.tagDisplayName} />
+              <TouchableOpacity onPress={onTagAddBtnClick} style={[tailwind('ml-2 flex-shrink-0 flex-grow-0 flex-row items-center rounded-full border border-gray-400 bg-white pl-1.5 pr-2.5 blk:border-gray-500 blk:bg-gray-800'), { paddingVertical: 5 }]}>
+                <Svg style={tailwind('font-normal text-gray-500 blk:text-gray-400')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
+                  <Path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                </Svg>
+                <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>Add</Text>
+              </TouchableOpacity>
+            </View>
+            {linkEditor.tagHints.length > 0 && <View style={tailwind('flex-row flex-wrap items-center justify-start pt-3.5')}>
+              <Text style={tailwind('mb-2 text-sm font-normal text-gray-500 blk:text-gray-400')}>Hint:</Text>
+              {linkEditor.tagHints.map(hint => {
+                return (
+                  <TouchableOpacity key={`TagEditorHint-${hint.tagName}`} onPress={() => onTagHintSelect(hint)} style={tailwind('ml-2 mb-2 max-w-full rounded-full bg-gray-100 px-3 py-1.5 blk:bg-gray-700')} disabled={hint.isBlur}>
+                    <Text style={tailwind(`text-sm font-normal ${hint.isBlur ? 'text-gray-400 blk:text-gray-500' : 'text-gray-600 blk:text-gray-300'}`)} numberOfLines={1} ellipsizeMode="tail">{hint.displayName}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>}
+          </View>
+        </View>
+        <View className={tailwind('mt-6 border-t border-gray-200 blk:border-gray-700')} />
+        {linkEditor.msg !== '' && <Text style={tailwind('mt-2 text-sm font-normal text-red-500')}>{linkEditor.msg}</Text>}
+        <View style={tailwind(`flex-row items-center justify-start ${linkEditor.msg !== '' ? 'pt-2' : 'pt-5'}`)}>
+          <TouchableOpacity onPress={onAddOkBtnClick} style={[tailwind('items-center justify-center rounded-full bg-gray-800 px-4 blk:bg-gray-100'), { paddingTop: 7, paddingBottom: 7 }]}>
+            <Text style={tailwind('text-sm font-medium text-gray-50 blk:text-gray-800')}>{linkEditor.isAskingConfirm ? 'Sure' : 'Save'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onAddCancelBtnClick} style={tailwind('ml-2 rounded-md px-2.5 py-1.5')}>
+            <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-300')}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+
+    return _render(content);
+  };
+
+  const { addingType } = linkEditor;
+  if (addingType === RENDER_NOT_SIGNED_IN) return renderNotSignedIn();
+  if (addingType === RENDER_INVALID) return renderInvalid();
+  if (addingType === RENDER_ERROR) return renderError();
+  if (addingType === RENDER_ADDED) return renderAdded();
+  if (addingType === RENDER_ADDING) return renderAdding();
+  if (addingType === RENDER_EDITOR) return renderEditor();
+  return null;
 };
 
 export default React.memo(Adding);

@@ -6,14 +6,14 @@ import { updatePopup } from '../actions';
 import {
   updateDoExtractContents, updateDoDeleteOldLinksInTrash, updateDoDescendingOrder,
   updateDoUseLocalLayout, updateLayoutType, updateDoUseLocalTheme, updateTheme,
-  updateUpdatingThemeMode,
+  updateUpdatingThemeMode, updateDoUseLocalAddMode, updateAddMode,
 } from '../actions/chunk';
 import {
   DOMAIN_NAME, HASH_PRIVACY, LAYOUT_CARD, LAYOUT_LIST, WHT_MODE, BLK_MODE, SYSTEM_MODE,
-  CUSTOM_MODE, TIME_PICK_POPUP,
+  CUSTOM_MODE, TIME_PICK_POPUP, ADD_MODE_BASIC, ADD_MODE_ADVANCED,
 } from '../types/const';
 import {
-  getLayoutType, getRawThemeMode, getRawThemeCustomOptions, getThemeMode,
+  getLayoutType, getRawThemeMode, getRawThemeCustomOptions, getThemeMode, getRawAddMode,
 } from '../selectors';
 import { getFormattedTime, getRect, adjustRect } from '../utils';
 
@@ -30,11 +30,13 @@ const SettingsPopupMisc = (props) => {
   const doDescendingOrder = useSelector(state => state.settings.doDescendingOrder);
   const doUseLocalLayout = useSelector(state => state.localSettings.doUseLocalLayout);
   const doUseLocalTheme = useSelector(state => state.localSettings.doUseLocalTheme);
+  const doUseLocalAddMode = useSelector(state => state.localSettings.doUseLocalAddMode);
   const layoutType = useSelector(state => getLayoutType(state));
   const themeMode = useSelector(state => getRawThemeMode(state));
   const customOptions = useSelector(state => getRawThemeCustomOptions(state));
   const is24HFormat = useSelector(state => state.window.is24HFormat);
   const derivedThemeMode = useSelector(state => getThemeMode(state));
+  const addMode = useSelector(state => getRawAddMode(state));
   const whtTimeBtn = useRef(null);
   const blkTimeBtn = useRef(null);
   const dispatch = useDispatch();
@@ -55,6 +57,14 @@ const SettingsPopupMisc = (props) => {
     else throw new Error(`Invalid value: ${value}`);
 
     dispatch(updateDoDescendingOrder(doDescend));
+  };
+
+  const onDoUseLocalAddModeBtnClick = (doUse) => {
+    dispatch(updateDoUseLocalAddMode(doUse));
+  };
+
+  const onAddModeInputChange = (value) => {
+    dispatch(updateAddMode(value));
   };
 
   const onDoUseLocalLayoutBtnClick = (doUse) => {
@@ -115,6 +125,20 @@ const SettingsPopupMisc = (props) => {
   const descendingBtnInnerClassNames = doDescendingOrder ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
   const descendingRBtnClassNames = doDescendingOrder ? 'bg-blue-600 blk:bg-blue-400' : 'border border-gray-500 bg-white blk:border-gray-500 blk:bg-gray-900';
   const descendingRBtnInnerClassNames = doDescendingOrder ? 'bg-white' : 'bg-white blk:bg-gray-900';
+
+  const addModeDefaultBtnClassNames = !doUseLocalAddMode ? 'text-gray-700 blk:text-gray-200' : 'text-gray-500 blk:text-gray-400';
+  const addModeLocalBtnClassNames = doUseLocalAddMode ? 'text-gray-700 blk:text-gray-200' : 'text-gray-500 blk:text-gray-400';
+
+  let addModeBscBtnClassNames = addMode === ADD_MODE_BASIC ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
+  if (addMode === ADD_MODE_ADVANCED) addModeBscBtnClassNames += ' border-b-0';
+  const addModeBscBtnInnerClassNames = addMode === ADD_MODE_BASIC ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
+  const addModeBscRBtnClassNames = addMode === ADD_MODE_BASIC ? 'bg-blue-600 blk:bg-blue-400' : 'border border-gray-500 bg-white blk:border-gray-500 blk:bg-gray-900';
+  const addModeBscRBtnInnerClassNames = addMode === ADD_MODE_BASIC ? 'bg-white' : 'bg-white blk:bg-gray-900';
+
+  const addModeAvdBtnClassNames = addMode === ADD_MODE_ADVANCED ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-t-0 border-gray-200 blk:border-gray-700';
+  const addModeAvdBtnInnerClassNames = addMode === ADD_MODE_ADVANCED ? 'text-blue-800 blk:text-blue-100' : 'text-gray-600 blk:text-gray-300';
+  const addModeAvdRBtnClassNames = addMode === ADD_MODE_ADVANCED ? 'bg-blue-600 blk:bg-blue-400' : 'border border-gray-500 bg-white blk:border-gray-500 blk:bg-gray-900';
+  const addModeAvdRBtnInnerClassNames = addMode === ADD_MODE_ADVANCED ? 'bg-white' : 'bg-white blk:bg-gray-900';
 
   const layoutDefaultBtnClassNames = !doUseLocalLayout ? 'text-gray-700 blk:text-gray-200' : 'text-gray-500 blk:text-gray-400';
   const layoutLocalBtnClassNames = doUseLocalLayout ? 'text-gray-700 blk:text-gray-200' : 'text-gray-500 blk:text-gray-400';
@@ -344,6 +368,48 @@ const SettingsPopupMisc = (props) => {
         </View>
         <View style={tailwind('ml-4 h-6 w-11 flex-shrink-0 flex-grow-0')}>
           <Switch onValueChange={onDoExtractBtnClick} value={doExtractContents} thumbColor={Platform.OS === 'android' ? doExtractContents ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} ios_backgroundColor={switchIosTrackColorOff} />
+        </View>
+      </View>
+      <View style={tailwind('mt-10')}>
+        <Text style={tailwind('text-base font-medium leading-4 text-gray-800 blk:text-gray-100')}>Add Mode</Text>
+        <View style={tailwind('sm:flex-row sm:items-start sm:justify-between')}>
+          <View style={tailwind('mt-2.5 sm:flex-shrink sm:flex-grow')}>
+            <Text style={tailwind('text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Choose whether your link editor are displayed in the Basic or Advanced (includes list and tags selection) mode. For Sync, your choosing is synced across your devices. For Device, you can choose and use the setting for this device only.</Text>
+          </View>
+          <View style={tailwind('mt-2.5 items-center sm:ml-4 sm:flex-shrink-0 sm:flex-grow-0')}>
+            <View style={tailwind('w-full max-w-48 rounded-md bg-white shadow-xs blk:bg-gray-900 sm:w-48')}>
+              <View style={tailwind('flex-row justify-evenly')}>
+                <TouchableOpacity onPress={() => onDoUseLocalAddModeBtnClick(false)} style={tailwind('flex-shrink flex-grow rounded-tl-md border border-b-0 border-gray-300 bg-white py-4 blk:border-gray-700 blk:bg-gray-900')}>
+                  <Text style={tailwind(`text-center text-sm font-medium ${addModeDefaultBtnClassNames}`)}>Sync</Text>
+                  {!doUseLocalAddMode && <View style={tailwind('absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 blk:bg-blue-300')} />}
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => onDoUseLocalAddModeBtnClick(true)} style={tailwind('flex-shrink flex-grow rounded-tr-md border border-l-0 border-b-0 border-gray-300 bg-white py-4 blk:border-gray-700 blk:bg-gray-900')}>
+                  <Text style={tailwind(`text-center text-sm font-medium ${addModeLocalBtnClassNames}`)}>Device</Text>
+                  {doUseLocalAddMode && <View style={tailwind('absolute inset-x-0 bottom-0 h-0.5 bg-blue-600 blk:bg-blue-300')} />}
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity onPress={() => onAddModeInputChange(ADD_MODE_BASIC)}>
+                <View style={tailwind(`flex-row border p-4 ${addModeBscBtnClassNames}`)}>
+                  <View style={tailwind('h-5 flex-row items-center')}>
+                    <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full ${addModeBscRBtnClassNames}`)}>
+                      <View style={tailwind(`h-1.5 w-1.5 rounded-full ${addModeBscRBtnInnerClassNames}`)} />
+                    </View>
+                  </View>
+                  <Text style={tailwind(`ml-3 text-sm font-medium leading-5 ${addModeBscBtnInnerClassNames}`)}>Basic</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => onAddModeInputChange(ADD_MODE_ADVANCED)}>
+                <View style={tailwind(`flex-row rounded-bl-md rounded-br-md border p-4 ${addModeAvdBtnClassNames}`)}>
+                  <View style={tailwind('h-5 flex-row items-center')}>
+                    <View style={tailwind(`h-4 w-4 items-center justify-center rounded-full ${addModeAvdRBtnClassNames}`)}>
+                      <View style={tailwind(`h-1.5 w-1.5 rounded-full ${addModeAvdRBtnInnerClassNames}`)} />
+                    </View>
+                  </View>
+                  <Text style={tailwind(`ml-3 text-sm font-medium leading-5 ${addModeAvdBtnInnerClassNames}`)}>Advanced</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </View>
       <View style={tailwind('mt-10 mb-4 flex-row items-center justify-between')}>

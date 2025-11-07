@@ -441,7 +441,7 @@ const SettingsPopup = () => {
     );
 
     return (
-      <View {...viewPanResponder.panHandlers} style={[tailwind('absolute inset-0 z-30 bg-white blk:bg-gray-900'), canvasStyle]}>
+      <View {...viewPanResponder.panHandlers} style={[tailwind('absolute inset-0 z-31 bg-white blk:bg-gray-900'), canvasStyle]}>
         <View style={tailwind('flex-1')}>
           {_renderPanel(contentWithSidebar)}
           {_renderPanelCloseBtn()}
@@ -657,7 +657,7 @@ const SettingsPopup = () => {
       <SettingsPopupConflict />
     );
     return (
-      <View style={[tailwind('absolute inset-0 z-30 bg-white blk:bg-gray-900'), canvasStyle]}>
+      <View style={[tailwind('absolute inset-0 z-31 bg-white blk:bg-gray-900'), canvasStyle]}>
         <View style={tailwind('flex-1')}>
           {_renderPanel(content)}
           {_renderConflictLoading()}

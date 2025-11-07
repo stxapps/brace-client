@@ -3,8 +3,8 @@ import { View, TouchableOpacity, Platform } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { useSelector, useDispatch } from '../store';
-import { updatePopup } from '../actions';
-import { ADD_POPUP, MY_LIST, TRASH, ARCHIVE, BLK_MODE } from '../types/const';
+import { updateAddPopup } from '../actions/chunk';
+import { MY_LIST, TRASH, ARCHIVE, BLK_MODE } from '../types/const';
 import { getThemeMode } from '../selectors';
 import { getListNameDisplayName, getTagNameDisplayName } from '../utils';
 import cache from '../utils/cache';
@@ -39,7 +39,7 @@ const EmptyContent = () => {
   const tailwind = useTailwind();
 
   const onAddBtnClick = () => {
-    dispatch(updatePopup(ADD_POPUP, true));
+    dispatch(updateAddPopup(true));
   };
 
   let displayName = getListNameDisplayName(listName, listNameMap);
