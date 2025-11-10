@@ -52,7 +52,7 @@
     "react-native-blockstack": "https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?3d5bcd6ea9a17f00c76be5913009f2c02f13b95f",
     "react-native-file-access": "^3.1.1",
     "react-native-flag-secure": "^1.0.4",
-    "react-native-keyboard-controller": "^1.17.5",
+    "react-native-keyboard-controller": "^1.19.5",
     "react-native-navigation-mode": "^1.1.1",
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",

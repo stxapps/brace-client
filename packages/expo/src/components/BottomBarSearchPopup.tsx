@@ -2,7 +2,6 @@ import React from 'react';
 import { View, TouchableOpacity, Keyboard, BackHandler, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Path } from 'react-native-svg';
-import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 import { updatePopup, updateSearchString } from '../actions';
 import {
@@ -234,12 +233,12 @@ class BottomBarSearchPopup extends React.PureComponent<any, any> {
   render() {
     const { isBottomBarShown, isSearchPopupShown, insets, tailwind } = this.props;
 
-    // From measurement,SEARCH_POPUP_HEIGHT is 56.1, so minus 2 to no gap.
+    // From measurement, SEARCH_POPUP_HEIGHT is 56.1, so minus 2 to no gap.
     let bbHeight = 0;
     if (isBottomBarShown && isSearchPopupShown) {
       const bottom = toPx(BOTTOM_BAR_HEIGHT) + insets.bottom;
       if (this.state.keyboardHeight > bottom) {
-        bbHeight = toPx(SEARCH_POPUP_HEIGHT) - 2;
+        bbHeight = this.state.keyboardHeight + toPx(SEARCH_POPUP_HEIGHT) - 2;
       } else {
         bbHeight = (
           toPx(BOTTOM_BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT) + insets.bottom - 2
@@ -251,11 +250,11 @@ class BottomBarSearchPopup extends React.PureComponent<any, any> {
     const style = { paddingLeft: insets.left, paddingRight: insets.right };
 
     return (
-      <KeyboardAvoidingView behavior="position" enabled={isSearchPopupShown} style={[tailwind('absolute inset-x-0 bottom-0 z-10'), bbStyle]}>
+      <View style={[tailwind('absolute inset-x-0 bottom-0 z-10'), bbStyle]}>
         <View style={[tailwind('bg-white blk:bg-gray-800'), style]}>
           {this.renderContent()}
         </View>
-      </KeyboardAvoidingView>
+      </View>
     );
   }
 }

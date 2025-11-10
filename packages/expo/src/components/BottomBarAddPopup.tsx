@@ -3,7 +3,9 @@ import {
   ScrollView, View, TouchableOpacity, BackHandler, Platform,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
-import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import {
+  KeyboardController, AndroidSoftInputModes,
+} from 'react-native-keyboard-controller';
 
 import { useSelector, useDispatch } from '../store';
 import { updatePopup } from '../actions';
@@ -13,7 +15,7 @@ import {
 } from '../actions/chunk';
 import {
   LIST_NAMES_POPUP, LIST_NAMES_MODE_ADD_LINK, LIST_NAMES_ANIM_TYPE_BMODAL,
-  ADD_MODE_BASIC, ADD_MODE_ADVANCED, BLK_MODE
+  ADD_MODE_BASIC, ADD_MODE_ADVANCED, BLK_MODE,
 } from '../types/const';
 import { getThemeMode } from '../selectors';
 import { isFldStr, toPx, getRect, adjustRect, getListNameDisplayName } from '../utils';
@@ -142,11 +144,16 @@ const BottomBarAddPopup = () => {
   }, [onAddCancelBtnClick]);
 
   useEffect(() => {
+    // Already set android:windowSoftInputMode to adjustNothing in AndroidManifest.xml,
+    //   but it doesn't work on split screen. So set it again here.
+    KeyboardController.setInputMode(AndroidSoftInputModes.SOFT_INPUT_ADJUST_NOTHING);
+  }, [isShown]);
+
+  useEffect(() => {
     if (isShown) {
       setTimeout(() => {
         if (addInput.current) addInput.current.focus();
       }, 100);
-      didClick.current = false;
     } else {
       if (addInput.current) addInput.current.blur();
     }
@@ -157,6 +164,10 @@ const BottomBarAddPopup = () => {
       registerPopupBackHandler(false);
     };
   }, [isShown, registerPopupBackHandler]);
+
+  useEffect(() => {
+    if (isShown) didClick.current = false;
+  }, [isShown, linkEditor]);
 
   if (!isShown) return null;
 
@@ -218,7 +229,7 @@ const BottomBarAddPopup = () => {
               {linkEditor.tagValues.length === 0 && <View style={tailwind('flex-row min-h-13 items-center justify-start')}>
                 <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>{tagDesc}</Text>
               </View>}
-              {linkEditor.tagValues.length > 0 && <View style={tailwind('flex-row min-h-13 flex-wrap items-center justify-start pt-2.5')}>
+              {linkEditor.tagValues.length > 0 && <View style={tailwind('flex-row min-h-13 flex-wrap items-start justify-start pt-2.5')}>
                 {linkEditor.tagValues.map((value, i) => {
                   return (
                     <View key={`TagEditorValue-${value.tagName}`} style={tailwind(`mb-2 max-w-full flex-row items-center justify-start rounded-full bg-gray-100 pl-3 blk:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
@@ -269,18 +280,24 @@ const BottomBarAddPopup = () => {
   };
 
   const popupStyle = {
-    paddingBottom: keyboardHeight > 0 ? 0 : insets.bottom,
+    paddingBottom: keyboardHeight > 0 ? keyboardHeight : insets.bottom,
     paddingLeft: insets.left, paddingRight: insets.right,
+  };
+  const scrollViewStyle = {
+    maxHeight: Math.max(
+      Math.min(safeAreaHeight - keyboardHeight - 24, safeAreaHeight - 368), 192,
+    ),
   };
 
   return (
     <>
-      <TouchableOpacity activeOpacity={1.0} onPress={onAddCancelBtnClick} style={tailwind('absolute inset-0 z-40 bg-black bg-opacity-25')} />
-      <KeyboardAvoidingView behavior="position" style={tailwind('absolute inset-x-0 bottom-0 z-41')} contentContainerStyle={[tailwind('rounded-t-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
-        <ScrollView style={{ maxHeight: safeAreaHeight - 16 }} automaticallyAdjustKeyboardInsets={true}>
+      <TouchableOpacity activeOpacity={1.0} onPress={onAddCancelBtnClick} style={tailwind('absolute inset-0 z-30 bg-black bg-opacity-25')} />
+      <View style={[tailwind('absolute inset-x-0 bottom-0 z-31 rounded-t-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
+        {/* Also set pb to kb height on iOS so autoAdjustKbInsets is false */}
+        <ScrollView style={scrollViewStyle} automaticallyAdjustKeyboardInsets={false} keyboardShouldPersistTaps="handled">
           {renderContent()}
         </ScrollView>
-      </KeyboardAvoidingView>
+      </View>
     </>
   );
 };

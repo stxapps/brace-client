@@ -148,6 +148,7 @@ const config: ExpoConfig = {
     "expo-router",
     "expo-localization",
     "./plugins/blockstack-plugin.ts",
+    "./plugins/input-mode-plugin.ts",
     "expo-iap",
     [
       "expo-document-picker",

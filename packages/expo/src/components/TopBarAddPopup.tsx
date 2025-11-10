@@ -23,7 +23,9 @@ import { popupFMV } from '../types/animConfigs';
 import { computePositionTranslate } from '../utils/popup';
 import { selectHint, deselectValue, addTagName, renameKeys } from '../utils/tag';
 
-import { getTopBarSizes, useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
+import {
+  getTopBarSizes, useSafeAreaFrame, useSafeAreaInsets, useKeyboardHeight, useTailwind,
+} from '.';
 import Text from './CustomText';
 import TextInput from './CustomTextInput';
 
@@ -31,6 +33,7 @@ const TopBarAddPopup = () => {
 
   const { width: safeAreaWidth, height: safeAreaHeight } = useSafeAreaFrame();
   const insets = useSafeAreaInsets();
+  const keyboardHeight = useKeyboardHeight(Platform.OS === 'android');
   const isShown = useSelector(state => state.display.isAddPopupShown);
   const addAnchorPosition = useSelector(state => state.display.addPopupPosition);
   const linkEditor = useSelector(state => state.linkEditor);
@@ -66,6 +69,7 @@ const TopBarAddPopup = () => {
   const popupAnim = useRef(new Animated.Value(0)).current;
   const popupBackHandler = useRef(null);
   const didClick = useRef(false);
+  const didFocus = useRef(false);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
 
@@ -178,7 +182,10 @@ const TopBarAddPopup = () => {
     if (isShown && popupSize) {
       Animated.timing(popupAnim, { toValue: 1, ...popupFMV.visible }).start(() => {
         requestAnimationFrame(() => {
-          if (addInput.current) addInput.current.focus();
+          if (addInput.current && !didFocus.current) {
+            addInput.current.focus();
+            didFocus.current = true;
+          }
         });
       });
     }
@@ -186,14 +193,13 @@ const TopBarAddPopup = () => {
 
   useEffect(() => {
     let didMount = true;
-    if (isShown) {
-      didClick.current = false;
-    } else {
+    if (!isShown) {
       Animated.timing(popupAnim, { toValue: 0, ...popupFMV.hidden }).start(() => {
         requestAnimationFrame(() => {
           if (didMount) {
             setPopupSize(null);
             setDidCloseAnimEnd(true);
+            didFocus.current = false;
           }
         });
       });
@@ -205,6 +211,10 @@ const TopBarAddPopup = () => {
       registerPopupBackHandler(false);
     };
   }, [isShown, popupAnim, registerPopupBackHandler]);
+
+  useEffect(() => {
+    if (isShown) didClick.current = false;
+  }, [isShown, linkEditor]);
 
   if (derivedIsShown !== isShown) {
     if (derivedIsShown && !isShown) setDidCloseAnimEnd(false);
@@ -277,7 +287,7 @@ const TopBarAddPopup = () => {
               {linkEditor.tagValues.length === 0 && <View style={tailwind('flex-row min-h-13 items-center justify-start')}>
                 <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>{tagDesc}</Text>
               </View>}
-              {linkEditor.tagValues.length > 0 && <View style={tailwind('flex-row min-h-13 flex-wrap items-center justify-start pt-2.5')}>
+              {linkEditor.tagValues.length > 0 && <View style={tailwind('flex-row min-h-13 flex-wrap items-start justify-start pt-2.5')}>
                 {linkEditor.tagValues.map((value, i) => {
                   return (
                     <View key={`TagEditorValue-${value.tagName}`} style={tailwind(`mb-2 max-w-full flex-row items-center justify-start rounded-full bg-gray-100 pl-3 blk:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
@@ -362,7 +372,7 @@ const TopBarAddPopup = () => {
 
     panel = (
       <Animated.View onLayout={onPopupLayout} style={[tailwind(popupClassNames), popupStyle]}>
-        <ScrollView style={{ maxHeight: safeAreaHeight - 16 }} automaticallyAdjustKeyboardInsets={true}>
+        <ScrollView style={{ maxHeight: safeAreaHeight - keyboardHeight - 52 - 16 }} automaticallyAdjustKeyboardInsets={true} keyboardShouldPersistTaps="handled">
           {renderContent()}
         </ScrollView>
       </Animated.View>
@@ -376,7 +386,7 @@ const TopBarAddPopup = () => {
   }
 
   return (
-    <View style={tailwind('absolute inset-0 z-40')}>
+    <View style={tailwind('absolute inset-0 z-30')}>
       <TouchableWithoutFeedback onPress={onAddCancelBtnClick}>
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>

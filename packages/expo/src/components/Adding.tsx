@@ -21,7 +21,7 @@ import {
 } from '../utils';
 import { selectHint, deselectValue, addTagName, renameKeys } from '../utils/tag';
 
-import { useSafeAreaFrame, useTailwind } from '.';
+import { useSafeAreaFrame, useKeyboardHeight, useTailwind } from '.';
 import TopBar from './TopBar';
 import GlobalPopups from './GlobalPopups';
 import Text from './CustomText';
@@ -59,6 +59,7 @@ const getLinkFromAddingUrl = (listName, addingUrl, linksPerLn) => {
 const Adding = () => {
   const { shareIntent, error, resetShareIntent } = useShareIntentContext();
   const { height: safeAreaHeight } = useSafeAreaFrame();
+  const keyboardHeight = useKeyboardHeight(Platform.OS === 'android');
   const isUserSignedIn = useSelector(state => state.user.isUserSignedIn);
   const linksPerLn = useSelector(state => state.links);
   const linkEditor = useSelector(state => state.linkEditor);
@@ -244,18 +245,21 @@ const Adding = () => {
   }, [linkEditor]);
 
   const _render = (content) => {
-    const classes = safeAreaHeight >= 640 ? '-mt-24 justify-center' : 'pt-28 md:pt-36';
+    const canvasStyle = { paddingBottom: keyboardHeight };
+    const style = { paddingTop: Math.max((safeAreaHeight - 48 - 280) / 2.5, 24) };
 
     return (
       <React.Fragment>
-        <ScrollView style={tailwind('flex-1')} contentContainerStyle={[tailwind('bg-white blk:bg-gray-900'), { minHeight: safeAreaHeight }]}>
-          <TopBar rightPane={SHOW_BLANK} doSupportTheme={true} />
-          <View style={tailwind(`flex-1 items-center ${classes}`)}>
-            <View style={tailwind('w-full max-w-md items-center px-4 pb-8 md:px-6 lg:px-8')}>
-              {content}
+        <View style={[tailwind('flex-1 bg-white blk:bg-gray-900'), canvasStyle]}>
+          <ScrollView style={tailwind('flex-1')} contentContainerStyle={[tailwind('flex-grow bg-white blk:bg-gray-900')]} automaticallyAdjustKeyboardInsets={true} keyboardShouldPersistTaps="handled">
+            <TopBar rightPane={SHOW_BLANK} doSupportTheme={true} />
+            <View style={[tailwind('items-center justify-start'), style]}>
+              <View style={tailwind('w-full max-w-md items-center px-4 pb-8 md:px-6 lg:px-8')}>
+                {content}
+              </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </View>
         <GlobalPopups />
       </React.Fragment>
     );
@@ -392,17 +396,17 @@ const Adding = () => {
     if (Platform.OS === 'ios') tagInputStyle.lineHeight = 18;
 
     const content = (
-      <View style={tailwind('max-w-82 pb-38 md:pb-46')}>
+      <View style={tailwind('w-full max-w-82 pb-38 md:pb-46')}>
         <View style={tailwind('w-full items-center justify-center')}>
           <View style={tailwind('h-24 w-24 flex items-center justify-center bg-gray-200 rounded-full blk:bg-gray-700')}>
-            <Svg style={tailwind('text-gray-400 blk:text-gray-400')} width={40} height={40} viewBox="0 0 20 20" fill="currentColor">
+            <Svg style={tailwind('font-normal text-gray-400 blk:text-gray-400')} width={40} height={40} viewBox="0 0 20 20" fill="currentColor">
               <Path d="M13.586 3.58601C13.7705 3.39499 13.9912 3.24262 14.2352 3.13781C14.4792 3.03299 14.7416 2.97782 15.0072 2.97551C15.2728 2.9732 15.5361 3.0238 15.7819 3.12437C16.0277 3.22493 16.251 3.37343 16.4388 3.56122C16.6266 3.74901 16.7751 3.97231 16.8756 4.2181C16.9762 4.46389 17.0268 4.72725 17.0245 4.99281C17.0222 5.25837 16.967 5.52081 16.8622 5.76482C16.7574 6.00883 16.605 6.22952 16.414 6.41401L15.621 7.20701L12.793 4.37901L13.586 3.58601ZM11.379 5.79301L3 14.172V17H5.828L14.208 8.62101L11.378 5.79301H11.379Z" />
             </Svg>
           </View>
         </View>
         <View style={tailwind('flex-row items-center justify-start pt-8')}>
           <Text style={tailwind('flex-none text-sm font-normal text-gray-500 blk:text-gray-300')}>Url:</Text>
-          <TextInput onChange={onAddInputChange} onSubmitEditing={onAddInputKeyPress} style={tailwind(`ml-3 flex-1 rounded-full border border-gray-400 bg-white px-3.5 text-base font-normal text-gray-700 blk:border-gray-600 blk:bg-gray-700 blk:text-gray-100 ${inputClassNames}`)} keyboardType="url" placeholder="https://" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={linkEditor.url} autoCapitalize="none" />
+          <TextInput onChange={onAddInputChange} onSubmitEditing={onAddInputKeyPress} style={tailwind(`ml-3 flex-1 rounded-full border border-gray-400 bg-white px-3.5 text-base font-normal text-gray-700 blk:border-gray-600 blk:bg-gray-800 blk:text-gray-200 ${inputClassNames}`)} keyboardType="url" placeholder="https://" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={linkEditor.url} autoCapitalize="none" />
         </View>
         <View style={tailwind('mt-6 border-t border-gray-200 blk:border-gray-700')} />
         <View style={tailwind('flex-row items-center justify-start pt-3.5')}>
@@ -422,7 +426,7 @@ const Adding = () => {
             {linkEditor.tagValues.length === 0 && <View style={tailwind('flex-row min-h-13 items-center justify-start')}>
               <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-400')}>{tagDesc}</Text>
             </View>}
-            {linkEditor.tagValues.length > 0 && <View style={tailwind('flex-row min-h-13 flex-wrap items-center justify-start pt-2.5')}>
+            {linkEditor.tagValues.length > 0 && <View style={tailwind('flex-row min-h-13 flex-wrap items-start justify-start pt-2.5')}>
               {linkEditor.tagValues.map((value, i) => {
                 return (
                   <View key={`TagEditorValue-${value.tagName}`} style={tailwind(`mb-2 max-w-full flex-row items-center justify-start rounded-full bg-gray-100 pl-3 blk:bg-gray-700 ${i === 0 ? '' : 'ml-2'}`)}>
@@ -438,8 +442,8 @@ const Adding = () => {
             </View>}
             {linkEditor.tagMsg && <Text style={tailwind('text-sm font-normal text-red-500')}>{linkEditor.tagMsg}</Text>}
             <View style={tailwind(`flex-row items-center justify-start ${linkEditor.tagMsg ? 'pt-0.5' : 'pt-1'}`)}>
-              <TextInput onChange={onTagDnInputChange} onSubmitEditing={onTagDnInputKeyPress} style={[tailwind('flex-1 rounded-full border border-gray-400 bg-white px-3.5 text-sm font-normal text-gray-700 blk:border-gray-500 blk:bg-gray-800 blk:text-gray-200'), tagInputStyle]} placeholder="Add a new tag" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={linkEditor.tagDisplayName} />
-              <TouchableOpacity onPress={onTagAddBtnClick} style={[tailwind('ml-2 flex-shrink-0 flex-grow-0 flex-row items-center rounded-full border border-gray-400 bg-white pl-1.5 pr-2.5 blk:border-gray-500 blk:bg-gray-800'), { paddingVertical: 5 }]}>
+              <TextInput onChange={onTagDnInputChange} onSubmitEditing={onTagDnInputKeyPress} style={[tailwind('flex-1 rounded-full border border-gray-400 bg-white px-3.5 text-sm font-normal text-gray-700 blk:border-gray-500 blk:bg-gray-900 blk:text-gray-200'), tagInputStyle]} placeholder="Add a new tag" placeholderTextColor={themeMode === BLK_MODE ? 'rgb(156, 163, 175)' : 'rgb(107, 114, 128)'} value={linkEditor.tagDisplayName} />
+              <TouchableOpacity onPress={onTagAddBtnClick} style={[tailwind('ml-2 flex-shrink-0 flex-grow-0 flex-row items-center rounded-full border border-gray-400 bg-white pl-1.5 pr-2.5 blk:border-gray-500 blk:bg-gray-900'), { paddingVertical: 5 }]}>
                 <Svg style={tailwind('font-normal text-gray-500 blk:text-gray-400')} width={16} height={16} viewBox="0 0 20 20" fill="currentColor">
                   <Path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
                 </Svg>
@@ -458,7 +462,7 @@ const Adding = () => {
             </View>}
           </View>
         </View>
-        <View className={tailwind('mt-6 border-t border-gray-200 blk:border-gray-700')} />
+        <View style={tailwind('mt-6 border-t border-gray-200 blk:border-gray-700')} />
         {linkEditor.msg !== '' && <Text style={tailwind('mt-2 text-sm font-normal text-red-500')}>{linkEditor.msg}</Text>}
         <View style={tailwind(`flex-row items-center justify-start ${linkEditor.msg !== '' ? 'pt-2' : 'pt-5'}`)}>
           <TouchableOpacity onPress={onAddOkBtnClick} style={[tailwind('items-center justify-center rounded-full bg-gray-800 px-4 blk:bg-gray-100'), { paddingTop: 7, paddingBottom: 7 }]}>

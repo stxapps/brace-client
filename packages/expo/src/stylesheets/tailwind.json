@@ -2207,6 +2207,9 @@
 	"z-30": {
 		"zIndex": 30
 	},
+	"z-31": {
+		"zIndex": 31
+	},
 	"z-40": {
 		"zIndex": 40
 	},
@@ -4554,6 +4557,9 @@
 	},
 	"max-w-64": {
 		"maxWidth": 256
+	},
+	"max-w-82": {
+		"maxWidth": 328
 	},
 	"max-w-none": {
 		"maxWidth": "none"
@@ -6958,11 +6964,17 @@
 	"pb-36": {
 		"paddingBottom": 144
 	},
+	"pb-38": {
+		"paddingBottom": 152
+	},
 	"pb-40": {
 		"paddingBottom": 160
 	},
 	"pb-44": {
 		"paddingBottom": 176
+	},
+	"pb-46": {
+		"paddingBottom": 184
 	},
 	"pb-48": {
 		"paddingBottom": 192
