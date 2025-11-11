@@ -158,6 +158,13 @@ export const useKeyboardHeight = (enabled = true) => {
       if (heightRef.current !== newHeight) setHeight(newHeight);
       heightRef.current = newHeight;
     };
+    const chgHeight = (e) => {
+      const newHeight = e.endCoordinates.height;
+      if (heightRef.current > 0 && heightRef.current !== newHeight) {
+        setHeight(newHeight);
+        heightRef.current = newHeight;
+      }
+    };
     const resetHeight = () => {
       if (heightRef.current !== 0) setHeight(0);
       heightRef.current = 0;
@@ -165,8 +172,8 @@ export const useKeyboardHeight = (enabled = true) => {
 
     const willShowSub = Keyboard.addListener('keyboardWillShow', chkAndSetHeight);
     const didShowSub = Keyboard.addListener('keyboardDidShow', chkAndSetHeight);
-    const willChgSub = Keyboard.addListener('keyboardWillChangeFrame', chkAndSetHeight);
-    const didChgSub = Keyboard.addListener('keyboardDidChangeFrame', chkAndSetHeight);
+    const willChgSub = Keyboard.addListener('keyboardWillChangeFrame', chgHeight);
+    const didChgSub = Keyboard.addListener('keyboardDidChangeFrame', chgHeight);
     const willHideSub = Keyboard.addListener('keyboardWillHide', resetHeight);
     const didHideSub = Keyboard.addListener('keyboardDidHide', resetHeight);
 

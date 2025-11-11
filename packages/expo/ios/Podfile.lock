@@ -1722,7 +1722,7 @@ PODS:
   - react-native-blockstack (0.4.6):
     - Blockstack
     - React
-  - react-native-keyboard-controller (1.17.5):
+  - react-native-keyboard-controller (1.19.5):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1737,7 +1737,7 @@ PODS:
     - React-hermes
     - React-ImageManager
     - React-jsi
-    - react-native-keyboard-controller/common (= 1.17.5)
+    - react-native-keyboard-controller/common (= 1.19.5)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -1747,7 +1747,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-keyboard-controller/common (1.17.5):
+  - react-native-keyboard-controller/common (1.19.5):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2945,7 +2945,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 70a29536f84ddffca4a91097651d2b8f194f7c67
   React-microtasksnativemodule: ff05e894231c44c21135d1d23a82b87656d98eeb
   react-native-blockstack: 98495a42cf7dc260fbbf8174e1e1877b4e71c0e0
-  react-native-keyboard-controller: 46ff1d24f868d895763d2043dac37909bc07c6fa
+  react-native-keyboard-controller: fbe295fd2dbadde0300fa5b01dec8deb3ec6b021
   react-native-netinfo: cec9c4e86083cb5b6aba0e0711f563e2fbbff187
   react-native-safe-area-context: 562163222d999b79a51577eda2ea8ad2c32b4d06
   react-native-webview: 520bcb79c3f2af91e157cdd695732a34ab5f25c8

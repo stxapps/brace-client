@@ -129,7 +129,10 @@ class BottomBarSearchPopup extends React.PureComponent<any, any> {
       if (!this.keyboardWillChangeListener) {
         this.keyboardWillChangeListener = Keyboard.addListener(
           'keyboardWillChangeFrame', (e) => {
-            if (this.state.keyboardHeight !== e.endCoordinates.height) {
+            if (
+              this.state.keyboardHeight > 0 && // only when keyboard is showing
+              this.state.keyboardHeight !== e.endCoordinates.height
+            ) {
               this.setState({ keyboardHeight: e.endCoordinates.height });
             }
           }
@@ -138,7 +141,10 @@ class BottomBarSearchPopup extends React.PureComponent<any, any> {
       if (!this.keyboardDidChangeListener) {
         this.keyboardDidChangeListener = Keyboard.addListener(
           'keyboardDidChangeFrame', (e) => {
-            if (this.state.keyboardHeight !== e.endCoordinates.height) {
+            if (
+              this.state.keyboardHeight > 0 && // only when keyboard is showing
+              this.state.keyboardHeight !== e.endCoordinates.height
+            ) {
               this.setState({ keyboardHeight: e.endCoordinates.height });
             }
           }
