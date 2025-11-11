@@ -56,6 +56,7 @@ const BottomBarAddPopup = () => {
 
   const onAddOkBtnClick = () => {
     if (didClick.current) return;
+    Keyboard.dismiss();
     dispatch(addLink());
     didClick.current = true;
   };
@@ -215,8 +216,8 @@ const BottomBarAddPopup = () => {
         {linkEditor.mode === ADD_MODE_ADVANCED && <View style={tailwind('pt-2')}>
           <View style={tailwind('flex-row items-center justify-start')}>
             <Text style={tailwind('w-12 flex-shrink-0 flex-grow-0 text-sm font-normal text-gray-500 blk:text-gray-300')}>List:</Text>
-            <TouchableOpacity ref={listNameBtn} onPress={onListNameBtnClick} style={tailwind('flex-row items-center rounded-md bg-white py-1 blk:bg-gray-800')}>
-              <Text style={tailwind('text-base font-normal text-gray-700 blk:text-gray-100')} numberOfLines={1} ellipsizeMode="tail">{displayName}</Text>
+            <TouchableOpacity ref={listNameBtn} onPress={onListNameBtnClick} style={tailwind('flex-shrink flex-row items-center rounded-md bg-white py-1 blk:bg-gray-800')}>
+              <Text style={tailwind('flex-shrink text-base font-normal text-gray-700 blk:text-gray-100')} numberOfLines={1} ellipsizeMode="tail">{displayName}</Text>
               <Svg style={tailwind('flex-shrink-0 flex-grow-0 font-normal text-gray-600 blk:text-gray-100')} width={20} height={20} viewBox="0 0 24 24" stroke="currentColor" fill="none">
                 <Path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </Svg>

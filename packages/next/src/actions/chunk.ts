@@ -990,6 +990,7 @@ export const initLinkEditor = (doDefault = false) => async (dispatch, getState) 
   const queryString = getState().display.queryString;
   const tagNameMap = getState().settings.tagNameMap;
   const purchases = getState().info.purchases;
+  const doEnable = doEnableExtraFeatures(purchases);
 
   let listName = getState().display.listName;
   if (listName === TRASH || queryString || doDefault) listName = MY_LIST;
@@ -997,7 +998,7 @@ export const initLinkEditor = (doDefault = false) => async (dispatch, getState) 
   const editor = cloneDeep(initialLinkEditorState);
   [editor.mode, editor.listName] = [ADD_MODE_BASIC, listName];
 
-  if (queryString && !doDefault) {
+  if (queryString && doEnable && !doDefault) {
     // Only tag name for now
     const tagName = queryString.trim();
     const { tagNameObj } = getTagNameObj(tagName, tagNameMap);
@@ -1008,7 +1009,7 @@ export const initLinkEditor = (doDefault = false) => async (dispatch, getState) 
     }
   }
 
-  if (doEnableExtraFeatures(purchases)) {
+  if (doEnable) {
     const doUseLocalAddMode = getState().localSettings.doUseLocalAddMode;
     editor.mode = doUseLocalAddMode ?
       getState().localSettings.addMode :
@@ -1032,6 +1033,8 @@ export const updateLinkEditor = (payload, doChangeCheck = false) => async (
   if (isFldStr(payload.mode) && payload.mode !== getState().linkEditor.mode) {
     const queryString = getState().display.queryString;
     const tagNameMap = getState().settings.tagNameMap;
+    const purchases = getState().info.purchases;
+    const doEnable = doEnableExtraFeatures(purchases);
 
     let listName = getState().display.listName;
     if (listName === TRASH || queryString) listName = MY_LIST;
@@ -1044,7 +1047,7 @@ export const updateLinkEditor = (payload, doChangeCheck = false) => async (
     [payload.tagValues, payload.tagHints] = [[], []];
     [payload.tagDisplayName, payload.tagColor, payload.tagMsg] = ['', '', ''];
 
-    if (queryString) {
+    if (queryString && doEnable) {
       // Only tag name for now
       const tagName = queryString.trim();
       const { tagNameObj } = getTagNameObj(tagName, tagNameMap);
