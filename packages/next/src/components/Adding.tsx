@@ -136,7 +136,7 @@ const Adding = () => {
     }
 
     if (intEdtLink.current !== addingUrl) {
-      dispatch(initLinkEditor());
+      dispatch(initLinkEditor(true));
       dispatch(updateLinkEditor({ url: addingUrl }, true));
       intEdtLink.current = addingUrl;
       return;

@@ -986,18 +986,18 @@ export const updateAddPopup = (
   dispatch(updatePopup(ADD_POPUP, isShown, anchorPosition, replaceId));
 };
 
-export const initLinkEditor = () => async (dispatch, getState) => {
+export const initLinkEditor = (doDefault = false) => async (dispatch, getState) => {
   const queryString = getState().display.queryString;
   const tagNameMap = getState().settings.tagNameMap;
   const purchases = getState().info.purchases;
 
   let listName = getState().display.listName;
-  if (listName === TRASH || queryString) listName = MY_LIST;
+  if (listName === TRASH || queryString || doDefault) listName = MY_LIST;
 
   const editor = cloneDeep(initialLinkEditorState);
   [editor.mode, editor.listName] = [ADD_MODE_BASIC, listName];
 
-  if (queryString) {
+  if (queryString && !doDefault) {
     // Only tag name for now
     const tagName = queryString.trim();
     const { tagNameObj } = getTagNameObj(tagName, tagNameMap);
