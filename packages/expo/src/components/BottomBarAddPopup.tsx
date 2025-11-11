@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import {
-  ScrollView, View, TouchableOpacity, BackHandler, Platform,
+  ScrollView, View, TouchableOpacity, BackHandler, Platform, Keyboard,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import {
@@ -73,6 +73,7 @@ const BottomBarAddPopup = () => {
   };
 
   const onListNameBtnClick = () => {
+    Keyboard.dismiss();
     listNameBtn.current.measure((_fx, _fy, width, height, x, y) => {
       dispatch(updateSelectingListName(linkEditor.listName));
       dispatch(updateListNamesMode(
