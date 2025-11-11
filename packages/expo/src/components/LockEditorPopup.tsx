@@ -226,7 +226,7 @@ const LockEditorPopup = () => {
   const inputClassNames = Platform.OS === 'ios' ? 'leading-4 py-2.5' : 'py-2';
 
   return (
-    <View style={[tailwind('absolute inset-0 z-30'), canvasStyle]}>
+    <View style={[tailwind('absolute inset-0 z-40'), canvasStyle]}>
       <TouchableWithoutFeedback onPress={onCancelBtnClick}>
         <Animated.View style={[tailwind('absolute inset-0 bg-black bg-opacity-25'), bgStyle]} />
       </TouchableWithoutFeedback>

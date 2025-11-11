@@ -137,7 +137,7 @@ const LockEditorPopup = () => {
 
   return (
     <AnimatePresence key="AP_LockP">
-      <div style={canvasStyle} className={tailwind('fixed inset-0 z-30 overflow-hidden')}>
+      <div style={canvasStyle} className={tailwind('fixed inset-0 z-40 overflow-hidden')}>
         <div className={tailwind('flex items-center justify-center p-4')} style={{ minHeight: windowHeight }}>
           <div className={tailwind('fixed inset-0')}>
             <motion.button onClick={onCancelBtnClick} className={tailwind('absolute inset-0 h-full w-full cursor-default bg-black/25 focus:outline-none')} variants={dialogBgFMV} initial="hidden" animate="visible" exit="hidden" />

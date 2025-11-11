@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback, useRef } from 'react';
 import { ScrollView, View, TouchableOpacity, Platform } from 'react-native';
+import { useRouter, ExternalPathString } from 'expo-router';
 import { useShareIntentContext } from 'expo-share-intent';
 import Svg, { Path } from 'react-native-svg';
 import { Flow } from 'react-native-animated-spinkit';
@@ -57,7 +58,9 @@ const getLinkFromAddingUrl = (listName, addingUrl, linksPerLn) => {
 };
 
 const Adding = () => {
-  const { shareIntent, error, resetShareIntent } = useShareIntentContext();
+  const {
+    isReady, hasShareIntent, shareIntent, error, resetShareIntent,
+  } = useShareIntentContext();
   const { height: safeAreaHeight } = useSafeAreaFrame();
   const keyboardHeight = useKeyboardHeight(Platform.OS === 'android');
   const isUserSignedIn = useSelector(state => state.user.isUserSignedIn);
@@ -66,6 +69,7 @@ const Adding = () => {
   const listNameMap = useSelector(state => state.settings.listNameMap);
   const tagNameMap = useSelector(state => state.settings.tagNameMap);
   const themeMode = useSelector(state => getThemeMode(state));
+  const timeId = useRef(null);
   const intEdtLink = useRef(null);
   const rndEdtLink = useRef(null);
   const fnlEdtLink = useRef(null);
@@ -74,6 +78,7 @@ const Adding = () => {
   const didClick = useRef(false);
   const dispatch = useDispatch();
   const tailwind = useTailwind();
+  const router = useRouter();
 
   const innerProcessLink = useCallback((linksPerLn, linkEditor, dispatch) => {
     const addingUrl = linkEditor.url;
@@ -113,6 +118,7 @@ const Adding = () => {
       return;
     }
 
+    if (isReady !== true) return;
     if (error) {
       const newValues = { addingType: RENDER_ERROR };
       dispatch(updateLinkEditor(newValues, true));
@@ -121,8 +127,10 @@ const Adding = () => {
 
     const addingUrl = getText(shareIntent);
     if (addingUrl.length === 0) {
-      const newValues = { addingType: RENDER_INVALID };
-      dispatch(updateLinkEditor(newValues, true));
+      timeId.current = setTimeout(() => {
+        const newValues = { addingType: RENDER_INVALID };
+        dispatch(updateLinkEditor(newValues, true));
+      }, 3000);
       return;
     }
 
@@ -152,9 +160,14 @@ const Adding = () => {
 
     console.log('Invalid mode', linkEditor);
   }, [
-    shareIntent, error, isUserSignedIn, linksPerLn, linkEditor, innerProcessLink,
-    dispatch,
+    isReady, shareIntent, error, isUserSignedIn, linksPerLn, linkEditor,
+    innerProcessLink, dispatch,
   ]);
+
+  const onResetBtnClick = () => {
+    if (hasShareIntent) resetShareIntent();
+    else router.replace('/' as ExternalPathString);
+  };
 
   const onAddInputChange = (e) => {
     dispatch(updateLinkEditor(
@@ -179,10 +192,6 @@ const Adding = () => {
     fnlEdtLink.current = linkEditor.url;
     processLink();
   };
-
-  const onAddCancelBtnClick = useCallback(() => {
-    resetShareIntent();
-  }, [resetShareIntent]);
 
   const onListNameBtnClick = () => {
     listNameBtn.current.measure((_fx, _fy, width, height, x, y) => {
@@ -238,6 +247,10 @@ const Adding = () => {
 
   useEffect(() => {
     processLink();
+
+    return () => {
+      clearTimeout(timeId.current);
+    };
   }, [processLink]);
 
   useEffect(() => {
@@ -271,7 +284,7 @@ const Adding = () => {
     if (doHide) rightText = '';
 
     let rightLink = (
-      <TouchableOpacity onPress={() => resetShareIntent()} disabled={doHide}>
+      <TouchableOpacity onPress={onResetBtnClick} disabled={doHide}>
         <Text style={tailwind('text-right text-base font-medium text-gray-500 blk:text-gray-300')}>{rightText}</Text>
       </TouchableOpacity>
     );
@@ -468,7 +481,7 @@ const Adding = () => {
           <TouchableOpacity onPress={onAddOkBtnClick} style={[tailwind('items-center justify-center rounded-full bg-gray-800 px-4 blk:bg-gray-100'), { paddingTop: 7, paddingBottom: 7 }]}>
             <Text style={tailwind('text-sm font-medium text-gray-50 blk:text-gray-800')}>{linkEditor.isAskingConfirm ? 'Sure' : 'Save'}</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={onAddCancelBtnClick} style={tailwind('ml-2 rounded-md px-2.5 py-1.5')}>
+          <TouchableOpacity onPress={onResetBtnClick} style={tailwind('ml-2 rounded-md px-2.5 py-1.5')}>
             <Text style={tailwind('text-sm font-normal text-gray-500 blk:text-gray-300')}>Cancel</Text>
           </TouchableOpacity>
         </View>
