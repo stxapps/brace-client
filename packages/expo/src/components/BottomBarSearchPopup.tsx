@@ -245,6 +245,7 @@ class BottomBarSearchPopup extends React.PureComponent<any, any> {
       const bottom = toPx(BOTTOM_BAR_HEIGHT) + insets.bottom;
       if (this.state.keyboardHeight > bottom) {
         bbHeight = this.state.keyboardHeight + toPx(SEARCH_POPUP_HEIGHT) - 2;
+        if (Platform.OS === 'android') bbHeight += + insets.bottom
       } else {
         bbHeight = (
           toPx(BOTTOM_BAR_HEIGHT) + toPx(SEARCH_POPUP_HEIGHT) + insets.bottom - 2

@@ -285,6 +285,7 @@ const BottomBarAddPopup = () => {
     paddingBottom: keyboardHeight > 0 ? keyboardHeight : insets.bottom,
     paddingLeft: insets.left, paddingRight: insets.right,
   };
+  if (Platform.OS === 'android') popupStyle.paddingBottom += insets.bottom;
   const scrollViewStyle = {
     maxHeight: Math.max(
       Math.min(safeAreaHeight - keyboardHeight - 24, safeAreaHeight - 368), 192,
