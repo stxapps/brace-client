@@ -108,6 +108,7 @@ const SettingsPopupMisc = (props) => {
   const isSystemShown = (
     Platform.OS !== 'android' || (Platform.OS === 'android' && Platform.Version >= 29)
   );
+  const isNewIos = Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 26;
 
   const switchThumbColorOn = 'rgb(59, 130, 246)';
   const switchThumbColorOff = 'rgb(229, 231, 235)';
@@ -366,7 +367,7 @@ const SettingsPopupMisc = (props) => {
           <Text style={tailwind('text-base font-medium leading-4 text-gray-800 blk:text-gray-100')}>Link Previews</Text>
           <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Allow your saved links to be sent to our server for extracting their representative title and image. No personal information is involved at all so there is no way to know who saves what links. These titles and images are used in our website and app for you to easily find and recognize your saved links. For more information, please visit <Text onPress={() => Linking.openURL(DOMAIN_NAME + '/' + HASH_PRIVACY)} style={tailwind('text-base font-normal leading-6.5 text-gray-500 underline blk:text-gray-400')}>our privacy policy page</Text>.</Text>
         </View>
-        <View style={tailwind('ml-4 h-6 w-11 flex-shrink-0 flex-grow-0')}>
+        <View style={tailwind(`ml-4 flex-shrink-0 flex-grow-0 ${isNewIos ? 'h-7 w-16' : 'h-6 w-11'}`)}>
           <Switch onValueChange={onDoExtractBtnClick} value={doExtractContents} thumbColor={Platform.OS === 'android' ? doExtractContents ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} ios_backgroundColor={switchIosTrackColorOff} />
         </View>
       </View>
@@ -417,7 +418,7 @@ const SettingsPopupMisc = (props) => {
           <Text style={tailwind('text-base font-medium leading-4 text-gray-800 blk:text-gray-100')}>Auto Cleanup</Text>
           <Text style={tailwind('mt-2.5 text-base font-normal leading-6.5 text-gray-500 blk:text-gray-400')}>Allow old removed links in Trash to be automatically deleted after 45 days.</Text>
         </View>
-        <View style={tailwind('ml-4 h-6 w-11 flex-shrink-0 flex-grow-0')}>
+        <View style={tailwind(`ml-4 flex-shrink-0 flex-grow-0 ${isNewIos ? 'h-7 w-16' : 'h-6 w-11'}`)}>
           <Switch onValueChange={onDoDeleteBtnClick} value={doDeleteOldLinksInTrash} thumbColor={Platform.OS === 'android' ? doDeleteOldLinksInTrash ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} ios_backgroundColor={switchIosTrackColorOff} />
         </View>
       </View>

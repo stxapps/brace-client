@@ -223,6 +223,7 @@ const LockEditorPopup = () => {
   const isAddLockMyList = (
     lockAction === LOCK_ACTION_ADD_LOCK_LIST && selectingListName === MY_LIST
   );
+  const isNewIos = Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 26;
   const inputClassNames = Platform.OS === 'ios' ? 'leading-4 py-2.5' : 'py-2';
 
   return (
@@ -255,11 +256,11 @@ const LockEditorPopup = () => {
               </View>
               {isAddLockMyList && <View style={tailwind('mt-5 flex-row items-center')}>
                 <Switch onValueChange={onChangeListNamesInputChange} style={tailwind('flex-shrink-0 flex-grow-0')} value={canChangeListNames} thumbColor={Platform.OS === 'android' ? canChangeListNames ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} ios_backgroundColor={switchIosTrackColorOff} />
-                <Text style={tailwind('ml-2.5 flex-shrink flex-grow text-sm font-normal text-gray-500 blk:text-gray-400')}>When locked, allow to change to other lists</Text>
+                <Text style={tailwind(`flex-shrink flex-grow text-sm font-normal text-gray-500 blk:text-gray-400 ${isNewIos ? 'ml-5.5' : 'ml-2.5'}`)}>When locked, allow to change to other lists</Text>
               </View>}
               {isAddLockList && <View style={tailwind(`flex-row items-center ${isAddLockMyList ? 'mt-3.5' : 'mt-5'}`)}>
                 <Switch onValueChange={onExportInputChange} style={tailwind('flex-shrink-0 flex-grow-0')} value={canExport} thumbColor={Platform.OS === 'android' ? canExport ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} ios_backgroundColor={switchIosTrackColorOff} />
-                <Text style={tailwind('ml-2.5 flex-shrink flex-grow text-sm font-normal text-gray-500 blk:text-gray-400')}>{exportText}</Text>
+                <Text style={tailwind(`flex-shrink flex-grow text-sm font-normal text-gray-500 blk:text-gray-400 ${isNewIos ? 'ml-5.5' : 'ml-2.5'}`)}>{exportText}</Text>
               </View>}
               <View style={tailwind(errMsg ? '' : isAddLockList ? 'pt-5' : 'pt-3.5')}>
                 {errMsg && <Text style={tailwind('py-2 text-sm font-normal text-red-500')}>{errMsg}</Text>}

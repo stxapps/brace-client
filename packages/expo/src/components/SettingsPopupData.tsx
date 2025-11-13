@@ -337,6 +337,8 @@ class InnerSettingsPopupDataDelete extends React.PureComponent<any, any> {
     const switchTrackColorOff = 'rgb(156, 163, 175)';
     const switchIosTrackColorOff = themeMode === BLK_MODE ? 'rgb(55, 65, 81)' : 'rgb(243, 244, 246)';
 
+    const isNewIos = Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 26;
+
     let actionPanel;
     if (!deleteAllDataProgress) {
       actionPanel = (
@@ -412,7 +414,7 @@ class InnerSettingsPopupDataDelete extends React.PureComponent<any, any> {
         <Text style={tailwind('mt-6 text-base font-normal leading-6.5 text-red-600 blk:text-red-500')}>This action CANNOT be undone.</Text>
         <View style={tailwind('mt-6 flex-row items-center')}>
           <Switch onValueChange={this.onConfirmInputChange} value={this.state.didCheckConfirm} thumbColor={Platform.OS === 'android' ? this.state.didCheckConfirm ? switchThumbColorOn : switchThumbColorOff : ''} trackColor={{ true: switchTrackColorOn, false: switchTrackColorOff }} ios_backgroundColor={switchIosTrackColorOff} />
-          <Text style={tailwind('ml-2 flex-1 text-base font-normal text-gray-500 blk:text-gray-400')}>Yes, I&apos;m absolutely sure I want to delete all my data.</Text>
+          <Text style={tailwind(`flex-1 text-base font-normal text-gray-500 blk:text-gray-400 ${isNewIos ? 'ml-5' : 'ml-2'}`)}>Yes, I&apos;m absolutely sure I want to delete all my data.</Text>
         </View>
         {actionPanel}
       </View>
