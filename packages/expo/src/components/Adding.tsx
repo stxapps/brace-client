@@ -11,6 +11,7 @@ import {
   initLinkEditor, updateLinkEditor, addLinkFromAdding, cancelDiedLinks,
   updateSelectingListName, updateListNamesMode,
 } from '../actions/chunk';
+import { resetPopupsForAdding } from '../actions/piece';
 import {
   ADDED, DIED_ADDING, NO_URL, BLK_MODE, SHOW_BLANK, ADD_MODE_BASIC, ADD_MODE_ADVANCED,
   LIST_NAMES_POPUP, LIST_NAMES_MODE_ADD_LINK, LIST_NAMES_ANIM_TYPE_POPUP, URL_MSGS,
@@ -137,6 +138,7 @@ const Adding = () => {
     if (intEdtLink.current !== addingUrl) {
       dispatch(initLinkEditor(true));
       dispatch(updateLinkEditor({ url: addingUrl }, true));
+      dispatch(resetPopupsForAdding());
       intEdtLink.current = addingUrl;
       return;
     }

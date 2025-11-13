@@ -34,6 +34,12 @@ export const runAfterFetchTask = () => async (dispatch, getState) => {
   dispatch(actionChunk.runAfterFetchTask());
 };
 
+export const updateSettingsPopup = (
+  isShown, doCheckEditing = false, popupToReplace = null
+) => async (dispatch, getState) => {
+  dispatch(actionChunk.updateSettingsPopup(isShown, doCheckEditing, popupToReplace));
+};
+
 export const updateStgsAndInfo = () => async (dispatch, getState) => {
   dispatch(actionChunk.updateStgsAndInfo());
 };

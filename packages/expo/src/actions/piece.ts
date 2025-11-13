@@ -6,11 +6,17 @@ import {
 } from '../types/actionTypes';
 import {
   MY_LIST, APP_STATE_ACTIVE, APP_STATE_INACTIVE, APP_STATE_BACKGROUND,
+  SETTINGS_LISTS_MENU_POPUP, SETTINGS_TAGS_MENU_POPUP, TIME_PICK_POPUP,
+  LIST_NAMES_POPUP, LOCK_EDITOR_POPUP, CONFIRM_DELETE_POPUP, CONFIRM_DISCARD_POPUP,
+  PAYWALL_POPUP,
 } from '../types/const';
 import { isObject, doListContainUnlocks } from '../utils';
 import vars from '../vars';
 
-import { isPopupShown, refreshFetched, is24HourFormat, updateIs24HFormat } from '.';
+import {
+  isPopupShown, updatePopup, refreshFetched, is24HourFormat, updateIs24HFormat,
+} from '.';
+import { updateSettingsPopup } from '../importWrapper';
 
 export const handleAppStateChange = (appState, pathname) => async (
   dispatch, getState
@@ -86,4 +92,18 @@ const _handleAppStateChange = async (appState, pathname, dispatch, getState) => 
       dispatch({ type: UPDATE_LOCKS_FOR_INACTIVE_APP });
     }
   }
+};
+
+export const resetPopupsForAdding = () => async (dispatch, getState) => {
+  dispatch(updatePopup(SETTINGS_LISTS_MENU_POPUP, false));
+  dispatch(updatePopup(SETTINGS_TAGS_MENU_POPUP, false));
+  dispatch(updatePopup(TIME_PICK_POPUP, false));
+  dispatch(updatePopup(LIST_NAMES_POPUP, false));
+  dispatch(updatePopup(LOCK_EDITOR_POPUP, false));
+  dispatch(updatePopup(CONFIRM_DELETE_POPUP, false));
+  dispatch(updatePopup(CONFIRM_DISCARD_POPUP, false));
+  dispatch(updatePopup(PAYWALL_POPUP, false));
+
+  const { isSettingsPopupShown } = getState().display;
+  if (isSettingsPopupShown) dispatch(updateSettingsPopup(false, true));
 };
