@@ -188,11 +188,14 @@ const LockEditorPopup = () => {
   }
   const bgStyle = { opacity: popupAnim };
 
+  const isNewIos = Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 26;
+
   const switchThumbColorOn = 'rgb(59, 130, 246)';
   const switchThumbColorOff = 'rgb(229, 231, 235)';
   const switchTrackColorOn = Platform.OS === 'android' ? 'rgb(191, 219, 254)' : 'rgb(59, 130, 246)';
   const switchTrackColorOff = 'rgb(156, 163, 175)';
-  const switchIosTrackColorOff = themeMode === BLK_MODE ? 'rgb(55, 65, 81)' : 'rgb(243, 244, 246)';
+  const switchIosTrackColorOff = themeMode === BLK_MODE ?
+    isNewIos ? 'rgb(107, 114, 128)' : 'rgb(55, 65, 81)' : 'rgb(243, 244, 246)';
 
   let title, desc, exportText, btnText;
   if (lockAction === LOCK_ACTION_ADD_LOCK_LIST) {
@@ -223,7 +226,6 @@ const LockEditorPopup = () => {
   const isAddLockMyList = (
     lockAction === LOCK_ACTION_ADD_LOCK_LIST && selectingListName === MY_LIST
   );
-  const isNewIos = Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 26;
   const inputClassNames = Platform.OS === 'ios' ? 'leading-4 py-2.5' : 'py-2';
 
   return (

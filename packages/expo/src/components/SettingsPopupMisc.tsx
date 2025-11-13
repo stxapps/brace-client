@@ -114,7 +114,8 @@ const SettingsPopupMisc = (props) => {
   const switchThumbColorOff = 'rgb(229, 231, 235)';
   const switchTrackColorOn = Platform.OS === 'android' ? 'rgb(191, 219, 254)' : 'rgb(59, 130, 246)';
   const switchTrackColorOff = 'rgb(156, 163, 175)';
-  const switchIosTrackColorOff = derivedThemeMode === BLK_MODE ? 'rgb(55, 65, 81)' : 'rgb(243, 244, 246)';
+  const switchIosTrackColorOff = derivedThemeMode === BLK_MODE ?
+    isNewIos ? 'rgb(107, 114, 128)' : 'rgb(55, 65, 81)' : 'rgb(243, 244, 246)';
 
   let ascendingBtnClassNames = !doDescendingOrder ? 'bg-blue-100 border-blue-200 z-10 blk:bg-blue-600 blk:border-blue-700' : 'border-gray-200 blk:border-gray-700';
   if (doDescendingOrder) ascendingBtnClassNames += ' border-b-0';

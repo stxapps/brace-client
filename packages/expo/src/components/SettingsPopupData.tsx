@@ -331,13 +331,14 @@ class InnerSettingsPopupDataDelete extends React.PureComponent<any, any> {
   render() {
     const { deleteAllDataProgress, safeAreaWidth, themeMode, tailwind } = this.props;
 
+    const isNewIos = Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 26;
+
     const switchThumbColorOn = 'rgb(59, 130, 246)';
     const switchThumbColorOff = 'rgb(229, 231, 235)';
     const switchTrackColorOn = Platform.OS === 'android' ? 'rgb(191, 219, 254)' : 'rgb(59, 130, 246)';
     const switchTrackColorOff = 'rgb(156, 163, 175)';
-    const switchIosTrackColorOff = themeMode === BLK_MODE ? 'rgb(55, 65, 81)' : 'rgb(243, 244, 246)';
-
-    const isNewIos = Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 26;
+    const switchIosTrackColorOff = themeMode === BLK_MODE ?
+      isNewIos ? 'rgb(107, 114, 128)' : 'rgb(55, 65, 81)' : 'rgb(243, 244, 246)';
 
     let actionPanel;
     if (!deleteAllDataProgress) {
