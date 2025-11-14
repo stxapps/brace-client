@@ -14,10 +14,11 @@ import { getThemeMode } from '../selectors';
 import { isFldStr, getListNameDisplayName } from '../utils';
 import { selectHint, deselectValue, addTagName, renameKeys } from '../utils/tag';
 
-import { useSafeAreaInsets, useTailwind } from '.';
+import { useSafeAreaFrame, useSafeAreaInsets, useTailwind } from '.';
 
 const BottomBarAddPopup = () => {
 
+  const { height: safeAreaHeight } = useSafeAreaFrame();
   const insets = useSafeAreaInsets();
   const isShown = useSelector(state => state.display.isAddPopupShown);
   const linkEditor = useSelector(state => state.linkEditor);
@@ -221,12 +222,13 @@ const BottomBarAddPopup = () => {
   const popupStyle = {
     paddingBottom: insets.bottom,
     paddingLeft: insets.left, paddingRight: insets.right,
+    maxHeight: Math.max(safeAreaHeight - 24, 192),
   };
 
   return (
     <React.Fragment>
       <button onClick={onAddCancelBtnClick} tabIndex={-1} className={tailwind(`fixed inset-0 z-30 h-full w-full cursor-default bg-black/25 focus:outline-none ${!isShown ? 'hidden' : ''}`)} />
-      <div style={popupStyle} className={tailwind(`fixed inset-x-0 bottom-0 z-31 transform rounded-t-lg bg-white shadow-xl ring-1 ring-black/5 blk:bg-gray-800 blk:ring-white/25 ${!isShown ? 'translate-y-full' : ''}`)}>
+      <div style={popupStyle} className={tailwind(`fixed inset-x-0 bottom-0 z-31 transform overflow-auto rounded-t-lg bg-white shadow-xl ring-1 ring-black/5 blk:bg-gray-800 blk:ring-white/25 ${!isShown ? 'translate-y-full' : ''}`)}>
         {renderContent()}
       </div>
     </React.Fragment>

@@ -168,6 +168,10 @@ const Adding = () => {
     console.log('Invalid mode', linkEditor);
   }, [isUserSignedIn, href, linksPerLn, linkEditor, innerProcessLink, dispatch]);
 
+  const onResetBtnClick = () => {
+    dispatch(linkTo(router, '/'));
+  };
+
   const onSignUpBtnClick = () => {
     dispatch(updatePopup(SIGN_UP_POPUP, true));
   };
@@ -209,10 +213,6 @@ const Adding = () => {
 
     fnlEdtLink.current = linkEditor.url;
     processLink();
-  };
-
-  const onAddCancelBtnClick = () => {
-    dispatch(linkTo(router, '/'));
   };
 
   const onListNameBtnClick = (e) => {
@@ -520,7 +520,7 @@ const Adding = () => {
         {linkEditor.msg !== '' && <p className={tailwind('mt-2 text-sm text-red-500')}>{linkEditor.msg}</p>}
         <div className={tailwind(`${linkEditor.msg !== '' ? 'pt-2' : 'pt-5'}`)}>
           <button onClick={onAddOkBtnClick} style={{ paddingTop: '0.4375rem', paddingBottom: '0.4375rem' }} className={tailwind('rounded-full bg-gray-800 px-4 text-sm font-medium text-gray-50 hover:bg-gray-900 focus:outline-none focus:ring blk:bg-gray-100 blk:text-gray-800 blk:hover:bg-white')}>{linkEditor.isAskingConfirm ? 'Sure' : 'Save'}</button>
-          <button onClick={onAddCancelBtnClick} className={tailwind('ml-2 rounded-md px-2.5 py-1.5 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring focus:ring-inset blk:text-gray-300 blk:hover:bg-gray-700')}>Cancel</button>
+          <button onClick={onResetBtnClick} className={tailwind('ml-2 rounded-md px-2.5 py-1.5 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring focus:ring-inset blk:text-gray-300 blk:hover:bg-gray-700')}>Cancel</button>
         </div>
       </div>
     );
