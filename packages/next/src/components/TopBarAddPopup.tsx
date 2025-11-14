@@ -262,7 +262,7 @@ const TopBarAddPopup = () => {
 
   let panel;
   if (popupSize) {
-    const maxHeight = safeAreaHeight - 16;
+    const maxHeight = safeAreaHeight - 52 - 16;
     const posStyle = computePositionStyle(
       anchorPosition,
       {
