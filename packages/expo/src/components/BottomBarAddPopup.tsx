@@ -295,15 +295,15 @@ const BottomBarAddPopup = () => {
   };
 
   return (
-    <>
-      <TouchableOpacity activeOpacity={1.0} onPress={onAddCancelBtnClick} style={tailwind('absolute inset-0 z-30 bg-black bg-opacity-25')} />
-      <View style={[tailwind('absolute inset-x-0 bottom-0 z-31 rounded-t-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
+    <View style={tailwind('absolute inset-0 z-30')}>
+      <TouchableOpacity activeOpacity={1.0} onPress={onAddCancelBtnClick} style={tailwind('absolute inset-0 bg-black bg-opacity-25')} />
+      <View style={[tailwind('absolute inset-x-0 bottom-0 rounded-t-lg bg-white shadow-xl blk:border blk:border-gray-700 blk:bg-gray-800'), popupStyle]}>
         {/* Also set pb to kb height on iOS so autoAdjustKbInsets is false */}
         <ScrollView style={scrollViewStyle} automaticallyAdjustKeyboardInsets={false} keyboardShouldPersistTaps="handled">
           {renderContent()}
         </ScrollView>
       </View>
-    </>
+    </View>
   );
 };
 
