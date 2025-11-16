@@ -89,8 +89,8 @@ const config: ExpoConfig = {
       "android.permission.WRITE_EXTERNAL_STORAGE"
     ],
     "package": "com.bracedotto",
-    "versionCode": 67,
-    "version": "0.37.0"
+    "versionCode": 68,
+    "version": "0.38.0"
   },
   "web": {
     "bundler": "metro",
