@@ -13,7 +13,6 @@
     "ios-release": "npx expo run:ios --configuration Release",
     "start": "npx expo start",
     "web": "expo start --web",
-    "test": "jest --watchAll",
     "lint": "npx expo lint --no-cache"
   },
   "dependencies": {
