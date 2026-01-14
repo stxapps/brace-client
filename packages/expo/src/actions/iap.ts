@@ -15,18 +15,15 @@ import {
   COM_BRACEDOTTO_SUPPORTER, SIGNED_TEST_STRING, VALID, INVALID, ACTIVE, UNKNOWN, ERROR,
 } from '../types/const';
 import {
-  isFldStr, sleep, getLatestPurchase, getValidPurchase, applySubscriptionOfferDetails,
-  getResErrMsg,
+  isObject, isFldStr, sleep, getLatestPurchase, getValidPurchase,
+  applySubscriptionOfferDetails, getResErrMsg,
 } from '../utils';
 import vars from '../vars';
 
 import { increaseUpdateStatusBarStyleCount } from '.';
 
-const verifyPurchase = async (rawPurchase: iapApi.ProductPurchase) => {
-  if (!rawPurchase) return { status: INVALID };
-  if (rawPurchase.platform === 'android' && rawPurchase.purchaseStateAndroid === 0) {
-    return { status: INVALID };
-  }
+const verifyPurchase = async (rawPurchase: iapApi.Purchase) => {
+  if (!isObject(rawPurchase)) return { status: INVALID };
 
   let source;
   if (Platform.OS === 'ios') source = APPSTORE;
@@ -41,11 +38,7 @@ const verifyPurchase = async (rawPurchase: iapApi.ProductPurchase) => {
   const userId = sigObj.publicKey;
 
   const productId = rawPurchase.id;
-
-  let token;
-  if (rawPurchase.platform === 'ios') token = rawPurchase.jwsRepresentationIos;
-  else if (rawPurchase.platform === 'android') token = rawPurchase.purchaseTokenAndroid;
-
+  const token = rawPurchase.purchaseToken;
   if (!token) {
     console.log('No purchaseToken in rawPurchase');
     return { status: INVALID };
@@ -165,10 +158,11 @@ const getPurchases = (
     const rawPurchases = await iapApi.getAvailablePurchases();
     for (const rawPurchase of rawPurchases) {
       let originalOrderId;
-      if (rawPurchase.platform === 'ios') {
-        originalOrderId = rawPurchase.originalTransactionIdentifierIos;
-      } else if (rawPurchase.platform === 'android') {
-        originalOrderId = rawPurchase.purchaseTokenAndroid;
+      if (Platform.OS === 'ios') {
+        const rpi = (rawPurchase as iapApi.PurchaseIOS);
+        originalOrderId = rpi.originalTransactionIdentifierIOS;
+      } else {
+        originalOrderId = rawPurchase.purchaseToken;
       }
 
       if (originalOrderIds.includes(originalOrderId)) continue;
@@ -273,7 +267,9 @@ export const initIapConnectionAndGetProducts = (doForce = false) => async (
 
     let products = null;
     if (canMakePayments) {
-      products = await iapApi.getSubscriptions([COM_BRACEDOTTO_SUPPORTER]);
+      products = await iapApi.fetchProducts({
+        skus: [COM_BRACEDOTTO_SUPPORTER], type: 'subs',
+      });
       for (let product of products) applySubscriptionOfferDetails(product);
     }
 
@@ -293,9 +289,8 @@ export const requestPurchase = (product) => async (dispatch, getState) => {
     const { id, offerToken } = product;
     await iapApi.requestPurchase({
       request: {
-        sku: id,
-        skus: [id],
-        subscriptionOffers: [{ sku: id, offerToken }],
+        apple: { sku: id },
+        google: { skus: [id], subscriptionOffers: [{ sku: id, offerToken }] },
       },
       type: 'subs',
     });

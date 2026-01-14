@@ -977,11 +977,14 @@ This and CI/CD are very important!
 ** install
 - npx create-expo-app --template tabs
 - npx expo install expo-dev-client -- --save-dev
-- npm i 'https://gitpkg.now.sh/stxapps/blockstack-react-native/BlockstackSDK?3d5bcd6ea9a17f00c76be5913009f2c02f13b95f'
+- npm i file:../../../sdrive-hub-sdk/blockstack-react-native/react-native-blockstack-0.1.1.tgz
+  + In the blockstack-react-native, run npm pack
 - npx expo install react-native-flag-secure
 - npm i react-redux redux redux-thunk reselect
+- npx expo install redux-devtools-expo-dev-plugin
 - npm i url-parse @wewatch/lexorank
-- npx expo install expo-share-intent@^4.1.1
+- npm i jest-diff@29.7.0
+- npx expo install expo-share-intent
 - npx expo install react-native-file-access
 - npx expo install expo-localization
 - npx expo install expo-iap
@@ -998,12 +1001,13 @@ This and CI/CD are very important!
 - npx expo install @react-native-async-storage/async-storage
 - npx expo install @react-native-community/netinfo
 - npm i https://github.com/stxapps/redux-offline#028205cec27dcf1ae05e310fc7e45779ee908949
-- npm i jest-diff@29.7.0
 - npm i react-native-swiper
 - npx expo install expo-clipboard
 - npx expo install expo-image-picker expo-image-manipulator
 - npx expo install expo-image
 - npx expo install @stylistic/eslint-plugin -- --save-dev
+- npx expo install expo-system-ui
+- npx expo install react-native-edge-to-edge
 ** build
 - npx expo prebuild --clean
 - ios

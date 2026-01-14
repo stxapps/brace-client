@@ -2167,7 +2167,7 @@ export const extractFPath = (fpath) => {
 export const applySubscriptionOfferDetails = (product) => {
   if (!isObject(product)) return;
 
-  const { subscriptionOfferDetails } = product;
+  const { subscriptionOfferDetailsAndroid: subscriptionOfferDetails } = product;
   if (!Array.isArray(subscriptionOfferDetails)) return;
 
   const offers = [];

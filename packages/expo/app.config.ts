@@ -81,6 +81,7 @@ const config: ExpoConfig = {
       "backgroundColor": "#ffffff"
     },
     "edgeToEdgeEnabled": true,
+    "predictiveBackGestureEnabled": false,
     "blockedPermissions": [
       "android.permission.READ_EXTERNAL_STORAGE",
       "android.permission.RECORD_AUDIO",
@@ -145,6 +146,7 @@ const config: ExpoConfig = {
         }
       }
     ],
+    "react-native-navigation-mode",
     "expo-router",
     "expo-localization",
     "./plugins/blockstack-plugin.ts",
@@ -186,7 +188,12 @@ const config: ExpoConfig = {
         },
         "android": {
           "minSdkVersion": 30,
-          "enableProguardInReleaseBuilds": true,
+          "packagingOptions": {
+            "pickFirst": [
+              "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+            ]
+          },
+          "enableMinifyInReleaseBuilds": true,
           "extraProguardRules": proguardRules
         }
       }
