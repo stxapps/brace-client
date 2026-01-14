@@ -37,7 +37,7 @@ const verifyPurchase = async (rawPurchase: iapApi.Purchase) => {
   const sigObj = await ecApi.signECDSA(SIGNED_TEST_STRING);
   const userId = sigObj.publicKey;
 
-  const productId = rawPurchase.id;
+  const productId = rawPurchase.productId;
   const token = rawPurchase.purchaseToken;
   if (!token) {
     console.log('No purchaseToken in rawPurchase');
