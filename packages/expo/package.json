@@ -32,7 +32,7 @@
     "expo-iap": "^3.4.0",
     "expo-image": "~3.0.11",
     "expo-image-manipulator": "~14.0.8",
-    "expo-image-picker": "16.1.4",
+    "expo-image-picker": "~17.0.10",
     "expo-linking": "~8.0.11",
     "expo-localization": "~17.0.8",
     "expo-router": "~6.0.21",
@@ -75,5 +75,12 @@
     "react-native-svg-transformer": "^1.5.2",
     "react-test-renderer": "19.1.0",
     "typescript": "~5.9.2"
+  },
+  "expo": {
+    "autolinking": {
+      "android": {
+        "buildFromSource": ["expo-image-picker"]
+      }
+    }
   }
 }

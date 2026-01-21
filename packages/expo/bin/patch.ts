@@ -69,6 +69,16 @@ const patchReduxOffline = () => {
   );
 };
 
+const patchImagePicker = () => {
+  let match = '    <color name="expoCropToolbarColor">#00000000</color> <!-- Transparent -->';
+  let repmt = '    <color name="expoCropToolbarColor">#ffffff</color> <!-- Transparent -->';
+  replaceMatchedLine(
+    'node_modules/expo-image-picker/android/src/main/res/values/colors.xml',
+    [{ match, repmt }],
+  );
+};
+
 patchExpoShareIntent();
 patchLexoRank();
 patchReduxOffline();
+patchImagePicker();
