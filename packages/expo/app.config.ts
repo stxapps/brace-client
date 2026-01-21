@@ -26,6 +26,8 @@ const proguardRules = `
   private static *** onContentChangedByOuterProcess(***);
 }
 -dontwarn org.slf4j.impl.StaticLoggerBinder
+-keep class org.bouncycastle.jcajce.provider.** { *; }
+-keep class org.bouncycastle.jce.provider.** { *; }
 `;
 
 const config: ExpoConfig = {
@@ -194,6 +196,7 @@ const config: ExpoConfig = {
             ]
           },
           "enableMinifyInReleaseBuilds": true,
+          "enableShrinkResourcesInReleaseBuilds": true,
           "extraProguardRules": proguardRules
         }
       }
