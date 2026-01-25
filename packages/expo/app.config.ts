@@ -74,7 +74,7 @@ const config: ExpoConfig = {
     },
     "bundleIdentifier": "com.bracedotto.brace",
     "appleTeamId": process.env.APPLE_TEAM_ID,
-    "version": "0.38.0",
+    "version": "0.39.0",
     "buildNumber": "1"
   },
   "android": {
